@@ -7,17 +7,17 @@ api-version: 1.21
 softdepend: [Vault, BlueMap]
 commands:
   claim:
-    description: 'Claim a chunk'
+    description: 'Claim a chunk using Homestead'
     usage: '/<command> <name>'
     permission: homestead.commands.claim
     default: true
   unclaim:
-    description: 'Unclaim a chunk'
+    description: 'Unclaim a chunk using Homestead'
     usage: '/<command>'
     permission: homestead.commands.unclaim
     default: true
   region:
-    description: 'The main command to manage regions'
+    description: 'The main command to manage regions using Homestead'
     usage: '/<command> [subcommand] <args>'
     permission: homestead.commands.region
     aliases:
@@ -26,15 +26,15 @@ commands:
       - homestead
     default: true
   homesteadadmin:
-    description: 'The main command for administrators to manage the plugin'
+    description: 'The main command for administrators to manage Homestead regions'
     usage: '/<command>'
     permission: homestead.commands.homesteadadmin
     aliases:
       - hsadmin
     default: op
   forceunclaim:
-    description: "Unclaim the Chunk you are stay on, don't care if it is yours or not."
-    usage: /forceunclaim
+    description: 'Unclaim the Chunk you are stay on, don't care if it is yours or not.'
+    usage: '/forceunclaim'
     aliases:
       - opunclaim
       - adminunclaim
@@ -122,6 +122,8 @@ permissions:
     default: true
   homestead.commands.region.home:
     default: true
+  homestead.commands.region.kick:
+    default: true
   homestead.commands.region.logs:
     default: true
   homestead.commands.region.members:
@@ -142,6 +144,8 @@ permissions:
     default: true
   homestead.commands.region.subareas:
     default: true
+  homestead.commands.region.top:
+    default: true
   homestead.commands.region.trust:
     default: true
   homestead.commands.region.unban:
@@ -149,6 +153,8 @@ permissions:
   homestead.commands.region.untrust:
     default: true
   homestead.commands.region.visit:
+    default: true
+  homestead.commands.region.war:
     default: true
   homestead.commands.region.withdraw:
     default: true
@@ -167,6 +173,7 @@ permissions:
       homestead.commands.region.flags: true
       homestead.commands.region.help: true
       homestead.commands.region.home: true
+      homestead.commands.region.kick: true
       homestead.commands.region.logs: true
       homestead.commands.region.members: true
       homestead.commands.region.menu: true
@@ -177,10 +184,12 @@ permissions:
       homestead.commands.region.rename: true
       homestead.commands.region.set: true
       homestead.commands.region.subareas: true
+      homestead.commands.region.top: true
       homestead.commands.region.trust: true
       homestead.commands.region.unban: true
       homestead.commands.region.untrust: true
       homestead.commands.region.visit: true
+      homestead.commands.region.war: true
       homestead.commands.region.withdraw: true
   homestead.commands.homesteadadmin.importdata:
     default: op
