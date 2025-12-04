@@ -37,6 +37,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
+import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -877,7 +878,7 @@ public class RegionProtectionListener implements Listener {
                         return;
                     }
                 } else if (entity instanceof Player && damager instanceof Player) {
-                    if (!PlayerUtils.hasPermissionFlag(region.getUniqueId(), (Player) damager, PlayerFlags.PVP)) {
+                    if (!PlayerUtils.hasPermissionFlag(region.getUniqueId(), (Player) damager, PlayerFlags.PVP) && !WarsManager.isRegionInWar(region.getOwnerId())) {
                         event.setCancelled(true);
                         return;
                     }
@@ -1145,7 +1146,7 @@ public class RegionProtectionListener implements Listener {
                     if (subArea != null) {
                         if (!player.getUniqueId().equals(region.getOwnerId())
                                 && !PlayerUtils.hasPermissionFlag(region.getUniqueId(), subArea.getId(), player,
-                                        PlayerFlags.PVP)) {
+                                        PlayerFlags.PVP) && !WarsManager.isRegionInWar(region.getOwnerId())) {
                             event.setCancelled(true);
                             event.getEntity().remove();
                             return;

@@ -14,6 +14,7 @@ import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
 
@@ -173,6 +174,20 @@ public class Formatters {
         return ChatColorTranslator.translate(members.stream()
                 .map((member) -> format.replace("{playername}", member.getBukkitOfflinePlayer().getName()))
                 .collect(Collectors.joining(Homestead.config.get("formatters.region-members-joining"))));
+    }
+
+    public static String getRegionsOfWar(War war) {
+        List<Region> regions = war.getRegions();
+
+        if (regions.size() == 0) {
+            return getNone();
+        }
+
+        String format = Homestead.config.get("formatters.war-regions");
+
+        return ChatColorTranslator.translate(regions.stream()
+                .map((region) -> format.replace("{region}", region.getName()))
+                .collect(Collectors.joining(Homestead.config.get("formatters.war-regions-joining"))));
     }
 
     public static String getNone() {

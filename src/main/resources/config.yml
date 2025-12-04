@@ -389,6 +389,8 @@ formatters:
   ago-hours: "{v} hours"
   ago-minutes: "{v} minutes"
   ago-seconds: "{v} seconds"
+  war-regions: "&2{region}"
+  war-regions-joining: ", "
 
 ############################################################
 # +------------------------------------------------------+ #

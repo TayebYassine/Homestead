@@ -181,6 +181,7 @@ prefix: "&8[&6HS&8]&r "
 151: "&cYou are already in a war with another region!"
 152: "&cYou are not in a war!"
 153: "&7You have quit the war, you may live in peace now."
+154: "&7Regions: &2{regions}&7, Prize: &c{prize}"
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."

@@ -41,6 +41,18 @@ public class WarsManager {
         return null;
     }
 
+    public static War findWarByRegionId(UUID id) {
+        for (War war : Homestead.warsCache.getAll()) {
+            for (Region region : war.getRegions()) {
+                if (region.getUniqueId().equals(id)) {
+                    return war;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static void endWar(UUID id) {
         War war = findWar(id);
 

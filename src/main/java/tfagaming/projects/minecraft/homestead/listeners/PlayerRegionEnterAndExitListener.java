@@ -66,7 +66,7 @@ public class PlayerRegionEnterAndExitListener implements Listener {
             }
 
             if (!PlayerUtils.isOperator(player) && !player.getUniqueId().equals(region.getOwnerId())
-                    && !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH)) {
+                    && !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH) && !WarsManager.isRegionInWar(region.getOwnerId())) {
                 Chunk nearbyChunk = ChunksManager.findNearbyUnclaimedChunk(player);
 
                 if (nearbyChunk != null) {

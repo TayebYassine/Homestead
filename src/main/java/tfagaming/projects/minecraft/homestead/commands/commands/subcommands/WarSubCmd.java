@@ -14,6 +14,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
@@ -159,7 +160,7 @@ public class WarSubCmd extends SubCommandBuilder {
                 break;
             }
 
-            case "end": {
+            case "quit": {
                 if (args.length < 2) {
                     PlayerUtils.sendMessage(player, 0);
                     return true;
@@ -182,6 +183,28 @@ public class WarSubCmd extends SubCommandBuilder {
                 PlayerUtils.sendMessage(player, 153);
 
                 break;
+            }
+
+            case "info": {
+                Region region = TargetRegionSession.getRegion(player);
+
+                if (region == null) {
+                    PlayerUtils.sendMessage(player, 4);
+                    return false;
+                }
+
+                War war = WarsManager.findWarByRegionId(region.getUniqueId());
+
+                if (!WarsManager.isRegionInWar(region.getUniqueId()) || war == null) {
+                    PlayerUtils.sendMessage(player, 152);
+                    return true;
+                }
+
+                Map<String, String> replacements = new HashMap<String, String>();
+                replacements.put("{regions}", Formatters.getRegionsOfWar(war));
+                replacements.put("{prize}", Formatters.formatBalance(war.prize));
+
+                PlayerUtils.sendMessage(player, 154, replacements);
             }
         }
 
