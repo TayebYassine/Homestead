@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLocation;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
@@ -406,6 +407,11 @@ public class CustomSignsLisntener implements Listener {
 
             if (region == null) {
                 PlayerUtils.sendMessage(player, 9);
+                return;
+            }
+
+            if (WarsManager.isRegionInWar(region.getUniqueId())) {
+                PlayerUtils.sendMessage(player, 156);
                 return;
             }
 

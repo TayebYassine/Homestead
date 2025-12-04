@@ -1,32 +1,29 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.players;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits.LimitMethod;
+
+import java.util.*;
 
 public class PlayerUtils {
     private static HashSet<UUID> cooldown = new HashSet<UUID>();
@@ -206,8 +203,20 @@ public class PlayerUtils {
         boolean response;
 
         SerializableRent rent = region.getRent();
+        War war = WarsManager.findWarByRegionId(regionId);
+
         if (rent != null && rent.getPlayerId() != null
                 && rent.getPlayerId().equals(player.getUniqueId()) && flag != PlayerFlags.PVP) {
+            response = true;
+        } else if (war != null
+                && WarsManager.getMembersOfWar(war.getUniqueId()).stream().map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId())
+                && List.of(PlayerFlags.PVP,
+                PlayerFlags.DOORS,
+                PlayerFlags.TRAP_DOORS,
+                PlayerFlags.PASSTHROUGH,
+                PlayerFlags.FENCE_GATES,
+                PlayerFlags.ELYTRA
+        ).contains(flag)) {
             response = true;
         } else if (region.isPlayerMember(player)) {
             SerializableMember member = region.getMember(player);

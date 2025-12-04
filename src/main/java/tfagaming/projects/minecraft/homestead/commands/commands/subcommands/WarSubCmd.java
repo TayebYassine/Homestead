@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.commands.commands.subcommands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -8,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
@@ -57,12 +55,17 @@ public class WarSubCmd extends SubCommandBuilder {
 
         switch (args[1]) {
             case "declare": {
-                if (args.length < 5) {
+                Region region = TargetRegionSession.getRegion(player);
+
+                if (region != null && WarsManager.isRegionInWar(region.getUniqueId())) {
+                    PlayerUtils.sendMessage(player, 151);
+                    return false;
+                }
+
+                if (args.length < 4) {
                     PlayerUtils.sendMessage(player, 0);
                     return true;
                 }
-
-                Region region = TargetRegionSession.getRegion(player);
 
                 if (region == null) {
                     PlayerUtils.sendMessage(player, 4);
@@ -87,11 +90,6 @@ public class WarSubCmd extends SubCommandBuilder {
                     return false;
                 }
 
-                if (WarsManager.isRegionInWar(region.getUniqueId())) {
-                    PlayerUtils.sendMessage(player, 151);
-                    return false;
-                }
-
                 if (WarsManager.isRegionInWar(targetRegion.getUniqueId())) {
                     PlayerUtils.sendMessage(player, 150);
                     return false;
@@ -100,22 +98,29 @@ public class WarSubCmd extends SubCommandBuilder {
                 String prizeInput = args[3];
 
                 if ((!NumberUtils.isValidDouble(prizeInput))
-                        || (NumberUtils.isValidDouble(prizeInput) && Double.parseDouble(prizeInput) > 2147483647)) {
+                        || (NumberUtils.isValidDouble(prizeInput) && Double.parseDouble(prizeInput) > Integer.MAX_VALUE)) {
                     PlayerUtils.sendMessage(player, 146);
                     return true;
                 }
 
                 double prize = Double.parseDouble(prizeInput);
 
+                if (targetRegion.getBank() < prize) {
+                    PlayerUtils.sendMessage(player, 157);
+                    return true;
+                }
+
                 List<String> nameList = Arrays.asList(args).subList(4, args.length);
                 String name = String.join(" ", nameList);
 
-                if (name.isEmpty() || name.length() > 512) {
+                if (name.isEmpty()) name = "Unnamed War";
+
+                if (name.length() > 512) {
                     PlayerUtils.sendMessage(player, 145);
                     return true;
                 }
 
-                WarsManager.declareWar(name, prize, List.of(region, targetRegion));
+                War war = WarsManager.declareWar(name, prize, List.of(region, targetRegion));
 
                 List<String> listString = Homestead.language.get("147");
 
@@ -124,28 +129,7 @@ public class WarSubCmd extends SubCommandBuilder {
                 replacements.put("{regiontarget}", targetRegion.getName());
                 replacements.put("{prize}", Formatters.formatBalance(prize));
 
-                ArrayList<OfflinePlayer> players = new ArrayList<>();
-
-                // Trigger's region
-                for (SerializableMember member : region.getMembers()) {
-                    OfflinePlayer p = member.getBukkitOfflinePlayer();
-
-                    if (!players.contains(p)) {
-                        players.add(p);
-                    }
-                }
-
-                // Target region
-                for (SerializableMember member : targetRegion.getMembers()) {
-                    OfflinePlayer p = member.getBukkitOfflinePlayer();
-
-                    if (!players.contains(p)) {
-                        players.add(p);
-                    }
-                }
-
-                players.add(player);
-                players.add(targetRegion.getOwner());
+                List<OfflinePlayer> players = WarsManager.getMembersOfWar(war.getUniqueId());
 
                 for (OfflinePlayer p : players) {
                     if (p.isOnline()) {
@@ -160,7 +144,7 @@ public class WarSubCmd extends SubCommandBuilder {
                 break;
             }
 
-            case "quit": {
+            case "surrender": {
                 if (args.length < 2) {
                     PlayerUtils.sendMessage(player, 0);
                     return true;
@@ -178,7 +162,22 @@ public class WarSubCmd extends SubCommandBuilder {
                     return true;
                 }
 
-                WarsManager.removeRegionFromAnyWar(region.getUniqueId());
+                War war = WarsManager.surrenderRegionFromFirstWarFound(region.getUniqueId());
+
+                if (war != null && war.getRegions().size() == 1) {
+                    Region winner = war.getRegions().getFirst();
+
+                    double prize = war.getPrize();
+
+                    region.removeBalanceFromBank(prize);
+                    winner.addBalanceToBank(prize);
+
+                    if (winner.getOwner().isOnline()) {
+                        PlayerUtils.sendMessage((Player) winner.getOwner(), 155);
+                    }
+
+                    WarsManager.endWar(war.getUniqueId());
+                }
 
                 PlayerUtils.sendMessage(player, 153);
 

@@ -878,7 +878,7 @@ public class RegionProtectionListener implements Listener {
                         return;
                     }
                 } else if (entity instanceof Player && damager instanceof Player) {
-                    if (!PlayerUtils.hasPermissionFlag(region.getUniqueId(), (Player) damager, PlayerFlags.PVP) && !WarsManager.isRegionInWar(region.getOwnerId())) {
+                    if (!PlayerUtils.hasPermissionFlag(region.getUniqueId(), (Player) damager, PlayerFlags.PVP)) {
                         event.setCancelled(true);
                         return;
                     }
@@ -1146,7 +1146,7 @@ public class RegionProtectionListener implements Listener {
                     if (subArea != null) {
                         if (!player.getUniqueId().equals(region.getOwnerId())
                                 && !PlayerUtils.hasPermissionFlag(region.getUniqueId(), subArea.getId(), player,
-                                        PlayerFlags.PVP) && !WarsManager.isRegionInWar(region.getOwnerId())) {
+                                        PlayerFlags.PVP)) {
                             event.setCancelled(true);
                             event.getEntity().remove();
                             return;

@@ -1,14 +1,12 @@
 package tfagaming.projects.minecraft.homestead.commands;
 
-import org.bukkit.command.PluginCommand;
-
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-
 import me.lucko.commodore.Commodore;
+import org.bukkit.command.PluginCommand;
 import tfagaming.projects.minecraft.homestead.Homestead;
 
 public class MojangBrigadier {
@@ -157,6 +155,15 @@ public class MojangBrigadier {
 								StringArgumentType.string())
 								.then(RequiredArgumentBuilder.argument("index",
 										IntegerArgumentType.integer(0, 32767)))))
+				.then(LiteralArgumentBuilder.literal("war")
+						.then(LiteralArgumentBuilder.literal("declare")
+								.then(RequiredArgumentBuilder.argument("region",
+												StringArgumentType.string())
+										.then(RequiredArgumentBuilder.argument("prize",
+												IntegerArgumentType.integer(0, 1000000000)))))
+						.then(LiteralArgumentBuilder.literal("surrender"))
+						.then(LiteralArgumentBuilder.literal("info"))
+				)
 				.then(LiteralArgumentBuilder.literal("withdraw")
 						.then(RequiredArgumentBuilder.argument("amount",
 								IntegerArgumentType.integer(0, 1000000000))))

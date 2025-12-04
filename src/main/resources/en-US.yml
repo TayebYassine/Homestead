@@ -180,8 +180,11 @@ prefix: "&8[&6HS&8]&r "
 150: "&cThe region is in a war with a different region, you cannot declare another war."
 151: "&cYou are already in a war with another region!"
 152: "&cYou are not in a war!"
-153: "&7You have quit the war, you may live in peace now."
+153: "&7You have surrendered, you have lost the war."
 154: "&7Regions: &2{regions}&7, Prize: &c{prize}"
+155: "&aCongratulations! You have won the war! The prize has been added to your region's bank."
+156: "&cThis feature is disabled because the region is in a war!"
+157: "&cYou cannot declare a war on that region! They do not have enough money for this prize."
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."

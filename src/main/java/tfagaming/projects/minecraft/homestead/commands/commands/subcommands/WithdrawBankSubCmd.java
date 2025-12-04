@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
@@ -52,6 +53,11 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 
         if (region == null) {
             PlayerUtils.sendMessage(player, 4);
+            return true;
+        }
+
+        if (WarsManager.isRegionInWar(region.getUniqueId())) {
+            PlayerUtils.sendMessage(player, 156);
             return true;
         }
 
