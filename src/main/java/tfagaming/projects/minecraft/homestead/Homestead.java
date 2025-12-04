@@ -27,6 +27,7 @@ import tfagaming.projects.minecraft.homestead.integrations.*;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
@@ -190,6 +191,14 @@ public class Homestead extends JavaPlugin {
 
 		if (Homestead.config.isDebugEnabled()) {
 			Logger.warning("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
+		}
+
+		if ((boolean) Homestead.config.get("clean-startup")) {
+			Logger.warning("Clean up regions data...");
+
+			int updated = RegionsManager.cleanStartup();
+
+			Logger.info("Successfully updated " + updated + " rows of regions data.");
 		}
 
 		Logger.info("Ready, took " + String.valueOf(System.currentTimeMillis() - startedAt) + " ms to load.");

@@ -20,7 +20,7 @@ public class SerializableChunk {
     private long claimedAt;
 
     public SerializableChunk(Chunk chunk) {
-        this.worldName = chunk.getWorld().getName();
+        this.worldName = chunk.getWorld() != null ? chunk.getWorld().getName() : null;
         this.x = chunk.getX();
         this.z = chunk.getZ();
         this.claimedAt = System.currentTimeMillis();
@@ -34,7 +34,7 @@ public class SerializableChunk {
     }
 
     public SerializableChunk(World world, int x, int z) {
-        this.worldName = world.getName();
+        this.worldName = world != null ? world.getName() : null;
         this.x = x;
         this.z = z;
         this.claimedAt = System.currentTimeMillis();
@@ -52,7 +52,7 @@ public class SerializableChunk {
     }
 
     public World getWorld() {
-        return Bukkit.getWorld(worldName);
+        return worldName == null ? null : Bukkit.getWorld(worldName);
     }
 
     public void setWorldName(String worldName) {

@@ -74,6 +74,9 @@ cache-interval: 30 # 30 seconds (Good for PostgreSQL, MySQL, and YAML)
 # +------------------------------------------------------+ #
 ############################################################
 
+# Clean startup; Removes unknown World names, Locations, and Player UUIDs from regions data.
+clean-startup: true
+
 # Disabled worlds; The worlds which players cannot claim chunks.
 disabled-worlds:
   - "world_the_end"

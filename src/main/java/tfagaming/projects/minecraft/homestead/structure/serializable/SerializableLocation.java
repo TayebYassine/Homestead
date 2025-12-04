@@ -13,7 +13,7 @@ public class SerializableLocation {
     private float pitch;
 
     public SerializableLocation(Location location) {
-        this.worldName = location.getWorld().getName();
+        this.worldName = location.getWorld() != null ? location.getWorld().getName() : null;
         this.x = location.getX();
         this.y = location.getY();
         this.z = location.getZ();
@@ -22,7 +22,7 @@ public class SerializableLocation {
     }
 
     public SerializableLocation(World world, double x, double y, double z, float yaw, float pitch) {
-        this.worldName = world.getName();
+        this.worldName = world != null ? world.getName() : null;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -40,7 +40,7 @@ public class SerializableLocation {
     }
 
     public World getWorld() {
-        return Bukkit.getWorld(worldName);
+        return worldName == null ? null : Bukkit.getWorld(worldName);
     }
 
     public void setWorld(World world) {

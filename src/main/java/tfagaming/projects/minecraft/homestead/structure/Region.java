@@ -393,6 +393,34 @@ public class Region {
         }
     }
 
+    public void removePlayerRate(OfflinePlayer player) {
+        for (int i = 0; i < rates.size(); i++) {
+            SerializableRate data = rates.get(i);
+
+            if (data.getPlayerId().equals(player.getUniqueId())) {
+                rates.remove(i);
+
+                updateCache();
+
+                break;
+            }
+        }
+    }
+
+    public void removePlayerRate(UUID playerId) {
+        for (int i = 0; i < rates.size(); i++) {
+            SerializableRate data = rates.get(i);
+
+            if (data.getPlayerId().equals(playerId)) {
+                rates.remove(i);
+
+                updateCache();
+
+                break;
+            }
+        }
+    }
+
     public void setPlayerRateValue(OfflinePlayer player, int rate) {
         for (int i = 0; i < rates.size(); i++) {
             SerializableRate data = rates.get(i);
@@ -543,6 +571,20 @@ public class Region {
             SerializableBannedPlayer playerData = bannedPlayers.get(i);
 
             if (playerData.getPlayerId().equals(player.getUniqueId())) {
+                bannedPlayers.remove(i);
+
+                updateCache();
+
+                break;
+            }
+        }
+    }
+
+    public void unbanPlayer(UUID playerId) {
+        for (int i = 0; i < bannedPlayers.size(); i++) {
+            SerializableBannedPlayer playerData = bannedPlayers.get(i);
+
+            if (playerData.getPlayerId().equals(playerId)) {
                 bannedPlayers.remove(i);
 
                 updateCache();

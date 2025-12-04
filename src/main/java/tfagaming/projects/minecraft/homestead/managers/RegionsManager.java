@@ -8,10 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -391,5 +388,73 @@ public class RegionsManager {
 
             region.setWorldFlags(newFlags);
         }
+    }
+
+    public static int cleanStartup() {
+        int updated = 0;
+
+        for (Region region : Homestead.regionsCache.getAll()) {
+            for (SerializableMember member : region.getMembers()) {
+                if (member.getBukkitOfflinePlayer() == null) {
+                    region.removeMember(member);
+                    updated++;
+                }
+            }
+
+            for (SerializableBannedPlayer bannedPlayer : region.getBannedPlayers()) {
+                if (bannedPlayer.getBukkitOfflinePlayer() == null) {
+                    region.unbanPlayer(bannedPlayer.getPlayerId());
+                    updated++;
+                }
+            }
+
+            for (SerializableRate rate : region.getRates()) {
+                OfflinePlayer rater = rate.getBukkitOfflinePlayer();
+
+                if (rater == null) {
+                    region.removePlayerRate(rate.getPlayerId());
+                    updated++;
+                }
+            }
+
+            for (SerializableChunk chunk : region.getChunks()) {
+                World world = chunk.getWorld();
+
+                if (world == null) {
+                    region.removeChunk(chunk);
+                    updated++;
+                }
+            }
+
+            for (SerializableSubArea area : region.getSubAreas()) {
+                World world = area.getWorld();
+
+                if (world == null) {
+                    region.removeSubArea(area.getId());
+                    updated++;
+                }
+            }
+
+            SerializableLocation spawnLoc = region.getLocation();
+
+            if (spawnLoc != null && spawnLoc.getWorld() == null) {
+                region.setLocation(null);
+                updated++;
+            }
+
+            SerializableLocation welcomeSignLoc = region.getWelcomeSign();
+
+            if (welcomeSignLoc != null && welcomeSignLoc.getWorld() == null) {
+                region.setWelcomeSign(null);
+                updated++;
+            }
+
+            if (region.getOwner() == null) {
+                RegionsManager.deleteRegion(region.getUniqueId());
+                updated++;
+            }
+        }
+
+        return updated;
     }
 }
