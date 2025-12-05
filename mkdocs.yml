@@ -6,6 +6,9 @@ copyright: Copyright (©) 2025 Tayeb Yassine
 theme:
   name: material
 
+  favicon: assets/favicon.ico
+  logo: assets/logo.png
+
   icon:
     repo: fontawesome/brands/github
 

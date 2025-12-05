@@ -19,7 +19,7 @@ To cancel a lease, use `/region rent cancel`.
 
 !!! warning
 
-    The lessor (who leases the region) has all permissions in your region; they can do anything.
+    The lessor (who leases the region) has all permissions in your region; they can do anything except configuring flags and permissions.
 
     You cannot control or manage the flags for leasers, but you can still kick them via menu or `/region rent cancel`.
 

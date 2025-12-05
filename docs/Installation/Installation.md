@@ -5,7 +5,7 @@
 3. Drag and drop the **.jar** file in your server's plugins directory.
 4. Start the server, and have fun!
 
-!!! bug "Attackers Exploit Abusing Notice"
+!!! bug "Attackers Exploiting Outdated Versions"
 
     Using outdated and obsolete versions on your server may let attackers abuse exploits to manipulate and do unattended actions.
 

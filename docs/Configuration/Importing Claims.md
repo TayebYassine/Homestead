@@ -3,7 +3,7 @@
 Are you migrating from a different anti-grief plugin to Homestead? Follow the steps:
 
 1. Do not uninstall the plugin or delete the plugin's data.
-2. When Homestead is ready, use the command `/hsadmin migratedata [plugin]` to import data from that plugin.
+2. When Homestead is ready, use the command `/hsadmin importdata [plugin]` to import data from that plugin.
 3. Wait for a few minutes until the command no longer sends messages in the console.
 
 !!! warning "Important Notice"

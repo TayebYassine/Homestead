@@ -19,7 +19,9 @@ To change the limits, edit the following settings:
 
 !!! warning "Undefined Group"
 
-    If a group is not found, any limit from that group will be **0** by default. Please make sure that all groups exist in the **config.yml** file.
+    If a group is not found, any limit from that group will be **0** by default.
+
+    Please make sure that all groups exist in the **config.yml** file.
 
 ```yaml
 limits:
@@ -84,6 +86,7 @@ In the following guide, you will know how to set permissions for a group using t
 5. You're good to go! You may need to leave the server and rejoin to update the commands for the client-side.
 
 ### Operators
+- homestead.admin.forceunclaim
 - homestead.commands.homesteadadmin.importdata
 - homestead.commands.homesteadadmin.migratedata
 - homestead.commands.homesteadadmin.plugin
@@ -93,12 +96,12 @@ In the following guide, you will know how to set permissions for a group using t
 
 !!! danger "Operator Permissions"
 
-    Giving the permission `homestead.operator` to a group that doesn't have operator role (like moderator or administrator) will cause major risks
+    Giving the permission `homestead.operator` or any above it to a group that doesn't have operator role (like moderator or administrator) will cause major risks
     and grief on the server.
 
     The permission is powerful enough to manage any region and access the administrator commands that are made only for server operators to use Homestead.
 
-    Please, double-check all the permissions you have set before saving.
+    Please, double-check all the permissions you have set before applying changes.
 
 ### Region Management
 Specific permissions for players to manage their regions.
@@ -125,6 +128,7 @@ Specific permissions for players to manage their regions.
 
 - homestead.commands.region.\*: This will give the group with all the permissions below.
 - homestead.commands.region.accept
+- homestead.commands.region.auto
 - homestead.commands.region.banlist
 - homestead.commands.region.ban
 - homestead.commands.region.claimlist
@@ -135,6 +139,7 @@ Specific permissions for players to manage their regions.
 - homestead.commands.region.flags
 - homestead.commands.region.help
 - homestead.commands.region.home
+- homestead.commands.region.kick
 - homestead.commands.region.logs
 - homestead.commands.region.members
 - homestead.commands.region.menu
@@ -144,8 +149,10 @@ Specific permissions for players to manage their regions.
 - homestead.commands.region.rename
 - homestead.commands.region.set
 - homestead.commands.region.subareas
+- homestead.commands.region.top
 - homestead.commands.region.trust
 - homestead.commands.region.unban
 - homestead.commands.region.untrust
 - homestead.commands.region.visit
+- homestead.commands.region.war (*Coming soon!*)
 - homestead.commands.region.withdraw
