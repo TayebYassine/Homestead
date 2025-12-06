@@ -60,6 +60,8 @@ public class DynamicMaps {
 
         if (bluemap == null) {
             try {
+                Class.forName("de.bluecolored.bluemap.api.BlueMapAPI");
+
                 de.bluecolored.bluemap.api.BlueMapAPI.onEnable((api) -> {
                     bluemap = new BlueMapAPI(plugin, api);
 
@@ -67,7 +69,7 @@ public class DynamicMaps {
 
                     bluemap.update();
                 });
-            } catch (NoClassDefFoundError e) {
+            } catch (NoClassDefFoundError | ClassNotFoundException e) {
 
             }
         } else {

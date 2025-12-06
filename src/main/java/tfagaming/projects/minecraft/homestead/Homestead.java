@@ -162,7 +162,7 @@ public class Homestead extends JavaPlugin {
 			endInstance();
 			return;
 		} else {
-			Logger.info("\"Vault\" found, loading service providers...");
+			Logger.warning("Loading service providers with Vault...");
 		}
 
 		Homestead.vault = new Vault(this);
@@ -194,11 +194,15 @@ public class Homestead extends JavaPlugin {
 		}
 
 		if ((boolean) Homestead.config.get("clean-startup")) {
-			Logger.warning("Clean up regions data...");
+			Logger.warning("Cleaning up regions data...");
 
 			int updated = RegionsManager.cleanStartup();
 
-			Logger.info("Successfully updated " + updated + " rows of regions data.");
+			if (updated > 0) {
+				Logger.info("Successfully updated " + updated + " rows of regions data.");
+			} else {
+				Logger.info("No data corruption was found!");
+			}
 		}
 
 		Logger.info("Ready, took " + String.valueOf(System.currentTimeMillis() - startedAt) + " ms to load.");
@@ -241,8 +245,6 @@ public class Homestead extends JavaPlugin {
 
 		registerExternalPlugins();
 
-		initOptionalBlueMapIntegration();
-
 		runAsyncTaskLater(() -> {
 			runSyncTimerTask(() -> {
 				for (World world : Bukkit.getWorlds()) {
@@ -281,38 +283,6 @@ public class Homestead extends JavaPlugin {
 			}
 		} catch (NoClassDefFoundError e) {
 			Logger.warning("Commodore/Brigadier classes not present. Skipping Brigadier command registration.");
-		}
-	}
-
-	/**
-	 * Optionally initialize BlueMap integration when BlueMap is installed and the API is present.
-	 * Uses a defensive classpath check to avoid NoClassDefFoundError when BlueMap is absent.
-	 */
-	private void initOptionalBlueMapIntegration() {
-		try {
-			boolean enabled = getServer().getPluginManager().isPluginEnabled("BlueMap");
-			if (!enabled) {
-				Logger.info("[Maps] BlueMap is not installed — skipping BlueMap integration.");
-				return;
-			}
-
-			Class.forName("de.bluecolored.bluemap.api.BlueMapAPI");
-
-			de.bluecolored.bluemap.api.BlueMapAPI.onEnable(api -> {
-				try {
-					Logger.info("[Maps] BlueMap detected — enabling BlueMap integration.");
-					new tfagaming.projects.minecraft.homestead.integrations.maps.BlueMapAPI(this, api);
-				} catch (Throwable t) {
-					Logger.error("[Maps] Failed to initialize BlueMap integration: " + t.getClass().getName() + ": " + t.getMessage());
-				}
-			});
-
-			Logger.info("[Maps] BlueMap API hook registered.");
-
-		} catch (ClassNotFoundException e) {
-			Logger.info("[Maps] BlueMap API is not on the classpath — skipping BlueMap integration.");
-		} catch (Throwable t) {
-			Logger.error("[Maps] Unexpected error while setting up BlueMap integration: " + t.getClass().getName() + ": " + t.getMessage());
 		}
 	}
 

@@ -33,7 +33,9 @@ public class ChunksManager {
         Region region = RegionsManager.findRegion(id);
         if (region == null) return false;
 
-        if (!region.getChunks().isEmpty() && !hasAdjacentOwnedChunk(region, chunk)) {
+        boolean adjacentChunks = Homestead.config.get("adjacent-chunks");
+
+        if (adjacentChunks && !region.getChunks().isEmpty() && !hasAdjacentOwnedChunk(region, chunk)) {
             if (player.length > 0 && player[0] instanceof Player target && target.isOnline()) {
                 PlayerUtils.sendMessage(target, 140);
             }
