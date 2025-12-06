@@ -1,12 +1,8 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import java.util.HashMap;
-import java.util.stream.Collectors;
-
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
@@ -20,6 +16,9 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
 import tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType;
+
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class RegionMenu {
     public RegionMenu(Player player, Region region) {
@@ -146,6 +145,12 @@ public class RegionMenu {
 
         gui.addItem(22, rentButton, (_player, event) -> {
             if (event.isLeftClick()) {
+                boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+                if (!isOwnerOrOperator) {
+                    PlayerUtils.sendMessage(player, 159);
+                    return;
+                }
+
                 if (region.getRent() == null) {
                     PlayerUtils.sendMessage(player, 128);
                 } else {

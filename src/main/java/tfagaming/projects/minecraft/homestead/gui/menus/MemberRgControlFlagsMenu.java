@@ -1,16 +1,8 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -20,6 +12,8 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+
+import java.util.*;
 
 public class MemberRgControlFlagsMenu {
     private final HashSet<UUID> cooldowns = new HashSet<>();
@@ -43,7 +37,10 @@ public class MemberRgControlFlagsMenu {
                         return;
                     }
 
-                    if (!region.getOwnerId().equals(player.getUniqueId())) {
+                    boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+
+                    if (!isOwnerOrOperator) {
+                        PlayerUtils.sendMessage(player, 159);
                         return;
                     }
 

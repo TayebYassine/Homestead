@@ -1,12 +1,7 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
@@ -15,6 +10,10 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class RegionLogsMenu {
     List<SerializableLog> logs;
@@ -67,6 +66,12 @@ public class RegionLogsMenu {
 
                         instance.setItems(getItems(player, region));
                     } else if (context.getEvent().isRightClick()) {
+                        boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+                        if (!isOwnerOrOperator) {
+                            PlayerUtils.sendMessage(player, 159);
+                            return;
+                        }
+
                         region.removeLog(log.getId());
 
                         PaginationMenu instance = context.getInstance();
@@ -100,6 +105,12 @@ public class RegionLogsMenu {
 
         gui.addActionButton(2, MenuUtils.getButton(41), (_player, event) -> {
             if (!event.isLeftClick()) {
+                return;
+            }
+
+            boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+            if (!isOwnerOrOperator) {
+                PlayerUtils.sendMessage(player, 159);
                 return;
             }
 

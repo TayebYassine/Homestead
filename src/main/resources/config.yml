@@ -128,7 +128,7 @@ selection-tool:
     none: "&7Please select two corners inside your region."
     firstCorner: "&7First corner: &a✔ &7| &7Second corner: &c✘"
     secondCorner: "&7First corner: &c✘ &7| &7Second corner: &a✔"
-    selectionDone: "&7Use &e/rg subareas create [name] &7to create a sub-area."
+    selectionDone: "&7Use &7/rg subareas create [name] &7to create a sub-area."
 
 # Upkeep regions; Region owners must pay an amount of money to keep-up their chunks, or else some or all of them will be unclaimed.
 upkeep:
@@ -196,6 +196,18 @@ selling:
 sub-areas:
   # Enable this feature? "true" to enable, "false" to disable.
   enabled: true
+
+# Wars (EXPERIMENTAL)
+# THIS IS AN EXPERIMENTAL FEATURE, KEEP IT OFF!
+wars:
+  # Enable this feature? "true" to enable, "false" to disable.
+  enabled: false
+
+  # The minimum prize value.
+  min-prize: 1000.0 # $10k (k = Thousand)
+
+  # The maximum prize value.
+  max-prize: 1000000000.0 # $1B (B = Billion)
 
 # Welcome signs; Allow players to teleport regions using signs?
 welcome-signs:
@@ -383,8 +395,8 @@ formatters:
   date-format: "dd/M/yyyy hh:mm a"
   date: "{date} &7({time-ago} ago)"
   balance: "${balance}"
-  location: "&6{world} &e(X: &6{x} &eY: &6{y} &eZ: &6{z}&e)"
-  chunk: "&6{world} &e(X: &6{x} &eZ: &6{z}&e)"
+  location: "&6{world} &7(X: &6{x} &7Y: &6{y} &7Z: &6{z}&7)"
+  chunk: "&6{world} &7(X: &6{x} &7Z: &6{z}&7)"
   player-regions: "&7• &2{region}"
   player-regions-joining: "\n"
   region-members: "&7• &3{playername}"

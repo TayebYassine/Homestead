@@ -1,11 +1,7 @@
 package tfagaming.projects.minecraft.homestead.commands.commands.subcommands;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
@@ -13,6 +9,9 @@ import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegi
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DeleteRegionSubCmd extends SubCommandBuilder {
     public DeleteRegionSubCmd() {
@@ -42,6 +41,13 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 
         if (region == null) {
             PlayerUtils.sendMessage(player, 4);
+            return true;
+        }
+
+        boolean canDelete = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+        if (!canDelete) {
+            PlayerUtils.sendMessage(player, 159);
+
             return true;
         }
 

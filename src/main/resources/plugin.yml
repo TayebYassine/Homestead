@@ -33,7 +33,7 @@ commands:
       - hsadmin
     default: op
   forceunclaim:
-    description: 'Unclaim the Chunk you are stay on, don not care if it is yours or not.'
+    description: 'Unclaim the Chunk you are stay on, do not care if it is yours or not.'
     usage: '/forceunclaim'
     aliases:
       - opunclaim

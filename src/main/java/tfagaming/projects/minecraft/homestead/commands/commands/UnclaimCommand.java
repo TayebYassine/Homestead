@@ -1,14 +1,8 @@
 package tfagaming.projects.minecraft.homestead.commands.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
@@ -16,6 +10,11 @@ import tfagaming.projects.minecraft.homestead.particles.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UnclaimCommand extends CommandBuilder {
     public UnclaimCommand() {
@@ -62,18 +61,20 @@ public class UnclaimCommand extends CommandBuilder {
             return true;
         }
 
-        ChunksManager.unclaimChunk(region.getUniqueId(), chunk, player);
+        boolean res = ChunksManager.unclaimChunk(region.getUniqueId(), chunk, player);
 
-        Map<String, String> replacements = new HashMap<String, String>();
-        replacements.put("{region}", region.getName());
+        if (res) {
+            Map<String, String> replacements = new HashMap<String, String>();
+            replacements.put("{region}", region.getName());
 
-        PlayerUtils.sendMessage(player, 24, replacements);
+            PlayerUtils.sendMessage(player, 24, replacements);
 
-        if (region.getLocation() != null && region.getLocation().getBukkitLocation().getChunk().equals(chunk)) {
-            region.setLocation(null);
+            if (region.getLocation() != null && region.getLocation().getBukkitLocation().getChunk().equals(chunk)) {
+                region.setLocation(null);
+            }
+
+            new ChunkParticlesSpawner(player);
         }
-
-        new ChunkParticlesSpawner(player);
 
         return true;
     }

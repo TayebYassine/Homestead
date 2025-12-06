@@ -564,7 +564,7 @@ buttons:
       - "&aCurrently showing all regions."
       - ""
       - "&8➥ Left-click to change."
-    type: EMERALD_BLOCK
+    type: ENDER_EYE
   63:
     name: "&9Show All Regions"
     lore:
@@ -572,7 +572,24 @@ buttons:
       - "&cCurrently showing your regions."
       - ""
       - "&8➥ Left-click to change."
-    type: REDSTONE_BLOCK
+    type: ENDER_PEARL
+  64:
+    name: "&9Delete Region"
+    lore:
+      - "&c&lWarning:"
+      - "&cOnly the owner or an operator can delete this region."
+      - "&cThis action is &4irreversible&c."
+      - ""
+      - "&8➥ Shift + Right-click to delete."
+    type: BARRIER
+  65:
+    name: "&9Bulk toggle flags"
+    lore:
+      - "&7Toggle all flags at once!"
+      - ""
+      - "&8➥ Left-click to enable all."
+      - "&8➥ Right-click to disable all."
+    type: JIGSAW
 
 button-types:
   world:

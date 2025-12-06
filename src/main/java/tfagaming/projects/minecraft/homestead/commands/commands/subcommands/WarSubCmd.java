@@ -13,13 +13,15 @@ import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WarSubCmd extends SubCommandBuilder {
     public WarSubCmd() {
@@ -37,6 +39,13 @@ public class WarSubCmd extends SubCommandBuilder {
 
         if (!player.hasPermission("homestead.region.war")) {
             PlayerUtils.sendMessage(player, 8);
+            return true;
+        }
+
+        boolean isEnabled = Homestead.config.get("wars.enabled");
+
+        if (!isEnabled) {
+            PlayerUtils.sendMessage(player, 105);
             return true;
         }
 
@@ -104,6 +113,14 @@ public class WarSubCmd extends SubCommandBuilder {
                 }
 
                 double prize = Double.parseDouble(prizeInput);
+
+                double minPrize = Homestead.config.get("wars.min-prize");
+                double maxPrize = Homestead.config.get("wars.max-prize");
+
+                if (prize < minPrize || prize > maxPrize) {
+                    PlayerUtils.sendMessage(player, 160);
+                    return true;
+                }
 
                 if (targetRegion.getBank() < prize) {
                     PlayerUtils.sendMessage(player, 157);

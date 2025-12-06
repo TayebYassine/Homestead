@@ -1,18 +1,10 @@
 package tfagaming.projects.minecraft.homestead.commands.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import com.google.common.collect.Lists;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.commands.commands.subcommands.*;
@@ -30,6 +22,12 @@ import tfagaming.projects.minecraft.homestead.tools.commands.AutoCompleteFilter;
 import tfagaming.projects.minecraft.homestead.tools.java.StringSimilarity;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RegionCommand extends CommandBuilder {
     public RegionCommand() {
@@ -359,6 +357,11 @@ public class RegionCommand extends CommandBuilder {
             case "info":
             case "rate":
                 if (args.length == 2)
+                    suggestions
+                            .addAll(RegionsManager.getAll().stream().map(Region::getName).collect(Collectors.toList()));
+                break;
+            case "war":
+                if (args.length == 3 && args[1].equalsIgnoreCase("declare"))
                     suggestions
                             .addAll(RegionsManager.getAll().stream().map(Region::getName).collect(Collectors.toList()));
                 break;

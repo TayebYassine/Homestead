@@ -1,15 +1,15 @@
 package tfagaming.projects.minecraft.homestead.integrations;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.integrations.bstats.Metrics;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class bStats {
     public bStats(Homestead plugin) {
@@ -76,6 +76,9 @@ public class bStats {
 						case PostgreSQL:
 							map.put("PostgreSQL", 1);
 							break;
+                        case MariaDB:
+                            map.put("MariaDB", 1);
+                            break;
 						case MySQL:
 							map.put("MySQL", 1);
 							break;

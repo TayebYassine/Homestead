@@ -1,15 +1,11 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.bukkit.*;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
@@ -22,6 +18,11 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MiscellaneousSettingsMenu {
 
@@ -208,25 +209,16 @@ public class MiscellaneousSettingsMenu {
             }, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region)), 81);
         });
 
-        // === Delete Region (Owner or Operator) ===
-        ItemStack deleteRegionButton = new ItemStack(Material.BARRIER);
-        ItemMeta delMeta = deleteRegionButton.getItemMeta();
-        delMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "Delete Region");
-        delMeta.setLore(java.util.Arrays.asList(
-                ChatColor.GRAY + "Only the owner or an operator can delete this region.",
-                ChatColor.DARK_GRAY + "This action is irreversible.",
-                "",
-                ChatColor.YELLOW + "Shift + Right-click: " + ChatColor.WHITE + "Delete (double-confirm)"
-        ));
-        deleteRegionButton.setItemMeta(delMeta);
+        ItemStack deleteRegionButton = MenuUtils.getButton(64, replacements);
 
         gui.addItem(22, deleteRegionButton, (_player, event) -> {
             if (!(event.isRightClick() && event.isShiftClick())) return;
 
-            boolean canDelete = _player.isOp() || region.getOwnerId().equals(_player.getUniqueId());
+            boolean canDelete = PlayerUtils.isOperator(_player) || region.getOwnerId().equals(_player.getUniqueId());
             if (!canDelete) {
-                _player.sendMessage(ChatColor.RED + "You must be the region owner or an operator to delete this region.");
+                PlayerUtils.sendMessage(_player, 159);
                 _player.playSound(_player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+
                 return;
             }
 
@@ -241,9 +233,19 @@ public class MiscellaneousSettingsMenu {
                 DELETE_CONFIRM_REGION.remove(pid);
                 DELETE_CONFIRM_TIME.remove(pid);
 
-                RegionsManager.deleteRegion(region.getUniqueId());
+                double amountToGive = region.getBank();
 
-                _player.sendMessage(ChatColor.GREEN + "Region '" + region.getName() + "' has been deleted.");
+                RegionsManager.deleteRegion(region.getUniqueId(), player);
+
+                if (Homestead.vault.isEconomyReady()) {
+                    PlayerUtils.addBalance(region.getOwner(), amountToGive);
+                }
+
+                Map<String, String> replacements1 = new HashMap<String, String>();
+                replacements1.put("{region}", region.getDisplayName());
+                replacements1.put("{region-bank}", Formatters.formatBalance(amountToGive));
+
+                PlayerUtils.sendMessage(player, 6, replacements1);
                 _player.playSound(_player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1.2f);
 
                 new RegionsMenu(_player);
@@ -253,7 +255,7 @@ public class MiscellaneousSettingsMenu {
             DELETE_CONFIRM_REGION.put(pid, region.getUniqueId());
             DELETE_CONFIRM_TIME.put(pid, now);
 
-            _player.sendMessage(ChatColor.YELLOW + "Shift + right-click again within 6 seconds to confirm deletion of '" + region.getName() + "'.");
+            PlayerUtils.sendMessage(player, 158);
             _player.playSound(_player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1f, 1f);
         });
 

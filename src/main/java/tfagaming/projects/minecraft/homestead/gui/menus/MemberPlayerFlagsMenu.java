@@ -1,19 +1,8 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
@@ -24,6 +13,8 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+
+import java.util.*;
 
 public class MemberPlayerFlagsMenu {
     private final HashSet<UUID> cooldowns = new HashSet<>();
@@ -81,11 +72,14 @@ public class MemberPlayerFlagsMenu {
 
                         if (changed > 0) {
                             region.setMemberFlags(member, newFlags);
+
                             player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
-                            player.sendMessage(ChatColor.GREEN + "Bulk change applied: "
-                                    + ChatColor.WHITE + changed + ChatColor.GREEN + " flag(s) "
-                                    + (enableAll ? "enabled" : "disabled")
-                                    + ChatColor.GRAY + " (locked flags were skipped).");
+
+                            Map<String, String> replacements = new HashMap<>();
+                            replacements.put("{changes}", String.valueOf(changed));
+                            replacements.put("{new-value}", Formatters.getBoolean(enableAll));
+
+                            PlayerUtils.sendMessage(player, 161, replacements);
 
                             // UI neu aufbauen
                             PaginationMenu instance = context.getInstance();
@@ -95,7 +89,7 @@ public class MemberPlayerFlagsMenu {
                             Homestead.getInstance().runAsyncTaskLater(() ->
                                     cooldowns.remove(player.getUniqueId()), 1);
                         } else {
-                            player.sendMessage(ChatColor.YELLOW + "No changes were made (either already in desired state or all relevant flags are locked).");
+                            PlayerUtils.sendMessage(player, 162);
                         }
                         return;
                     }
@@ -155,18 +149,8 @@ public class MemberPlayerFlagsMenu {
     private List<ItemStack> buildItemsList(SerializableMember member) {
         List<ItemStack> items = new ArrayList<>();
 
-        // Bulk toggle item (emerald block icon)
-        ItemStack bulk = new ItemStack(Material.EMERALD_BLOCK);
-        ItemMeta meta = bulk.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + "" + ChatColor.BOLD + "Bulk toggle flags");
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Toggle all flags at once");
-        lore.add(ChatColor.DARK_GRAY + "(locked flags in config are skipped).");
-        lore.add("");
-        lore.add(ChatColor.YELLOW + "Left-click: " + ChatColor.WHITE + "Enable all");
-        lore.add(ChatColor.YELLOW + "Right-click: " + ChatColor.WHITE + "Disable all");
-        meta.setLore(lore);
-        bulk.setItemMeta(meta);
+        ItemStack bulk = MenuUtils.getButton(65);
+
         items.add(bulk);
 
         // Einzelne Flag-Buttons

@@ -1,15 +1,8 @@
 package tfagaming.projects.minecraft.homestead.managers;
 
-import java.util.*;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
@@ -19,6 +12,8 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+
+import java.util.*;
 
 /**
  * Handles claiming, unclaiming, and managing chunks in regions.
@@ -53,8 +48,8 @@ public class ChunksManager {
     /**
      * Unclaims a chunk with normal protection checks.
      */
-    public static void unclaimChunk(UUID id, Chunk chunk, OfflinePlayer... player) {
-        unclaimChunkInternal(id, chunk, player, false);
+    public static boolean unclaimChunk(UUID id, Chunk chunk, OfflinePlayer... player) {
+        return unclaimChunkInternal(id, chunk, player, false);
     }
 
     /**
@@ -72,17 +67,20 @@ public class ChunksManager {
      * @param player optional executor
      * @param force  when true, bypasses split/topology validation
      */
-    private static void unclaimChunkInternal(UUID id, Chunk chunk, OfflinePlayer[] player, boolean force) {
+    private static boolean unclaimChunkInternal(UUID id, Chunk chunk, OfflinePlayer[] player, boolean force) {
         Region region = RegionsManager.findRegion(id);
-        if (region == null) return;
+        if (region == null) return false;
 
         SerializableChunk target = new SerializableChunk(chunk);
 
-        if (!force && wouldSplitRegion(region, target)) {
+        boolean adjacentChunks = Homestead.config.get("adjacent-chunks");
+
+        if (adjacentChunks && !force && wouldSplitRegion(region, target)) {
             if (player.length > 0 && player[0] instanceof Player p && p.isOnline()) {
                 PlayerUtils.sendMessage(p, 141);
             }
-            return;
+
+            return false;
         }
 
         removeChunk(id, target);
@@ -96,6 +94,8 @@ public class ChunksManager {
 
         ChunkUnclaimEvent event = new ChunkUnclaimEvent(chunk, player.length > 0 ? player[0] : null);
         Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
+
+        return true;
     }
 
     /** Removes a claimed chunk from a region and its sub-areas. */
