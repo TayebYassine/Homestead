@@ -22,6 +22,14 @@ sub-areas:
   enabled: true
 ```
 
+## Clean startup
+
+Clears corrupted data in regions data.
+
+```yaml
+clean-startup: true
+```
+
 ## Disabled worlds
 
 List of worlds where players cannot claim chunks.

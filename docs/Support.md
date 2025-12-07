@@ -25,7 +25,9 @@ We need the following details:
 - **Any suggestion to fix the bug.** (optional)
 
 ## Submit Ideas
+
 We need the following details:
+
 - **Your suggestion or the feature that you want it to be on the plugin.**
 - **The benefits of your suggestion.**
 

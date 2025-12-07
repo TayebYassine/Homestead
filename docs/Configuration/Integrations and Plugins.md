@@ -29,7 +29,7 @@ worldedit:
 ## PlaceholderAPI
 **PlaceholderAPI** is a plugin that allows server owners to display information from various plugins in a uniform format.
 
-!!! success ""
+!!! success "Automatic Hook"
 
     There is no need to use `/papi ecloud download Homestead`, Homestead automatically registers the placeholders on startup.
 

@@ -10,11 +10,12 @@ In **config.yml**, there is a unique key to enable Experimental features:
 
 ```yaml
 experimental:
-  enable: true
+  enabled: true
 ```
 
 ## Table of Experimental Features
 
-| Version | Experimental Features |
-| :-----: | --------------------- |
-| 3.5.3   | Pl3xMap and Squaremap Chunks Adjacent Connection |
+| Version | Experimental Features                            |
+|:-------:|--------------------------------------------------|
+|  3.5.3  | Pl3xMap and Squaremap Chunks Adjacent Connection |
+|  4.1.3  | Wars and clashes                                 |

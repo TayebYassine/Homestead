@@ -1,6 +1,6 @@
 site_name: Homestead
 site_author: Tayeb Yassine
-side_description: An advanced, chunk-based land claiming plugin for Minecraft servers, with multiple APIs support, based on Bukkit API.
+site_description: An advanced, chunk-based land claiming plugin for Minecraft servers, with multiple APIs support, based on Bukkit API.
 copyright: Copyright (©) 2025 Tayeb Yassine
 
 theme:
@@ -57,6 +57,13 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.details
   - pymdownx.superfences
+  - tables
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
   
 extra_css:
   - stylesheets/extra.css
