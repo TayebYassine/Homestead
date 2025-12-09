@@ -5,73 +5,73 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DelayedTeleport {
-    public static HashMap<UUID, BukkitTask> tasks = new HashMap<UUID, BukkitTask>();
+	public static ConcurrentHashMap<UUID, BukkitTask> tasks = new ConcurrentHashMap<UUID, BukkitTask>();
 
-    public DelayedTeleport(Player player, Location location) {
-        if (tasks.containsKey(player.getUniqueId())) {
-            return;
-        }
+	public DelayedTeleport(Player player, Location location) {
+		if (tasks.containsKey(player.getUniqueId())) {
+			return;
+		}
 
-        boolean delayedTeleportEnabled = Homestead.config.get("delayed-teleport.enabled");
+		boolean delayedTeleportEnabled = Homestead.config.get("delayed-teleport.enabled");
 
-        if (!delayedTeleportEnabled) {
-            teleportPlayer(player, location);
-            return;
-        }
+		if (!delayedTeleportEnabled) {
+			teleportPlayer(player, location);
+			return;
+		}
 
-        boolean ignoreOperators = Homestead.config.get("delayed-teleport.ignore-operators");
+		boolean ignoreOperators = Homestead.config.get("delayed-teleport.ignore-operators");
 
-        if (ignoreOperators && PlayerUtils.isOperator(player)) {
-            teleportPlayer(player, location);
-            return;
-        }
-        
-        PlayerUtils.sendMessage(player, 53);
+		if (ignoreOperators && PlayerUtils.isOperator(player)) {
+			teleportPlayer(player, location);
+			return;
+		}
 
-        int delay = Homestead.config.get("delayed-teleport.delay");
-        long ticks = (delay * 1000) / 50;
+		PlayerUtils.sendMessage(player, 53);
 
-        BukkitTask task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                teleportPlayer(player, location);
+		int delay = Homestead.config.get("delayed-teleport.delay");
+		long ticks = (delay * 1000L) / 50;
 
-                BukkitTask playerTask = tasks.get(player.getUniqueId());
+		BukkitTask task = new BukkitRunnable() {
+			@Override
+			public void run() {
+				teleportPlayer(player, location);
 
-                if (playerTask != null) {
-                    playerTask.cancel();
+				BukkitTask playerTask = tasks.get(player.getUniqueId());
 
-                    tasks.remove(player.getUniqueId());
-                }
-            }
-        }.runTaskLater(Homestead.getInstance(), ticks);
+				if (playerTask != null) {
+					playerTask.cancel();
 
-        tasks.put(player.getUniqueId(), task);
-    }
+					tasks.remove(player.getUniqueId());
+				}
+			}
+		}.runTaskLater(Homestead.getInstance(), ticks);
 
-    private void teleportPlayer(Player player, Location location) {
-        if (location == null) {
-            PlayerUtils.sendMessage(player, 52);
-            return;
-        }
+		tasks.put(player.getUniqueId(), task);
+	}
 
-        player.teleport(location);
+	private void teleportPlayer(Player player, Location location) {
+		if (location == null) {
+			PlayerUtils.sendMessage(player, 52);
+			return;
+		}
 
-        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 500.0f, 1.0f);
+		player.teleport(location);
 
-        HashMap<String, String> replacements = new HashMap<>();
+		player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 500.0f, 1.0f);
 
-        replacements.put("{location}", Formatters.formatLocation(location));
+		HashMap<String, String> replacements = new HashMap<>();
 
-        PlayerUtils.sendMessage(player, 51, replacements);
-    }
+		replacements.put("{location}", Formatters.formatLocation(location));
+
+		PlayerUtils.sendMessage(player, 51, replacements);
+	}
 }

@@ -1,71 +1,70 @@
 package tfagaming.projects.minecraft.homestead.structure.serializable;
 
-import java.util.UUID;
-
 import org.bukkit.OfflinePlayer;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 
+import java.util.UUID;
+
 public class SerializableRent {
-    private UUID playerId;
-    private double price;
-    private long startAt;
-    private long untilAt;
+	private UUID playerId;
+	private final double price;
+	private final long startAt;
+	private final long untilAt;
 
-    public SerializableRent(OfflinePlayer player, double price, long untilAt) {
-        this.playerId = player.getUniqueId();
-        this.price = price;
-        this.startAt = System.currentTimeMillis();
-        this.untilAt = untilAt;
-    }
+	public SerializableRent(OfflinePlayer player, double price, long untilAt) {
+		this.playerId = player.getUniqueId();
+		this.price = price;
+		this.startAt = System.currentTimeMillis();
+		this.untilAt = untilAt;
+	}
 
-    public SerializableRent(UUID playerId, double price, long startedAt, long untilAt) {
-        this.playerId = playerId;
-        this.price = price;
-        this.startAt = startedAt;
-        this.untilAt = untilAt;
-    }
+	public SerializableRent(UUID playerId, double price, long startedAt, long untilAt) {
+		this.playerId = playerId;
+		this.price = price;
+		this.startAt = startedAt;
+		this.untilAt = untilAt;
+	}
 
-    public UUID getPlayerId() {
-        return playerId;
-    }
+	public static SerializableRent fromString(String string) {
+		if (string == null) {
+			return null;
+		}
 
-    public void setPlayerId(UUID playerId) {
-        this.playerId = playerId;
-    }
+		String[] splitted = string.split(",");
 
-    public OfflinePlayer getPlayer() {
-        return Homestead.getInstance().getOfflinePlayerSync(playerId);
-    }
+		return new SerializableRent(UUID.fromString(splitted[0]), Double.parseDouble(splitted[1]), Long.parseLong(splitted[2]), Long.parseLong(splitted[3]));
+	}
 
-    public double getPrice() {
-        return price;
-    }
+	public UUID getPlayerId() {
+		return playerId;
+	}
 
-    public long getStartAt() {
-        return startAt;
-    }
+	public void setPlayerId(UUID playerId) {
+		this.playerId = playerId;
+	}
 
-    public long getUntilAt() {
-        return untilAt;
-    }
+	public OfflinePlayer getPlayer() {
+		return Homestead.getInstance().getOfflinePlayerSync(playerId);
+	}
 
-    @Override
-    public String toString() {
-        return (playerId + "," + price + "," + startAt + "," + untilAt);
-    }
+	public double getPrice() {
+		return price;
+	}
 
-    public static SerializableRent fromString(String string) {
-        if (string == null) {
-            return null;
-        }
-        
-        String[] splitted = string.split(",");
+	public long getStartAt() {
+		return startAt;
+	}
 
-        return new SerializableRent(UUID.fromString(splitted[0]), Double.parseDouble(splitted[1]), Long.parseLong(splitted[2]), Long.parseLong(splitted[3]));
-    }
+	public long getUntilAt() {
+		return untilAt;
+	}
 
-    public OfflinePlayer getBukkitOfflinePlayer() {
-        return Homestead.getInstance().getOfflinePlayerSync(playerId);
-    }
+	@Override
+	public String toString() {
+		return (playerId + "," + price + "," + startAt + "," + untilAt);
+	}
+
+	public OfflinePlayer getBukkitOfflinePlayer() {
+		return Homestead.getInstance().getOfflinePlayerSync(playerId);
+	}
 }

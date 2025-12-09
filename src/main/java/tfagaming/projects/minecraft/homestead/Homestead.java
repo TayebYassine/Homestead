@@ -1,29 +1,31 @@
 package tfagaming.projects.minecraft.homestead;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import me.lucko.commodore.Commodore;
+import me.lucko.commodore.CommodoreProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import me.lucko.commodore.Commodore;
-import me.lucko.commodore.CommodoreProvider;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.commands.MojangBrigadier;
 import tfagaming.projects.minecraft.homestead.commands.commands.*;
-import tfagaming.projects.minecraft.homestead.config.*;
-import tfagaming.projects.minecraft.homestead.database.*;
-import tfagaming.projects.minecraft.homestead.events.*;
-import tfagaming.projects.minecraft.homestead.integrations.*;
+import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
+import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
+import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
+import tfagaming.projects.minecraft.homestead.database.Database;
+import tfagaming.projects.minecraft.homestead.database.OldDataLoader;
+import tfagaming.projects.minecraft.homestead.database.RegionsCache;
+import tfagaming.projects.minecraft.homestead.database.WarsCache;
+import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
+import tfagaming.projects.minecraft.homestead.events.RegionRent;
+import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
+import tfagaming.projects.minecraft.homestead.integrations.DynamicMaps;
+import tfagaming.projects.minecraft.homestead.integrations.PlaceholderAPI;
+import tfagaming.projects.minecraft.homestead.integrations.Vault;
+import tfagaming.projects.minecraft.homestead.integrations.bStats;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
@@ -32,20 +34,28 @@ import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
 
+import java.io.File;
+import java.util.*;
+
 public class Homestead extends JavaPlugin {
 	private final static String version = "4.1.3";
-	private static Homestead instance;
-	private static long startedAt;
-
 	public static Database database;
 	public static RegionsCache regionsCache;
 	public static WarsCache warsCache;
-
 	public static ConfigLoader config;
 	public static LanguageLoader language;
 	public static MenusConfigLoader menusConfig;
-
 	public static Vault vault;
+	private static Homestead instance;
+	private static long startedAt;
+
+	public static String getVersion() {
+		return version;
+	}
+
+	public static Homestead getInstance() {
+		return instance;
+	}
 
 	public void onEnable() {
 		Homestead.instance = this;
@@ -205,7 +215,7 @@ public class Homestead extends JavaPlugin {
 			}
 		}
 
-		Logger.info("Ready, took " + String.valueOf(System.currentTimeMillis() - startedAt) + " ms to load.");
+		Logger.info("Ready, took " + (System.currentTimeMillis() - startedAt) + " ms to load.");
 
 		runAsyncTask(() -> {
 			Logger.warning("Downloading required web map render icons... This may take a while!");
@@ -253,7 +263,7 @@ public class Homestead extends JavaPlugin {
 					}
 				}
 			}, 5L);
-		},  10);
+		}, 10);
 	}
 
 	private void registerCommands() {
@@ -302,7 +312,7 @@ public class Homestead extends JavaPlugin {
 	 * Run a repeating task synchronously with interval in ticks.
 	 *
 	 * @param callable The task to run.
-	 * @param ticks The interval, in ticks.
+	 * @param ticks    The interval, in ticks.
 	 */
 	public void runSyncTimerTask(Runnable callable, long ticks) {
 		Bukkit.getScheduler().runTaskTimer(this, callable, 0L, ticks);
@@ -411,14 +421,6 @@ public class Homestead extends JavaPlugin {
 			Logger.info("Closing database connection...");
 			database.closeConnection();
 		}
-	}
-
-	public static String getVersion() {
-		return version;
-	}
-
-	public static Homestead getInstance() {
-		return instance;
 	}
 
 	public void registerExternalPlugins() {

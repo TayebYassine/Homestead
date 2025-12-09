@@ -1,14 +1,8 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
@@ -19,162 +13,167 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class RegionBannedPlayersMenu {
-    List<SerializableBannedPlayer> bannedPlayers;
+	List<SerializableBannedPlayer> bannedPlayers;
 
-    public List<ItemStack> getItems(Player player, Region region) {
-        List<ItemStack> items = new ArrayList<>();
+	public RegionBannedPlayersMenu(Player player, Region region) {
+		bannedPlayers = region.getBannedPlayers();
 
-        for (int i = 0; i < bannedPlayers.size(); i++) {
-            SerializableBannedPlayer bannedPlayer = bannedPlayers.get(i);
+		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(9), 9 * 4,
+				MenuUtils.getNextPageButton(),
+				MenuUtils.getPreviousPageButton(), getItems(player, region), (_player, event) -> {
+			new ManagePlayersMenu(player, region);
+		}, (_player, context) -> {
+			if (context.getIndex() >= bannedPlayers.size()) {
+				return;
+			}
 
-            HashMap<String, String> replacements = new HashMap<>();
+			SerializableBannedPlayer bannedPlayer = bannedPlayers.get(context.getIndex());
 
-            replacements.put("{region}", region.getName());
-            replacements.put("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName());
-            replacements.put("{player-bannedat}", Formatters.formatDate(bannedPlayer.getBannedAt()));
-            replacements.put("{player-banreason}", bannedPlayer.getReason());
+			if (context.getEvent().isLeftClick()) {
+				if (region.isPlayerBanned(bannedPlayer.getBukkitOfflinePlayer())) {
+					if (!player.hasPermission("homestead.region.players.unban")) {
+						PlayerUtils.sendMessage(player, 8);
+						return;
+					}
 
-            items.add(MenuUtils.getButton(27, replacements, bannedPlayer.getBukkitOfflinePlayer()));
-        }
+					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+							RegionControlFlags.UNBAN_PLAYERS)) {
+						return;
+					}
 
-        return items;
-    }
+					region.unbanPlayer(bannedPlayer.getBukkitOfflinePlayer());
 
-    public RegionBannedPlayersMenu(Player player, Region region) {
-        bannedPlayers = region.getBannedPlayers();
+					Map<String, String> replacements = new HashMap<String, String>();
+					replacements.put("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName());
+					replacements.put("{region}", region.getName());
 
-        PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(9), 9 * 4,
-                MenuUtils.getNextPageButton(),
-                MenuUtils.getPreviousPageButton(), getItems(player, region), (_player, event) -> {
-                    new ManagePlayersMenu(player, region);
-                }, (_player, context) -> {
-                    if (context.getIndex() >= bannedPlayers.size()) {
-                        return;
-                    }
+					PlayerUtils.sendMessage(player, 34, replacements);
 
-                    SerializableBannedPlayer bannedPlayer = bannedPlayers.get(context.getIndex());
+					PaginationMenu instance = context.getInstance();
 
-                    if (context.getEvent().isLeftClick()) {
-                        if (region.isPlayerBanned(bannedPlayer.getBukkitOfflinePlayer())) {
-                            if (!player.hasPermission("homestead.region.players.unban")) {
-                                PlayerUtils.sendMessage(player, 8);
-                                return;
-                            }
+					bannedPlayers = region.getBannedPlayers();
 
-                            if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                                    RegionControlFlags.UNBAN_PLAYERS)) {
-                                return;
-                            }
+					instance.setItems(getItems(player, region));
+				}
+			}
+		});
 
-                            region.unbanPlayer(bannedPlayer.getBukkitOfflinePlayer());
+		gui.addActionButton(0, MenuUtils.getButton(28), (_player, event) -> {
+			if (!event.isLeftClick()) {
+				return;
+			}
 
-                            Map<String, String> replacements = new HashMap<String, String>();
-                            replacements.put("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName());
-                            replacements.put("{region}", region.getName());
+			if (!player.hasPermission("homestead.region.players.ban")) {
+				PlayerUtils.sendMessage(player, 8);
+				return;
+			}
 
-                            PlayerUtils.sendMessage(player, 34, replacements);
+			player.closeInventory();
 
-                            PaginationMenu instance = context.getInstance();
+			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
+				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
-                            bannedPlayers = region.getBannedPlayers();
+				region.banPlayer(targetPlayer);
 
-                            instance.setItems(getItems(player, region));
-                        }
-                    }
-                });
+				Map<String, String> replacements = new HashMap<String, String>();
+				replacements.put("{playername}", targetPlayer.getName());
+				replacements.put("{region}", region.getName());
+				replacements.put("{reason}", Homestead.language.get("default.reason"));
 
-        gui.addActionButton(0, MenuUtils.getButton(28), (_player, event) -> {
-            if (!event.isLeftClick()) {
-                return;
-            }
+				PlayerUtils.sendMessage(player, 31, replacements);
 
-            if (!player.hasPermission("homestead.region.players.ban")) {
-                PlayerUtils.sendMessage(player, 8);
-                return;
-            }
+				if (region.isPlayerMember(targetPlayer)) {
+					region.removeMember(targetPlayer);
+				}
 
-            player.closeInventory();
+				if (region.isPlayerInvited(targetPlayer)) {
+					region.removePlayerInvite(targetPlayer);
+				}
 
-            new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
-                OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
+				Homestead.getInstance().runSyncTask(() -> {
+					new RegionBannedPlayersMenu(player, region);
+				});
+			}, (message) -> {
+				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
-                region.banPlayer(targetPlayer);
+				if (target == null) {
+					Map<String, String> replacements = new HashMap<String, String>();
+					replacements.put("{playername}", message);
 
-                Map<String, String> replacements = new HashMap<String, String>();
-                replacements.put("{playername}", targetPlayer.getName());
-                replacements.put("{region}", region.getName());
-                replacements.put("{reason}", Homestead.language.get("default.reason"));
+					PlayerUtils.sendMessage(player, 29, replacements);
+					return false;
+				}
 
-                PlayerUtils.sendMessage(player, 31, replacements);
+				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+						RegionControlFlags.BAN_PLAYERS)) {
+					return false;
+				}
 
-                if (region.isPlayerMember(targetPlayer)) {
-                    region.removeMember(targetPlayer);
-                }
+				if (region.isPlayerBanned(target)) {
+					Map<String, String> replacements = new HashMap<String, String>();
+					replacements.put("{playername}", target.getName());
 
-                if (region.isPlayerInvited(targetPlayer)) {
-                    region.removePlayerInvite(targetPlayer);
-                }
+					PlayerUtils.sendMessage(player, 32, replacements);
+					return false;
+				}
 
-                Homestead.getInstance().runSyncTask(() -> {
-                    new RegionBannedPlayersMenu(player, region);
-                });
-            }, (message) -> {
-                OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
+				if (target.getUniqueId().equals(region.getOwnerId())) {
+					PlayerUtils.sendMessage(player, 30);
+					return false;
+				}
 
-                if (target == null) {
-                    Map<String, String> replacements = new HashMap<String, String>();
-                    replacements.put("{playername}", message);
+				return true;
+			}, (__player) -> {
+				Homestead.getInstance().runSyncTask(() -> {
+					new RegionBannedPlayersMenu(player, region);
+				});
+			}, 73);
+		});
 
-                    PlayerUtils.sendMessage(player, 29, replacements);
-                    return false;
-                }
+		gui.addActionButton(2, MenuUtils.getButton(32), (_player, event) -> {
+			if (!event.isLeftClick()) {
+				return;
+			}
 
-                if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                        RegionControlFlags.BAN_PLAYERS)) {
-                    return false;
-                }
+			if (region.getBannedPlayers().size() == 0) {
+				PlayerUtils.sendMessage(player, 77);
+				return;
+			}
 
-                if (region.isPlayerBanned(target)) {
-                    Map<String, String> replacements = new HashMap<String, String>();
-                    replacements.put("{playername}", target.getName());
+			region.setBannedPlayers(new ArrayList<>());
 
-                    PlayerUtils.sendMessage(player, 32, replacements);
-                    return false;
-                }
+			PlayerUtils.sendMessage(player, 94);
 
-                if (target.getUniqueId().equals(region.getOwnerId())) {
-                    PlayerUtils.sendMessage(player, 30);
-                    return false;
-                }
+			Homestead.getInstance().runSyncTask(() -> {
+				new RegionBannedPlayersMenu(player, region);
+			});
+		});
 
-                return true;
-            }, (__player) -> {
-                Homestead.getInstance().runSyncTask(() -> {
-                    new RegionBannedPlayersMenu(player, region);
-                });
-            }, 73);
-        });
+		gui.open(player, MenuUtils.getEmptySlot());
+	}
 
-        gui.addActionButton(2, MenuUtils.getButton(32), (_player, event) -> {
-            if (!event.isLeftClick()) {
-                return;
-            }
+	public List<ItemStack> getItems(Player player, Region region) {
+		List<ItemStack> items = new ArrayList<>();
 
-            if (region.getBannedPlayers().size() == 0) {
-                PlayerUtils.sendMessage(player, 77);
-                return;
-            }
+		for (int i = 0; i < bannedPlayers.size(); i++) {
+			SerializableBannedPlayer bannedPlayer = bannedPlayers.get(i);
 
-            region.setBannedPlayers(new ArrayList<>());
+			HashMap<String, String> replacements = new HashMap<>();
 
-            PlayerUtils.sendMessage(player, 94);
+			replacements.put("{region}", region.getName());
+			replacements.put("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName());
+			replacements.put("{player-bannedat}", Formatters.formatDate(bannedPlayer.getBannedAt()));
+			replacements.put("{player-banreason}", bannedPlayer.getReason());
 
-            Homestead.getInstance().runSyncTask(() -> {
-                new RegionBannedPlayersMenu(player, region);
-            });
-        });
+			items.add(MenuUtils.getButton(27, replacements, bannedPlayer.getBukkitOfflinePlayer()));
+		}
 
-        gui.open(player, MenuUtils.getEmptySlot());
-    }
+		return items;
+	}
 }

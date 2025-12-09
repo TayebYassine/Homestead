@@ -5,120 +5,120 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 public class SerializableLocation {
-    private String worldName;
-    private double x;
-    private double y;
-    private double z;
-    private float yaw;
-    private float pitch;
+	private String worldName;
+	private double x;
+	private double y;
+	private double z;
+	private float yaw;
+	private float pitch;
 
-    public SerializableLocation(Location location) {
-        this.worldName = location.getWorld() != null ? location.getWorld().getName() : null;
-        this.x = location.getX();
-        this.y = location.getY();
-        this.z = location.getZ();
-        this.yaw = location.getYaw();
-        this.pitch = location.getPitch();
-    }
+	public SerializableLocation(Location location) {
+		this.worldName = location.getWorld() != null ? location.getWorld().getName() : null;
+		this.x = location.getX();
+		this.y = location.getY();
+		this.z = location.getZ();
+		this.yaw = location.getYaw();
+		this.pitch = location.getPitch();
+	}
 
-    public SerializableLocation(World world, double x, double y, double z, float yaw, float pitch) {
-        this.worldName = world != null ? world.getName() : null;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-    }
+	public SerializableLocation(World world, double x, double y, double z, float yaw, float pitch) {
+		this.worldName = world != null ? world.getName() : null;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.yaw = yaw;
+		this.pitch = pitch;
+	}
 
-    public SerializableLocation(String worldName, double x, double y, double z, float yaw, float pitch) {
-        this.worldName = worldName;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-    }
+	public SerializableLocation(String worldName, double x, double y, double z, float yaw, float pitch) {
+		this.worldName = worldName;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.yaw = yaw;
+		this.pitch = pitch;
+	}
 
-    public World getWorld() {
-        return worldName == null ? null : Bukkit.getWorld(worldName);
-    }
+	public static SerializableLocation fromString(String string) {
+		if (string == null) {
+			return null;
+		}
 
-    public void setWorld(World world) {
-        this.worldName = world.getName();
-    }
+		String[] splitted = string.split(",");
 
-    public double getX() {
-        return x;
-    }
+		return new SerializableLocation(splitted[0], Double.parseDouble(splitted[1]), Double.parseDouble(splitted[2]),
+				Double.parseDouble(splitted[3]), Float.parseFloat(splitted[4]), Float.parseFloat(splitted[5]));
+	}
 
-    public void setX(double x) {
-        this.x = x;
-    }
+	public static String toString(Location location) {
+		return location.getWorld().getName() + "," + location.getX() + "," + location.getY() + "," + location.getYaw() + "," + location.getPitch();
+	}
 
-    public double getY() {
-        return y;
-    }
+	public World getWorld() {
+		return worldName == null ? null : Bukkit.getWorld(worldName);
+	}
 
-    public void setY(double y) {
-        this.y = y;
-    }
+	public void setWorld(World world) {
+		this.worldName = world.getName();
+	}
 
-    public double getZ() {
-        return z;
-    }
+	public double getX() {
+		return x;
+	}
 
-    public void setZ(double z) {
-        this.z = z;
-    }
+	public void setX(double x) {
+		this.x = x;
+	}
 
-    public float getYaw() {
-        return yaw;
-    }
+	public double getY() {
+		return y;
+	}
 
-    public void setYaw(float yaw) {
-        this.yaw = yaw;
-    }
+	public void setY(double y) {
+		this.y = y;
+	}
 
-    public float getPitch() {
-        return yaw;
-    }
+	public double getZ() {
+		return z;
+	}
 
-    public void setPitch(float pitch) {
-        this.pitch = pitch;
-    }
+	public void setZ(double z) {
+		this.z = z;
+	}
 
-    @Override
-    public String toString() {
-        return (worldName + "," + x + "," + y + "," + z + "," + yaw + "," + pitch);
-    }
+	public float getYaw() {
+		return yaw;
+	}
 
-    public static SerializableLocation fromString(String string) {
-        if (string == null) {
-            return null;
-        }
+	public void setYaw(float yaw) {
+		this.yaw = yaw;
+	}
 
-        String[] splitted = string.split(",");
+	public float getPitch() {
+		return yaw;
+	}
 
-        return new SerializableLocation(splitted[0], Double.parseDouble(splitted[1]), Double.parseDouble(splitted[2]),
-                Double.parseDouble(splitted[3]), Float.parseFloat(splitted[4]), Float.parseFloat(splitted[5]));
-    }
+	public void setPitch(float pitch) {
+		this.pitch = pitch;
+	}
 
-    public static String toString(Location location) {
-        return location.getWorld().getName() + "," + location.getX() + "," + location.getY() + "," + location.getYaw() + "," + location.getPitch();
-    }
+	@Override
+	public String toString() {
+		return (worldName + "," + x + "," + y + "," + z + "," + yaw + "," + pitch);
+	}
 
-    public Location getBukkitLocation() {
-        World world = Bukkit.getWorld(worldName);
+	public Location getBukkitLocation() {
+		World world = Bukkit.getWorld(worldName);
 
-        if (world == null) {
-            return null;
-        }
+		if (world == null) {
+			return null;
+		}
 
-        Location location = new Location(world, x, y, z);
+		Location location = new Location(world, x, y, z);
 
-        location.setYaw(yaw);
-        location.setPitch(pitch);
+		location.setYaw(yaw);
+		location.setPitch(pitch);
 
-        return location;
-    }
+		return location;
+	}
 }

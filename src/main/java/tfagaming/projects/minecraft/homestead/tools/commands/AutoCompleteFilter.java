@@ -6,29 +6,29 @@ import java.util.List;
 import java.util.Set;
 
 public class AutoCompleteFilter {
-    public static List<String> filter(List<String> suggestions, String[] args) {
-        // Remove duplications
-        Set<String> set = new HashSet<>(suggestions);
-        suggestions.clear();
-        suggestions.addAll(set);
-        
-        // Filtering
-        List<String> filtered = new ArrayList<String>();
+	public static List<String> filter(List<String> suggestions, String[] args) {
+		// Remove duplications
+		Set<String> set = new HashSet<>(suggestions);
+		suggestions.clear();
+		suggestions.addAll(set);
 
-        for (String suggestion : suggestions) {
-            if (suggestion == null) {
-                continue;
-            }
+		// Filtering
+		List<String> filtered = new ArrayList<String>();
 
-            if (suggestion.toLowerCase().startsWith(args[args.length - 1].toLowerCase())) {
-                filtered.add(suggestion);
-            }
-        }
+		for (String suggestion : suggestions) {
+			if (suggestion == null) {
+				continue;
+			}
 
-        if (filtered.size() == 0) {
-            filtered.add("?");
-        }
+			if (suggestion.toLowerCase().startsWith(args[args.length - 1].toLowerCase())) {
+				filtered.add(suggestion);
+			}
+		}
 
-        return filtered;
-    }
+		if (filtered.size() == 0) {
+			filtered.add("?");
+		}
+
+		return filtered;
+	}
 }

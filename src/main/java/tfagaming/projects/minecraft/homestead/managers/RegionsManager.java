@@ -1,20 +1,15 @@
 package tfagaming.projects.minecraft.homestead.managers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.bukkit.*;
-
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
-import tfagaming.projects.minecraft.homestead.flags.*;
+import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
+import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
@@ -22,439 +17,442 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class RegionsManager {
-    public enum RegionSorting {
-        BANK,
-        CHUNKS_COUNT,
-        MEMBERS_COUNT,
-        RATING,
-        CREATION_DATE
-    }
-
-    public static Region createRegion(String name, OfflinePlayer player) {
-        Region region = new Region(name, player);
-
-        boolean isEnabled = Homestead.config.get("upkeep.enabled");
-        int delay = Homestead.config.get("upkeep.start-upkeep");
-
-        if (isEnabled) {
-            region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000 : 0));
-        }
+	public static Region createRegion(String name, OfflinePlayer player) {
+		Region region = new Region(name, player);
 
-        Homestead.regionsCache.putOrUpdate(region);
+		boolean isEnabled = Homestead.config.get("upkeep.enabled");
+		int delay = Homestead.config.get("upkeep.start-upkeep");
 
-        RegionCreateEvent event = new RegionCreateEvent(region, player);
-        Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
+		if (isEnabled) {
+			region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
+		}
 
-        return region;
-    }
+		Homestead.regionsCache.putOrUpdate(region);
 
-    public static Region createRegion(String name, OfflinePlayer player, boolean verifyName) {
-        if (verifyName) {
-            String newname = name;
-            int counter = 1;
+		RegionCreateEvent event = new RegionCreateEvent(region, player);
+		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 
-            if (verifyName) {
-                while (RegionsManager.isNameUsed(newname)) {
-                    newname = name + counter;
-                    counter++;
-                }
-            }
+		return region;
+	}
 
-            Region region = new Region(newname, player);
+	public static Region createRegion(String name, OfflinePlayer player, boolean verifyName) {
+		if (verifyName) {
+			String newname = name;
+			int counter = 1;
 
-            boolean isEnabled = Homestead.config.get("upkeep.enabled");
-            int delay = Homestead.config.get("upkeep.start-upkeep");
+			if (verifyName) {
+				while (RegionsManager.isNameUsed(newname)) {
+					newname = name + counter;
+					counter++;
+				}
+			}
 
-            if (isEnabled) {
-                region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000 : 0));
-            }
+			Region region = new Region(newname, player);
 
-            Homestead.regionsCache.putOrUpdate(region);
+			boolean isEnabled = Homestead.config.get("upkeep.enabled");
+			int delay = Homestead.config.get("upkeep.start-upkeep");
 
-            return region;
-        } else {
-            return createRegion(name, player);
-        }
-    }
+			if (isEnabled) {
+				region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
+			}
 
-    public static List<Region> getAll() {
-        return Homestead.regionsCache.getAll();
-    }
+			Homestead.regionsCache.putOrUpdate(region);
 
-    public static Region findRegion(UUID id) {
-        for (Region region : Homestead.regionsCache.getAll()) {
-            if (region.getUniqueId().equals(id)) {
-                return region;
-            }
-        }
+			return region;
+		} else {
+			return createRegion(name, player);
+		}
+	}
 
-        return null;
-    }
+	public static List<Region> getAll() {
+		return Homestead.regionsCache.getAll();
+	}
 
-    public static Region findRegion(String name) {
-        for (Region region : Homestead.regionsCache.getAll()) {
-            if (region.getName().equals(name)) {
-                return region;
-            }
-        }
+	public static Region findRegion(UUID id) {
+		for (Region region : Homestead.regionsCache.getAll()) {
+			if (region.getUniqueId().equals(id)) {
+				return region;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public static void deleteRegion(UUID id, OfflinePlayer... player) {
-        Region region = findRegion(id);
+	public static Region findRegion(String name) {
+		for (Region region : Homestead.regionsCache.getAll()) {
+			if (region.getName().equals(name)) {
+				return region;
+			}
+		}
 
-        if (region == null) {
-            return;
-        }
+		return null;
+	}
 
-        boolean isRegeneratingChunksEnabled = Homestead.config.get("worldedit.regenerate-chunks");
+	public static void deleteRegion(UUID id, OfflinePlayer... player) {
+		Region region = findRegion(id);
 
-        if (isRegeneratingChunksEnabled) {
-            for (SerializableChunk chunk : region.getChunks()) {
-                Homestead.getInstance().runAsyncTask(() -> {
-                    WorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
-                });
-            }
-        }
+		if (region == null) {
+			return;
+		}
 
-        Homestead.regionsCache.remove(id);
+		boolean isRegeneratingChunksEnabled = Homestead.config.get("worldedit.regenerate-chunks");
 
-        RegionDeleteEvent event = new RegionDeleteEvent(region, player.length > 0 ? player[0] : null);
-        Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
-    }
+		if (isRegeneratingChunksEnabled) {
+			for (SerializableChunk chunk : region.getChunks()) {
+				Homestead.getInstance().runAsyncTask(() -> {
+					WorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
+				});
+			}
+		}
 
-    public static void addNewLog(UUID id, int messagePath) {
-        Region region = findRegion(id);
+		Homestead.regionsCache.remove(id);
 
-        if (region == null) {
-            return;
-        }
+		RegionDeleteEvent event = new RegionDeleteEvent(region, player.length > 0 ? player[0] : null);
+		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
+	}
 
-        String message = Homestead.language.get("logs." + messagePath);
+	public static void addNewLog(UUID id, int messagePath) {
+		Region region = findRegion(id);
 
-        region.addLog(new SerializableLog(Homestead.language.get("default.author"), message));
-    }
+		if (region == null) {
+			return;
+		}
 
-    public static void addNewLog(UUID id, int messagePath, Map<String, String> replacements) {
-        Region region = findRegion(id);
+		String message = Homestead.language.get("logs." + messagePath);
 
-        if (region == null) {
-            return;
-        }
+		region.addLog(new SerializableLog(Homestead.language.get("default.author"), message));
+	}
 
-        String message = Homestead.language.get("logs." + messagePath);
+	public static void addNewLog(UUID id, int messagePath, Map<String, String> replacements) {
+		Region region = findRegion(id);
 
-        region.addLog(new SerializableLog(Homestead.language.get("default.author"),
-                Formatters.replace(message, replacements)));
-    }
+		if (region == null) {
+			return;
+		}
 
-    public static List<OfflinePlayer> getAllOwners() {
-        List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();
+		String message = Homestead.language.get("logs." + messagePath);
 
-        for (Region region : Homestead.regionsCache.getAll()) {
-            players.add(region.getOwner());
-        }
+		region.addLog(new SerializableLog(Homestead.language.get("default.author"),
+				Formatters.replace(message, replacements)));
+	}
 
-        return ListUtils.removeDuplications(players);
-    }
+	public static List<OfflinePlayer> getAllOwners() {
+		List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();
 
-    public static List<Region> sortRegionsAlpha() {
-        List<Region> regions = Homestead.regionsCache.getAll();
-
-        Collections.sort(regions, new Comparator<Region>() {
-            @Override
-            public int compare(Region r1, Region r2) {
-                return r1.getName().compareToIgnoreCase(r2.getName());
-            }
-        });
-
-        return regions;
-    }
-
-    public static List<Region> getRegionsWithWelcomeSigns() {
-        List<Region> filtered = new ArrayList<>();
-
-        for (Region region : getAll()) {
-            if (region.getWelcomeSign() != null) {
-                filtered.add(region);
-            }
-        }
-
-        return filtered;
-    }
-
-    public static List<OfflinePlayer> getPlayersWithRegionsHasWelcomeSigns() {
-        List<OfflinePlayer> filtered = new ArrayList<>();
-
-        for (Region region : getAll()) {
-            if (region.getWelcomeSign() != null) {
-                filtered.add(region.getOwner());
-            }
-        }
-
-        return filtered;
-    }
-
-    public static List<Region> getRegionsOwnedByPlayer(OfflinePlayer player) {
-        List<Region> regions = new ArrayList<Region>();
-
-        for (Region region : Homestead.regionsCache.getAll()) {
-            if (region.getOwner().getUniqueId().equals(player.getUniqueId())) {
-                regions.add(region);
-            }
-        }
-
-        return regions;
-    }
-
-    public static List<Region> getRegionsHasPlayerAsMember(OfflinePlayer player) {
-        List<Region> regions = new ArrayList<Region>();
-
-        for (Region region : Homestead.regionsCache.getAll()) {
-            if (region.isPlayerMember(player)) {
-                regions.add(region);
-            }
-        }
-
-        return regions;
-    }
-
-    public static List<Region> getPublicRegions() {
-        List<Region> regions = new ArrayList<Region>();
-
-        for (Region region : Homestead.regionsCache.getAll()) {
-            long flags = region.getPlayerFlags();
-
-            if (FlagsCalculator.isFlagSet(flags, PlayerFlags.PASSTHROUGH)
-                    && FlagsCalculator.isFlagSet(flags, PlayerFlags.TELEPORT_SPAWN)) {
-                regions.add(region);
-            }
-        }
-
-        return regions;
-    }
-
-    public static List<Region> getRegionsInvitedPlayer(OfflinePlayer player) {
-        List<Region> regions = new ArrayList<Region>();
-
-        for (Region region : Homestead.regionsCache.getAll()) {
-            if (region.isPlayerInvited(player)) {
-                regions.add(region);
-            }
-        }
-
-        return regions;
-    }
-
-    public static List<Region> sortRegions(RegionSorting type) {
-        switch (type) {
-            case BANK:
-                return Homestead.regionsCache.getAll().stream()
-                        .sorted(Comparator.comparingDouble(Region::getBank).reversed())
-                        .collect(Collectors.toList());
-            case CHUNKS_COUNT:
-                return Homestead.regionsCache.getAll().stream()
-                        .sorted(Comparator.comparingInt(region -> ((Region) region).getChunks().size()).reversed())
-                        .collect(Collectors.toList());
-            case MEMBERS_COUNT:
-                return Homestead.regionsCache.getAll().stream()
-                        .sorted(Comparator.comparingInt((region) -> ((Region) region).getMembers().size()).reversed())
-                        .collect(Collectors.toList());
-            case RATING:
-                return Homestead.regionsCache.getAll().stream()
-                        .sorted(Comparator
-                                .comparingDouble((region) -> getAverageRating((Region) region))
-                                .reversed())
-                        .collect(Collectors.toList());
-            case CREATION_DATE:
-                return Homestead.regionsCache.getAll().stream()
-                        .sorted(Comparator.comparingLong((region) -> ((Region) region).getCreatedAt()))
-                        .collect(Collectors.toList());
-            default:
-                return new ArrayList<>();
-        }
-    }
-
-    public static int getRank(RegionSorting type, UUID id) {
-        List<Region> regions = sortRegions(type);
-
-        for (int i = 0; i < regions.size(); i++) {
-            Region region = regions.get(i);
-
-            if (region.getUniqueId().equals(id)) {
-                return i + 1;
-            }
-        }
-
-        return 0;
-    }
-
-    public static int getGlobalRank(UUID id) {
-        return (getRank(RegionSorting.BANK, id) + getRank(RegionSorting.CHUNKS_COUNT, id)
-                + getRank(RegionSorting.MEMBERS_COUNT, id)
-                + getRank(RegionSorting.RATING, id)) / 4;
-    }
-
-    public static boolean isNameUsed(String name) {
-        for (Region region : Homestead.regionsCache.getAll()) {
-            if (region.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean isPlayerInsideRegion(Player player, Region region) {
-        Chunk location = player.getLocation().getChunk();
-
-        for (SerializableChunk chunk : region.getChunks()) {
-            if (chunk.getX() == location.getX() && chunk.getZ() == location.getZ()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static double getAverageRating(Region region) {
-        List<SerializableRate> rates = region.getRates();
-
-        if (rates == null || rates.isEmpty()) {
-            return 0.0;
-        }
-
-        int totalRate = 0;
-        for (SerializableRate rate : rates) {
-            totalRate += rate.getRate();
-        }
-
-        return (double) totalRate / rates.size();
-    }
-
-    public static int deleteRegionsWithInvalidPlayerIds() {
-        int count = 0;
-
-        for (Region region : Homestead.regionsCache.getAll()) {
-            OfflinePlayer regionOwner = region.getOwner();
-
-            if (regionOwner.getName() == null) {
-                deleteRegion(region.getUniqueId());
-
-                count++;
-            } else {
-                for (SerializableMember serializableMember : region.getMembers()) {
-                    OfflinePlayer member = serializableMember.getBukkitOfflinePlayer();
-
-                    if (member.getName() == null) {
-                        region.removeMember(serializableMember);
-
-                        count++;
-                    }
-                }
-            }
-        }
-
-        return count;
-    }
-
-    public static void setPlayerFlagForAllRegions(long flag, boolean state) {
-        for (Region region : getAll()) {
-            long flags = region.getPlayerFlags();
-            long newFlags;
-
-            if (state) {
-                newFlags = FlagsCalculator.addFlag(flags, flag);
-            } else {
-                newFlags = FlagsCalculator.removeFlag(flags, flag);
-            }
-
-            region.setPlayerFlags(newFlags);
-        }
-    }
-
-    public static void setWorldFlagForAllRegions(long flag, boolean state) {
-        for (Region region : getAll()) {
-            long flags = region.getWorldFlags();
-            long newFlags;
-
-            if (state) {
-                newFlags = FlagsCalculator.addFlag(flags, flag);
-            } else {
-                newFlags = FlagsCalculator.removeFlag(flags, flag);
-            }
-
-            region.setWorldFlags(newFlags);
-        }
-    }
-
-    public static int cleanStartup() {
-        int updated = 0;
-
-        for (Region region : Homestead.regionsCache.getAll()) {
-            for (SerializableMember member : region.getMembers()) {
-                if (member.getBukkitOfflinePlayer() == null) {
-                    region.removeMember(member);
-                    updated++;
-                }
-            }
-
-            for (SerializableBannedPlayer bannedPlayer : region.getBannedPlayers()) {
-                if (bannedPlayer.getBukkitOfflinePlayer() == null) {
-                    region.unbanPlayer(bannedPlayer.getPlayerId());
-                    updated++;
-                }
-            }
-
-            for (SerializableRate rate : region.getRates()) {
-                OfflinePlayer rater = rate.getBukkitOfflinePlayer();
-
-                if (rater == null) {
-                    region.removePlayerRate(rate.getPlayerId());
-                    updated++;
-                }
-            }
-
-            for (SerializableChunk chunk : region.getChunks()) {
-                World world = chunk.getWorld();
-
-                if (world == null) {
-                    region.removeChunk(chunk);
-                    updated++;
-                }
-            }
-
-            for (SerializableSubArea area : region.getSubAreas()) {
-                World world = area.getWorld();
-
-                if (world == null) {
-                    region.removeSubArea(area.getId());
-                    updated++;
-                }
-            }
-
-            SerializableLocation spawnLoc = region.getLocation();
-
-            if (spawnLoc != null && spawnLoc.getWorld() == null) {
-                region.setLocation(null);
-                updated++;
-            }
-
-            SerializableLocation welcomeSignLoc = region.getWelcomeSign();
-
-            if (welcomeSignLoc != null && welcomeSignLoc.getWorld() == null) {
-                region.setWelcomeSign(null);
-                updated++;
-            }
-
-            if (region.getOwner() == null) {
-                RegionsManager.deleteRegion(region.getUniqueId());
-                updated++;
-            }
-        }
-
-        return updated;
-    }
+		for (Region region : Homestead.regionsCache.getAll()) {
+			players.add(region.getOwner());
+		}
+
+		return ListUtils.removeDuplications(players);
+	}
+
+	public static List<Region> sortRegionsAlpha() {
+		List<Region> regions = Homestead.regionsCache.getAll();
+
+		Collections.sort(regions, new Comparator<Region>() {
+			@Override
+			public int compare(Region r1, Region r2) {
+				return r1.getName().compareToIgnoreCase(r2.getName());
+			}
+		});
+
+		return regions;
+	}
+
+	public static List<Region> getRegionsWithWelcomeSigns() {
+		List<Region> filtered = new ArrayList<>();
+
+		for (Region region : getAll()) {
+			if (region.getWelcomeSign() != null) {
+				filtered.add(region);
+			}
+		}
+
+		return filtered;
+	}
+
+	public static List<OfflinePlayer> getPlayersWithRegionsHasWelcomeSigns() {
+		List<OfflinePlayer> filtered = new ArrayList<>();
+
+		for (Region region : getAll()) {
+			if (region.getWelcomeSign() != null) {
+				filtered.add(region.getOwner());
+			}
+		}
+
+		return filtered;
+	}
+
+	public static List<Region> getRegionsOwnedByPlayer(OfflinePlayer player) {
+		List<Region> regions = new ArrayList<Region>();
+
+		for (Region region : Homestead.regionsCache.getAll()) {
+			if (region.getOwner().getUniqueId().equals(player.getUniqueId())) {
+				regions.add(region);
+			}
+		}
+
+		return regions;
+	}
+
+	public static List<Region> getRegionsHasPlayerAsMember(OfflinePlayer player) {
+		List<Region> regions = new ArrayList<Region>();
+
+		for (Region region : Homestead.regionsCache.getAll()) {
+			if (region.isPlayerMember(player)) {
+				regions.add(region);
+			}
+		}
+
+		return regions;
+	}
+
+	public static List<Region> getPublicRegions() {
+		List<Region> regions = new ArrayList<Region>();
+
+		for (Region region : Homestead.regionsCache.getAll()) {
+			long flags = region.getPlayerFlags();
+
+			if (FlagsCalculator.isFlagSet(flags, PlayerFlags.PASSTHROUGH)
+					&& FlagsCalculator.isFlagSet(flags, PlayerFlags.TELEPORT_SPAWN)) {
+				regions.add(region);
+			}
+		}
+
+		return regions;
+	}
+
+	public static List<Region> getRegionsInvitedPlayer(OfflinePlayer player) {
+		List<Region> regions = new ArrayList<Region>();
+
+		for (Region region : Homestead.regionsCache.getAll()) {
+			if (region.isPlayerInvited(player)) {
+				regions.add(region);
+			}
+		}
+
+		return regions;
+	}
+
+	public static List<Region> sortRegions(RegionSorting type) {
+		switch (type) {
+			case BANK:
+				return Homestead.regionsCache.getAll().stream()
+						.sorted(Comparator.comparingDouble(Region::getBank).reversed())
+						.collect(Collectors.toList());
+			case CHUNKS_COUNT:
+				return Homestead.regionsCache.getAll().stream()
+						.sorted(Comparator.comparingInt(region -> ((Region) region).getChunks().size()).reversed())
+						.collect(Collectors.toList());
+			case MEMBERS_COUNT:
+				return Homestead.regionsCache.getAll().stream()
+						.sorted(Comparator.comparingInt((region) -> ((Region) region).getMembers().size()).reversed())
+						.collect(Collectors.toList());
+			case RATING:
+				return Homestead.regionsCache.getAll().stream()
+						.sorted(Comparator
+								.comparingDouble((region) -> getAverageRating((Region) region))
+								.reversed())
+						.collect(Collectors.toList());
+			case CREATION_DATE:
+				return Homestead.regionsCache.getAll().stream()
+						.sorted(Comparator.comparingLong((region) -> region.getCreatedAt()))
+						.collect(Collectors.toList());
+			default:
+				return new ArrayList<>();
+		}
+	}
+
+	public static int getRank(RegionSorting type, UUID id) {
+		List<Region> regions = sortRegions(type);
+
+		for (int i = 0; i < regions.size(); i++) {
+			Region region = regions.get(i);
+
+			if (region.getUniqueId().equals(id)) {
+				return i + 1;
+			}
+		}
+
+		return 0;
+	}
+
+	public static int getGlobalRank(UUID id) {
+		return (getRank(RegionSorting.BANK, id) + getRank(RegionSorting.CHUNKS_COUNT, id)
+				+ getRank(RegionSorting.MEMBERS_COUNT, id)
+				+ getRank(RegionSorting.RATING, id)) / 4;
+	}
+
+	public static boolean isNameUsed(String name) {
+		for (Region region : Homestead.regionsCache.getAll()) {
+			if (region.getName().equalsIgnoreCase(name)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static boolean isPlayerInsideRegion(Player player, Region region) {
+		Chunk location = player.getLocation().getChunk();
+
+		for (SerializableChunk chunk : region.getChunks()) {
+			if (chunk.getX() == location.getX() && chunk.getZ() == location.getZ()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static double getAverageRating(Region region) {
+		List<SerializableRate> rates = region.getRates();
+
+		if (rates == null || rates.isEmpty()) {
+			return 0.0;
+		}
+
+		int totalRate = 0;
+		for (SerializableRate rate : rates) {
+			totalRate += rate.getRate();
+		}
+
+		return (double) totalRate / rates.size();
+	}
+
+	public static int deleteRegionsWithInvalidPlayerIds() {
+		int count = 0;
+
+		for (Region region : Homestead.regionsCache.getAll()) {
+			OfflinePlayer regionOwner = region.getOwner();
+
+			if (regionOwner.getName() == null) {
+				deleteRegion(region.getUniqueId());
+
+				count++;
+			} else {
+				for (SerializableMember serializableMember : region.getMembers()) {
+					OfflinePlayer member = serializableMember.getBukkitOfflinePlayer();
+
+					if (member.getName() == null) {
+						region.removeMember(serializableMember);
+
+						count++;
+					}
+				}
+			}
+		}
+
+		return count;
+	}
+
+	public static void setPlayerFlagForAllRegions(long flag, boolean state) {
+		for (Region region : getAll()) {
+			long flags = region.getPlayerFlags();
+			long newFlags;
+
+			if (state) {
+				newFlags = FlagsCalculator.addFlag(flags, flag);
+			} else {
+				newFlags = FlagsCalculator.removeFlag(flags, flag);
+			}
+
+			region.setPlayerFlags(newFlags);
+		}
+	}
+
+	public static void setWorldFlagForAllRegions(long flag, boolean state) {
+		for (Region region : getAll()) {
+			long flags = region.getWorldFlags();
+			long newFlags;
+
+			if (state) {
+				newFlags = FlagsCalculator.addFlag(flags, flag);
+			} else {
+				newFlags = FlagsCalculator.removeFlag(flags, flag);
+			}
+
+			region.setWorldFlags(newFlags);
+		}
+	}
+
+	public static int cleanStartup() {
+		int updated = 0;
+
+		for (Region region : Homestead.regionsCache.getAll()) {
+			for (SerializableMember member : region.getMembers()) {
+				if (member.getBukkitOfflinePlayer() == null) {
+					region.removeMember(member);
+					updated++;
+				}
+			}
+
+			for (SerializableBannedPlayer bannedPlayer : region.getBannedPlayers()) {
+				if (bannedPlayer.getBukkitOfflinePlayer() == null) {
+					region.unbanPlayer(bannedPlayer.getPlayerId());
+					updated++;
+				}
+			}
+
+			for (SerializableRate rate : region.getRates()) {
+				OfflinePlayer rater = rate.getBukkitOfflinePlayer();
+
+				if (rater == null) {
+					region.removePlayerRate(rate.getPlayerId());
+					updated++;
+				}
+			}
+
+			for (SerializableChunk chunk : region.getChunks()) {
+				World world = chunk.getWorld();
+
+				if (world == null) {
+					region.removeChunk(chunk);
+					updated++;
+				}
+			}
+
+			for (SerializableSubArea area : region.getSubAreas()) {
+				World world = area.getWorld();
+
+				if (world == null) {
+					region.removeSubArea(area.getId());
+					updated++;
+				}
+			}
+
+			SerializableLocation spawnLoc = region.getLocation();
+
+			if (spawnLoc != null && spawnLoc.getWorld() == null) {
+				region.setLocation(null);
+				updated++;
+			}
+
+			SerializableLocation welcomeSignLoc = region.getWelcomeSign();
+
+			if (welcomeSignLoc != null && welcomeSignLoc.getWorld() == null) {
+				region.setWelcomeSign(null);
+				updated++;
+			}
+
+			if (region.getOwner() == null) {
+				RegionsManager.deleteRegion(region.getUniqueId());
+				updated++;
+			}
+		}
+
+		return updated;
+	}
+
+	public enum RegionSorting {
+		BANK,
+		CHUNKS_COUNT,
+		MEMBERS_COUNT,
+		RATING,
+		CREATION_DATE
+	}
 }

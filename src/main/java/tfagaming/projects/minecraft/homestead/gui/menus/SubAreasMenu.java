@@ -1,59 +1,58 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class SubAreasMenu {
-    List<SerializableSubArea> subAreas;
+	List<SerializableSubArea> subAreas;
 
-    public List<ItemStack> getItems(Player player, Region region) {
-        List<ItemStack> items = new ArrayList<>();
+	public SubAreasMenu(Player player, Region region) {
+		subAreas = region.getSubAreas();
 
-        for (int i = 0; i < subAreas.size(); i++) {
-            SerializableSubArea subArea = subAreas.get(i);
+		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(14), 9 * 4,
+				MenuUtils.getNextPageButton(),
+				MenuUtils.getPreviousPageButton(), getItems(player, region), (_player, event) -> {
+			new RegionMenu(player, region);
+		}, (_player, context) -> {
+			if (context.getIndex() >= subAreas.size()) {
+				return;
+			}
 
-            HashMap<String, String> replacements = new HashMap<>();
+			SerializableSubArea subArea = subAreas.get(context.getIndex());
 
-            replacements.put("{region}", region.getName());
-            replacements.put("{subarea}", subArea.getName());
-            replacements.put("{subarea-volume}", String.valueOf(subArea.getVolume()));
-            replacements.put("{subarea-createdat}", Formatters.formatDate(subArea.getCreatedAt()));
+			if (context.getEvent().isLeftClick()) {
+				new SubAreaSettingsMenu(player, region, subArea);
+			}
+		});
 
-            items.add(MenuUtils.getButton(42, replacements));
-        }
+		gui.open(player, MenuUtils.getEmptySlot());
+	}
 
-        return items;
-    }
+	public List<ItemStack> getItems(Player player, Region region) {
+		List<ItemStack> items = new ArrayList<>();
 
-    public SubAreasMenu(Player player, Region region) {
-        subAreas = region.getSubAreas();
+		for (int i = 0; i < subAreas.size(); i++) {
+			SerializableSubArea subArea = subAreas.get(i);
 
-        PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(14), 9 * 4,
-                MenuUtils.getNextPageButton(),
-                MenuUtils.getPreviousPageButton(), getItems(player, region), (_player, event) -> {
-                    new RegionMenu(player, region);
-                }, (_player, context) -> {
-                    if (context.getIndex() >= subAreas.size()) {
-                        return;
-                    }
+			HashMap<String, String> replacements = new HashMap<>();
 
-                    SerializableSubArea subArea = subAreas.get(context.getIndex());
+			replacements.put("{region}", region.getName());
+			replacements.put("{subarea}", subArea.getName());
+			replacements.put("{subarea-volume}", String.valueOf(subArea.getVolume()));
+			replacements.put("{subarea-createdat}", Formatters.formatDate(subArea.getCreatedAt()));
 
-                    if (context.getEvent().isLeftClick()) {
-                        new SubAreaSettingsMenu(player, region, subArea);
-                    }
-                });
+			items.add(MenuUtils.getButton(42, replacements));
+		}
 
-        gui.open(player, MenuUtils.getEmptySlot());
-    }
+		return items;
+	}
 }

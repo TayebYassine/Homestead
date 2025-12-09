@@ -14,66 +14,64 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DeleteRegionSubCmd extends SubCommandBuilder {
-    public DeleteRegionSubCmd() {
-        super("delete");
-    }
+	public DeleteRegionSubCmd() {
+		super("delete");
+	}
 
-    @Override
-    public boolean onExecution(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("You cannot use this command via the console.");
-            return false;
-        }
+	@Override
+	public boolean onExecution(CommandSender sender, String[] args) {
+		if (!(sender instanceof Player player)) {
+			sender.sendMessage("You cannot use this command via the console.");
+			return false;
+		}
 
-        Player player = (Player) sender;
+		if (!player.hasPermission("homestead.region.delete")) {
+			PlayerUtils.sendMessage(player, 8);
+			return true;
+		}
 
-        if (!player.hasPermission("homestead.region.delete")) {
-            PlayerUtils.sendMessage(player, 8);
-            return true;
-        }
+		if (args.length < 2) {
+			PlayerUtils.sendMessage(player, 0);
+			return true;
+		}
 
-        if (args.length < 2) {
-            PlayerUtils.sendMessage(player, 0);
-            return true;
-        }
+		Region region = TargetRegionSession.getRegion(player);
 
-        Region region = TargetRegionSession.getRegion(player);
+		if (region == null) {
+			PlayerUtils.sendMessage(player, 4);
+			return true;
+		}
 
-        if (region == null) {
-            PlayerUtils.sendMessage(player, 4);
-            return true;
-        }
+		boolean canDelete = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+		if (!canDelete) {
+			PlayerUtils.sendMessage(player, 159);
 
-        boolean canDelete = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
-        if (!canDelete) {
-            PlayerUtils.sendMessage(player, 159);
+			return true;
+		}
 
-            return true;
-        }
+		String confirmInput = args[1];
 
-        String confirmInput = args[1];
+		if (!confirmInput.equalsIgnoreCase("confirm")) {
+			PlayerUtils.sendMessage(player, 5);
+			return true;
+		}
 
-        if (!confirmInput.equalsIgnoreCase("confirm")) {
-            PlayerUtils.sendMessage(player, 5);
-            return true;
-        }
+		double amountToGive = region.getBank();
 
-        double amountToGive = region.getBank();
+		RegionsManager.deleteRegion(region.getUniqueId(), player);
 
-        RegionsManager.deleteRegion(region.getUniqueId(), player);
+		if (Homestead.vault.isEconomyReady()) {
+			PlayerUtils.addBalance(region.getOwner(), amountToGive);
+		}
 
-        if (Homestead.vault.isEconomyReady()) {
-            PlayerUtils.addBalance(region.getOwner(), amountToGive);
-        }
+		Map<String, String> replacements = new HashMap<String, String>();
+		replacements.put("{region}", region.getDisplayName());
+		replacements.put("{region-bank}", Formatters.formatBalance(amountToGive));
 
-        Map<String, String> replacements = new HashMap<String, String>();
-        replacements.put("{region}", region.getDisplayName());
-        replacements.put("{region-bank}", Formatters.formatBalance(amountToGive));
+		PlayerUtils.sendMessage(player, 6, replacements);
 
-        PlayerUtils.sendMessage(player, 6, replacements);
+		TargetRegionSession.randomizeRegion(player);
 
-        TargetRegionSession.randomizeRegion(player);
-
-        return true;
-    }
+		return true;
+	}
 }

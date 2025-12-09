@@ -1,22 +1,16 @@
 package tfagaming.projects.minecraft.homestead.database.providers;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.bukkit.OfflinePlayer;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
+
+import java.sql.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MySQL {
 	private static String JDBC_URL = "jdbc:mysql://";
@@ -127,7 +121,7 @@ public class MySQL {
 		String sql = "SELECT * FROM regions";
 
 		try (Statement stmt = connection.createStatement();
-				ResultSet rs = stmt.executeQuery(sql)) {
+			 ResultSet rs = stmt.executeQuery(sql)) {
 			Homestead.regionsCache.clear();
 
 			while (rs.next()) {
@@ -146,37 +140,37 @@ public class MySQL {
 				int mapColor = rs.getInt("mapColor");
 				List<SerializableChunk> chunks = rs.getString("chunks").length() > 0
 						? Arrays.asList(rs.getString("chunks").split("§")).stream()
-								.map(SerializableChunk::fromString).collect(Collectors.toList())
+						.map(SerializableChunk::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
 				List<SerializableMember> members = rs.getString("members").length() > 0
 						? Arrays.asList(rs.getString("members").split("§")).stream()
-								.map(SerializableMember::fromString).collect(Collectors.toList())
+						.map(SerializableMember::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
 				List<SerializableRate> rates = rs.getString("rates").length() > 0
 						? Arrays.asList(rs.getString("rates").split("§")).stream()
-								.map(SerializableRate::fromString).collect(Collectors.toList())
+						.map(SerializableRate::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
 				List<OfflinePlayer> invitedPlayers = rs.getString("invitedPlayers").length() > 0
 						? Arrays.asList(rs.getString("invitedPlayers").split("§")).stream()
-								.map((uuidString) -> Homestead.getInstance()
-										.getOfflinePlayerSync(UUID.fromString(uuidString)))
-								.collect(Collectors.toList())
+						.map((uuidString) -> Homestead.getInstance()
+								.getOfflinePlayerSync(UUID.fromString(uuidString)))
+						.collect(Collectors.toList())
 						: new ArrayList<>();
 				List<SerializableBannedPlayer> bannedPlayers = rs.getString("bannedPlayers")
 						.length() > 0
-								? Arrays.asList(rs.getString("bannedPlayers")
-										.split("§"))
-										.stream()
-										.map(SerializableBannedPlayer::fromString)
-										.collect(Collectors.toList())
-								: new ArrayList<>();
+						? Arrays.asList(rs.getString("bannedPlayers")
+								.split("§"))
+						.stream()
+						.map(SerializableBannedPlayer::fromString)
+						.collect(Collectors.toList())
+						: new ArrayList<>();
 				List<SerializableLog> logs = rs.getString("logs").length() > 0
 						? Arrays.asList(rs.getString("logs").split("µ")).stream()
-								.map(SerializableLog::fromString).collect(Collectors.toList())
+						.map(SerializableLog::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
 				List<SerializableSubArea> subAreas = rs.getString("subAreas").length() > 0
 						? Arrays.asList(rs.getString("subAreas").split("§")).stream()
-								.map(SerializableSubArea::fromString).collect(Collectors.toList())
+						.map(SerializableSubArea::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
 				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
 				long upkeepAt = rs.getLong("upkeepAt");
@@ -267,7 +261,7 @@ public class MySQL {
 		String selectSql = "SELECT id FROM regions";
 
 		try (Statement stmt = connection.createStatement();
-				ResultSet rs = stmt.executeQuery(selectSql)) {
+			 ResultSet rs = stmt.executeQuery(selectSql)) {
 			while (rs.next()) {
 				dbRegionIds.add(UUID.fromString(rs.getString("id")));
 			}
@@ -313,7 +307,7 @@ public class MySQL {
 		String deleteSql = "DELETE FROM regions WHERE id = ?";
 
 		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
-				PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
+			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
 			Set<UUID> cacheRegionIds = new HashSet<>();
 
 			for (Region region : Homestead.regionsCache.getAll()) {
@@ -362,8 +356,8 @@ public class MySQL {
 				upsertStmt.setInt(23, region.time);
 				upsertStmt.setString(24,
 						region.welcomeSign != null ? region.welcomeSign.toString() : null);
-				upsertStmt.setString(25, region.icon != null ? region.icon.toString() : null);
-				
+				upsertStmt.setString(25, region.icon != null ? region.icon : null);
+
 				upsertStmt.addBatch();
 			}
 
@@ -379,7 +373,7 @@ public class MySQL {
 
 			if (Homestead.config.isDebugEnabled()) {
 				Logger.info("Exported " + cacheRegionIds.size() + " regions and deleted " + dbRegionIds.size()
-					+ " regions.");
+						+ " regions.");
 			}
 		} catch (SQLException e) {
 			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
@@ -476,7 +470,7 @@ public class MySQL {
 		String sql = "SELECT * FROM regions";
 
 		try (Statement stmt = connection.createStatement();
-				ResultSet rs = stmt.executeQuery(sql)) {
+			 ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
 			}
 		} catch (SQLException e) {

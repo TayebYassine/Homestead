@@ -1,16 +1,9 @@
 package tfagaming.projects.minecraft.homestead.tools.java;
 
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -18,233 +11,239 @@ import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
 
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class Formatters {
-    public static String replace(String string, Map<String, String> replacements) {
-        if (string == null) {
-            return "[Homestead: String is null]";
-        }
+	public static String replace(String string, Map<String, String> replacements) {
+		if (string == null) {
+			return "[Homestead: String is null]";
+		}
 
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            string = string.replace(entry.getKey(), entry.getValue() == null ? "null" : entry.getValue());
-        }
+		for (Map.Entry<String, String> entry : replacements.entrySet()) {
+			string = string.replace(entry.getKey(), entry.getValue() == null ? "null" : entry.getValue());
+		}
 
-        return string;
-    }
+		return string;
+	}
 
-    public static String formatLocation(Location location) {
-        HashMap<String, String> replacements = new HashMap<String, String>();
+	public static String formatLocation(Location location) {
+		HashMap<String, String> replacements = new HashMap<String, String>();
 
-        replacements.put("{world}", location.getWorld().getName());
-        replacements.put("{x}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getX())));
-        replacements.put("{y}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getY())));
-        replacements.put("{z}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getZ())));
+		replacements.put("{world}", location.getWorld().getName());
+		replacements.put("{x}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getX())));
+		replacements.put("{y}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getY())));
+		replacements.put("{z}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getZ())));
 
-        return ChatColorTranslator.translate(replace(Homestead.config.get("formatters.location"), replacements));
-    }
+		return ChatColorTranslator.translate(replace(Homestead.config.get("formatters.location"), replacements));
+	}
 
-    public static String formatChunk(Chunk chunk) {
-        HashMap<String, String> replacements = new HashMap<String, String>();
+	public static String formatChunk(Chunk chunk) {
+		HashMap<String, String> replacements = new HashMap<String, String>();
 
-        replacements.put("{world}", chunk.getWorld().getName());
-        replacements.put("{x}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(chunk.getX())));
-        replacements.put("{z}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(chunk.getZ())));
+		replacements.put("{world}", chunk.getWorld().getName());
+		replacements.put("{x}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(chunk.getX())));
+		replacements.put("{z}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(chunk.getZ())));
 
-        return ChatColorTranslator.translate(replace(Homestead.config.get("formatters.location"), replacements));
-    }
+		return ChatColorTranslator.translate(replace(Homestead.config.get("formatters.location"), replacements));
+	}
 
-    public static String formatBalance(double amount) {
-        String balance = NumberUtils.convertDoubleToBalance(amount);
-        String format = Homestead.config.get("formatters.balance");
+	public static String formatBalance(double amount) {
+		String balance = NumberUtils.convertDoubleToBalance(amount);
+		String format = Homestead.config.get("formatters.balance");
 
-        return format.replace("{balance}", balance);
-    }
+		return format.replace("{balance}", balance);
+	}
 
-    public static String formatDate(long date) {
-        String pattern = Homestead.config.get("formatters.date-format");
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+	public static String formatDate(long date) {
+		String pattern = Homestead.config.get("formatters.date-format");
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
-        String formatted = simpleDateFormat.format(date);
-        String dateWithAgo = Homestead.config.get("formatters.date");
+		String formatted = simpleDateFormat.format(date);
+		String dateWithAgo = Homestead.config.get("formatters.date");
 
-        Map<String, String> replacements = new HashMap<String, String>();
-        
-        replacements.put("{date}", formatted);
-        replacements.put("{time-ago}", getAgo(date));
+		Map<String, String> replacements = new HashMap<String, String>();
 
-        return replace(dateWithAgo, replacements);
-    }
+		replacements.put("{date}", formatted);
+		replacements.put("{time-ago}", getAgo(date));
 
-    public static String formatRating(double rate) {
-        return formatRating(Math.round((float) rate));
-    }
+		return replace(dateWithAgo, replacements);
+	}
 
-    public static String formatRating(int rate) {
-        String star = Homestead.language.get("default.star");
+	public static String formatRating(double rate) {
+		return formatRating(Math.round((float) rate));
+	}
 
-        switch (rate) {
-            case 1:
-                return ChatColorTranslator.translate("&#FF0000" + star.repeat(1));
-            case 2:
-                return ChatColorTranslator.translate("&#FF5900" + star.repeat(2));
-            case 3:
-                return ChatColorTranslator.translate("&#FFE600" + star.repeat(3));
-            case 4:
-                return ChatColorTranslator.translate("&#80FF00" + star.repeat(4));
-            case 5:
-                return ChatColorTranslator.translate("&#00FF08" + star.repeat(5));
-            default:
-                return getNone();
-        }
-    }
+	public static String formatRating(int rate) {
+		String star = Homestead.language.get("default.star");
 
-    public static String formatRemainingTime(long time) {
-        long currentTime = System.currentTimeMillis();
+		switch (rate) {
+			case 1:
+				return ChatColorTranslator.translate("&#FF0000" + star.repeat(1));
+			case 2:
+				return ChatColorTranslator.translate("&#FF5900" + star.repeat(2));
+			case 3:
+				return ChatColorTranslator.translate("&#FFE600" + star.repeat(3));
+			case 4:
+				return ChatColorTranslator.translate("&#80FF00" + star.repeat(4));
+			case 5:
+				return ChatColorTranslator.translate("&#00FF08" + star.repeat(5));
+			default:
+				return getNone();
+		}
+	}
 
-        long differenceMillis = time - currentTime;
-        long totalSeconds = differenceMillis / 1000;
+	public static String formatRemainingTime(long time) {
+		long currentTime = System.currentTimeMillis();
 
-        long days = totalSeconds / 86400;
-        long remaining = totalSeconds % 86400;
+		long differenceMillis = time - currentTime;
+		long totalSeconds = differenceMillis / 1000;
 
-        long hours = remaining / 3600;
-        remaining = remaining % 3600;
+		long days = totalSeconds / 86400;
+		long remaining = totalSeconds % 86400;
 
-        long minutes = remaining / 60;
-        long seconds = remaining % 60;
+		long hours = remaining / 3600;
+		remaining = remaining % 3600;
 
-        HashMap<String, String> replacements = new HashMap<String, String>();
+		long minutes = remaining / 60;
+		long seconds = remaining % 60;
 
-        replacements.put("{d}", String.valueOf(days));
-        replacements.put("{h}", String.valueOf(hours));
-        replacements.put("{m}", String.valueOf(minutes));
-        replacements.put("{s}", String.valueOf(seconds));
+		HashMap<String, String> replacements = new HashMap<String, String>();
 
-        return ChatColorTranslator
-                .translate(replace(Homestead.config.get("formatters.remaining-time"), replacements));
-    }
+		replacements.put("{d}", String.valueOf(days));
+		replacements.put("{h}", String.valueOf(hours));
+		replacements.put("{m}", String.valueOf(minutes));
+		replacements.put("{s}", String.valueOf(seconds));
 
-    public static String formatPaginationMenuTitle(String title, int currentPage, int totalPages) {
-        HashMap<String, String> replacements = new HashMap<String, String>();
+		return ChatColorTranslator
+				.translate(replace(Homestead.config.get("formatters.remaining-time"), replacements));
+	}
 
-        replacements.put("{title}", title);
-        replacements.put("{current-page}", String.valueOf(currentPage));
-        replacements.put("{total-pages}", String.valueOf(totalPages));
+	public static String formatPaginationMenuTitle(String title, int currentPage, int totalPages) {
+		HashMap<String, String> replacements = new HashMap<String, String>();
 
-        return ChatColorTranslator
-                .translate(replace(Homestead.config.get("formatters.gui-pagination-title"), replacements));
-    }
+		replacements.put("{title}", title);
+		replacements.put("{current-page}", String.valueOf(currentPage));
+		replacements.put("{total-pages}", String.valueOf(totalPages));
 
-    public static String getPlayerOwnedRegions(OfflinePlayer player) {
-        List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
+		return ChatColorTranslator
+				.translate(replace(Homestead.config.get("formatters.gui-pagination-title"), replacements));
+	}
 
-        if (regions.size() == 0) {
-            return getNone();
-        }
+	public static String getPlayerOwnedRegions(OfflinePlayer player) {
+		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
 
-        String format = Homestead.config.get("formatters.player-regions");
+		if (regions.size() == 0) {
+			return getNone();
+		}
 
-        return ChatColorTranslator.translate(regions.stream()
-                .map((region) -> format.replace("{region}", region.getName()))
-                .collect(Collectors.joining(Homestead.config.get("formatters.player-regions-joining"))));
-    }
+		String format = Homestead.config.get("formatters.player-regions");
 
-    public static String getPlayerTrustedRegions(OfflinePlayer player) {
-        List<Region> regions = RegionsManager.getRegionsHasPlayerAsMember(player);
+		return ChatColorTranslator.translate(regions.stream()
+				.map((region) -> format.replace("{region}", region.getName()))
+				.collect(Collectors.joining(Homestead.config.get("formatters.player-regions-joining"))));
+	}
 
-        if (regions.size() == 0) {
-            return getNone();
-        }
+	public static String getPlayerTrustedRegions(OfflinePlayer player) {
+		List<Region> regions = RegionsManager.getRegionsHasPlayerAsMember(player);
 
-        String format = Homestead.config.get("formatters.player-regions");
+		if (regions.size() == 0) {
+			return getNone();
+		}
 
-        return ChatColorTranslator.translate(regions.stream()
-                .map((region) -> format.replace("{region}", region.getName()))
-                .collect(Collectors.joining(Homestead.config.get("formatters.player-regions-joining"))));
-    }
+		String format = Homestead.config.get("formatters.player-regions");
 
-    public static String getMembersOfRegion(Region region) {
-        List<SerializableMember> members = region.getMembers();
+		return ChatColorTranslator.translate(regions.stream()
+				.map((region) -> format.replace("{region}", region.getName()))
+				.collect(Collectors.joining(Homestead.config.get("formatters.player-regions-joining"))));
+	}
 
-        if (members.size() == 0) {
-            return getNone();
-        }
+	public static String getMembersOfRegion(Region region) {
+		List<SerializableMember> members = region.getMembers();
 
-        String format = Homestead.config.get("formatters.region-members");
+		if (members.size() == 0) {
+			return getNone();
+		}
 
-        return ChatColorTranslator.translate(members.stream()
-                .map((member) -> format.replace("{playername}", member.getBukkitOfflinePlayer().getName()))
-                .collect(Collectors.joining(Homestead.config.get("formatters.region-members-joining"))));
-    }
+		String format = Homestead.config.get("formatters.region-members");
 
-    public static String getRegionsOfWar(War war) {
-        List<Region> regions = war.getRegions();
+		return ChatColorTranslator.translate(members.stream()
+				.map((member) -> format.replace("{playername}", member.getBukkitOfflinePlayer().getName()))
+				.collect(Collectors.joining(Homestead.config.get("formatters.region-members-joining"))));
+	}
 
-        if (regions.size() == 0) {
-            return getNone();
-        }
+	public static String getRegionsOfWar(War war) {
+		List<Region> regions = war.getRegions();
 
-        String format = Homestead.config.get("formatters.war-regions");
+		if (regions.size() == 0) {
+			return getNone();
+		}
 
-        return ChatColorTranslator.translate(regions.stream()
-                .map((region) -> format.replace("{region}", region.getName()))
-                .collect(Collectors.joining(Homestead.config.get("formatters.war-regions-joining"))));
-    }
+		String format = Homestead.config.get("formatters.war-regions");
 
-    public static String getNone() {
-        return ChatColorTranslator.translate(Homestead.language.get("default.none"));
-    }
+		return ChatColorTranslator.translate(regions.stream()
+				.map((region) -> format.replace("{region}", region.getName()))
+				.collect(Collectors.joining(Homestead.config.get("formatters.war-regions-joining"))));
+	}
 
-    public static String getBoolean(boolean value) {
-        return ChatColorTranslator.translate(Homestead.language.get(value ? "default.isTrue" : "default.isFalse"));
-    }
+	public static String getNone() {
+		return ChatColorTranslator.translate(Homestead.language.get("default.none"));
+	}
 
-    public static String getEnabled(boolean value) {
-        return ChatColorTranslator
-                .translate(Homestead.language.get(value ? "default.isEnabled" : "default.isDisabled"));
-    }
+	public static String getBoolean(boolean value) {
+		return ChatColorTranslator.translate(Homestead.language.get(value ? "default.isTrue" : "default.isFalse"));
+	}
 
-    public static String getFlag(boolean value) {
-        return ChatColorTranslator.translate(Homestead.language.get(value ? "default.flagSet" : "default.flagUnset"));
-    }
+	public static String getEnabled(boolean value) {
+		return ChatColorTranslator
+				.translate(Homestead.language.get(value ? "default.isEnabled" : "default.isDisabled"));
+	}
 
-    public static String getPlayerStatus(OfflinePlayer player) {
-        return ChatColorTranslator
-                .translate(Bukkit.getBannedPlayers().contains(player) ? Homestead.language.get("default.banned")
-                        : (player.isOnline() ? Homestead.language.get("default.online")
-                                : Homestead.language.get("default.offline")));
-    }
+	public static String getFlag(boolean value) {
+		return ChatColorTranslator.translate(Homestead.language.get(value ? "default.flagSet" : "default.flagUnset"));
+	}
 
-    public static String getAgo(long time) {
-        long currentTime = System.currentTimeMillis();
+	public static String getPlayerStatus(OfflinePlayer player) {
+		return ChatColorTranslator
+				.translate(Bukkit.getBannedPlayers().contains(player) ? Homestead.language.get("default.banned")
+						: (player.isOnline() ? Homestead.language.get("default.online")
+						: Homestead.language.get("default.offline")));
+	}
 
-        long differenceMillis = currentTime - time;
-        long totalSeconds = differenceMillis / 1000;
+	public static String getAgo(long time) {
+		long currentTime = System.currentTimeMillis();
 
-        long days = totalSeconds / 86400;
-        long remaining = totalSeconds % 86400;
+		long differenceMillis = currentTime - time;
+		long totalSeconds = differenceMillis / 1000;
 
-        long hours = remaining / 3600;
-        remaining = remaining % 3600;
+		long days = totalSeconds / 86400;
+		long remaining = totalSeconds % 86400;
 
-        long minutes = remaining / 60;
-        long seconds = remaining % 60;
+		long hours = remaining / 3600;
+		remaining = remaining % 3600;
 
-        if (days != 0) {
-            return ((String) Homestead.config.get("formatters.ago-days")).replace("{v}", String.valueOf(days));
-        }
+		long minutes = remaining / 60;
+		long seconds = remaining % 60;
 
-        if (hours != 0) {
-            return ((String) Homestead.config.get("formatters.ago-hours")).replace("{v}", String.valueOf(hours));
-        }
+		if (days != 0) {
+			return ((String) Homestead.config.get("formatters.ago-days")).replace("{v}", String.valueOf(days));
+		}
 
-        if (minutes != 0) {
-            return ((String) Homestead.config.get("formatters.ago-minutes")).replace("{v}", String.valueOf(minutes));
-        }
+		if (hours != 0) {
+			return ((String) Homestead.config.get("formatters.ago-hours")).replace("{v}", String.valueOf(hours));
+		}
 
-        if (seconds != 0) {
-            return ((String) Homestead.config.get("formatters.ago-seconds")).replace("{v}", String.valueOf(seconds));
-        }
+		if (minutes != 0) {
+			return ((String) Homestead.config.get("formatters.ago-minutes")).replace("{v}", String.valueOf(minutes));
+		}
 
-        return "0";
-    }
+		if (seconds != 0) {
+			return ((String) Homestead.config.get("formatters.ago-seconds")).replace("{v}", String.valueOf(seconds));
+		}
+
+		return "0";
+	}
 }

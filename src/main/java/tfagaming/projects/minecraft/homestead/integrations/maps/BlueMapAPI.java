@@ -1,24 +1,16 @@
 package tfagaming.projects.minecraft.homestead.integrations.maps;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-
 import com.flowpowered.math.vector.Vector2i;
 import com.technicjelle.BMUtils.Cheese;
-
 import de.bluecolored.bluemap.api.BlueMapMap;
+import de.bluecolored.bluemap.api.markers.ExtrudeMarker;
 import de.bluecolored.bluemap.api.markers.Marker;
 import de.bluecolored.bluemap.api.markers.MarkerSet;
 import de.bluecolored.bluemap.api.markers.POIMarker;
-import de.bluecolored.bluemap.api.markers.ExtrudeMarker;
 import de.bluecolored.bluemap.api.math.Color;
 import de.bluecolored.bluemap.api.math.Shape;
-
 import org.bukkit.Location;
 import org.bukkit.World;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -27,6 +19,11 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+
 /**
  * BlueMap integration for Homestead regions.
  * Uses {@link ExtrudeMarker}s for claimed areas and a {@link POIMarker} for the region home.
@@ -34,217 +31,217 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
  */
 public class BlueMapAPI {
 
-    private static final String MARKER_SET_ID = "homestead:regions";
-    private final Map<World, MarkerSet> markerSets = new HashMap<>();
-    private final de.bluecolored.bluemap.api.BlueMapAPI api;
+	private static final String MARKER_SET_ID = "homestead:regions";
+	private final Map<World, MarkerSet> markerSets = new HashMap<>();
+	private final de.bluecolored.bluemap.api.BlueMapAPI api;
 
-    /**
-     * Creates a new BlueMapAPI handler and triggers an initial update.
-     *
-     * @param plugin the Homestead plugin instance
-     * @param api    the active BlueMap API instance
-     */
-    public BlueMapAPI(Homestead plugin, de.bluecolored.bluemap.api.BlueMapAPI api) {
-        this.api = api;
-        update();
-    }
+	/**
+	 * Creates a new BlueMapAPI handler and triggers an initial update.
+	 *
+	 * @param plugin the Homestead plugin instance
+	 * @param api    the active BlueMap API instance
+	 */
+	public BlueMapAPI(Homestead plugin, de.bluecolored.bluemap.api.BlueMapAPI api) {
+		this.api = api;
+		update();
+	}
 
-    /**
-     * Clears only Homestead markers on all BlueMap maps and also clears markers
-     * inside cached sets to avoid stale, unattached instances.
-     */
-    public void clearAllMarkers() {
-        for (BlueMapMap map : api.getMaps()) {
-            MarkerSet set = map.getMarkerSets().get(MARKER_SET_ID);
-            if (set != null) set.getMarkers().clear();
-        }
-        for (MarkerSet cached : markerSets.values()) {
-            cached.getMarkers().clear();
-        }
-    }
+	/**
+	 * Clears only Homestead markers on all BlueMap maps and also clears markers
+	 * inside cached sets to avoid stale, unattached instances.
+	 */
+	public void clearAllMarkers() {
+		for (BlueMapMap map : api.getMaps()) {
+			MarkerSet set = map.getMarkerSets().get(MARKER_SET_ID);
+			if (set != null) set.getMarkers().clear();
+		}
+		for (MarkerSet cached : markerSets.values()) {
+			cached.getMarkers().clear();
+		}
+	}
 
-    /**
-     * Returns the {@link MarkerSet} for the specified world and (re-)binds it
-     * to every BlueMap map of that world. This method is idempotent and safe to
-     * call repeatedly, even if BlueMap loads worlds later than this integration.
-     *
-     * @param world the Bukkit world (may be null)
-     * @return the corresponding marker set or {@code null} if world is null
-     */
-    public MarkerSet getOrNewMarkerSet(World world) {
-        if (world == null) return null;
+	/**
+	 * Returns the {@link MarkerSet} for the specified world and (re-)binds it
+	 * to every BlueMap map of that world. This method is idempotent and safe to
+	 * call repeatedly, even if BlueMap loads worlds later than this integration.
+	 *
+	 * @param world the Bukkit world (may be null)
+	 * @return the corresponding marker set or {@code null} if world is null
+	 */
+	public MarkerSet getOrNewMarkerSet(World world) {
+		if (world == null) return null;
 
-        MarkerSet set = markerSets.computeIfAbsent(world,
-                w -> MarkerSet.builder().label("Homestead Regions").build());
+		MarkerSet set = markerSets.computeIfAbsent(world,
+				w -> MarkerSet.builder().label("Homestead Regions").build());
 
-        api.getWorld(world).ifPresent(bmWorld -> {
-            for (BlueMapMap map : bmWorld.getMaps()) {
-                Map<String, MarkerSet> mapSets = map.getMarkerSets();
-                if (mapSets.get(MARKER_SET_ID) != set) {
-                    mapSets.put(MARKER_SET_ID, set);
-                }
-            }
-        });
+		api.getWorld(world).ifPresent(bmWorld -> {
+			for (BlueMapMap map : bmWorld.getMaps()) {
+				Map<String, MarkerSet> mapSets = map.getMarkerSets();
+				if (mapSets.get(MARKER_SET_ID) != set) {
+					mapSets.put(MARKER_SET_ID, set);
+				}
+			}
+		});
 
-        return set;
-    }
+		return set;
+	}
 
-    /**
-     * Creates and adds all map markers for a given region.
-     *
-     * @param region the region to display on BlueMap
-     */
-    public void addRegionMarker(Region region) {
-        if (region == null || region.getChunks() == null || region.getChunks().isEmpty()) return;
+	/**
+	 * Creates and adds all map markers for a given region.
+	 *
+	 * @param region the region to display on BlueMap
+	 */
+	public void addRegionMarker(Region region) {
+		if (region == null || region.getChunks() == null || region.getChunks().isEmpty()) return;
 
-        boolean isOperator = PlayerUtils.isOperator(region.getOwner());
+		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
-        Map<String, String> replacements = new HashMap<>();
-        replacements.put("{region}", region.getName());
-        replacements.put("{region-owner}", region.getOwner().getName());
-        replacements.put("{region-members}", ChatColorTranslator.removeColor(
-                Formatters.getMembersOfRegion(region), false));
-        replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
-        replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
-        replacements.put("{region-description}", region.getDescription());
-        replacements.put("{region-size}", String.valueOf(region.getChunks().size() * 256));
+		Map<String, String> replacements = new HashMap<>();
+		replacements.put("{region}", region.getName());
+		replacements.put("{region-owner}", region.getOwner().getName());
+		replacements.put("{region-members}", ChatColorTranslator.removeColor(
+				Formatters.getMembersOfRegion(region), false));
+		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
+		replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
+		replacements.put("{region-description}", region.getDescription());
+		replacements.put("{region-size}", String.valueOf(region.getChunks().size() * 256));
 
-        String hoverTextRaw = Formatters.replace(
-                isOperator
-                        ? Homestead.config.get("dynamic-maps.chunks.operator-description")
-                        : Homestead.config.get("dynamic-maps.chunks.description"),
-                replacements
-        );
+		String hoverTextRaw = Formatters.replace(
+				isOperator
+						? Homestead.config.get("dynamic-maps.chunks.operator-description")
+						: Homestead.config.get("dynamic-maps.chunks.description"),
+				replacements
+		);
 
-        String plainLabel = region.getName() + " (#" + RegionsManager.getGlobalRank(region.getUniqueId()) + ")";
-        plainLabel = ChatColorTranslator.removeColor(plainLabel, false)
-                .replaceAll("<[^>]*>", "")
-                .replaceAll("&lt;[^&]*&gt;", "")
-                .trim();
+		String plainLabel = region.getName() + " (#" + RegionsManager.getGlobalRank(region.getUniqueId()) + ")";
+		plainLabel = ChatColorTranslator.removeColor(plainLabel, false)
+				.replaceAll("<[^>]*>", "")
+				.replaceAll("&lt;[^&]*&gt;", "")
+				.trim();
 
-        String hoverText = hoverTextRaw
-                .replaceAll("&lt;", "<")
-                .replaceAll("&gt;", ">");
+		String hoverText = hoverTextRaw
+				.replaceAll("&lt;", "<")
+				.replaceAll("&gt;", ">");
 
-        int chunkColor = region.getMapColor() == 0
-                ? (isOperator
-                ? Homestead.config.get("dynamic-maps.chunks.operator-color")
-                : Homestead.config.get("dynamic-maps.chunks.color"))
-                : region.getMapColor();
+		int chunkColor = region.getMapColor() == 0
+				? (isOperator
+				? Homestead.config.get("dynamic-maps.chunks.operator-color")
+				: Homestead.config.get("dynamic-maps.chunks.color"))
+				: region.getMapColor();
 
-        int chunkTransparencyInfill = Homestead.config.get("dynamic-maps.chunks.transparency-fill");
-        int chunkTransparencyOutline = Homestead.config.get("dynamic-maps.chunks.transparency-outline");
+		int chunkTransparencyInfill = Homestead.config.get("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Homestead.config.get("dynamic-maps.chunks.transparency-outline");
 
-        World world = resolveRegionWorld(region);
-        if (world == null) return;
+		World world = resolveRegionWorld(region);
+		if (world == null) return;
 
-        MarkerSet markerSet = getOrNewMarkerSet(world);
-        if (markerSet == null) return;
+		MarkerSet markerSet = getOrNewMarkerSet(world);
+		if (markerSet == null) return;
 
-        Map<String, Marker> markers = markerSet.getMarkers();
+		Map<String, Marker> markers = markerSet.getMarkers();
 
-        Vector2i[] chunkCoordinates = region.getChunks().stream()
-                .map(sc -> new Vector2i(sc.getX(), sc.getZ()))
-                .toArray(Vector2i[]::new);
-        if (chunkCoordinates.length == 0) return;
+		Vector2i[] chunkCoordinates = region.getChunks().stream()
+				.map(sc -> new Vector2i(sc.getX(), sc.getZ()))
+				.toArray(Vector2i[]::new);
+		if (chunkCoordinates.length == 0) return;
 
-        Collection<Cheese> platter;
-        try {
-            platter = Cheese.createPlatterFromChunks(chunkCoordinates);
-        } catch (Throwable t) {
-            Homestead.getInstance().getLogger().log(
-                    Level.WARNING,
-                    "BlueMap: Could not create shapes for region " + region.getName() +
-                            " (" + region.getUniqueId() + "): " + t.getMessage(), t
-            );
-            return;
-        }
+		Collection<Cheese> platter;
+		try {
+			platter = Cheese.createPlatterFromChunks(chunkCoordinates);
+		} catch (Throwable t) {
+			Homestead.getInstance().getLogger().log(
+					Level.WARNING,
+					"BlueMap: Could not create shapes for region " + region.getName() +
+							" (" + region.getUniqueId() + "): " + t.getMessage(), t
+			);
+			return;
+		}
 
-        float minY = world.getMinHeight();
-        float maxY = world.getMaxHeight();
+		float minY = world.getMinHeight();
+		float maxY = world.getMaxHeight();
 
-        int i = 0;
-        for (Cheese cheese : platter) {
-            ExtrudeMarker.Builder builder = ExtrudeMarker.builder()
-                    .label(plainLabel)
-                    .detail(hoverText)
-                    .shape(cheese.getShape(), minY, maxY)
-                    .fillColor(new Color(chunkColor, chunkTransparencyInfill))
-                    .lineColor(new Color(chunkColor, chunkTransparencyOutline))
-                    .lineWidth(2)
-                    .depthTestEnabled(false);
+		int i = 0;
+		for (Cheese cheese : platter) {
+			ExtrudeMarker.Builder builder = ExtrudeMarker.builder()
+					.label(plainLabel)
+					.detail(hoverText)
+					.shape(cheese.getShape(), minY, maxY)
+					.fillColor(new Color(chunkColor, chunkTransparencyInfill))
+					.lineColor(new Color(chunkColor, chunkTransparencyOutline))
+					.lineWidth(2)
+					.depthTestEnabled(false);
 
-            if (!cheese.getHoles().isEmpty()) {
-                builder.holes(cheese.getHoles().toArray(Shape[]::new));
-            }
+			if (!cheese.getHoles().isEmpty()) {
+				builder.holes(cheese.getHoles().toArray(Shape[]::new));
+			}
 
-            ExtrudeMarker marker = builder.build();
-            String markerId = "region-" + region.getUniqueId() + "-area-" + (i++);
-            markers.put(markerId, marker);
-        }
+			ExtrudeMarker marker = builder.build();
+			String markerId = "region-" + region.getUniqueId() + "-area-" + (i++);
+			markers.put(markerId, marker);
+		}
 
-        addRegionSpawnLocation(world, markerSet, region, hoverText);
-    }
+		addRegionSpawnLocation(world, markerSet, region, hoverText);
+	}
 
-    /**
-     * Adds a {@link POIMarker} for the region’s home or spawn location,
-     * only if the location is in the same world as the given marker set.
-     *
-     * @param world     the Bukkit world that the marker set belongs to
-     * @param markerSet the marker set the POI will be added to
-     * @param region    the region that owns the home
-     * @param hoverText the hover text to display for the marker
-     */
-    public void addRegionSpawnLocation(World world, MarkerSet markerSet, Region region, String hoverText) {
-        if (markerSet == null || region == null || region.getLocation() == null) return;
+	/**
+	 * Adds a {@link POIMarker} for the region’s home or spawn location,
+	 * only if the location is in the same world as the given marker set.
+	 *
+	 * @param world     the Bukkit world that the marker set belongs to
+	 * @param markerSet the marker set the POI will be added to
+	 * @param region    the region that owns the home
+	 * @param hoverText the hover text to display for the marker
+	 */
+	public void addRegionSpawnLocation(World world, MarkerSet markerSet, Region region, String hoverText) {
+		if (markerSet == null || region == null || region.getLocation() == null) return;
 
-        Location loc = region.getLocation().getBukkitLocation();
-        if (loc == null || loc.getWorld() == null || !loc.getWorld().equals(world)) return;
+		Location loc = region.getLocation().getBukkitLocation();
+		if (loc == null || loc.getWorld() == null || !loc.getWorld().equals(world)) return;
 
-        POIMarker marker = POIMarker.builder()
-                .label(region.getName() + " Home")
-                .detail(hoverText)
-                .position(loc.getX(), loc.getY(), loc.getZ())
-                .maxDistance(1000)
-                .build();
+		POIMarker marker = POIMarker.builder()
+				.label(region.getName() + " Home")
+				.detail(hoverText)
+				.position(loc.getX(), loc.getY(), loc.getZ())
+				.maxDistance(1000)
+				.build();
 
-        String markerId = "region-" + region.getUniqueId() + "-home";
-        markerSet.getMarkers().put(markerId, marker);
-    }
+		String markerId = "region-" + region.getUniqueId() + "-home";
+		markerSet.getMarkers().put(markerId, marker);
+	}
 
-    /**
-     * Rebuilds all Homestead region markers across every world.
-     */
-    public void update() {
-        clearAllMarkers();
-        for (Region region : RegionsManager.getAll()) {
-            addRegionMarker(region);
-        }
-    }
+	/**
+	 * Rebuilds all Homestead region markers across every world.
+	 */
+	public void update() {
+		clearAllMarkers();
+		for (Region region : RegionsManager.getAll()) {
+			addRegionMarker(region);
+		}
+	}
 
-    /**
-     * Resolves the world for the given region using its home first, then any claimed chunk.
-     *
-     * @param region the region to resolve world for
-     * @return the resolved world or {@code null} if none could be determined
-     */
-    private World resolveRegionWorld(Region region) {
-        if (region.getLocation() != null && region.getLocation().getWorld() != null) {
-            return region.getLocation().getWorld();
-        }
+	/**
+	 * Resolves the world for the given region using its home first, then any claimed chunk.
+	 *
+	 * @param region the region to resolve world for
+	 * @return the resolved world or {@code null} if none could be determined
+	 */
+	private World resolveRegionWorld(Region region) {
+		if (region.getLocation() != null && region.getLocation().getWorld() != null) {
+			return region.getLocation().getWorld();
+		}
 
-        if (region.getChunks() != null) {
-            for (SerializableChunk sc : region.getChunks()) {
-                if (sc == null) continue;
-                World w = sc.getWorld();
-                if (w != null) return w;
+		if (region.getChunks() != null) {
+			for (SerializableChunk sc : region.getChunks()) {
+				if (sc == null) continue;
+				World w = sc.getWorld();
+				if (w != null) return w;
 
-                if (sc.getWorldName() != null) {
-                    World byName = org.bukkit.Bukkit.getWorld(sc.getWorldName());
-                    if (byName != null) return byName;
-                }
-            }
-        }
-        return null;
-    }
+				if (sc.getWorldName() != null) {
+					World byName = org.bukkit.Bukkit.getWorld(sc.getWorldName());
+					if (byName != null) return byName;
+				}
+			}
+		}
+		return null;
+	}
 }

@@ -1,25 +1,21 @@
 package tfagaming.projects.minecraft.homestead.commands.commands.subcommands.admin;
 
-import java.util.*;
-
+import biz.princeps.landlord.api.ILandLord;
+import biz.princeps.landlord.api.IOwnedLand;
+import com.cjburkey.claimchunk.ClaimChunk;
+import com.cjburkey.claimchunk.chunk.ChunkPos;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.ChunkCoordinate;
 import me.angeschossen.lands.api.land.Land;
+import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.william278.huskclaims.api.BukkitHuskClaimsAPI;
-import net.william278.huskclaims.api.HuskClaimsAPI;
 import net.william278.huskclaims.claim.ClaimWorld;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-
-import com.cjburkey.claimchunk.ClaimChunk;
-import com.cjburkey.claimchunk.chunk.ChunkPos;
-
-import biz.princeps.landlord.api.ILandLord;
-import biz.princeps.landlord.api.IOwnedLand;
-import me.ryanhamshire.GriefPrevention.*;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
@@ -28,334 +24,336 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
+import java.util.*;
+
 public class ImportDataSubCmd extends SubCommandBuilder {
-    public ImportDataSubCmd() {
-        super("importdata");
-    }
+	public ImportDataSubCmd() {
+		super("importdata");
+	}
+
+	public static boolean isGriefPreventionInstalled() {
+		try {
+			GriefPrevention.instance.getClass();
+
+			return Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention") != null
+					&& Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention").isEnabled();
+		} catch (NoClassDefFoundError e) {
+			return false;
+		}
+	}
+
+	public static boolean isLandLordInstalled() {
+		try {
+			return Bukkit.getServer().getPluginManager().getPlugin("LandLord") != null
+					&& Bukkit.getServer().getPluginManager().getPlugin("LandLord").isEnabled();
+		} catch (NoClassDefFoundError e) {
+			return false;
+		}
+	}
+
+	public static boolean isClaimChunkInstalled() {
+		try {
+			ClaimChunk.getInstance();
+
+			return Bukkit.getServer().getPluginManager().getPlugin("ClaimChunk") != null
+					&& Bukkit.getServer().getPluginManager().getPlugin("ClaimChunk").isEnabled();
+		} catch (NoClassDefFoundError e) {
+			return false;
+		}
+	}
+
+	public static boolean isLandsInstalled() {
+		try {
+			return Bukkit.getServer().getPluginManager().getPlugin("Lands") != null
+					&& Bukkit.getServer().getPluginManager().getPlugin("Lands").isEnabled();
+		} catch (NoClassDefFoundError e) {
+			return false;
+		}
+	}
+
+	public static boolean isHuskClaimsInstalled() {
+		try {
+			return Bukkit.getServer().getPluginManager().getPlugin("HuskClaims") != null
+					&& Bukkit.getServer().getPluginManager().getPlugin("HuskClaims").isEnabled();
+		} catch (NoClassDefFoundError e) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean onExecution(CommandSender sender, String[] args) {
+		if (args.length < 2) {
+			PlayerUtils.sendMessage(sender, 0);
+			return true;
+		}
+
+		String pluginInput = args[1];
+
+		switch (pluginInput.toLowerCase()) {
+			case "griefprevention": {
+				if (!isGriefPreventionInstalled()) {
+					PlayerUtils.sendMessage(sender, 114);
+					return true;
+				}
+
+				int imported = 0;
+
+				Collection<Claim> claims = GriefPrevention.instance.dataStore.getClaims();
+
+				for (Claim claim : claims) {
+					OfflinePlayer owner = Homestead.getInstance().getOfflinePlayerSync(claim.getOwnerID());
+
+					if (owner == null) {
+						continue;
+					}
+
+					Region region = RegionsManager.createRegion(owner.getName(),
+							Bukkit.getOfflinePlayer(claim.getOwnerID()),
+							true);
+
+					for (Chunk chunk : claim.getChunks()) {
+						if (!ChunksManager.isChunkClaimed(chunk)) {
+							ChunksManager.claimChunk(region.getUniqueId(), chunk);
+						}
+					}
+
+					Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
+							+ region.getUniqueId().toString() + ", Owner = " + owner.getName() + " ("
+							+ owner.getUniqueId() + ")");
+
+					imported++;
+				}
+
+				Map<String, String> replacements = new HashMap<>();
+				replacements.put("{regions}", String.valueOf(imported));
+
+				PlayerUtils.sendMessage(sender, 115, replacements);
 
-    @Override
-    public boolean onExecution(CommandSender sender, String[] args) {
-        if (args.length < 2) {
-            PlayerUtils.sendMessage(sender, 0);
-            return true;
-        }
+				break;
+			}
+			case "landlord": {
+				if (!isLandLordInstalled()) {
+					PlayerUtils.sendMessage(sender, 114);
+					return true;
+				}
 
-        String pluginInput = args[1];
+				int imported = 0;
 
-        switch (pluginInput.toLowerCase()) {
-            case "griefprevention": {
-                if (!isGriefPreventionInstalled()) {
-                    PlayerUtils.sendMessage(sender, 114);
-                    return true;
-                }
+				ILandLord landlord = getLandLordInstance();
 
-                int imported = 0;
+				Set<IOwnedLand> chunks = landlord.getWGManager().getRegions();
 
-                Collection<Claim> claims = GriefPrevention.instance.dataStore.getClaims();
+				for (IOwnedLand chunk : chunks) {
+					OfflinePlayer owner = Bukkit.getOfflinePlayer(chunk.getOwner());
 
-                for (Claim claim : claims) {
-                    OfflinePlayer owner = Homestead.getInstance().getOfflinePlayerSync(claim.getOwnerID());
+					if (RegionsManager.getRegionsOwnedByPlayer(owner).size() == 0) {
+						Region region = RegionsManager.createRegion(owner.getName(),
+								owner, true);
 
-                    if (owner == null) {
-                        continue;
-                    }
+						if (!ChunksManager.isChunkClaimed(chunk.getChunk())) {
+							ChunksManager.claimChunk(region.getUniqueId(), chunk.getChunk());
+						}
 
-                    Region region = RegionsManager.createRegion(owner.getName(),
-                            Bukkit.getOfflinePlayer(claim.getOwnerID()),
-                            true);
+						for (UUID friendUuid : chunk.getFriends()) {
+							OfflinePlayer friend = Homestead.getInstance().getOfflinePlayerSync(friendUuid);
 
-                    for (Chunk chunk : claim.getChunks()) {
-                        if (!ChunksManager.isChunkClaimed(chunk)) {
-                            ChunksManager.claimChunk(region.getUniqueId(), chunk);
-                        }
-                    }
+							if (friend == null) {
+								continue;
+							}
 
-                    Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
-                            + region.getUniqueId().toString() + ", Owner = " + owner.getName() + " ("
-                            + owner.getUniqueId().toString() + ")");
+							if (!region.isPlayerMember(friend)) {
+								region.addMember(friend);
 
-                    imported++;
-                }
+								region.setMemberFlags(region.getMember(friend), region.getPlayerFlags());
+							}
+						}
 
-                Map<String, String> replacements = new HashMap<>();
-                replacements.put("{regions}", String.valueOf(imported));
+						Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
+								+ region.getUniqueId().toString() + ", Owner = " + owner.getName() + " ("
+								+ owner.getUniqueId() + ")");
 
-                PlayerUtils.sendMessage(sender, 115, replacements);
+						imported++;
+					} else {
+						Region region = RegionsManager.getRegionsOwnedByPlayer(owner).get(0);
 
-                break;
-            }
-            case "landlord": {
-                if (!isLandLordInstalled()) {
-                    PlayerUtils.sendMessage(sender, 114);
-                    return true;
-                }
+						for (UUID friendUuid : chunk.getFriends()) {
+							OfflinePlayer friend = Homestead.getInstance().getOfflinePlayerSync(friendUuid);
 
-                int imported = 0;
+							if (friend == null) {
+								continue;
+							}
 
-                ILandLord landlord = getLandLordInstance();
+							if (!region.isPlayerMember(friend)) {
+								region.addMember(friend);
 
-                Set<IOwnedLand> chunks = landlord.getWGManager().getRegions();
+								region.setMemberFlags(region.getMember(friend), region.getPlayerFlags());
+							}
+						}
 
-                for (IOwnedLand chunk : chunks) {
-                    OfflinePlayer owner = Bukkit.getOfflinePlayer(chunk.getOwner());
+						if (!ChunksManager.isChunkClaimed(chunk.getChunk())) {
+							ChunksManager.claimChunk(region.getUniqueId(), chunk.getChunk());
+						}
+					}
+				}
 
-                    if (RegionsManager.getRegionsOwnedByPlayer(owner).size() == 0) {
-                        Region region = RegionsManager.createRegion(owner.getName(),
-                                owner, true);
+				Map<String, String> replacements = new HashMap<>();
+				replacements.put("{regions}", String.valueOf(imported));
 
-                        if (!ChunksManager.isChunkClaimed(chunk.getChunk())) {
-                            ChunksManager.claimChunk(region.getUniqueId(), chunk.getChunk());
-                        }
+				PlayerUtils.sendMessage(sender, 115, replacements);
 
-                        for (UUID friendUuid : chunk.getFriends()) {
-                            OfflinePlayer friend = Homestead.getInstance().getOfflinePlayerSync(friendUuid);
+				break;
+			}
+			case "claimchunk": {
+				if (!isClaimChunkInstalled()) {
+					PlayerUtils.sendMessage(sender, 114);
+					return true;
+				}
 
-                            if (friend == null) {
-                                continue;
-                            }
+				int imported = 0;
 
-                            if (!region.isPlayerMember(friend)) {
-                                region.addMember(friend);
+				ClaimChunk claimChunk = ClaimChunk.getInstance();
 
-                                region.setMemberFlags(region.getMember(friend), region.getPlayerFlags());
-                            }
-                        }
+				for (OfflinePlayer offlinePlayer : Homestead.getInstance().getOfflinePlayersSync()) {
+					if (offlinePlayer.getName() == null) {
+						continue;
+					}
 
-                        Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
-                                + region.getUniqueId().toString() + ", Owner = " + owner.getName() + " ("
-                                + owner.getUniqueId().toString() + ")");
+					ChunkPos[] chunkPositions = claimChunk.getChunkHandler()
+							.getClaimedChunks(offlinePlayer.getUniqueId());
 
-                        imported++;
-                    } else {
-                        Region region = RegionsManager.getRegionsOwnedByPlayer(owner).get(0);
+					Region region = RegionsManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
 
-                        for (UUID friendUuid : chunk.getFriends()) {
-                            OfflinePlayer friend = Homestead.getInstance().getOfflinePlayerSync(friendUuid);
+					for (ChunkPos chunkPos : chunkPositions) {
+						Chunk chunk = ChunksManager.getFromLocation(Bukkit.getWorld(chunkPos.world()), chunkPos.x(),
+								chunkPos.z());
 
-                            if (friend == null) {
-                                continue;
-                            }
+						if (!ChunksManager.isChunkClaimed(chunk)) {
+							ChunksManager.claimChunk(region.getUniqueId(), chunk);
+						}
+					}
 
-                            if (!region.isPlayerMember(friend)) {
-                                region.addMember(friend);
+					Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
+							+ region.getUniqueId().toString() + ", Owner = " + offlinePlayer.getName() + " ("
+							+ offlinePlayer.getUniqueId() + ")");
 
-                                region.setMemberFlags(region.getMember(friend), region.getPlayerFlags());
-                            }
-                        }
+					imported++;
+				}
 
-                        if (!ChunksManager.isChunkClaimed(chunk.getChunk())) {
-                            ChunksManager.claimChunk(region.getUniqueId(), chunk.getChunk());
-                        }
-                    }
-                }
+				Map<String, String> replacements = new HashMap<>();
+				replacements.put("{regions}", String.valueOf(imported));
 
-                Map<String, String> replacements = new HashMap<>();
-                replacements.put("{regions}", String.valueOf(imported));
+				PlayerUtils.sendMessage(sender, 115, replacements);
 
-                PlayerUtils.sendMessage(sender, 115, replacements);
+				break;
+			}
+			case "lands": {
+				if (!isLandsInstalled()) {
+					PlayerUtils.sendMessage(sender, 114);
+					return true;
+				}
 
-                break;
-            }
-            case "claimchunk": {
-                if (!isClaimChunkInstalled()) {
-                    PlayerUtils.sendMessage(sender, 114);
-                    return true;
-                }
+				int imported = 0;
 
-                int imported = 0;
+				LandsIntegration landsApi = getLandsInstance();
 
-                ClaimChunk claimChunk = ClaimChunk.getInstance();
+				for (Land land : landsApi.getLands()) {
+					OfflinePlayer owner = Homestead.getInstance().getOfflinePlayerSync(land.getOwnerUID());
 
-                for (OfflinePlayer offlinePlayer : Homestead.getInstance().getOfflinePlayersSync()) {
-                    if (offlinePlayer.getName() == null) {
-                        continue;
-                    }
+					if (owner == null) {
+						continue;
+					}
 
-                    ChunkPos[] chunkPositions = claimChunk.getChunkHandler()
-                            .getClaimedChunks(offlinePlayer.getUniqueId());
+					Region region = RegionsManager.createRegion(owner.getName(), owner, true);
 
-                    Region region = RegionsManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
+					for (World world : Bukkit.getWorlds()) {
+						for (ChunkCoordinate chunkCoord : Objects.requireNonNull(land.getChunks(world))) {
+							Chunk chunk = ChunksManager.getFromLocation(world, chunkCoord.getX(), chunkCoord.getZ());
 
-                    for (ChunkPos chunkPos : chunkPositions) {
-                        Chunk chunk = ChunksManager.getFromLocation(Bukkit.getWorld(chunkPos.world()), chunkPos.x(),
-                                chunkPos.z());
+							if (!ChunksManager.isChunkClaimed(chunk)) {
+								ChunksManager.claimChunk(region.getUniqueId(), chunk);
+							}
+						}
+					}
 
-                        if (!ChunksManager.isChunkClaimed(chunk)) {
-                            ChunksManager.claimChunk(region.getUniqueId(), chunk);
-                        }
-                    }
+					Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
+							+ region.getUniqueId().toString() + ", Owner = " + owner.getName() + " ("
+							+ owner.getUniqueId() + ")");
 
-                    Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
-                            + region.getUniqueId().toString() + ", Owner = " + offlinePlayer.getName() + " ("
-                            + offlinePlayer.getUniqueId().toString() + ")");
+					imported++;
+				}
 
-                    imported++;
-                }
+				Map<String, String> replacements = new HashMap<>();
+				replacements.put("{regions}", String.valueOf(imported));
 
-                Map<String, String> replacements = new HashMap<>();
-                replacements.put("{regions}", String.valueOf(imported));
+				PlayerUtils.sendMessage(sender, 115, replacements);
 
-                PlayerUtils.sendMessage(sender, 115, replacements);
+				break;
+			}
+			// this api gave me headache, please do not touch it
+			case "huskclaims": {
+				if (!isHuskClaimsInstalled()) {
+					PlayerUtils.sendMessage(sender, 114);
+					return true;
+				}
 
-                break;
-            }
-            case "lands": {
-                if (!isLandsInstalled()) {
-                    PlayerUtils.sendMessage(sender, 114);
-                    return true;
-                }
+				int imported = 0;
 
-                int imported = 0;
+				BukkitHuskClaimsAPI api = BukkitHuskClaimsAPI.getInstance();
 
-                LandsIntegration landsApi = getLandsInstance();
+				for (OfflinePlayer offlinePlayer : Homestead.getInstance().getOfflinePlayersSync()) {
+					if (offlinePlayer.getName() == null) {
+						continue;
+					}
 
-                for (Land land : landsApi.getLands()) {
-                    OfflinePlayer owner = Homestead.getInstance().getOfflinePlayerSync(land.getOwnerUID());
+					Region region = RegionsManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
 
-                    if (owner == null) {
-                        continue;
-                    }
+					for (World world : Bukkit.getWorlds()) {
+						net.william278.huskclaims.position.World hcWorld = api.getWorld(world.getName());
 
-                    Region region = RegionsManager.createRegion(owner.getName(), owner, true);
+						Optional<ClaimWorld> claimWorld = api.getClaimWorld(hcWorld);
 
-                    for (World world : Bukkit.getWorlds()) {
-                        for (ChunkCoordinate chunkCoord : Objects.requireNonNull(land.getChunks(world))) {
-                            Chunk chunk = ChunksManager.getFromLocation(world, chunkCoord.getX(), chunkCoord.getZ());
+						claimWorld.ifPresent(claimWorld1 -> {
+							claimWorld1.getClaims().forEach(claim -> {
+								net.william278.huskclaims.claim.Region region1 = claim.getRegion();
 
-                            if (!ChunksManager.isChunkClaimed(chunk)) {
-                                ChunksManager.claimChunk(region.getUniqueId(), chunk);
-                            }
-                        }
-                    }
+								region1.getChunks().forEach(claimChunk -> {
+									Chunk chunk = ChunksManager.getFromLocation(world, claimChunk[0], claimChunk[1]);
 
-                    Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
-                            + region.getUniqueId().toString() + ", Owner = " + owner.getName() + " ("
-                            + owner.getUniqueId().toString() + ")");
+									if (!ChunksManager.isChunkClaimed(chunk)) {
+										ChunksManager.claimChunk(region.getUniqueId(), chunk);
+									}
+								});
+							});
+						});
 
-                    imported++;
-                }
+						Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
+								+ region.getUniqueId().toString() + ", Owner = " + offlinePlayer.getName() + " ("
+								+ offlinePlayer.getUniqueId() + ")");
 
-                Map<String, String> replacements = new HashMap<>();
-                replacements.put("{regions}", String.valueOf(imported));
+						imported++;
+					}
+				}
 
-                PlayerUtils.sendMessage(sender, 115, replacements);
-
-                break;
-            }
-            // this api gave me headache, please do not touch it
-            case "huskclaims": {
-                if (!isHuskClaimsInstalled()) {
-                    PlayerUtils.sendMessage(sender, 114);
-                    return true;
-                }
-
-                int imported = 0;
-
-                BukkitHuskClaimsAPI api = BukkitHuskClaimsAPI.getInstance();
-
-                for (OfflinePlayer offlinePlayer : Homestead.getInstance().getOfflinePlayersSync()) {
-                    if (offlinePlayer.getName() == null) {
-                        continue;
-                    }
-
-                    Region region = RegionsManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
-
-                    for (World world : Bukkit.getWorlds()) {
-                        net.william278.huskclaims.position.World hcWorld = api.getWorld(world.getName());
-
-                        Optional<ClaimWorld> claimWorld = api.getClaimWorld(hcWorld);
-
-                        claimWorld.ifPresent(claimWorld1 -> {
-                            claimWorld1.getClaims().forEach(claim -> {
-                                net.william278.huskclaims.claim.Region region1 = claim.getRegion();
-
-                                region1.getChunks().forEach(claimChunk -> {
-                                    Chunk chunk = ChunksManager.getFromLocation(world, claimChunk[0], claimChunk[1]);
-
-                                    if (!ChunksManager.isChunkClaimed(chunk)) {
-                                        ChunksManager.claimChunk(region.getUniqueId(), chunk);
-                                    }
-                                });
-                            });
-                        });
-
-                        Logger.info("Imported a region; Name = " + region.getName() + ", ID = "
-                                + region.getUniqueId().toString() + ", Owner = " + offlinePlayer.getName() + " ("
-                                + offlinePlayer.getUniqueId().toString() + ")");
-
-                        imported++;
-                    }
-                }
-
-                Map<String, String> replacements = new HashMap<>();
-                replacements.put("{regions}", String.valueOf(imported));
-
-                PlayerUtils.sendMessage(sender, 115, replacements);
-
-                break;
-            }
-            default:
-                PlayerUtils.sendMessage(sender, 113);
-                break;
-        }
-
-        return true;
-    }
-
-    public static boolean isGriefPreventionInstalled() {
-        try {
-            GriefPrevention.instance.getClass();
-
-            return Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention") != null
-                    && Bukkit.getServer().getPluginManager().getPlugin("GriefPrevention").isEnabled();
-        } catch (NoClassDefFoundError e) {
-            return false;
-        }
-    }
-
-    public static boolean isLandLordInstalled() {
-        try {
-            return Bukkit.getServer().getPluginManager().getPlugin("LandLord") != null
-                    && Bukkit.getServer().getPluginManager().getPlugin("LandLord").isEnabled();
-        } catch (NoClassDefFoundError e) {
-            return false;
-        }
-    }
-
-    public static boolean isClaimChunkInstalled() {
-        try {
-            ClaimChunk.getInstance();
-
-            return Bukkit.getServer().getPluginManager().getPlugin("ClaimChunk") != null
-                    && Bukkit.getServer().getPluginManager().getPlugin("ClaimChunk").isEnabled();
-        } catch (NoClassDefFoundError e) {
-            return false;
-        }
-    }
-
-    public static boolean isLandsInstalled() {
-        try {
-            return Bukkit.getServer().getPluginManager().getPlugin("Lands") != null
-                    && Bukkit.getServer().getPluginManager().getPlugin("Lands").isEnabled();
-        } catch (NoClassDefFoundError e) {
-            return false;
-        }
-    }
-
-    public static boolean isHuskClaimsInstalled() {
-        try {
-            return Bukkit.getServer().getPluginManager().getPlugin("HuskClaims") != null
-                    && Bukkit.getServer().getPluginManager().getPlugin("HuskClaims").isEnabled();
-        } catch (NoClassDefFoundError e) {
-            return false;
-        }
-    }
-
-    public ILandLord getLandLordInstance() {
-        return (ILandLord) Bukkit.getServer().getPluginManager().getPlugin("Landlord");
-    }
-
-    public LandsIntegration getLandsInstance() {
-        return new LandsIntegration(Homestead.getInstance());
-    }
+				Map<String, String> replacements = new HashMap<>();
+				replacements.put("{regions}", String.valueOf(imported));
+
+				PlayerUtils.sendMessage(sender, 115, replacements);
+
+				break;
+			}
+			default:
+				PlayerUtils.sendMessage(sender, 113);
+				break;
+		}
+
+		return true;
+	}
+
+	public ILandLord getLandLordInstance() {
+		return (ILandLord) Bukkit.getServer().getPluginManager().getPlugin("Landlord");
+	}
+
+	public LandsIntegration getLandsInstance() {
+		return new LandsIntegration(Homestead.getInstance());
+	}
 }

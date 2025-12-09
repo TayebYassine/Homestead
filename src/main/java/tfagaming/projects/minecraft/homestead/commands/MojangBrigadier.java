@@ -10,8 +10,8 @@ import org.bukkit.command.PluginCommand;
 import tfagaming.projects.minecraft.homestead.Homestead;
 
 public class MojangBrigadier {
-	private Homestead plugin;
-	private Commodore commodore;
+	private final Homestead plugin;
+	private final Commodore commodore;
 
 	public MojangBrigadier(Homestead plugin, Commodore commodore) {
 		this.plugin = plugin;
@@ -121,7 +121,7 @@ public class MojangBrigadier {
 										StringArgumentType.string())))
 						.then(LiteralArgumentBuilder.literal("rename")
 								.then(RequiredArgumentBuilder.argument("subarea",
-										StringArgumentType.string())
+												StringArgumentType.string())
 										.then(RequiredArgumentBuilder.argument(
 												"newname",
 												StringArgumentType
@@ -134,9 +134,9 @@ public class MojangBrigadier {
 										.argument("subarea", StringArgumentType
 												.string())
 										.then(RequiredArgumentBuilder.argument(
-												"flag",
-												StringArgumentType
-														.string())
+														"flag",
+														StringArgumentType
+																.string())
 												.then(RequiredArgumentBuilder
 														.argument("state",
 																StringArgumentType
@@ -152,7 +152,7 @@ public class MojangBrigadier {
 								StringArgumentType.string())))
 				.then(LiteralArgumentBuilder.literal("visit")
 						.then(RequiredArgumentBuilder.argument("name",
-								StringArgumentType.string())
+										StringArgumentType.string())
 								.then(RequiredArgumentBuilder.argument("index",
 										IntegerArgumentType.integer(0, 32767)))))
 				.then(LiteralArgumentBuilder.literal("war")

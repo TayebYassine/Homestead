@@ -5,59 +5,59 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 
 public class SerializableBlock {
-    private String worldName;
-    private int x;
-    private int y;
-    private int z;
+	private final String worldName;
+	private final int x;
+	private final int y;
+	private final int z;
 
-    public SerializableBlock(Block block) {
-        this.worldName = block.getWorld().getName();
-        this.x = block.getX();
-        this.y = block.getY();
-        this.z = block.getZ();
-    }
+	public SerializableBlock(Block block) {
+		this.worldName = block.getWorld().getName();
+		this.x = block.getX();
+		this.y = block.getY();
+		this.z = block.getZ();
+	}
 
-    public SerializableBlock(String worldName, int x, int y, int z) {
-        this.worldName = worldName;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
+	public SerializableBlock(String worldName, int x, int y, int z) {
+		this.worldName = worldName;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
 
-    public World getWorld() {
-        return Bukkit.getWorld(worldName);
-    }
+	public static SerializableBlock fromString(String string) {
+		String[] splitted = string.split(",");
 
-    public int getX() {
-        return x;
-    }
+		return new SerializableBlock(splitted[0], Integer.parseInt(splitted[1]), Integer.parseInt(splitted[2]), Integer.parseInt(splitted[3]));
+	}
 
-    public int getY() {
-        return y;
-    }
+	public World getWorld() {
+		return Bukkit.getWorld(worldName);
+	}
 
-    public int getZ() {
-        return z;
-    }
+	public int getX() {
+		return x;
+	}
 
-    @Override
-    public String toString() {
-        return (worldName + "," + x + "," + y + "," + z);
-    }
+	public int getY() {
+		return y;
+	}
 
-    public static SerializableBlock fromString(String string) {
-        String[] splitted = string.split(",");
+	public int getZ() {
+		return z;
+	}
 
-        return new SerializableBlock(splitted[0], Integer.parseInt(splitted[1]), Integer.parseInt(splitted[2]), Integer.parseInt(splitted[3]));
-    }
+	@Override
+	public String toString() {
+		return (worldName + "," + x + "," + y + "," + z);
+	}
 
-    public Block getBlock() {
-        World world = getWorld();
+	public Block getBlock() {
+		World world = getWorld();
 
-        if (world == null) {
-            return null;
-        }
+		if (world == null) {
+			return null;
+		}
 
-        return world.getBlockAt(x, y, z);
-    }
+		return world.getBlockAt(x, y, z);
+	}
 }

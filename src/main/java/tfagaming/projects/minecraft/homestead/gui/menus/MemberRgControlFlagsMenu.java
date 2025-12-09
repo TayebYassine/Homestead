@@ -16,82 +16,82 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.*;
 
 public class MemberRgControlFlagsMenu {
-    private final HashSet<UUID> cooldowns = new HashSet<>();
+	private final HashSet<UUID> cooldowns = new HashSet<>();
 
-    public MemberRgControlFlagsMenu(Player player, Region region, SerializableMember member) {
-        List<ItemStack> items = new ArrayList<>();
+	public MemberRgControlFlagsMenu(Player player, Region region, SerializableMember member) {
+		List<ItemStack> items = new ArrayList<>();
 
-        for (String flagString : RegionControlFlags.getFlags()) {
-            boolean value = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), RegionControlFlags.valueOf(flagString));
+		for (String flagString : RegionControlFlags.getFlags()) {
+			boolean value = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), RegionControlFlags.valueOf(flagString));
 
-            items.add(MenuUtils.getFlagButton(flagString, value));
-        }
+			items.add(MenuUtils.getFlagButton(flagString, value));
+		}
 
-        PaginationMenu gui = new PaginationMenu(
-                MenuUtils.getTitle(7).replace("{playername}", member.getBukkitOfflinePlayer().getName()), 9 * 5,
-                MenuUtils.getNextPageButton(),
-                MenuUtils.getPreviousPageButton(), items, (_player, event) -> {
-                    new RegionMembersMenu(player, region);
-                }, (_player, context) -> {
-                    if (cooldowns.contains(player.getUniqueId())) {
-                        return;
-                    }
+		PaginationMenu gui = new PaginationMenu(
+				MenuUtils.getTitle(7).replace("{playername}", member.getBukkitOfflinePlayer().getName()), 9 * 5,
+				MenuUtils.getNextPageButton(),
+				MenuUtils.getPreviousPageButton(), items, (_player, event) -> {
+			new RegionMembersMenu(player, region);
+		}, (_player, context) -> {
+			if (cooldowns.contains(player.getUniqueId())) {
+				return;
+			}
 
-                    boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+			boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
 
-                    if (!isOwnerOrOperator) {
-                        PlayerUtils.sendMessage(player, 159);
-                        return;
-                    }
+			if (!isOwnerOrOperator) {
+				PlayerUtils.sendMessage(player, 159);
+				return;
+			}
 
-                    String flagString = RegionControlFlags.getFlags().get(context.getIndex());
+			String flagString = RegionControlFlags.getFlags().get(context.getIndex());
 
-                    List<String> disabledFlags = Homestead.config.get("disabled-flags");
+			List<String> disabledFlags = Homestead.config.get("disabled-flags");
 
-                    if (disabledFlags.contains(flagString)) {
-                        PlayerUtils.sendMessage(player, 42);
-                        return;
-                    }
+			if (disabledFlags.contains(flagString)) {
+				PlayerUtils.sendMessage(player, 42);
+				return;
+			}
 
-                    long flag = RegionControlFlags.valueOf(flagString);
+			long flag = RegionControlFlags.valueOf(flagString);
 
-                    if (context.getEvent().isLeftClick()) {
-                        PaginationMenu instance = context.getInstance();
+			if (context.getEvent().isLeftClick()) {
+				PaginationMenu instance = context.getInstance();
 
-                        long flags = member.getRegionControlFlags();
+				long flags = member.getRegionControlFlags();
 
-                        boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
-                        long newFlags;
+				boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
+				long newFlags;
 
-                        if (isSet) {
-                            newFlags = FlagsCalculator.removeFlag(flags, flag);
-                        } else {
-                            newFlags = FlagsCalculator.addFlag(flags, flag);
-                        }
+				if (isSet) {
+					newFlags = FlagsCalculator.removeFlag(flags, flag);
+				} else {
+					newFlags = FlagsCalculator.addFlag(flags, flag);
+				}
 
-                        region.setMemberRegionControlFlags(member, newFlags);
+				region.setMemberRegionControlFlags(member, newFlags);
 
-                        cooldowns.add(player.getUniqueId());
+				cooldowns.add(player.getUniqueId());
 
-                        player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+				player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
 
-                        Map<String, String> replacements = new HashMap<String, String>();
-                        replacements.put("{flag}", flagString);
-                        replacements.put("{state}", Formatters.getFlag(!isSet));
-                        replacements.put("{region}", region.getName());
-                        replacements.put("{player}", member.getBukkitOfflinePlayer().getName());
+				Map<String, String> replacements = new HashMap<String, String>();
+				replacements.put("{flag}", flagString);
+				replacements.put("{state}", Formatters.getFlag(!isSet));
+				replacements.put("{region}", region.getName());
+				replacements.put("{player}", member.getBukkitOfflinePlayer().getName());
 
-                        PlayerUtils.sendMessage(player, 43, replacements);
+				PlayerUtils.sendMessage(player, 43, replacements);
 
-                        instance.replaceSlot(context.getIndex(),
-                                MenuUtils.getFlagButton(flagString, !isSet));
+				instance.replaceSlot(context.getIndex(),
+						MenuUtils.getFlagButton(flagString, !isSet));
 
-                        Homestead.getInstance().runAsyncTaskLater(() -> {
-                            cooldowns.remove(player.getUniqueId());
-                        }, 1);
-                    }
-                });
+				Homestead.getInstance().runAsyncTaskLater(() -> {
+					cooldowns.remove(player.getUniqueId());
+				}, 1);
+			}
+		});
 
-        gui.open(player, MenuUtils.getEmptySlot());
-    }
+		gui.open(player, MenuUtils.getEmptySlot());
+	}
 }

@@ -1,8 +1,11 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -11,16 +14,11 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.particles.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
-
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,188 +26,188 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SelectionToolListener implements Listener {
-    private static final HashSet<UUID> cooldowns = new HashSet<>();
-    private static final HashMap<UUID, Selection> sessions = new HashMap<>();
-    private static final HashMap<UUID, BukkitTask> tasks = new HashMap<>();
+	private static final HashSet<UUID> cooldowns = new HashSet<>();
+	private static final HashMap<UUID, Selection> sessions = new HashMap<>();
+	private static final HashMap<UUID, BukkitTask> tasks = new HashMap<>();
 
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        ItemStack item = player.getInventory().getItemInMainHand();
+	public static void cancelPlayerSession(Player player) {
+		if (sessions.containsKey(player.getUniqueId())) {
+			sessions.remove(player.getUniqueId());
 
-        if (item != null && item.getType() == getSelectionToolType()) {
-            UUID playerId = player.getUniqueId();
+			SelectedAreaParticlesSpawner.cancelTask(player);
+		}
 
-            sessions.putIfAbsent(playerId, new Selection());
+		cancelTask(player);
+	}
 
-            Selection selection = sessions.get(playerId);
+	public static void cancelTask(BukkitTask task, Player player) {
+		if (task != null) {
+			tasks.remove(player.getUniqueId());
 
-            Map<String, String> replacements = new HashMap<>();
+			task.cancel();
+			task = null;
+		}
+	}
 
-            if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                event.setCancelled(true);
+	public static void cancelTask(Player player) {
+		BukkitTask task = tasks.get(player.getUniqueId());
 
-                if (cooldowns.contains(player.getUniqueId())) {
-                    return;
-                }
+		if (task != null) {
+			tasks.remove(player.getUniqueId());
 
-                Block firstPosition = event.getClickedBlock();
+			task.cancel();
+			task = null;
+		}
+	}
 
-                if (selection.getSecondPosition() != null && !firstPosition.getWorld().getName()
-                        .equals(selection.getSecondPosition().getWorld().getName())) {
-                    return;
-                }
+	public static Selection getPlayerSession(Player player) {
+		Selection selection = sessions.get(player.getUniqueId());
 
-                selection.setFirstPosition(firstPosition);
+		if (selection == null || selection.getSecondPosition() == null || selection.getFirstPosition() == null) {
+			return null;
+		}
 
-                cooldowns.add(player.getUniqueId());
+		return selection;
+	}
 
-                Homestead.getInstance().runAsyncTaskLater(() -> {
-                    cooldowns.remove(player.getUniqueId());
-                }, 1);
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		ItemStack item = player.getInventory().getItemInMainHand();
 
-                replacements.put("{location}", Formatters.formatLocation(firstPosition.getLocation()));
+		if (item != null && item.getType() == getSelectionToolType()) {
+			UUID playerId = player.getUniqueId();
 
-                sendActionBarMessage(player, "firstCorner");
+			sessions.putIfAbsent(playerId, new Selection());
 
-                if (selection.getSecondPosition() != null && selection.getFirstPosition() != null) {
-                    sendActionBarMessage(player, "selectionDone");
+			Selection selection = sessions.get(playerId);
 
-                    new SelectedAreaParticlesSpawner(player, new SerializableBlock(selection.getFirstPosition()),
-                            new SerializableBlock(selection.getSecondPosition()));
-                }
-            } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                event.setCancelled(true);
+			Map<String, String> replacements = new HashMap<>();
 
-                if (cooldowns.contains(player.getUniqueId())) {
-                    return;
-                }
+			if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+				event.setCancelled(true);
 
-                Block secondPosition = event.getClickedBlock();
+				if (cooldowns.contains(player.getUniqueId())) {
+					return;
+				}
 
-                if (selection.getFirstPosition() != null && !secondPosition.getWorld().getName()
-                        .equals(selection.getFirstPosition().getWorld().getName())) {
-                    return;
-                }
+				Block firstPosition = event.getClickedBlock();
 
-                selection.setSecondPosition(secondPosition);
+				if (selection.getSecondPosition() != null && !firstPosition.getWorld().getName()
+						.equals(selection.getSecondPosition().getWorld().getName())) {
+					return;
+				}
 
-                cooldowns.add(player.getUniqueId());
+				selection.setFirstPosition(firstPosition);
 
-                Homestead.getInstance().runAsyncTaskLater(() -> {
-                    cooldowns.remove(player.getUniqueId());
-                }, 1);
+				cooldowns.add(player.getUniqueId());
 
-                replacements.put("{location}", Formatters.formatLocation(secondPosition.getLocation()));
+				Homestead.getInstance().runAsyncTaskLater(() -> {
+					cooldowns.remove(player.getUniqueId());
+				}, 1);
 
-                sendActionBarMessage(player, "secondCorner");
+				replacements.put("{location}", Formatters.formatLocation(firstPosition.getLocation()));
 
-                if (selection.getSecondPosition() != null && selection.getFirstPosition() != null) {
-                    sendActionBarMessage(player, "selectionDone");
+				sendActionBarMessage(player, "firstCorner");
 
-                    new SelectedAreaParticlesSpawner(player, new SerializableBlock(selection.getFirstPosition()),
-                            new SerializableBlock(selection.getSecondPosition()));
-                }
-            }
-        }
-    }
+				if (selection.getSecondPosition() != null && selection.getFirstPosition() != null) {
+					sendActionBarMessage(player, "selectionDone");
 
-    @EventHandler
-    public void onPlayerItemHeld(PlayerItemHeldEvent event) {
-        Player player = event.getPlayer();
-        ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
-        UUID playerId = player.getUniqueId();
+					new SelectedAreaParticlesSpawner(player, new SerializableBlock(selection.getFirstPosition()),
+							new SerializableBlock(selection.getSecondPosition()));
+				}
+			} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				event.setCancelled(true);
 
-        if (newItem == null || newItem.getType() != getSelectionToolType()) {
-            cancelPlayerSession(player);
-        } else {
-            sessions.putIfAbsent(playerId, new Selection());
+				if (cooldowns.contains(player.getUniqueId())) {
+					return;
+				}
 
-            sendActionBarMessage(player, "none");
-        }
-    }
+				Block secondPosition = event.getClickedBlock();
 
-    public static void cancelPlayerSession(Player player) {
-        if (sessions.containsKey(player.getUniqueId())) {
-            sessions.remove(player.getUniqueId());
+				if (selection.getFirstPosition() != null && !secondPosition.getWorld().getName()
+						.equals(selection.getFirstPosition().getWorld().getName())) {
+					return;
+				}
 
-            SelectedAreaParticlesSpawner.cancelTask(player);
-        }
+				selection.setSecondPosition(secondPosition);
 
-        cancelTask(player);
-    }
+				cooldowns.add(player.getUniqueId());
 
-    public static void cancelTask(BukkitTask task, Player player) {
-        if (task != null) {
-            tasks.remove(player.getUniqueId());
+				Homestead.getInstance().runAsyncTaskLater(() -> {
+					cooldowns.remove(player.getUniqueId());
+				}, 1);
 
-            task.cancel();
-            task = null;
-        }
-    }
+				replacements.put("{location}", Formatters.formatLocation(secondPosition.getLocation()));
 
-    public static void cancelTask(Player player) {
-        BukkitTask task = tasks.get(player.getUniqueId());
+				sendActionBarMessage(player, "secondCorner");
 
-        if (task != null) {
-            tasks.remove(player.getUniqueId());
+				if (selection.getSecondPosition() != null && selection.getFirstPosition() != null) {
+					sendActionBarMessage(player, "selectionDone");
 
-            task.cancel();
-            task = null;
-        }
-    }
+					new SelectedAreaParticlesSpawner(player, new SerializableBlock(selection.getFirstPosition()),
+							new SerializableBlock(selection.getSecondPosition()));
+				}
+			}
+		}
+	}
 
-    private void sendActionBarMessage(Player player, String path) {
-        String message = Homestead.config.get("selection-tool.messages." + path);
+	@EventHandler
+	public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+		Player player = event.getPlayer();
+		ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
+		UUID playerId = player.getUniqueId();
 
-        cancelTask(player);
+		if (newItem == null || newItem.getType() != getSelectionToolType()) {
+			cancelPlayerSession(player);
+		} else {
+			sessions.putIfAbsent(playerId, new Selection());
 
-        BukkitTask task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                        new TextComponent(ChatColorTranslator
-                                .translate(message)));
-            }
-        }.runTaskTimer(Homestead.getInstance(), 0L, 20L);
+			sendActionBarMessage(player, "none");
+		}
+	}
 
-        tasks.put(player.getUniqueId(), task);
-    }
+	private void sendActionBarMessage(Player player, String path) {
+		String message = Homestead.config.get("selection-tool.messages." + path);
 
-    private Material getSelectionToolType() {
-        String itemString = Homestead.config.get("selection-tool.item");
+		cancelTask(player);
 
-        return Material.getMaterial(itemString);
-    }
+		BukkitTask task = new BukkitRunnable() {
+			@Override
+			public void run() {
+				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+						new TextComponent(ChatColorTranslator
+								.translate(message)));
+			}
+		}.runTaskTimer(Homestead.getInstance(), 0L, 20L);
 
-    public static Selection getPlayerSession(Player player) {
-        Selection selection = sessions.get(player.getUniqueId());
+		tasks.put(player.getUniqueId(), task);
+	}
 
-        if (selection == null || selection.getSecondPosition() == null || selection.getFirstPosition() == null) {
-            return null;
-        }
+	private Material getSelectionToolType() {
+		String itemString = Homestead.config.get("selection-tool.item");
 
-        return selection;
-    }
+		return Material.getMaterial(itemString);
+	}
 
-    public static class Selection {
-        private Block firstPosition;
-        private Block secondPosition;
+	public static class Selection {
+		private Block firstPosition;
+		private Block secondPosition;
 
-        public void setFirstPosition(Block firstPosition) {
-            this.firstPosition = firstPosition;
-        }
+		public Block getFirstPosition() {
+			return firstPosition;
+		}
 
-        public void setSecondPosition(Block secondPosition) {
-            this.secondPosition = secondPosition;
-        }
+		public void setFirstPosition(Block firstPosition) {
+			this.firstPosition = firstPosition;
+		}
 
-        public Block getFirstPosition() {
-            return firstPosition;
-        }
+		public Block getSecondPosition() {
+			return secondPosition;
+		}
 
-        public Block getSecondPosition() {
-            return secondPosition;
-        }
-    }
+		public void setSecondPosition(Block secondPosition) {
+			this.secondPosition = secondPosition;
+		}
+	}
 }

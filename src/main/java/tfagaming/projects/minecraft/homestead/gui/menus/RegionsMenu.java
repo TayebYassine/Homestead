@@ -30,208 +30,208 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RegionsMenu {
 
-    /**
-     * Per-session toggle storage for the "show all regions" operator mode.
-     * Contains the UUIDs of operators who have enabled the mode.
-     */
-    private static final Set<UUID> ADMIN_SHOW_ALL = ConcurrentHashMap.newKeySet();
+	/**
+	 * Per-session toggle storage for the "show all regions" operator mode.
+	 * Contains the UUIDs of operators who have enabled the mode.
+	 */
+	private static final Set<UUID> ADMIN_SHOW_ALL = ConcurrentHashMap.newKeySet();
 
-    /**
-     * The list of regions to display for the current viewer. Contents depend on
-     * whether the operator toggle is enabled.
-     */
-    private List<Region> regions = new ArrayList<>();
+	/**
+	 * The list of regions to display for the current viewer. Contents depend on
+	 * whether the operator toggle is enabled.
+	 */
+	private List<Region> regions = new ArrayList<>();
 
-    /**
-     * Returns whether the given player has "show all regions" mode enabled.
-     *
-     * @param p player
-     * @return true if player is op and has the toggle enabled
-     */
-    private static boolean isShowAllEnabled(Player p) {
-        return PlayerUtils.isOperator(p) && ADMIN_SHOW_ALL.contains(p.getUniqueId());
-    }
+	/**
+	 * Constructs and opens the regions pagination menu for the given player.
+	 * <ul>
+	 *     <li>Index 0 (operators only): toggle item to show all regions.</li>
+	 *     <li>Left-click on region: open {@link RegionMenu}.</li>
+	 *     <li>Right-click on region: teleport to region spawn if permitted
+	 *         (OP or owner or both {@link PlayerFlags#TELEPORT_SPAWN} and
+	 *         {@link PlayerFlags#PASSTHROUGH} are set for the player).</li>
+	 *     <li>Shift+Left on region: set as targeted region.</li>
+	 *     <li>Shift+Right on region: open {@link RegionInfoMenu}.</li>
+	 * </ul>
+	 *
+	 * @param player viewer
+	 */
+	public RegionsMenu(Player player) {
+		this.regions = computeRegionList(player);
 
-    /**
-     * Toggles the "show all regions" mode for the given player.
-     * No-op for non-operators.
-     *
-     * @param p player
-     */
-    private static void toggleShowAll(Player p) {
-        if (!PlayerUtils.isOperator(p)) return;
+		PaginationMenu gui = new PaginationMenu(
+				MenuUtils.getTitle(0),
+				9 * 4,
+				MenuUtils.getNextPageButton(),
+				MenuUtils.getPreviousPageButton(),
+				getItems(player),
+				(_player, event) -> _player.closeInventory(),
+				(_player, context) -> {
+					boolean hasToggle = PlayerUtils.isOperator(_player);
+					int index = context.getIndex();
 
-        UUID id = p.getUniqueId();
+					if (hasToggle && index == 0) {
+						if (context.getEvent().isLeftClick()) {
+							toggleShowAll(_player);
 
-        if (!ADMIN_SHOW_ALL.add(id)) ADMIN_SHOW_ALL.remove(id);
-    }
+							player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
 
-    /**
-     * Computes the region list to show for the provided player.
-     * If the operator toggle is enabled, returns all regions; otherwise only
-     * owned regions and regions where the player is a member.
-     *
-     * @param player viewer
-     * @return list of regions to display
-     */
-    private List<Region> computeRegionList(Player player) {
-        if (isShowAllEnabled(player)) {
-            return new ArrayList<>(RegionsManager.getAll());
-        }
-        List<Region> list = new ArrayList<>();
-        list.addAll(RegionsManager.getRegionsOwnedByPlayer(player));
-        list.addAll(RegionsManager.getRegionsHasPlayerAsMember(player));
-        return ListUtils.removeDuplications(list);
-    }
+							new RegionsMenu(_player);
+						}
+						return;
+					}
 
-    /**
-     * Creates the operator-only toggle item that switches between showing all
-     * regions and showing only personal regions. The item's material indicates
-     * the current state (emerald when ON, redstone when OFF).
-     *
-     * @param player viewer
-     * @return toggle item stack
-     */
-    private static ItemStack createAdminToggleItem(Player player) {
-        if (isShowAllEnabled(player)) {
-            return MenuUtils.getButton(62);
-        } else {
-            return MenuUtils.getButton(63);
-        }
-    }
+					if (hasToggle) index--;
 
-    /**
-     * Builds the list of item stacks for the current page.
-     * If the player is an operator, the first item is the toggle item.
-     *
-     * @param player viewer
-     * @return item list for the menu
-     */
-    private List<ItemStack> getItems(Player player) {
-        List<ItemStack> items = new ArrayList<>();
+					if (index < 0 || index >= regions.size()) return;
 
-        if (PlayerUtils.isOperator(player)) {
-            items.add(createAdminToggleItem(player));
-        }
+					Region region = regions.get(index);
 
-        for (Region region : regions) {
-            HashMap<String, String> replacements = new HashMap<>();
-            replacements.put("{region}", region.getName());
-            replacements.put("{region-displayname}", region.getDisplayName());
-            replacements.put("{region-owner}", region.getOwner().getName());
-            replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
-            replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
+					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
+						new RegionInfoMenu(_player, region, () -> new RegionsMenu(_player));
+						return;
+					}
 
-            Region targetRegion = TargetRegionSession.getRegion(player);
-            if (targetRegion != null && targetRegion.getUniqueId().equals(region.getUniqueId())) {
-                items.add(MenuUtils.getButton(5, replacements));
-            } else {
-                items.add(MenuUtils.getButton(4, replacements));
-            }
-        }
+					if (context.getEvent().isRightClick()) {
+						if (region.getLocation() == null) {
+							Map<String, String> replacements = new HashMap<>();
+							replacements.put("{region}", region.getName());
+							PlayerUtils.sendMessage(_player, 71, replacements);
+							return;
+						}
 
-        return items;
-    }
+						boolean allowed = PlayerUtils.isOperator(_player)
+								|| _player.getUniqueId().equals(region.getOwnerId())
+								|| (PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN)
+								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH));
 
-    /**
-     * Constructs and opens the regions pagination menu for the given player.
-     * <ul>
-     *     <li>Index 0 (operators only): toggle item to show all regions.</li>
-     *     <li>Left-click on region: open {@link RegionMenu}.</li>
-     *     <li>Right-click on region: teleport to region spawn if permitted
-     *         (OP or owner or both {@link PlayerFlags#TELEPORT_SPAWN} and
-     *         {@link PlayerFlags#PASSTHROUGH} are set for the player).</li>
-     *     <li>Shift+Left on region: set as targeted region.</li>
-     *     <li>Shift+Right on region: open {@link RegionInfoMenu}.</li>
-     * </ul>
-     *
-     * @param player viewer
-     */
-    public RegionsMenu(Player player) {
-        this.regions = computeRegionList(player);
+						if (!allowed) {
+							Map<String, String> replacements = new HashMap<>();
+							replacements.put("{region}", region.getName());
+							PlayerUtils.sendMessage(_player, 45, replacements);
+							return;
+						}
 
-        PaginationMenu gui = new PaginationMenu(
-                MenuUtils.getTitle(0),
-                9 * 4,
-                MenuUtils.getNextPageButton(),
-                MenuUtils.getPreviousPageButton(),
-                getItems(player),
-                (_player, event) -> _player.closeInventory(),
-                (_player, context) -> {
-                    boolean hasToggle = PlayerUtils.isOperator(_player);
-                    int index = context.getIndex();
+						new DelayedTeleport(_player, region.getLocation().getBukkitLocation());
+						return;
+					}
 
-                    if (hasToggle && index == 0) {
-                        if (context.getEvent().isLeftClick()) {
-                            toggleShowAll(_player);
+					if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
+						if (TargetRegionSession.getRegion(_player) != null
+								&& TargetRegionSession.getRegion(_player).getUniqueId().equals(region.getUniqueId())) {
+							return;
+						}
 
-                            player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+						new TargetRegionSession(_player, region);
+						_player.playSound(_player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
 
-                            new RegionsMenu(_player);
-                        }
-                        return;
-                    }
+						Map<String, String> replacements = new HashMap<>();
+						replacements.put("{region}", region.getName());
+						PlayerUtils.sendMessage(_player, 12, replacements);
 
-                    if (hasToggle) index--;
+						PaginationMenu instance = context.getInstance();
+						regions = computeRegionList(_player);
+						instance.setItems(getItems(_player));
+						return;
+					}
 
-                    if (index < 0 || index >= regions.size()) return;
+					if (context.getEvent().isLeftClick()) {
+						new RegionMenu(_player, region);
+					}
+				}
+		);
 
-                    Region region = regions.get(index);
+		gui.open(player, MenuUtils.getEmptySlot());
+	}
 
-                    if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
-                        new RegionInfoMenu(_player, region, () -> new RegionsMenu(_player));
-                        return;
-                    }
+	/**
+	 * Returns whether the given player has "show all regions" mode enabled.
+	 *
+	 * @param p player
+	 * @return true if player is op and has the toggle enabled
+	 */
+	private static boolean isShowAllEnabled(Player p) {
+		return PlayerUtils.isOperator(p) && ADMIN_SHOW_ALL.contains(p.getUniqueId());
+	}
 
-                    if (context.getEvent().isRightClick()) {
-                        if (region.getLocation() == null) {
-                            Map<String, String> replacements = new HashMap<>();
-                            replacements.put("{region}", region.getName());
-                            PlayerUtils.sendMessage(_player, 71, replacements);
-                            return;
-                        }
+	/**
+	 * Toggles the "show all regions" mode for the given player.
+	 * No-op for non-operators.
+	 *
+	 * @param p player
+	 */
+	private static void toggleShowAll(Player p) {
+		if (!PlayerUtils.isOperator(p)) return;
 
-                        boolean allowed = PlayerUtils.isOperator(_player)
-                                || _player.getUniqueId().equals(region.getOwnerId())
-                                || (PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN)
-                                && PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH));
+		UUID id = p.getUniqueId();
 
-                        if (!allowed) {
-                            Map<String, String> replacements = new HashMap<>();
-                            replacements.put("{region}", region.getName());
-                            PlayerUtils.sendMessage(_player, 45, replacements);
-                            return;
-                        }
+		if (!ADMIN_SHOW_ALL.add(id)) ADMIN_SHOW_ALL.remove(id);
+	}
 
-                        new DelayedTeleport(_player, region.getLocation().getBukkitLocation());
-                        return;
-                    }
+	/**
+	 * Creates the operator-only toggle item that switches between showing all
+	 * regions and showing only personal regions. The item's material indicates
+	 * the current state (emerald when ON, redstone when OFF).
+	 *
+	 * @param player viewer
+	 * @return toggle item stack
+	 */
+	private static ItemStack createAdminToggleItem(Player player) {
+		if (isShowAllEnabled(player)) {
+			return MenuUtils.getButton(62);
+		} else {
+			return MenuUtils.getButton(63);
+		}
+	}
 
-                    if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-                        if (TargetRegionSession.getRegion(_player) != null
-                                && TargetRegionSession.getRegion(_player).getUniqueId().equals(region.getUniqueId())) {
-                            return;
-                        }
+	/**
+	 * Computes the region list to show for the provided player.
+	 * If the operator toggle is enabled, returns all regions; otherwise only
+	 * owned regions and regions where the player is a member.
+	 *
+	 * @param player viewer
+	 * @return list of regions to display
+	 */
+	private List<Region> computeRegionList(Player player) {
+		if (isShowAllEnabled(player)) {
+			return new ArrayList<>(RegionsManager.getAll());
+		}
+		List<Region> list = new ArrayList<>();
+		list.addAll(RegionsManager.getRegionsOwnedByPlayer(player));
+		list.addAll(RegionsManager.getRegionsHasPlayerAsMember(player));
+		return ListUtils.removeDuplications(list);
+	}
 
-                        new TargetRegionSession(_player, region);
-                        _player.playSound(_player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+	/**
+	 * Builds the list of item stacks for the current page.
+	 * If the player is an operator, the first item is the toggle item.
+	 *
+	 * @param player viewer
+	 * @return item list for the menu
+	 */
+	private List<ItemStack> getItems(Player player) {
+		List<ItemStack> items = new ArrayList<>();
 
-                        Map<String, String> replacements = new HashMap<>();
-                        replacements.put("{region}", region.getName());
-                        PlayerUtils.sendMessage(_player, 12, replacements);
+		if (PlayerUtils.isOperator(player)) {
+			items.add(createAdminToggleItem(player));
+		}
 
-                        PaginationMenu instance = context.getInstance();
-                        regions = computeRegionList(_player);
-                        instance.setItems(getItems(_player));
-                        return;
-                    }
+		for (Region region : regions) {
+			HashMap<String, String> replacements = new HashMap<>();
+			replacements.put("{region}", region.getName());
+			replacements.put("{region-displayname}", region.getDisplayName());
+			replacements.put("{region-owner}", region.getOwner().getName());
+			replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
+			replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
 
-                    if (context.getEvent().isLeftClick()) {
-                        new RegionMenu(_player, region);
-                    }
-                }
-        );
+			Region targetRegion = TargetRegionSession.getRegion(player);
+			if (targetRegion != null && targetRegion.getUniqueId().equals(region.getUniqueId())) {
+				items.add(MenuUtils.getButton(5, replacements));
+			} else {
+				items.add(MenuUtils.getButton(4, replacements));
+			}
+		}
 
-        gui.open(player, MenuUtils.getEmptySlot());
-    }
+		return items;
+	}
 }

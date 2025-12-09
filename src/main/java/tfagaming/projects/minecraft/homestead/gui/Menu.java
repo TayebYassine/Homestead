@@ -11,7 +11,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
 
@@ -20,91 +19,89 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class Menu implements Listener {
-    private final Homestead plugin;
-    private final Inventory inventory;
-    private final Map<Integer, BiConsumer<Player, InventoryClickEvent>> callbacks;
+	private final Homestead plugin;
+	private final Inventory inventory;
+	private final Map<Integer, BiConsumer<Player, InventoryClickEvent>> callbacks;
 
-    public Menu(String title, int size) {
-        this.plugin = Homestead.getInstance();
-        this.inventory = Bukkit.createInventory(null, size, ChatColorTranslator.translate(title));
-        this.callbacks = new HashMap<>();
+	public Menu(String title, int size) {
+		this.plugin = Homestead.getInstance();
+		this.inventory = Bukkit.createInventory(null, size, ChatColorTranslator.translate(title));
+		this.callbacks = new HashMap<>();
 
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
+		Bukkit.getPluginManager().registerEvents(this, plugin);
+	}
 
-    public Menu(String title, int size, boolean beautiful) {
-        this.plugin = Homestead.getInstance();
-        this.inventory = Bukkit.createInventory(null, size, ChatColorTranslator.translate(title));
-        this.callbacks = new HashMap<>();
+	public Menu(String title, int size, boolean beautiful) {
+		this.plugin = Homestead.getInstance();
+		this.inventory = Bukkit.createInventory(null, size, ChatColorTranslator.translate(title));
+		this.callbacks = new HashMap<>();
 
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
+		Bukkit.getPluginManager().registerEvents(this, plugin);
+	}
 
-    public void addItem(int slot, ItemStack itemStack, BiConsumer<Player, InventoryClickEvent> callback) {
-        if (slot < 0 || slot >= inventory.getSize()) {
-            return;
-        }
+	public void addItem(int slot, ItemStack itemStack, BiConsumer<Player, InventoryClickEvent> callback) {
+		if (slot < 0 || slot >= inventory.getSize()) {
+			return;
+		}
 
-        inventory.setItem(slot, itemStack);
-        callbacks.put(slot, callback);
-    }
+		inventory.setItem(slot, itemStack);
+		callbacks.put(slot, callback);
+	}
 
-    public void open(Player player) {
-        player.openInventory(inventory);
+	public void open(Player player) {
+		player.openInventory(inventory);
 
-        InventoryManager.register(player, this);
-    }
+		InventoryManager.register(player, this);
+	}
 
-    public void open(Player player, ItemStack filler) {
-        for (int i = 0; i < inventory.getSize(); i++) {
-            if (inventory.getItem(i) == null) {
-                inventory.setItem(i, filler);
-            }
-        }
+	public void open(Player player, ItemStack filler) {
+		for (int i = 0; i < inventory.getSize(); i++) {
+			if (inventory.getItem(i) == null) {
+				inventory.setItem(i, filler);
+			}
+		}
 
-        player.openInventory(inventory);
+		player.openInventory(inventory);
 
-        InventoryManager.register(player, this);
-    }
+		InventoryManager.register(player, this);
+	}
 
-    public void unregister() {
-        HandlerList.unregisterAll(this);
-    }
+	public void unregister() {
+		HandlerList.unregisterAll(this);
+	}
 
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) {
-            return;
-        }
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent event) {
+		if (!(event.getWhoClicked() instanceof Player player)) {
+			return;
+		}
 
-        Player player = (Player) event.getWhoClicked();
+		if (InventoryManager.getMenu(player) == this && event.getInventory().equals(this.inventory)) {
+			event.setCancelled(true);
 
-        if (InventoryManager.getMenu(player) == this && event.getInventory().equals(this.inventory)) {
-            event.setCancelled(true);
+			int slot = event.getRawSlot();
 
-            int slot = event.getRawSlot();
+			if (callbacks.containsKey(slot)) {
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						callbacks.get(slot).accept(player, event);
+					}
+				}.runTask(plugin);
+			}
+		}
+	}
 
-            if (callbacks.containsKey(slot)) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        callbacks.get(slot).accept(player, event);
-                    }
-                }.runTask(plugin);
-            }
-        }
-    }
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent event) {
+		Player player = (Player) event.getPlayer();
 
-    @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {
-        Player player = (Player) event.getPlayer();
+		if (InventoryManager.getMenu(player) == this) {
+			InventoryManager.unregister(player);
 
-        if (InventoryManager.getMenu(player) == this) {
-            InventoryManager.unregister(player);
-
-            if (!InventoryManager.hasMenu(player)) {
-                unregister();
-            }
-        }
-    }
+			if (!InventoryManager.hasMenu(player)) {
+				unregister();
+			}
+		}
+	}
 }

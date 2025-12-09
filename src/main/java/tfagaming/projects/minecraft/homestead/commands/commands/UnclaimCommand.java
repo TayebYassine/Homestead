@@ -17,70 +17,68 @@ import java.util.List;
 import java.util.Map;
 
 public class UnclaimCommand extends CommandBuilder {
-    public UnclaimCommand() {
-        super("unclaim");
-    }
+	public UnclaimCommand() {
+		super("unclaim");
+	}
 
-    @Override
-    public boolean onExecution(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("You cannot use this command via the console.");
-            return false;
-        }
+	@Override
+	public boolean onExecution(CommandSender sender, String[] args) {
+		if (!(sender instanceof Player player)) {
+			sender.sendMessage("You cannot use this command via the console.");
+			return false;
+		}
 
-        Player player = (Player) sender;
+		Chunk chunk = player.getLocation().getChunk();
 
-        Chunk chunk = player.getLocation().getChunk();
+		if (ChunksManager.isChunkInDisabledWorld(chunk)) {
+			PlayerUtils.sendMessage(player, 20);
+			return true;
+		}
 
-        if (ChunksManager.isChunkInDisabledWorld(chunk)) {
-            PlayerUtils.sendMessage(player, 20);
-            return true;
-        }
+		Region region = TargetRegionSession.getRegion(player);
 
-        Region region = TargetRegionSession.getRegion(player);
+		if (region == null) {
+			PlayerUtils.sendMessage(player, 4);
+			return true;
+		}
 
-        if (region == null) {
-            PlayerUtils.sendMessage(player, 4);
-            return true;
-        }
+		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				RegionControlFlags.UNCLAIM_CHUNKS)) {
+			return true;
+		}
 
-        if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                RegionControlFlags.UNCLAIM_CHUNKS)) {
-            return true;
-        }
+		Region regionOwnsThisChunk = ChunksManager.getRegionOwnsTheChunk(chunk);
 
-        Region regionOwnsThisChunk = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (regionOwnsThisChunk == null) {
+			PlayerUtils.sendMessage(player, 25);
+			return true;
+		}
 
-        if (regionOwnsThisChunk == null) {
-            PlayerUtils.sendMessage(player, 25);
-            return true;
-        }
+		if (!regionOwnsThisChunk.getUniqueId().equals(region.getUniqueId())) {
+			PlayerUtils.sendMessage(player, 23);
+			return true;
+		}
 
-        if (!regionOwnsThisChunk.getUniqueId().equals(region.getUniqueId())) {
-            PlayerUtils.sendMessage(player, 23);
-            return true;
-        }
+		boolean res = ChunksManager.unclaimChunk(region.getUniqueId(), chunk, player);
 
-        boolean res = ChunksManager.unclaimChunk(region.getUniqueId(), chunk, player);
+		if (res) {
+			Map<String, String> replacements = new HashMap<String, String>();
+			replacements.put("{region}", region.getName());
 
-        if (res) {
-            Map<String, String> replacements = new HashMap<String, String>();
-            replacements.put("{region}", region.getName());
+			PlayerUtils.sendMessage(player, 24, replacements);
 
-            PlayerUtils.sendMessage(player, 24, replacements);
+			if (region.getLocation() != null && region.getLocation().getBukkitLocation().getChunk().equals(chunk)) {
+				region.setLocation(null);
+			}
 
-            if (region.getLocation() != null && region.getLocation().getBukkitLocation().getChunk().equals(chunk)) {
-                region.setLocation(null);
-            }
+			new ChunkParticlesSpawner(player);
+		}
 
-            new ChunkParticlesSpawner(player);
-        }
+		return true;
+	}
 
-        return true;
-    }
-
-    @Override
-    public List<String> onAutoComplete(CommandSender sender, String[] args) {
-        return new ArrayList<>();
-    }
+	@Override
+	public List<String> onAutoComplete(CommandSender sender, String[] args) {
+		return new ArrayList<>();
+	}
 }

@@ -26,322 +26,314 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimi
 import java.util.*;
 
 public class PlayerUtils {
-    private static HashSet<UUID> cooldown = new HashSet<UUID>();
-
-    public static boolean hasAvailableSlot(Player player) {
-        return player.getInventory().firstEmpty() == -1 ? false : true;
-    }
-
-    public static double getBalance(OfflinePlayer player) {
-        if (!Homestead.vault.isEconomyReady()) {
-            return 0.0;
-        }
-
-        return Homestead.vault.getEconomy().getBalance(player);
-    }
-
-    public static void addBalance(OfflinePlayer player, double amount) {
-        if (!Homestead.vault.isEconomyReady()) {
-            return;
-        }
-
-        Homestead.vault.getEconomy().depositPlayer(player, amount);
-    }
-
-    public static void removeBalance(OfflinePlayer player, double amount) {
-        if (!Homestead.vault.isEconomyReady()) {
-            return;
-        }
-
-        Homestead.vault.getEconomy().withdrawPlayer(player, amount);
-    }
-
-    public static void sendMessage(Player player, String... messages) {
-        player.sendMessage(ChatColorTranslator.translate(String.join("", messages)));
-    }
-
-    public static void sendMessage(CommandSender sender, String path, Map<String, String> replacements) {
-        String message = Homestead.language.get(path);
-
-        if (message == null) {
-            sender.sendMessage("String not found from the language file: " + path);
-            return;
-        }
-
-        message = Formatters.replace(message, replacements);
-
-        sender.sendMessage(ChatColorTranslator.translate(Homestead.config.getPrefix() + message));
-    }
-
-    public static void sendMessage(CommandSender sender, String path) {
-        String message = Homestead.language.get(path);
-
-        if (message == null) {
-            sender.sendMessage("String not found from the language file: " + path);
-            return;
-        }
-
-        sender.sendMessage(ChatColorTranslator.translate(Homestead.config.getPrefix() + message));
-    }
-
-    public static void sendMessage(Player player, int path, Map<String, String> replacements) {
-        sendMessage(player, String.valueOf(path), replacements);
-    }
-
-    public static void sendMessage(CommandSender sender, int path, Map<String, String> replacements) {
-        sendMessage(sender, String.valueOf(path), replacements);
-    }
-
-    public static void sendMessage(CommandSender sender, int path) {
-        sendMessage(sender, String.valueOf(path));
-    }
-
-    public static void sendMessage(Player player, int path) {
-        sendMessage(player, String.valueOf(path));
-    }
-
-    public static void sendMessageRegionEnter(Player player, Map<String, String> replacements) {
-        switch (((String) Homestead.config.get("enter-exit-region-message.type")).toLowerCase()) {
-            case "title":
-                List<String> titleData = Homestead.config.get("enter-exit-region-message.messages.enter.title");
-
-                player.sendTitle(ChatColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
-                        ChatColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
-                        20);
-
-                break;
-            case "actionbar":
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                        new TextComponent(ChatColorTranslator
-                                .translate(Formatters.replace(
-                                        Homestead.config.get("enter-exit-region-message.messages.enter.actionbar"),
-                                        replacements))));
-
-                break;
-            default:
-                player.sendMessage(ChatColorTranslator.translate(Formatters.replace(
-                        Homestead.config.get("enter-exit-region-message.messages.enter.chat"),
-                        replacements)));
-                break;
-        }
-    }
-
-    public static void sendMessageRegionExit(Player player, Map<String, String> replacements) {
-        switch (((String) Homestead.config.get("enter-exit-region-message.type")).toLowerCase()) {
-            case "title":
-                List<String> titleData = Homestead.config.get("enter-exit-region-message.messages.exit.title");
-
-                player.sendTitle(ChatColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
-                        ChatColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
-                        20);
-
-                break;
-            case "actionbar":
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                        new TextComponent(ChatColorTranslator
-                                .translate(Formatters.replace(
-                                        Homestead.config.get("enter-exit-region-message.messages.exit.actionbar"),
-                                        replacements))));
-
-                break;
-            default:
-                player.sendMessage(ChatColorTranslator.translate(Formatters.replace(
-                        Homestead.config.get("enter-exit-region-message.messages.exit.chat"),
-                        replacements)));
-                break;
-        }
-    }
-
-    public static void teleportPlayerToChunk(Player player, Chunk chunk) {
-        Location location = new Location(chunk.getWorld(), chunk.getX() * 16 + 8, 64,
-                chunk.getZ() * 16 + 8);
-
-        location.setY(location.getWorld().getHighestBlockYAt(location) + 2);
-        location.setPitch(player.getLocation().getPitch());
-        location.setYaw(player.getLocation().getYaw());
-
-        player.teleport(location);
-    }
-
-    public static boolean isOperator(Player player) {
-        if (player.isOp()) {
-            return true;
-        } else if (player.hasPermission("homestead.operator")) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isOperator(OfflinePlayer player) {
-        if (player.isOp()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks whether the given player has the specified player flag in the target region.
-     * If the player lacks the permission, a cooldown-gated info message is sent,
-     * except for the TAKE_FALL_DAMAGE flag where no message is shown.
-     * <p>
-     * Resolution order:
-     * 1) If the player is the active renter of the region, permissions are granted for all flags except PVP.
-     * 2) Otherwise, if the player is a member, the member flags are used.
-     * 3) Otherwise, the region's global player flags are used.
-     *
-     * @param regionId the region UUID
-     * @param player   the player to check
-     * @param flag     the PlayerFlags bit to check
-     * @return true if the action is allowed; false otherwise
-     */
-    public static boolean hasPermissionFlag(UUID regionId, Player player, long flag) {
-        Region region = RegionsManager.findRegion(regionId);
-        if (region == null) return true;
-
-        boolean response;
-
-        SerializableRent rent = region.getRent();
-        War war = WarsManager.findWarByRegionId(regionId);
-
-        if (rent != null && rent.getPlayerId() != null
-                && rent.getPlayerId().equals(player.getUniqueId()) && flag != PlayerFlags.PVP) {
-            response = true;
-        } else if (war != null
-                && WarsManager.getMembersOfWar(war.getUniqueId()).stream().map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId())
-                && List.of(PlayerFlags.PVP,
-                PlayerFlags.DOORS,
-                PlayerFlags.TRAP_DOORS,
-                PlayerFlags.PASSTHROUGH,
-                PlayerFlags.FENCE_GATES,
-                PlayerFlags.ELYTRA
-        ).contains(flag)) {
-            response = true;
-        } else if (region.isPlayerMember(player)) {
-            SerializableMember member = region.getMember(player);
-            response = FlagsCalculator.isFlagSet(member.getFlags(), flag);
-        } else {
-            response = FlagsCalculator.isFlagSet(region.getPlayerFlags(), flag);
-        }
-
-        if (!response
-                && flag != PlayerFlags.TAKE_FALL_DAMAGE
-                && !cooldown.contains(player.getUniqueId())) {
-            Map<String, String> replacements = new HashMap<>();
-            replacements.put("{flag}", PlayerFlags.from(flag));
-            replacements.put("{region}", region.getName());
-
-            PlayerUtils.sendMessage(player, 50, replacements);
-
-            cooldown.add(player.getUniqueId());
-            Homestead.getInstance().runAsyncTaskLater(() -> cooldown.remove(player.getUniqueId()), 3);
-        }
-
-        return response;
-    }
-
-
-    public static boolean hasPermissionFlag(UUID regionId, UUID subAreaId, Player player, long flag) {
-        Region region = RegionsManager.findRegion(regionId);
-
-        if (region != null) {
-            SerializableSubArea subArea = region.getSubArea(subAreaId);
-
-            boolean response = true;
-
-            SerializableRent rent = region.getRent();
-
-            if (rent != null && rent.getPlayerId() != null
-                    && rent.getPlayerId().equals(player.getUniqueId()) && flag != PlayerFlags.PVP) {
-                response = true;
-            } else {
-                if (region.isPlayerMember(player)) {
-                    SerializableMember member = region.getMember(player);
-
-                    response = FlagsCalculator.isFlagSet(member.getFlags(), flag);
-                } else {
-                    response = FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
-                }
-            }
-
-            if (!response && !cooldown.contains(player.getUniqueId())) {
-                Map<String, String> replacements = new HashMap<>();
-                replacements.put("{flag}", PlayerFlags.from(flag));
-                replacements.put("{region}", region.getName());
-
-                PlayerUtils.sendMessage(player, 50, replacements);
-
-                cooldown.add(player.getUniqueId());
-
-                Homestead.getInstance().runAsyncTaskLater(() -> {
-                    cooldown.remove(player.getUniqueId());
-                }, 3);
-            }
-
-            return response;
-        }
-
-        return true;
-    }
-
-    public static boolean hasControlRegionPermissionFlag(UUID regionId, Player player, long flag) {
-        Region region = RegionsManager.findRegion(regionId);
-
-        if (region != null) {
-            if (PlayerUtils.isOperator(player) || player.getUniqueId().equals(region.getOwnerId())) {
-                return true;
-            }
-
-            boolean response = true;
-
-            if (region.isPlayerMember(player)) {
-                SerializableMember member = region.getMember(player);
-
-                response = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), flag);
-            }
-
-            if (!response && !cooldown.contains(player.getUniqueId())) {
-                Map<String, String> replacements = new HashMap<>();
-                replacements.put("{flag}", RegionControlFlags.from(flag));
-                replacements.put("{region}", region.getName());
-
-                PlayerUtils.sendMessage(player, 70, replacements);
-
-                cooldown.add(player.getUniqueId());
-
-                Homestead.getInstance().runAsyncTaskLater(() -> {
-                    cooldown.remove(player.getUniqueId());
-                }, 3);
-            }
-
-            return response;
-        }
-
-        return true;
-    }
-
-    public static String getPlayerGroup(OfflinePlayer player) {
-        if (PlayerLimits.getLimitsMethod() != LimitMethod.GROUPS) {
-            return null;
-        }
-
-        try {
-            if (player.isOnline()) {
-                return Homestead.vault.getPermissions().getPrimaryGroup((Player) player);
-            } else {
-                return Homestead.vault.getPermissions().getPrimaryGroup(player.getLocation().getWorld().getName(),
-                        player);
-            }
-        } catch (UnsupportedOperationException e) {
-            Logger.error(
-                    "Unable to find a service provider for permissions and groups, using the default group \"default\".");
-            Logger.error(
-                    "Please install a plugin that supports permissions and groups. We recommend installing the LuckPerms plugin.");
-            Logger.error(
-                    "To ignore this warning, change the limits method to \"static\" in this setting: limits.method");
-        }
-
-        return null;
-    }
+	private static final HashSet<UUID> cooldown = new HashSet<UUID>();
+
+	public static boolean hasAvailableSlot(Player player) {
+		return player.getInventory().firstEmpty() != -1;
+	}
+
+	public static double getBalance(OfflinePlayer player) {
+		if (!Homestead.vault.isEconomyReady()) {
+			return 0.0;
+		}
+
+		return Homestead.vault.getEconomy().getBalance(player);
+	}
+
+	public static void addBalance(OfflinePlayer player, double amount) {
+		if (!Homestead.vault.isEconomyReady()) {
+			return;
+		}
+
+		Homestead.vault.getEconomy().depositPlayer(player, amount);
+	}
+
+	public static void removeBalance(OfflinePlayer player, double amount) {
+		if (!Homestead.vault.isEconomyReady()) {
+			return;
+		}
+
+		Homestead.vault.getEconomy().withdrawPlayer(player, amount);
+	}
+
+	public static void sendMessage(Player player, String... messages) {
+		player.sendMessage(ChatColorTranslator.translate(String.join("", messages)));
+	}
+
+	public static void sendMessage(CommandSender sender, String path, Map<String, String> replacements) {
+		String message = Homestead.language.get(path);
+
+		if (message == null) {
+			sender.sendMessage("String not found from the language file: " + path);
+			return;
+		}
+
+		message = Formatters.replace(message, replacements);
+
+		sender.sendMessage(ChatColorTranslator.translate(Homestead.config.getPrefix() + message));
+	}
+
+	public static void sendMessage(CommandSender sender, String path) {
+		String message = Homestead.language.get(path);
+
+		if (message == null) {
+			sender.sendMessage("String not found from the language file: " + path);
+			return;
+		}
+
+		sender.sendMessage(ChatColorTranslator.translate(Homestead.config.getPrefix() + message));
+	}
+
+	public static void sendMessage(Player player, int path, Map<String, String> replacements) {
+		sendMessage(player, String.valueOf(path), replacements);
+	}
+
+	public static void sendMessage(CommandSender sender, int path, Map<String, String> replacements) {
+		sendMessage(sender, String.valueOf(path), replacements);
+	}
+
+	public static void sendMessage(CommandSender sender, int path) {
+		sendMessage(sender, String.valueOf(path));
+	}
+
+	public static void sendMessage(Player player, int path) {
+		sendMessage(player, String.valueOf(path));
+	}
+
+	public static void sendMessageRegionEnter(Player player, Map<String, String> replacements) {
+		switch (((String) Homestead.config.get("enter-exit-region-message.type")).toLowerCase()) {
+			case "title":
+				List<String> titleData = Homestead.config.get("enter-exit-region-message.messages.enter.title");
+
+				player.sendTitle(ChatColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
+						ChatColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
+						20);
+
+				break;
+			case "actionbar":
+				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+						new TextComponent(ChatColorTranslator
+								.translate(Formatters.replace(
+										Homestead.config.get("enter-exit-region-message.messages.enter.actionbar"),
+										replacements))));
+
+				break;
+			default:
+				player.sendMessage(ChatColorTranslator.translate(Formatters.replace(
+						Homestead.config.get("enter-exit-region-message.messages.enter.chat"),
+						replacements)));
+				break;
+		}
+	}
+
+	public static void sendMessageRegionExit(Player player, Map<String, String> replacements) {
+		switch (((String) Homestead.config.get("enter-exit-region-message.type")).toLowerCase()) {
+			case "title":
+				List<String> titleData = Homestead.config.get("enter-exit-region-message.messages.exit.title");
+
+				player.sendTitle(ChatColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
+						ChatColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
+						20);
+
+				break;
+			case "actionbar":
+				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+						new TextComponent(ChatColorTranslator
+								.translate(Formatters.replace(
+										Homestead.config.get("enter-exit-region-message.messages.exit.actionbar"),
+										replacements))));
+
+				break;
+			default:
+				player.sendMessage(ChatColorTranslator.translate(Formatters.replace(
+						Homestead.config.get("enter-exit-region-message.messages.exit.chat"),
+						replacements)));
+				break;
+		}
+	}
+
+	public static void teleportPlayerToChunk(Player player, Chunk chunk) {
+		Location location = new Location(chunk.getWorld(), chunk.getX() * 16 + 8, 64,
+				chunk.getZ() * 16 + 8);
+
+		location.setY(location.getWorld().getHighestBlockYAt(location) + 2);
+		location.setPitch(player.getLocation().getPitch());
+		location.setYaw(player.getLocation().getYaw());
+
+		player.teleport(location);
+	}
+
+	public static boolean isOperator(Player player) {
+		if (player.isOp()) {
+			return true;
+		} else return player.hasPermission("homestead.operator");
+	}
+
+	public static boolean isOperator(OfflinePlayer player) {
+		return player.isOp();
+	}
+
+	/**
+	 * Checks whether the given player has the specified player flag in the target region.
+	 * If the player lacks the permission, a cooldown-gated info message is sent,
+	 * except for the TAKE_FALL_DAMAGE flag where no message is shown.
+	 * <p>
+	 * Resolution order:
+	 * 1) If the player is the active renter of the region, permissions are granted for all flags except PVP.
+	 * 2) Otherwise, if the player is a member, the member flags are used.
+	 * 3) Otherwise, the region's global player flags are used.
+	 *
+	 * @param regionId the region UUID
+	 * @param player   the player to check
+	 * @param flag     the PlayerFlags bit to check
+	 * @return true if the action is allowed; false otherwise
+	 */
+	public static boolean hasPermissionFlag(UUID regionId, Player player, long flag) {
+		Region region = RegionsManager.findRegion(regionId);
+		if (region == null) return true;
+
+		boolean response;
+
+		SerializableRent rent = region.getRent();
+		War war = WarsManager.findWarByRegionId(regionId);
+
+		if (rent != null && rent.getPlayerId() != null
+				&& rent.getPlayerId().equals(player.getUniqueId()) && flag != PlayerFlags.PVP) {
+			response = true;
+		} else if (war != null
+				&& WarsManager.getMembersOfWar(war.getUniqueId()).stream().map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId())
+				&& List.of(PlayerFlags.PVP,
+				PlayerFlags.DOORS,
+				PlayerFlags.TRAP_DOORS,
+				PlayerFlags.PASSTHROUGH,
+				PlayerFlags.FENCE_GATES,
+				PlayerFlags.ELYTRA
+		).contains(flag)) {
+			response = true;
+		} else if (region.isPlayerMember(player)) {
+			SerializableMember member = region.getMember(player);
+			response = FlagsCalculator.isFlagSet(member.getFlags(), flag);
+		} else {
+			response = FlagsCalculator.isFlagSet(region.getPlayerFlags(), flag);
+		}
+
+		if (!response
+				&& flag != PlayerFlags.TAKE_FALL_DAMAGE
+				&& !cooldown.contains(player.getUniqueId())) {
+			Map<String, String> replacements = new HashMap<>();
+			replacements.put("{flag}", PlayerFlags.from(flag));
+			replacements.put("{region}", region.getName());
+
+			PlayerUtils.sendMessage(player, 50, replacements);
+
+			cooldown.add(player.getUniqueId());
+			Homestead.getInstance().runAsyncTaskLater(() -> cooldown.remove(player.getUniqueId()), 3);
+		}
+
+		return response;
+	}
+
+
+	public static boolean hasPermissionFlag(UUID regionId, UUID subAreaId, Player player, long flag) {
+		Region region = RegionsManager.findRegion(regionId);
+
+		if (region != null) {
+			SerializableSubArea subArea = region.getSubArea(subAreaId);
+
+			boolean response = true;
+
+			SerializableRent rent = region.getRent();
+
+			if (rent != null && rent.getPlayerId() != null
+					&& rent.getPlayerId().equals(player.getUniqueId()) && flag != PlayerFlags.PVP) {
+				response = true;
+			} else {
+				if (region.isPlayerMember(player)) {
+					SerializableMember member = region.getMember(player);
+
+					response = FlagsCalculator.isFlagSet(member.getFlags(), flag);
+				} else {
+					response = FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
+				}
+			}
+
+			if (!response && !cooldown.contains(player.getUniqueId())) {
+				Map<String, String> replacements = new HashMap<>();
+				replacements.put("{flag}", PlayerFlags.from(flag));
+				replacements.put("{region}", region.getName());
+
+				PlayerUtils.sendMessage(player, 50, replacements);
+
+				cooldown.add(player.getUniqueId());
+
+				Homestead.getInstance().runAsyncTaskLater(() -> {
+					cooldown.remove(player.getUniqueId());
+				}, 3);
+			}
+
+			return response;
+		}
+
+		return true;
+	}
+
+	public static boolean hasControlRegionPermissionFlag(UUID regionId, Player player, long flag) {
+		Region region = RegionsManager.findRegion(regionId);
+
+		if (region != null) {
+			if (PlayerUtils.isOperator(player) || player.getUniqueId().equals(region.getOwnerId())) {
+				return true;
+			}
+
+			boolean response = true;
+
+			if (region.isPlayerMember(player)) {
+				SerializableMember member = region.getMember(player);
+
+				response = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), flag);
+			}
+
+			if (!response && !cooldown.contains(player.getUniqueId())) {
+				Map<String, String> replacements = new HashMap<>();
+				replacements.put("{flag}", RegionControlFlags.from(flag));
+				replacements.put("{region}", region.getName());
+
+				PlayerUtils.sendMessage(player, 70, replacements);
+
+				cooldown.add(player.getUniqueId());
+
+				Homestead.getInstance().runAsyncTaskLater(() -> {
+					cooldown.remove(player.getUniqueId());
+				}, 3);
+			}
+
+			return response;
+		}
+
+		return true;
+	}
+
+	public static String getPlayerGroup(OfflinePlayer player) {
+		if (PlayerLimits.getLimitsMethod() != LimitMethod.GROUPS) {
+			return null;
+		}
+
+		try {
+			if (player.isOnline()) {
+				return Homestead.vault.getPermissions().getPrimaryGroup((Player) player);
+			} else {
+				return Homestead.vault.getPermissions().getPrimaryGroup(player.getLocation().getWorld().getName(),
+						player);
+			}
+		} catch (UnsupportedOperationException e) {
+			Logger.error(
+					"Unable to find a service provider for permissions and groups, using the default group \"default\".");
+			Logger.error(
+					"Please install a plugin that supports permissions and groups. We recommend installing the LuckPerms plugin.");
+			Logger.error(
+					"To ignore this warning, change the limits method to \"static\" in this setting: limits.method");
+		}
+
+		return null;
+	}
 }

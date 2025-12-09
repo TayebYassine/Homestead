@@ -1,12 +1,7 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -15,54 +10,58 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class RegionsWithWelcomeSignsMenu {
-    List<Region> regions;
+	List<Region> regions;
 
-    public List<ItemStack> getItems(Player player) {
-        List<ItemStack> items = new ArrayList<>();
+	public RegionsWithWelcomeSignsMenu(Player player) {
+		regions = new ArrayList<>();
+		regions.addAll(RegionsManager.getRegionsWithWelcomeSigns());
 
-        for (int i = 0; i < regions.size(); i++) {
-            Region region = regions.get(i);
+		regions = ListUtils.removeDuplications(regions);
 
-            HashMap<String, String> replacements = new HashMap<>();
+		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(0), 9 * 5,
+				MenuUtils.getNextPageButton(),
+				MenuUtils.getPreviousPageButton(), getItems(player), (_player, event) -> {
+			_player.closeInventory();
+		}, (_player, context) -> {
+			if (context.getIndex() >= regions.size()) {
+				return;
+			}
 
-            replacements.put("{region}", region.getName());
-            replacements.put("{region-displayname}", region.getDisplayName());
-            replacements.put("{region-owner}", region.getOwner().getName());
-            replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
-            replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
+			Region region = regions.get(context.getIndex());
 
-            items.add(MenuUtils.getButton(47, replacements));
+			if (context.getEvent().isLeftClick()) {
+				player.closeInventory();
 
-        }
+				new DelayedTeleport(player, region.getWelcomeSign().getBukkitLocation());
+			}
+		});
 
-        return items;
-    }
+		gui.open(player, MenuUtils.getEmptySlot());
+	}
 
-    public RegionsWithWelcomeSignsMenu(Player player) {
-        regions = new ArrayList<>();
-        regions.addAll(RegionsManager.getRegionsWithWelcomeSigns());
+	public List<ItemStack> getItems(Player player) {
+		List<ItemStack> items = new ArrayList<>();
 
-        regions = ListUtils.removeDuplications(regions);
+		for (int i = 0; i < regions.size(); i++) {
+			Region region = regions.get(i);
 
-        PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(0), 9 * 5,
-                MenuUtils.getNextPageButton(),
-                MenuUtils.getPreviousPageButton(), getItems(player), (_player, event) -> {
-                    _player.closeInventory();
-                }, (_player, context) -> {
-                    if (context.getIndex() >= regions.size()) {
-                        return;
-                    }
+			HashMap<String, String> replacements = new HashMap<>();
 
-                    Region region = regions.get(context.getIndex());
+			replacements.put("{region}", region.getName());
+			replacements.put("{region-displayname}", region.getDisplayName());
+			replacements.put("{region-owner}", region.getOwner().getName());
+			replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
+			replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
 
-                    if (context.getEvent().isLeftClick()) {
-                        player.closeInventory();
+			items.add(MenuUtils.getButton(47, replacements));
 
-                        new DelayedTeleport(player, region.getWelcomeSign().getBukkitLocation());
-                    }
-                });
+		}
 
-        gui.open(player, MenuUtils.getEmptySlot());
-    }
+		return items;
+	}
 }

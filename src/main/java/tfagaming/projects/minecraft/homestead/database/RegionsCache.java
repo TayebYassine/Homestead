@@ -1,41 +1,35 @@
 package tfagaming.projects.minecraft.homestead.database;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
-public class RegionsCache extends HashMap<UUID, Region> {
-    public RegionsCache(int interval) {
-        Homestead.getInstance().runAsyncTimerTask(() -> {
-            Homestead.database.exportRegions();
-        }, 10, interval);
-    }
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-    public List<Region> getAll() {
-        List<Region> regions = new ArrayList<>();
+public class RegionsCache extends ConcurrentHashMap<UUID, Region> {
+	public RegionsCache(int interval) {
+		Homestead.getInstance().runAsyncTimerTask(() -> {
+			Homestead.database.exportRegions();
+		}, 10, interval);
+	}
 
-        for (Region region : this.values()) {
-            regions.add(region);
-        }
+	public List<Region> getAll() {
+		return new ArrayList<>(this.values());
+	}
 
-        return regions;
-    }
+	public void putOrUpdate(Region region) {
+		this.put(region.getUniqueId(), region);
+	}
 
-    public void putOrUpdate(Region region) {
-        this.put(region.getUniqueId(), region);
-    }
+	public long getLatency() {
+		long before = System.currentTimeMillis();
 
-    public long getLatency() {
-        long before = System.currentTimeMillis();
+		this.getAll();
 
-        this.getAll();
+		long after = System.currentTimeMillis();
 
-        long after = System.currentTimeMillis();
-
-        return after - before;
-    }
+		return after - before;
+	}
 }

@@ -1,73 +1,72 @@
 package tfagaming.projects.minecraft.homestead.structure.serializable;
 
-import java.util.UUID;
-
 import org.bukkit.OfflinePlayer;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 
+import java.util.UUID;
+
 public class SerializableBannedPlayer {
-    private UUID playerId;
-    private String reason;
-    private long bannedAt;
+	private UUID playerId;
+	private String reason;
+	private final long bannedAt;
 
-    public SerializableBannedPlayer(OfflinePlayer player) {
-        this.playerId = player.getUniqueId();
-        this.reason = null;
-        this.bannedAt = System.currentTimeMillis();
-    }
+	public SerializableBannedPlayer(OfflinePlayer player) {
+		this.playerId = player.getUniqueId();
+		this.reason = null;
+		this.bannedAt = System.currentTimeMillis();
+	}
 
-    public SerializableBannedPlayer(OfflinePlayer player, String reason) {
-        this.playerId = player.getUniqueId();
-        this.reason = reason;
-        this.bannedAt = System.currentTimeMillis();
-    }
+	public SerializableBannedPlayer(OfflinePlayer player, String reason) {
+		this.playerId = player.getUniqueId();
+		this.reason = reason;
+		this.bannedAt = System.currentTimeMillis();
+	}
 
-    public SerializableBannedPlayer(OfflinePlayer player, String reason, long bannedAt) {
-        this.playerId = player.getUniqueId();
-        this.reason = reason;
-        this.bannedAt = bannedAt;
-    }
+	public SerializableBannedPlayer(OfflinePlayer player, String reason, long bannedAt) {
+		this.playerId = player.getUniqueId();
+		this.reason = reason;
+		this.bannedAt = bannedAt;
+	}
 
-    public SerializableBannedPlayer(UUID playerId, String reason, long bannedAt) {
-        this.playerId = playerId;
-        this.reason = reason;
-        this.bannedAt = bannedAt;
-    }
+	public SerializableBannedPlayer(UUID playerId, String reason, long bannedAt) {
+		this.playerId = playerId;
+		this.reason = reason;
+		this.bannedAt = bannedAt;
+	}
 
-    public UUID getPlayerId() {
-        return playerId;
-    }
+	public static SerializableBannedPlayer fromString(String string) {
+		String[] splitted = StringUtils.splitWithLimit(string, ",", 3);
 
-    public void setPlayerId(UUID playerId) {
-        this.playerId = playerId;
-    }
+		return new SerializableBannedPlayer(UUID.fromString(splitted[0]), splitted[2], Long.parseLong(splitted[1]));
+	}
 
-    public String getReason() {
-        return reason;
-    }
+	public UUID getPlayerId() {
+		return playerId;
+	}
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
+	public void setPlayerId(UUID playerId) {
+		this.playerId = playerId;
+	}
 
-    public long getBannedAt() {
-        return bannedAt;
-    }
+	public String getReason() {
+		return reason;
+	}
 
-    @Override
-    public String toString() {
-        return (playerId + "," + bannedAt + "," + reason);
-    }
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
 
-    public static SerializableBannedPlayer fromString(String string) {
-        String[] splitted = StringUtils.splitWithLimit(string, ",", 3);
+	public long getBannedAt() {
+		return bannedAt;
+	}
 
-        return new SerializableBannedPlayer(UUID.fromString(splitted[0]), splitted[2], Long.parseLong(splitted[1]));
-    }
+	@Override
+	public String toString() {
+		return (playerId + "," + bannedAt + "," + reason);
+	}
 
-    public OfflinePlayer getBukkitOfflinePlayer() {
-        return Homestead.getInstance().getOfflinePlayerSync(playerId);
-    }
+	public OfflinePlayer getBukkitOfflinePlayer() {
+		return Homestead.getInstance().getOfflinePlayerSync(playerId);
+	}
 }

@@ -16,118 +16,118 @@ import java.util.HashMap;
 import java.util.List;
 
 public class RegionLogsMenu {
-    List<SerializableLog> logs;
+	List<SerializableLog> logs;
 
-    public List<ItemStack> getItems(Player player, Region region) {
-        List<ItemStack> items = new ArrayList<>();
+	public RegionLogsMenu(Player player, Region region) {
+		logs = region.getLogs();
 
-        for (int i = 0; i < logs.size(); i++) {
-            SerializableLog log = logs.get(i);
+		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(13), 9 * 5,
+				MenuUtils.getNextPageButton(),
+				MenuUtils.getPreviousPageButton(), getItems(player, region), (_player, event) -> {
+			new RegionMenu(player, region);
+		}, (_player, context) -> {
+			if (context.getIndex() >= logs.size()) {
+				return;
+			}
 
-            HashMap<String, String> replacements = new HashMap<>();
+			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+					RegionControlFlags.MANAGE_LOGS)) {
+				return;
+			}
 
-            replacements.put("{region}", region.getName());
-            replacements.put("{index}", String.valueOf(i + 1));
-            replacements.put("{log-sentat}", Formatters.formatDate(log.getSentAt()));
-            replacements.put("{log-author}", log.getAuthor());
-            replacements.put("{log-message}", log.getMessage());
+			SerializableLog log = logs.get(context.getIndex());
 
-            items.add(MenuUtils.getButton(log.isRead() ? 40 : 39, replacements));
-        }
+			if (context.getEvent().isLeftClick()) {
+				region.setLogAsRead(log.getId());
 
-        return items;
-    }
+				PaginationMenu instance = context.getInstance();
 
-    public RegionLogsMenu(Player player, Region region) {
-        logs = region.getLogs();
+				logs = region.getLogs();
 
-        PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(13), 9 * 5,
-                MenuUtils.getNextPageButton(),
-                MenuUtils.getPreviousPageButton(), getItems(player, region), (_player, event) -> {
-                    new RegionMenu(player, region);
-                }, (_player, context) -> {
-                    if (context.getIndex() >= logs.size()) {
-                        return;
-                    }
+				instance.setItems(getItems(player, region));
+			} else if (context.getEvent().isRightClick()) {
+				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+				if (!isOwnerOrOperator) {
+					PlayerUtils.sendMessage(player, 159);
+					return;
+				}
 
-                    if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                            RegionControlFlags.MANAGE_LOGS)) {
-                        return;
-                    }
+				region.removeLog(log.getId());
 
-                    SerializableLog log = logs.get(context.getIndex());
+				PaginationMenu instance = context.getInstance();
 
-                    if (context.getEvent().isLeftClick()) {
-                        region.setLogAsRead(log.getId());
+				logs = region.getLogs();
 
-                        PaginationMenu instance = context.getInstance();
+				instance.setItems(getItems(player, region));
+			}
+		});
 
-                        logs = region.getLogs();
+		gui.addActionButton(0, MenuUtils.getButton(46), (_player, event) -> {
+			if (!event.isLeftClick()) {
+				return;
+			}
 
-                        instance.setItems(getItems(player, region));
-                    } else if (context.getEvent().isRightClick()) {
-                        boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
-                        if (!isOwnerOrOperator) {
-                            PlayerUtils.sendMessage(player, 159);
-                            return;
-                        }
+			if (region.getLogs().size() == 0) {
+				PlayerUtils.sendMessage(player, 91);
+				return;
+			}
 
-                        region.removeLog(log.getId());
+			for (SerializableLog log : region.getLogs()) {
+				region.setLogAsRead(log.getId());
+			}
 
-                        PaginationMenu instance = context.getInstance();
+			PlayerUtils.sendMessage(player, 92);
 
-                        logs = region.getLogs();
+			Homestead.getInstance().runSyncTask(() -> {
+				new RegionLogsMenu(player, region);
+			});
+		});
 
-                        instance.setItems(getItems(player, region));
-                    }
-                });
+		gui.addActionButton(2, MenuUtils.getButton(41), (_player, event) -> {
+			if (!event.isLeftClick()) {
+				return;
+			}
 
-        gui.addActionButton(0, MenuUtils.getButton(46), (_player, event) -> {
-            if (!event.isLeftClick()) {
-                return;
-            }
+			boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+			if (!isOwnerOrOperator) {
+				PlayerUtils.sendMessage(player, 159);
+				return;
+			}
 
-            if (region.getLogs().size() == 0) {
-                PlayerUtils.sendMessage(player, 91);
-                return;
-            }
+			if (region.getLogs().size() == 0) {
+				PlayerUtils.sendMessage(player, 83);
+				return;
+			}
 
-            for (SerializableLog log : region.getLogs()) {
-                region.setLogAsRead(log.getId());
-            }
+			region.setLogs(new ArrayList<>());
 
-            PlayerUtils.sendMessage(player, 92);
+			PlayerUtils.sendMessage(player, 93);
 
-            Homestead.getInstance().runSyncTask(() -> {
-                new RegionLogsMenu(player, region);
-            });
-        });
+			Homestead.getInstance().runSyncTask(() -> {
+				new RegionLogsMenu(player, region);
+			});
+		});
 
-        gui.addActionButton(2, MenuUtils.getButton(41), (_player, event) -> {
-            if (!event.isLeftClick()) {
-                return;
-            }
+		gui.open(player, MenuUtils.getEmptySlot());
+	}
 
-            boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
-            if (!isOwnerOrOperator) {
-                PlayerUtils.sendMessage(player, 159);
-                return;
-            }
+	public List<ItemStack> getItems(Player player, Region region) {
+		List<ItemStack> items = new ArrayList<>();
 
-            if (region.getLogs().size() == 0) {
-                PlayerUtils.sendMessage(player, 83);
-                return;
-            }
+		for (int i = 0; i < logs.size(); i++) {
+			SerializableLog log = logs.get(i);
 
-            region.setLogs(new ArrayList<>());
+			HashMap<String, String> replacements = new HashMap<>();
 
-            PlayerUtils.sendMessage(player, 93);
+			replacements.put("{region}", region.getName());
+			replacements.put("{index}", String.valueOf(i + 1));
+			replacements.put("{log-sentat}", Formatters.formatDate(log.getSentAt()));
+			replacements.put("{log-author}", log.getAuthor());
+			replacements.put("{log-message}", log.getMessage());
 
-            Homestead.getInstance().runSyncTask(() -> {
-                new RegionLogsMenu(player, region);
-            });
-        });
+			items.add(MenuUtils.getButton(log.isRead() ? 40 : 39, replacements));
+		}
 
-        gui.open(player, MenuUtils.getEmptySlot());
-    }
+		return items;
+	}
 }

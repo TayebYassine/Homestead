@@ -1,13 +1,8 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -15,67 +10,71 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class TopOldestRegionMenu {
-    List<Region> regions;
+	List<Region> regions;
 
-    public List<ItemStack> getItems(Player player) {
-        List<ItemStack> items = new ArrayList<>();
+	public TopOldestRegionMenu(Player player) {
+		regions = new ArrayList<>();
+		regions.addAll(RegionsManager.sortRegions(RegionsManager.RegionSorting.CREATION_DATE));
 
-        for (int i = 0; i < regions.size(); i++) {
-            Region region = regions.get(i);
+		regions = ListUtils.removeDuplications(regions);
 
-            HashMap<String, String> replacements = new HashMap<>();
+		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(21), 9 * 5,
+				MenuUtils.getNextPageButton(),
+				MenuUtils.getPreviousPageButton(), getItems(player), (_player, event) -> {
+			_player.closeInventory();
+		}, (_player, context) -> {
+			if (context.getIndex() >= regions.size()) {
+				return;
+			}
 
-            replacements.put("{rank}", String.valueOf(i + 1));
-            replacements.put("{region}", region.getName());
-            replacements.put("{region-displayname}", region.getDisplayName());
-            replacements.put("{region-owner}", region.getOwner().getName());
-            replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
-            replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
-            replacements.put("{region-rating}", Formatters.formatRating(RegionsManager.getAverageRating(region)));
-            replacements.put("{region-members}", String.valueOf(region.getMembers().size()));
-            replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
+			Region region = regions.get(context.getIndex());
 
-            items.add(MenuUtils.getButton(55, replacements));
-        }
+			if (context.getEvent().isLeftClick()) {
+				new RegionInfoMenu(player, region, () -> {
+					new TopOldestRegionMenu(player);
+				});
+			}
+		});
 
-        return items;
-    }
+		gui.addActionButton(1, MenuUtils.getButton(59), (_player, event) -> {
+			if (event.isLeftClick()) {
+				new TopRatingRegionsMenu(player);
+			} else if (event.isRightClick()) {
+				new TopMembersRegionMenu(player);
+			}
 
-    public TopOldestRegionMenu(Player player) {
-        regions = new ArrayList<>();
-        regions.addAll(RegionsManager.sortRegions(RegionsManager.RegionSorting.CREATION_DATE));
+			player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+		});
 
-        regions = ListUtils.removeDuplications(regions);
+		gui.open(player, MenuUtils.getEmptySlot());
+	}
 
-        PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(21), 9 * 5,
-                MenuUtils.getNextPageButton(),
-                MenuUtils.getPreviousPageButton(), getItems(player), (_player, event) -> {
-                    _player.closeInventory();
-                }, (_player, context) -> {
-                    if (context.getIndex() >= regions.size()) {
-                        return;
-                    }
+	public List<ItemStack> getItems(Player player) {
+		List<ItemStack> items = new ArrayList<>();
 
-                    Region region = regions.get(context.getIndex());
+		for (int i = 0; i < regions.size(); i++) {
+			Region region = regions.get(i);
 
-                    if (context.getEvent().isLeftClick()) {
-                        new RegionInfoMenu(player, region, () -> {
-                            new TopOldestRegionMenu(player);
-                        });
-                    }
-                });
+			HashMap<String, String> replacements = new HashMap<>();
 
-        gui.addActionButton(1, MenuUtils.getButton(59), (_player, event) -> {
-            if (event.isLeftClick()) {
-                new TopRatingRegionsMenu(player);
-            } else if (event.isRightClick()) {
-                new TopMembersRegionMenu(player);
-            }
+			replacements.put("{rank}", String.valueOf(i + 1));
+			replacements.put("{region}", region.getName());
+			replacements.put("{region-displayname}", region.getDisplayName());
+			replacements.put("{region-owner}", region.getOwner().getName());
+			replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
+			replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
+			replacements.put("{region-rating}", Formatters.formatRating(RegionsManager.getAverageRating(region)));
+			replacements.put("{region-members}", String.valueOf(region.getMembers().size()));
+			replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 
-            player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
-        });
+			items.add(MenuUtils.getButton(55, replacements));
+		}
 
-        gui.open(player, MenuUtils.getEmptySlot());
-    }
+		return items;
+	}
 }

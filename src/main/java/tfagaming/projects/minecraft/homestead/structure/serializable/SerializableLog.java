@@ -1,72 +1,72 @@
 package tfagaming.projects.minecraft.homestead.structure.serializable;
 
-import java.util.UUID;
-
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 
+import java.util.UUID;
+
 public class SerializableLog {
-    private UUID logId;
-    private String author;
-    private String message;
-    private boolean read;
-    private long sentAt;
+	private final UUID logId;
+	private String author;
+	private String message;
+	private boolean read;
+	private final long sentAt;
 
-    public SerializableLog(String author, String message) {
-        this.logId = UUID.randomUUID();
-        this.author = author;
-        this.message = message;
-        this.read = false;
-        this.sentAt = System.currentTimeMillis();
-    }
+	public SerializableLog(String author, String message) {
+		this.logId = UUID.randomUUID();
+		this.author = author;
+		this.message = message;
+		this.read = false;
+		this.sentAt = System.currentTimeMillis();
+	}
 
-    public SerializableLog(UUID logId, String author, String message, long sentAt, boolean read) {
-        this.logId = logId;
-        this.author = author;
-        this.message = message;
-        this.read = read;
-        this.sentAt = sentAt;
-    }
+	public SerializableLog(UUID logId, String author, String message, long sentAt, boolean read) {
+		this.logId = logId;
+		this.author = author;
+		this.message = message;
+		this.read = read;
+		this.sentAt = sentAt;
+	}
 
-    public UUID getId() {
-        return logId;
-    }
+	public static SerializableLog fromString(String string) {
+		String[] splitted = StringUtils.splitWithLimit(string, ",", 5);
 
-    public String getAuthor() {
-        return author;
-    }
+		return new SerializableLog(UUID.fromString(splitted[0]), splitted[1], splitted[4], Long.parseLong(splitted[2]), Boolean.parseBoolean(splitted[3]));
+	}
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+	public UUID getId() {
+		return logId;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getAuthor() {
+		return author;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setAuthor(String author) {
+		this.author = author;
+	}
 
-    public boolean isRead() {
-        return read;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setRead(boolean read) {
-        this.read = read;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public long getSentAt() {
-        return sentAt;
-    }
+	public boolean isRead() {
+		return read;
+	}
 
-    @Override
-    public String toString() {
-        return (logId.toString() + "," + author + "," + sentAt + "," + read + "," + message);
-    }
+	public void setRead(boolean read) {
+		this.read = read;
+	}
 
-    public static SerializableLog fromString(String string) {
-        String[] splitted = StringUtils.splitWithLimit(string, ",", 5);
+	public long getSentAt() {
+		return sentAt;
+	}
 
-        return new SerializableLog(UUID.fromString(splitted[0]), splitted[1], splitted[4], Long.parseLong(splitted[2]), Boolean.parseBoolean(splitted[3]));
-    }
+	@Override
+	public String toString() {
+		return (logId.toString() + "," + author + "," + sentAt + "," + read + "," + message);
+	}
 }

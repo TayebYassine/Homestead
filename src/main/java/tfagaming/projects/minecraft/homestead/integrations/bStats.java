@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class bStats {
-    public bStats(Homestead plugin) {
-        try {
+	public bStats(Homestead plugin) {
+		try {
 			Metrics metrics = new Metrics(plugin, 25286);
 
 			// Regions
@@ -30,11 +30,11 @@ public class bStats {
 				public Integer call() throws Exception {
 					int subAreas = 0;
 
-                    for (Region region : RegionsManager.getAll()) {
-                        subAreas += region.getSubAreas().size();
-                    }
+					for (Region region : RegionsManager.getAll()) {
+						subAreas += region.getSubAreas().size();
+					}
 
-                    return subAreas;
+					return subAreas;
 				}
 			}));
 
@@ -76,9 +76,9 @@ public class bStats {
 						case PostgreSQL:
 							map.put("PostgreSQL", 1);
 							break;
-                        case MariaDB:
-                            map.put("MariaDB", 1);
-                            break;
+						case MariaDB:
+							map.put("MariaDB", 1);
+							break;
 						case MySQL:
 							map.put("MySQL", 1);
 							break;
@@ -110,9 +110,9 @@ public class bStats {
 					return map;
 				}
 			}));
-            
+
 		} catch (NoClassDefFoundError | IllegalStateException e) {
 			Logger.error("Unable to communicate with bStats servers.");
 		}
-    }
+	}
 }
