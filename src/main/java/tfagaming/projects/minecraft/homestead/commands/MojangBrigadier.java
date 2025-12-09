@@ -31,6 +31,9 @@ public class MojangBrigadier {
 				.then(LiteralArgumentBuilder.literal("ban")
 						.then(RequiredArgumentBuilder.argument("player",
 								StringArgumentType.string())))
+				.then(LiteralArgumentBuilder.literal("chat")
+						.then(RequiredArgumentBuilder.argument("message",
+								StringArgumentType.greedyString())))
 				.then(LiteralArgumentBuilder.literal("claimlist"))
 				.then(LiteralArgumentBuilder.literal("create")
 						.then(RequiredArgumentBuilder.argument("name",

@@ -133,6 +133,17 @@ public class Formatters {
 				.translate(replace(Homestead.config.get("formatters.gui-pagination-title"), replacements));
 	}
 
+	public static String formatPrivateChat(String regionName, String sender, String message) {
+		HashMap<String, String> replacements = new HashMap<String, String>();
+
+		replacements.put("{region}", regionName);
+		replacements.put("{sender}", sender);
+		replacements.put("{message}", message);
+
+		return ChatColorTranslator
+				.translate(replace(Homestead.config.get("formatters.private-chat"), replacements));
+	}
+
 	public static String getPlayerOwnedRegions(OfflinePlayer player) {
 		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
 

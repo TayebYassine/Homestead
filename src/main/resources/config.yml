@@ -409,6 +409,7 @@ formatters:
   ago-seconds: "{v} seconds"
   war-regions: "&2{region}"
   war-regions-joining: ", "
+  private-chat: "&2{region} &7- &e{sender}&7: &r{message}"
 
 ############################################################
 # +------------------------------------------------------+ #

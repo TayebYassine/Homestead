@@ -45,6 +45,8 @@ permissions:
     default: true
   homestead.region.delete:
     default: true
+  homestead.region.chat:
+    default: true
   homestead.region.players.trust:
     default: true
   homestead.region.players.untrust:
@@ -82,6 +84,7 @@ permissions:
     children:
       homestead.region.create: true
       homestead.region.delete: true
+      homestead.region.chat: true
       homestead.region.players.trust: true
       homestead.region.players.untrust: true
       homestead.region.players.ban: true
@@ -105,6 +108,8 @@ permissions:
   homestead.commands.region.banlist:
     default: true
   homestead.commands.region.ban:
+    default: true
+  homestead.commands.region.chat:
     default: true
   homestead.commands.region.claimlist:
     default: true
@@ -165,6 +170,7 @@ permissions:
       homestead.commands.region.auto: true
       homestead.commands.region.banlist: true
       homestead.commands.region.ban: true
+      homestead.commands.region.chat: true
       homestead.commands.region.claimlist: true
       homestead.commands.region.create: true
       homestead.commands.region.delete: true
