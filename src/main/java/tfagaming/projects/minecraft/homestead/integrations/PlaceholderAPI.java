@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
+import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
@@ -107,6 +108,20 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 				}
 
 				return Formatters.formatDate(region.getUpkeepAt());
+			case "war_name": {
+				if (region == null || !WarsManager.isRegionInWar(region.getUniqueId())) {
+					return Homestead.config.get("placeholderapi.default.war_name");
+				}
+
+				return WarsManager.findWarByRegionId(region.getUniqueId()).getName();
+			}
+			case "war_prize": {
+				if (region == null || !WarsManager.isRegionInWar(region.getUniqueId())) {
+					return Homestead.config.get("placeholderapi.default.war_prize");
+				}
+
+				return Formatters.formatBalance(WarsManager.findWarByRegionId(region.getUniqueId()).getPrize());
+			}
 			default:
 				return null;
 		}

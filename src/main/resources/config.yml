@@ -307,6 +307,8 @@ placeholderapi:
     region_current: "&2Wilderness" # The region where the player is currently inside.
     upkeep_amount: "0,00" # The amount that the player must pay for taxes.
     upkeep_at: "Never" # When the player must pay for taxes.
+    war_name: "None" # The war's name.
+    war_prize: "0,00" # The war's prize.
 
 # Dynamic maps; Show all regions on the web!
 # Supported plugins:
