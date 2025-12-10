@@ -47,6 +47,8 @@ permissions:
     default: true
   homestead.region.chat:
     default: true
+  homestead.region.mail:
+    default: true
   homestead.region.players.trust:
     default: true
   homestead.region.players.untrust:
@@ -85,6 +87,7 @@ permissions:
       homestead.region.create: true
       homestead.region.delete: true
       homestead.region.chat: true
+      homestead.region.mail: true
       homestead.region.players.trust: true
       homestead.region.players.untrust: true
       homestead.region.players.ban: true

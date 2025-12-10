@@ -150,6 +150,9 @@ public class RegionCommand extends CommandBuilder {
 			case "chat":
 				new ChatSubCmd().onExecution(sender, args);
 				break;
+			case "mail":
+				new MailSubCmd().onExecution(sender, args);
+				break;
 			default:
 				String similaritySubCmds = StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand).stream()
 						.collect(Collectors.joining(", "));
@@ -353,6 +356,7 @@ public class RegionCommand extends CommandBuilder {
 				if (args.length == 2)
 					suggestions.add("all");
 				break;
+			case "mail":
 			case "info":
 			case "rate":
 				if (args.length == 2)
@@ -372,6 +376,7 @@ public class RegionCommand extends CommandBuilder {
 	public List<String> getSubcommands() {
 		return Lists.newArrayList("create", "delete", "set", "rename", "borders", "ban", "unban", "trust", "untrust",
 				"flags", "accept", "deny", "visit", "subareas", "deposit", "withdraw", "menu", "player", "home",
-				"info", "banlist", "members", "claimlist", "help", "logs", "rate", "top", "auto", "kick", "war", "chat");
+				"info", "banlist", "members", "claimlist", "help", "logs", "rate", "top", "auto", "kick", "war", "chat",
+				"mail");
 	}
 }

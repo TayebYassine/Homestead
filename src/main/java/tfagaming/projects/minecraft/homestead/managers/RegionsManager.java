@@ -115,6 +115,16 @@ public class RegionsManager {
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 	}
 
+	public static void addNewLog(UUID id, String author, String message) {
+		Region region = findRegion(id);
+
+		if (region == null) {
+			return;
+		}
+
+		region.addLog(new SerializableLog(author, message));
+	}
+
 	public static void addNewLog(UUID id, int messagePath) {
 		Region region = findRegion(id);
 

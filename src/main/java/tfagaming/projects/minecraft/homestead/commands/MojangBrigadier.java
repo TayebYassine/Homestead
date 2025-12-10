@@ -80,6 +80,11 @@ public class MojangBrigadier {
 				.then(LiteralArgumentBuilder.literal("help"))
 				.then(LiteralArgumentBuilder.literal("home"))
 				.then(LiteralArgumentBuilder.literal("logs"))
+				.then(LiteralArgumentBuilder.literal("mail")
+						.then(RequiredArgumentBuilder.argument("region",
+										StringArgumentType.string())
+								.then(RequiredArgumentBuilder.argument("message",
+										StringArgumentType.greedyString()))))
 				.then(LiteralArgumentBuilder.literal("members"))
 				.then(LiteralArgumentBuilder.literal("menu"))
 				.then(LiteralArgumentBuilder.literal("player")
