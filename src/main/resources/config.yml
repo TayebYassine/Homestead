@@ -204,7 +204,7 @@ wars:
   enabled: false
 
   # The minimum prize value.
-  min-prize: 1000.0 # $10k (k = Thousand)
+  min-prize: 1000.0 # $1k (k = Thousand)
 
   # The maximum prize value.
   max-prize: 1000000000.0 # $1B (B = Billion)

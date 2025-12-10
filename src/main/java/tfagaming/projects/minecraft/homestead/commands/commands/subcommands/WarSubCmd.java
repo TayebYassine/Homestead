@@ -120,7 +120,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (targetRegion.getBank() < prize) {
+				if (!(targetRegion.getBank() >= prize && region.getBank() >= prize)) {
 					PlayerUtils.sendMessage(player, 157);
 					return true;
 				}
@@ -140,6 +140,7 @@ public class WarSubCmd extends SubCommandBuilder {
 				List<String> listString = Homestead.language.get("147");
 
 				Map<String, String> replacements = new HashMap<String, String>();
+				replacements.put("{war-name}", war.getName());
 				replacements.put("{regionplayer}", region.getName());
 				replacements.put("{regiontarget}", targetRegion.getName());
 				replacements.put("{prize}", Formatters.formatBalance(prize));
@@ -148,10 +149,12 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				for (OfflinePlayer p : players) {
 					if (p.isOnline()) {
-						((Player) p).playSound(p.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
+						Player player1 = (Player) p;
 
-						for (String string : listString) {
-							((Player) p).sendMessage(ChatColorTranslator.translate(Formatters.replace(string, replacements)));
+                        player1.playSound(player1.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
+
+                        for (String string : listString) {
+							player1.sendMessage(ChatColorTranslator.translate(Formatters.replace(string, replacements)));
 						}
 					}
 				}

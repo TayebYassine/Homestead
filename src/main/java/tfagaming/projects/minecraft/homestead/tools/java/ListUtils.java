@@ -1,17 +1,10 @@
 package tfagaming.projects.minecraft.homestead.tools.java;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ListUtils {
 	public static <T> List<T> removeDuplications(List<T> list) {
-		Set<T> set = new HashSet<>(list);
-		set.clear();
-		set.addAll(set);
-
-		return list;
+		return new ArrayList<>(new LinkedHashSet<>(list));
 	}
 
 	public static <T> List<T> removeNullElements(List<T> list) {
