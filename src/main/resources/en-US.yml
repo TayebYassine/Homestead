@@ -194,6 +194,7 @@ prefix: "&8[&6HS&8]&r "
 161: "&7Bulk change applied: &e{changes} flag(s) &7-> {new-value} &7(locked flags were skipped)."
 162: "&eNo changes were made (either already in desired state or all relevant flags are locked)."
 163: "&4You have been killed. &cYou have lost the war."
+164: "&cCannot declare a war, one of the regions is currently living in peace (wars is denied)."
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."
@@ -375,6 +376,9 @@ flags-info:
   wilderness-copper-golems:
     description: "Allow copper golems outside regions to enter to the region?"
     type: CHISELED_COPPER
+  wars:
+    description: "Allow any player to declare war on this region?"
+    type: PLAYERHEAD-d51e6cbd10b0ff98b47f93d9f34deaaf690f40d5db9950016071e7ae5d2ab226
 
   # REGION CONTROL FLAGS
   trust-players:

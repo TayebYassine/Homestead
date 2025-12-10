@@ -488,3 +488,4 @@ default-world-flags:
   snowman-trails: true # Snowman trails: Allow snow golems to leave snow trails?
   windcharge-burst: false # Windcharge burst: Allow windcharges to burst?
   wilderness-copper-golems: false # Wilderness copper golems: Allow wilderness copper golems to enter the region?
+  wars: false # Wars: Allow any player to declare war on this region?

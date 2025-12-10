@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
@@ -94,6 +95,11 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				if (region.getUniqueId().equals(targetRegion.getUniqueId()) || region.getOwnerId().equals(targetRegion.getOwnerId())) {
 					PlayerUtils.sendMessage(player, 148);
+					return false;
+				}
+
+				if (!(region.isWorldFlagSet(WorldFlags.WARS) && targetRegion.isWorldFlagSet(WorldFlags.WARS))) {
+					PlayerUtils.sendMessage(player, 164);
 					return false;
 				}
 
