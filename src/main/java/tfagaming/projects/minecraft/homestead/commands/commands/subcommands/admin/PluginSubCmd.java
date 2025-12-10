@@ -41,6 +41,7 @@ public class PluginSubCmd extends SubCommandBuilder {
 					{"Players", Bukkit.getOnlinePlayers().size()},
 					{"Homestead", "v" + Homestead.getVersion()},
 					{"Regions", RegionsManager.getAll().size()},
+					{"Wars", WarsManager.getAll().size()},
 					{"Database", Homestead.database.getSelectedProvider()},
 					{"Latency", Homestead.database.getLatency()},
 					{"Latency (cache)", Homestead.regionsCache.getLatency()}
