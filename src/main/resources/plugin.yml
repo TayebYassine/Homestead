@@ -108,6 +108,8 @@ permissions:
     default: true
   homestead.commands.region.auto:
     default: true
+  homestead.commands.region.balance:
+    default: true
   homestead.commands.region.banlist:
     default: true
   homestead.commands.region.ban:
@@ -173,6 +175,7 @@ permissions:
     children:
       homestead.commands.region.accept: true
       homestead.commands.region.auto: true
+      homestead.commands.region.balance: true
       homestead.commands.region.banlist: true
       homestead.commands.region.ban: true
       homestead.commands.region.chat: true

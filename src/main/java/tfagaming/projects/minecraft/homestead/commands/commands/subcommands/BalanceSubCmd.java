@@ -1,0 +1,75 @@
+package tfagaming.projects.minecraft.homestead.commands.commands.subcommands;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class BalanceSubCmd extends SubCommandBuilder {
+	public BalanceSubCmd() {
+		super("balance");
+	}
+
+	@Override
+	public boolean onExecution(CommandSender sender, String[] args) {
+		if (!(sender instanceof Player player)) {
+			sender.sendMessage("You cannot use this command via the console.");
+			return false;
+		}
+
+		if (!player.hasPermission("homestead.region.bank")) {
+			PlayerUtils.sendMessage(player, 8);
+			return true;
+		}
+
+		if (!Homestead.vault.isEconomyReady()) {
+			PlayerUtils.sendMessage(player, 69);
+			Logger.warning("The player \"" + player.getName() + "\" (UUID: " + player.getUniqueId()
+					+ ") executed a command that requires economy implementation, but it's disabled.");
+			Logger.warning(
+					"The execution has been ignored, you may resolve this issue by installing a plugin that implements economy on the server.");
+
+			return true;
+		}
+
+		Region region;
+
+		if (args.length >= 2) {
+			String regionName = args[1];
+
+			region = RegionsManager.findRegion(regionName);
+
+			if (region == null) {
+				PlayerUtils.sendMessage(player, 9);
+				return false;
+			}
+		} else {
+			region = TargetRegionSession.getRegion(player);
+
+			if (region == null) {
+				PlayerUtils.sendMessage(player, 4);
+				return true;
+			}
+		}
+
+		Map<String, String> replacements = new HashMap<String, String>();
+		replacements.put("{region}", region.getName());
+		replacements.put("{balance}", Formatters.formatBalance(region.getBank()));
+
+		PlayerUtils.sendMessage(player, 167, replacements);
+
+		return true;
+	}
+}

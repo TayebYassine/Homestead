@@ -95,6 +95,9 @@ public class MojangBrigadier {
 				.then(LiteralArgumentBuilder.literal("info")
 						.then(RequiredArgumentBuilder.argument("region",
 								StringArgumentType.string())))
+				.then(LiteralArgumentBuilder.literal("balance")
+						.then(RequiredArgumentBuilder.argument("region",
+								StringArgumentType.string())))
 				.then(LiteralArgumentBuilder.literal("rate")
 						.then(RequiredArgumentBuilder.argument("region",
 								StringArgumentType.string())))
