@@ -1,9 +1,11 @@
 package tfagaming.projects.minecraft.homestead.managers;
 
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
+import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 
 import java.util.*;
 
@@ -94,5 +96,19 @@ public class WarsManager {
 		return getAll().stream()
 				.anyMatch(w -> w.getRegions().stream()
 						.anyMatch(r -> r.getUniqueId().equals(regionId)));
+	}
+
+	public static int cleanStartup() {
+		int updated = 0;
+
+		for (War war : Homestead.warsCache.getAll()) {
+			if (war.getRegions().size() < 2) {
+				Homestead.warsCache.remove(war.getUniqueId());
+
+				updated++;
+			}
+		}
+
+		return updated;
 	}
 }

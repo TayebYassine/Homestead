@@ -30,6 +30,7 @@ import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
@@ -204,12 +205,15 @@ public class Homestead extends JavaPlugin {
 		}
 
 		if ((boolean) Homestead.config.get("clean-startup")) {
-			Logger.warning("Cleaning up regions data...");
+			Logger.warning("Cleaning up regions and wars data...");
 
-			int updated = RegionsManager.cleanStartup();
+			int updatedRg = RegionsManager.cleanStartup();
+			int updatedWs = WarsManager.cleanStartup();
+
+			int updated = updatedRg + updatedWs;
 
 			if (updated > 0) {
-				Logger.info("Successfully updated " + updated + " rows of regions data.");
+				Logger.info("Successfully updated " + updated + " rows of regions and wars data.");
 			} else {
 				Logger.info("No data corruption was found!");
 			}

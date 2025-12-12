@@ -25,9 +25,9 @@ public class UpdateChecker {
 				String response = reader.readLine();
 
 				if (!Homestead.getVersion().equalsIgnoreCase(response)) {
-					Logger.info("There is an available update for Homestead.");
-					Logger.info("Installed: " + Homestead.getVersion() + ", Updated: " + response);
-					Logger.info(
+					Logger.warning("There is an available update for Homestead.");
+					Logger.warning("Installed: " + Homestead.getVersion() + ", Updated: " + response);
+					Logger.warning(
 							"Download: https://www.spigotmc.org/resources/121873/, https://modrinth.com/plugin/homestead-plugin");
 
 					foundUpdate = true;
