@@ -5,7 +5,9 @@ import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.integrations.bstats.Metrics;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.War;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -108,6 +110,14 @@ public class bStats {
 					map.put("BlueMap", DynamicMaps.bluemap == null ? 0 : 1);
 
 					return map;
+				}
+			}));
+
+			// Wars
+			metrics.addCustomChart(new Metrics.SingleLineChart("wars", new Callable<Integer>() {
+				@Override
+				public Integer call() throws Exception {
+					return WarsManager.getAll().size();
 				}
 			}));
 
