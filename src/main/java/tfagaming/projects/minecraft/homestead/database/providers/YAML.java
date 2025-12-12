@@ -262,7 +262,7 @@ public class YAML {
 				config.set("weather", region.weather);
 				config.set("time", region.time);
 				config.set("welcomeSign", region.welcomeSign != null ? region.welcomeSign.toString() : null);
-				config.set("welcomeSign", region.icon != null ? region.icon : null);
+				config.set("icon", region.icon != null ? region.icon : null);
 
 				config.save(regionFile);
 				savedCount++;
