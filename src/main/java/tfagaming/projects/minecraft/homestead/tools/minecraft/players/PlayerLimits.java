@@ -37,7 +37,17 @@ public class PlayerLimits {
 		return LimitMethod.STATIC;
 	}
 
+	private static Object getLimitValueByPlayername(OfflinePlayer player, LimitType limit) {
+        return Homestead.config.get("player-limits." + player.getName() + "." + getString(limit));
+	}
+
 	public static int getLimitValue(OfflinePlayer player, LimitType limit) {
+		Object playerLimitByName = getLimitValueByPlayername(player, limit);
+
+		if (playerLimitByName != null) {
+			return (int) playerLimitByName;
+		}
+
 		switch (getLimitsMethod()) {
 			case STATIC:
 				if (PlayerUtils.isOperator(player)) {

@@ -220,6 +220,7 @@ welcome-signs:
 # +------------------------------------------------------+ #
 ############################################################
 
+# Limits: Limiting players by groups or operator permissions
 limits:
   # Two valid options:
   # - 'static': Static limits; No permission plugins required.
@@ -274,6 +275,25 @@ limits:
       subareas-per-region: 10
       max-subarea-volume: 1200
       commands-cooldown: 0
+
+# Player limits: Limiting players by their username
+# You can add as many player names as you want!
+player-limits:
+  A_PLAYER_NAME_GOES_HERE_FOR_SPECIAL_LIMITS:
+    regions: 10
+    chunks-per-region: 100
+    members-per-region: 16
+    subareas-per-region: 10
+    max-subarea-volume: 1200
+    commands-cooldown: 0
+
+  ANOTHER_PLAYER_NAME_GOES_HERE_IF_NEEDED_TOO:
+    regions: 2147483647 # 2,147,483,647 is the max signed 32-bit integer value.
+    chunks-per-region: 2147483647
+    members-per-region: 2147483647
+    subareas-per-region: 2147483647
+    max-subarea-volume: 2147483647
+    commands-cooldown: 2147483647
 
 ############################################################
 # +------------------------------------------------------+ #
