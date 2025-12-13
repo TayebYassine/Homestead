@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -62,6 +63,12 @@ public class ChatSubCmd extends SubCommandBuilder {
 			if (regionPlayer != null && regionPlayer.isOnline()) {
 				((Player) regionPlayer).sendMessage(Formatters.formatPrivateChat(region.getDisplayName(), player.getName(), message));
 			}
+		}
+
+		boolean logToConsole = Homestead.config.get("log-private-chat");
+
+		if (logToConsole) {
+			Logger.info(String.format("[Chat] %s (UUID: %s) -> %s: %s", player.getName(), player.getUniqueId(), region.getName(), message));
 		}
 
 		return true;
