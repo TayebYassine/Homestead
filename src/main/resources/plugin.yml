@@ -1,6 +1,6 @@
 name: Homestead
 main: tfagaming.projects.minecraft.homestead.Homestead
-version: 4.1.3
+version: 4.2.0
 description: 'The Ultimate and Premium-Free Grief Prevention Plugin.'
 author: TFAGaming
 api-version: 1.21
