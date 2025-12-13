@@ -123,7 +123,7 @@ public class Database {
 				postgreSQL.importWars();
 				break;
 			case MariaDB:
-				//mariaDB.importWars();
+				mariaDB.importWars();
 				break;
 			case MySQL:
 				mySQL.importWars();
@@ -167,7 +167,7 @@ public class Database {
 				postgreSQL.exportWars();
 				break;
 			case MariaDB:
-				//mariaDB.exportWars();
+				mariaDB.exportWars();
 				break;
 			case MySQL:
 				mySQL.exportWars();

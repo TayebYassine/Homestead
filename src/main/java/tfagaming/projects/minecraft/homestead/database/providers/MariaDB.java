@@ -4,6 +4,7 @@ import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 
@@ -31,6 +32,7 @@ public class MariaDB {
 			Logger.info("MariaDB database connection established.");
 
 			createTablesIfNotExists();
+			createWarsTableIfNotExists();
 		} catch (ClassNotFoundException e) {
 			Logger.error("MariaDB JDBC Driver not found.");
 			e.printStackTrace();
@@ -206,6 +208,65 @@ public class MariaDB {
 		Logger.info("Imported " + Homestead.regionsCache.size() + " regions from MariaDB.");
 	}
 
+	public void createWarsTableIfNotExists() {
+		String sql = """
+                CREATE TABLE IF NOT EXISTS wars (
+                    id          CHAR(36) PRIMARY KEY,
+                    display_name TEXT NOT NULL,
+                    name        TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    regions     TEXT NOT NULL,
+                    prize       DOUBLE PRECISION NOT NULL,
+                    started_at  BIGINT NOT NULL
+                )
+                """;
+
+		try (Statement stmt = connection.createStatement()) {
+			stmt.execute(sql);
+			Logger.info("Wars table created/verified in MariaDB.");
+		} catch (SQLException e) {
+			Logger.error("Unable to create wars table in MariaDB.");
+			e.printStackTrace();
+		}
+	}
+
+	public void importWars() {
+		final String sql = "SELECT * FROM wars";
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(sql)) {
+
+			Homestead.warsCache.clear();
+
+			while (rs.next()) {
+				UUID id = UUID.fromString(rs.getString("id"));
+				String displayName = rs.getString("display_name");
+				String name = rs.getString("name");
+				String description = rs.getString("description");
+
+				List<UUID> regions =
+						Arrays.stream(stringArrayFromPgText(rs.getString("regions")))
+								.map(UUID::fromString)
+								.collect(Collectors.toList());
+
+				double prize = rs.getDouble("prize");
+				long startedAt = rs.getLong("started_at");
+
+				War war = new War(name, regions);
+				war.id = id;
+				war.displayName = displayName;
+				war.description = description;
+				war.prize = prize;
+				war.startedAt = startedAt;
+
+				Homestead.warsCache.putOrUpdate(war);
+			}
+		} catch (SQLException e) {
+			Logger.error("Unable to import wars from MariaDB.");
+			e.printStackTrace();
+		}
+		Logger.info("Imported " + Homestead.warsCache.size() + " wars from MariaDB.");
+	}
+
 	public void exportRegions() {
 		Set<UUID> dbRegionIds = new HashSet<>();
 		final String selectSql = "SELECT id FROM regions";
@@ -317,6 +378,74 @@ public class MariaDB {
 			}
 		} catch (SQLException e) {
 			Logger.error("Unable to export regions to MariaDB.");
+			e.printStackTrace();
+		}
+	}
+
+	public void exportWars() {
+		Set<UUID> dbWarIds = new HashSet<>();
+		final String selectSql = "SELECT id FROM wars";
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(selectSql)) {
+			while (rs.next()) {
+				dbWarIds.add(UUID.fromString(rs.getString("id")));
+			}
+		} catch (SQLException e) {
+			Logger.error("Unable to fetch war IDs from MariaDB.");
+			e.printStackTrace();
+			return;
+		}
+
+		final String upsertSql = """
+        INSERT INTO wars (
+            id, display_name, name, description, regions, prize, started_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            display_name = VALUES(display_name),
+            name = VALUES(name),
+            description = VALUES(description),
+            regions = VALUES(regions),
+            prize = VALUES(prize),
+            started_at = VALUES(started_at)
+        """;
+
+		final String deleteSql = "DELETE FROM wars WHERE id = ?";
+
+		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
+			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
+
+			Set<UUID> cacheWarIds = new HashSet<>();
+
+			for (War war : Homestead.warsCache.getAll()) {
+				UUID warId = war.id;
+				cacheWarIds.add(warId);
+
+				upsertStmt.setString(1, warId.toString());
+				upsertStmt.setString(2, war.displayName);
+				upsertStmt.setString(3, war.name);
+				upsertStmt.setString(4, war.description);
+				upsertStmt.setString(5, toPgTextArray(war.regions.stream()
+						.map(UUID::toString).toArray(String[]::new)));
+				upsertStmt.setDouble(6, war.prize);
+				upsertStmt.setLong(7, war.startedAt);
+
+				upsertStmt.addBatch();
+			}
+			upsertStmt.executeBatch();
+
+			dbWarIds.removeAll(cacheWarIds);
+			for (UUID deletedId : dbWarIds) {
+				deleteStmt.setString(1, deletedId.toString());
+				deleteStmt.addBatch();
+			}
+			deleteStmt.executeBatch();
+
+			if (Homestead.config.isDebugEnabled()) {
+				Logger.info("Exported " + cacheWarIds.size() + " wars and deleted "
+						+ dbWarIds.size() + " wars from MariaDB.");
+			}
+		} catch (SQLException e) {
+			Logger.error("Unable to export wars to MariaDB.");
 			e.printStackTrace();
 		}
 	}
