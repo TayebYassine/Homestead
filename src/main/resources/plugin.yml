@@ -152,6 +152,8 @@ permissions:
     default: true
   homestead.commands.region.rename:
     default: true
+  homestead.commands.region.rewards:
+    default: true
   homestead.commands.region.set:
     default: true
   homestead.commands.region.subareas:
@@ -197,6 +199,7 @@ permissions:
       homestead.commands.region.info: true
       homestead.commands.region.rate: true
       homestead.commands.region.rename: true
+      homestead.commands.region.rewards: true
       homestead.commands.region.set: true
       homestead.commands.region.subareas: true
       homestead.commands.region.top: true
