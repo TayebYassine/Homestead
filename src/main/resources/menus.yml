@@ -22,6 +22,7 @@ titles:
   20: "Top Regions by Members"
   21: "Top Regions by Creation Date"
   22: "Top Regions by Player Rating"
+  23: "Rewards: &2{region}"
 
 buttons:
   0:
@@ -590,6 +591,18 @@ buttons:
       - "&8➥ Left-click to enable all."
       - "&8➥ Right-click to disable all."
     type: JIGSAW
+  66:
+    name: "&9Rewards by Member"
+    lore:
+      - "&7You have invited &6{members} &7to this region, which"
+      - "&7unlocked &6{chunks} &7more chunks to claim!"
+    type: PAPER
+  67:
+    name: "&9Rewards by Playtime"
+    lore:
+      - "&7You have played on this server for&6 %playtime_time% &7and" # "%playtime_time%" Requires PAPI for the placeholder to work!
+      - "&7you unlocked &6{chunks} &7more chunks to claim!"
+    type: PAPER
 
 button-types:
   world:

@@ -105,6 +105,7 @@ public class MojangBrigadier {
 				.then(LiteralArgumentBuilder.literal("rename")
 						.then(RequiredArgumentBuilder.argument("newname",
 								StringArgumentType.string())))
+				.then(LiteralArgumentBuilder.literal("rewards"))
 				.then(LiteralArgumentBuilder.literal("set")
 						.then(LiteralArgumentBuilder.literal("description").then(
 								RequiredArgumentBuilder.argument("description",

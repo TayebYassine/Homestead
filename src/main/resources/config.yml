@@ -197,8 +197,7 @@ sub-areas:
   # Enable this feature? "true" to enable, "false" to disable.
   enabled: true
 
-# Wars (EXPERIMENTAL)
-# THIS IS AN EXPERIMENTAL FEATURE, KEEP IT OFF!
+# Wars; Allow players to declare wars on other regions.
 wars:
   # Enable this feature? "true" to enable, "false" to disable.
   enabled: false
@@ -287,13 +286,57 @@ player-limits:
     max-subarea-volume: 1200
     commands-cooldown: 0
 
-  ANOTHER_PLAYER_NAME_GOES_HERE_IF_NEEDED_TOO:
-    regions: 2147483647 # 2,147,483,647 is the max signed 32-bit integer value.
-    chunks-per-region: 2147483647
-    members-per-region: 2147483647
-    subareas-per-region: 2147483647
-    max-subarea-volume: 2147483647
-    commands-cooldown: 2147483647
+############################################################
+# +------------------------------------------------------+ #
+# |                      Rewards                         | #
+# +------------------------------------------------------+ #
+############################################################
+
+# Rewards; Giving rewards to players by interacting more on the server!
+# NOTE: Player groups doesn't restrict rewards!
+rewards:
+  # Enable this feature? "true" to enable, "false" to disable.
+  enabled: true
+
+  # For each member of a region:
+  # NOTE: If you want to disable it, set chunks to '0'.
+  for-each-member:
+    # Gives to the region owner the amount of chunks to claim:
+    chunks: 2 # +2 chunks
+
+  # By player's playtime:
+  # WARNING: HOMESTEAD COMPARES BY THE HIGHEST PLAY TIME. IF YOU LOWER THE AMOUNT OF CHUNKS AND HIGHER THE PLAY TIME,
+  # THE PLAYER WILL RECEIVE LOWER REWARDED CHUNKS!
+  # => Once you increase the playtime, you must increase the rewarded chunks!
+  # NOTE: If you want to disable it, remove ALL objects EXCEPT one, and set chunks to '0'.
+  by-playtime:
+    - minutes: 30
+      hours: 0
+      days: 0
+
+      # If the player has 30 minutes of playtime, they will get 1 more chunks to claim!
+      chunks: 1
+
+    - minutes: 0
+      hours: 1
+      days: 0
+
+      # If the player has 1 hour of playtime, they will get 2 more chunks to claim!
+      chunks: 2
+
+    - minutes: 0
+      hours: 3
+      days: 0
+
+      # If the player has 3 hours of playtime, they will get 4 more chunks to claim!
+      chunks: 4
+
+    - minutes: 0
+      hours: 0
+      days: 1
+
+      # If the player has 1 day of playtime, they will get 8 more chunks to claim!
+      chunks: 8
 
 ############################################################
 # +------------------------------------------------------+ #

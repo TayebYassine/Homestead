@@ -6,6 +6,8 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
+import java.util.Objects;
+
 public class PlayerLimits {
 	public static String getString(LimitType limit) {
 		switch (limit) {
@@ -41,7 +43,7 @@ public class PlayerLimits {
         return Homestead.config.get("player-limits." + player.getName() + "." + getString(limit));
 	}
 
-	public static int getLimitValue(OfflinePlayer player, LimitType limit) {
+	public static int getDefaultLimitValue(OfflinePlayer player, LimitType limit) {
 		Object playerLimitByName = getLimitValueByPlayername(player, limit);
 
 		if (playerLimitByName != null) {
@@ -74,11 +76,27 @@ public class PlayerLimits {
 		}
 	}
 
-	public static boolean hasReachedLimit(OfflinePlayer player, LimitType limit) {
+	public static int getLimitOfPlayer(OfflinePlayer player, LimitType limit) {
+		if (Objects.requireNonNull(limit) == LimitType.CHUNKS_PER_REGION) {
+			int defChunks = getDefaultLimitValue(player, limit);
+
+			boolean rewardsEnabled = Homestead.config.get("rewards.enabled");
+
+			if (rewardsEnabled) {
+				return PlayerRewards.getChunksByEachMember(player) + PlayerRewards.getChunksByPlayTime(player) + defChunks;
+			} else {
+				return defChunks;
+			}
+		}
+
+		return getDefaultLimitValue(player, limit);
+	}
+
+	public static boolean hasPlayerReachedLimit(OfflinePlayer player, LimitType limit) {
 		switch (limit) {
 			case REGIONS: {
 				int current = RegionsManager.getRegionsOwnedByPlayer(player).size();
-				int max = getLimitValue(player, limit);
+				int max = getLimitOfPlayer(player, limit);
 
 				return current >= max;
 			}
@@ -90,7 +108,7 @@ public class PlayerLimits {
 				}
 
 				int current = region.getChunks().size();
-				int max = getLimitValue(player, limit);
+				int max = getLimitOfPlayer(player, limit);
 
 				return current >= max;
 			}
@@ -102,7 +120,7 @@ public class PlayerLimits {
 				}
 
 				int current = region.getMembers().size();
-				int max = getLimitValue(player, limit);
+				int max = getLimitOfPlayer(player, limit);
 
 				return current >= max;
 			}
@@ -114,7 +132,7 @@ public class PlayerLimits {
 				}
 
 				int current = region.getSubAreas().size();
-				int max = getLimitValue(player, limit);
+				int max = getLimitOfPlayer(player, limit);
 
 				return current >= max;
 			}

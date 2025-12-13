@@ -29,7 +29,7 @@ public class CommandsCooldownListener implements Listener {
 
 				PlayerUtils.sendMessage(player, 118);
 			} else {
-				int cooldownPlayer = PlayerLimits.getLimitValue(player, PlayerLimits.LimitType.COMMANDS_COOLDOWN);
+				int cooldownPlayer = PlayerLimits.getDefaultLimitValue(player, PlayerLimits.LimitType.COMMANDS_COOLDOWN);
 
 				if (cooldownPlayer > 0) {
 					cooldown.add(player.getUniqueId());

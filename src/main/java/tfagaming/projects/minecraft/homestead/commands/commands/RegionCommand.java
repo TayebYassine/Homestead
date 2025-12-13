@@ -156,6 +156,9 @@ public class RegionCommand extends CommandBuilder {
 			case "balance":
 				new BalanceSubCmd().onExecution(sender, args);
 				break;
+			case "rewards":
+				new RewardsSubCmd().onExecution(sender, args);
+				break;
 			default:
 				String similaritySubCmds = StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand).stream()
 						.collect(Collectors.joining(", "));
@@ -381,6 +384,6 @@ public class RegionCommand extends CommandBuilder {
 		return Lists.newArrayList("create", "delete", "set", "rename", "borders", "ban", "unban", "trust", "untrust",
 				"flags", "accept", "deny", "visit", "subareas", "deposit", "withdraw", "menu", "player", "home",
 				"info", "banlist", "members", "claimlist", "help", "logs", "rate", "top", "auto", "kick", "war", "chat",
-				"mail", "balance");
+				"mail", "balance", "rewards");
 	}
 }

@@ -198,6 +198,7 @@ prefix: "&8[&6HS&8]&r "
 165: "&eYou have left 5 mails and they're still unread, please wait until your mails are read so you can send another one!"
 166: "&7Mail sent! Please wait until &3{region-owner} &7sees your mail."
 167: "&2{region}&7's balance is &c{balance}&7."
+168: "&eRewards are disabled on this server! :("
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."

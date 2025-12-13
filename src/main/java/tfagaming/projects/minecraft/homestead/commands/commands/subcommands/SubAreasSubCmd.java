@@ -103,7 +103,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (PlayerLimits.hasReachedLimit(region.getOwner(), PlayerLimits.LimitType.SUBAREAS_PER_REGION)) {
+				if (PlayerLimits.hasPlayerReachedLimit(region.getOwner(), PlayerLimits.LimitType.SUBAREAS_PER_REGION)) {
 					PlayerUtils.sendMessage(player, 116);
 					return true;
 				}
@@ -112,7 +112,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 						firstCorner.getWorld(), firstCorner, secondCorner, region.getPlayerFlags());
 
 				int volume = subArea.getVolume();
-				int maxVolume = PlayerLimits.getLimitValue(player, PlayerLimits.LimitType.MAX_SUBAREA_VOLUME);
+				int maxVolume = PlayerLimits.getDefaultLimitValue(player, PlayerLimits.LimitType.MAX_SUBAREA_VOLUME);
 
 				if (volume >= maxVolume) {
 					Map<String, String> replacements = new HashMap<String, String>();
