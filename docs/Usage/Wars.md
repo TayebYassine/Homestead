@@ -1,8 +1,4 @@
-# Wars
-
-!!! warning
-
-    This is an upcoming feature that is still under development.
+# War
 
 A war is an organized armed conflict involving PvP between nations (or regions), characterized by clashes, or territorial disputes, leading to mass killing of players, social disruption, and economic destruction between them.
 
@@ -12,7 +8,7 @@ To declare a war, you must confirm that:
 
 - You have an army of players, which are the members of your region.
 - Once you get killed by anything during the war, the other nation will be marked as the winner, and you will pay the prize.
-- The other nation's members can attack you, but other players and your members will not attack you.
+- The other nation's members can attack you, but other players cannot attack you. Unfortunately, your members **may** attack you.
 - A member can be a part of your nation and the other nation, so it means they are a regicide, and they can murder you.
 - Surrendering first will mark you as the loser, and you will pay the prize.
 

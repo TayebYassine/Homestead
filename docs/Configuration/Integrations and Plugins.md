@@ -44,6 +44,8 @@ Available placeholders:
 - `%homestead_region_max_members%`: Displays the maximum number of chunks a player can claim.
 - `%homestead_upkeep_amount%`: Displays the required amount to pay for taxes.
 - `%homestead_upkeep_at%`: Shows when the region's owners must pay their taxes.
+- `%homestead_war_name%`: Shows the current war name.
+- `%homestead_war_prize%`: Shows the current war prize.
 
 ## Web Map Rendering Plugins
 

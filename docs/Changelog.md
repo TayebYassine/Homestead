@@ -4,10 +4,9 @@ This is a document that lists all releases made to Homestead, including the obso
 
 ## Latest Releases
 
-- [Release 4.1.3 (stable)](https://www.spigotmc.org/resources/121873/update?update=620037)
+- [Release 4.2.0 (stable)](https://www.spigotmc.org/resources/121873/update?update=620915)
+- [Release 4.1.3](https://www.spigotmc.org/resources/121873/update?update=620037)
 - [Release 4.1.2](https://www.spigotmc.org/resources/121873/update?update=615387)
-- [Release 4.1.1](https://www.spigotmc.org/resources/121873/update?update=615271)
-- [Release 4.1.0](https://www.spigotmc.org/resources/121873/update?update=615109)
 
 ## Table of Releases
 
@@ -22,10 +21,11 @@ First release: **January 11th, 2025**
 
 | Release |  Series  |    Supported?    |
 |:-------:|:--------:|:----------------:|
+|  4.2.0  |   4.x    | :material-check: |
 |  4.1.3  |   4.x    | :material-check: |
 |  4.1.2  |   4.x    | :material-check: |
-|  4.1.1  |   4.x    | :material-check: |
-|  4.1.0  |   4.x    | :material-check: |
+|  4.1.1  |   4.x    | :material-close: |
+|  4.1.0  |   4.x    | :material-close: |
 |  4.0.4  |   4.x    | :material-close: |
 |  4.0.3  |   4.x    | :material-close: |
 |  4.0.2  |   4.x    | :material-close: |

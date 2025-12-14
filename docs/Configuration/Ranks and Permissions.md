@@ -1,5 +1,5 @@
 # Ranks and Permissions
-## Ranks and the limits
+## Limits by Groups
 Each player has a group; by default, it's `default`. They may upgrade to another rank, for example, `vip` group, so they need special upgrades for their regions, like 6+ more claims, 4+ members... etc.
 
 There are two options for limits:
@@ -75,6 +75,29 @@ limits:
       commands-cooldown: 0
 ```
 
+## Limits by Playername
+
+To reduce the complexity of creating many groups for each specific player, you can put their playername in the configuration file to avoid creating multiple groups!
+
+```yaml
+player-limits:
+  Dead_Master_121: # <-- A player name (he's a cool guy btw)
+    regions: 10
+    chunks-per-region: 100
+    members-per-region: 16
+    subareas-per-region: 10
+    max-subarea-volume: 1200
+    commands-cooldown: 0
+    
+  TFA_Gaming: # <-- Another player name
+    regions: 8
+    chunks-per-region: 64
+    members-per-region: 8
+    subareas-per-region: 5
+    max-subarea-volume: 400
+    commands-cooldown: 3
+```
+
 ## Permissions
 
 In the following guide, you will know how to set permissions for a group using the LuckPerms plugin.
@@ -109,6 +132,8 @@ Specific permissions for players to manage their regions.
 - homestead.region.\*: This will give the group with all the permissions below.
 - homestead.region.create
 - homestead.region.delete
+- homestead.region.chat
+- homestead.region.mail
 - homestead.region.players.trust
 - homestead.region.players.untrust
 - homestead.region.players.ban
@@ -123,14 +148,17 @@ Specific permissions for players to manage their regions.
 - homestead.region.bank
 - homestead.region.dynamicmaps.icon
 - homestead.region.dynamicmaps.color
+- homestead.region.war
 
 ### Commands
 
 - homestead.commands.region.\*: This will give the group with all the permissions below.
 - homestead.commands.region.accept
 - homestead.commands.region.auto
+- homestead.commands.region.balance
 - homestead.commands.region.banlist
 - homestead.commands.region.ban
+- homestead.commands.region.chat
 - homestead.commands.region.claimlist
 - homestead.commands.region.create
 - homestead.commands.region.delete
@@ -141,6 +169,7 @@ Specific permissions for players to manage their regions.
 - homestead.commands.region.home
 - homestead.commands.region.kick
 - homestead.commands.region.logs
+- homestead.commands.region.mail
 - homestead.commands.region.members
 - homestead.commands.region.menu
 - homestead.commands.region.player
@@ -154,5 +183,5 @@ Specific permissions for players to manage their regions.
 - homestead.commands.region.unban
 - homestead.commands.region.untrust
 - homestead.commands.region.visit
-- homestead.commands.region.war (*Coming soon!*)
+- homestead.commands.region.war
 - homestead.commands.region.withdraw

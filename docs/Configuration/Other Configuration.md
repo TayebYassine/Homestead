@@ -24,7 +24,7 @@ sub-areas:
 
 ## Clean startup
 
-Clears corrupted data in regions data.
+Clears corrupted data in regions and wars data.
 
 ```yaml
 clean-startup: true
