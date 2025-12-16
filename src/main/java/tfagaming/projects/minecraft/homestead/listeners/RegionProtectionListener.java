@@ -724,10 +724,12 @@ public class RegionProtectionListener implements Listener {
 
 	@EventHandler
 	public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
-		if (event.getEntity().getType().name().contains("PAINTING")
-				|| event.getEntity().getType().name().contains("ITEM_FRAME")) {
+		Entity entity = event.getEntity();
+
+		if (entity.getType().name().contains("PAINTING")
+				|| entity.getType().name().contains("ITEM_FRAME")) {
 			if (event.getRemover() instanceof Player player) {
-				Chunk chunk = event.getEntity().getLocation().getChunk();
+				Chunk chunk = entity.getLocation().getChunk();
 
 				if (player != null && ChunksManager.isChunkClaimed(chunk) && !PlayerUtils.isOperator(player)) {
 					Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
@@ -1072,7 +1074,21 @@ public class RegionProtectionListener implements Listener {
 		Entity entityhit = event.getHitEntity();
 		// Block blockHit = event.getHitBlock();
 
-		if (shooter instanceof Player player && entity instanceof ThrownPotion) {
+		if (event.getEntityType() == EntityType.WITHER_SKULL) {
+			if (event.getHitBlock() != null) {
+				Block block = event.getHitBlock();
+				chunk = block.getLocation().getChunk();
+
+				if (ChunksManager.isChunkClaimed(chunk)) {
+					Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+
+					if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
+						event.getEntity().remove();
+						event.setCancelled(true);
+					}
+				}
+			}
+		} else if (shooter instanceof Player player && entity instanceof ThrownPotion) {
 
 			chunk = entity.getLocation().getChunk();
 
@@ -1490,13 +1506,17 @@ public class RegionProtectionListener implements Listener {
 			}
 		} else if (event.getEntity().getType() == EntityType.WITHER
 				|| event.getEntity().getType() == EntityType.WITHER_SKULL) {
-			event.blockList().removeIf((block) -> {
+			boolean removedOne = event.blockList().removeIf((block) -> {
 				Chunk chunk = block.getChunk();
 
 				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
 
-				return region != null && region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE);
+				return region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE);
 			});
+
+			if (removedOne) {
+				event.setCancelled(true);
+			}
 		} else if (event.getEntity() instanceof TNTPrimed || event.getEntity() instanceof Creeper
 				|| event.getEntity() instanceof Fireball || event.getEntity() instanceof EnderCrystal
 				|| event.getEntity().getType() == EntityType.END_CRYSTAL
