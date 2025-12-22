@@ -442,6 +442,12 @@ dynamic-maps:
 # +------------------------------------------------------+ #
 ############################################################
 
+# Flags configuration; Specific configuration for some flags
+flags-configuration:
+  # Allow entities spawned from spawners to ignore the flags "passive-entities-spawn" and "hostile-entities-spawn"?
+  # Set to "true" to ignore the flags, else "false".
+  spawners: true
+
 # Delayed teleport; Set a custom delay for players to teleport to a region.
 delayed-teleport:
   # Enable this feature? "true" to enable, "false" to disable.
@@ -524,6 +530,7 @@ default-players-flags:
   sleep: false # Sleep: Allow players to sleep in beds within the region?
   trigger-raid: false # Raids: Allow players to trigger raids?
   elytra: true # Elytra: Allow players to fly using an Elytra?
+  spawn-entities: true
 
 ############################################################
 # +------------------------------------------------------+ #

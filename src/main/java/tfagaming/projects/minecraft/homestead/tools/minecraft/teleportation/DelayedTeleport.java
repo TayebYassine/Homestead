@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -64,7 +65,7 @@ public class DelayedTeleport {
 			return;
 		}
 
-		player.teleport(location);
+		player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 500.0f, 1.0f);
 

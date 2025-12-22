@@ -41,8 +41,8 @@ public class HomeSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtils.isOperator(player)
 				&& !player.getUniqueId().equals(region.getOwnerId())
-				&& !(PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN)
-				&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH))) {
+				&& !(PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
+				&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
 			Map<String, String> replacements = new HashMap<String, String>();
 			replacements.put("{region}", region.getName());
 

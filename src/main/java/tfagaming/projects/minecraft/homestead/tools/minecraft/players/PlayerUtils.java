@@ -5,13 +5,16 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -26,11 +29,8 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimi
 import java.util.*;
 
 public class PlayerUtils {
-	private static final HashSet<UUID> cooldown = new HashSet<UUID>();
-
-	public static boolean hasAvailableSlot(Player player) {
-		return player.getInventory().firstEmpty() != -1;
-	}
+	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
+	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
 
 	public static double getBalance(OfflinePlayer player) {
 		if (!Homestead.vault.isEconomyReady()) {
@@ -153,14 +153,9 @@ public class PlayerUtils {
 	}
 
 	public static void teleportPlayerToChunk(Player player, Chunk chunk) {
-		Location location = new Location(chunk.getWorld(), chunk.getX() * 16 + 8, 64,
-				chunk.getZ() * 16 + 8);
+        Location location = ChunksManager.getLocation(player, chunk);
 
-		location.setY(location.getWorld().getHighestBlockYAt(location) + 2);
-		location.setPitch(player.getLocation().getPitch());
-		location.setYaw(player.getLocation().getYaw());
-
-		player.teleport(location);
+		player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 	}
 
 	public static boolean isOperator(Player player) {
@@ -188,7 +183,7 @@ public class PlayerUtils {
 	 * @param flag     the PlayerFlags bit to check
 	 * @return true if the action is allowed; false otherwise
 	 */
-	public static boolean hasPermissionFlag(UUID regionId, Player player, long flag) {
+	public static boolean hasPermissionFlag(UUID regionId, Player player, long flag, boolean notify) {
 		Region region = RegionsManager.findRegion(regionId);
 		if (region == null) return true;
 
@@ -219,62 +214,74 @@ public class PlayerUtils {
 
 		if (!response
 				&& flag != PlayerFlags.TAKE_FALL_DAMAGE
-				&& !cooldown.contains(player.getUniqueId())) {
+				&& !COOLDOWN.contains(player.getUniqueId())
+				&& notify) {
 			Map<String, String> replacements = new HashMap<>();
 			replacements.put("{flag}", PlayerFlags.from(flag));
 			replacements.put("{region}", region.getName());
 
 			PlayerUtils.sendMessage(player, 50, replacements);
 
-			cooldown.add(player.getUniqueId());
-			Homestead.getInstance().runAsyncTaskLater(() -> cooldown.remove(player.getUniqueId()), 3);
+			COOLDOWN.add(player.getUniqueId());
+			Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()), 3);
 		}
 
 		return response;
 	}
 
 
-	public static boolean hasPermissionFlag(UUID regionId, UUID subAreaId, Player player, long flag) {
+	public static boolean hasPermissionFlag(UUID regionId,
+											UUID subAreaId,
+											Player player,
+											long flag,
+											boolean notify) {
+
 		Region region = RegionsManager.findRegion(regionId);
-
-		if (region != null) {
-			SerializableSubArea subArea = region.getSubArea(subAreaId);
-
-			boolean response = true;
-
-			SerializableRent rent = region.getRent();
-
-			if (rent != null && rent.getPlayerId() != null
-					&& rent.getPlayerId().equals(player.getUniqueId()) && flag != PlayerFlags.PVP) {
-				response = true;
-			} else {
-				if (region.isPlayerMember(player)) {
-					SerializableMember member = region.getMember(player);
-
-					response = FlagsCalculator.isFlagSet(member.getFlags(), flag);
-				} else {
-					response = FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
-				}
-			}
-
-			if (!response && !cooldown.contains(player.getUniqueId())) {
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{flag}", PlayerFlags.from(flag));
-				replacements.put("{region}", region.getName());
-
-				PlayerUtils.sendMessage(player, 50, replacements);
-
-				cooldown.add(player.getUniqueId());
-
-				Homestead.getInstance().runAsyncTaskLater(() -> {
-					cooldown.remove(player.getUniqueId());
-				}, 3);
-			}
-
-			return response;
+		if (region == null) {
+			return true;
 		}
 
-		return true;
+		boolean allowed = calculatePermission(region, subAreaId, player, flag);
+
+		if (!allowed && notify && !COOLDOWN.contains(player.getUniqueId())) {
+			sendDenialMessage(player, region, flag);
+		}
+
+		return allowed;
+	}
+
+	private static boolean calculatePermission(Region region,
+											   UUID subAreaId,
+											   Player player,
+											   long flag) {
+		SerializableRent rent = region.getRent();
+		if (rent != null
+				&& rent.getPlayerId() != null
+				&& rent.getPlayerId().equals(player.getUniqueId())
+				&& flag != PlayerFlags.PVP) {
+			return true;
+		}
+
+		if (region.isPlayerMember(player)) {
+			SerializableMember member = region.getMember(player);
+
+			return FlagsCalculator.isFlagSet(member.getFlags(), flag);
+		}
+
+		SerializableSubArea subArea = region.getSubArea(subAreaId);
+
+		return FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
+	}
+
+	private static void sendDenialMessage(Player player, Region region, long flag) {
+		Map<String, String> placeholders = Map.of(
+				"{flag}", PlayerFlags.from(flag),
+				"{region}", region.getName()
+		);
+		PlayerUtils.sendMessage(player, 50, placeholders);
+
+		COOLDOWN.add(player.getUniqueId());
+		Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()), MESSAGE_COOLDOWN_SECONDS);
 	}
 
 	public static boolean hasControlRegionPermissionFlag(UUID regionId, Player player, long flag) {
@@ -293,17 +300,17 @@ public class PlayerUtils {
 				response = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), flag);
 			}
 
-			if (!response && !cooldown.contains(player.getUniqueId())) {
+			if (!response && !COOLDOWN.contains(player.getUniqueId())) {
 				Map<String, String> replacements = new HashMap<>();
 				replacements.put("{flag}", RegionControlFlags.from(flag));
 				replacements.put("{region}", region.getName());
 
 				PlayerUtils.sendMessage(player, 70, replacements);
 
-				cooldown.add(player.getUniqueId());
+				COOLDOWN.add(player.getUniqueId());
 
 				Homestead.getInstance().runAsyncTaskLater(() -> {
-					cooldown.remove(player.getUniqueId());
+					COOLDOWN.remove(player.getUniqueId());
 				}, 3);
 			}
 
@@ -322,7 +329,19 @@ public class PlayerUtils {
 			if (player.isOnline()) {
 				return Homestead.vault.getPermissions().getPrimaryGroup((Player) player);
 			} else {
-				return Homestead.vault.getPermissions().getPrimaryGroup(player.getLocation().getWorld().getName(),
+				Location location = player.getLocation();
+
+				if (location == null) {
+					return null;
+				}
+
+				World world = location.getWorld();
+
+				if (world == null) {
+					return null;
+				}
+
+				return Homestead.vault.getPermissions().getPrimaryGroup(world.getName(),
 						player);
 			}
 		} catch (UnsupportedOperationException e) {

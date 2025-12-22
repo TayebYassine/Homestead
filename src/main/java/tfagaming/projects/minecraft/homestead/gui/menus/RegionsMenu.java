@@ -102,8 +102,8 @@ public class RegionsMenu {
 
 						boolean allowed = PlayerUtils.isOperator(_player)
 								|| _player.getUniqueId().equals(region.getOwnerId())
-								|| (PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN)
-								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH));
+								|| (PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN, true)
+								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true));
 
 						if (!allowed) {
 							Map<String, String> replacements = new HashMap<>();

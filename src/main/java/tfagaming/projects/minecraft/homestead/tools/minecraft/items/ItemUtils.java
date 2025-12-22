@@ -41,20 +41,22 @@ public class ItemUtils {
 
 		ItemMeta meta = item.getItemMeta();
 
-		meta.setDisplayName(ChatColorTranslator.translate(displayname));
+		if (meta != null) {
+			meta.setDisplayName(ChatColorTranslator.translate(displayname));
 
-		if (loreCopy != null) {
-			ArrayList<String> lorelist = new ArrayList<>();
-			for (String each : loreCopy) {
-				String[] lines = each.split("\\n");
-				for (String line : lines) {
-					if (!line.contains("&")) {
-						line = "&f" + line;
+			if (loreCopy != null) {
+				ArrayList<String> lorelist = new ArrayList<>();
+				for (String each : loreCopy) {
+					String[] lines = each.split("\\n");
+					for (String line : lines) {
+						if (!line.contains("&")) {
+							line = "&f" + line;
+						}
+						lorelist.add(ChatColorTranslator.translate(line));
 					}
-					lorelist.add(ChatColorTranslator.translate(line));
 				}
+				meta.setLore(lorelist);
 			}
-			meta.setLore(lorelist);
 		}
 
 		item.setItemMeta(meta);
@@ -84,26 +86,28 @@ public class ItemUtils {
 		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
 
 		ItemStack item = getCustomHeadTexture(texture);
-		if (item == null || item.getType() != Material.PLAYER_HEAD) {
+		if (item.getType() != Material.PLAYER_HEAD) {
 			throw new IllegalStateException("Failed to create a valid Player Head!");
 		}
 
 		ItemMeta meta = item.getItemMeta();
 
-		meta.setDisplayName(ChatColorTranslator.translate(displayname));
+		if (meta != null) {
+			meta.setDisplayName(ChatColorTranslator.translate(displayname));
 
-		if (loreCopy != null) {
-			ArrayList<String> lorelist = new ArrayList<>();
-			for (String each : loreCopy) {
-				String[] lines = each.split("\\n");
-				for (String line : lines) {
-					if (!line.contains("&")) {
-						line = "&f" + line;
+			if (loreCopy != null) {
+				ArrayList<String> lorelist = new ArrayList<>();
+				for (String each : loreCopy) {
+					String[] lines = each.split("\\n");
+					for (String line : lines) {
+						if (!line.contains("&")) {
+							line = "&f" + line;
+						}
+						lorelist.add(ChatColorTranslator.translate(line));
 					}
-					lorelist.add(ChatColorTranslator.translate(line));
 				}
+				meta.setLore(lorelist);
 			}
-			meta.setLore(lorelist);
 		}
 
 		item.setItemMeta(meta);
@@ -132,9 +136,11 @@ public class ItemUtils {
 		ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 		SkullMeta meta = (SkullMeta) head.getItemMeta();
 
-		meta.setOwnerProfile(
-				getProfile("https://textures.minecraft.net/texture/" + texture));
-		head.setItemMeta(meta);
+		if (meta != null) {
+			meta.setOwnerProfile(
+					getProfile("https://textures.minecraft.net/texture/" + texture));
+			head.setItemMeta(meta);
+		}
 
 		return head;
 	}
@@ -162,22 +168,25 @@ public class ItemUtils {
 		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
 
 		ItemStack item = getPlayerHeadById(playerId);
-		if (item == null || item.getType() != Material.PLAYER_HEAD) {
+		if (item.getType() != Material.PLAYER_HEAD) {
 			throw new IllegalStateException("Failed to create a valid Player Head!");
 		}
 
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColorTranslator.translate(displayname));
 
-		if (loreCopy != null) {
-			ArrayList<String> lorelist = new ArrayList<>();
-			for (String each : loreCopy) {
-				if (!each.contains("&")) {
-					each = "&f" + each;
+		if (meta != null) {
+			meta.setDisplayName(ChatColorTranslator.translate(displayname));
+
+			if (loreCopy != null) {
+				ArrayList<String> lorelist = new ArrayList<>();
+				for (String each : loreCopy) {
+					if (!each.contains("&")) {
+						each = "&f" + each;
+					}
+					lorelist.add(ChatColorTranslator.translate(each));
 				}
-				lorelist.add(ChatColorTranslator.translate(each));
+				meta.setLore(lorelist);
 			}
-			meta.setLore(lorelist);
 		}
 
 		item.setItemMeta(meta);
@@ -209,11 +218,11 @@ public class ItemUtils {
 
 		if (player == null) {
 			return new ItemStack(Material.PLAYER_HEAD);
-		} else {
+		} else if (meta != null) {
 			meta.setOwningPlayer(player);
-		}
 
-		head.setItemMeta(meta);
+			head.setItemMeta(meta);
+		}
 
 		return head;
 	}

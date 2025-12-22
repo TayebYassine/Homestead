@@ -315,6 +315,9 @@ flags-info:
   elytra:
     description: "Allow players to fly using an Elytra?"
     type: ELYTRA
+  spawn-entities:
+    description: "TEST: ALLOW PLAYERS TO SPAWN MOBS WITH SPAWN EGGS"
+    type: BARRIER
 
   # WORLD FLAGS
   passive-entities-spawn:

@@ -67,7 +67,7 @@ public class PlayerRegionEnterAndExitListener implements Listener {
 			}
 
 			if (!PlayerUtils.isOperator(player) && !player.getUniqueId().equals(region.getOwnerId())
-					&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH) && !WarsManager.isRegionInWar(region.getOwnerId())) {
+					&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true) && !WarsManager.isRegionInWar(region.getOwnerId())) {
 				Chunk nearbyChunk = ChunksManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
@@ -109,14 +109,14 @@ public class PlayerRegionEnterAndExitListener implements Listener {
 			if (region.isWorldFlagSet(WorldFlags.PLAYER_GLOWING)) {
 				if (!player.hasPotionEffect(PotionEffectType.GLOWING)) {
 					player.addPotionEffect(
-							new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 1, false, false));
+							new PotionEffect(PotionEffectType.GLOWING, PotionEffect.INFINITE_DURATION, 1, false, false));
 				}
 			}
 
 			// Checking if player has an elytra
 			if (player.isGliding() && isWearingElytra(player) && !PlayerUtils.isOperator(player)) {
 				if (!player.getUniqueId().equals(region.getOwnerId())
-						&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.ELYTRA)) {
+						&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.ELYTRA, true)) {
 					player.setGliding(false);
 				}
 			}
