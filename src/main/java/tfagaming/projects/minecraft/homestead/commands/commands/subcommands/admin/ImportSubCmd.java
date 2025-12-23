@@ -26,9 +26,9 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 import java.util.*;
 
-public class ImportDataSubCmd extends SubCommandBuilder {
-	public ImportDataSubCmd() {
-		super("importdata");
+public class ImportSubCmd extends SubCommandBuilder {
+	public ImportSubCmd() {
+		super("import");
 	}
 
 	public static boolean isGriefPreventionInstalled() {

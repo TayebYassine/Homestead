@@ -9,9 +9,9 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.HashMap;
 import java.util.Map;
 
-public class MigrateDataSubCmd extends SubCommandBuilder {
-	public MigrateDataSubCmd() {
-		super("migratedata");
+public class ExportSubCmd extends SubCommandBuilder {
+	public ExportSubCmd() {
+		super("export");
 	}
 
 	@Override

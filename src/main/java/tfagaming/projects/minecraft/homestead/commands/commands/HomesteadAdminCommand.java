@@ -43,8 +43,8 @@ public class HomesteadAdminCommand extends CommandBuilder {
 		}
 
 		switch (subCommand) {
-			case "migratedata":
-				new MigrateDataSubCmd().onExecution(sender, args);
+			case "export":
+				new ExportSubCmd().onExecution(sender, args);
 				break;
 			case "plugin":
 				new PluginSubCmd().onExecution(sender, args);
@@ -55,8 +55,8 @@ public class HomesteadAdminCommand extends CommandBuilder {
 			case "updates":
 				new CheckUpdatesSubCmd().onExecution(sender, args);
 				break;
-			case "importdata":
-				new ImportDataSubCmd().onExecution(sender, args);
+			case "import":
+				new ImportSubCmd().onExecution(sender, args);
 				break;
 			case "flagsoverride":
 				new FlagsOverrideSubCmd().onExecution(sender, args);
@@ -108,12 +108,12 @@ public class HomesteadAdminCommand extends CommandBuilder {
 		}
 
 		switch (args[0].toLowerCase()) {
-			case "migratedata": {
+			case "export": {
 				if (args.length == 2)
 					suggestions.addAll(List.of("SQLite", "MySQL", "YAML", "PostgreSQL", "MariaDB"));
 				break;
 			}
-			case "importdata": {
+			case "import": {
 				if (args.length == 2)
 					suggestions.addAll(List.of("GriefPrevention", "LandLord", "ClaimChunk", "Lands", "HuskClaims"));
 				break;
@@ -152,6 +152,6 @@ public class HomesteadAdminCommand extends CommandBuilder {
 	}
 
 	public List<String> getSubcommands() {
-		return Lists.newArrayList("migratedata", "plugin", "reload", "updates", "importdata", "flagsoverride");
+		return Lists.newArrayList("export", "plugin", "reload", "updates", "import", "flagsoverride");
 	}
 }

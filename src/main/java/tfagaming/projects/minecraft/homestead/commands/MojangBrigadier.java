@@ -205,10 +205,10 @@ public class MojangBrigadier {
 
 		// /homesteadadmin
 		LiteralCommandNode<?> homesteadAdminCommandNode = LiteralArgumentBuilder.literal("homesteadadmin")
-				.then(LiteralArgumentBuilder.literal("importdata")
+				.then(LiteralArgumentBuilder.literal("import")
 						.then(RequiredArgumentBuilder.argument("plugin",
 								StringArgumentType.string())))
-				.then(LiteralArgumentBuilder.literal("migratedata")
+				.then(LiteralArgumentBuilder.literal("export")
 						.then(RequiredArgumentBuilder.argument("provider",
 								StringArgumentType.string())))
 				.then(LiteralArgumentBuilder.literal("plugin"))

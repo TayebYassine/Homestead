@@ -209,9 +209,9 @@ permissions:
       homestead.commands.region.visit: true
       homestead.commands.region.war: true
       homestead.commands.region.withdraw: true
-  homestead.commands.homesteadadmin.importdata:
+  homestead.commands.homesteadadmin.import:
     default: op
-  homestead.commands.homesteadadmin.migratedata:
+  homestead.commands.homesteadadmin.export:
     default: op
   homestead.commands.homesteadadmin.plugin:
     default: op
@@ -224,8 +224,8 @@ permissions:
   homestead.commands.homesteadadmin.*:
     default: op
     children:
-      homestead.commands.homesteadadmin.importdata: true
-      homestead.commands.homesteadadmin.migratedata: true
+      homestead.commands.homesteadadmin.import: true
+      homestead.commands.homesteadadmin.export: true
       homestead.commands.homesteadadmin.plugin: true
       homestead.commands.homesteadadmin.reload: true
       homestead.commands.homesteadadmin.updates: true
