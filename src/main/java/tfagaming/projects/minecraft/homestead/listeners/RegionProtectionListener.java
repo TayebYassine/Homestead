@@ -93,7 +93,7 @@ public class RegionProtectionListener implements Listener {
 	}
 
 	// Block place
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
@@ -106,7 +106,7 @@ public class RegionProtectionListener implements Listener {
 	}
 
 	// Block break
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
@@ -118,7 +118,7 @@ public class RegionProtectionListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onInventoryInstanceOfEntityOpen(InventoryOpenEvent event) {
 		Inventory inventory = event.getInventory();
 		InventoryHolder holder = inventory.getHolder();
@@ -147,7 +147,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
 		Player player = event.getPlayer();
 		Block blockClicked = event.getBlockClicked();
@@ -161,7 +161,7 @@ public class RegionProtectionListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerBucketFill(PlayerBucketFillEvent event) {
 		Player player = event.getPlayer();
 		Block blockClicked = event.getBlockClicked();
@@ -175,7 +175,7 @@ public class RegionProtectionListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerExtinguishFire(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Action action = event.getAction();
@@ -195,7 +195,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerTrampleBlock(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Block blockClicked = event.getClickedBlock();
@@ -215,7 +215,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerHarvestCrop(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Block blockClicked = event.getClickedBlock();
@@ -234,7 +234,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerPlaceSpawnEgg(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Action action = event.getAction();
@@ -259,7 +259,7 @@ public class RegionProtectionListener implements Listener {
 	 * Handles most player interaction with blocks and certain placeable items in claimed chunks.
 	 * Uses Bukkit tags where available and centralizes permission gating to reduce branching and duplication.
 	 */
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		final Block clicked = event.getClickedBlock();
@@ -504,7 +504,7 @@ public class RegionProtectionListener implements Listener {
 		};
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerPunchFrame(EntityDamageByEntityEvent event) {
 		Entity entity = event.getEntity();
 
@@ -520,7 +520,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event) {
 		Player player = event.getPlayer();
 		Lectern lectern = event.getLectern();
@@ -532,7 +532,7 @@ public class RegionProtectionListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityBlockForm(EntityBlockFormEvent event) {
 		Entity entity = event.getEntity();
 		Block block = event.getBlock();
@@ -557,7 +557,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockIgnite(BlockIgniteEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
@@ -579,7 +579,7 @@ public class RegionProtectionListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onHangingEntityBreak(HangingBreakByEntityEvent event) {
 		Entity entity = event.getEntity();
 		Entity remover = event.getRemover();
@@ -608,7 +608,7 @@ public class RegionProtectionListener implements Listener {
 	}
 
 	// Entities protection
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onProjectileHitBreakableBlock(ProjectileHitEvent event) {
 		Block hit = event.getHitBlock();
 
@@ -652,7 +652,7 @@ public class RegionProtectionListener implements Listener {
 		return !block.isPreferredTool(new ItemStack(Material.AIR));
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 		Entity entity = event.getEntity();
 		Entity damager = event.getDamager();
@@ -688,7 +688,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
 		Player player = event.getPlayer();
 		Entity entity = event.getEntity();
@@ -700,7 +700,7 @@ public class RegionProtectionListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerInteractThrowThrowable(PlayerInteractEvent event) {
 		Action action = event.getAction();
 		if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) {
@@ -732,7 +732,7 @@ public class RegionProtectionListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerEatChorusFruit(PlayerItemConsumeEvent event) {
 		Player player = event.getPlayer();
 		Location location = player.getLocation();
@@ -746,7 +746,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPotionSplash(PotionSplashEvent event) {
 		Projectile entity = event.getEntity();
 		ProjectileSource shooter = entity.getShooter();
@@ -766,7 +766,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onLingeringPotionSplash(LingeringPotionSplashEvent event) {
 		Projectile entity = event.getEntity();
 		ProjectileSource shooter = entity.getShooter();
@@ -786,7 +786,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onProjectileHitEntity(ProjectileHitEvent event) {
 		Projectile entity = event.getEntity();
 		ProjectileSource shooter = entity.getShooter();
@@ -856,7 +856,7 @@ public class RegionProtectionListener implements Listener {
 		return !allowed;
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onVehicleEnter(VehicleEnterEvent event) {
 		Vehicle vehicle = event.getVehicle();
 		Location location = vehicle.getLocation();
@@ -870,7 +870,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onVehicleDamage(VehicleDamageEvent event) {
 		Vehicle vehicle = event.getVehicle();
 		Location location = vehicle.getLocation();
@@ -884,7 +884,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerLeashEntity(PlayerLeashEntityEvent event) {
 		Player player = event.getPlayer();
 		Entity entity = event.getEntity();
@@ -896,7 +896,7 @@ public class RegionProtectionListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onLeashEvent(PlayerLeashEntityEvent event) {
 		Player player = event.getPlayer();
 		Entity entity = event.getEntity();
@@ -911,7 +911,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerUnleashEntity(PlayerUnleashEntityEvent event) {
 		Player player = event.getPlayer();
 		Entity entity = event.getEntity();
@@ -926,7 +926,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
 		Player player = event.getPlayer();
 		Entity entity = event.getRightClicked();
@@ -935,7 +935,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
 		Player player = event.getPlayer();
 		Entity entity = event.getRightClicked();
@@ -972,17 +972,21 @@ public class RegionProtectionListener implements Listener {
 
 		if (player.getUniqueId().equals(region.getOwnerId())) return false;
 
-		long requiredFlag;
+		long requiredFlag = -1L;
 		EntityType type = entity.getType();
 
 		if (type == EntityType.ITEM_FRAME || type == EntityType.GLOW_ITEM_FRAME) {
 			requiredFlag = PlayerFlags.ITEM_FRAME_ROTATION;
-		} else if (entity instanceof org.bukkit.entity.Villager) {
+		} else if (entity instanceof Villager) {
 			requiredFlag = PlayerFlags.TRADE_VILLAGERS;
-		} else if (entity instanceof org.bukkit.entity.ArmorStand) {
+		} else if (entity instanceof ArmorStand) {
 			requiredFlag = PlayerFlags.ARMOR_STANDS;
-		} else {
+		} else if (!(entity instanceof Player)) {
 			requiredFlag = PlayerFlags.INTERACT_ENTITIES;
+		}
+
+		if (requiredFlag != -1L) {
+			return true;
 		}
 
 		SerializableSubArea subArea = region.findSubAreaHasLocationInside(entity.getLocation());
@@ -993,7 +997,7 @@ public class RegionProtectionListener implements Listener {
 		return !allowed;
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityToggleGlide(EntityToggleGlideEvent event) {
 		Entity entity = event.getEntity();
 
@@ -1012,7 +1016,7 @@ public class RegionProtectionListener implements Listener {
 
 	// World protection
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerFallDamage(EntityDamageEvent event) {
 		Entity entity = event.getEntity();
 		EntityDamageEvent.DamageCause cause = event.getCause();
@@ -1029,7 +1033,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
 		Entity entity = event.getEntity();
 
@@ -1083,7 +1087,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockExplode(BlockExplodeEvent event) {
 		Block block = event.getBlock();
 
@@ -1115,7 +1119,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockSpread(BlockSpreadEvent event) {
 		BlockState newState = event.getNewState();
 		Block block = event.getBlock();
@@ -1173,7 +1177,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onLeavesDecay(LeavesDecayEvent event) {
 		Block block = event.getBlock();
 		Location location = block.getLocation();
@@ -1188,7 +1192,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockBurn(BlockBurnEvent event) {
 		Block block = event.getBlock();
 		Location location = block.getLocation();
@@ -1204,7 +1208,7 @@ public class RegionProtectionListener implements Listener {
 	}
 
 	// TODO fix this
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onLiquidFlow(BlockFromToEvent event) {
 		Chunk fromChunk = event.getBlock().getChunk();
 		Chunk toChunk = event.getToBlock().getChunk();
@@ -1222,7 +1226,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPistonExtend(BlockPistonExtendEvent event) {
 		Block piston = event.getBlock();
 		@SuppressWarnings({"rawtypes", "unchecked"})
@@ -1238,7 +1242,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPistonRetract(BlockPistonRetractEvent event) {
 		Block piston = event.getBlock();
 		@SuppressWarnings({"rawtypes", "unchecked"})
@@ -1314,7 +1318,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onDispense(BlockDispenseEvent event) {
 		Block block = event.getBlock();
 		BlockData blockdata = event.getBlock().getBlockData();
@@ -1339,7 +1343,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityChangeBlock(EntityChangeBlockEvent event) {
 		Entity entity = event.getEntity();
 		Block block = event.getBlock();
@@ -1369,7 +1373,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
 		Location location = event.getLocation();
 		Chunk chunk = location.getChunk();
@@ -1397,7 +1401,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
 		Entity entity = event.getEntity();
 		Entity damager = event.getDamager();
@@ -1414,7 +1418,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityBreakDoor(EntityBreakDoorEvent event) {
 		Entity entity = event.getEntity();
 		Chunk chunk = entity.getLocation().getChunk();
@@ -1430,7 +1434,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onRaidTrigger(RaidTriggerEvent event) {
 		Player player = event.getPlayer();
 		Raid raid = event.getRaid();
@@ -1448,7 +1452,7 @@ public class RegionProtectionListener implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent event) {
 		Material blockType = event.getBlock().getType();
 		Chunk chunk = event.getBlock().getLocation().getChunk();
@@ -1469,7 +1473,7 @@ public class RegionProtectionListener implements Listener {
 
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onVehicleMove(VehicleMoveEvent event) {
 		if (!(event.getVehicle() instanceof Minecart)) {
 			return;
@@ -1501,7 +1505,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onWitherBlockChange(EntityChangeBlockEvent event) {
 		Entity entity = event.getEntity();
 
@@ -1519,7 +1523,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onSnowGolemTrail(EntityBlockFormEvent event) {
 		Entity entity = event.getEntity();
 
@@ -1537,7 +1541,7 @@ public class RegionProtectionListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onTreeGrow(StructureGrowEvent event) {
 		Chunk chunk = event.getLocation().getChunk();
 
@@ -1611,6 +1615,8 @@ public class RegionProtectionListener implements Listener {
 											Chunk chunk,
 											Location location,
 											long flag) {
+			System.out.println("Chunk claimed? " + ChunksManager.isChunkClaimed(chunk));
+
 			if (player != null && PlayerUtils.isOperator(player)) return true;
 
 			if (!ChunksManager.isChunkClaimed(chunk)) return true;

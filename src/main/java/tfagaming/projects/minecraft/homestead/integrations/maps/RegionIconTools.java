@@ -33,11 +33,11 @@ public class RegionIconTools {
 	}
 
 	public static void downloadAllIcons() {
-		Logger.info("Downloaded icons status: 0%");
-
 		List<String> allIcons = getAllIcons();
 		int totalIcons = allIcons.size();
 		int downloadedCount = 0;
+
+		Logger.warning("Downloaded icons status: 0% (0 / " + totalIcons + ")");
 
 		defaultIcon = downloadIcon(Homestead.config.get("dynamic-maps.icons.default"));
 
@@ -54,7 +54,7 @@ public class RegionIconTools {
 				icons.putIfAbsent(icon, downloaded);
 
 				downloadedCount++;
-				Logger.info("Downloaded icons status: " + (int) ((downloadedCount / (float) totalIcons) * 100) + "%");
+				Logger.warning("Downloaded icons status: " + (int) ((downloadedCount / (float) totalIcons) * 100) + "% (" + downloadedCount + " / " + totalIcons + ")");
 			}
 		}
 	}

@@ -224,7 +224,7 @@ public class Homestead extends JavaPlugin {
 		runAsyncTask(() -> {
 			Logger.warning("Downloading required web map render icons... This may take a while!");
 			RegionIconTools.downloadAllIcons();
-			Logger.info("Successfully downloaded all icons.");
+			Logger.info("Successfully downloaded all icons!");
 		});
 
 		runAsyncTimerTask(() -> {
