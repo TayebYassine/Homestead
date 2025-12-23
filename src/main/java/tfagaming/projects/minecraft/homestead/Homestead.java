@@ -198,7 +198,11 @@ public class Homestead extends JavaPlugin {
 		registerEvents();
 		registerBrigadier();
 
-		new bStats(this);
+		if ((boolean) Homestead.config.get("metrics")) {
+			new bStats(this);
+
+			Logger.info("bStats metrics is enabled, anonymous data is being sent every 30 minutes.");
+		}
 
 		if (Homestead.config.isDebugEnabled()) {
 			Logger.warning("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");

@@ -13,6 +13,13 @@
 # NOTE: On very busy servers this can flood logs.txt.
 debug: false
 
+# Allow Homestead to publish anonymous usage data to bStats servers?
+# true = Allow, false = Keep my data private.
+# Usually, it's recommended to keep it on so the developers and the users (including you) will see how many servers are using Homestead,
+# including the features such as how many regions are currently being managed, claimed chunks count...
+# But still, if you want to keep your server's data private, keep the setting off.
+metrics: true
+
 ############################################################
 # +------------------------------------------------------+ #
 # |                      Language                        | #
@@ -274,7 +281,7 @@ rewards:
 worldguard:
   protect-existing-regions: true # Stop claiming inside WG regions (spawn, arena, etc.)
 
-# WorldEdit hooks
+# WorldEdit hooks (DEPRECATED)
 worldedit:
   regenerate-chunks: false # Restore terrain when unclaiming. HEAVY LAG WARNING!
 
