@@ -4,6 +4,10 @@ To access the Homestead API in your plugin, download the Homestead **.jar** file
 
 [Click here](https://stackoverflow.com/questions/4955635/how-can-i-add-local-jar-files-to-a-maven-project?page=1) or [here](https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html) for the guide to installing the dependency.
 
+!!! failure "API Updating"
+
+    The API is getting recent updates. Do not use the API until this warning gets removed.
+
 !!! warning
 
     This section explains the API from version **4.0.2**.

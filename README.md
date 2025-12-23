@@ -8,7 +8,7 @@ Homestead is compatible with **Minecraft 1.21** (and higher) and supports any se
 ## Developer API
 How to include the API with Maven:
 
-```yaml
+```xml
 <repository>
   <id>homestead-github</id>
   <url>https://maven.pkg.github.com/TayebYassine/Homestead</url>
