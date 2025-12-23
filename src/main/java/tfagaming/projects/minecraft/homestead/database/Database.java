@@ -22,18 +22,21 @@ public class Database {
 				postgreSQL = new PostgreSQL(Homestead.config.get("database.postgresql.username"),
 						Homestead.config.get("database.postgresql.password"),
 						Homestead.config.get("database.postgresql.host"),
-						Homestead.config.get("database.postgresql.port"));
+						Homestead.config.get("database.postgresql.port"),
+						Homestead.config.get("database.postgresql.database"));
 				break;
 			case MariaDB:
 				mariaDB = new MariaDB(Homestead.config.get("database.mariadb.username"),
 						Homestead.config.get("database.mariadb.password"),
 						Homestead.config.get("database.mariadb.host"),
-						Homestead.config.get("database.mariadb.port"));
+						Homestead.config.get("database.mariadb.port"),
+						Homestead.config.get("database.mariadb.database"));
 				break;
 			case MySQL:
 				mySQL = new MySQL(Homestead.config.get("database.mysql.username"),
 						Homestead.config.get("database.mysql.password"), Homestead.config.get("database.mysql.host"),
-						Homestead.config.get("database.mysql.port"));
+						Homestead.config.get("database.mysql.port"),
+						Homestead.config.get("database.mysql.database"));
 				break;
 			case SQLite:
 				sqLite = new SQLite(Homestead.config.get("database.sqlite"));
@@ -56,18 +59,21 @@ public class Database {
 				postgreSQL = new PostgreSQL(Homestead.config.get("database.postgresql.username"),
 						Homestead.config.get("database.postgresql.password"),
 						Homestead.config.get("database.postgresql.host"),
-						Homestead.config.get("database.postgresql.port"), handleError);
+						Homestead.config.get("database.postgresql.port"),
+						Homestead.config.get("database.postgresql.database"), handleError);
 				break;
 			case MariaDB:
 				mariaDB = new MariaDB(Homestead.config.get("database.mariadb.username"),
 						Homestead.config.get("database.mariadb.password"),
 						Homestead.config.get("database.mariadb.host"),
-						Homestead.config.get("database.mariadb.port"), handleError);
+						Homestead.config.get("database.mariadb.port"),
+						Homestead.config.get("database.mariadb.database"), handleError);
 				break;
 			case MySQL:
 				mySQL = new MySQL(Homestead.config.get("database.mysql.username"),
 						Homestead.config.get("database.mysql.password"), Homestead.config.get("database.mysql.host"),
-						Homestead.config.get("database.mysql.port"), handleError);
+						Homestead.config.get("database.mysql.port"),
+						Homestead.config.get("database.mysql.database"), handleError);
 				break;
 			case SQLite:
 				sqLite = new SQLite(Homestead.config.get("database.sqlite"), handleError);

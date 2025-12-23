@@ -13,41 +13,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MySQL {
-	private static String JDBC_URL = "jdbc:mysql://";
+	private final String TABLE_PREFIX;
+	private static final String JDBC_URL = "jdbc:mysql://";
 
 	private Connection connection;
 
-	public MySQL(String username, String password, String host, int port) {
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-
-			JDBC_URL += (host + ":" + port + "/homestead_data");
-
-			this.connection = DriverManager.getConnection(JDBC_URL, username, password);
-
-			Logger.info("New database connection established.");
-
-			createTablesIfNotExists();
-		} catch (ClassNotFoundException e) {
-			Logger.error("MySQL JDBC Driver not found.");
-			e.printStackTrace();
-
-			Homestead.getInstance().endInstance();
-		} catch (SQLException e) {
-			Logger.error("Unable to establish a connection for MySQL.");
-			e.printStackTrace();
-
-			Homestead.getInstance().endInstance();
-		}
+	public MySQL(String username, String password, String host, int port, String database, String tablePrefix) {
+		this(username, password, host, port, database, tablePrefix, false);
 	}
 
-	public MySQL(String username, String password, String host, int port, boolean handleError) {
+	public MySQL(String username, String password, String host, int port, String database, String tablePrefix, boolean handleError) {
+		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "").concat("_");
+
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 
-			JDBC_URL += (host + ":" + port + "/homestead_data");
-
-			this.connection = DriverManager.getConnection(JDBC_URL, username, password);
+			String connectionUrl = JDBC_URL + host + ":" + port + "/" + database;
+			this.connection = DriverManager.getConnection(connectionUrl, username, password);
 
 			Logger.info("New database connection established.");
 
@@ -70,7 +52,7 @@ public class MySQL {
 	}
 
 	public void createTablesIfNotExists() {
-		String sql1 = "CREATE TABLE IF NOT EXISTS regions (" +
+		String sql1 = "CREATE TABLE IF NOT EXISTS " + TABLE_PREFIX + "regions (" +
 				"id VARCHAR(36) PRIMARY KEY, " +
 				"displayName TINYTEXT NOT NULL, " +
 				"name TINYTEXT NOT NULL, " +
@@ -98,7 +80,7 @@ public class MySQL {
 				"icon LONGTEXT" +
 				")";
 
-		String sql2 = "CREATE TABLE IF NOT EXISTS wars (" +
+		String sql2 = "CREATE TABLE IF NOT EXISTS " + TABLE_PREFIX + "wars (" +
 				"id VARCHAR(36) PRIMARY KEY, " +
 				"displayName TINYTEXT NOT NULL, " +
 				"name TINYTEXT NOT NULL, " +
@@ -118,7 +100,7 @@ public class MySQL {
 	}
 
 	public void importRegions() {
-		String sql = "SELECT * FROM regions";
+		String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
@@ -221,7 +203,7 @@ public class MySQL {
 	}
 
 	public void importWars() {
-		String sql = "SELECT * FROM wars";
+		String sql = "SELECT * FROM " + TABLE_PREFIX + "wars";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
@@ -258,7 +240,7 @@ public class MySQL {
 
 	public void exportRegions() {
 		Set<UUID> dbRegionIds = new HashSet<>();
-		String selectSql = "SELECT id FROM regions";
+		String selectSql = "SELECT id FROM " + TABLE_PREFIX + "regions";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(selectSql)) {
@@ -272,7 +254,7 @@ public class MySQL {
 			return;
 		}
 
-		String upsertSql = "INSERT INTO regions (" +
+		String upsertSql = "INSERT INTO " + TABLE_PREFIX + "regions (" +
 				"id, displayName, name, description, ownerId, location, createdAt, " +
 				"playerFlags, worldFlags, bank, mapColor, chunks, members, rates, " +
 				"invitedPlayers, bannedPlayers, subAreas, logs, rent, upkeepAt, taxesAmount, weather, " +
@@ -304,7 +286,7 @@ public class MySQL {
 				"welcomeSign = VALUES(welcomeSign), " +
 				"icon = VALUES(icon)";
 
-		String deleteSql = "DELETE FROM regions WHERE id = ?";
+		String deleteSql = "DELETE FROM " + TABLE_PREFIX + "regions WHERE id = ?";
 
 		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
 			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
@@ -383,7 +365,7 @@ public class MySQL {
 
 	public void exportWars() {
 		Set<UUID> dbWarIds = new HashSet<>();
-		String selectSql = "SELECT id FROM wars";
+		String selectSql = "SELECT id FROM " + TABLE_PREFIX + "wars";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(selectSql)) {
@@ -397,7 +379,7 @@ public class MySQL {
 			return;
 		}
 
-		String upsertSql = "INSERT INTO wars (" +
+		String upsertSql = "INSERT INTO " + TABLE_PREFIX + "wars (" +
 				"id, displayName, name, description, regions, prize, startedAt" +
 				") VALUES (?, ?, ?, ?, ?, ?, ?) " +
 				"ON DUPLICATE KEY UPDATE " +
@@ -408,7 +390,7 @@ public class MySQL {
 				"prize = VALUES(prize), " +
 				"startedAt = VALUES(startedAt)";
 
-		String deleteSql = "DELETE FROM wars WHERE id = ?";
+		String deleteSql = "DELETE FROM " + TABLE_PREFIX + "wars WHERE id = ?";
 
 		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
 			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
@@ -467,7 +449,7 @@ public class MySQL {
 	public long getLatency() {
 		long before = System.currentTimeMillis();
 
-		String sql = "SELECT * FROM regions";
+		String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {

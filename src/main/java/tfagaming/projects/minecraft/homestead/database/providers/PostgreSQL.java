@@ -13,37 +13,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PostgreSQL {
+	private final String TABLE_PREFIX;
 	private static final String JDBC_URL = "jdbc:postgresql://";
 	private Connection connection;
 
-	public PostgreSQL(String username, String password, String host, int port) {
-		try {
-			Class.forName("org.postgresql.Driver");
-
-			String connectionUrl = JDBC_URL + host + ":" + port + "/homestead_data";
-			this.connection = DriverManager.getConnection(connectionUrl, username, password);
-
-			Logger.info("PostgreSQL database connection established.");
-
-			createTablesIfNotExists();
-		} catch (ClassNotFoundException e) {
-			Logger.error("PostgreSQL JDBC Driver not found.");
-			e.printStackTrace();
-
-			Homestead.getInstance().endInstance();
-		} catch (SQLException e) {
-			Logger.error("Unable to establish connection to PostgreSQL.");
-			e.printStackTrace();
-
-			Homestead.getInstance().endInstance();
-		}
+	public PostgreSQL(String username, String password, String host, int port, String database, String tablePrefix) {
+		this(username, password, host, port, database, tablePrefix, false);
 	}
 
-	public PostgreSQL(String username, String password, String host, int port, boolean handleError) {
+	public PostgreSQL(String username, String password, String host, int port, String database, String tablePrefix, boolean handleError) {
+		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "").concat("_");
+
 		try {
 			Class.forName("org.postgresql.Driver");
 
-			String connectionUrl = JDBC_URL + host + ":" + port + "/homestead_data";
+			String connectionUrl = JDBC_URL + host + ":" + port + "/" + database;
 			this.connection = DriverManager.getConnection(connectionUrl, username, password);
 
 			Logger.info("PostgreSQL database connection established.");
@@ -67,7 +51,7 @@ public class PostgreSQL {
 	}
 
 	public void createTablesIfNotExists() {
-		String sql1 = "CREATE TABLE IF NOT EXISTS regions (" +
+		String sql1 = "CREATE TABLE IF NOT EXISTS " + TABLE_PREFIX + "regions (" +
 				"id UUID PRIMARY KEY, " +
 				"display_name TEXT NOT NULL, " +
 				"name TEXT NOT NULL, " +
@@ -95,7 +79,7 @@ public class PostgreSQL {
 				"icon TEXT" +
 				")";
 
-		String sql2 = "CREATE TABLE IF NOT EXISTS wars (" +
+		String sql2 = "CREATE TABLE IF NOT EXISTS " + TABLE_PREFIX + "wars (" +
 				"id UUID PRIMARY KEY, " +
 				"displayName TEXT NOT NULL, " +
 				"name TEXT NOT NULL, " +
@@ -115,7 +99,7 @@ public class PostgreSQL {
 	}
 
 	public void importRegions() {
-		String sql = "SELECT * FROM regions";
+		String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
@@ -216,7 +200,7 @@ public class PostgreSQL {
 	}
 
 	public void importWars() {
-		String sql = "SELECT * FROM wars";
+		String sql = "SELECT * FROM " + TABLE_PREFIX + "wars";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
@@ -252,7 +236,7 @@ public class PostgreSQL {
 
 	public void exportRegions() {
 		Set<UUID> dbRegionIds = new HashSet<>();
-		String selectSql = "SELECT id FROM regions";
+		String selectSql = "SELECT id FROM " + TABLE_PREFIX + "regions";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(selectSql)) {
@@ -265,7 +249,7 @@ public class PostgreSQL {
 			return;
 		}
 
-		String upsertSql = "INSERT INTO regions (" +
+		String upsertSql = "INSERT INTO " + TABLE_PREFIX + "regions (" +
 				"id, display_name, name, description, owner_id, location, created_at, " +
 				"player_flags, world_flags, bank, map_color, chunks, members, rates, " +
 				"invited_players, banned_players, sub_areas, logs, rent, upkeep_at, taxes_amount, weather, " +
@@ -297,7 +281,7 @@ public class PostgreSQL {
 				"welcome_sign = EXCLUDED.welcome_sign," +
 				"icon = EXCLUDED.icon";
 
-		String deleteSql = "DELETE FROM regions WHERE id = ?";
+		String deleteSql = "DELETE FROM " + TABLE_PREFIX + "regions WHERE id = ?";
 
 		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
 			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
@@ -387,7 +371,7 @@ public class PostgreSQL {
 
 	public void exportWars() {
 		Set<UUID> dbWarIds = new HashSet<>();
-		String selectSql = "SELECT id FROM wars";
+		String selectSql = "SELECT id FROM " + TABLE_PREFIX + "wars";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(selectSql)) {
@@ -401,7 +385,7 @@ public class PostgreSQL {
 			return;
 		}
 
-		String upsertSql = "INSERT INTO wars (" +
+		String upsertSql = "INSERT INTO " + TABLE_PREFIX + "wars (" +
 				"id, displayName, name, description, regions, prize, started_at" +
 				") VALUES (?, ?, ?, ?, ?, ?, ?) " +
 				"ON CONFLICT (id) DO UPDATE SET " +
@@ -412,7 +396,7 @@ public class PostgreSQL {
 				"prize = EXCLUDED.prize, " +
 				"started_at = EXCLUDED.started_at";
 
-		String deleteSql = "DELETE FROM wars WHERE id = ?";
+		String deleteSql = "DELETE FROM " + TABLE_PREFIX + "wars WHERE id = ?";
 
 		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
 			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
@@ -471,7 +455,7 @@ public class PostgreSQL {
 	public long getLatency() {
 		long before = System.currentTimeMillis();
 
-		String sql = "SELECT * FROM regions";
+		String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
 
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {

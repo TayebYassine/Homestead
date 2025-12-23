@@ -13,21 +13,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MariaDB {
-
+	private final String TABLE_PREFIX;
 	private static final String JDBC_URL = "jdbc:mariadb://";
 	private Connection connection;
 
-	public MariaDB(String username, String password, String host, int port) {
-		this(username, password, host, port, false);
+	public MariaDB(String username, String password, String host, int port, String database, String tablePrefix) {
+		this(username, password, host, port, database, tablePrefix, false);
 	}
 
-	public MariaDB(String username, String password, String host, int port, boolean handleError) {
+	public MariaDB(String username, String password, String host, int port, String database, String tablePrefix, boolean handleError) {
+		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "").concat("_");
+
 		try {
 			Class.forName("org.mariadb.jdbc.Driver");
 
-			String url = JDBC_URL + host + ":" + port + "/homestead_data"
+			String connectionUrl = JDBC_URL + host + ":" + port + "/" + database
 					+ "?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
-			this.connection = DriverManager.getConnection(url, username, password);
+			this.connection = DriverManager.getConnection(connectionUrl, username, password);
 
 			Logger.info("MariaDB database connection established.");
 
@@ -63,7 +65,7 @@ public class MariaDB {
 
 	public void createTablesIfNotExists() {
 		String sql = """
-				    CREATE TABLE IF NOT EXISTS regions (
+				    CREATE TABLE IF NOT EXISTS `%sregions` (
 				        id              CHAR(36) PRIMARY KEY,
 				        display_name    TEXT NOT NULL,
 				        name            TEXT NOT NULL,
@@ -90,7 +92,7 @@ public class MariaDB {
 				        welcome_sign    TEXT,
 				        icon            TEXT
 				    )
-				""";
+				""".formatted(TABLE_PREFIX);
 		try (Statement stmt = connection.createStatement()) {
 			stmt.execute(sql);
 			Logger.info("Regions table created/verified in MariaDB.");
@@ -101,7 +103,7 @@ public class MariaDB {
 	}
 
 	public void importRegions() {
-		final String sql = "SELECT * FROM regions";
+		final String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -210,7 +212,7 @@ public class MariaDB {
 
 	public void createWarsTableIfNotExists() {
 		String sql = """
-                CREATE TABLE IF NOT EXISTS wars (
+                CREATE TABLE IF NOT EXISTS `%swars` (
                     id          CHAR(36) PRIMARY KEY,
                     display_name TEXT NOT NULL,
                     name        TEXT NOT NULL,
@@ -219,7 +221,7 @@ public class MariaDB {
                     prize       DOUBLE PRECISION NOT NULL,
                     started_at  BIGINT NOT NULL
                 )
-                """;
+                """.formatted(TABLE_PREFIX);
 
 		try (Statement stmt = connection.createStatement()) {
 			stmt.execute(sql);
@@ -231,7 +233,7 @@ public class MariaDB {
 	}
 
 	public void importWars() {
-		final String sql = "SELECT * FROM wars";
+		final String sql = "SELECT * FROM " + TABLE_PREFIX + "wars";
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -269,7 +271,7 @@ public class MariaDB {
 
 	public void exportRegions() {
 		Set<UUID> dbRegionIds = new HashSet<>();
-		final String selectSql = "SELECT id FROM regions";
+		final String selectSql = "SELECT id FROM " + TABLE_PREFIX + "regions";
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(selectSql)) {
 			while (rs.next()) {
@@ -282,7 +284,7 @@ public class MariaDB {
 		}
 
 		final String upsertSql = """
-				    INSERT INTO regions (
+				    INSERT INTO `%sregions` (
 				        id, display_name, name, description, owner_id, location, created_at,
 				        player_flags, world_flags, bank, map_color, chunks, members, rates,
 				        invited_players, banned_players, sub_areas, logs, rent, upkeep_at,
@@ -313,9 +315,9 @@ public class MariaDB {
 				        time = VALUES(time),
 				        welcome_sign = VALUES(welcome_sign),
 				        icon = VALUES(icon)
-				""";
+				""".formatted(TABLE_PREFIX);
 
-		final String deleteSql = "DELETE FROM regions WHERE id = ?";
+		final String deleteSql = "DELETE FROM " + TABLE_PREFIX + "regions WHERE id = ?";
 
 		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
 			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
@@ -384,7 +386,7 @@ public class MariaDB {
 
 	public void exportWars() {
 		Set<UUID> dbWarIds = new HashSet<>();
-		final String selectSql = "SELECT id FROM wars";
+		final String selectSql = "SELECT id FROM " + TABLE_PREFIX + "wars";
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(selectSql)) {
 			while (rs.next()) {
@@ -397,7 +399,7 @@ public class MariaDB {
 		}
 
 		final String upsertSql = """
-        INSERT INTO wars (
+        INSERT INTO `%swars` (
             id, display_name, name, description, regions, prize, started_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
@@ -407,9 +409,9 @@ public class MariaDB {
             regions = VALUES(regions),
             prize = VALUES(prize),
             started_at = VALUES(started_at)
-        """;
+        """.formatted(TABLE_PREFIX);
 
-		final String deleteSql = "DELETE FROM wars WHERE id = ?";
+		final String deleteSql = "DELETE FROM " + TABLE_PREFIX + "wars WHERE id = ?";
 
 		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
 			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
@@ -464,8 +466,11 @@ public class MariaDB {
 
 	public long getLatency() {
 		long before = System.currentTimeMillis();
+
+		String sql = "SELECT 1 FROM `%sregions` LIMIT 1".formatted(TABLE_PREFIX);
+
 		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery("SELECT 1")) {
+			 ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
 
 			}
