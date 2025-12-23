@@ -1615,8 +1615,6 @@ public class RegionProtectionListener implements Listener {
 											Chunk chunk,
 											Location location,
 											long flag) {
-			System.out.println("Chunk claimed? " + ChunksManager.isChunkClaimed(chunk));
-
 			if (player != null && PlayerUtils.isOperator(player)) return true;
 
 			if (!ChunksManager.isChunkClaimed(chunk)) return true;
