@@ -264,9 +264,6 @@
 						<goals><goal>jar</goal></goals>
 						<configuration>
 							<classifier>api</classifier>
-							<includes>
-								<include>tfagaming/projects/minecraft/homestead/api/**</include>
-							</includes>
 						</configuration>
 					</execution>
 				</executions>
