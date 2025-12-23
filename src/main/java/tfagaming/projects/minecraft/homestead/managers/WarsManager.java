@@ -1,15 +1,15 @@
 package tfagaming.projects.minecraft.homestead.managers;
 
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
-import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 
 import java.util.*;
 
-public class WarsManager {
+public final class WarsManager {
+	private  WarsManager() { }
+
 	public static War declareWar(String name, double prize, List<Region> regions) {
 		War war = new War(name);
 		regions.forEach(war::addRegion);

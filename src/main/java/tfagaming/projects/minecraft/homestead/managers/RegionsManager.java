@@ -20,7 +20,20 @@ import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RegionsManager {
+/**
+ * Handles creating, deleting, and updating regions.<br>
+ * This is a utility class that helps manage regions more easily. Updating and setting data to regions is generally done to the {@link Region} object.
+ */
+public final class RegionsManager {
+	private RegionsManager() { }
+
+	/**
+	 * Creates a new region owned by the given player.
+	 * The region's upkeep timer is scheduled if upkeep is enabled.
+	 * A {@link RegionCreateEvent} is fired on the next server tick.
+	 * @param name The region name
+	 * @param player The owner of the region
+	 */
 	public static Region createRegion(String name, OfflinePlayer player) {
 		Region region = new Region(name, player);
 
@@ -39,16 +52,21 @@ public class RegionsManager {
 		return region;
 	}
 
+	/**
+	 * Creates a region, optionally ensuring the name is unique by appending a counter.
+	 * Upkeep and event logic is identical to {@link #createRegion(String, OfflinePlayer)}.
+	 * @param name The region name
+	 * @param player The owner of the region
+	 * @param verifyName Verify if another region has the same name
+	 */
 	public static Region createRegion(String name, OfflinePlayer player, boolean verifyName) {
 		if (verifyName) {
 			String newname = name;
 			int counter = 1;
 
-			if (verifyName) {
-				while (RegionsManager.isNameUsed(newname)) {
-					newname = name + counter;
-					counter++;
-				}
+			while (RegionsManager.isNameUsed(newname)) {
+				newname = name + counter;
+				counter++;
 			}
 
 			Region region = new Region(newname, player);
@@ -68,10 +86,15 @@ public class RegionsManager {
 		}
 	}
 
+	/** Returns an immutable view of every loaded region. */
 	public static List<Region> getAll() {
 		return Homestead.regionsCache.getAll();
 	}
 
+	/**
+	 * Retrieves the region with the exact UUID, or null if none exists.
+	 * @param id The region UUID
+	 */
 	public static Region findRegion(UUID id) {
 		for (Region region : Homestead.regionsCache.getAll()) {
 			if (region.getUniqueId().equals(id)) {
@@ -82,6 +105,10 @@ public class RegionsManager {
 		return null;
 	}
 
+	/**
+	 * Retrieves the region with the exact name (case-insensitive), or null if none exists.
+	 * @param name The region name
+	 */
 	public static Region findRegion(String name) {
 		for (Region region : Homestead.regionsCache.getAll()) {
 			if (region.getName().equals(name)) {
@@ -92,6 +119,13 @@ public class RegionsManager {
 		return null;
 	}
 
+	/**
+	 * Permanently deletes the specified region.
+	 * If configured, all linked chunks are regenerated via WorldEdit.
+	 * A {@link RegionDeleteEvent} is fired on the next server tick.
+	 * @param id The region UUID
+	 * @param player Executor (optional)
+	 */
 	public static void deleteRegion(UUID id, OfflinePlayer... player) {
 		Region region = findRegion(id);
 
@@ -115,6 +149,12 @@ public class RegionsManager {
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 	}
 
+	/**
+	 * Appends a human-written log entry to the region's audit trail.
+	 * @param id The region UUID
+	 * @param author The author
+	 * @param message The message
+	 */
 	public static void addNewLog(UUID id, String author, String message) {
 		Region region = findRegion(id);
 
@@ -125,6 +165,11 @@ public class RegionsManager {
 		region.addLog(new SerializableLog(author, message));
 	}
 
+	/**
+	 * Appends a translated log entry using the plugin's language file.
+	 * @param id The region UUID
+	 * @param messagePath The message path from the language file
+	 */
 	public static void addNewLog(UUID id, int messagePath) {
 		Region region = findRegion(id);
 
@@ -137,6 +182,12 @@ public class RegionsManager {
 		region.addLog(new SerializableLog(Homestead.language.get("default.author"), message));
 	}
 
+	/**
+	 * Appends a translated and token-replaced log entry.
+	 * @param id The region UUID
+	 * @param messagePath The message path from the language file
+	 * @param replacements Replacements for variables
+	 */
 	public static void addNewLog(UUID id, int messagePath, Map<String, String> replacements) {
 		Region region = findRegion(id);
 
@@ -150,6 +201,7 @@ public class RegionsManager {
 				Formatters.replace(message, replacements)));
 	}
 
+	/** Collects every unique owner across all regions. */
 	public static List<OfflinePlayer> getAllOwners() {
 		List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();
 
@@ -160,19 +212,16 @@ public class RegionsManager {
 		return ListUtils.removeDuplications(players);
 	}
 
+	/** Supplies all regions sorted alphabetically by name. */
 	public static List<Region> sortRegionsAlpha() {
 		List<Region> regions = Homestead.regionsCache.getAll();
 
-		Collections.sort(regions, new Comparator<Region>() {
-			@Override
-			public int compare(Region r1, Region r2) {
-				return r1.getName().compareToIgnoreCase(r2.getName());
-			}
-		});
+		regions.sort((r1, r2) -> r1.getName().compareToIgnoreCase(r2.getName()));
 
 		return regions;
 	}
 
+	/** Supplies only regions that have a welcome sign configured. */
 	public static List<Region> getRegionsWithWelcomeSigns() {
 		List<Region> filtered = new ArrayList<>();
 
@@ -185,6 +234,7 @@ public class RegionsManager {
 		return filtered;
 	}
 
+	/** Supplies owners of regions that possess a welcome sign. */
 	public static List<OfflinePlayer> getPlayersWithRegionsHasWelcomeSigns() {
 		List<OfflinePlayer> filtered = new ArrayList<>();
 
@@ -197,6 +247,10 @@ public class RegionsManager {
 		return filtered;
 	}
 
+	/**
+	 * Supplies every region whose owner matches the given player.
+	 * @param player The player
+	 */
 	public static List<Region> getRegionsOwnedByPlayer(OfflinePlayer player) {
 		List<Region> regions = new ArrayList<Region>();
 
@@ -209,6 +263,10 @@ public class RegionsManager {
 		return regions;
 	}
 
+	/**
+	 * Supplies every region that lists the given player as a member.
+	 * @param player The player
+	 */
 	public static List<Region> getRegionsHasPlayerAsMember(OfflinePlayer player) {
 		List<Region> regions = new ArrayList<Region>();
 
@@ -221,6 +279,7 @@ public class RegionsManager {
 		return regions;
 	}
 
+	/** Supplies regions flagged as public (passthrough + teleport-spawn). */
 	public static List<Region> getPublicRegions() {
 		List<Region> regions = new ArrayList<Region>();
 
@@ -236,6 +295,10 @@ public class RegionsManager {
 		return regions;
 	}
 
+	/**
+	 * Supplies regions that have invited the given player.
+	 * @param player The player
+	 */
 	public static List<Region> getRegionsInvitedPlayer(OfflinePlayer player) {
 		List<Region> regions = new ArrayList<Region>();
 
@@ -248,35 +311,35 @@ public class RegionsManager {
 		return regions;
 	}
 
+	/**
+	 * Produces a list ordered by the requested metric.
+	 * Ordering is descending for numeric criteria, ascending for creation date.
+	 * @param type The sorting method
+	 */
 	public static List<Region> sortRegions(RegionSorting type) {
-		switch (type) {
-			case BANK:
-				return Homestead.regionsCache.getAll().stream()
-						.sorted(Comparator.comparingDouble(Region::getBank).reversed())
-						.collect(Collectors.toList());
-			case CHUNKS_COUNT:
-				return Homestead.regionsCache.getAll().stream()
-						.sorted(Comparator.comparingInt(region -> ((Region) region).getChunks().size()).reversed())
-						.collect(Collectors.toList());
-			case MEMBERS_COUNT:
-				return Homestead.regionsCache.getAll().stream()
-						.sorted(Comparator.comparingInt((region) -> ((Region) region).getMembers().size()).reversed())
-						.collect(Collectors.toList());
-			case RATING:
-				return Homestead.regionsCache.getAll().stream()
-						.sorted(Comparator
-								.comparingDouble((region) -> getAverageRating((Region) region))
-								.reversed())
-						.collect(Collectors.toList());
-			case CREATION_DATE:
-				return Homestead.regionsCache.getAll().stream()
-						.sorted(Comparator.comparingLong((region) -> region.getCreatedAt()))
-						.collect(Collectors.toList());
-			default:
-				return new ArrayList<>();
-		}
+        return switch (type) {
+            case BANK -> Homestead.regionsCache.getAll().stream()
+                    .sorted(Comparator.comparingDouble(Region::getBank).reversed())
+                    .collect(Collectors.toList());
+            case CHUNKS_COUNT -> Homestead.regionsCache.getAll().stream()
+                    .sorted(Comparator.comparingInt(region -> ((Region) region).getChunks().size()).reversed())
+                    .collect(Collectors.toList());
+            case MEMBERS_COUNT -> Homestead.regionsCache.getAll().stream()
+                    .sorted(Comparator.comparingInt((region) -> ((Region) region).getMembers().size()).reversed())
+                    .collect(Collectors.toList());
+            case RATING -> Homestead.regionsCache.getAll().stream()
+                    .sorted(Comparator
+                            .comparingDouble((region) -> getAverageRating((Region) region))
+                            .reversed())
+                    .collect(Collectors.toList());
+            case CREATION_DATE -> Homestead.regionsCache.getAll().stream()
+                    .sorted(Comparator.comparingLong(Region::getCreatedAt))
+                    .collect(Collectors.toList());
+            default -> new ArrayList<>();
+        };
 	}
 
+	/** Computes the 1-based rank of a region within the given sorting; 0 if not found. */
 	public static int getRank(RegionSorting type, UUID id) {
 		List<Region> regions = sortRegions(type);
 
@@ -291,12 +354,14 @@ public class RegionsManager {
 		return 0;
 	}
 
+	/** Averages the region's ranks across four core metrics to give a global standing. */
 	public static int getGlobalRank(UUID id) {
 		return (getRank(RegionSorting.BANK, id) + getRank(RegionSorting.CHUNKS_COUNT, id)
 				+ getRank(RegionSorting.MEMBERS_COUNT, id)
 				+ getRank(RegionSorting.RATING, id)) / 4;
 	}
 
+	/** Checks whether any region already carries the supplied name, ignoring case. */
 	public static boolean isNameUsed(String name) {
 		for (Region region : Homestead.regionsCache.getAll()) {
 			if (region.getName().equalsIgnoreCase(name)) {
@@ -307,6 +372,7 @@ public class RegionsManager {
 		return false;
 	}
 
+	/** Tests whether the player's current chunk is claimed by the supplied region. */
 	public static boolean isPlayerInsideRegion(Player player, Region region) {
 		Chunk location = player.getLocation().getChunk();
 
@@ -319,6 +385,7 @@ public class RegionsManager {
 		return false;
 	}
 
+	/** Calculates the mean of all player-submitted ratings for the region. */
 	public static double getAverageRating(Region region) {
 		List<SerializableRate> rates = region.getRates();
 
@@ -334,62 +401,11 @@ public class RegionsManager {
 		return (double) totalRate / rates.size();
 	}
 
-	public static int deleteRegionsWithInvalidPlayerIds() {
-		int count = 0;
-
-		for (Region region : Homestead.regionsCache.getAll()) {
-			OfflinePlayer regionOwner = region.getOwner();
-
-			if (regionOwner.getName() == null) {
-				deleteRegion(region.getUniqueId());
-
-				count++;
-			} else {
-				for (SerializableMember serializableMember : region.getMembers()) {
-					OfflinePlayer member = serializableMember.getBukkitOfflinePlayer();
-
-					if (member.getName() == null) {
-						region.removeMember(serializableMember);
-
-						count++;
-					}
-				}
-			}
-		}
-
-		return count;
-	}
-
-	public static void setPlayerFlagForAllRegions(long flag, boolean state) {
-		for (Region region : getAll()) {
-			long flags = region.getPlayerFlags();
-			long newFlags;
-
-			if (state) {
-				newFlags = FlagsCalculator.addFlag(flags, flag);
-			} else {
-				newFlags = FlagsCalculator.removeFlag(flags, flag);
-			}
-
-			region.setPlayerFlags(newFlags);
-		}
-	}
-
-	public static void setWorldFlagForAllRegions(long flag, boolean state) {
-		for (Region region : getAll()) {
-			long flags = region.getWorldFlags();
-			long newFlags;
-
-			if (state) {
-				newFlags = FlagsCalculator.addFlag(flags, flag);
-			} else {
-				newFlags = FlagsCalculator.removeFlag(flags, flag);
-			}
-
-			region.setWorldFlags(newFlags);
-		}
-	}
-
+	/**
+	 * Cleans stale references during server startup:
+	 * missing worlds, offline players, invalid chunks, sub-areas, spawn or welcome signs.
+	 * Returns the number of corrective actions performed.
+	 */
 	public static int cleanStartup() {
 		int updated = 0;
 
@@ -458,6 +474,7 @@ public class RegionsManager {
 		return updated;
 	}
 
+	/** Supported metrics for leaderboard-style sorting. */
 	public enum RegionSorting {
 		BANK,
 		CHUNKS_COUNT,

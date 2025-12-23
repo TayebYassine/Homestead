@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class ChunkClaimEvent extends Event {
 	private static final HandlerList HANDLERS = new HandlerList();
@@ -29,7 +30,7 @@ public class ChunkClaimEvent extends Event {
 	}
 
 	@Override
-	public HandlerList getHandlers() {
+	public @NotNull HandlerList getHandlers() {
 		return HANDLERS;
 	}
 }

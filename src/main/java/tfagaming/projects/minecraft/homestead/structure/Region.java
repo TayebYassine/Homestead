@@ -468,21 +468,19 @@ public class Region {
 	public List<OfflinePlayer> getInvitedPlayers() {
 		List<OfflinePlayer> players = new ArrayList<>();
 
-		for (int i = 0; i < invitedPlayers.size(); i++) {
-			UUID playerId = invitedPlayers.get(i);
+        for (UUID playerId : invitedPlayers) {
+            OfflinePlayer player = Homestead.getInstance().getOfflinePlayerSync(playerId);
 
-			OfflinePlayer player = Homestead.getInstance().getOfflinePlayerSync(playerId);
-
-			if (player != null) {
-				players.add(player);
-			}
-		}
+            if (player != null) {
+                players.add(player);
+            }
+        }
 
 		return players;
 	}
 
 	public void setInvitedPlayers(List<OfflinePlayer> players) {
-		this.invitedPlayers = players.stream().map((player) -> player.getUniqueId()).collect(Collectors.toList());
+		this.invitedPlayers = players.stream().map(OfflinePlayer::getUniqueId).collect(Collectors.toList());
 		updateCache();
 	}
 
@@ -654,10 +652,8 @@ public class Region {
 				.min(Comparator.comparingLong(SerializableLog::getSentAt))
 				.orElse(null);
 
-		if (oldest != null) {
-			logs.remove(oldest);
-		}
-	}
+        logs.remove(oldest);
+    }
 
 	// Sub-Areas
 	public List<SerializableSubArea> getSubAreas() {
@@ -704,19 +700,17 @@ public class Region {
 	}
 
 	public SerializableSubArea findSubAreaHasLocationInside(Location location) {
-		for (int i = 0; i < subAreas.size(); i++) {
-			SerializableSubArea subArea = subAreas.get(i);
-
-			if (subArea.isLocationInside(location)) {
-				return subArea;
-			}
-		}
+        for (SerializableSubArea subArea : subAreas) {
+            if (subArea.isLocationInside(location)) {
+                return subArea;
+            }
+        }
 
 		return null;
 	}
 
 	public void addSubArea(SerializableSubArea subArea) {
-		if (!subAreas.stream().map(SerializableSubArea::getId).collect(Collectors.toList()).contains(subArea.getId())) {
+		if (!subAreas.stream().map(SerializableSubArea::getId).toList().contains(subArea.getId())) {
 			subAreas.add(subArea);
 			updateCache();
 		}

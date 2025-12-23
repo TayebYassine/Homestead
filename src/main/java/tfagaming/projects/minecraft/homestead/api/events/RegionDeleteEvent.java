@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.api.events;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
 public class RegionDeleteEvent extends Event {
@@ -29,7 +30,7 @@ public class RegionDeleteEvent extends Event {
 	}
 
 	@Override
-	public HandlerList getHandlers() {
+	public @NotNull HandlerList getHandlers() {
 		return HANDLERS;
 	}
 }
