@@ -211,234 +211,347 @@ logs:
 flags-info:
   # PLAYER FLAGS
   break-blocks:
-    description: "Allow players to break blocks?"
+    description:
+      - "&7Allow players to break blocks?"
     type: IRON_PICKAXE
   place-blocks:
-    description: "Allow players to place blocks?"
+    description:
+      - "&7Allow players to place blocks?"
     type: OAK_LOG
   containers:
-    description: "Allow players to open containers?"
+    description:
+      - "&7Allow players to open containers?"
+      - " "
+      - "&e&lNote:"
+      - "&eEnder chests, Crafting tables, Enchanting"
+      - "&etables are ignored by this flag."
     type: CHEST
   doors:
-    description: "Allow players to use doors?"
+    description:
+      - "&7Allow players to use doors?"
     type: OAK_DOOR
   trap-doors:
-    description: "Allow players to use trapdoors?"
+    description:
+      - "&7Allow players to use trapdoors?"
     type: OAK_TRAPDOOR
   fence-gates:
-    description: "Allow players to use fence gates?"
+    description:
+      - "&7Allow players to use fence gates?"
     type: OAK_FENCE_GATE
   use-anvil:
-    description: "Allow players to use anvils?"
+    description:
+       - "&7Allow players to use anvils?"
+       - " "
+       - "&e&lNote:"
+       - "&ePlayers can use any anvil in your region"
+       - "&eand they may break the anvils if they"
+       - "&ewere used excessively."
     type: ANVIL
   redstone:
-    description: "Allow players to use redstone?"
+    description:
+      - "&7Allow players to use redstone?"
     type: REDSTONE
   levers:
-    description: "Allow players to use levers?"
+    description:
+      - "&7Allow players to use levers?"
     type: LEVER
   buttons:
-    description: "Allow players to use buttons?"
+    description:
+      - "&7Allow players to use buttons?"
     type: STONE_BUTTON
   pressure-plates:
-    description: "Allow players to step on pressure plates?"
+    description:
+      - "&7Allow players to step on pressure plates?"
     type: STONE_PRESSURE_PLATE
   use-bells:
-    description: "Allow players to use bells?"
+    description:
+      - "&7Allow players to use bells?"
     type: BELL
   trigger-tripwire:
-    description: "Allow players to trigger tripwires?"
+    description:
+      - "&7Allow players to trigger tripwires?"
     type: TRIPWIRE_HOOK
   frost-walker:
-    description: "Allow players to generate ice with Frost Walker boots?"
+    description:
+      - "&7Allow players to generate ice with"
+      - "&7Frost Walker enchanted books?"
     type: DIAMOND_BOOTS
   harvest-crops:
-    description: "Allow players to harvest crops?"
+    description:
+      - "&7Allow players to harvest crops?"
     type: WHEAT_SEEDS
   block-trampling:
-    description: "Allow players to trample blocks?"
+    description:
+      - "&7Allow players to trample blocks?"
     type: TURTLE_EGG
   general-interaction:
-    description: "Allow players to interact generally?\n&7General interaction such as eating cake..."
+    description:
+      - "&7Allow players to interact generally?"
     type: STRING
   armor-stands:
-    description: "Allow players to interact with armor stands?"
+    description:
+      - "&7Allow players to interact with armor stands?"
     type: ARMOR_STAND
   interact-entities:
-    description: "Allow players to interact with entities?"
+    description:
+      - "&7Allow players to interact with entities?"
     type: SHEARS
   item-frame-rotation:
-    description: "Allow players to rotate item frames?"
+    description:
+      - "&7Allow players to rotate item frames?"
     type: ITEM_FRAME
   damage-passive-entities:
-    description: "Allow players to harm passive entities, such as sheep and cows?"
+    description:
+      - "&7Allow players to harm passive entities,"
+      - "&7such as Sheeps, Cows, Pigs... etc?"
     type: IRON_SWORD
   damage-hostile-entities:
-    description: "Allow players to harm hostile entities, such as zombies and skeletons?"
+    description:
+      - "&7Allow players to harm hostile entities,"
+      - "&7such as Zombies, Endermen, Skeletons... etc?"
     type: ZOMBIE_HEAD
   trade-villagers:
-    description: "Allow players to trade with villagers?"
+    description:
+      - "&7Allow players to trade with villagers?"
     type: EMERALD
   ignite:
-    description: "Allow players to start fires?"
+    description:
+      - "&7Allow players to start fires?"
     type: FLINT_AND_STEEL
   vehicles:
-    description: "Allow players to ride vehicles, such as horses, minecarts, or pigs?"
+    description:
+      - "&7Allow players to ride vehicles,"
+      - "&7such as Minecarts, Horses... etc?"
     type: MINECART
   teleport-spawn:
-    description: "Allow players to teleport to the region's spawn point?"
+    description:
+      - "&7Allow players to teleport to the region's"
+      - "&7spawn point?"
     type: ENDER_EYE
   passthrough:
-    description: "Allow players to enter the region?"
+    description:
+      - "&7Allow players to enter the region?"
     type: IRON_BOOTS
   pvp:
-    description: "Allow players to engage in player-vs-player combat?"
+    description:
+      - "&7Allow players to engage in PvP combat?"
     type: DIAMOND_SWORD
   take-fall-damage:
-    description: "Allow players to take fall damage?"
+    description:
+      - "&7Allow players to take fall damage?"
     type: FEATHER
   teleport:
-    description: "Allow players to teleport using ender pearls or chorus fruit?"
+    description:
+      - "&7Allow players to teleport using"
+      - "&7ender pearls or chorus fruit?"
     type: CHORUS_FRUIT
   throw-potions:
-    description: "Allow players to throw potions?"
+    description:
+      - "&7Allow players to throw potions?"
     type: SPLASH_POTION
   pickup-items:
-    description: "Allow players to pick up items?"
+    description:
+      - "&7Allow players to pick up items?"
     type: SUNFLOWER
   sleep:
-    description: "Allow players to sleep in beds within the region?"
+    description:
+      - "&7Allow players to sleep in beds?"
     type: RED_BED
   trigger-raid:
-    description: "Allow players to trigger raids?"
+    description:
+      - "&7Allow players to trigger raids?"
     type: PLAYERHEAD-4aee6bb37cbfc92b0d86db5ada4790c64ff4468d68b84942fde04405e8ef5333
   elytra:
-    description: "Allow players to fly using an Elytra?"
+    description:
+      - "&7Allow players to fly using an Elytra?"
     type: ELYTRA
   spawn-entities:
-    description: "TEST: ALLOW PLAYERS TO SPAWN MOBS WITH SPAWN EGGS"
-    type: BARRIER
+    description:
+      - "&7Allow players to spawn mobs with Spawn eggs?"
+    type: ZOMBIE_SPAWN_EGG
 
   # WORLD FLAGS
   passive-entities-spawn:
-    description: "Allow passive entities, such as sheep and cows, to spawn in the region?"
+    description:
+      - "&7Allow passive entities, such as sheep and cows,"
+      - "&7to spawn in the region?"
+      - " "
+      - "&7Spawners affected? &cNo"
     type: PLAYERHEAD-84e5cdb0edb362cb454586d1fd0ebe971423f015b0b1bfc95f8d5af8afe7e810
   hostile-entities-spawn:
-    description: "Allow hostile entities, such as zombies and skeletons, to spawn in the region?"
+    description:
+      - "&7Allow hostile entities, such as zombies and skeletons,"
+      - "&7to spawn in the region?"
+      - " "
+      - "&7Spawners affected? &cNo"
     type: SPAWNER
   entities-grief:
-    description: "Allow entities, such as ravagers and endermen, to cause damage in the region?"
+    description:
+      - "&7Allow entities, such as ravagers and endermen,"
+      - "&7to cause damage in the region?"
     type: CREEPER_HEAD
   entities-damage-entities:
-    description: "Allow entities to attack each other?"
+    description:
+      - "&7Allow entities to attack each other?"
     type: IRON_SWORD
   leaves-decay:
-    description: "Allow leaves to decay naturally?"
+    description:
+      - "&7Allow leaves to decay naturally?"
     type: VINE
   fire-spread:
-    description: "Allow fire to spread?"
+    description:
+      - "&7Allow fire to spread?"
     type: FLINT_AND_STEEL
   liquid-flow:
-    description: "Allow liquids (water or lava) to flow into the region?"
+    description:
+      - "&7Allow liquids (water or lava) to flow"
+      - "&7into the region?"
+      - " "
+      - "&c&lWarning:"
+      - "&cRecommended to keep this flag in Deny state."
+      - "&cPlayers can create Lava casts and grief your"
+      - "&cregion if this flag is on Allow state!"
     type: WATER_BUCKET
   explosions-damage:
-    description: "Allow explosions, such as TNT or creepers, to damage the region?"
+    description:
+      - "&7Allow explosions, such as TNT or creepers,"
+      - "&7to damage the region?"
     type: TNT
   wither-damage:
-    description: "Allow withers to do damage in the region?"
+    description:
+      - "&7Allow withers to do damage in the region?"
     type: PLAYERHEAD-74f328f5044129b5d1f96affd1b8c05bcde6bd8e756aff5c5020585eef8a3daf
   wilderness-pistons:
-    description: "Allow pistons outside regions to push/pull blocks into the region?"
+    description:
+      - "&7Allow pistons outside regions to"
+      - "&7push/pull blocks into the region?"
     type: PISTON
   wilderness-dispensers:
-    description: "Allow dispensers outside regions to interact with the region?"
+    description:
+      - "&7Allow dispensers outside regions to"
+      - "&7interact with the region?"
     type: DISPENSER
   wilderness-minecarts:
-    description: "Allow minecarts outside regions to enter the region?"
+    description:
+      - "&7Allow minecarts outside regions to"
+      - "&7enter the region?"
     type: MINECART
   plant-growth:
-    description: "Allow plants to grow within the region?"
+    description:
+      - "&7Allow plants to grow within the region?"
     type: OAK_SAPLING
   grass-growth:
-    description: "Allow grass and mycelium to grow within the region?"
+    description:
+      - "&7Allow grass and mycelium to grow within"
+      - "&7the region?"
     type: GRASS_BLOCK
   sculk-spread:
-    description: "Allow sculk to spread within the region?"
+    description:
+      - "&7Allow sculk to spread within the region?"
     type: SCULK_SENSOR
   player-glowing:
-    description: "Allow all players to have glowing effect?"
+    description:
+      - "&7Allow all players to have glowing effect?"
     type: SPECTRAL_ARROW
   snow-melting:
-    description: "Allow snow to melt?"
+    description:
+      - "&7Allow snow to melt?"
     type: SNOW 
   ice-melting:
-    description: "Allow ice to melt?"
+    description:
+      - "&7Allow ice to melt?"
     type: ICE
   snowman-trails:
-    description: "Allow snow golems to leave snow trails?"
+    description:
+      - "&7Allow snow golems to leave snow trails?"
     type: PLAYERHEAD-e6f20aec528c3968dd8164f9d9336b081b3a2c7ecf189cf73df6f925e5a4ed14
   windcharge-burst:
-    description: "Allow windcharges to burst?"
+    description:
+      -"&7Allow windcharges to burst?"
     type: WIND_CHARGE
   wilderness-copper-golems:
-    description: "Allow copper golems outside regions to enter to the region?"
+    description:
+      - "&7Allow copper golems outside regions to"
+      - "&7enter to the region?"
     type: CHISELED_COPPER
   wars:
-    description: "Allow any player to declare war on this region?"
+    description:
+      - "&7Allow any player to declare war"
+      - "&7on this region?"
     type: PLAYERHEAD-d51e6cbd10b0ff98b47f93d9f34deaaf690f40d5db9950016071e7ae5d2ab226
 
   # REGION CONTROL FLAGS
   trust-players:
-    description: "Allow the player to trust players?"
+    description:
+      - "&7Allow the player to trust players?"
     type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
   untrust-players:
-    description: "Allow the player to untrust players?"
+    description:
+      - "&7Allow the player to untrust players?"
     type: PLAYERHEAD-4e4b8b8d2362c864e062301487d94d3272a6b570afbf80c2c5b148c954579d46
   ban-players:
-    description: "Allow the player to ban players?"
+    description:
+      - "&7Allow the player to ban players?"
     type: MACE
   unban-players:
-    description: "Allow the player to unban players?"
+    description:
+      - "&7Allow the player to unban players?"
     type: BARRIER
   claim-chunks:
-    description: "Allow the player to claim chunks?"
+    description:
+      - "&7Allow the player to claim chunks?"
     type: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
   unclaim-chunks:
-    description: "Allow the player to unclaim chunks?"
+    description:
+      - "&7Allow the player to unclaim chunks?"
     type: GOLDEN_SHOVEL
   deposit-money:
-    description: "Allow the player to deposit money?"
+    description:
+      - "&7Allow the player to deposit money?"
     type: GOLD_NUGGET
   withdraw-money:
-    description: "Allow the player to withdraw money?"
+    description:
+      - "&7Allow the player to withdraw money?"
     type: FEATHER
   set-global-flags:
-    description: "Allow the player to set global player flags?"
+    description:
+      - "&7Allow the player to set global player flags?"
     type: LEVER
   set-world-flags:
-    description: "Allow the player to set environment flags?"
+    description:
+      - "&7Allow the player to set environment flags?"
     type: LEVER
   set-member-flags:
-    description: "Allow the player to set members' flags?"
+    description:
+      - "&7Allow the player to set members' flags?"
     type: LEVER
   set-spawn:
-    description: "Allow the player to set the region's location?"
+    description:
+      - "&7Allow the player to set the region's location?"
     type: ENDER_EYE
   manage-subareas:
-    description: "Allow the player to manage sub-areas?"
+    description:
+      - "&7Allow the player to manage sub-areas?"
     type: GOLDEN_HOE
   rename-region:
-    description: "Allow the player to rename the region?"
+    description:
+      - "&7Allow the player to rename the region?"
     type: NAME_TAG
   set-description:
-    description: "Allow the player to update the description?"
+    description:
+      - "&7Allow the player to update the description?"
     type: OAK_SIGN
   manage-logs:
-    description: "Allow the player to view the logs?"
+    description:
+      - "&7Allow the player to view the logs?"
     type: BOOKSHELF
   kick-players:
-    description: "Allow the player to kick players inside the region?"
+    description:
+      - "&7Allow the player to kick players inside"
+      - "&7the region?"
     type: RABBIT_FOOT
   set-weather-and-time:
-    description: "Allow the player to set the weather and time of the region?"
+    description:
+      - "&7Allow the player to set the weather and time"
+      - "&7of the region?"
     type: PLAYERHEAD-65f37826161c792d7f6c920b2fa06b88e6845288ab02ad9b65d4bbf5ca2ce1e3

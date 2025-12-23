@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.sessions.targetedregion;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
@@ -28,7 +29,17 @@ public class TargetRegionSession {
 	}
 
 	public static Region getRegion(OfflinePlayer player) {
-		return sessions.get(player.getUniqueId());
+		Region region = sessions.get(player.getUniqueId());
+
+		boolean autoRandom = Homestead.config.get("autoset-target-region");
+
+		if (region == null && autoRandom && player.isOnline()) {
+			randomizeRegion((Player) player);
+
+			return getRegion(player);
+		}
+
+		return region;
 	}
 
 	public static void setRegion(OfflinePlayer player, Region region) {
@@ -45,7 +56,7 @@ public class TargetRegionSession {
 			Player player) {
 		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
 
-		if (regions.size() == 0) {
+		if (regions.isEmpty()) {
 			sessions.put(player.getUniqueId(), null);
 		} else {
 			Random random = new Random();

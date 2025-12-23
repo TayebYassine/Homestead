@@ -174,12 +174,12 @@ buttons:
       - "&8➥ Right-click to change the time."
     type: PLAYERHEAD-65f37826161c792d7f6c920b2fa06b88e6845288ab02ad9b65d4bbf5ca2ce1e3
   17:
-    name: "&7Flag: &6{flag}"
+    name: "&9Flag: &6{flag}"
     lore:
       - "&7{flag-description}"
       - ""
       - "&7• State: {state}"
-      - "&7• Unlocked: {flag-allowed}"
+      # - "&7• Unlocked: {flag-allowed}"
       - ""
       - "&8➥ Left-click to change the state."
   18:

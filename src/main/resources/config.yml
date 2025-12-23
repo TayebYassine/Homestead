@@ -83,6 +83,9 @@ log-private-chat: true
 # Adjacent chunks; All the chunks of a region must be connected next to each other.
 adjacent-chunks: true
 
+# Automatically set target region?
+autoset-target-region: true
+
 # Disabled worlds; The worlds which players cannot claim chunks.
 disabled-worlds:
   - "world_the_end"

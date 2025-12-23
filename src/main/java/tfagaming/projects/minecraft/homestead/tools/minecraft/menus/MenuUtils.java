@@ -87,8 +87,10 @@ public class MenuUtils {
 	public static ItemStack getFlagButton(String flag, boolean value) {
 		HashMap<String, String> replacements = new HashMap<>();
 
+		Object description = Homestead.language.get("flags-info." + flag + ".description");
+
 		replacements.put("{flag}", flag);
-		replacements.put("{flag-description}", Homestead.language.get("flags-info." + flag + ".description"));
+		replacements.put("{flag-description}", description instanceof String ? description.toString() : String.join("\n", (List<String>) description));
 		replacements.put("{state}", Formatters.getFlag(value));
 		replacements.put("{flag-allowed}",
 				Formatters.getBoolean(!((List<String>) Homestead.config.get("disabled-flags")).contains(flag)));
