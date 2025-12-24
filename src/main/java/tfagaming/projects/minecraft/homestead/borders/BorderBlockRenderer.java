@@ -1,21 +1,23 @@
 package tfagaming.projects.minecraft.homestead.borders;
 
 import com.google.common.collect.Sets;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public final class BorderBlockRenderer {
 
-    private static final Material BORDER_MAT = Material.GOLD_BLOCK;
-
-    /* --------------------------------------------------
-     *  Show exact chunk-border outline for one region
-     * -------------------------------------------------- */
     public static void show(Player player, Region region) {
         removeAll(player);                                       // clean old
         Set<FakeBorderRegistry.FakeBorderBlock> batch = Sets.newHashSet();
@@ -27,23 +29,26 @@ public final class BorderBlockRenderer {
             int cx = sc.getX();
             int cz = sc.getZ();
 
-            /* only draw if neighbour is NOT in this region */
-            if (!isChunkInRegion(region, world, cx, cz - 1))   // north neighbour
+            if (!isChunkInRegion(region, world, cx, cz - 1)) {
                 addBorderColumn(batch, player, region, world, cx, cz, Direction.NORTH);
-            if (!isChunkInRegion(region, world, cx, cz + 1))   // south neighbour
+            }
+
+            if (!isChunkInRegion(region, world, cx, cz + 1)) {
                 addBorderColumn(batch, player, region, world, cx, cz, Direction.SOUTH);
-            if (!isChunkInRegion(region, world, cx - 1, cz))   // west neighbour
+            }
+
+            if (!isChunkInRegion(region, world, cx - 1, cz)) {
                 addBorderColumn(batch, player, region, world, cx, cz, Direction.WEST);
-            if (!isChunkInRegion(region, world, cx + 1, cz))   // east neighbour
+            }
+
+            if (!isChunkInRegion(region, world, cx + 1, cz)) {
                 addBorderColumn(batch, player, region, world, cx, cz, Direction.EAST);
+            }
         }
 
         batch.forEach(FakeBorderRegistry::add);
     }
 
-    /* --------------------------------------------------
-     *  remove every fake block this player can see
-     * -------------------------------------------------- */
     public static void removeAll(Player player) {
         UUID viewer = player.getUniqueId();
         List<FakeBorderRegistry.FakeBorderBlock> remove = new ArrayList<>();
@@ -63,9 +68,6 @@ public final class BorderBlockRenderer {
         });
     }
 
-    /* --------------------------------------------------
-     *  remove whole region border for every viewer
-     * -------------------------------------------------- */
     public static void removeRegion(UUID regionUUID) {
         Set<FakeBorderRegistry.FakeBorderBlock> blocks =
                 FakeBorderRegistry.removeRegion(regionUUID);
@@ -76,23 +78,20 @@ public final class BorderBlockRenderer {
         });
     }
 
-    /* ==================================================
-     *  private helpers
-     * ================================================== */
     private static boolean isChunkInRegion(Region region, World world, int cx, int cz) {
         return region.getChunks().contains(new SerializableChunk(world.getName(), cx, cz));
     }
 
-    /* draw one 16-block-long border line (on the neighbour’s first row/col) */
     private static void addBorderColumn(Set<FakeBorderRegistry.FakeBorderBlock> batch,
                                         Player player, Region region,
                                         World world, int cx, int cz, Direction dir) {
 
-        /* base coordinate of the **neighbour** chunk – we draw on its edge */
         int baseX = cx << 4;
         int baseZ = cz << 4;
 
         int stepX = 0, stepZ = 0, startX = 0, startZ = 0;
+
+        Material borderMat = ChunkBorder.getBlockType();
 
         switch (dir) {
             case NORTH -> { startX = baseX;      startZ = baseZ;      stepX = 1; } // z = const
@@ -106,9 +105,9 @@ public final class BorderBlockRenderer {
             int z = startZ + i * stepZ;
             int y = world.getHighestBlockYAt(x, z);
 
-            Location loc       = new Location(world, x, y, z);
+            Location loc = new Location(world, x, y, z);
             BlockData original = loc.getBlock().getBlockData();
-            BlockData fake     = BORDER_MAT.createBlockData();
+            BlockData fake = borderMat.createBlockData();
 
             player.sendBlockChange(loc, fake);
             batch.add(new FakeBorderRegistry.FakeBorderBlock(

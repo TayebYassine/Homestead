@@ -5,6 +5,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import tfagaming.projects.minecraft.homestead.borders.BorderBlockRenderer;
 import tfagaming.projects.minecraft.homestead.borders.FakeBorderRegistry;
 
@@ -25,12 +26,17 @@ public final class BorderBreakListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onBreakMonitor(BlockBreakEvent e) {
         if (e.isCancelled()) return;
         FakeBorderRegistry.FakeBorderBlock fbb = FakeBorderRegistry.getByLocation(e.getBlock().getLocation());
         if (fbb == null) return;
 
         BorderBlockRenderer.removeRegion(fbb.regionUUID());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        BorderBlockRenderer.removeAll(e.getPlayer());
     }
 }

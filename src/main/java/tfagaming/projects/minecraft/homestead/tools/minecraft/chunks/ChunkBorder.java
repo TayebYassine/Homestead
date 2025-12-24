@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.chunks;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.BorderBlockRenderer;
@@ -24,6 +25,12 @@ public class ChunkBorder {
             case "blocks" -> BorderType.BLOCKS;
             default -> null;
         };
+    }
+
+    public static Material getBlockType() {
+        String blockType = Homestead.config.get("borders.block-type");
+
+        return Material.getMaterial(blockType) == null ? Material.GOLD_BLOCK : Material.getMaterial(blockType);
     }
 
     public static void stop(Player player) {

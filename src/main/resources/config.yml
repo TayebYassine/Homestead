@@ -111,6 +111,8 @@ borders:
 
   type: particles # particles, blocks
 
+  block-type: GRAY_GLAZED_TERRACOTTA
+
 # Title/Action-bar/Chat messages shown when entering or leaving a region.
 enter-exit-region-message:
   enabled: true
