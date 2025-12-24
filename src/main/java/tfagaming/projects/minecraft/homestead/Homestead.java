@@ -290,6 +290,7 @@ public class Homestead extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new CustomSignsListener(), this);
 		getServer().getPluginManager().registerEvents(new PlayerAutoClaimListener(), this);
 		getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
+		getServer().getPluginManager().registerEvents(new BorderBreakListener(), this);
 	}
 
 	private void registerBrigadier() {

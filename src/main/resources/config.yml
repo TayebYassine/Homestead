@@ -105,8 +105,11 @@ disabled-flags:
   - "use-bells"
   - "take-fall-damage"
 
-# Turn off the border particle effect.
-disable-particles: false
+# Show region and sub-area borders.
+borders:
+  enabled: true
+
+  type: particles # particles, blocks
 
 # Title/Action-bar/Chat messages shown when entering or leaving a region.
 enter-exit-region-message:

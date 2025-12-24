@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSessio
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLocation;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -168,7 +169,7 @@ public class PlayerAutoClaimListener implements Listener {
 
 			/** Starts the visual border particle display if not already active. */
 			if (!ChunkParticlesSpawner.isTaskRunning(player)) {
-				new ChunkParticlesSpawner(player);
+				ChunkBorder.show(player);
 			}
 		}
 	}

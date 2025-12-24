@@ -28,13 +28,17 @@ public class SelectedAreaParticlesSpawner {
 		this.firstBlock = new SerializableBlock(firstBlock);
 		this.secondBlock = new SerializableBlock(secondBlock);
 
-		if (tasks.containsKey(player.getUniqueId())) {
-			BukkitTask taskFromMap = tasks.get(player.getUniqueId());
+		boolean isEnabled = Homestead.config.get("borders.enabled");
 
-			cancelTask(taskFromMap, player);
+		if (isEnabled) {
+			if (tasks.containsKey(player.getUniqueId())) {
+				BukkitTask taskFromMap = tasks.get(player.getUniqueId());
+
+				cancelTask(taskFromMap, player);
+			}
+
+			startRepeatingEffect(15L);
 		}
-
-		startRepeatingEffect(15L);
 	}
 
 	public SelectedAreaParticlesSpawner(Player player, SerializableBlock firstBlock, SerializableBlock secondBlock) {
@@ -42,13 +46,17 @@ public class SelectedAreaParticlesSpawner {
 		this.firstBlock = firstBlock;
 		this.secondBlock = secondBlock;
 
-		if (tasks.containsKey(player.getUniqueId())) {
-			BukkitTask taskFromMap = tasks.get(player.getUniqueId());
+		boolean isEnabled = Homestead.config.get("borders.enabled");
 
-			cancelTask(taskFromMap, player);
+		if (isEnabled) {
+			if (tasks.containsKey(player.getUniqueId())) {
+				BukkitTask taskFromMap = tasks.get(player.getUniqueId());
+
+				cancelTask(taskFromMap, player);
+			}
+
+			startRepeatingEffect(15L);
 		}
-
-		startRepeatingEffect(15L);
 	}
 
 	public static void cancelTask(BukkitTask task, Player player) {

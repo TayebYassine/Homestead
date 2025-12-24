@@ -9,10 +9,10 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLocation;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -106,7 +106,7 @@ public class ClaimCommand extends CommandBuilder {
 				region.setLocation(new SerializableLocation(player.getLocation()));
 			}
 
-			new ChunkParticlesSpawner(player);
+			ChunkBorder.show(player);
 		}
 
 		return true;

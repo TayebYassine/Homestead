@@ -5,8 +5,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class ForceUnclaimCommand extends CommandBuilder {
 		replacements.put("{region}", owningRegion.getName());
 		PlayerUtils.sendMessage(player, 24, replacements);
 
-		new ChunkParticlesSpawner(player);
+		ChunkBorder.show(player);
 
 		return true;
 	}

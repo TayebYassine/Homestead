@@ -46,9 +46,9 @@ public class ChunkParticlesSpawner {
 	public ChunkParticlesSpawner(Player player) {
 		this.player = player;
 
-		boolean isParticlesDisabled = Homestead.config.get("disable-borders");
+		boolean isEnabled = Homestead.config.get("borders.enabled");
 
-		if (!isParticlesDisabled) {
+		if (isEnabled) {
 			// Cancel any previously running particle task for this player
 			if (tasks.containsKey(player.getUniqueId())) {
 				BukkitTask taskFromMap = tasks.get(player.getUniqueId());

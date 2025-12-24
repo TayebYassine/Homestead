@@ -6,10 +6,10 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.ButtonData;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -91,7 +91,7 @@ public class RegionClaimedChunksMenu {
 								region.setLocation(null);
 							}
 
-							new ChunkParticlesSpawner(player);
+							ChunkBorder.show(player);
 
 							/** Update pagination items to reflect changes. */
 							PaginationMenu instance = context.getInstance();
