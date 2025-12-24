@@ -10,7 +10,7 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.particles.ChunkParticlesSpawner;
+import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -74,7 +74,7 @@ public class PlayerAutoClaimListener implements Listener {
 	 * <p>
 	 * The method enforces cooldowns, permission checks, and chunk adjacency rules.
 	 * It also ensures the player owns or has rights to modify the region.
-	 * If successful, a claim success message is sent and border particles are displayed.
+	 * If successful, a claim success message is sent and border borders are displayed.
 	 * </p>
 	 *
 	 * @param player The player attempting to claim.

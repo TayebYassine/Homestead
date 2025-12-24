@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.particles;
+package tfagaming.projects.minecraft.homestead.borders;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -112,16 +112,15 @@ public class SelectedAreaParticlesSpawner {
 	}
 
 	public void startRepeatingEffect(long intervalTicks) {
-		BukkitTask task = new BukkitRunnable() {
-			@Override
-			public void run() {
-				spawnParticles();
-			}
-		}.runTaskTimer(Homestead.getInstance(), 0L, intervalTicks);
+		Homestead instance = Homestead.getInstance();
+
+		BukkitTask task = instance.runAsyncTimerTask(this::spawnParticles, 1);
 
 		tasks.put(player.getUniqueId(), task);
 
-		Bukkit.getScheduler().runTaskLater(Homestead.getInstance(),
-				() -> cancelTask(task, player), 60 * 20L);
+		// Automatically cancel task  60 seconds
+		instance.runAsyncTaskLater(() -> {
+			cancelTask(task, player);
+		}, 60);
 	}
 }

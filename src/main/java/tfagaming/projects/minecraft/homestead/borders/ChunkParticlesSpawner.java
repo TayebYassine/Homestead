@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.particles;
+package tfagaming.projects.minecraft.homestead.borders;
 
 import org.bukkit.Chunk;
 import org.bukkit.Color;
@@ -41,12 +41,12 @@ public class ChunkParticlesSpawner {
 	 * Creates a new ChunkParticlesSpawner for the given player.
 	 * Cancels any existing running task for the player and starts a new repeating effect.
 	 *
-	 * @param player the player to show region particles for
+	 * @param player the player to show region borders for
 	 */
 	public ChunkParticlesSpawner(Player player) {
 		this.player = player;
 
-		boolean isParticlesDisabled = Homestead.config.get("disable-particles");
+		boolean isParticlesDisabled = Homestead.config.get("disable-borders");
 
 		if (!isParticlesDisabled) {
 			// Cancel any previously running particle task for this player
@@ -97,7 +97,7 @@ public class ChunkParticlesSpawner {
 	}
 
 	/**
-	 * Iterates through all regions and spawns border particles visible to this player.
+	 * Iterates through all regions and spawns border borders visible to this player.
 	 */
 	public void spawnParticles() {
 		for (Region region : RegionsManager.getAll()) {
@@ -106,13 +106,13 @@ public class ChunkParticlesSpawner {
 	}
 
 	/**
-	 * Spawns particles for a specific region around the chunk borders.
+	 * Spawns borders for a specific region around the chunk borders.
 	 * <p>
 	 * Chunks are only processed if they are already loaded in memory,
 	 * preventing any synchronous chunk loading that can cause server lag.
 	 * </p>
 	 *
-	 * @param region the region for which to display particles
+	 * @param region the region for which to display borders
 	 */
 	public void spawnParticlesForRegion(Region region) {
 		List<SerializableChunk> chunks = region.getChunks();
@@ -155,7 +155,7 @@ public class ChunkParticlesSpawner {
 	}
 
 	/**
-	 * Checks if a neighboring chunk is loaded and spawns border particles if needed.
+	 * Checks if a neighboring chunk is loaded and spawns border borders if needed.
 	 *
 	 * @param world       the world instance
 	 * @param chunkX      X coordinate of the neighbor chunk
@@ -198,9 +198,7 @@ public class ChunkParticlesSpawner {
 	public void startRepeatingEffect() {
 		Homestead instance = Homestead.getInstance();
 
-		BukkitTask task = instance.runAsyncTimerTask(() -> {
-			spawnParticles();
-		}, 1);
+		BukkitTask task = instance.runAsyncTimerTask(this::spawnParticles, 1);
 
 		tasks.put(player.getUniqueId(), task);
 
