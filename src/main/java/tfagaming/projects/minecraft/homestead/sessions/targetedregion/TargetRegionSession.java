@@ -21,8 +21,8 @@ public class TargetRegionSession {
 	public TargetRegionSession(Player player) {
 		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
 
-		if (regions.size() > 0) {
-			sessions.putIfAbsent(player.getUniqueId(), regions.get(0));
+		if (!regions.isEmpty()) {
+			sessions.putIfAbsent(player.getUniqueId(), regions.getFirst());
 		} else {
 			sessions.putIfAbsent(player.getUniqueId(), null);
 		}
@@ -33,7 +33,7 @@ public class TargetRegionSession {
 
 		boolean autoRandom = Homestead.config.get("autoset-target-region");
 
-		if (region == null && autoRandom && player.isOnline()) {
+		if (region == null && autoRandom && player.isOnline() && !RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 			randomizeRegion((Player) player);
 
 			return getRegion(player);
