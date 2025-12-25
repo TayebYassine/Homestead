@@ -20,7 +20,6 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.raid.RaidTriggerEvent;
@@ -45,7 +44,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 import java.util.*;
 
-public class RegionProtectionListener implements Listener {
+public final class RegionProtectionListener implements Listener {
 	public static final Map<UUID, Location> lastLocations = new HashMap<>();
 
 	// Blocks protection
@@ -1275,7 +1274,7 @@ public class RegionProtectionListener implements Listener {
 				if (!chunk.equals(pistonChunk) && ChunksManager.isChunkClaimed(chunk)) {
 					Region pistonChunkRegion = ChunksManager.getRegionOwnsTheChunk(pistonChunk);
 					UUID pistonChunkOwner = pistonChunkRegion == null ? null : pistonChunkRegion.getOwnerId();
-					UUID targetChunkOwner = ChunksManager.getRegionOwnsTheChunk(chunk).getOwnerId();
+					UUID targetChunkOwner = Objects.requireNonNull(ChunksManager.getRegionOwnsTheChunk(chunk)).getOwnerId();
 
 					if (pistonChunkRegion != null && pistonChunkOwner != null && pistonChunkOwner.equals(targetChunkOwner)) {
 						return true;
@@ -1283,7 +1282,7 @@ public class RegionProtectionListener implements Listener {
 
 					Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
 
-					if (!region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
+					if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
 						return false;
 					}
 				}
@@ -1300,7 +1299,7 @@ public class RegionProtectionListener implements Listener {
 				if (!chunk.equals(pistonChunk) && ChunksManager.isChunkClaimed(chunk)) {
 					Region pistonChunkRegion = ChunksManager.getRegionOwnsTheChunk(pistonChunk);
 					UUID pistonChunkOwner = pistonChunkRegion == null ? null : pistonChunkRegion.getOwnerId();
-					UUID targetChunkOwner = ChunksManager.getRegionOwnsTheChunk(chunk).getOwnerId();
+					UUID targetChunkOwner = Objects.requireNonNull(ChunksManager.getRegionOwnsTheChunk(chunk)).getOwnerId();
 
 					if (pistonChunkRegion != null && pistonChunkOwner != null && pistonChunkOwner.equals(targetChunkOwner)) {
 						return true;
@@ -1308,7 +1307,7 @@ public class RegionProtectionListener implements Listener {
 
 					Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
 
-					if (!region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
+					if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
 						return false;
 					}
 				}
@@ -1328,7 +1327,7 @@ public class RegionProtectionListener implements Listener {
 			if (ChunksManager.isChunkClaimed(targetChunk)) {
 				Region dispenserChunkRegion = ChunksManager.getRegionOwnsTheChunk(block.getLocation().getChunk());
 				UUID dispenserChunkOwner = dispenserChunkRegion == null ? null : dispenserChunkRegion.getOwnerId();
-				UUID targetChunkOwner = ChunksManager.getRegionOwnsTheChunk(targetChunk).getOwnerId();
+				UUID targetChunkOwner = Objects.requireNonNull(ChunksManager.getRegionOwnsTheChunk(targetChunk)).getOwnerId();
 
 				if (dispenserChunkRegion != null && dispenserChunkOwner != null && dispenserChunkOwner.equals(targetChunkOwner)) {
 					return;
@@ -1336,7 +1335,7 @@ public class RegionProtectionListener implements Listener {
 
 				Region region = ChunksManager.getRegionOwnsTheChunk(targetChunk);
 
-				if (!region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
 					event.setCancelled(true);
 				}
 			}

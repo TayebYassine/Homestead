@@ -25,7 +25,7 @@ public class AutoCompleteFilter {
 			}
 		}
 
-		if (filtered.size() == 0) {
+		if (filtered.isEmpty()) {
 			filtered.add("?");
 		}
 

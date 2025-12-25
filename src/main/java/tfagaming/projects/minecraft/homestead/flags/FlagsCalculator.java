@@ -1,6 +1,6 @@
 package tfagaming.projects.minecraft.homestead.flags;
 
-public class FlagsCalculator {
+public final class FlagsCalculator {
 	public static long addFlag(long... flags) {
 		long combined = 0;
 

@@ -6,11 +6,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -30,7 +30,7 @@ import java.util.WeakHashMap;
  * ensures safe performance by applying cooldowns, and prevents duplicate particle tasks.
  * </p>
  */
-public class PlayerAutoClaimListener implements Listener {
+public final class PlayerAutoClaimListener implements Listener {
 
 	/**
 	 * Minimum delay between automatic claim attempts in milliseconds.

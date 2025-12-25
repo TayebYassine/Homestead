@@ -141,7 +141,7 @@ public class RegionInvitedPlayersMenu {
 				return;
 			}
 
-			if (region.getInvitedPlayers().size() == 0) {
+			if (region.getInvitedPlayers().isEmpty()) {
 				PlayerUtils.sendMessage(player, 76);
 				return;
 			}

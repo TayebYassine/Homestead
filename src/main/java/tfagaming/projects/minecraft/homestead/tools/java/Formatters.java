@@ -147,7 +147,7 @@ public class Formatters {
 	public static String getPlayerOwnedRegions(OfflinePlayer player) {
 		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
 
-		if (regions.size() == 0) {
+		if (regions.isEmpty()) {
 			return getNone();
 		}
 
@@ -161,7 +161,7 @@ public class Formatters {
 	public static String getPlayerTrustedRegions(OfflinePlayer player) {
 		List<Region> regions = RegionsManager.getRegionsHasPlayerAsMember(player);
 
-		if (regions.size() == 0) {
+		if (regions.isEmpty()) {
 			return getNone();
 		}
 
@@ -175,7 +175,7 @@ public class Formatters {
 	public static String getMembersOfRegion(Region region) {
 		List<SerializableMember> members = region.getMembers();
 
-		if (members.size() == 0) {
+		if (members.isEmpty()) {
 			return getNone();
 		}
 
@@ -189,7 +189,7 @@ public class Formatters {
 	public static String getRegionsOfWar(War war) {
 		List<Region> regions = war.getRegions();
 
-		if (regions.size() == 0) {
+		if (regions.isEmpty()) {
 			return getNone();
 		}
 

@@ -146,7 +146,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 				for (IOwnedLand chunk : chunks) {
 					OfflinePlayer owner = Bukkit.getOfflinePlayer(chunk.getOwner());
 
-					if (RegionsManager.getRegionsOwnedByPlayer(owner).size() == 0) {
+					if (RegionsManager.getRegionsOwnedByPlayer(owner).isEmpty()) {
 						Region region = RegionsManager.createRegion(owner.getName(),
 								owner, true);
 

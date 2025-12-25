@@ -67,7 +67,7 @@ public class RegionLogsMenu {
 				return;
 			}
 
-			if (region.getLogs().size() == 0) {
+			if (region.getLogs().isEmpty()) {
 				PlayerUtils.sendMessage(player, 91);
 				return;
 			}
@@ -94,7 +94,7 @@ public class RegionLogsMenu {
 				return;
 			}
 
-			if (region.getLogs().size() == 0) {
+			if (region.getLogs().isEmpty()) {
 				PlayerUtils.sendMessage(player, 83);
 				return;
 			}

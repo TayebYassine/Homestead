@@ -12,7 +12,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.HashSet;
 import java.util.UUID;
 
-public class CommandsCooldownListener implements Listener {
+public final class CommandsCooldownListener implements Listener {
 	private static final HashSet<UUID> cooldown = new HashSet<UUID>();
 
 	@EventHandler

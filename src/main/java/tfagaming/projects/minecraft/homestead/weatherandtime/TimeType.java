@@ -15,40 +15,26 @@ public class TimeType {
 	}
 
 	public static int next(int current) {
-		switch (current) {
-			case SERVER:
-				return MORNING;
-			case MORNING:
-				return NOON;
-			case NOON:
-				return AFTERNOON;
-			case AFTERNOON:
-				return SUNSET;
-			case SUNSET:
-				return NIGHT;
-			case NIGHT:
-				return SERVER;
-			default:
-				return SERVER;
-		}
+        return switch (current) {
+            case SERVER -> MORNING;
+            case MORNING -> NOON;
+            case NOON -> AFTERNOON;
+            case AFTERNOON -> SUNSET;
+            case SUNSET -> NIGHT;
+            case NIGHT -> SERVER;
+            default -> SERVER;
+        };
 	}
 
 	public static String from(int time) {
-		switch (time) {
-			case SERVER:
-				return "Server";
-			case MORNING:
-				return "Morning";
-			case NOON:
-				return "Noon";
-			case AFTERNOON:
-				return "Afternoon";
-			case SUNSET:
-				return "Sunset";
-			case NIGHT:
-				return "Night";
-			default:
-				return "Server";
-		}
+        return switch (time) {
+            case SERVER -> "Server";
+            case MORNING -> "Morning";
+            case NOON -> "Noon";
+            case AFTERNOON -> "Afternoon";
+            case SUNSET -> "Sunset";
+            case NIGHT -> "Night";
+            default -> "Server";
+        };
 	}
 }

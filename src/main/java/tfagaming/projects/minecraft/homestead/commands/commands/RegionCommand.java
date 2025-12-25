@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RegionCommand extends CommandBuilder {
 	public RegionCommand() {
@@ -160,17 +159,12 @@ public class RegionCommand extends CommandBuilder {
 				new RewardsSubCmd().onExecution(sender, args);
 				break;
 			default:
-				String similaritySubCmds = StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand).stream()
-						.collect(Collectors.joining(", "));
+				String similaritySubCmds = String.join(", ", StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand));
 
-				if (sender instanceof Player) {
-					Map<String, String> replacements = new HashMap<>();
-					replacements.put("{similarity-subcmds}", similaritySubCmds);
+				Map<String, String> replacements = new HashMap<>();
+				replacements.put("{similarity-subcmds}", similaritySubCmds);
 
-					PlayerUtils.sendMessage(player, 7, replacements);
-				} else {
-					sender.sendMessage("Unknown sub-command, maybe you meant...", similaritySubCmds);
-				}
+				PlayerUtils.sendMessage(player, 7, replacements);
 				break;
 		}
 
@@ -188,7 +182,7 @@ public class RegionCommand extends CommandBuilder {
 		if (args.length == 1) {
 			List<String> subcommands = getSubcommands().stream()
 					.filter(cmd -> cmd.startsWith(args[0].toLowerCase()))
-					.collect(Collectors.toList());
+					.toList();
 
 			for (String subcommand : subcommands) {
 				if (player.hasPermission("homestead.commands.region." + subcommand)) {
@@ -353,7 +347,7 @@ public class RegionCommand extends CommandBuilder {
 
 					if (region != null) {
 						suggestions.addAll(region.getSubAreas().stream()
-								.map(SerializableSubArea::getName).collect(Collectors.toList()));
+								.map(SerializableSubArea::getName).toList());
 					}
 				} else if (args.length == 4 && args[1].equals("flags"))
 					suggestions.addAll(PlayerFlags.getFlags());
@@ -372,12 +366,12 @@ public class RegionCommand extends CommandBuilder {
 			case "rate":
 				if (args.length == 2)
 					suggestions
-							.addAll(RegionsManager.getAll().stream().map(Region::getName).collect(Collectors.toList()));
+							.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
 				break;
 			case "war":
 				if (args.length == 3 && args[1].equalsIgnoreCase("declare"))
 					suggestions
-							.addAll(RegionsManager.getAll().stream().map(Region::getName).collect(Collectors.toList()));
+							.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
 				break;
 		}
 

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class CustomSignsListener implements Listener {
+public final class CustomSignsListener implements Listener {
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
 		Player player = event.getPlayer();

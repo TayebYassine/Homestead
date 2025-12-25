@@ -52,7 +52,7 @@ public class ClaimCommand extends CommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			if (RegionsManager.getRegionsOwnedByPlayer(player).size() > 0) {
+			if (!RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 				TargetRegionSession.randomizeRegion(player);
 
 				region = TargetRegionSession.getRegion(player);

@@ -141,7 +141,7 @@ public class RegionBannedPlayersMenu {
 				return;
 			}
 
-			if (region.getBannedPlayers().size() == 0) {
+			if (region.getBannedPlayers().isEmpty()) {
 				PlayerUtils.sendMessage(player, 77);
 				return;
 			}

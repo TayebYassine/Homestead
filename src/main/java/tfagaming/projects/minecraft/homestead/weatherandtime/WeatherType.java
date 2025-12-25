@@ -12,28 +12,20 @@ public class WeatherType {
 	}
 
 	public static int next(int current) {
-		switch (current) {
-			case SERVER:
-				return CLEAR;
-			case CLEAR:
-				return RAIN;
-			case RAIN:
-				return SERVER;
-			default:
-				return SERVER;
-		}
+        return switch (current) {
+            case SERVER -> CLEAR;
+            case CLEAR -> RAIN;
+            case RAIN -> SERVER;
+            default -> SERVER;
+        };
 	}
 
 	public static String from(int weather) {
-		switch (weather) {
-			case SERVER:
-				return "Server";
-			case CLEAR:
-				return "Clear";
-			case RAIN:
-				return "Rain";
-			default:
-				return "Server";
-		}
+        return switch (weather) {
+            case SERVER -> "Server";
+            case CLEAR -> "Clear";
+            case RAIN -> "Rain";
+            default -> "Server";
+        };
 	}
 }

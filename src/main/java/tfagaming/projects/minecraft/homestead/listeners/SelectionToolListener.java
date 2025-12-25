@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
-
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
@@ -25,7 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-public class SelectionToolListener implements Listener {
+public final class SelectionToolListener implements Listener {
 	private static final HashSet<UUID> cooldowns = new HashSet<>();
 	private static final HashMap<UUID, Selection> sessions = new HashMap<>();
 	private static final HashMap<UUID, BukkitTask> tasks = new HashMap<>();

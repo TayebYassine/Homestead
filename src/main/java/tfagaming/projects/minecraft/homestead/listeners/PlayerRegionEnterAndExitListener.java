@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerRegionEnterAndExitListener implements Listener {
+public final class PlayerRegionEnterAndExitListener implements Listener {
 	private static final Map<UUID, UUID> sessions = new HashMap<UUID, UUID>();
 
 	@EventHandler
