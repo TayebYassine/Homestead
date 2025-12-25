@@ -592,14 +592,16 @@ buttons:
   66:
     name: "&9Rewards by Member"
     lore:
-      - "&7You have invited &6{members} &7to this region, which"
-      - "&7unlocked &6{chunks} &7more chunks to claim!"
+      - "&7Invited players: &6{members}"
+      - "&a🡫"
+      - "&7Unlocked chunks: &6{chunks}"
     type: PAPER
   67:
     name: "&9Rewards by Playtime"
     lore:
-      - "&7You have played on this server for&6 %playtime_time% &7and" # "%playtime_time%" Requires PAPI for the placeholder to work!
-      - "&7you unlocked &6{chunks} &7more chunks to claim!"
+      - "&7Playtime: &6%playtime_time%" # "%playtime_time%" Requires PAPI for the placeholder to work!
+      - "&a🡫"
+      - "&7Unlocked chunks: &6{chunks}"
     type: PAPER
 
 button-types:

@@ -14,7 +14,7 @@ public class UpdateChecker {
 
 	public UpdateChecker(Homestead plugin) {
 		try {
-			Logger.warning("Looking for updates on GitHub...");
+			Logger.warning("[Updates] Looking for updates on GitHub...");
 
 			URI uri = URI.create("https://raw.githubusercontent.com/TayebYassine/Homestead/main/version.yml");
 			URL url = uri.toURL();
@@ -25,14 +25,14 @@ public class UpdateChecker {
 				String response = reader.readLine();
 
 				if (!Homestead.getVersion().equalsIgnoreCase(response)) {
-					Logger.warning("There is an available update for Homestead.");
-					Logger.warning("Installed: " + Homestead.getVersion() + ", Updated: " + response);
+					Logger.warning("[Updates] There is an available update for Homestead.");
+					Logger.warning("[Updates] Installed: " + Homestead.getVersion() + ", Updated: " + response);
 					Logger.warning(
-							"Download: https://www.spigotmc.org/resources/121873/, https://modrinth.com/plugin/homestead-plugin");
+							"[Updates] Download: https://www.spigotmc.org/resources/121873/, https://modrinth.com/plugin/homestead-plugin");
 
 					foundUpdate = true;
 				} else {
-					Logger.info("You are running on the latest version of Homestead.");
+					Logger.info("[Updates] You are running on the latest version of Homestead.");
 
 					foundUpdate = false;
 				}

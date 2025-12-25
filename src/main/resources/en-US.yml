@@ -467,7 +467,7 @@ flags-info:
     type: PLAYERHEAD-e6f20aec528c3968dd8164f9d9336b081b3a2c7ecf189cf73df6f925e5a4ed14
   windcharge-burst:
     description:
-      -"&7Allow windcharges to burst?"
+      - "&7Allow windcharges to burst?"
     type: WIND_CHARGE
   wilderness-copper-golems:
     description:
