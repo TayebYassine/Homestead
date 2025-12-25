@@ -1206,16 +1206,13 @@ public final class RegionProtectionListener implements Listener {
 		}
 	}
 
-	// TODO fix this
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onLiquidFlow(BlockFromToEvent event) {
 		Chunk fromChunk = event.getBlock().getChunk();
 		Chunk toChunk = event.getToBlock().getChunk();
 
 		if (!fromChunk.equals(toChunk)) {
-			if (ChunksManager.isChunkClaimed(toChunk) && ChunksManager.isChunkClaimed(fromChunk)) {
-				event.setCancelled(false);
-			} else if (ChunksManager.isChunkClaimed(toChunk)) {
+			if (ChunksManager.isChunkClaimed(toChunk)) {
 				Region region = ChunksManager.getRegionOwnsTheChunk(toChunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.LIQUID_FLOW)) {
