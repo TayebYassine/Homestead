@@ -123,11 +123,26 @@ public class RegionLogsMenu {
 			replacements.put("{index}", String.valueOf(i + 1));
 			replacements.put("{log-sentat}", Formatters.formatDate(log.getSentAt()));
 			replacements.put("{log-author}", log.getAuthor());
-			replacements.put("{log-message}", log.getMessage());
+			replacements.put("{log-message}", log.getAuthor().equals(Homestead.language.get("default.author")) ? log.getMessage() : wrapMessage(log.getMessage()));
 
 			items.add(MenuUtils.getButton(log.isRead() ? 40 : 39, replacements));
 		}
 
 		return items;
+	}
+
+	private String wrapMessage(String message) {
+		int wrapLength = 40;
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < message.length(); i++) {
+			if (i > 0 && i % wrapLength == 0) {
+				sb.append("\n");
+			}
+
+			sb.append(message.charAt(i));
+		}
+
+        return sb.toString();
 	}
 }

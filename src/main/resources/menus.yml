@@ -12,7 +12,7 @@ titles:
   10: "Invited Players"
   11: "Chunk List"
   12: "Miscellaneous Settings"
-  13: "Logs & Messages"
+  13: "Logs & Mails"
   14: "Sub-Areas"
   15: "Sub-Area: &2{subarea}"
   16: "Sub-Area Flags"
@@ -375,23 +375,21 @@ buttons:
   39:
     name: "&9Log #{index}"
     lore:
-      - "&a&lNew message!"
-      - ""
       - "&7• Author: &3{log-author}"
-      - "&7• Sent At: &6{log-sentat}"
+      - "&7• At: &6{log-sentat}"
       - ""
-      - "&f{log-message}"
+      - "&7➽ &f{log-message}"
       - ""
       - "&8➥ Left-click to mark it as read."
       - "&8➥ Right-click to delete this log."
     type: BOOK
   40:
-    name: "&9Log #{index}"
+    name: "&9Log #{index} &7(Marked as Read)"
     lore:
       - "&7• Author: &3{log-author}"
-      - "&7• Sent At: &6{log-sentat}"
+      - "&7• At: &6{log-sentat}"
       - ""
-      - "&f{log-message}"
+      - "&7➽ &f{log-message}"
       - ""
       - "&8➥ Right-click to delete this log."
     type: ENCHANTED_BOOK

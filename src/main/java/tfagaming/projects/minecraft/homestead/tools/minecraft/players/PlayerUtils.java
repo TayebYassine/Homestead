@@ -68,20 +68,15 @@ public class PlayerUtils {
 			return;
 		}
 
+		replacements.put("{__prefix__}", Homestead.config.getPrefix());
+
 		message = Formatters.replace(message, replacements);
 
-		sender.sendMessage(ChatColorTranslator.translate(Homestead.config.getPrefix() + message));
+		sender.sendMessage(ChatColorTranslator.translate(message));
 	}
 
 	public static void sendMessage(CommandSender sender, String path) {
-		String message = Homestead.language.get(path);
-
-		if (message == null) {
-			sender.sendMessage("String not found from the language file: " + path);
-			return;
-		}
-
-		sender.sendMessage(ChatColorTranslator.translate(Homestead.config.getPrefix() + message));
+		sendMessage(sender, path, new HashMap<>());
 	}
 
 	public static void sendMessage(Player player, int path, Map<String, String> replacements) {
