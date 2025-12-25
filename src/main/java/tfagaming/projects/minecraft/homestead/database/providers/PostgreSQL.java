@@ -22,7 +22,7 @@ public class PostgreSQL {
 	}
 
 	public PostgreSQL(String username, String password, String host, int port, String database, String tablePrefix, boolean handleError) {
-		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "").concat("_");
+		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "");
 
 		try {
 			Class.forName("org.postgresql.Driver");

@@ -23,7 +23,7 @@ public class MySQL {
 	}
 
 	public MySQL(String username, String password, String host, int port, String database, String tablePrefix, boolean handleError) {
-		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "").concat("_");
+		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "");
 
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
