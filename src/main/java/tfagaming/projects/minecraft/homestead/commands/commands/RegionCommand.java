@@ -221,10 +221,14 @@ public class RegionCommand extends CommandBuilder {
 					suggestions.addAll(
 							List.of("displayname", "target", "description", "mapcolor", "spawn", "icon", "tax"));
 				else if (args.length == 3 && args[1].equalsIgnoreCase("target")) {
-					suggestions.addAll(
-							RegionsManager.getRegionsOwnedByPlayer(player).stream().map(Region::getName).toList());
-					suggestions.addAll(
-							RegionsManager.getRegionsHasPlayerAsMember(player).stream().map(Region::getName).toList());
+					if (PlayerUtils.isOperator(player)) {
+						suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+					} else {
+						suggestions.addAll(
+								RegionsManager.getRegionsOwnedByPlayer(player).stream().map(Region::getName).toList());
+						suggestions.addAll(
+								RegionsManager.getRegionsHasPlayerAsMember(player).stream().map(Region::getName).toList());
+					}
 				} else if (args.length == 3 && args[1].equalsIgnoreCase("mapcolor"))
 					suggestions.addAll(MapColor.getAll());
 				else if (args.length == 3 && args[1].equalsIgnoreCase("icon")) {
