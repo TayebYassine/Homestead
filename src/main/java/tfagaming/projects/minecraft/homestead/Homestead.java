@@ -39,7 +39,7 @@ import java.io.File;
 import java.util.*;
 
 public class Homestead extends JavaPlugin {
-	private final static String version = "4.2.0";
+	private final static String version = "4.3.0";
 	public static Database database;
 	public static RegionsCache regionsCache;
 	public static WarsCache warsCache;
