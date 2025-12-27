@@ -39,7 +39,7 @@ For a button type, you can use Minecraft's materials like Diamonds (`DIAMOND`), 
 
 !!! warning "Undefined Material Names"
 
-    If you are using a Minecraft version that is higher than the API version 1.21 and using a material name that doesn't exist in version 1.21, it will be automatically replaced with a barrier block.
+    If you are using a Minecraft version that is higher than the API version of Homestead and using a material name that doesn't exist in API version, it will be automatically replaced with a Barrier block.
 
     Example: Minecraft added the Copper Golem Statue. You cannot use `COPPER_GOLEM_STATUE` because it will return a barrier block.
 

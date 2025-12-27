@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * The region structure.
+ */
 public class Region {
 	public UUID id;
 	public String displayName;
@@ -41,6 +44,11 @@ public class Region {
 	public SerializableLocation welcomeSign;
 	public String icon;
 
+	/**
+	 * Create a new region instance.
+	 * @param name The region name
+	 * @param player The owner of the region
+	 */
 	public Region(String name, OfflinePlayer player) {
 		this.id = UUID.randomUUID();
 		this.displayName = name;
@@ -57,7 +65,7 @@ public class Region {
 		this.welcomeSign = null;
 		this.mapColor = 0;
 	}
-
+	
 	public UUID getUniqueId() {
 		return id;
 	}

@@ -50,7 +50,7 @@ Require all region owners to pay for upkeep for every week (configurable) based 
 
 !!! warning
 
-    If you change one of the settings for the upkeep system, you must restart the server.
+    If you change one of the settings for the upkeep system, you **must restart the server**.
 
 ```yaml
 upkeep:
@@ -83,7 +83,7 @@ Require all members of a region to pay taxes to stay trusted for every week (con
 
 !!! warning
 
-    If you change one of the settings for the member taxes system, you must restart the server.
+    If you change one of the settings for the member taxes system, you **must restart the server**.
 
 ```yaml
 taxes:

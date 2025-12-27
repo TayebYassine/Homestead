@@ -3,7 +3,7 @@
 Are you migrating from a different anti-grief plugin to Homestead? Follow the steps:
 
 1. Do not uninstall the plugin or delete the plugin's data.
-2. When Homestead is ready, use the command `/hsadmin importdata [plugin]` to import data from that plugin.
+2. When Homestead is ready, use the command `/hsadmin import [plugin]` to import data from that plugin.
 3. Wait for a few minutes until the command no longer sends messages in the console.
 
 !!! warning "Important Notice"
@@ -14,10 +14,10 @@ Are you migrating from a different anti-grief plugin to Homestead? Follow the st
 
 ## Supported Plugins
 
-| Plugins |  Supported?   |
-| ------- |:-------------:|
-| GriefPrevention |      Yes      |
-| ClaimChunk |      Yes      |
-| LandLord4 |      Yes      |
-| Lands |      Yes       |
-| HuskClaims | Yes |
+| Plugins         |    Supported?    |
+|-----------------|:----------------:|
+| GriefPrevention | :material-check: |
+| ClaimChunk      | :material-check: |
+| LandLord4       | :material-check: |
+| Lands           | :material-check: |
+| HuskClaims      | :material-check: |

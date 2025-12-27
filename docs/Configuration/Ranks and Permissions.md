@@ -110,8 +110,8 @@ In the following guide, you will know how to set permissions for a group using t
 
 ### Operators
 - homestead.admin.forceunclaim
-- homestead.commands.homesteadadmin.importdata
-- homestead.commands.homesteadadmin.migratedata
+- homestead.commands.homesteadadmin.import
+- homestead.commands.homesteadadmin.export
 - homestead.commands.homesteadadmin.plugin
 - homestead.commands.homesteadadmin.reload
 - homestead.commands.homesteadadmin.updates

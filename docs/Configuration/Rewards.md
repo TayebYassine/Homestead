@@ -13,10 +13,9 @@ In the configuration file, for each member, the region owner will get 2 chunks. 
 ```yaml
 rewards:
   # For each member of a region:
-  # NOTE: If you want to disable it, set chunks to '0'.
   for-each-member:
     # Gives to the region owner the amount of chunks to claim:
-    chunks: 2 # +2 chunks
+    chunks: 2 # Give 2 chunks
 ```
 
 ## By Playtime
@@ -34,8 +33,6 @@ By default, this is how they will be rewarded:
 
 ```yaml
 rewards:
-  # By player's playtime:
-  # ...
   by-playtime:
     - minutes: 30
       hours: 0

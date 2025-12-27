@@ -22,6 +22,19 @@ sub-areas:
   enabled: true
 ```
 
+## Region Borders
+
+Customize region borders by particles or client-side blocks.
+
+```yaml
+borders:
+  enabled: true
+
+  type: particles # particles, blocks
+
+  block-type: GRAY_GLAZED_TERRACOTTA
+```
+
 ## Clean startup
 
 Clears corrupted data in regions and wars data.
@@ -44,19 +57,11 @@ disabled-worlds:
 
 ## Disabled flags
 
-Flags that players cannot modify. You can find the list of flags [here](https://tfagaming.gitbook.io/homestead/configuration/flags).
+Flags that players cannot modify. You can find the list of flags [here](./Flags.md).
 
 ```yaml
 disabled-flags:
   - "use-bells"
   - "no-fall-damage"
   - ...
-```
-
-## Disabled particles
-
-Disable particles from spawning around region or chunk's borders.
-
-```yaml
-disabled-particles: false
 ```
