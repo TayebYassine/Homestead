@@ -44,13 +44,14 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			// Player enters a region
 
 			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			assert region != null;
 
 			if (sessions.containsKey(player.getUniqueId())
 					&& sessions.get(player.getUniqueId()).equals(region.getUniqueId())) {
 				return;
 			}
 
-			if (region.isPlayerBanned(player)) {
+			if (!PlayerUtils.isOperator(player) && region.isPlayerBanned(player)) {
 				Chunk nearbyChunk = ChunksManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
