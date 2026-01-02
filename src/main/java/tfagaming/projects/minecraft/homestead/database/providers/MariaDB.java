@@ -48,21 +48,6 @@ public class MariaDB {
 		}
 	}
 
-	private static String toPgTextArray(String[] src) {
-		return "{" + String.join(",", src) + "}";
-	}
-
-	private static String[] stringArrayFromPgText(String pg) {
-		if (pg == null || pg.isEmpty()) return new String[0];
-		return pg.replaceAll("^\\{|\\}$", "").split(",", -1);
-	}
-
-	private static List<OfflinePlayer> uuidArrayFromPgText(String pg) {
-		return Arrays.stream(stringArrayFromPgText(pg))
-				.map(id -> Homestead.getInstance().getOfflinePlayerSync(UUID.fromString(id)))
-				.collect(Collectors.toList());
-	}
-
 	public void createTablesIfNotExists() {
 		String sql = """
 				    CREATE TABLE IF NOT EXISTS `%sregions` (
@@ -95,9 +80,7 @@ public class MariaDB {
 				""".formatted(TABLE_PREFIX);
 		try (Statement stmt = connection.createStatement()) {
 			stmt.execute(sql);
-			Logger.info("Regions table created/verified in MariaDB.");
 		} catch (SQLException e) {
-			Logger.error("Unable to create regions table in MariaDB.");
 			e.printStackTrace();
 		}
 	}
@@ -127,42 +110,46 @@ public class MariaDB {
 				double bank = rs.getDouble("bank");
 				int mapColor = rs.getInt("map_color");
 
-				List<SerializableChunk> chunks =
-						Arrays.stream(stringArrayFromPgText(rs.getString("chunks")))
-								.map(SerializableChunk::fromString)
-								.collect(Collectors.toList());
+				List<SerializableChunk> chunks = !rs.getString("chunks").isEmpty()
+						? Arrays.stream(rs.getString("chunks").split("§"))
+						.map(SerializableChunk::fromString).collect(Collectors.toList())
+						: new ArrayList<>();
 
-				List<SerializableMember> members =
-						Arrays.stream(stringArrayFromPgText(rs.getString("members")))
-								.map(SerializableMember::fromString)
-								.collect(Collectors.toList());
+				List<SerializableMember> members = !rs.getString("members").isEmpty()
+						? Arrays.stream(rs.getString("members").split("§"))
+						.map(SerializableMember::fromString).collect(Collectors.toList())
+						: new ArrayList<>();
 
-				List<SerializableRate> rates =
-						Arrays.stream(stringArrayFromPgText(rs.getString("rates")))
-								.map(SerializableRate::fromString)
-								.collect(Collectors.toList());
+				List<SerializableRate> rates = !rs.getString("rates").isEmpty()
+						? Arrays.stream(rs.getString("rates").split("§"))
+						.map(SerializableRate::fromString).collect(Collectors.toList())
+						: new ArrayList<>();
 
-				List<OfflinePlayer> invitedPlayers =
-						uuidArrayFromPgText(rs.getString("invited_players"));
+				List<OfflinePlayer> invitedPlayers = !rs.getString("invited_players").isEmpty()
+						? Arrays.stream(rs.getString("invited_players").split("§"))
+						.map((uuidString) -> Homestead.getInstance()
+								.getOfflinePlayerSync(UUID.fromString(uuidString)))
+						.collect(Collectors.toList())
+						: new ArrayList<>();
 
-				List<SerializableBannedPlayer> bannedPlayers =
-						Arrays.stream(stringArrayFromPgText(rs.getString("banned_players")))
-								.map(SerializableBannedPlayer::fromString)
-								.collect(Collectors.toList());
+				List<SerializableBannedPlayer> bannedPlayers = !rs.getString("banned_players").isEmpty()
+						? Arrays.stream(rs.getString("banned_players")
+								.split("§"))
+						.map(SerializableBannedPlayer::fromString)
+						.collect(Collectors.toList())
+						: new ArrayList<>();
 
-				List<SerializableLog> logs =
-						Arrays.stream(stringArrayFromPgText(rs.getString("logs")))
-								.map(SerializableLog::fromString)
-								.collect(Collectors.toList());
+				List<SerializableLog> logs = !rs.getString("logs").isEmpty()
+						? Arrays.stream(rs.getString("logs").split("µ"))
+						.map(SerializableLog::fromString).collect(Collectors.toList())
+						: new ArrayList<>();
 
-				List<SerializableSubArea> subAreas =
-						Arrays.stream(stringArrayFromPgText(rs.getString("sub_areas")))
-								.map(SerializableSubArea::fromString)
-								.collect(Collectors.toList());
+				List<SerializableSubArea> subAreas = !rs.getString("sub_areas").isEmpty()
+						? Arrays.stream(rs.getString("sub_areas").split("§"))
+						.map(SerializableSubArea::fromString).collect(Collectors.toList())
+						: new ArrayList<>();
 
-				SerializableRent rent =
-						Optional.ofNullable(rs.getString("rent"))
-								.map(SerializableRent::fromString).orElse(null);
+				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
 
 				long upkeepAt = rs.getLong("upkeep_at");
 				double taxesAmount = rs.getDouble("taxes_amount");
@@ -245,10 +232,10 @@ public class MariaDB {
 				String name = rs.getString("name");
 				String description = rs.getString("description");
 
-				List<UUID> regions =
-						Arrays.stream(stringArrayFromPgText(rs.getString("regions")))
-								.map(UUID::fromString)
-								.collect(Collectors.toList());
+				List<UUID> regions = !rs.getString("regions").isEmpty()
+						? Arrays.stream(rs.getString("regions").split("§"))
+						.map(UUID::fromString).collect(Collectors.toList())
+						: new ArrayList<>();
 
 				double prize = rs.getDouble("prize");
 				long startedAt = rs.getLong("started_at");
@@ -340,20 +327,30 @@ public class MariaDB {
 				upsertStmt.setDouble(10, region.bank);
 				upsertStmt.setInt(11, region.mapColor);
 
-				upsertStmt.setString(12, toPgTextArray(region.chunks.stream()
-						.map(SerializableChunk::toString).toArray(String[]::new)));
-				upsertStmt.setString(13, toPgTextArray(region.members.stream()
-						.map(SerializableMember::toString).toArray(String[]::new)));
-				upsertStmt.setString(14, toPgTextArray(region.rates.stream()
-						.map(SerializableRate::toString).toArray(String[]::new)));
-				upsertStmt.setString(15, toPgTextArray(region.getInvitedPlayers().stream()
-						.map(p -> p.getUniqueId().toString()).toArray(String[]::new)));
-				upsertStmt.setString(16, toPgTextArray(region.bannedPlayers.stream()
-						.map(SerializableBannedPlayer::toString).toArray(String[]::new)));
-				upsertStmt.setString(17, toPgTextArray(region.logs.stream()
-						.map(SerializableLog::toString).toArray(String[]::new)));
-				upsertStmt.setString(18, toPgTextArray(region.subAreas.stream()
-						.map(SerializableSubArea::toString).toArray(String[]::new)));
+				String chunksStr = String.join("§",
+						region.chunks.stream().map(SerializableChunk::toString).collect(Collectors.toList()));
+				String membersStr = String.join("§",
+						region.members.stream().map(SerializableMember::toString).collect(Collectors.toList()));
+				String ratesStr = String.join("§",
+						region.rates.stream().map(SerializableRate::toString).collect(Collectors.toList()));
+				String invitedStr = String.join("§",
+						region.getInvitedPlayers().stream().map(OfflinePlayer::getUniqueId)
+								.map(UUID::toString).collect(Collectors.toList()));
+				String bannedStr = String.join("§",
+						region.bannedPlayers.stream().map(SerializableBannedPlayer::toString)
+								.collect(Collectors.toList()));
+				String logsStr = String.join("µ",
+						region.logs.stream().map(SerializableLog::toString).collect(Collectors.toList()));
+				String subAreasStr = String.join("§",
+						region.subAreas.stream().map(SerializableSubArea::toString).collect(Collectors.toList()));
+
+				upsertStmt.setString(12, chunksStr);
+				upsertStmt.setString(13, membersStr);
+				upsertStmt.setString(14, ratesStr);
+				upsertStmt.setString(15, invitedStr);
+				upsertStmt.setString(16, bannedStr);
+				upsertStmt.setString(17, subAreasStr);
+				upsertStmt.setString(18, logsStr);
 
 				upsertStmt.setString(19, region.rent == null ? null : region.rent.toString());
 				upsertStmt.setLong(20, region.upkeepAt);
@@ -422,12 +419,14 @@ public class MariaDB {
 				UUID warId = war.id;
 				cacheWarIds.add(warId);
 
+				String regionsStr = String.join("§",
+						war.regions.stream().map(UUID::toString).collect(Collectors.toList()));
+
 				upsertStmt.setString(1, warId.toString());
 				upsertStmt.setString(2, war.displayName);
 				upsertStmt.setString(3, war.name);
 				upsertStmt.setString(4, war.description);
-				upsertStmt.setString(5, toPgTextArray(war.regions.stream()
-						.map(UUID::toString).toArray(String[]::new)));
+				upsertStmt.setString(5, regionsStr);
 				upsertStmt.setDouble(6, war.prize);
 				upsertStmt.setLong(7, war.startedAt);
 
