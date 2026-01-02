@@ -72,7 +72,7 @@ public class PostgreSQL {
 				"logs TEXT[] NOT NULL, " +
 				"rent TEXT, " +
 				"upkeep_at BIGINT NOT NULL, " +
-				"taxes_amount DOUBLE NOT NULL, " +
+				"taxes_amount DOUBLE PRECISION NOT NULL, " +
 				"weather INTEGER NOT NULL, " +
 				"time INTEGER NOT NULL, " +
 				"welcome_sign TEXT," +
@@ -85,7 +85,7 @@ public class PostgreSQL {
 				"name TEXT NOT NULL, " +
 				"description TEXT NOT NULL, " +
 				"regions TEXT[] NOT NULL, " +
-				"prize DOUBLE NOT NULL, " +
+				"prize DOUBLE PRECISION NOT NULL, " +
 				"started_at BIGINT NOT NULL" +
 				")";
 
