@@ -49,12 +49,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 					}
 
 					if (!region.isPlayerMember(target)) {
-						Map<String, String> replacements = new HashMap<String, String>();
-						replacements.put("{playername}", target.getName());
-						replacements.put("{region}", region.getName());
-
-						PlayerUtils.sendMessage(sender, 40, replacements);
-						return true;
+						continue;
 					}
 
 					String flagInput = args[3];
@@ -103,7 +98,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 					Map<String, String> replacements = new HashMap<String, String>();
 					replacements.put("{flag}", flagInput);
 					replacements.put("{state}", currentState ? "Deny" : "Allow");
-					replacements.put("{sender}", target.getName());
+					replacements.put("{player}", target.getName());
 					replacements.put("{region}", region.getName());
 
 					PlayerUtils.sendMessage(sender, 43, replacements);

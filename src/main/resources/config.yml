@@ -137,7 +137,7 @@ selection-tool:
     none: "&7Please select two corners inside your region."
     firstCorner: "&7First corner: &a✔ &7| Second corner: &c✘"
     secondCorner: "&7First corner: &c✘ &7| Second corner: &a✔"
-    selectionDone: "&7Use &7/rg subareas create [name] &7to finish."
+    selectionDone: "&7Use &e/rg subareas create [name] &7to finish."
 
 # Upkeep – charge owners per chunk or lose the land.
 upkeep:
