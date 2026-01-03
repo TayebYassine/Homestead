@@ -186,10 +186,13 @@ public class SquaremapAPI {
 		Polygon fillArea = Marker.polygon(List.of(
 				topLeft, topRight, bottomRight, bottomLeft, topLeft));
 
+		int chunkTransparencyInfill = Homestead.config.get("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Homestead.config.get("dynamic-maps.chunks.transparency-outline");
+
 		MarkerOptions fillOptions = MarkerOptions.builder()
 				.hoverTooltip(hoverText)
-				.fillColor(applyAlpha(chunkColor, 50))
-				.strokeColor(applyAlpha(chunkColor, 0))
+				.fillColor(applyAlpha(chunkColor, chunkTransparencyInfill))
+				.strokeColor(applyAlpha(chunkColor, chunkTransparencyOutline))
 				.strokeWeight(0)
 				.fill(true)
 				.stroke(false)

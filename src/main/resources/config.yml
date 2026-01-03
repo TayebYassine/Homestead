@@ -337,7 +337,7 @@ dynamic-maps:
     color: 0x00FF00
     description: "<div style='font-size:16px;'><b>{region} (#{global-rank})</b></div>{region-description}<br><br><b>Owner</b>: {region-owner}<br><b>Members</b>: {region-members}<br><b>Chunks</b>: {region-chunks}<br><b>Size</b>: {region-size} blocks"
     
-    transparency-fill: 40 # BlueMap only (0-255)
+    transparency-fill: 40
     transparency-outline: 125
 
 ############################################################

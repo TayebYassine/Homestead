@@ -66,6 +66,9 @@ public class DynmapAPI {
 			return;
 		}
 
+		int chunkTransparencyInfill = Homestead.config.get("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Homestead.config.get("dynamic-maps.chunks.transparency-outline");
+
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
 		int chunkColor = region.getMapColor() == 0
@@ -73,8 +76,8 @@ public class DynmapAPI {
 				: Homestead.config.get("dynamic-maps.chunks.color"))
 				: region.getMapColor();
 
-		areaMarker.setLineStyle(1, 0.8, chunkColor);
-		areaMarker.setFillStyle(0.10, chunkColor);
+		areaMarker.setLineStyle(1, (double) chunkTransparencyInfill / 100, chunkColor);
+		areaMarker.setFillStyle((double) chunkTransparencyOutline / 100, chunkColor);
 
 		HashMap<String, String> replacements = new HashMap<>();
 

@@ -121,11 +121,14 @@ public class Pl3xMapAPI {
 		Point point1 = Point.of(chunk.getX() * 16, chunk.getZ() * 16);
 		Point point2 = Point.of(chunk.getX() * 16 + 16, chunk.getZ() * 16 + 16);
 
+		int chunkTransparencyInfill = Homestead.config.get("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Homestead.config.get("dynamic-maps.chunks.transparency-outline");
+
 		Rectangle rectangle = new Rectangle(markerId, point1, point2);
 		rectangle.setOptions(Options.builder()
 				.tooltipContent(hoverText)
-				.fillColor(Colors.setAlpha(50, chunkColor))
-				.strokeColor(Colors.setAlpha(0, chunkColor))
+				.fillColor(Colors.setAlpha(chunkTransparencyInfill, chunkColor))
+				.strokeColor(Colors.setAlpha(chunkTransparencyOutline, chunkColor))
 				.strokeWeight(0)
 				.fill(true)
 				.stroke(false)
