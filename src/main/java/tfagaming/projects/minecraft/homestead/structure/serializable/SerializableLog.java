@@ -14,7 +14,7 @@ public class SerializableLog {
 	public SerializableLog(String author, String message) {
 		this.logId = UUID.randomUUID();
 		this.author = author;
-		this.message = message;
+		this.message = message.replaceAll("µ", " ");
 		this.read = false;
 		this.sentAt = System.currentTimeMillis();
 	}
@@ -22,7 +22,7 @@ public class SerializableLog {
 	public SerializableLog(UUID logId, String author, String message, long sentAt, boolean read) {
 		this.logId = logId;
 		this.author = author;
-		this.message = message;
+		this.message = message.replaceAll("µ", " ");
 		this.read = read;
 		this.sentAt = sentAt;
 	}
