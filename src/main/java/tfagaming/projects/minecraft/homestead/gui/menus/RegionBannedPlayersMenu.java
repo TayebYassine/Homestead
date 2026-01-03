@@ -141,6 +141,16 @@ public class RegionBannedPlayersMenu {
 				return;
 			}
 
+			if (!player.hasPermission("homestead.region.players.unban")) {
+				PlayerUtils.sendMessage(player, 8);
+				return;
+			}
+
+			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+					RegionControlFlags.UNBAN_PLAYERS)) {
+				return;
+			}
+
 			if (region.getBannedPlayers().isEmpty()) {
 				PlayerUtils.sendMessage(player, 77);
 				return;
