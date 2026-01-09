@@ -1319,7 +1319,7 @@ public final class RegionProtectionListener implements Listener {
 		Location location = block.getLocation();
 		Chunk chunk = location.getChunk();
 
-		if (entity instanceof Sheep || entity instanceof Goat || entity instanceof Cow || entity instanceof Villager || entity instanceof Bee) {
+		if (entity instanceof Sheep || entity instanceof Goat || entity instanceof Cow || entity instanceof Villager || entity instanceof Bee || block.getType().hasGravity()) {
 			return;
 		}
 
@@ -1331,7 +1331,7 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				}
 			}
-		} else if (!(entity instanceof Player)) {
+		} else if (!(entity instanceof Player || entity instanceof FallingBlock)) {
 			if (ChunksManager.isChunkClaimed(chunk)) {
 				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
 
