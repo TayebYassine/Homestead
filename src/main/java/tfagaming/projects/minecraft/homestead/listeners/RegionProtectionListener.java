@@ -262,19 +262,8 @@ public final class RegionProtectionListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		final Block clicked = event.getClickedBlock();
-		final Chunk chunk = (clicked != null ? clicked.getLocation().getChunk() : player.getLocation().getChunk());
-
-		if (!ChunksManager.isChunkClaimed(chunk)) return;
-		if (PlayerUtils.isOperator(player)) return;
-
-		final Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
-		if (region == null) return;
-
-		final boolean isOwner = player.getUniqueId().equals(region.getOwnerId());
-		if (isOwner) return;
-
-		final SerializableSubArea subArea = (clicked != null) ? region.findSubAreaHasLocationInside(clicked.getLocation())
-				: region.findSubAreaHasLocationInside(player.getLocation());
+		final Location location = (clicked != null ? clicked.getLocation() : player.getLocation());
+		final Chunk chunk = location.getChunk();
 
 		if (event.getItem() != null) {
 			final Material itemType = event.getItem().getType();
@@ -290,7 +279,9 @@ public final class RegionProtectionListener implements Listener {
 							itemType == Material.GLOW_ITEM_FRAME;
 
 			if (placeSpawnItem) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.PLACE_BLOCKS, event)) return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 		}
 
@@ -298,75 +289,93 @@ public final class RegionProtectionListener implements Listener {
 			final Material type = clicked.getType();
 
 			if (isShulkerBox(type)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.CONTAINERS, event)) return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (isAnySign(type)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.GENERAL_INTERACTION, event)) return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (isContainerLike(type)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.CONTAINERS, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (isAnvil(type)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.USE_ANVIL, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_ANVIL, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (Tag.TRAPDOORS.isTagged(type)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.TRAP_DOORS, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRAP_DOORS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (Tag.DOORS.isTagged(type) || type.name().contains("DOOR")) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.DOORS, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DOORS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (isArchaeologyBlockWithBrush(type, player)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.BREAK_BLOCKS, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (Tag.BUTTONS.isTagged(type)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.BUTTONS, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BUTTONS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (type.name().contains("FENCE_GATE")) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.FENCE_GATES, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.FENCE_GATES, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (isSmallInteractable(type)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.GENERAL_INTERACTION, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.GENERAL_INTERACTION, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (isLecternOrVaultWithKey(type, player)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.CONTAINERS, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (type.name().endsWith("_BED")) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.SLEEP, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.SLEEP, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (type == Material.LEVER) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.LEVERS, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.LEVERS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (type == Material.BELL) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.USE_BELLS, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_BELLS, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (isRedstoneInteraction(type)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.REDSTONE, event)) return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.REDSTONE, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 			return;
 		}
@@ -375,30 +384,17 @@ public final class RegionProtectionListener implements Listener {
 			final Material type = clicked.getType();
 
 			if (Tag.PRESSURE_PLATES.isTagged(type)) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.PRESSURE_PLATES, event)) return;
-				return;
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PRESSURE_PLATES, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 
 			if (type == Material.TRIPWIRE) {
-				if (!requireFlag(region, subArea, player, PlayerFlags.TRIGGER_TRIPWIRE, event)) {
-				}
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRIGGER_TRIPWIRE, null, () -> {
+					event.setCancelled(true);
+				}); return;
 			}
 		}
-	}
-
-	/**
-	 * Centralized permission gate. Cancels the event if the player does not have the given flag.
-	 */
-	private boolean requireFlag(Region region, SerializableSubArea subArea, Player player, long flag, Cancellable event) {
-		final boolean allowed = (subArea != null)
-				? PlayerUtils.hasPermissionFlag(region.getUniqueId(), subArea.getId(), player, flag, true)
-				: PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, flag, true);
-
-		if (!allowed) {
-			event.setCancelled(true);
-			return false;
-		}
-		return true;
 	}
 
 	/**
@@ -824,37 +820,29 @@ public final class RegionProtectionListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		Player player = event.getPlayer();
-		if (shouldCancelItemTransfer(player)) {
+
+		Location location = player.getLocation();
+		Chunk chunk = location.getChunk();
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PICKUP_ITEMS, null, () -> {
 			event.setCancelled(true);
-		}
+		});
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerPickupItem(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player player)) return;
-		if (shouldCancelItemTransfer(player)) {
-			event.setCancelled(true);
+		Entity entity = event.getEntity();
+
+		if (!(entity instanceof Player player)) {
+			return;
 		}
-	}
 
-	private boolean shouldCancelItemTransfer(Player player) {
-		if (player == null) return false;
-		if (PlayerUtils.isOperator(player)) return false;
+		Location location = player.getLocation();
+		Chunk chunk = location.getChunk();
 
-		Chunk chunk = player.getLocation().getChunk();
-		if (!ChunksManager.isChunkClaimed(chunk)) return false;
-
-		Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
-		if (region == null) return false;
-		if (player.getUniqueId().equals(region.getOwnerId())) return false;
-
-		SerializableSubArea subArea = region.findSubAreaHasLocationInside(player.getLocation());
-
-		boolean allowed = (subArea != null)
-				? PlayerUtils.hasPermissionFlag(region.getUniqueId(), subArea.getId(), player, PlayerFlags.PICKUP_ITEMS, true)
-				: PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PICKUP_ITEMS, true);
-
-		return !allowed;
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PICKUP_ITEMS, null, () -> {
+			event.setCancelled(true);
+		});
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
