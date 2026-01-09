@@ -285,7 +285,9 @@ public final class RegionProtectionListener implements Listener {
 							itn.contains("ARMOR_STAND") ||
 							itn.contains("MINECART") ||
 							itn.contains("PAINTING") ||
-							itemType == Material.BONE_MEAL;
+							itemType == Material.BONE_MEAL ||
+							itemType == Material.ITEM_FRAME ||
+							itemType == Material.GLOW_ITEM_FRAME;
 
 			if (placeSpawnItem) {
 				if (!requireFlag(region, subArea, player, PlayerFlags.PLACE_BLOCKS, event)) return;
@@ -929,8 +931,26 @@ public final class RegionProtectionListener implements Listener {
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
 		Player player = event.getPlayer();
 		Entity entity = event.getRightClicked();
-		if (shouldCancelEntityInteraction(player, entity)) {
-			event.setCancelled(true);
+
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (entity instanceof Villager) {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (entity instanceof ArmorStand) {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (entity instanceof ItemFrame || entity instanceof GlowItemFrame) {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_ROTATION, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (!(entity instanceof Player)) {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+				event.setCancelled(true);
+			});
 		}
 	}
 
@@ -938,62 +958,27 @@ public final class RegionProtectionListener implements Listener {
 	public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
 		Player player = event.getPlayer();
 		Entity entity = event.getRightClicked();
-		if (shouldCancelEntityInteraction(player, entity)) {
-			event.setCancelled(true);
-		}
-	}
 
-	/**
-	 * Returns true if the interaction should be cancelled based on region ownership,
-	 * sub-area membership and the required flag for the clicked entity type.
-	 * <p>
-	 * Required flags:
-	 * <ul>
-	 *   <li>ArmorStand → {@code PlayerFlags.ARMOR_STANDS}</li>
-	 *   <li>Item Frames → {@code PlayerFlags.ITEM_FRAME_ROTATION}</li>
-	 *   <li>Villager trading → {@code PlayerFlags.TRADE_VILLAGERS}</li>
-	 *   <li>All other entities → {@code PlayerFlags.INTERACT_ENTITIES}</li>
-	 * </ul>
-	 *
-	 * @param player the interacting player
-	 * @param entity the clicked entity
-	 * @return true if the event should be cancelled
-	 */
-	private boolean shouldCancelEntityInteraction(Player player, Entity entity) {
-		if (player == null || entity == null) return false;
-		if (PlayerUtils.isOperator(player)) return false;
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
 
-		Chunk chunk = entity.getLocation().getChunk();
-		if (!ChunksManager.isChunkClaimed(chunk)) return false;
-
-		Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
-		if (region == null) return false;
-
-		if (player.getUniqueId().equals(region.getOwnerId())) return false;
-
-		long requiredFlag = -1L;
-		EntityType type = entity.getType();
-
-		if (type == EntityType.ITEM_FRAME || type == EntityType.GLOW_ITEM_FRAME) {
-			requiredFlag = PlayerFlags.ITEM_FRAME_ROTATION;
-		} else if (entity instanceof Villager) {
-			requiredFlag = PlayerFlags.TRADE_VILLAGERS;
+		if (entity instanceof Villager) {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
+				event.setCancelled(true);
+			});
 		} else if (entity instanceof ArmorStand) {
-			requiredFlag = PlayerFlags.ARMOR_STANDS;
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (entity instanceof ItemFrame || entity instanceof GlowItemFrame) {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_ROTATION, null, () -> {
+				event.setCancelled(true);
+			});
 		} else if (!(entity instanceof Player)) {
-			requiredFlag = PlayerFlags.INTERACT_ENTITIES;
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+				event.setCancelled(true);
+			});
 		}
-
-		if (requiredFlag != -1L) {
-			return true;
-		}
-
-		SerializableSubArea subArea = region.findSubAreaHasLocationInside(entity.getLocation());
-		boolean allowed = (subArea != null)
-				? PlayerUtils.hasPermissionFlag(region.getUniqueId(), subArea.getId(), player, requiredFlag, true)
-				: PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, requiredFlag, true);
-
-		return !allowed;
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
