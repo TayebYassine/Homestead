@@ -408,7 +408,7 @@ default-players-flags:
   general-interaction: false
   armor-stands: false
   interact-entities: false
-  item-frame-rotation: false
+  item-frame-interaction: false
   damage-passive-entities: false
   damage-hostile-entities: false
   trade-villagers: false

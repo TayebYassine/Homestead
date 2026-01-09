@@ -22,7 +22,7 @@ public final class PlayerFlags {
 	public static final long GENERAL_INTERACTION = 1L << 16;
 	public static final long ARMOR_STANDS = 1L << 17;
 	public static final long INTERACT_ENTITIES = 1L << 18;
-	public static final long ITEM_FRAME_ROTATION = 1L << 19;
+	public static final long ITEM_FRAME_INTERACTION = 1L << 19;
 	public static final long DAMAGE_PASSIVE_ENTITIES = 1L << 20;
 	public static final long DAMAGE_HOSTILE_ENTITIES = 1L << 21;
 	public static final long TRADE_VILLAGERS = 1L << 22;
@@ -64,7 +64,7 @@ public final class PlayerFlags {
 		MAPPED_FLAGS.put("general-interaction", GENERAL_INTERACTION);
 		MAPPED_FLAGS.put("armor-stands", ARMOR_STANDS);
 		MAPPED_FLAGS.put("interact-entities", INTERACT_ENTITIES);
-		MAPPED_FLAGS.put("item-frame-rotation", ITEM_FRAME_ROTATION);
+		MAPPED_FLAGS.put("item-frame-interaction", ITEM_FRAME_INTERACTION);
 		MAPPED_FLAGS.put("damage-passive-entities", DAMAGE_PASSIVE_ENTITIES);
 		MAPPED_FLAGS.put("damage-hostile-entities", DAMAGE_HOSTILE_ENTITIES);
 		MAPPED_FLAGS.put("trade-villagers", TRADE_VILLAGERS);

@@ -12,7 +12,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -932,7 +931,7 @@ public final class RegionProtectionListener implements Listener {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ItemFrame || entity instanceof GlowItemFrame) {
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_ROTATION, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (!(entity instanceof Player)) {
@@ -959,7 +958,7 @@ public final class RegionProtectionListener implements Listener {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ItemFrame || entity instanceof GlowItemFrame) {
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_ROTATION, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (!(entity instanceof Player)) {

@@ -296,9 +296,9 @@ flags-info:
     description:
       - "&7Allow players to interact with entities?"
     type: SHEARS
-  item-frame-rotation:
+  item-frame-interaction:
     description:
-      - "&7Allow players to rotate item frames?"
+      - "&7Allow players to interact with item frames?"
     type: ITEM_FRAME
   damage-passive-entities:
     description:
