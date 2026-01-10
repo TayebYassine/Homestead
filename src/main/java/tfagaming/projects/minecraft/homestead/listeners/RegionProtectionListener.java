@@ -52,41 +52,45 @@ public final class RegionProtectionListener implements Listener {
 	 * Static function to listen when an entity move.
 	 */
 	public static void onEntityMove(Entity entity) {
-		Location from = lastLocations.get(entity.getUniqueId());
-		Location to = entity.getLocation();
+		try {
+			Location from = lastLocations.get(entity.getUniqueId());
+			Location to = entity.getLocation();
 
-		if (from == null) {
-			from = entity.getLocation();
-		}
+			if (from == null) {
+				from = entity.getLocation();
+			}
 
-		Chunk fromChunk = from.getChunk();
-		Chunk toChunk = to.getChunk();
+			Chunk fromChunk = from.getChunk();
+			Chunk toChunk = to.getChunk();
 
-		lastLocations.put(entity.getUniqueId(), to.clone());
+			lastLocations.put(entity.getUniqueId(), to.clone());
 
-		if (fromChunk.equals(toChunk)) {
-			return;
-		}
+			if (fromChunk.equals(toChunk)) {
+				return;
+			}
 
-		if (ChunksManager.isChunkClaimed(toChunk)) {
-			if (entity instanceof CopperGolem) {
-				Region fromRegion = ChunksManager.getRegionOwnsTheChunk(fromChunk);
-				Region toRegion = ChunksManager.getRegionOwnsTheChunk(toChunk);
+			if (ChunksManager.isChunkClaimed(toChunk)) {
+				if (entity instanceof CopperGolem) {
+					Region fromRegion = ChunksManager.getRegionOwnsTheChunk(fromChunk);
+					Region toRegion = ChunksManager.getRegionOwnsTheChunk(toChunk);
 
-				if (toRegion == null) {
-					return;
-				}
-
-				if (fromRegion == null) {
-					if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_COPPER_GOLEMS)) {
-						entity.remove();
+					if (toRegion == null) {
+						return;
 					}
-				} else if (!fromRegion.getUniqueId().equals(toRegion.getUniqueId())) {
-					if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_COPPER_GOLEMS)) {
-						entity.remove();
+
+					if (fromRegion == null) {
+						if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_COPPER_GOLEMS)) {
+							entity.remove();
+						}
+					} else if (!fromRegion.getUniqueId().equals(toRegion.getUniqueId())) {
+						if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_COPPER_GOLEMS)) {
+							entity.remove();
+						}
 					}
 				}
 			}
+		} catch (Exception ignored) {
+
 		}
 	}
 

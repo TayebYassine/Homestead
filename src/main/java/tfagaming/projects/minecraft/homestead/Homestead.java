@@ -50,6 +50,8 @@ public class Homestead extends JavaPlugin {
 	private static Homestead instance;
 	private static long startedAt;
 
+	private static BukkitTask moveCheckTask;
+
 	public static String getVersion() {
 		return version;
 	}
@@ -263,15 +265,13 @@ public class Homestead extends JavaPlugin {
 
 		registerExternalPlugins();
 
-		runAsyncTaskLater(() -> {
-			runSyncTimerTask(() -> {
-				for (World world : Bukkit.getWorlds()) {
-					for (Entity entity : world.getEntities()) {
-						RegionProtectionListener.onEntityMove(entity);
-					}
+		moveCheckTask = runSyncTimerTask(() -> {
+			for (World world : Bukkit.getWorlds()) {
+				for (Entity entity : world.getEntities()) {
+					RegionProtectionListener.onEntityMove(entity);
 				}
-			}, 5L);
-		}, 10);
+			}
+		}, 5L);
 	}
 
 	private void registerCommands() {
@@ -324,8 +324,8 @@ public class Homestead extends JavaPlugin {
 	 * @param callable The task to run.
 	 * @param ticks    The interval, in ticks.
 	 */
-	public void runSyncTimerTask(Runnable callable, long ticks) {
-		Bukkit.getScheduler().runTaskTimer(this, callable, 0L, ticks);
+	public BukkitTask runSyncTimerTask(Runnable callable, long ticks) {
+		return Bukkit.getScheduler().runTaskTimer(this, callable, 0L, ticks);
 	}
 
 	/**
@@ -430,6 +430,10 @@ public class Homestead extends JavaPlugin {
 		if (database != null) {
 			Logger.info("Closing database connection...");
 			database.closeConnection();
+		}
+
+		if (moveCheckTask != null) {
+			moveCheckTask.cancel();
 		}
 	}
 
