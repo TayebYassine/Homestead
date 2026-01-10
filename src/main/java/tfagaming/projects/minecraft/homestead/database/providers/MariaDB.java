@@ -212,7 +212,6 @@ public class MariaDB {
 
 		try (Statement stmt = connection.createStatement()) {
 			stmt.execute(sql);
-			Logger.info("Wars table created/verified in MariaDB.");
 		} catch (SQLException e) {
 			Logger.error("Unable to create wars table in MariaDB.");
 			e.printStackTrace();
