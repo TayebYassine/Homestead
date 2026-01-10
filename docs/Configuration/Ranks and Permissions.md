@@ -108,13 +108,23 @@ In the following guide, you will know how to set permissions for a group using t
 4. Once you select all permissions, click on "+ Add". But before that, if you want to disallow the permissions for the selected group, click on "true" to change it to "false", and then "+ Add".
 5. You're good to go! You may need to leave the server and rejoin to update the commands for the client-side.
 
+### Recommended Permissions
+
+The following permissions are recommended to give to all players within the group `default`.
+
+- `homestead.commands.region`
+- `homestead.commands.region.*`
+- `homestead.commands.claim`
+- `homestead.commands.unclaim`
+
 ### Operators
-- homestead.admin.forceunclaim
-- homestead.commands.homesteadadmin.import
-- homestead.commands.homesteadadmin.export
-- homestead.commands.homesteadadmin.plugin
-- homestead.commands.homesteadadmin.reload
-- homestead.commands.homesteadadmin.updates
+- homestead.admin.forceunclaim → `/forceunclaim`
+- homestead.commands.homesteadadmin → `/homesteadadmin`, `/hsadmin`
+- homestead.commands.homesteadadmin.import → `/hsadmin import (args)`
+- homestead.commands.homesteadadmin.export → `/hsadmin export (args)`
+- homestead.commands.homesteadadmin.plugin → `/hsadmin plugin (args)`
+- homestead.commands.homesteadadmin.reload → `/hsadmin reload (args)`
+- homestead.commands.homesteadadmin.updates → `/hsadmin updates (args)`
 - homestead.operator
 
 !!! danger "Operator Permissions"
@@ -152,7 +162,10 @@ Specific permissions for players to manage their regions.
 
 ### Commands
 
-- homestead.commands.region.\*: This will give the group with all the permissions below.
+- homestead.commands.claim → `/claim`
+- homestead.commands.unclaim → `/unclaim`
+- homestead.commands.region → `/homestead`, `/hs`, `/region`, `/rg`
+- homestead.commands.region.\*: This permission has the children of all the sub-commands below (`/homestead [subcmd] (args)`).
 - homestead.commands.region.accept
 - homestead.commands.region.auto
 - homestead.commands.region.balance

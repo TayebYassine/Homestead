@@ -35,6 +35,10 @@ borders:
   block-type: GRAY_GLAZED_TERRACOTTA
 ```
 
+!!! warning "No Particles Issue"
+
+    Please check the resource packs you are using; some of them could have disabled particles, or in the accessibility settings of your Minecraft client, you could have disabled particles.
+
 ## Clean startup
 
 Clears corrupted data in regions and wars data.

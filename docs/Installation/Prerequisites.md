@@ -4,7 +4,9 @@ These are the requirements for Homestead to work.
 
 ## Server
 - **Software**: Any software that supports Bukkit-based plugins
-- **Version**: 1.21 or newer
+- **Version**:
+    - **1.21 or newer** for 4.2.0 or older
+    - **1.21.9 or newer** for 4.3.0 or newer
 
 ## Java
 - **Version**: Java 21 SE or newer

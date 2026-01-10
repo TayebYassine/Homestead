@@ -42,7 +42,7 @@ default-world-flags:
 | general-interaction     |  Deny   | Allow players to interact (in general)?                     |
 | armor-stands            |  Deny   | Allow players to take off armor from armor stands?          |
 | interact-entities       |  Deny   | Allow players to interact with entities?                    |
-| item-frame-rotation     |  Deny   | Allow players to rotate items from item frames?             |
+| item-frame-interaction  |  Deny   | Allow players to interact with item frames?                 |
 | damage-passive-entities |  Deny   | Allow players to kill passive (Cow, Sheep…) entities?       |
 | damage-hostile-entities |  Deny   | Allow players to kill hostile (Zombie, Skeleton…) entities? |
 | trade-villagers         |  Deny   | Allow players to trade with Villagers?                      |
