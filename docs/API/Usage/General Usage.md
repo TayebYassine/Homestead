@@ -65,6 +65,60 @@ if (region != null){
 }
 ```
 
+### Claiming a Chunk:
+
+```java
+import org.bukkit.*;
+import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.structure.*;
+
+// The player who will claim the chunk (optional)
+Player player = Bukkit.getPlayer("TFA_Gaming");
+
+// The chunk to claim
+Chunk chunk = ...;
+
+// The region which will have the chunk added
+Region region = ...; // Make sure not null
+
+boolean successful = ChunksManager.claimChunk(region.getUniqueId(), chunk, player);
+
+// If Homestead claimed the chunk
+if (successful) {
+    System.out.println("Chunk claimed successfully!");    
+} else {
+    System.err.println("Cannot claim the chunk!");
+}
+```
+
+### Unclaiming a Chunk:
+
+```java
+import org.bukkit.*;
+import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.structure.*;
+
+// The player who will unclaim the chunk (optional)
+Player player = Bukkit.getPlayer("TFA_Gaming");
+
+// The chunk to unclaim
+Chunk chunk = ...;
+
+// The region which will have the chunk removed
+Region region = ...; // Make sure not null
+
+boolean successful = ChunksManager.unclaimChunk(region.getUniqueId(), chunk, player);
+
+// If Homestead unclaimed the chunk
+if (successful) {
+    System.out.println("Chunk unclaimed successfully!");    
+} else {
+    System.err.println("Cannot unclaim the chunk!");
+}
+```
+
 ### Managing Members:
 
 ```java
@@ -110,10 +164,6 @@ long flag = PlayerFlags.valueOf("break-blocks"); // Get the flag value of "break
 ```
 
 ### Calculating and using flags:
-
-!!! success "Same Method for other Flag Classes"
-
-    This all applies to other flag classes, including `WorldFlags` and `RegionControlFlags`. They have the same methods as `PlayerFlags`.
 
 !!! failure "Mixing Flags"
 

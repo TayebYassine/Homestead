@@ -17,7 +17,7 @@ How to include the API with Maven:
 <dependency>
   <groupId>tfagaming.projects.minecraft.homestead</groupId>
   <artifactId>homestead</artifactId>
-  <version>{LATEST_VERSION}</version>
+  <version>4.3.1</version>
   <classifier>api</classifier>
   <scope>provided</scope>
 </dependency>
@@ -31,11 +31,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly("tfagaming.projects.minecraft.homestead:homestead:{LATEST_VERSION}:api")
+    compileOnly("tfagaming.projects.minecraft.homestead:homestead:4.3.1:api")
 }
 ```
 
-Replace `{LATEST_VERSION}` with the current latest version available, check [SpigotMC](https://www.spigotmc.org/resources/121873/), [Modrinth](https://modrinth.com/plugin/homestead-plugin/versions?c=release), or [Hangar](https://hangar.papermc.io/TayebYassine/Homestead/versions?channel=Release).
+All versions are available in [GitHub Packages](https://github.com/TayebYassine/Homestead/packages/2787077/versions).
 
 ## Contributing
 

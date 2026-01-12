@@ -17,7 +17,7 @@ You can develop a third-party plugin to implement more features using the API!
     <dependency>
         <groupId>tfagaming.projects.minecraft.homestead</groupId>
         <artifactId>homestead</artifactId>
-        <version>{LATEST_VERSION}</version>
+        <version>4.3.1</version>
         <classifier>api</classifier>
         <scope>provided</scope>
     </dependency>
@@ -31,9 +31,8 @@ You can develop a third-party plugin to implement more features using the API!
     }
 
     dependencies {
-        compileOnly("tfagaming.projects.minecraft.homestead:homestead:{LATEST_VERSION}:api")
+        compileOnly("tfagaming.projects.minecraft.homestead:homestead:4.3.1:api")
     }
     ```
 
-Replace `{LATEST_VERSION}` with the latest available version, check [GitHub Packages](https://github.com/TayebYassine/Homestead/packages/2787077/versions).
-
+All versions are available in [GitHub Packages](https://github.com/TayebYassine/Homestead/packages/2787077/versions).
