@@ -8,10 +8,8 @@ import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
 import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
+import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.*;
 
@@ -27,107 +25,101 @@ public final class ChunksManager {
 	 * Claims a chunk for a specific region. Returns true if it was successfully claimed, otherwise false.
 	 * @param id The region UUID
 	 * @param chunk The chunk
-	 * @param player Executor (optional)
+	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
 	 */
-	public static boolean claimChunk(UUID id, Chunk chunk, OfflinePlayer... player) {
+	public static Error claimChunk(UUID id, Chunk chunk) {
 		Region region = RegionsManager.findRegion(id);
-		if (region == null) return false;
 
-		boolean adjacentChunks = Homestead.config.get("adjacent-chunks");
-
-		if (adjacentChunks && !region.getChunks().isEmpty() && !hasAdjacentOwnedChunk(region, chunk)) {
-			if (player.length > 0 && player[0] instanceof Player target && target.isOnline()) {
-				PlayerUtils.sendMessage(target, 140);
-			}
-			return false;
+		if (region == null) {
+			return Error.REGION_NOT_FOUND;
 		}
 
-		region.addChunk(new SerializableChunk(chunk));
+		if (Homestead.config.isAdjacentChunksRuleEnabled() && !region.getChunks().isEmpty() && !hasAdjacentOwnedChunk(region, chunk)) {
+			return Error.CHUNK_NOT_ADJACENT_TO_REGION;
+		}
 
-		ChunkClaimEvent event = new ChunkClaimEvent(chunk, player.length > 0 ? player[0] : null);
+		region.addChunk(chunk);
+
+		ChunkClaimEvent event = new ChunkClaimEvent(region, chunk);
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 
-		return true;
+		return null;
 	}
 
 	/**
 	 * Unclaims a chunk with normal protection checks.
 	 * @param id The region UUID
 	 * @param chunk The chunk
-	 * @param player Executor (optional)
+	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
 	 */
-	public static boolean unclaimChunk(UUID id, Chunk chunk, OfflinePlayer... player) {
-		return unclaimChunkInternal(id, chunk, player, false);
+	public static Error unclaimChunk(UUID id, Chunk chunk) {
+		return unclaimChunkInternal(id, chunk, false);
 	}
 
 	/**
 	 * Unclaims a chunk bypassing split/topology protection and ownership checks.
 	 * @param id The region UUID
 	 * @param chunk The chunk
-	 * @param player Executor (optional)
+	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
 	 */
-	public static void forceUnclaimChunk(UUID id, Chunk chunk, OfflinePlayer... player) {
-		unclaimChunkInternal(id, chunk, player, true);
+	public static Error forceUnclaimChunk(UUID id, Chunk chunk) {
+		return unclaimChunkInternal(id, chunk, true);
 	}
 
-	/**
-	 * Internal unclaim implementation with optional force bypass.
-	 *
-	 * @param id The region UUID
-	 * @param chunk The chunk
-	 * @param player Executor (optional)
-	 * @param force When <code>true</code>, bypasses split/topology validation
-	 */
-	private static boolean unclaimChunkInternal(UUID id, Chunk chunk, OfflinePlayer[] player, boolean force) {
+	private static Error unclaimChunkInternal(UUID id, Chunk chunk, boolean force) {
 		Region region = RegionsManager.findRegion(id);
-		if (region == null) return false;
 
-		SerializableChunk target = new SerializableChunk(chunk);
-
-		boolean adjacentChunks = Homestead.config.get("adjacent-chunks");
-
-		if (adjacentChunks && !force && wouldSplitRegion(region, target)) {
-			if (player.length > 0 && player[0] instanceof Player p && p.isOnline()) {
-				PlayerUtils.sendMessage(p, 141);
-			}
-
-			return false;
+		if (region == null) {
+			return Error.REGION_NOT_FOUND;
 		}
 
-		removeChunk(id, target);
+		if (Homestead.config.isAdjacentChunksRuleEnabled() && !force && wouldSplitRegion(region, chunk)) {
+			return Error.CHUNK_WOULD_SPLIT_REGION;
+		}
 
-		boolean regenerate = Homestead.config.get("worldedit.regenerate-chunks");
-		if (regenerate) {
+		removeChunk(id, chunk);
+
+		if (Homestead.config.regenerateChunksWithWorldEdit()) {
 			Homestead.getInstance().runAsyncTask(() ->
 					WorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.getX(), chunk.getZ())
 			);
 		}
 
-		ChunkUnclaimEvent event = new ChunkUnclaimEvent(chunk, player.length > 0 ? player[0] : null);
+		if (region.getLocation() != null && ChunkUtils.areEqual(region.getLocation().getBukkitLocation().getChunk(), chunk)) {
+			region.setLocationToNull();
+		}
+
+		ChunkUnclaimEvent event = new ChunkUnclaimEvent(region, chunk);
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 
-		return true;
+		return null;
 	}
 
 	/**
 	 * Removes a claimed chunk from a region and its sub-areas.
 	 * @param id The region UUID
 	 * @param chunk The chunk
+	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
 	 */
-	public static void removeChunk(UUID id, SerializableChunk chunk) {
+	public static Error removeChunk(UUID id, Chunk chunk) {
 		Region region = RegionsManager.findRegion(id);
-		if (region == null) return;
+
+		if (region == null) {
+			return Error.REGION_NOT_FOUND;
+		}
 
 		region.removeChunk(chunk);
 
-		for (SerializableSubArea sub : region.getSubAreas()) {
-			for (Chunk subChunk : ChunkUtils.getChunksInArea(sub.getFirstPoint(), sub.getSecondPoint())) {
-				if (new SerializableChunk(subChunk).toString(true).equals(chunk.toString(true))) {
-					region.removeSubArea(sub.getId());
+		for (SerializableSubArea subArea : region.getSubAreas()) {
+			for (Chunk subAreaChunk : ChunkUtils.getChunksInArea(subArea.getFirstPoint(), subArea.getSecondPoint())) {
+				if (ChunkUtils.areEqual(subAreaChunk, chunk)) {
+					region.removeSubArea(subArea.getId());
 					break;
 				}
 			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -137,7 +129,7 @@ public final class ChunksManager {
 	 * @param region The region
 	 * @param chunkToRemove The chunk that will be removed
 	 */
-	public static boolean wouldSplitRegion(Region region, SerializableChunk chunkToRemove) {
+	public static boolean wouldSplitRegion(Region region, Chunk chunkToRemove) {
 		if (region == null || region.getChunks() == null || region.getChunks().isEmpty()) return false;
 
 		List<SerializableChunk> normalized = new ArrayList<>();
@@ -153,7 +145,7 @@ public final class ChunksManager {
 		}
 
 		List<SerializableChunk> chunks = new ArrayList<>(byKey.values());
-		chunks.removeIf(c -> c.toString(true).equals(chunkToRemove.toString(true)));
+		chunks.removeIf(c -> ChunkUtils.areEqual(c.getBukkitChunk(), chunkToRemove));
 
 		if (chunks.isEmpty()) return false;
 
@@ -412,5 +404,11 @@ public final class ChunksManager {
 			}
 		}
 		return count;
+	}
+
+	public enum Error {
+		REGION_NOT_FOUND,
+		CHUNK_NOT_ADJACENT_TO_REGION,
+		CHUNK_WOULD_SPLIT_REGION
 	}
 }

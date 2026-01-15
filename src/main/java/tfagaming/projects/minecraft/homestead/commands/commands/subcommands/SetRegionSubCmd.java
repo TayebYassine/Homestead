@@ -197,7 +197,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return false;
 				}
 
-				region.setLocation(new SerializableLocation(location));
+				region.setLocation(location);
 
 				Map<String, String> replacements = new HashMap<String, String>();
 				replacements.put("{region}", region.getName());
@@ -354,7 +354,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				new TargetRegionSession(player, region);
+				TargetRegionSession.newSession(player, region);
 
 				Map<String, String> replacements = new HashMap<String, String>();
 				replacements.put("{region}", region.getName());

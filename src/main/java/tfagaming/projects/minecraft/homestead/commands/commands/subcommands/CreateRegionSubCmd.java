@@ -59,7 +59,7 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 
 		PlayerUtils.sendMessage(player, 3, replacements);
 
-		new TargetRegionSession(player, region);
+		TargetRegionSession.newSession(player, region);
 
 		return true;
 	}

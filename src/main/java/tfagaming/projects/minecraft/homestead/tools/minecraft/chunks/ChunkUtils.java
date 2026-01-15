@@ -63,4 +63,12 @@ public class ChunkUtils {
 
 		return null;
 	}
+
+	public static String getUniqueIdentifier(Chunk chunk) {
+		return String.format("%s,%s,%s", chunk.getWorld().getName(), chunk.getX(), chunk.getZ());
+	}
+
+	public static boolean areEqual(Chunk chunk1, Chunk chunk2) {
+		return getUniqueIdentifier(chunk1).equals(getUniqueIdentifier(chunk2));
+	}
 }

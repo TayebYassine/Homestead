@@ -122,7 +122,7 @@ public class RegionsMenu {
 							return;
 						}
 
-						new TargetRegionSession(_player, region);
+						TargetRegionSession.newSession(_player, region);
 						_player.playSound(_player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
 
 						Map<String, String> replacements = new HashMap<>();

@@ -61,20 +61,19 @@ public final class RegionsManager {
 	 */
 	public static Region createRegion(String name, OfflinePlayer player, boolean verifyName) {
 		if (verifyName) {
-			String newname = name;
+			String newName = name;
 			int counter = 1;
 
-			while (RegionsManager.isNameUsed(newname)) {
-				newname = name + counter;
+			while (RegionsManager.isNameUsed(newName)) {
+				newName = name + counter;
 				counter++;
 			}
 
-			Region region = new Region(newname, player);
+			Region region = new Region(newName, player);
 
-			boolean isEnabled = Homestead.config.get("upkeep.enabled");
-			int delay = Homestead.config.get("upkeep.start-upkeep");
+			if ((boolean) Homestead.config.get("upkeep.enabled")) {
+				int delay = Homestead.config.get("upkeep.start-upkeep");
 
-			if (isEnabled) {
 				region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
 			}
 
@@ -96,7 +95,7 @@ public final class RegionsManager {
 	 * @param id The region UUID
 	 */
 	public static Region findRegion(UUID id) {
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : getAll()) {
 			if (region.getUniqueId().equals(id)) {
 				return region;
 			}
@@ -110,7 +109,7 @@ public final class RegionsManager {
 	 * @param name The region name
 	 */
 	public static Region findRegion(String name) {
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : getAll()) {
 			if (region.getName().equals(name)) {
 				return region;
 			}
@@ -133,9 +132,7 @@ public final class RegionsManager {
 			return;
 		}
 
-		boolean isRegeneratingChunksEnabled = Homestead.config.get("worldedit.regenerate-chunks");
-
-		if (isRegeneratingChunksEnabled) {
+		if (Homestead.config.regenerateChunksWithWorldEdit()) {
 			for (SerializableChunk chunk : region.getChunks()) {
 				Homestead.getInstance().runAsyncTask(() -> {
 					WorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
@@ -205,7 +202,7 @@ public final class RegionsManager {
 	public static List<OfflinePlayer> getAllOwners() {
 		List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();
 
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : getAll()) {
 			players.add(region.getOwner());
 		}
 
@@ -214,7 +211,7 @@ public final class RegionsManager {
 
 	/** Supplies all regions sorted alphabetically by name. */
 	public static List<Region> sortRegionsAlpha() {
-		List<Region> regions = Homestead.regionsCache.getAll();
+		List<Region> regions = getAll();
 
 		regions.sort((r1, r2) -> r1.getName().compareToIgnoreCase(r2.getName()));
 
@@ -254,7 +251,7 @@ public final class RegionsManager {
 	public static List<Region> getRegionsOwnedByPlayer(OfflinePlayer player) {
 		List<Region> regions = new ArrayList<Region>();
 
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : getAll()) {
 			if (region.getOwner().getUniqueId().equals(player.getUniqueId())) {
 				regions.add(region);
 			}
@@ -270,7 +267,7 @@ public final class RegionsManager {
 	public static List<Region> getRegionsHasPlayerAsMember(OfflinePlayer player) {
 		List<Region> regions = new ArrayList<Region>();
 
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : getAll()) {
 			if (region.isPlayerMember(player)) {
 				regions.add(region);
 			}
@@ -283,7 +280,7 @@ public final class RegionsManager {
 	public static List<Region> getPublicRegions() {
 		List<Region> regions = new ArrayList<Region>();
 
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : getAll()) {
 			long flags = region.getPlayerFlags();
 
 			if (FlagsCalculator.isFlagSet(flags, PlayerFlags.PASSTHROUGH)
@@ -302,7 +299,7 @@ public final class RegionsManager {
 	public static List<Region> getRegionsInvitedPlayer(OfflinePlayer player) {
 		List<Region> regions = new ArrayList<Region>();
 
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : getAll()) {
 			if (region.isPlayerInvited(player)) {
 				regions.add(region);
 			}
@@ -318,21 +315,21 @@ public final class RegionsManager {
 	 */
 	public static List<Region> sortRegions(RegionSorting type) {
         return switch (type) {
-            case BANK -> Homestead.regionsCache.getAll().stream()
+            case BANK -> getAll().stream()
                     .sorted(Comparator.comparingDouble(Region::getBank).reversed())
                     .collect(Collectors.toList());
-            case CHUNKS_COUNT -> Homestead.regionsCache.getAll().stream()
+            case CHUNKS_COUNT -> getAll().stream()
                     .sorted(Comparator.comparingInt(region -> ((Region) region).getChunks().size()).reversed())
                     .collect(Collectors.toList());
-            case MEMBERS_COUNT -> Homestead.regionsCache.getAll().stream()
+            case MEMBERS_COUNT -> getAll().stream()
                     .sorted(Comparator.comparingInt((region) -> ((Region) region).getMembers().size()).reversed())
                     .collect(Collectors.toList());
-            case RATING -> Homestead.regionsCache.getAll().stream()
+            case RATING -> getAll().stream()
                     .sorted(Comparator
                             .comparingDouble((region) -> getAverageRating((Region) region))
                             .reversed())
                     .collect(Collectors.toList());
-            case CREATION_DATE -> Homestead.regionsCache.getAll().stream()
+            case CREATION_DATE -> getAll().stream()
                     .sorted(Comparator.comparingLong(Region::getCreatedAt))
                     .collect(Collectors.toList());
             default -> new ArrayList<>();
@@ -363,7 +360,7 @@ public final class RegionsManager {
 
 	/** Checks whether any region already carries the supplied name, ignoring case. */
 	public static boolean isNameUsed(String name) {
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : getAll()) {
 			if (region.getName().equalsIgnoreCase(name)) {
 				return true;
 			}
@@ -409,7 +406,7 @@ public final class RegionsManager {
 	public static int cleanStartup() {
 		int updated = 0;
 
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : getAll()) {
 			for (SerializableMember member : region.getMembers()) {
 				if (member.getBukkitOfflinePlayer() == null) {
 					region.removeMember(member);
@@ -454,7 +451,7 @@ public final class RegionsManager {
 			SerializableLocation spawnLoc = region.getLocation();
 
 			if (spawnLoc != null && spawnLoc.getWorld() == null) {
-				region.setLocation(null);
+				region.setLocationToNull();
 				updated++;
 			}
 

@@ -59,19 +59,20 @@ public class UnclaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		boolean res = ChunksManager.unclaimChunk(region.getUniqueId(), chunk, player);
+		ChunksManager.Error error = ChunksManager.unclaimChunk(region.getUniqueId(), chunk);
 
-		if (res) {
+		if (error == null) {
 			Map<String, String> replacements = new HashMap<String, String>();
 			replacements.put("{region}", region.getName());
 
 			PlayerUtils.sendMessage(player, 24, replacements);
 
-			if (region.getLocation() != null && region.getLocation().getBukkitLocation().getChunk().equals(chunk)) {
-				region.setLocation(null);
-			}
-
 			ChunkBorder.show(player);
+		} else {
+			switch (error) {
+				case REGION_NOT_FOUND -> PlayerUtils.sendMessage(player, 9);
+				case CHUNK_WOULD_SPLIT_REGION ->  PlayerUtils.sendMessage(player, 141);
+			}
 		}
 
 		return true;

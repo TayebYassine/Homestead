@@ -156,7 +156,7 @@ public class MiscellaneousSettingsMenu {
 				return;
 			}
 
-			region.setLocation(new SerializableLocation(location));
+			region.setLocation(location);
 
 			replacements.put("{region}", region.getName());
 			replacements.put("{location}", Formatters.formatLocation(location));

@@ -5,16 +5,17 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+import tfagaming.projects.minecraft.homestead.structure.Region;
 
 public class ChunkUnclaimEvent extends Event {
 	private static final HandlerList HANDLERS = new HandlerList();
 
+	private final Region region;
 	private final Chunk chunk;
-	private final OfflinePlayer player;
 
-	public ChunkUnclaimEvent(Chunk chunk, OfflinePlayer player) {
+	public ChunkUnclaimEvent(Region region, Chunk chunk) {
+		this.region = region;
 		this.chunk = chunk;
-		this.player = player;
 	}
 
 	public static HandlerList getHandlerList() {
@@ -25,8 +26,8 @@ public class ChunkUnclaimEvent extends Event {
 		return chunk;
 	}
 
-	public OfflinePlayer getPlayer() {
-		return player;
+	public Region getRegion() {
+		return region;
 	}
 
 	@Override

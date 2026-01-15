@@ -84,27 +84,23 @@ public final class PlayerAutoClaimListener implements Listener {
 	private void tryToClaim(Player player, Chunk chunk) {
 		long now = System.currentTimeMillis();
 
-		/** Prevents claim spam by applying a short cooldown. */
 		if (lastClaimAttempt.containsKey(player)
 				&& (now - lastClaimAttempt.get(player)) < CLAIM_COOLDOWN_MS) {
 			return;
 		}
 		lastClaimAttempt.put(player, now);
 
-		/** Prevents claiming in disabled worlds. */
 		if (ChunksManager.isChunkInDisabledWorld(chunk)) {
 			PlayerUtils.sendMessage(player, 20);
 			return;
 		}
 
-		/** Prevents claiming inside WorldGuard protected areas if configured. */
 		boolean wgEnabled = Homestead.config.get("worldguard.protect-existing-regions");
 		if (wgEnabled && WorldGuardAPI.isChunkInWorldGuardRegion(chunk)) {
 			PlayerUtils.sendMessage(player, 133);
 			return;
 		}
 
-		/** Retrieves or creates a region for the player if none exists. */
 		Region region = TargetRegionSession.getRegion(player);
 		if (region == null) {
 			if (!RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
@@ -122,17 +118,15 @@ public final class PlayerAutoClaimListener implements Listener {
 				}
 
 				region = RegionsManager.createRegion(player.getName(), player, true);
-				new TargetRegionSession(player, region);
+				TargetRegionSession.newSession(player, region);
 			}
 		}
 
-		/** Verifies the player's permission to claim chunks for the region. */
 		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				RegionControlFlags.CLAIM_CHUNKS)) {
 			return;
 		}
 
-		/** Prevents claiming chunks already owned by other regions. */
 		Region owner = ChunksManager.getRegionOwnsTheChunk(chunk);
 		if (owner != null) {
 			Map<String, String> replacements = new HashMap<>();
@@ -141,35 +135,35 @@ public final class PlayerAutoClaimListener implements Listener {
 			return;
 		}
 
-		/** Prevents exceeding the maximum chunks-per-region limit. */
 		if (PlayerLimits.hasPlayerReachedLimit(region.getOwner(), PlayerLimits.LimitType.CHUNKS_PER_REGION)) {
 			PlayerUtils.sendMessage(player, 116);
 			return;
 		}
 
-		/** Attempts to claim the chunk and confirms success by checking size difference. */
 		int before = region.getChunks().size();
 
-		boolean isClaimedSuccessfully = ChunksManager.claimChunk(region.getUniqueId(), chunk, player);
+		ChunksManager.Error error = ChunksManager.claimChunk(region.getUniqueId(), chunk);
 
 		int after = region.getChunks().size();
 
-		if (isClaimedSuccessfully) {
-			/** Sends a success message only if the claim was actually added. */
+		if (error == null) {
 			if (after > before) {
 				Map<String, String> replacements = new HashMap<>();
 				replacements.put("{region}", region.getName());
 				PlayerUtils.sendMessage(player, 22, replacements);
 			}
 
-			/** Sets a default location for the region if not yet defined. */
 			if (region.getLocation() == null) {
-				region.setLocation(new SerializableLocation(player.getLocation()));
+				region.setLocation(player.getLocation());
 			}
 
-			/** Starts the visual border particle display if not already active. */
 			if (!ChunkParticlesSpawner.isTaskRunning(player)) {
 				ChunkBorder.show(player);
+			}
+		} else {
+			switch (error) {
+				case REGION_NOT_FOUND -> PlayerUtils.sendMessage(player, 9);
+				case CHUNK_NOT_ADJACENT_TO_REGION ->  PlayerUtils.sendMessage(player, 140);
 			}
 		}
 	}

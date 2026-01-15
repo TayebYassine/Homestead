@@ -74,7 +74,7 @@ public class RegionClaimedChunksMenu {
 							}
 
 							int before = region.getChunks().size();
-							ChunksManager.unclaimChunk(region.getUniqueId(), chunk.getBukkitChunk(), player);
+							ChunksManager.unclaimChunk(region.getUniqueId(), chunk.getBukkitChunk());
 							int after = region.getChunks().size();
 
 							/** Only send success message if the unclaim was successful. */
@@ -82,13 +82,6 @@ public class RegionClaimedChunksMenu {
 								Map<String, String> replacements = new HashMap<>();
 								replacements.put("{region}", region.getName());
 								PlayerUtils.sendMessage(player, 24, replacements);
-							}
-
-							/** Reset region home if it was inside the unclaimed chunk. */
-							if (region.getLocation() != null
-									&& region.getLocation().getBukkitLocation().getChunk()
-									.equals(chunk.getBukkitChunk())) {
-								region.setLocation(null);
 							}
 
 							ChunkBorder.show(player);

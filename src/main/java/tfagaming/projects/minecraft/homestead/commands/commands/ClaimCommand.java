@@ -70,7 +70,7 @@ public class ClaimCommand extends CommandBuilder {
 				region = RegionsManager.createRegion(player.getName(),
 						player, true);
 
-				new TargetRegionSession(player, region);
+				TargetRegionSession.newSession(player, region);
 			}
 		}
 
@@ -94,19 +94,24 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		boolean isClaimedSuccessfully = ChunksManager.claimChunk(region.getUniqueId(), chunk, player);
+		ChunksManager.Error error = ChunksManager.claimChunk(region.getUniqueId(), chunk);
 
-		if (isClaimedSuccessfully) {
+		if (error == null) {
 			Map<String, String> replacements = new HashMap<String, String>();
 			replacements.put("{region}", region.getName());
 
 			PlayerUtils.sendMessage(player, 22, replacements);
 
 			if (region.getLocation() == null) {
-				region.setLocation(new SerializableLocation(player.getLocation()));
+				region.setLocation(player.getLocation());
 			}
 
 			ChunkBorder.show(player);
+		} else {
+			switch (error) {
+				case REGION_NOT_FOUND -> PlayerUtils.sendMessage(player, 9);
+				case CHUNK_NOT_ADJACENT_TO_REGION ->  PlayerUtils.sendMessage(player, 140);
+            }
 		}
 
 		return true;

@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.structure;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -116,6 +117,15 @@ public class Region {
 	// Location
 	public SerializableLocation getLocation() {
 		return location;
+	}
+
+	public void setLocationToNull() {
+		this.location = null;
+		updateCache();
+	}
+
+	public void setLocation(Location location) {
+		setLocation(new SerializableLocation(location));
 	}
 
 	public void setLocation(SerializableLocation location) {
@@ -249,11 +259,19 @@ public class Region {
 		updateCache();
 	}
 
+	public void addChunk(Chunk chunk) {
+		addChunk(new SerializableChunk(chunk));
+	}
+
 	public void addChunk(SerializableChunk chunk) {
 		if (!chunks.contains(chunk)) {
 			chunks.add(chunk);
 			updateCache();
 		}
+	}
+
+	public void removeChunk(Chunk chunk) {
+		removeChunk(new SerializableChunk(chunk));
 	}
 
 	public void removeChunk(SerializableChunk chunkToRemove) {

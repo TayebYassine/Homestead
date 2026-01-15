@@ -92,6 +92,12 @@ public class ConfigLoader {
 		return Homestead.language.get("prefix");
 	}
 
+	public boolean isAdjacentChunksRuleEnabled() {
+		return get("adjacent-chunks");
+	}
+
+	public boolean regenerateChunksWithWorldEdit() { return get("worldedit.regenerate-chunks"); }
+
 	public boolean isDebugEnabled() {
 		return get("debug");
 	}

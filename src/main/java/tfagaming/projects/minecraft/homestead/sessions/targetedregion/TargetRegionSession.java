@@ -11,14 +11,18 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public class TargetRegionSession {
+public final class TargetRegionSession {
 	public static final HashMap<UUID, Region> sessions = new HashMap<UUID, Region>();
 
-	public TargetRegionSession(Player player, Region region) {
+	private TargetRegionSession() {
+
+	}
+
+	public static void newSession(Player player, Region region) {
 		sessions.put(player.getUniqueId(), region);
 	}
 
-	public TargetRegionSession(Player player) {
+	public static void newSession(Player player) {
 		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
 
 		if (!regions.isEmpty()) {
@@ -31,9 +35,7 @@ public class TargetRegionSession {
 	public static Region getRegion(OfflinePlayer player) {
 		Region region = sessions.get(player.getUniqueId());
 
-		boolean autoRandom = Homestead.config.get("autoset-target-region");
-
-		if (region == null && autoRandom && player.isOnline() && !RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
+		if (region == null && (boolean) Homestead.config.get("autoset-target-region") && player.isOnline() && !RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 			randomizeRegion((Player) player);
 
 			return getRegion(player);
