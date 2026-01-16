@@ -83,7 +83,6 @@ public class SQLite {
 				"rates TEXT NOT NULL, " +
 				"invitedPlayers TEXT NOT NULL, " +
 				"bannedPlayers TEXT NOT NULL, " +
-				"subAreas TEXT NOT NULL, " +
 				"logs TEXT NOT NULL, " +
 				"rent TEXT, " +
 				"upkeepAt INTEGER NOT NULL, " +
@@ -169,11 +168,9 @@ public class SQLite {
 						.map(SerializableLog::fromString)
 						.collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableSubArea> subAreas = rs.getString("subAreas").length() > 0
-						? Arrays.asList(rs.getString("subAreas").split("§")).stream()
-						.map(SerializableSubArea::fromString)
-						.collect(Collectors.toList())
-						: new ArrayList<>();
+
+				rs.getString("subAreas"); // Ignored
+
 				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
 				long upkeepAt = rs.getLong("upkeepAt");
 				double taxesAmount = rs.getDouble("taxesAmount");
@@ -203,7 +200,6 @@ public class SQLite {
 				region.setInvitedPlayers(ListUtils.removeNullElements(invitedPlayers));
 				region.setBannedPlayers(bannedPlayers);
 				region.setLogs(logs);
-				region.setSubAreas(subAreas);
 				region.rent = rent;
 				region.upkeepAt = upkeepAt;
 				region.taxesAmount = taxesAmount;
@@ -309,9 +305,6 @@ public class SQLite {
 				String logsStr = String.join("µ",
 						region.logs.stream().map(SerializableLog::toString)
 								.collect(Collectors.toList()));
-				String subAreasStr = String.join("§",
-						region.subAreas.stream().map(SerializableSubArea::toString)
-								.collect(Collectors.toList()));
 
 				upsertStmt.setString(1, regionId.toString());
 				upsertStmt.setString(2, region.displayName);
@@ -329,7 +322,7 @@ public class SQLite {
 				upsertStmt.setString(14, ratesStr);
 				upsertStmt.setString(15, invitedStr);
 				upsertStmt.setString(16, bannedStr);
-				upsertStmt.setString(17, subAreasStr);
+				upsertStmt.setString(17, ""); // Ignored
 				upsertStmt.setString(18, logsStr);
 				upsertStmt.setString(19, region.rent != null ? region.rent.toString() : null);
 				upsertStmt.setLong(20, region.upkeepAt);

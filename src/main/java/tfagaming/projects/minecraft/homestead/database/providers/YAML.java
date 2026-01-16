@@ -88,10 +88,6 @@ public class YAML {
 						.map(SerializableLog::fromString)
 						.collect(Collectors.toList());
 
-				List<SerializableSubArea> subAreas = config.getStringList("subAreas").stream()
-						.map(SerializableSubArea::fromString)
-						.collect(Collectors.toList());
-
 				SerializableRent rent = config.getString("rent") != null
 						? SerializableRent.fromString(config.getString("rent"))
 						: null;
@@ -124,7 +120,6 @@ public class YAML {
 				region.setInvitedPlayers(ListUtils.removeNullElements(invitedPlayers));
 				region.setBannedPlayers(bannedPlayers);
 				region.setLogs(logs);
-				region.setSubAreas(subAreas);
 				region.rent = rent;
 				region.upkeepAt = upkeepAt;
 				region.taxesAmount = taxesAmount;
@@ -250,10 +245,6 @@ public class YAML {
 
 				config.set("logs", region.logs.stream()
 						.map(SerializableLog::toString)
-						.collect(Collectors.toList()));
-
-				config.set("subAreas", region.subAreas.stream()
-						.map(SerializableSubArea::toString)
 						.collect(Collectors.toList()));
 
 				config.set("rent", region.rent != null ? region.rent.toString() : null);

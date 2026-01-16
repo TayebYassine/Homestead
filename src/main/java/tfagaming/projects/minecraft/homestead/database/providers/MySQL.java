@@ -34,6 +34,8 @@ public class MySQL {
 			Logger.info("New database connection established.");
 
 			createTablesIfNotExists();
+
+			TableSyncer.apply(this.connection, TABLE_PREFIX);
 		} catch (ClassNotFoundException e) {
 			Logger.error("MySQL JDBC Driver not found.");
 			e.printStackTrace();
@@ -69,7 +71,6 @@ public class MySQL {
 				"rates LONGTEXT NOT NULL, " +
 				"invitedPlayers LONGTEXT NOT NULL, " +
 				"bannedPlayers LONGTEXT NOT NULL, " +
-				"subAreas LONGTEXT NOT NULL, " +
 				"logs LONGTEXT NOT NULL, " +
 				"rent LONGTEXT, " +
 				"upkeepAt BIGINT NOT NULL, " +
@@ -150,10 +151,6 @@ public class MySQL {
 						? Arrays.asList(rs.getString("logs").split("µ")).stream()
 						.map(SerializableLog::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableSubArea> subAreas = rs.getString("subAreas").length() > 0
-						? Arrays.asList(rs.getString("subAreas").split("§")).stream()
-						.map(SerializableSubArea::fromString).collect(Collectors.toList())
-						: new ArrayList<>();
 				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
 				long upkeepAt = rs.getLong("upkeepAt");
 				double taxesAmount = rs.getDouble("taxesAmount");
@@ -183,7 +180,6 @@ public class MySQL {
 				region.setInvitedPlayers(ListUtils.removeNullElements(invitedPlayers));
 				region.setBannedPlayers(bannedPlayers);
 				region.setLogs(logs);
-				region.setSubAreas(subAreas);
 				region.rent = rent;
 				region.upkeepAt = upkeepAt;
 				region.taxesAmount = taxesAmount;
@@ -257,9 +253,9 @@ public class MySQL {
 		String upsertSql = "INSERT INTO " + TABLE_PREFIX + "regions (" +
 				"id, displayName, name, description, ownerId, location, createdAt, " +
 				"playerFlags, worldFlags, bank, mapColor, chunks, members, rates, " +
-				"invitedPlayers, bannedPlayers, subAreas, logs, rent, upkeepAt, taxesAmount, weather, " +
+				"invitedPlayers, bannedPlayers, logs, rent, upkeepAt, taxesAmount, weather, " +
 				"time, welcomeSign, icon" +
-				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
 				"ON DUPLICATE KEY UPDATE " +
 				"displayName = VALUES(displayName), " +
 				"name = VALUES(name), " +
@@ -276,7 +272,6 @@ public class MySQL {
 				"rates = VALUES(rates), " +
 				"invitedPlayers = VALUES(invitedPlayers), " +
 				"bannedPlayers = VALUES(bannedPlayers), " +
-				"subAreas = VALUES(subAreas), " +
 				"logs = VALUES(logs), " +
 				"rent = VALUES(rent), " +
 				"upkeepAt = VALUES(upkeepAt), " +
@@ -310,8 +305,7 @@ public class MySQL {
 								.collect(Collectors.toList()));
 				String logsStr = String.join("µ",
 						region.logs.stream().map(SerializableLog::toString).collect(Collectors.toList()));
-				String subAreasStr = String.join("§",
-						region.subAreas.stream().map(SerializableSubArea::toString).collect(Collectors.toList()));
+
 
 				upsertStmt.setString(1, regionId.toString());
 				upsertStmt.setString(2, region.displayName);
@@ -329,16 +323,15 @@ public class MySQL {
 				upsertStmt.setString(14, ratesStr);
 				upsertStmt.setString(15, invitedStr);
 				upsertStmt.setString(16, bannedStr);
-				upsertStmt.setString(17, subAreasStr);
-				upsertStmt.setString(18, logsStr);
-				upsertStmt.setString(19, region.rent != null ? region.rent.toString() : null);
-				upsertStmt.setLong(20, region.upkeepAt);
-				upsertStmt.setDouble(21, region.taxesAmount);
-				upsertStmt.setInt(22, region.weather);
-				upsertStmt.setInt(23, region.time);
-				upsertStmt.setString(24,
+				upsertStmt.setString(17, logsStr);
+				upsertStmt.setString(18, region.rent != null ? region.rent.toString() : null);
+				upsertStmt.setLong(19, region.upkeepAt);
+				upsertStmt.setDouble(20, region.taxesAmount);
+				upsertStmt.setInt(21, region.weather);
+				upsertStmt.setInt(22, region.time);
+				upsertStmt.setString(23,
 						region.welcomeSign != null ? region.welcomeSign.toString() : null);
-				upsertStmt.setString(25, region.icon != null ? region.icon : null);
+				upsertStmt.setString(24, region.icon != null ? region.icon : null);
 
 				upsertStmt.addBatch();
 			}
@@ -462,5 +455,109 @@ public class MySQL {
 		long after = System.currentTimeMillis();
 
 		return after - before;
+	}
+
+	public static final class TableSyncer {
+		public static void syncTable(Connection conn,
+									 String tableName,
+									 List<String> wantedColumns,
+									 Map<String, String> wantedDefinitions) throws SQLException {
+
+			Map<String, String> realCols = getRealColumns(conn, tableName);
+
+			Logger.warning("Synchronizing columns... This might take a while.");
+
+			for (String existing : realCols.keySet()) {
+				if (!wantedColumns.contains(existing)) {
+					String sql = "ALTER TABLE `" + tableName + "` DROP COLUMN `" + existing + "`";
+					try (Statement st = conn.createStatement()) {
+						st.execute(sql);
+					}
+				}
+			}
+
+			for (int i = 0; i < wantedColumns.size(); i++) {
+				String col = wantedColumns.get(i);
+				if (!realCols.containsKey(col)) {
+					String def = wantedDefinitions.get(col);
+
+					if (def == null) {
+						throw new IllegalArgumentException("No definition for column " + col);
+					}
+
+					String after = i == 0 ? "FIRST" : "AFTER `" + wantedColumns.get(i - 1) + "`";
+					String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + col + "` " + def + " " + after;
+
+					try (Statement st = conn.createStatement()) {
+						st.execute(sql);
+					}
+				}
+			}
+
+			Logger.info("Synchronization done!");
+		}
+
+		private static Map<String, String> getRealColumns(Connection conn, String tableName) throws SQLException {
+			Map<String, String> map = new LinkedHashMap<>();
+			String sql = "SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_DEFAULT, EXTRA " +
+					"FROM INFORMATION_SCHEMA.COLUMNS " +
+					"WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? " +
+					"ORDER BY ORDINAL_POSITION";
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setString(1, tableName);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						String name = rs.getString("COLUMN_NAME");
+						String type = rs.getString("COLUMN_TYPE");
+						String nullable = "YES".equals(rs.getString("IS_NULLABLE")) ? "NULL" : "NOT NULL";
+						String defaultVal = rs.getString("COLUMN_DEFAULT");
+						String extra = rs.getString("EXTRA");
+						StringBuilder def = new StringBuilder(type).append(' ').append(nullable);
+						if (defaultVal != null) def.append(" DEFAULT '").append(defaultVal).append('\'');
+						if (extra != null && !extra.isEmpty()) def.append(' ').append(extra);
+						map.put(name, def.toString());
+					}
+				}
+			}
+			return map;
+		}
+
+		public static void apply(Connection conn, String prefix) throws SQLException {
+			List<String> wanted = Arrays.asList(
+					"id", "displayName", "name", "description", "ownerId", "location",
+					"createdAt", "playerFlags", "worldFlags", "bank", "mapColor",
+					"chunks", "members", "rates", "invitedPlayers", "bannedPlayers",
+					"logs", "rent", "upkeepAt", "taxesAmount", "weather", "time",
+					"welcomeSign", "icon"
+			);
+
+			Map<String, String> def = new HashMap<>();
+			def.put("id", "VARCHAR(36) PRIMARY KEY");
+			def.put("displayName", "TINYTEXT NOT NULL");
+			def.put("name", "TINYTEXT NOT NULL");
+			def.put("description", "MEDIUMTEXT NOT NULL");
+			def.put("ownerId", "TINYTEXT NOT NULL");
+			def.put("location", "MEDIUMTEXT");
+			def.put("createdAt", "BIGINT NOT NULL");
+			def.put("playerFlags", "BIGINT NOT NULL");
+			def.put("worldFlags", "BIGINT NOT NULL");
+			def.put("bank", "DOUBLE NOT NULL");
+			def.put("mapColor", "INT NOT NULL");
+			def.put("chunks", "LONGTEXT NOT NULL");
+			def.put("members", "LONGTEXT NOT NULL");
+			def.put("rates", "LONGTEXT NOT NULL");
+			def.put("invitedPlayers", "LONGTEXT NOT NULL");
+			def.put("bannedPlayers", "LONGTEXT NOT NULL");
+			def.put("logs", "LONGTEXT NOT NULL");
+			def.put("rent", "LONGTEXT");
+			def.put("upkeepAt", "BIGINT NOT NULL");
+			def.put("taxesAmount", "DOUBLE NOT NULL");
+			def.put("weather", "INT NOT NULL");
+			def.put("time", "INT NOT NULL");
+			def.put("welcomeSign", "MEDIUMTEXT");
+			def.put("icon", "LONGTEXT");
+
+			syncTable(conn, prefix + "regions", wanted, def);
+		}
 	}
 }

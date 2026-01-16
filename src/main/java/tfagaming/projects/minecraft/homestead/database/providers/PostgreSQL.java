@@ -33,6 +33,8 @@ public class PostgreSQL {
 			Logger.info("PostgreSQL database connection established.");
 
 			createTablesIfNotExists();
+
+			TableSyncer.apply(this.connection, TABLE_PREFIX);
 		} catch (ClassNotFoundException e) {
 			Logger.error("PostgreSQL JDBC Driver not found.");
 			e.printStackTrace();
@@ -68,7 +70,6 @@ public class PostgreSQL {
 				"rates TEXT[] NOT NULL, " +
 				"invited_players UUID[] NOT NULL, " +
 				"banned_players TEXT[] NOT NULL, " +
-				"sub_areas TEXT[] NOT NULL, " +
 				"logs TEXT[] NOT NULL, " +
 				"rent TEXT, " +
 				"upkeep_at BIGINT NOT NULL, " +
@@ -145,10 +146,6 @@ public class PostgreSQL {
 						.map(SerializableLog::fromString)
 						.collect(Collectors.toList());
 
-				List<SerializableSubArea> subAreas = Arrays.stream((String[]) rs.getArray("sub_areas").getArray())
-						.map(SerializableSubArea::fromString)
-						.collect(Collectors.toList());
-
 				SerializableRent rent = rs.getString("rent") != null ? SerializableRent.fromString(rs.getString("rent"))
 						: null;
 				long upkeepAt = rs.getLong("upkeep_at");
@@ -180,7 +177,6 @@ public class PostgreSQL {
 				region.setInvitedPlayers(ListUtils.removeNullElements(invitedPlayers));
 				region.setBannedPlayers(bannedPlayers);
 				region.setLogs(logs);
-				region.setSubAreas(subAreas);
 				region.rent = rent;
 				region.upkeepAt = upkeepAt;
 				region.taxesAmount = taxesAmount;
@@ -252,9 +248,9 @@ public class PostgreSQL {
 		String upsertSql = "INSERT INTO " + TABLE_PREFIX + "regions (" +
 				"id, display_name, name, description, owner_id, location, created_at, " +
 				"player_flags, world_flags, bank, map_color, chunks, members, rates, " +
-				"invited_players, banned_players, sub_areas, logs, rent, upkeep_at, taxes_amount, weather, " +
+				"invited_players, banned_players, logs, rent, upkeep_at, taxes_amount, weather, " +
 				"time, welcome_sign, icon" +
-				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
 				"ON CONFLICT (id) DO UPDATE SET " +
 				"display_name = EXCLUDED.display_name, " +
 				"name = EXCLUDED.name, " +
@@ -271,7 +267,6 @@ public class PostgreSQL {
 				"rates = EXCLUDED.rates, " +
 				"invited_players = EXCLUDED.invited_players, " +
 				"banned_players = EXCLUDED.banned_players, " +
-				"sub_areas = EXCLUDED.sub_areas, " +
 				"logs = EXCLUDED.logs, " +
 				"rent = EXCLUDED.rent, " +
 				"upkeep_at = EXCLUDED.upkeep_at, " +
@@ -316,10 +311,6 @@ public class PostgreSQL {
 						.map(SerializableLog::toString)
 						.toArray(String[]::new);
 
-				String[] subAreasArray = region.subAreas.stream()
-						.map(SerializableSubArea::toString)
-						.toArray(String[]::new);
-
 				upsertStmt.setObject(1, regionId);
 				upsertStmt.setString(2, region.displayName);
 				upsertStmt.setString(3, region.name);
@@ -336,15 +327,14 @@ public class PostgreSQL {
 				upsertStmt.setArray(14, connection.createArrayOf("text", ratesArray));
 				upsertStmt.setArray(15, connection.createArrayOf("uuid", invitedArray));
 				upsertStmt.setArray(16, connection.createArrayOf("text", bannedArray));
-				upsertStmt.setArray(17, connection.createArrayOf("text", subAreasArray));
-				upsertStmt.setArray(18, connection.createArrayOf("text", logsArray));
-				upsertStmt.setString(19, region.rent != null ? region.rent.toString() : null);
-				upsertStmt.setLong(20, region.upkeepAt);
-				upsertStmt.setDouble(21, region.taxesAmount);
-				upsertStmt.setInt(22, region.weather);
-				upsertStmt.setInt(23, region.time);
-				upsertStmt.setString(24, region.welcomeSign != null ? region.welcomeSign.toString() : null);
-				upsertStmt.setString(25, region.icon != null ? region.icon : null);
+				upsertStmt.setArray(17, connection.createArrayOf("text", logsArray));
+				upsertStmt.setString(18, region.rent != null ? region.rent.toString() : null);
+				upsertStmt.setLong(19, region.upkeepAt);
+				upsertStmt.setDouble(20, region.taxesAmount);
+				upsertStmt.setInt(21, region.weather);
+				upsertStmt.setInt(22, region.time);
+				upsertStmt.setString(23, region.welcomeSign != null ? region.welcomeSign.toString() : null);
+				upsertStmt.setString(24, region.icon != null ? region.icon : null);
 
 				upsertStmt.addBatch();
 			}
@@ -468,5 +458,100 @@ public class PostgreSQL {
 		long after = System.currentTimeMillis();
 
 		return after - before;
+	}
+
+	public static final class TableSyncer {
+		public static void syncTable(Connection conn,
+									 String tableName,
+									 List<String> wantedCols,
+									 Map<String, String> colDef) throws SQLException {
+
+			Set<String> wanted = new LinkedHashSet<>(wantedCols);
+			Set<String> real = getRealColumns(conn, tableName);
+
+			Logger.warning("Synchronizing columns... This might take a while.");
+
+			for (String existing : real) {
+				if (!wanted.contains(existing)) {
+					String sql = "ALTER TABLE \"" + tableName + "\" DROP COLUMN IF EXISTS \"" + existing + "\"";
+					try (Statement st = conn.createStatement()) {
+						st.execute(sql);
+					}
+				}
+			}
+
+			for (String col : wanted) {
+				if (!real.contains(col)) {
+					String def = colDef.get(col);
+
+					if (def == null) {
+						throw new IllegalArgumentException("No definition for column " + col);
+					}
+
+					String sql = "ALTER TABLE \"" + tableName + "\" ADD COLUMN \"" + col + "\" " + def;
+
+					try (Statement st = conn.createStatement()) {
+						st.execute(sql);
+					}
+				}
+			}
+
+			Logger.info("Synchronization done!");
+		}
+
+		private static Set<String> getRealColumns(Connection conn, String table) throws SQLException {
+			Set<String> set = new LinkedHashSet<>();
+			String sql = "SELECT column_name " +
+					"FROM information_schema.columns " +
+					"WHERE table_schema = current_schema() AND table_name = ? " +
+					"ORDER BY ordinal_position";
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setString(1, table);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) set.add(rs.getString(1));
+				}
+			}
+			return set;
+		}
+
+		public static void apply(Connection conn, String prefix) throws SQLException {
+			String table = prefix + "regions";
+
+			List<String> wanted = Arrays.asList(
+					"id", "display_name", "name", "description", "owner_id", "location",
+					"created_at", "player_flags", "world_flags", "bank", "map_color",
+					"chunks", "members", "rates", "invited_players", "banned_players",
+					"logs", "rent", "upkeep_at", "taxes_amount", "weather", "time",
+					"welcome_sign", "icon"
+			);
+
+			Map<String, String> def = new HashMap<>();
+			def.put("id", "UUID PRIMARY KEY");
+			def.put("display_name", "TEXT NOT NULL");
+			def.put("name", "TEXT NOT NULL");
+			def.put("description", "TEXT NOT NULL");
+			def.put("owner_id", "UUID NOT NULL");
+			def.put("location", "TEXT");
+			def.put("created_at", "BIGINT NOT NULL");
+			def.put("player_flags", "BIGINT NOT NULL");
+			def.put("world_flags", "BIGINT NOT NULL");
+			def.put("bank", "DOUBLE PRECISION NOT NULL");
+			def.put("map_color", "INTEGER NOT NULL");
+			def.put("chunks", "TEXT[] NOT NULL");
+			def.put("members", "TEXT[] NOT NULL");
+			def.put("rates", "TEXT[] NOT NULL");
+			def.put("invited_players", "UUID[] NOT NULL");
+			def.put("banned_players", "TEXT[] NOT NULL");
+			def.put("logs", "TEXT[] NOT NULL");
+			def.put("rent", "TEXT");
+			def.put("upkeep_at", "BIGINT NOT NULL");
+			def.put("taxes_amount", "DOUBLE PRECISION NOT NULL");
+			def.put("weather", "INTEGER NOT NULL");
+			def.put("time", "INTEGER NOT NULL");
+			def.put("welcome_sign", "TEXT");
+			def.put("icon", "TEXT");
+
+			syncTable(conn, table, wanted, def);
+		}
 	}
 }

@@ -35,6 +35,8 @@ public class MariaDB {
 
 			createTablesIfNotExists();
 			createWarsTableIfNotExists();
+
+			TableSyncer.apply(this.connection, TABLE_PREFIX);
 		} catch (ClassNotFoundException e) {
 			Logger.error("MariaDB JDBC Driver not found.");
 			e.printStackTrace();
@@ -67,7 +69,6 @@ public class MariaDB {
 				        rates           TEXT NOT NULL,
 				        invited_players TEXT NOT NULL,
 				        banned_players  TEXT NOT NULL,
-				        sub_areas       TEXT NOT NULL,
 				        logs            TEXT NOT NULL,
 				        rent            TEXT,
 				        upkeep_at       BIGINT NOT NULL,
@@ -144,11 +145,6 @@ public class MariaDB {
 						.map(SerializableLog::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
 
-				List<SerializableSubArea> subAreas = !rs.getString("sub_areas").isEmpty()
-						? Arrays.stream(rs.getString("sub_areas").split("§"))
-						.map(SerializableSubArea::fromString).collect(Collectors.toList())
-						: new ArrayList<>();
-
 				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
 
 				long upkeepAt = rs.getLong("upkeep_at");
@@ -179,7 +175,6 @@ public class MariaDB {
 				region.setInvitedPlayers(ListUtils.removeNullElements(invitedPlayers));
 				region.setBannedPlayers(bannedPlayers);
 				region.setLogs(logs);
-				region.setSubAreas(subAreas);
 				region.rent = rent;
 				region.upkeepAt = upkeepAt;
 				region.taxesAmount = taxesAmount;
@@ -273,9 +268,9 @@ public class MariaDB {
 				    INSERT INTO `%sregions` (
 				        id, display_name, name, description, owner_id, location, created_at,
 				        player_flags, world_flags, bank, map_color, chunks, members, rates,
-				        invited_players, banned_players, sub_areas, logs, rent, upkeep_at,
+				        invited_players, banned_players, logs, rent, upkeep_at,
 				        taxes_amount, weather, time, welcome_sign, icon
-				    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				    ON DUPLICATE KEY UPDATE
 				        display_name = VALUES(display_name),
 				        name = VALUES(name),
@@ -292,7 +287,6 @@ public class MariaDB {
 				        rates = VALUES(rates),
 				        invited_players = VALUES(invited_players),
 				        banned_players = VALUES(banned_players),
-				        sub_areas = VALUES(sub_areas),
 				        logs = VALUES(logs),
 				        rent = VALUES(rent),
 				        upkeep_at = VALUES(upkeep_at),
@@ -340,24 +334,20 @@ public class MariaDB {
 								.collect(Collectors.toList()));
 				String logsStr = String.join("µ",
 						region.logs.stream().map(SerializableLog::toString).collect(Collectors.toList()));
-				String subAreasStr = String.join("§",
-						region.subAreas.stream().map(SerializableSubArea::toString).collect(Collectors.toList()));
 
 				upsertStmt.setString(12, chunksStr);
 				upsertStmt.setString(13, membersStr);
 				upsertStmt.setString(14, ratesStr);
 				upsertStmt.setString(15, invitedStr);
 				upsertStmt.setString(16, bannedStr);
-				upsertStmt.setString(17, subAreasStr);
-				upsertStmt.setString(18, logsStr);
-
-				upsertStmt.setString(19, region.rent == null ? null : region.rent.toString());
-				upsertStmt.setLong(20, region.upkeepAt);
-				upsertStmt.setDouble(21, region.taxesAmount);
-				upsertStmt.setInt(22, region.weather);
-				upsertStmt.setInt(23, region.time);
-				upsertStmt.setString(24, region.welcomeSign == null ? null : region.welcomeSign.toString());
-				upsertStmt.setString(25, region.icon);
+				upsertStmt.setString(17, logsStr);
+				upsertStmt.setString(18, region.rent == null ? null : region.rent.toString());
+				upsertStmt.setLong(19, region.upkeepAt);
+				upsertStmt.setDouble(20, region.taxesAmount);
+				upsertStmt.setInt(21, region.weather);
+				upsertStmt.setInt(22, region.time);
+				upsertStmt.setString(23, region.welcomeSign == null ? null : region.welcomeSign.toString());
+				upsertStmt.setString(24, region.icon);
 
 				upsertStmt.addBatch();
 			}
@@ -477,5 +467,96 @@ public class MariaDB {
 		}
 
 		return System.currentTimeMillis() - before;
+	}
+
+	public static final class TableSyncer {
+		public static void syncTable(Connection conn,
+									 String tableName,
+									 List<String> wantedCols,
+									 Map<String, String> colDef) throws SQLException {
+
+			Set<String> wanted = new LinkedHashSet<>(wantedCols);
+			Set<String> real = getRealColumns(conn, tableName);
+
+			Logger.warning("Synchronizing columns... This might take a while.");
+
+			for (String col : real) {
+				if (!wanted.contains(col)) {
+					String sql = "ALTER TABLE `" + tableName + "` DROP COLUMN `" + col + "`";
+					try (Statement st = conn.createStatement()) {
+						st.execute(sql);
+					}
+				}
+			}
+
+			for (String col : wanted) {
+				if (!real.contains(col)) {
+					String def = colDef.get(col);
+					if (def == null) {
+						throw new IllegalArgumentException("No definition for column " + col);
+					}
+
+					String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + col + "` " + def;
+					try (Statement st = conn.createStatement()) {
+						st.execute(sql);
+					}
+				}
+			}
+
+			Logger.info("Synchronization done!");
+		}
+
+		private static Set<String> getRealColumns(Connection conn, String table) throws SQLException {
+			Set<String> set = new LinkedHashSet<>();
+			String sql = "SELECT COLUMN_NAME " +
+					"FROM INFORMATION_SCHEMA.COLUMNS " +
+					"WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? " +
+					"ORDER BY ORDINAL_POSITION";
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setString(1, table);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) set.add(rs.getString(1));
+				}
+			}
+			return set;
+		}
+
+		public static void apply(Connection conn, String prefix) throws SQLException {
+			List<String> wanted = Arrays.asList(
+					"id", "display_name", "name", "description", "owner_id", "location",
+					"created_at", "player_flags", "world_flags", "bank", "map_color",
+					"chunks", "members", "rates", "invited_players", "banned_players",
+					"logs", "rent", "upkeep_at", "taxes_amount", "weather", "time",
+					"welcome_sign", "icon"
+			);
+
+			Map<String, String> def = new HashMap<>();
+			def.put("id", "CHAR(36) PRIMARY KEY");
+			def.put("display_name", "TEXT NOT NULL");
+			def.put("name", "TEXT NOT NULL");
+			def.put("description", "TEXT NOT NULL");
+			def.put("owner_id", "CHAR(36) NOT NULL");
+			def.put("location", "TEXT");
+			def.put("created_at", "BIGINT NOT NULL");
+			def.put("player_flags", "BIGINT NOT NULL");
+			def.put("world_flags", "BIGINT NOT NULL");
+			def.put("bank", "DOUBLE PRECISION NOT NULL");
+			def.put("map_color", "INT NOT NULL");
+			def.put("chunks", "TEXT NOT NULL");
+			def.put("members", "TEXT NOT NULL");
+			def.put("rates", "TEXT NOT NULL");
+			def.put("invited_players", "TEXT NOT NULL");
+			def.put("banned_players", "TEXT NOT NULL");
+			def.put("logs", "TEXT NOT NULL");
+			def.put("rent", "TEXT");
+			def.put("upkeep_at", "BIGINT NOT NULL");
+			def.put("taxes_amount", "DOUBLE NOT NULL");
+			def.put("weather", "INT NOT NULL");
+			def.put("time", "INT NOT NULL");
+			def.put("welcome_sign", "TEXT");
+			def.put("icon", "TEXT");
+
+			syncTable(conn, prefix + "regions", wanted, def);
+		}
 	}
 }
