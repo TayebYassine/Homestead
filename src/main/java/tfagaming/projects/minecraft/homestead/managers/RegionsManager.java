@@ -11,6 +11,7 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
@@ -404,7 +405,9 @@ public final class RegionsManager {
 	 * missing worlds, offline players, invalid chunks, sub-areas, spawn or welcome signs.
 	 * Returns the number of corrective actions performed.
 	 */
-	public static int cleanStartup() {
+	public static void cleanStartup() {
+		Logger.warning("Cleaning up regions data...");
+
 		int updated = 0;
 
 		for (Region region : getAll()) {
@@ -469,7 +472,11 @@ public final class RegionsManager {
 			}
 		}
 
-		return updated;
+		if (updated == 0) {
+			Logger.info("No data corruption was found!");
+		} else {
+			Logger.info(updated + " updates have been applied to regions data.");
+		}
 	}
 
 	/** Supported metrics for leaderboard-style sorting. */

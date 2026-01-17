@@ -82,12 +82,9 @@ public class Menu implements Listener {
 			int slot = event.getRawSlot();
 
 			if (callbacks.containsKey(slot)) {
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						callbacks.get(slot).accept(player, event);
-					}
-				}.runTask(plugin);
+				plugin.runSyncTask(() -> {
+					callbacks.get(slot).accept(player, event);
+				});
 			}
 		}
 	}

@@ -148,12 +148,9 @@ public class PaginationMenu implements Listener {
 
 			InventoryManager.register(player, this);
 
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					pageChanged = false;
-				}
-			}.runTaskLater(plugin, 1L);
+			plugin.runAsyncTaskLater(() -> {
+				pageChanged = false;
+			}, 1);
 		}
 	}
 
@@ -250,14 +247,11 @@ public class PaginationMenu implements Listener {
 		}
 
 		if (slot == size - 9) {
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					goBackCallback.accept(player, event);
+			plugin.runSyncTask(() -> {
+				goBackCallback.accept(player, event);
 
-					destroy();
-				}
-			}.runTask(plugin);
+				destroy();
+			});
 		}
 
 		if (slot >= 9 && slot < size - 9) {

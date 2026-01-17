@@ -45,9 +45,9 @@ public class WorldGuardAPI {
 			return false;
 		} catch (NoClassDefFoundError e) {
 			if (!warningSent) {
-				Logger.error(
+				Logger.warning(
 						"Protection against claiming inside WorldGuard regions is enabled, but the WorldGuard class was not found.");
-				Logger.error(
+				Logger.warning(
 						"Please install the WorldGuard plugin on your server or turn off this feature in the config.yml file.");
 
 				warningSent = true;

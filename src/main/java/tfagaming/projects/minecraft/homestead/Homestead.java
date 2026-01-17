@@ -32,6 +32,8 @@ import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
+import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
@@ -67,21 +69,32 @@ public class Homestead extends JavaPlugin {
 		Homestead.instance = this;
 		Homestead.startedAt = System.currentTimeMillis();
 
-		if (!getDataFolder().exists()) {
-			getDataFolder().mkdirs();
-		}
-
-		File regionsFolder = new File(getDataFolder(), "regions");
-		if (!regionsFolder.exists()) {
-			regionsFolder.mkdir();
-		}
-
-		File warsFolder = new File(getDataFolder(), "wars");
-		if (!warsFolder.exists()) {
-			warsFolder.mkdir();
-		}
-
 		new Logger();
+
+		try {
+			if (!getDataFolder().exists()) {
+				if (!getDataFolder().mkdirs()) {
+					throw new IOException("Unable to create Bukkit data directory");
+				}
+			}
+
+			File regionsFolder = new File(getDataFolder(), "regions");
+			if (!regionsFolder.exists()) {
+				if (!regionsFolder.mkdir()) {
+					throw new IOException("Unable to create regions directory");
+				}
+			}
+
+			File warsFolder = new File(getDataFolder(), "wars");
+			if (!warsFolder.exists()) {
+				if (!warsFolder.mkdir()) {
+					throw new IOException("Unable to create wars directory");
+				}
+			}
+		} catch (IOException | SecurityException e) {
+			endInstance(e);
+			return;
+		}
 
 		saveDefaultConfig();
 
@@ -217,18 +230,8 @@ public class Homestead extends JavaPlugin {
 		}
 
 		if ((boolean) Homestead.config.get("clean-startup")) {
-			Logger.warning("Cleaning up regions and wars data...");
-
-			int updatedRg = RegionsManager.cleanStartup();
-			int updatedWs = WarsManager.cleanStartup();
-
-			int updated = updatedRg + updatedWs;
-
-			if (updated > 0) {
-				Logger.info("Successfully updated " + updated + " rows of regions and wars data.");
-			} else {
-				Logger.info("No data corruption was found!");
-			}
+			RegionsManager.cleanStartup();
+			WarsManager.cleanStartup();
 		}
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - startedAt) + " ms to load.");
@@ -353,10 +356,10 @@ public class Homestead extends JavaPlugin {
 	 * @param callable The task to run.
 	 * @param delay    The delay, in seconds.
 	 */
-	public void runAsyncTaskLater(Runnable callable, int delay) {
+	public BukkitTask runAsyncTaskLater(Runnable callable, int delay) {
 		long delayTicks = delay * 20L;
 
-		Bukkit.getScheduler().runTaskLaterAsynchronously(this, callable, delayTicks);
+		return Bukkit.getScheduler().runTaskLaterAsynchronously(this, callable, delayTicks);
 	}
 
 	/**
@@ -441,6 +444,17 @@ public class Homestead extends JavaPlugin {
 		if (moveCheckTask != null) {
 			moveCheckTask.cancel();
 		}
+
+		Logger.warning("Cleaning cache...");
+
+		Homestead.regionsCache.clear();
+		Homestead.warsCache.clear();
+		TargetRegionSession.sessions.clear();
+		AutoClaimSession.sessions.clear();
+
+		Logger.info("Cache cleaned.");
+
+		Logger.info("Homestead has been disabled. Goodbye!");
 	}
 
 	public void registerExternalPlugins() {

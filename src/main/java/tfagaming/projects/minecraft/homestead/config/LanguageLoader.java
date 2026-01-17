@@ -21,18 +21,18 @@ public class LanguageLoader {
 		File defaultPath = new File(plugin.getDataFolder(), "languages/en-US.yml");
 
 		if (!directory.isDirectory()) {
-			directory.mkdir();
-
 			try {
+				if (!directory.mkdir()) {
+					throw new IOException("Unable to create language directory");
+				}
+
 				InputStream stream = plugin.getResource("en-US.yml");
 
 				assert stream != null;
 				FileUtils.copyInputStreamToFile(stream, defaultPath);
 			} catch (IOException e) {
 				Logger.error("Unable to copy the default language file (en-US.yml), closing plugin's instance...");
-				plugin.endInstance();
-
-				e.printStackTrace();
+				plugin.endInstance(e);
 			}
 		}
 

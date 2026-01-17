@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.managers;
 
 import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 
@@ -99,7 +100,9 @@ public final class WarsManager {
 						.anyMatch(r -> r.getUniqueId().equals(regionId)));
 	}
 
-	public static int cleanStartup() {
+	public static void cleanStartup() {
+		Logger.warning("Cleaning up wars data...");
+
 		int updated = 0;
 
 		for (War war : Homestead.warsCache.getAll()) {
@@ -110,6 +113,10 @@ public final class WarsManager {
 			}
 		}
 
-		return updated;
+		if (updated == 0) {
+			Logger.info("No data corruption was found!");
+		} else {
+			Logger.info(updated + " updates have been applied to regions data.");
+		}
 	}
 }
