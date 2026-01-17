@@ -34,7 +34,7 @@ public class LogsFile {
 			try {
 				logFile.createNewFile();
 			} catch (IOException e) {
-				Logger.error("Unable to create 'logs.txt' file.", true);
+
 			}
 		}
 
@@ -50,7 +50,7 @@ public class LogsFile {
 			String timestamp = LocalDateTime.now().format(formatter);
 			writer.write("[" + timestamp + "] " + message + "\n");
 		} catch (IOException e) {
-			Logger.error("Unable to update content for 'logs.txt' file.", true);
+
 		}
 	}
 
@@ -62,7 +62,7 @@ public class LogsFile {
 		try (FileWriter writer = new FileWriter(logFile, false)) {
 			writer.write("");
 		} catch (IOException e) {
-			Logger.error("Unable to update content for 'logs.txt' file.", true);
+
 		}
 	}
 }

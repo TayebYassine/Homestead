@@ -18,7 +18,7 @@ public class Database {
 	public Database(Provider provider) throws ClassNotFoundException, SQLException, IOException {
 		this.provider = provider;
 
-		Logger.warning("Attempting to connect to database... Provider:", provider.toString());
+		Logger.warning("Attempting to connect to database... Provider: " + provider.toString());
 
 		switch (provider) {
 			case PostgreSQL:
