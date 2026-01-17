@@ -16,11 +16,7 @@ public class CheckUpdatesSubCmd extends SubCommandBuilder {
 		PlayerUtils.sendMessage(sender, 98);
 
 		Homestead.getInstance().runAsyncTask(() -> {
-			new UpdateChecker(Homestead.getInstance());
-
-			boolean foundUpdate = UpdateChecker.foundUpdate;
-
-			if (foundUpdate) {
+			if (UpdateChecker.check(Homestead.getInstance())) {
 				PlayerUtils.sendMessage(sender, 97);
 			} else {
 				PlayerUtils.sendMessage(sender, 96);

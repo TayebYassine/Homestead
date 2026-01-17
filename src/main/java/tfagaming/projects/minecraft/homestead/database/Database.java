@@ -4,6 +4,9 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.database.providers.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 public class Database {
 	private final Provider provider;
 	private PostgreSQL postgreSQL;
@@ -12,7 +15,7 @@ public class Database {
 	private SQLite sqLite;
 	private YAML yaml;
 
-	public Database(Provider provider) {
+	public Database(Provider provider) throws ClassNotFoundException, SQLException, IOException {
 		this.provider = provider;
 
 		Logger.warning("Attempting to connect to database... Provider:", provider.toString());
@@ -43,46 +46,6 @@ public class Database {
 				break;
 			case SQLite:
 				sqLite = new SQLite(Homestead.config.get("database.sqlite"));
-				break;
-			case YAML:
-				yaml = new YAML(Homestead.getInstance().getDataFolder());
-				break;
-			default:
-				break;
-		}
-	}
-
-	public Database(Provider provider, boolean handleError) {
-		this.provider = provider;
-
-		Logger.warning("Attempting to connect to database... Provider:", provider.toString());
-
-		switch (provider) {
-			case PostgreSQL:
-				postgreSQL = new PostgreSQL(Homestead.config.get("database.postgresql.username"),
-						Homestead.config.get("database.postgresql.password"),
-						Homestead.config.get("database.postgresql.host"),
-						Homestead.config.get("database.postgresql.port"),
-						Homestead.config.get("database.postgresql.database"),
-						Homestead.config.get("database.postgresql.table_prefix"), handleError);
-				break;
-			case MariaDB:
-				mariaDB = new MariaDB(Homestead.config.get("database.mariadb.username"),
-						Homestead.config.get("database.mariadb.password"),
-						Homestead.config.get("database.mariadb.host"),
-						Homestead.config.get("database.mariadb.port"),
-						Homestead.config.get("database.mariadb.database"),
-						Homestead.config.get("database.mariadb.table_prefix"), handleError);
-				break;
-			case MySQL:
-				mySQL = new MySQL(Homestead.config.get("database.mysql.username"),
-						Homestead.config.get("database.mysql.password"), Homestead.config.get("database.mysql.host"),
-						Homestead.config.get("database.mysql.port"),
-						Homestead.config.get("database.mysql.database"),
-						Homestead.config.get("database.mysql.table_prefix"), handleError);
-				break;
-			case SQLite:
-				sqLite = new SQLite(Homestead.config.get("database.sqlite"), handleError);
 				break;
 			case YAML:
 				yaml = new YAML(Homestead.getInstance().getDataFolder());

@@ -14,58 +14,19 @@ import java.util.stream.Collectors;
 
 public class SQLite {
 	private static final String JDBC_URL = "jdbc:sqlite:";
+	private final Connection connection;
 
-	private Connection connection;
+	public SQLite(String dbFile) throws ClassNotFoundException, SQLException {
+		Class.forName("org.sqlite.JDBC");
 
-	public SQLite(String dbFile) {
-		try {
-			Class.forName("org.sqlite.JDBC");
+		this.connection = DriverManager.getConnection(JDBC_URL + dbFile);
 
-			this.connection = DriverManager.getConnection(JDBC_URL + dbFile);
+		Logger.info("New SQLite database connection established.");
 
-			Logger.info("New SQLite database connection established.");
-
-			createTablesIfNotExists();
-		} catch (ClassNotFoundException e) {
-			Logger.error("SQLite JDBC Driver not found.");
-			e.printStackTrace();
-
-			Homestead.getInstance().endInstance();
-		} catch (SQLException e) {
-			Logger.error("Unable to establish a connection for SQLite.");
-			e.printStackTrace();
-
-			Homestead.getInstance().endInstance();
-		}
+		createTables();
 	}
 
-	public SQLite(String dbFile, boolean handleError) {
-		try {
-			Class.forName("org.sqlite.JDBC");
-
-			this.connection = DriverManager.getConnection(JDBC_URL + dbFile);
-
-			Logger.info("New SQLite database connection established.");
-
-			createTablesIfNotExists();
-		} catch (ClassNotFoundException e) {
-			Logger.error("SQLite JDBC Driver not found.");
-			e.printStackTrace();
-
-			if (!handleError) {
-				Homestead.getInstance().endInstance();
-			}
-		} catch (SQLException e) {
-			Logger.error("Unable to establish a connection for SQLite.");
-			e.printStackTrace();
-
-			if (!handleError) {
-				Homestead.getInstance().endInstance();
-			}
-		}
-	}
-
-	public void createTablesIfNotExists() {
+	private void createTables() throws SQLException {
 		String sql1 = "CREATE TABLE IF NOT EXISTS regions (" +
 				"id TEXT PRIMARY KEY, " +
 				"displayName TEXT NOT NULL, " +
@@ -106,9 +67,6 @@ public class SQLite {
 		try (Statement stmt = connection.createStatement()) {
 			stmt.executeUpdate(sql1);
 			stmt.executeUpdate(sql2);
-		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
 		}
 	}
 
@@ -133,38 +91,42 @@ public class SQLite {
 				long worldFlags = rs.getLong("worldFlags");
 				double bank = rs.getDouble("bank");
 				int mapColor = rs.getInt("mapColor");
-				List<SerializableChunk> chunks = rs.getString("chunks").length() > 0
-						? Arrays.asList(rs.getString("chunks").split("§")).stream()
+
+				List<SerializableChunk> chunks = !rs.getString("chunks").isEmpty()
+						? Arrays.stream(rs.getString("chunks").split("§"))
 						.map(SerializableChunk::fromString)
 						.collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableMember> members = rs.getString("members").length() > 0
-						? Arrays.asList(rs.getString("members").split("§")).stream()
+
+				List<SerializableMember> members = !rs.getString("members").isEmpty()
+						? Arrays.stream(rs.getString("members").split("§"))
 						.map(SerializableMember::fromString)
 						.collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableRate> rates = rs.getString("rates").length() > 0
-						? Arrays.asList(rs.getString("rates").split("§")).stream()
+
+				List<SerializableRate> rates = !rs.getString("rates").isEmpty()
+						? Arrays.stream(rs.getString("rates").split("§"))
 						.map(SerializableRate::fromString)
 						.collect(Collectors.toList())
 						: new ArrayList<>();
-				List<OfflinePlayer> invitedPlayers = rs.getString("invitedPlayers").length() > 0
-						? Arrays.asList(rs.getString("invitedPlayers").split("§")).stream()
+
+				List<OfflinePlayer> invitedPlayers = !rs.getString("invitedPlayers").isEmpty()
+						? Arrays.stream(rs.getString("invitedPlayers").split("§"))
 						.map((uuidString) -> Homestead.getInstance()
 								.getOfflinePlayerSync(UUID.fromString(
 										uuidString)))
 						.collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableBannedPlayer> bannedPlayers = rs.getString("bannedPlayers")
-						.length() > 0
-						? Arrays.asList(rs.getString("bannedPlayers")
+
+				List<SerializableBannedPlayer> bannedPlayers = !rs.getString("bannedPlayers").isEmpty()
+						? Arrays.stream(rs.getString("bannedPlayers")
 								.split("§"))
-						.stream()
 						.map(SerializableBannedPlayer::fromString)
 						.collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableLog> logs = rs.getString("logs").length() > 0
-						? Arrays.asList(rs.getString("logs").split("µ")).stream()
+
+				List<SerializableLog> logs = !rs.getString("logs").isEmpty()
+						? Arrays.stream(rs.getString("logs").split("µ"))
 						.map(SerializableLog::fromString)
 						.collect(Collectors.toList())
 						: new ArrayList<>();
@@ -172,6 +134,7 @@ public class SQLite {
 				rs.getString("subAreas"); // Ignored
 
 				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
+
 				long upkeepAt = rs.getLong("upkeepAt");
 				double taxesAmount = rs.getDouble("taxesAmount");
 				int weather = rs.getInt("weather");
@@ -211,8 +174,8 @@ public class SQLite {
 				Homestead.regionsCache.putOrUpdate(region);
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
+			return;
 		}
 
 		Logger.info("Imported " + Homestead.regionsCache.size() + " regions.");
@@ -230,8 +193,8 @@ public class SQLite {
 				String displayName = rs.getString("displayName");
 				String name = rs.getString("name");
 				String description = rs.getString("description");
-				List<UUID> regions = rs.getString("regions").length() > 0
-						? Arrays.asList(rs.getString("regions").split("§")).stream()
+				List<UUID> regions = !rs.getString("regions").isEmpty()
+						? Arrays.stream(rs.getString("regions").split("§"))
 						.map(UUID::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
 				double prize = rs.getDouble("prize");
@@ -247,8 +210,8 @@ public class SQLite {
 				Homestead.warsCache.putOrUpdate(war);
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
+			return;
 		}
 
 		Logger.info("Imported " + Homestead.warsCache.size() + " wars.");
@@ -264,9 +227,7 @@ public class SQLite {
 				dbRegionIds.add(UUID.fromString(rs.getString("id")));
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
-
+			Homestead.getInstance().endInstance(e);
 			return;
 		}
 
@@ -287,24 +248,18 @@ public class SQLite {
 				UUID regionId = region.id;
 				cacheRegionIds.add(regionId);
 
-				String chunksStr = String.join("§",
-						region.chunks.stream().map(SerializableChunk::toString)
-								.collect(Collectors.toList()));
-				String membersStr = String.join("§",
-						region.members.stream().map(SerializableMember::toString)
-								.collect(Collectors.toList()));
-				String ratesStr = String.join("§",
-						region.rates.stream().map(SerializableRate::toString)
-								.collect(Collectors.toList()));
-				String invitedStr = String.join("§",
-						region.getInvitedPlayers().stream().map(OfflinePlayer::getUniqueId)
-								.map(UUID::toString).collect(Collectors.toList()));
-				String bannedStr = String.join("§",
-						region.bannedPlayers.stream().map(SerializableBannedPlayer::toString)
-								.collect(Collectors.toList()));
-				String logsStr = String.join("µ",
-						region.logs.stream().map(SerializableLog::toString)
-								.collect(Collectors.toList()));
+				String chunksStr = region.chunks.stream().map(SerializableChunk::toString)
+						.collect(Collectors.joining("§"));
+				String membersStr = region.members.stream().map(SerializableMember::toString)
+						.collect(Collectors.joining("§"));
+				String ratesStr = region.rates.stream().map(SerializableRate::toString)
+						.collect(Collectors.joining("§"));
+				String invitedStr = region.getInvitedPlayers().stream().map(OfflinePlayer::getUniqueId)
+						.map(UUID::toString).collect(Collectors.joining("§"));
+				String bannedStr = region.bannedPlayers.stream().map(SerializableBannedPlayer::toString)
+						.collect(Collectors.joining("§"));
+				String logsStr = region.logs.stream().map(SerializableLog::toString)
+						.collect(Collectors.joining("µ"));
 
 				upsertStmt.setString(1, regionId.toString());
 				upsertStmt.setString(2, region.displayName);
@@ -351,8 +306,7 @@ public class SQLite {
 						+ " regions.");
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -366,9 +320,7 @@ public class SQLite {
 				dbWarIds.add(UUID.fromString(rs.getString("id")));
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
-
+			Homestead.getInstance().endInstance(e);
 			return;
 		}
 
@@ -386,8 +338,7 @@ public class SQLite {
 				UUID warId = war.id;
 				cacheWarIds.add(warId);
 
-				String regionsStr = String.join("§",
-						war.regions.stream().map(UUID::toString).collect(Collectors.toList()));
+				String regionsStr = war.regions.stream().map(UUID::toString).collect(Collectors.joining("§"));
 
 				upsertStmt.setString(1, warId.toString());
 				upsertStmt.setString(2, war.displayName);
@@ -415,8 +366,7 @@ public class SQLite {
 						+ " wars.");
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -427,8 +377,7 @@ public class SQLite {
 				Logger.warning("Connection for SQLite has been closed.");
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -437,9 +386,11 @@ public class SQLite {
 
 		String sql = "SELECT * FROM regions";
 
+		int count = 0;
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
+				count++;
 			}
 		} catch (SQLException e) {
 			return -1L;

@@ -94,6 +94,10 @@ public final class RegionProtectionListener implements Listener {
 		}
 	}
 
+	private static boolean canBeBrokenByProjectile(Block block) {
+		return !block.isPreferredTool(new ItemStack(Material.AIR));
+	}
+
 	// Block place
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
@@ -284,7 +288,8 @@ public final class RegionProtectionListener implements Listener {
 			if (placeSpawnItem) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 		}
 
@@ -294,91 +299,106 @@ public final class RegionProtectionListener implements Listener {
 			if (isShulkerBox(type)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (isAnySign(type)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (isContainerLike(type)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (isAnvil(type)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_ANVIL, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (Tag.TRAPDOORS.isTagged(type)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRAP_DOORS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (Tag.DOORS.isTagged(type) || type.name().contains("DOOR")) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DOORS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (isArchaeologyBlockWithBrush(type, player)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (Tag.BUTTONS.isTagged(type)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BUTTONS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (type.name().contains("FENCE_GATE")) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.FENCE_GATES, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (isSmallInteractable(type)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.GENERAL_INTERACTION, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (isLecternOrVaultWithKey(type, player)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (type.name().endsWith("_BED")) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.SLEEP, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (type == Material.LEVER) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.LEVERS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (type == Material.BELL) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_BELLS, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (isRedstoneInteraction(type)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.REDSTONE, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 			return;
 		}
@@ -389,13 +409,14 @@ public final class RegionProtectionListener implements Listener {
 			if (Tag.PRESSURE_PLATES.isTagged(type)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PRESSURE_PLATES, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
+				return;
 			}
 
 			if (type == Material.TRIPWIRE) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRIGGER_TRIPWIRE, null, () -> {
 					event.setCancelled(true);
-				}); return;
+				});
 			}
 		}
 	}
@@ -648,10 +669,6 @@ public final class RegionProtectionListener implements Listener {
 		}
 	}
 
-	private static boolean canBeBrokenByProjectile(Block block) {
-		return !block.isPreferredTool(new ItemStack(Material.AIR));
-	}
-
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 		Entity entity = event.getEntity();
@@ -806,7 +823,7 @@ public final class RegionProtectionListener implements Listener {
 
 			if (entityHit instanceof Player) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PVP, null, () -> {
-						event.setCancelled(true);
+					event.setCancelled(true);
 				});
 			} else if (entityHit instanceof Monster || entityHit instanceof IronGolem) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_HOSTILE_ENTITIES, null, () -> {

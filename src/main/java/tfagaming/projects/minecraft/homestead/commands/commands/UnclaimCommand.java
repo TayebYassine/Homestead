@@ -71,7 +71,7 @@ public class UnclaimCommand extends CommandBuilder {
 		} else {
 			switch (error) {
 				case REGION_NOT_FOUND -> PlayerUtils.sendMessage(player, 9);
-				case CHUNK_WOULD_SPLIT_REGION ->  PlayerUtils.sendMessage(player, 141);
+				case CHUNK_WOULD_SPLIT_REGION -> PlayerUtils.sendMessage(player, 141);
 			}
 		}
 

@@ -148,7 +148,7 @@ public class PlayerUtils {
 	}
 
 	public static void teleportPlayerToChunk(Player player, Chunk chunk) {
-        Location location = ChunksManager.getLocation(player, chunk);
+		Location location = ChunksManager.getLocation(player, chunk);
 
 		player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 	}

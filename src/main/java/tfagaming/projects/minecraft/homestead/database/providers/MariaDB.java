@@ -13,45 +13,28 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MariaDB {
-	private final String TABLE_PREFIX;
 	private static final String JDBC_URL = "jdbc:mariadb://";
-	private Connection connection;
+	private final String TABLE_PREFIX;
+	private final Connection connection;
 
-	public MariaDB(String username, String password, String host, int port, String database, String tablePrefix) {
-		this(username, password, host, port, database, tablePrefix, false);
-	}
-
-	public MariaDB(String username, String password, String host, int port, String database, String tablePrefix, boolean handleError) {
+	public MariaDB(String username, String password, String host, int port, String database, String tablePrefix) throws ClassNotFoundException, SQLException {
 		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "");
 
-		try {
-			Class.forName("org.mariadb.jdbc.Driver");
+		Class.forName("org.mariadb.jdbc.Driver");
 
-			String connectionUrl = JDBC_URL + host + ":" + port + "/" + database
-					+ "?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
-			this.connection = DriverManager.getConnection(connectionUrl, username, password);
+		String connectionUrl = JDBC_URL + host + ":" + port + "/" + database
+				+ "?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
+		this.connection = DriverManager.getConnection(connectionUrl, username, password);
 
-			Logger.info("MariaDB database connection established.");
+		Logger.info("MariaDB database connection established.");
 
-			createTablesIfNotExists();
-			createWarsTableIfNotExists();
+		createTables();
 
-			TableSyncer.apply(this.connection, TABLE_PREFIX);
-		} catch (ClassNotFoundException e) {
-			Logger.error("MariaDB JDBC Driver not found.");
-			e.printStackTrace();
-
-			if (!handleError) Homestead.getInstance().endInstance();
-		} catch (SQLException e) {
-			Logger.error("Unable to establish connection to MariaDB.");
-			e.printStackTrace();
-
-			if (!handleError) Homestead.getInstance().endInstance();
-		}
+		TableSyncer.apply(this.connection, TABLE_PREFIX);
 	}
 
-	public void createTablesIfNotExists() {
-		String sql = """
+	private void createTables() throws SQLException {
+		String sql1 = """
 				    CREATE TABLE IF NOT EXISTS `%sregions` (
 				        id              CHAR(36) PRIMARY KEY,
 				        display_name    TEXT NOT NULL,
@@ -79,10 +62,22 @@ public class MariaDB {
 				        icon            TEXT
 				    )
 				""".formatted(TABLE_PREFIX);
+
+		String sql2 = """
+				CREATE TABLE IF NOT EXISTS `%swars` (
+				    id          CHAR(36) PRIMARY KEY,
+				    display_name TEXT NOT NULL,
+				    name        TEXT NOT NULL,
+				    description TEXT NOT NULL,
+				    regions     TEXT NOT NULL,
+				    prize       DOUBLE PRECISION NOT NULL,
+				    started_at  BIGINT NOT NULL
+				)
+				""".formatted(TABLE_PREFIX);
+
 		try (Statement stmt = connection.createStatement()) {
-			stmt.execute(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
+			stmt.executeUpdate(sql1);
+			stmt.executeUpdate(sql2);
 		}
 	}
 
@@ -186,31 +181,11 @@ public class MariaDB {
 				Homestead.regionsCache.putOrUpdate(region);
 			}
 		} catch (SQLException e) {
-			Logger.error("Unable to import regions from MariaDB.");
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
+			return;
 		}
+
 		Logger.info("Imported " + Homestead.regionsCache.size() + " regions from MariaDB.");
-	}
-
-	public void createWarsTableIfNotExists() {
-		String sql = """
-                CREATE TABLE IF NOT EXISTS `%swars` (
-                    id          CHAR(36) PRIMARY KEY,
-                    display_name TEXT NOT NULL,
-                    name        TEXT NOT NULL,
-                    description TEXT NOT NULL,
-                    regions     TEXT NOT NULL,
-                    prize       DOUBLE PRECISION NOT NULL,
-                    started_at  BIGINT NOT NULL
-                )
-                """.formatted(TABLE_PREFIX);
-
-		try (Statement stmt = connection.createStatement()) {
-			stmt.execute(sql);
-		} catch (SQLException e) {
-			Logger.error("Unable to create wars table in MariaDB.");
-			e.printStackTrace();
-		}
 	}
 
 	public void importWars() {
@@ -244,9 +219,10 @@ public class MariaDB {
 				Homestead.warsCache.putOrUpdate(war);
 			}
 		} catch (SQLException e) {
-			Logger.error("Unable to import wars from MariaDB.");
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
+			return;
 		}
+
 		Logger.info("Imported " + Homestead.warsCache.size() + " wars from MariaDB.");
 	}
 
@@ -259,8 +235,7 @@ public class MariaDB {
 				dbRegionIds.add(UUID.fromString(rs.getString("id")));
 			}
 		} catch (SQLException e) {
-			Logger.error("Unable to fetch region IDs from MariaDB.");
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 			return;
 		}
 
@@ -365,8 +340,7 @@ public class MariaDB {
 						+ " regions from MariaDB.");
 			}
 		} catch (SQLException e) {
-			Logger.error("Unable to export regions to MariaDB.");
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -379,23 +353,22 @@ public class MariaDB {
 				dbWarIds.add(UUID.fromString(rs.getString("id")));
 			}
 		} catch (SQLException e) {
-			Logger.error("Unable to fetch war IDs from MariaDB.");
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 			return;
 		}
 
 		final String upsertSql = """
-        INSERT INTO `%swars` (
-            id, display_name, name, description, regions, prize, started_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE
-            display_name = VALUES(display_name),
-            name = VALUES(name),
-            description = VALUES(description),
-            regions = VALUES(regions),
-            prize = VALUES(prize),
-            started_at = VALUES(started_at)
-        """.formatted(TABLE_PREFIX);
+				INSERT INTO `%swars` (
+				    id, display_name, name, description, regions, prize, started_at
+				) VALUES (?, ?, ?, ?, ?, ?, ?)
+				ON DUPLICATE KEY UPDATE
+				    display_name = VALUES(display_name),
+				    name = VALUES(name),
+				    description = VALUES(description),
+				    regions = VALUES(regions),
+				    prize = VALUES(prize),
+				    started_at = VALUES(started_at)
+				""".formatted(TABLE_PREFIX);
 
 		final String deleteSql = "DELETE FROM " + TABLE_PREFIX + "wars WHERE id = ?";
 
@@ -435,8 +408,7 @@ public class MariaDB {
 						+ dbWarIds.size() + " wars from MariaDB.");
 			}
 		} catch (SQLException e) {
-			Logger.error("Unable to export wars to MariaDB.");
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -447,8 +419,7 @@ public class MariaDB {
 				Logger.warning("MariaDB connection has been closed.");
 			}
 		} catch (SQLException e) {
-			Logger.error("Unable to close MariaDB connection.");
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -457,10 +428,11 @@ public class MariaDB {
 
 		String sql = "SELECT 1 FROM `%sregions` LIMIT 1".formatted(TABLE_PREFIX);
 
+		int count = 0;
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
-
+				count++;
 			}
 		} catch (SQLException e) {
 			return -1L;

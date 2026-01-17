@@ -96,7 +96,9 @@ public class ConfigLoader {
 		return get("adjacent-chunks");
 	}
 
-	public boolean regenerateChunksWithWorldEdit() { return get("worldedit.regenerate-chunks"); }
+	public boolean regenerateChunksWithWorldEdit() {
+		return get("worldedit.regenerate-chunks");
+	}
 
 	public boolean isDebugEnabled() {
 		return get("debug");

@@ -6,10 +6,10 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import java.util.UUID;
 
 public class SerializableMember {
+	private final long joinedAt;
 	private UUID playerId;
 	private long flags;
 	private long regionControlFlags;
-	private final long joinedAt;
 	private long taxesAt;
 
 	public SerializableMember(OfflinePlayer player) {

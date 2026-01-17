@@ -97,16 +97,10 @@ public class YAMLValidator {
 		return allKeysPresent;
 	}
 
-	public boolean fix() {
+	public void fix() throws IOException {
 		fixKeys(defaultConfig, targetConfig, "");
 
-		try {
-			targetConfig.save(targetFile);
-
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
+		targetConfig.save(targetFile);
 	}
 
 	private void fixKeys(ConfigurationSection defaultSection, ConfigurationSection targetSection, String path) {

@@ -66,7 +66,7 @@ public class Region {
 		this.welcomeSign = null;
 		this.mapColor = 0;
 	}
-	
+
 	public UUID getUniqueId() {
 		return id;
 	}
@@ -119,17 +119,17 @@ public class Region {
 		return location;
 	}
 
-	public void setLocationToNull() {
-		this.location = null;
-		updateCache();
-	}
-
 	public void setLocation(Location location) {
 		setLocation(new SerializableLocation(location));
 	}
 
 	public void setLocation(SerializableLocation location) {
 		this.location = location;
+		updateCache();
+	}
+
+	public void setLocationToNull() {
+		this.location = null;
 		updateCache();
 	}
 
@@ -494,13 +494,13 @@ public class Region {
 	public List<OfflinePlayer> getInvitedPlayers() {
 		List<OfflinePlayer> players = new ArrayList<>();
 
-        for (UUID playerId : invitedPlayers) {
-            OfflinePlayer player = Homestead.getInstance().getOfflinePlayerSync(playerId);
+		for (UUID playerId : invitedPlayers) {
+			OfflinePlayer player = Homestead.getInstance().getOfflinePlayerSync(playerId);
 
-            if (player != null) {
-                players.add(player);
-            }
-        }
+			if (player != null) {
+				players.add(player);
+			}
+		}
 
 		return players;
 	}
@@ -678,8 +678,8 @@ public class Region {
 				.min(Comparator.comparingLong(SerializableLog::getSentAt))
 				.orElse(null);
 
-        logs.remove(oldest);
-    }
+		logs.remove(oldest);
+	}
 
 	// Sub-Areas
 	public List<SerializableSubArea> getSubAreas() {
@@ -726,11 +726,11 @@ public class Region {
 	}
 
 	public SerializableSubArea findSubAreaHasLocationInside(Location location) {
-        for (SerializableSubArea subArea : subAreas) {
-            if (subArea.isLocationInside(location)) {
-                return subArea;
-            }
-        }
+		for (SerializableSubArea subArea : subAreas) {
+			if (subArea.isLocationInside(location)) {
+				return subArea;
+			}
+		}
 
 		return null;
 	}

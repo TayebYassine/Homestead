@@ -10,12 +10,12 @@ import java.util.UUID;
 public class SerializableSubArea {
 	private final UUID id;
 	private final UUID regionId;
-	private String name;
 	private final String worldName;
 	private final int[] point1;
 	private final int[] point2;
-	private long flags;
 	private final long createdAt;
+	private String name;
+	private long flags;
 
 	public SerializableSubArea(UUID regionId, String name, World world, Block point1, Block point2, long flags) {
 		this.id = UUID.randomUUID();

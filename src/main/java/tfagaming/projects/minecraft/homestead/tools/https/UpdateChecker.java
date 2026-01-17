@@ -10,9 +10,15 @@ import java.net.URI;
 import java.net.URL;
 
 public class UpdateChecker {
-	public static boolean foundUpdate = false;
+	private UpdateChecker() {
+	}
 
-	public UpdateChecker(Homestead plugin) {
+	/**
+	 * Fetch the latest version available from the GitHub repository.
+	 * @param plugin The instance of the plugin.
+	 * @return <code>true</code> if there is an update, otherwise <code>false</code>.
+	 */
+	public static boolean check(Homestead plugin) {
 		try {
 			Logger.warning("[Updates] Looking for updates on GitHub...");
 
@@ -30,11 +36,11 @@ public class UpdateChecker {
 					Logger.warning(
 							"[Updates] Download: https://www.spigotmc.org/resources/121873/, https://modrinth.com/plugin/homestead-plugin");
 
-					foundUpdate = true;
+					return true;
 				} else {
 					Logger.info("[Updates] You are running on the latest version of Homestead.");
 
-					foundUpdate = false;
+					return false;
 				}
 			}
 		} catch (Exception e) {
@@ -43,7 +49,7 @@ public class UpdateChecker {
 			Logger.warning(
 					"You can manually look for updates on SpigotMC or Modrinth: https://www.spigotmc.org/resources/121873/, https://modrinth.com/plugin/homestead-plugin");
 
-			foundUpdate = false;
+			return false;
 		}
 	}
 }

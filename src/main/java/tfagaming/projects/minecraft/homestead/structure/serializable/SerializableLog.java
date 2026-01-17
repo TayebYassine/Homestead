@@ -6,10 +6,10 @@ import java.util.UUID;
 
 public class SerializableLog {
 	private final UUID logId;
+	private final long sentAt;
 	private String author;
 	private String message;
 	private boolean read;
-	private final long sentAt;
 
 	public SerializableLog(String author, String message) {
 		this.logId = UUID.randomUUID();

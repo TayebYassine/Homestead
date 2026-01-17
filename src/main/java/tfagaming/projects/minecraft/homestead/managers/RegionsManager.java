@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
  * This is a utility class that helps manage regions more easily. Updating and setting data to regions is generally done to the {@link Region} object.
  */
 public final class RegionsManager {
-	private RegionsManager() { }
+	private RegionsManager() {
+	}
 
 	/**
 	 * Creates a new region owned by the given player.
@@ -314,26 +315,26 @@ public final class RegionsManager {
 	 * @param type The sorting method
 	 */
 	public static List<Region> sortRegions(RegionSorting type) {
-        return switch (type) {
-            case BANK -> getAll().stream()
-                    .sorted(Comparator.comparingDouble(Region::getBank).reversed())
-                    .collect(Collectors.toList());
-            case CHUNKS_COUNT -> getAll().stream()
-                    .sorted(Comparator.comparingInt(region -> ((Region) region).getChunks().size()).reversed())
-                    .collect(Collectors.toList());
-            case MEMBERS_COUNT -> getAll().stream()
-                    .sorted(Comparator.comparingInt((region) -> ((Region) region).getMembers().size()).reversed())
-                    .collect(Collectors.toList());
-            case RATING -> getAll().stream()
-                    .sorted(Comparator
-                            .comparingDouble((region) -> getAverageRating((Region) region))
-                            .reversed())
-                    .collect(Collectors.toList());
-            case CREATION_DATE -> getAll().stream()
-                    .sorted(Comparator.comparingLong(Region::getCreatedAt))
-                    .collect(Collectors.toList());
-            default -> new ArrayList<>();
-        };
+		return switch (type) {
+			case BANK -> getAll().stream()
+					.sorted(Comparator.comparingDouble(Region::getBank).reversed())
+					.collect(Collectors.toList());
+			case CHUNKS_COUNT -> getAll().stream()
+					.sorted(Comparator.comparingInt(region -> ((Region) region).getChunks().size()).reversed())
+					.collect(Collectors.toList());
+			case MEMBERS_COUNT -> getAll().stream()
+					.sorted(Comparator.comparingInt((region) -> ((Region) region).getMembers().size()).reversed())
+					.collect(Collectors.toList());
+			case RATING -> getAll().stream()
+					.sorted(Comparator
+							.comparingDouble((region) -> getAverageRating((Region) region))
+							.reversed())
+					.collect(Collectors.toList());
+			case CREATION_DATE -> getAll().stream()
+					.sorted(Comparator.comparingLong(Region::getCreatedAt))
+					.collect(Collectors.toList());
+			default -> new ArrayList<>();
+		};
 	}
 
 	/** Computes the 1-based rank of a region within the given sorting; 0 if not found. */

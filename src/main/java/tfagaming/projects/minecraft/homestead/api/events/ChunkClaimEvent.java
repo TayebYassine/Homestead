@@ -1,7 +1,6 @@
 package tfagaming.projects.minecraft.homestead.api.events;
 
 import org.bukkit.Chunk;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

@@ -10,28 +10,28 @@ import java.util.Objects;
 
 public class PlayerLimits {
 	public static String getString(LimitType limit) {
-        return switch (limit) {
-            case REGIONS -> "regions";
-            case CHUNKS_PER_REGION -> "chunks-per-region";
-            case MEMBERS_PER_REGION -> "members-per-region";
-            case SUBAREAS_PER_REGION -> "subareas-per-region";
-            case MAX_SUBAREA_VOLUME -> "max-subarea-volume";
-            case COMMANDS_COOLDOWN -> "commands-cooldown";
-            default -> null;
-        };
+		return switch (limit) {
+			case REGIONS -> "regions";
+			case CHUNKS_PER_REGION -> "chunks-per-region";
+			case MEMBERS_PER_REGION -> "members-per-region";
+			case SUBAREAS_PER_REGION -> "subareas-per-region";
+			case MAX_SUBAREA_VOLUME -> "max-subarea-volume";
+			case COMMANDS_COOLDOWN -> "commands-cooldown";
+			default -> null;
+		};
 	}
 
 	public static LimitMethod getLimitsMethod() {
-        return switch ((String) Homestead.config.get("limits.method")) {
-            case "static" -> LimitMethod.STATIC;
-            case "groups" -> LimitMethod.GROUPS;
-            default -> LimitMethod.STATIC;
-        };
+		return switch ((String) Homestead.config.get("limits.method")) {
+			case "static" -> LimitMethod.STATIC;
+			case "groups" -> LimitMethod.GROUPS;
+			default -> LimitMethod.STATIC;
+		};
 
-    }
+	}
 
 	private static Object getLimitValueByPlayername(OfflinePlayer player, LimitType limit) {
-        return Homestead.config.get("player-limits." + player.getName() + "." + getString(limit));
+		return Homestead.config.get("player-limits." + player.getName() + "." + getString(limit));
 	}
 
 	public static int getDefaultLimitValue(OfflinePlayer player, LimitType limit) {

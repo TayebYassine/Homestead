@@ -6,10 +6,10 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import java.util.UUID;
 
 public class SerializableRent {
-	private UUID playerId;
 	private final double price;
 	private final long startAt;
 	private final long untilAt;
+	private UUID playerId;
 
 	public SerializableRent(OfflinePlayer player, double price, long untilAt) {
 		this.playerId = player.getUniqueId();

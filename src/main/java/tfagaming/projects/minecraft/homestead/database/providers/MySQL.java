@@ -13,47 +13,26 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MySQL {
-	private final String TABLE_PREFIX;
 	private static final String JDBC_URL = "jdbc:mysql://";
+	private final String TABLE_PREFIX;
+	private final Connection connection;
 
-	private Connection connection;
-
-	public MySQL(String username, String password, String host, int port, String database, String tablePrefix) {
-		this(username, password, host, port, database, tablePrefix, false);
-	}
-
-	public MySQL(String username, String password, String host, int port, String database, String tablePrefix, boolean handleError) {
+	public MySQL(String username, String password, String host, int port, String database, String tablePrefix) throws ClassNotFoundException, SQLException {
 		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "");
 
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
+		Class.forName("com.mysql.cj.jdbc.Driver");
 
-			String connectionUrl = JDBC_URL + host + ":" + port + "/" + database;
-			this.connection = DriverManager.getConnection(connectionUrl, username, password);
+		String connectionUrl = JDBC_URL + host + ":" + port + "/" + database;
+		this.connection = DriverManager.getConnection(connectionUrl, username, password);
 
-			Logger.info("New database connection established.");
+		Logger.info("New database connection established.");
 
-			createTablesIfNotExists();
+		createTables();
 
-			TableSyncer.apply(this.connection, TABLE_PREFIX);
-		} catch (ClassNotFoundException e) {
-			Logger.error("MySQL JDBC Driver not found.");
-			e.printStackTrace();
-
-			if (!handleError) {
-				Homestead.getInstance().endInstance();
-			}
-		} catch (SQLException e) {
-			Logger.error("Unable to establish a connection for MySQL.");
-			e.printStackTrace();
-
-			if (!handleError) {
-				Homestead.getInstance().endInstance();
-			}
-		}
+		TableSyncer.apply(this.connection, TABLE_PREFIX);
 	}
 
-	public void createTablesIfNotExists() {
+	private void createTables() throws SQLException {
 		String sql1 = "CREATE TABLE IF NOT EXISTS " + TABLE_PREFIX + "regions (" +
 				"id VARCHAR(36) PRIMARY KEY, " +
 				"displayName TINYTEXT NOT NULL, " +
@@ -94,9 +73,6 @@ public class MySQL {
 		try (Statement stmt = connection.createStatement()) {
 			stmt.executeUpdate(sql1);
 			stmt.executeUpdate(sql2);
-		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
 		}
 	}
 
@@ -121,37 +97,42 @@ public class MySQL {
 				long worldFlags = rs.getLong("worldFlags");
 				double bank = rs.getDouble("bank");
 				int mapColor = rs.getInt("mapColor");
-				List<SerializableChunk> chunks = rs.getString("chunks").length() > 0
-						? Arrays.asList(rs.getString("chunks").split("§")).stream()
+				List<SerializableChunk> chunks = !rs.getString("chunks").isEmpty()
+						? Arrays.stream(rs.getString("chunks").split("§"))
 						.map(SerializableChunk::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableMember> members = rs.getString("members").length() > 0
-						? Arrays.asList(rs.getString("members").split("§")).stream()
+
+				List<SerializableMember> members = !rs.getString("members").isEmpty()
+						? Arrays.stream(rs.getString("members").split("§"))
 						.map(SerializableMember::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableRate> rates = rs.getString("rates").length() > 0
-						? Arrays.asList(rs.getString("rates").split("§")).stream()
+
+				List<SerializableRate> rates = !rs.getString("rates").isEmpty()
+						? Arrays.stream(rs.getString("rates").split("§"))
 						.map(SerializableRate::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
-				List<OfflinePlayer> invitedPlayers = rs.getString("invitedPlayers").length() > 0
-						? Arrays.asList(rs.getString("invitedPlayers").split("§")).stream()
+
+				List<OfflinePlayer> invitedPlayers = !rs.getString("invitedPlayers").isEmpty()
+						? Arrays.stream(rs.getString("invitedPlayers").split("§"))
 						.map((uuidString) -> Homestead.getInstance()
 								.getOfflinePlayerSync(UUID.fromString(uuidString)))
 						.collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableBannedPlayer> bannedPlayers = rs.getString("bannedPlayers")
-						.length() > 0
-						? Arrays.asList(rs.getString("bannedPlayers")
+
+				List<SerializableBannedPlayer> bannedPlayers = !rs.getString("bannedPlayers").isEmpty()
+						? Arrays.stream(rs.getString("bannedPlayers")
 								.split("§"))
-						.stream()
 						.map(SerializableBannedPlayer::fromString)
 						.collect(Collectors.toList())
 						: new ArrayList<>();
-				List<SerializableLog> logs = rs.getString("logs").length() > 0
-						? Arrays.asList(rs.getString("logs").split("µ")).stream()
+
+				List<SerializableLog> logs = !rs.getString("logs").isEmpty()
+						? Arrays.stream(rs.getString("logs").split("µ"))
 						.map(SerializableLog::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
+
 				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
+
 				long upkeepAt = rs.getLong("upkeepAt");
 				double taxesAmount = rs.getDouble("taxesAmount");
 				int weather = rs.getInt("weather");
@@ -191,8 +172,8 @@ public class MySQL {
 				Homestead.regionsCache.putOrUpdate(region);
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
+			return;
 		}
 
 		Logger.info("Imported " + Homestead.regionsCache.size() + " regions.");
@@ -210,8 +191,8 @@ public class MySQL {
 				String displayName = rs.getString("displayName");
 				String name = rs.getString("name");
 				String description = rs.getString("description");
-				List<UUID> regions = rs.getString("regions").length() > 0
-						? Arrays.asList(rs.getString("regions").split("§")).stream()
+				List<UUID> regions = !rs.getString("regions").isEmpty()
+						? Arrays.stream(rs.getString("regions").split("§"))
 						.map(UUID::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
 				double prize = rs.getDouble("prize");
@@ -227,8 +208,8 @@ public class MySQL {
 				Homestead.warsCache.putOrUpdate(war);
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
+			return;
 		}
 
 		Logger.info("Imported " + Homestead.warsCache.size() + " wars.");
@@ -244,9 +225,7 @@ public class MySQL {
 				dbRegionIds.add(UUID.fromString(rs.getString("id")));
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
-
+			Homestead.getInstance().endInstance(e);
 			return;
 		}
 
@@ -291,21 +270,14 @@ public class MySQL {
 				UUID regionId = region.id;
 				cacheRegionIds.add(regionId);
 
-				String chunksStr = String.join("§",
-						region.chunks.stream().map(SerializableChunk::toString).collect(Collectors.toList()));
-				String membersStr = String.join("§",
-						region.members.stream().map(SerializableMember::toString).collect(Collectors.toList()));
-				String ratesStr = String.join("§",
-						region.rates.stream().map(SerializableRate::toString).collect(Collectors.toList()));
-				String invitedStr = String.join("§",
-						region.getInvitedPlayers().stream().map(OfflinePlayer::getUniqueId)
-								.map(UUID::toString).collect(Collectors.toList()));
-				String bannedStr = String.join("§",
-						region.bannedPlayers.stream().map(SerializableBannedPlayer::toString)
-								.collect(Collectors.toList()));
-				String logsStr = String.join("µ",
-						region.logs.stream().map(SerializableLog::toString).collect(Collectors.toList()));
-
+				String chunksStr = region.chunks.stream().map(SerializableChunk::toString).collect(Collectors.joining("§"));
+				String membersStr = region.members.stream().map(SerializableMember::toString).collect(Collectors.joining("§"));
+				String ratesStr = region.rates.stream().map(SerializableRate::toString).collect(Collectors.joining("§"));
+				String invitedStr = region.getInvitedPlayers().stream().map(OfflinePlayer::getUniqueId)
+						.map(UUID::toString).collect(Collectors.joining("§"));
+				String bannedStr = region.bannedPlayers.stream().map(SerializableBannedPlayer::toString)
+						.collect(Collectors.joining("§"));
+				String logsStr = region.logs.stream().map(SerializableLog::toString).collect(Collectors.joining("µ"));
 
 				upsertStmt.setString(1, regionId.toString());
 				upsertStmt.setString(2, region.displayName);
@@ -351,8 +323,7 @@ public class MySQL {
 						+ " regions.");
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -366,9 +337,7 @@ public class MySQL {
 				dbWarIds.add(UUID.fromString(rs.getString("id")));
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
-
+			Homestead.getInstance().endInstance(e);
 			return;
 		}
 
@@ -393,8 +362,7 @@ public class MySQL {
 				UUID warId = war.id;
 				cacheWarIds.add(warId);
 
-				String regionsStr = String.join("§",
-						war.regions.stream().map(UUID::toString).collect(Collectors.toList()));
+				String regionsStr = war.regions.stream().map(UUID::toString).collect(Collectors.joining("§"));
 
 				upsertStmt.setString(1, warId.toString());
 				upsertStmt.setString(2, war.displayName);
@@ -422,8 +390,7 @@ public class MySQL {
 						+ " wars.");
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -434,8 +401,7 @@ public class MySQL {
 				Logger.warning("Connection for MySQL has been closed.");
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -444,9 +410,11 @@ public class MySQL {
 
 		String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
 
+		int count = 0;
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
+				count++;
 			}
 		} catch (SQLException e) {
 			return -1L;

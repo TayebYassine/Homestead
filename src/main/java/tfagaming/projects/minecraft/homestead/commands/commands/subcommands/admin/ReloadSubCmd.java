@@ -6,10 +6,12 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
 import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
 import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,45 +37,31 @@ public class ReloadSubCmd extends SubCommandBuilder {
 					skipKeys);
 
 			if (!configValidator.validate()) {
-				boolean fixed = configValidator.fix();
+				configValidator.fix();
 
-				if (fixed) {
-					Homestead.config = new ConfigLoader(instance);
-				} else {
-					throw new Exception("Unable to fix the config.yml file.");
-				}
+				Homestead.config = new ConfigLoader(instance);
 			}
 
-			YAMLValidator languageValidator = new YAMLValidator("en-US.yml",
-					Homestead.language.getLanguageFile(Homestead.config.get("language")));
+			YAMLValidator languageValidator = new YAMLValidator("en-US.yml", Homestead.language.getLanguageFile(Homestead.config.get("language")));
 
 			if (!languageValidator.validate()) {
-				boolean fixed = languageValidator.fix();
+				languageValidator.fix();
 
-				if (fixed) {
-					Homestead.language = new LanguageLoader(instance, Homestead.config.get("language"));
-				} else {
-					throw new Exception("Unable to fix the config.yml file.");
-				}
+				Homestead.language = new LanguageLoader(instance, Homestead.config.get("language"));
 			}
 
 			YAMLValidator menusConfigValidator = new YAMLValidator("menus.yml", new File(instance.getDataFolder(), "menus.yml"),
 					skipKeys);
 
 			if (!menusConfigValidator.validate()) {
-				boolean fixed = menusConfigValidator.fix();
+				menusConfigValidator.fix();
 
-				if (fixed) {
-					Homestead.menusConfig = new MenusConfigLoader(instance);
-				} else {
-					throw new Exception("Unable to fix the config.yml file.");
-				}
+				Homestead.menusConfig = new MenusConfigLoader(instance);
 			}
 
 			PlayerUtils.sendMessage(sender, 90);
-		} catch (Exception e) {
-			System.out.println(e);
-
+		} catch (IOException e) {
+			Logger.error(e);
 			PlayerUtils.sendMessage(sender, 87);
 		}
 

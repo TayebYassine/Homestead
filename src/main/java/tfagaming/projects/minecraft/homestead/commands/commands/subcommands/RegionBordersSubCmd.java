@@ -2,10 +2,7 @@ package tfagaming.projects.minecraft.homestead.commands.commands.subcommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.borders.BorderBlockRenderer;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
-import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 

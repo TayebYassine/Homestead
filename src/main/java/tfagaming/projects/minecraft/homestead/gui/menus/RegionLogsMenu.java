@@ -143,6 +143,6 @@ public class RegionLogsMenu {
 			sb.append(message.charAt(i));
 		}
 
-        return sb.toString();
+		return sb.toString();
 	}
 }

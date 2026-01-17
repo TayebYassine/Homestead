@@ -7,9 +7,9 @@ import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import java.util.UUID;
 
 public class SerializableBannedPlayer {
+	private final long bannedAt;
 	private UUID playerId;
 	private String reason;
-	private final long bannedAt;
 
 	public SerializableBannedPlayer(OfflinePlayer player) {
 		this.playerId = player.getUniqueId();

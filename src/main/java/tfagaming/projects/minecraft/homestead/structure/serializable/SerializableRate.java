@@ -6,9 +6,9 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import java.util.UUID;
 
 public class SerializableRate {
+	private final long ratedAt;
 	private UUID playerId;
 	private int rate;
-	private final long ratedAt;
 
 	public SerializableRate(OfflinePlayer player) {
 		this.playerId = player.getUniqueId();

@@ -1,6 +1,8 @@
 package tfagaming.projects.minecraft.homestead.tools.java;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 public class ListUtils {
 	public static <T> List<T> removeDuplications(List<T> list) {

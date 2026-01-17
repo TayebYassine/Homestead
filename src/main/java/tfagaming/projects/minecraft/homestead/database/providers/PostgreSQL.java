@@ -13,46 +13,26 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PostgreSQL {
-	private final String TABLE_PREFIX;
 	private static final String JDBC_URL = "jdbc:postgresql://";
-	private Connection connection;
+	private final String TABLE_PREFIX;
+	private final Connection connection;
 
-	public PostgreSQL(String username, String password, String host, int port, String database, String tablePrefix) {
-		this(username, password, host, port, database, tablePrefix, false);
-	}
-
-	public PostgreSQL(String username, String password, String host, int port, String database, String tablePrefix, boolean handleError) {
+	public PostgreSQL(String username, String password, String host, int port, String database, String tablePrefix) throws ClassNotFoundException, SQLException {
 		TABLE_PREFIX = tablePrefix.replaceAll("[^A-Za-z0-9_]", "");
 
-		try {
-			Class.forName("org.postgresql.Driver");
+		Class.forName("org.postgresql.Driver");
 
-			String connectionUrl = JDBC_URL + host + ":" + port + "/" + database;
-			this.connection = DriverManager.getConnection(connectionUrl, username, password);
+		String connectionUrl = JDBC_URL + host + ":" + port + "/" + database;
+		this.connection = DriverManager.getConnection(connectionUrl, username, password);
 
-			Logger.info("PostgreSQL database connection established.");
+		Logger.info("PostgreSQL database connection established.");
 
-			createTablesIfNotExists();
+		createTables();
 
-			TableSyncer.apply(this.connection, TABLE_PREFIX);
-		} catch (ClassNotFoundException e) {
-			Logger.error("PostgreSQL JDBC Driver not found.");
-			e.printStackTrace();
-
-			if (!handleError) {
-				Homestead.getInstance().endInstance();
-			}
-		} catch (SQLException e) {
-			Logger.error("Unable to establish connection to PostgreSQL.");
-			e.printStackTrace();
-
-			if (!handleError) {
-				Homestead.getInstance().endInstance();
-			}
-		}
+		TableSyncer.apply(this.connection, TABLE_PREFIX);
 	}
 
-	public void createTablesIfNotExists() {
+	private void createTables() throws SQLException {
 		String sql1 = "CREATE TABLE IF NOT EXISTS " + TABLE_PREFIX + "regions (" +
 				"id UUID PRIMARY KEY, " +
 				"display_name TEXT NOT NULL, " +
@@ -93,9 +73,6 @@ public class PostgreSQL {
 		try (Statement stmt = connection.createStatement()) {
 			stmt.executeUpdate(sql1);
 			stmt.executeUpdate(sql2);
-		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
 		}
 	}
 
@@ -188,8 +165,8 @@ public class PostgreSQL {
 				Homestead.regionsCache.putOrUpdate(region);
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
+			return;
 		}
 
 		Logger.info("Imported " + Homestead.regionsCache.size() + " regions.");
@@ -223,8 +200,8 @@ public class PostgreSQL {
 				Homestead.warsCache.putOrUpdate(war);
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
+			return;
 		}
 
 		Logger.info("Imported " + Homestead.warsCache.size() + " wars.");
@@ -240,8 +217,7 @@ public class PostgreSQL {
 				dbRegionIds.add((UUID) rs.getObject("id"));
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 			return;
 		}
 
@@ -354,8 +330,7 @@ public class PostgreSQL {
 						" regions.");
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -369,9 +344,7 @@ public class PostgreSQL {
 				dbWarIds.add(UUID.fromString(rs.getString("id")));
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
-
+			Homestead.getInstance().endInstance(e);
 			return;
 		}
 
@@ -396,8 +369,7 @@ public class PostgreSQL {
 				UUID warId = war.id;
 				cacheWarIds.add(warId);
 
-				String regionsStr = String.join("§",
-						war.regions.stream().map(UUID::toString).collect(Collectors.toList()));
+				String regionsStr = war.regions.stream().map(UUID::toString).collect(Collectors.joining("§"));
 
 				upsertStmt.setString(1, warId.toString());
 				upsertStmt.setString(2, war.displayName);
@@ -425,8 +397,7 @@ public class PostgreSQL {
 						+ " wars.");
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -437,8 +408,7 @@ public class PostgreSQL {
 				Logger.warning("PostgreSQL connection has been closed.");
 			}
 		} catch (SQLException e) {
-			Logger.error("An unexpected error occurred for the provider: " + Homestead.database.getSelectedProvider());
-			e.printStackTrace();
+			Homestead.getInstance().endInstance(e);
 		}
 	}
 
@@ -447,9 +417,11 @@ public class PostgreSQL {
 
 		String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
 
+		int count = 0;
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
+				count++;
 			}
 		} catch (SQLException e) {
 			return -1L;

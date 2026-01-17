@@ -14,7 +14,6 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLocation;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -163,7 +162,7 @@ public final class PlayerAutoClaimListener implements Listener {
 		} else {
 			switch (error) {
 				case REGION_NOT_FOUND -> PlayerUtils.sendMessage(player, 9);
-				case CHUNK_NOT_ADJACENT_TO_REGION ->  PlayerUtils.sendMessage(player, 140);
+				case CHUNK_NOT_ADJACENT_TO_REGION -> PlayerUtils.sendMessage(player, 140);
 			}
 		}
 	}

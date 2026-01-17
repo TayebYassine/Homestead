@@ -13,35 +13,35 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.List;
 
 public final class PlayerDeathListener implements Listener {
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        Player victim = event.getEntity();
+	@EventHandler
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		Player victim = event.getEntity();
 
-        List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(victim);
+		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(victim);
 
-        for (Region region : regions) {
-            if (WarsManager.isRegionInWar(region.getUniqueId())) {
-                War war = WarsManager.surrenderRegionFromFirstWarFound(region.getUniqueId());
+		for (Region region : regions) {
+			if (WarsManager.isRegionInWar(region.getUniqueId())) {
+				War war = WarsManager.surrenderRegionFromFirstWarFound(region.getUniqueId());
 
-                if (war != null && war.getRegions().size() == 1) {
-                    Region winner = war.getRegions().getFirst();
+				if (war != null && war.getRegions().size() == 1) {
+					Region winner = war.getRegions().getFirst();
 
-                    double prize = war.getPrize();
+					double prize = war.getPrize();
 
-                    region.removeBalanceFromBank(prize);
-                    winner.addBalanceToBank(prize);
+					region.removeBalanceFromBank(prize);
+					winner.addBalanceToBank(prize);
 
-                    if (winner.getOwner().isOnline()) {
-                        PlayerUtils.sendMessage((Player) winner.getOwner(), 155);
-                    }
+					if (winner.getOwner().isOnline()) {
+						PlayerUtils.sendMessage((Player) winner.getOwner(), 155);
+					}
 
-                    WarsManager.endWar(war.getUniqueId());
-                }
+					WarsManager.endWar(war.getUniqueId());
+				}
 
-                PlayerUtils.sendMessage(victim, 163);
+				PlayerUtils.sendMessage(victim, 163);
 
-                break;
-            }
-        }
-    }
+				break;
+			}
+		}
+	}
 }

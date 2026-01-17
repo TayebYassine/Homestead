@@ -11,25 +11,26 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class YAML {
 	private final File regionsFolder;
 	private final File warsFolder;
 
-	public YAML(File dataFolder) {
+	public YAML(File dataFolder) throws IOException {
 		this.regionsFolder = new File(dataFolder, "regions");
 		if (!regionsFolder.exists()) {
-			regionsFolder.mkdirs();
+			if (!regionsFolder.mkdirs()) {
+				throw new IOException("Unable to create regions directory");
+			}
 		}
 
 		this.warsFolder = new File(dataFolder, "wars");
 		if (!warsFolder.exists()) {
-			warsFolder.mkdirs();
+			if (!warsFolder.mkdirs()) {
+				throw new IOException("Unable to create wars directory");
+			}
 		}
 
 		Logger.info("New database connection established, path: " + regionsFolder.getPath());
@@ -51,12 +52,12 @@ public class YAML {
 			try {
 				YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-				UUID id = UUID.fromString(config.getString("id"));
+				UUID id = UUID.fromString(Objects.requireNonNull(config.getString("id")));
 				String displayName = config.getString("displayName");
 				String name = config.getString("name");
 				String description = config.getString("description");
 				OfflinePlayer owner = Homestead.getInstance()
-						.getOfflinePlayerSync(UUID.fromString(config.getString("ownerId")));
+						.getOfflinePlayerSync(UUID.fromString(Objects.requireNonNull(config.getString("ownerId"))));
 				SerializableLocation location = SerializableLocation.fromString(config.getString("location"));
 				long createdAt = config.getLong("createdAt");
 				long playerFlags = config.getLong("playerFlags");
@@ -131,8 +132,8 @@ public class YAML {
 				Homestead.regionsCache.putOrUpdate(region);
 				importedCount++;
 			} catch (Exception e) {
-				Logger.error("Error loading region from file: " + file.getName());
-				e.printStackTrace();
+				Homestead.getInstance().endInstance(e);
+				return;
 			}
 		}
 
@@ -155,7 +156,7 @@ public class YAML {
 			try {
 				YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-				UUID id = UUID.fromString(config.getString("id"));
+				UUID id = UUID.fromString(Objects.requireNonNull(config.getString("id")));
 				String displayName = config.getString("displayName");
 				String name = config.getString("name");
 				String description = config.getString("description");
@@ -175,8 +176,8 @@ public class YAML {
 				Homestead.warsCache.putOrUpdate(war);
 				importedCount++;
 			} catch (Exception e) {
-				Logger.error("Error loading war from file: " + file.getName());
-				e.printStackTrace();
+				Homestead.getInstance().endInstance(e);
+				return;
 			}
 		}
 
@@ -195,7 +196,7 @@ public class YAML {
 				try {
 					String uuidStr = file.getName().replace("region_", "").replace(".yml", "");
 					existingFiles.add(UUID.fromString(uuidStr));
-				} catch (IllegalArgumentException e) {
+				} catch (IllegalArgumentException ignored) {
 				}
 			}
 		}
@@ -258,8 +259,8 @@ public class YAML {
 				config.save(regionFile);
 				savedCount++;
 			} catch (IOException e) {
-				Logger.error("Error saving region: " + region.id);
-				e.printStackTrace();
+				Homestead.getInstance().endInstance(e);
+				return;
 			}
 		}
 
@@ -291,7 +292,7 @@ public class YAML {
 				try {
 					String uuidStr = file.getName().replace("war_", "").replace(".yml", "");
 					existingFiles.add(UUID.fromString(uuidStr));
-				} catch (IllegalArgumentException e) {
+				} catch (IllegalArgumentException ignored) {
 				}
 			}
 		}
@@ -319,14 +320,15 @@ public class YAML {
 				config.save(warFile);
 				savedCount++;
 			} catch (IOException e) {
-				Logger.error("Error saving war: " + war.id);
-				e.printStackTrace();
+				Homestead.getInstance().endInstance(e);
+				return;
 			}
 		}
 
 		existingFiles.removeAll(cacheWarIds);
 		for (UUID deletedId : existingFiles) {
 			File toDelete = new File(warsFolder, "war_" + deletedId.toString() + ".yml");
+
 			if (toDelete.delete()) {
 				deletedCount++;
 			} else {
@@ -354,9 +356,9 @@ public class YAML {
 			return 0L;
 		}
 
-		for (@SuppressWarnings("unused")
-		File file : regionFiles) {
-
+		int count = 0;
+		for (@SuppressWarnings("unused") File file : regionFiles) {
+			count++;
 		}
 
 		long after = System.currentTimeMillis();

@@ -3,6 +3,9 @@ package tfagaming.projects.minecraft.homestead.logs;
 import org.bukkit.Bukkit;
 import tfagaming.projects.minecraft.homestead.Homestead;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class Logger {
 	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Homestead");
 	private static LogsFile logs;
@@ -50,6 +53,18 @@ public class Logger {
 
 	public static void warning(String... args) {
 		warning(String.join(" ", args));
+	}
+
+	public static void error(Throwable error) {
+		Logger.error("An unexpected error occurred while running Homestead. The plugin is being disabled to avoid any exploits or data corruption.");
+		Logger.error("Please report the issue to the GitHub issues tracker or on the Discord server to resolve it as soon as possible.");
+
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		error.printStackTrace(pw);
+		String fullStackTrace = sw.toString();
+
+		Logger.error(fullStackTrace);
 	}
 
 	public static void error(String message) {

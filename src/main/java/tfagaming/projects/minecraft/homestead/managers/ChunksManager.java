@@ -8,7 +8,8 @@ import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
 import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.*;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 
 import java.util.*;
@@ -19,7 +20,8 @@ import java.util.*;
  * This is a utility class that helps manage chunks more easily. Updating and setting data to regions is generally done to the {@link Region} object.
  */
 public final class ChunksManager {
-	private ChunksManager() { }
+	private ChunksManager() {
+	}
 
 	/**
 	 * Claims a chunk for a specific region. Returns true if it was successfully claimed, otherwise false.
@@ -355,7 +357,7 @@ public final class ChunksManager {
 	 * Finds a safe standable location in the Nether near (x, z).
 	 * @param world The world
 	 * @param x The location (X axis)
-	 * @param z	The location (Z axis)
+	 * @param z    The location (Z axis)
 	 */
 	private static Location findSafeNetherLocation(World world, int x, int z) {
 		for (int y = 32; y < 127; y++) {

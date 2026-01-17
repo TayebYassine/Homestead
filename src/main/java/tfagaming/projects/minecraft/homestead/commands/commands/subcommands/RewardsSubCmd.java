@@ -5,17 +5,9 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RewardsMenu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLog;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerRewards;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class RewardsSubCmd extends SubCommandBuilder {
 	public RewardsSubCmd() {

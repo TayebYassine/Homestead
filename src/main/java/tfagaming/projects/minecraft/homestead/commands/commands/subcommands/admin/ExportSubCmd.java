@@ -4,8 +4,11 @@ import org.bukkit.command.CommandSender;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.database.Database;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +39,13 @@ public class ExportSubCmd extends SubCommandBuilder {
 		}
 
 		try {
-			Database instance = new Database(Database.parseProviderFromString(provider), true);
+			Database.Provider providerParsed = Database.parseProviderFromString(provider);
+
+			if (providerParsed == null) {
+				throw new IllegalStateException("Database provider not found.");
+			}
+
+			Database instance = new Database(providerParsed);
 
 			instance.exportRegions();
 			instance.exportWars();
@@ -50,7 +59,8 @@ public class ExportSubCmd extends SubCommandBuilder {
 			PlayerUtils.sendMessage(sender, 86, replacements);
 
 			instance.closeConnection();
-		} catch (Exception e) {
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			Logger.error(e);
 			PlayerUtils.sendMessage(sender, 87);
 		}
 

@@ -10,10 +10,10 @@ import org.bukkit.block.Block;
  * </p>
  */
 public class SerializableChunk {
+	private final long claimedAt;
 	private String worldName;
 	private int x;
 	private int z;
-	private final long claimedAt;
 
 	public SerializableChunk(Chunk chunk) {
 		this.worldName = chunk.getWorld() != null ? chunk.getWorld().getName() : null;

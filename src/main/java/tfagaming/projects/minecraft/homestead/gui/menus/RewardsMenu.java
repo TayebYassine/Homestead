@@ -1,20 +1,13 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
-import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
-import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerRewards;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class RewardsMenu {
 	public RewardsMenu(Player player, Region region, Runnable backButton) {

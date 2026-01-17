@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 public class RegionIconTools {
-	private static BufferedImage defaultIcon;
 	private static final Map<String, BufferedImage> icons = new HashMap<>();
+	private static BufferedImage defaultIcon;
 
 	public static List<String> getAllIcons() {
 		return Homestead.config.getKeysUnderPath("dynamic-maps.icons.list");

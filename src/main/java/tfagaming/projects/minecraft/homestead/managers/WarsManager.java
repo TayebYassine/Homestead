@@ -8,7 +8,8 @@ import tfagaming.projects.minecraft.homestead.structure.War;
 import java.util.*;
 
 public final class WarsManager {
-	private  WarsManager() { }
+	private WarsManager() {
+	}
 
 	public static War declareWar(String name, double prize, List<Region> regions) {
 		War war = new War(name);

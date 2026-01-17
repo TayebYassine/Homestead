@@ -7,6 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
@@ -36,6 +37,8 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.Integratio
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
 
 import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 
 public class Homestead extends JavaPlugin {
@@ -93,56 +96,59 @@ public class Homestead extends JavaPlugin {
 		YAMLValidator configValidator = new YAMLValidator("config.yml", new File(getDataFolder(), "config.yml"),
 				skipKeys);
 
-		if (!configValidator.validate()) {
-			boolean fixed = configValidator.fix();
+		try {
+			if (!configValidator.validate()) {
+				configValidator.fix();
 
-			if (fixed) {
 				config = new ConfigLoader(this);
-			} else {
-				endInstance();
-				return;
 			}
+		} catch (IOException e) {
+			endInstance(e);
+			return;
 		}
 
-		YAMLValidator languageValidator = new YAMLValidator("en-US.yml",
-				language.getLanguageFile(config.get("language")));
+		YAMLValidator languageValidator = new YAMLValidator("en-US.yml", language.getLanguageFile(config.get("language")));
 
-		if (!languageValidator.validate()) {
-			boolean fixed = languageValidator.fix();
+		try {
+			if (!languageValidator.validate()) {
+				languageValidator.fix();
 
-			if (fixed) {
 				language = new LanguageLoader(this, config.get("language"));
-			} else {
-				endInstance();
-				return;
 			}
+		} catch (IOException e) {
+			endInstance(e);
+			return;
 		}
 
 		YAMLValidator menusConfigValidator = new YAMLValidator("menus.yml", new File(getDataFolder(), "menus.yml"),
 				skipKeys);
 
-		if (!menusConfigValidator.validate()) {
-			boolean fixed = menusConfigValidator.fix();
+		try {
+			if (!menusConfigValidator.validate()) {
+				menusConfigValidator.fix();
 
-			if (fixed) {
 				menusConfig = new MenusConfigLoader(this);
-			} else {
-				endInstance();
-				return;
 			}
+		} catch (IOException e) {
+			endInstance(e);
+			return;
 		}
 
 		Homestead.regionsCache = new RegionsCache(config.get("cache-interval"));
 		Homestead.warsCache = new WarsCache(config.get("cache-interval"));
 
-		Database.Provider provider = Database.parseProviderFromString(config.get("database.provider"));
+		try {
+			Database.Provider provider = Database.parseProviderFromString(config.get("database.provider"));
 
-		if (provider == null) {
-			Logger.error("Invalid database provider, please use: PostgreSQL, MySQL, SQLite, YAML");
-			endInstance();
+			if (provider == null) {
+				throw new IllegalStateException("Database provider not found.");
+			}
+
+			Homestead.database = new Database(provider);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			endInstance(e);
+			return;
 		}
-
-		Homestead.database = new Database(provider);
 
 		File claimsFolder = new File(getDataFolder(), "claims");
 		if (claimsFolder.exists() && claimsFolder.isDirectory()) {
@@ -259,7 +265,7 @@ public class Homestead extends JavaPlugin {
 
 		runAsyncTimerTask(() -> {
 			runAsyncTask(() -> {
-				new UpdateChecker(this);
+				UpdateChecker.check(this);
 			});
 		}, 86400);
 
@@ -438,7 +444,7 @@ public class Homestead extends JavaPlugin {
 	}
 
 	public void registerExternalPlugins() {
-		if (isPlaceholderAPIInstalled()) {
+		if (isExternalPluginEnabled("PlaceholderAPI")) {
 			boolean placeholderRegistered = new PlaceholderAPI(this).register();
 
 			if (!placeholderRegistered) {
@@ -447,15 +453,22 @@ public class Homestead extends JavaPlugin {
 		}
 	}
 
-	public boolean isPlaceholderAPIInstalled() {
-		return Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null
-				&& Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI").isEnabled();
+	public boolean isExternalPluginEnabled(String pluginName) {
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginName);
+
+		return plugin != null && plugin.isEnabled();
 	}
 
 	/**
 	 * Kill the plugin's instance.
 	 */
 	public void endInstance() {
+		getServer().getPluginManager().disablePlugin(this);
+	}
+
+	public void endInstance(Throwable e) {
+		Logger.error(e);
+
 		getServer().getPluginManager().disablePlugin(this);
 	}
 }

@@ -157,9 +157,9 @@ public class WarSubCmd extends SubCommandBuilder {
 					if (p.isOnline()) {
 						Player player1 = (Player) p;
 
-                        player1.playSound(player1.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
+						player1.playSound(player1.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
 
-                        for (String string : listString) {
+						for (String string : listString) {
 							player1.sendMessage(ChatColorTranslator.translate(Formatters.replace(string, replacements)));
 						}
 					}
