@@ -16,138 +16,106 @@ import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class PlayerInputSession implements Listener {
-	private static final Map<UUID, PlayerInputSession> activeInputs = new HashMap<>();
-	private static final HashMap<UUID, BukkitTask> tasks = new HashMap<>();
+
+	/* ---------- static state ---------- */
+	private static final Map<UUID, PlayerInputSession> SESSIONS = new ConcurrentHashMap<>();
+	private static final Map<UUID, BukkitTask> TIMERS = new ConcurrentHashMap<>();
+
+	/* ---------- instance fields ---------- */
+	private final Homestead plugin;
 	private final Player player;
 	private final BiConsumer<Player, String> callback;
 	private final Function<String, Boolean> validator;
 	private final Consumer<Player> onCancel;
+	private final String prompt;          // cached translated message
+	private final BukkitTask repeatTask;  // action-bar refresher
+	private final BukkitTask timeoutTask; // auto-remove after 60 s
 
-	public PlayerInputSession(Homestead plugin, Player player,
+	/* ---------- constructor ---------- */
+	public PlayerInputSession(Homestead plugin,
+							  Player player,
 							  BiConsumer<Player, String> callback,
-							  Function<String, Boolean> validator, Consumer<Player> onCancel, int messagePath) {
+							  Function<String, Boolean> validator,
+							  Consumer<Player> onCancel,
+							  int messagePath) {
+
+		this.plugin = plugin;
 		this.player = player;
 		this.callback = callback;
 		this.validator = validator;
 		this.onCancel = onCancel;
 
-		if (!activeInputs.containsKey(player.getUniqueId())) {
-			Bukkit.getPluginManager().registerEvents(this, plugin);
+		String key = String.valueOf(messagePath);
+		this.prompt = ChatColorTranslator.translate(Homestead.language.get(key));
 
-			activeInputs.put(player.getUniqueId(), this);
+		PlayerInputSession old = SESSIONS.put(player.getUniqueId(), this);
+		if (old != null) old.internalDestroy();
 
-			sendActionBarMessage(player, messagePath);
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 
-			Homestead.getInstance().runAsyncTaskLater(() -> {
-				if (activeInputs.containsKey(player.getUniqueId())) {
-					destroy(player);
-				}
-			}, 60);
-		}
-	}
+		repeatTask = plugin.runAsyncTimerTask(() -> {
+			player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+					new TextComponent(prompt));
+		}, 1);
 
-	public static void cancelTask(BukkitTask task, Player player) {
-		if (task != null) {
-			tasks.remove(player.getUniqueId());
-
-			task.cancel();
-			task = null;
-		}
-	}
-
-	public static void cancelTask(Player player) {
-		BukkitTask task = tasks.get(player.getUniqueId());
-
-		if (task != null) {
-			tasks.remove(player.getUniqueId());
-
-			task.cancel();
-			task = null;
-		}
+		timeoutTask = plugin.runAsyncTaskLater(this::internalDestroy, 60);
 	}
 
 	public static boolean isWaitingForInput(Player player) {
-		return activeInputs.containsKey(player.getUniqueId());
+		return SESSIONS.containsKey(player.getUniqueId());
 	}
 
-	public void destroy(Player player) {
-		HandlerList.unregisterAll(activeInputs.get(player.getUniqueId()));
+	/* ---------- internal cleanup ---------- */
+	private void internalDestroy() {
+		SESSIONS.remove(player.getUniqueId(), this);
+		HandlerList.unregisterAll(this);
+		if (repeatTask != null) repeatTask.cancel();
+		if (timeoutTask != null) timeoutTask.cancel();
+	}
 
-		activeInputs.remove(player.getUniqueId());
+	/* ---------- event handlers ---------- */
+	@EventHandler
+	public void onChat(AsyncPlayerChatEvent e) {
+		if (!e.getPlayer().equals(player)) return;
+		e.setCancelled(true);
 
-		cancelTask(player);
+		String msg = e.getMessage();
+		if (msg.equalsIgnoreCase("cancel")) {
+
+			plugin.runSyncTask(() -> {
+				onCancel.accept(player);
+				internalDestroy();
+			});
+
+			return;
+		}
+
+		if (validator.apply(msg)) {
+			plugin.runSyncTask(() -> {
+				callback.accept(player, msg);
+				internalDestroy();
+			});
+		}
 	}
 
 	@EventHandler
-	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-		if (!isWaitingForInput(player)) {
-			return;
-		}
-
-		event.setCancelled(true);
-	}
-
-	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-
-		if (isWaitingForInput(player)) {
-			destroy(player);
+	public void onCommand(PlayerCommandPreprocessEvent e) {
+		if (e.getPlayer().equals(player) && SESSIONS.containsKey(player.getUniqueId())) {
+			e.setCancelled(true);
 		}
 	}
 
 	@EventHandler
-	public void onPlayerChat(AsyncPlayerChatEvent event) {
-		if (!event.getPlayer().equals(player)) {
-			return;
+	public void onQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().equals(player)) {
+			internalDestroy();
 		}
-
-		if (!isWaitingForInput(player)) {
-			return;
-		}
-
-		event.setCancelled(true);
-
-		String message = event.getMessage();
-
-		if (message.equalsIgnoreCase("cancel")) {
-			this.onCancel.accept(player);
-
-			destroy(player);
-
-			return;
-		}
-
-		boolean response = validator.apply(message);
-
-		if (response) {
-			callback.accept(player, message);
-
-			destroy(player);
-		}
-	}
-
-	private void sendActionBarMessage(Player player, int path) {
-		String message = Homestead.language.get(String.valueOf(path));
-
-		cancelTask(player);
-
-		BukkitTask task = new BukkitRunnable() {
-			@Override
-			public void run() {
-				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-						new TextComponent(ChatColorTranslator
-								.translate(message)));
-			}
-		}.runTaskTimer(Homestead.getInstance(), 0L, 20L);
-
-		tasks.put(player.getUniqueId(), task);
 	}
 }
