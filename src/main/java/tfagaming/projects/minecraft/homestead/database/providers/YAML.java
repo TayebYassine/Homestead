@@ -1,10 +1,14 @@
 package tfagaming.projects.minecraft.homestead.database.providers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
@@ -17,6 +21,7 @@ import java.util.stream.Collectors;
 public class YAML {
 	private final File regionsFolder;
 	private final File warsFolder;
+	private final File subAreasFolder;
 
 	public YAML(File dataFolder) throws IOException {
 		this.regionsFolder = new File(dataFolder, "regions");
@@ -30,6 +35,13 @@ public class YAML {
 		if (!warsFolder.exists()) {
 			if (!warsFolder.mkdirs()) {
 				throw new IOException("Unable to create wars directory");
+			}
+		}
+
+		this.subAreasFolder = new File(dataFolder, "subareas");
+		if (!subAreasFolder.exists()) {
+			if (!subAreasFolder.mkdirs()) {
+				throw new IOException("Unable to create subareas directory");
 			}
 		}
 
@@ -182,6 +194,51 @@ public class YAML {
 		}
 
 		Logger.info("Imported " + importedCount + " wars.");
+	}
+
+	public void importSubAreas() {
+		File[] files = subAreasFolder.listFiles((dir, name) -> name.startsWith("subarea_") && name.endsWith(".yml"));
+		if (files == null || files.length == 0) {
+			Logger.info("No sub-area files found to import.");
+			return;
+		}
+
+		Homestead.subAreasCache.clear();
+		int imported = 0;
+
+		for (File file : files) {
+			try {
+				YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+
+				UUID id       = UUID.fromString(Objects.requireNonNull(cfg.getString("id")));
+				UUID regionId = UUID.fromString(Objects.requireNonNull(cfg.getString("regionId")));
+				String name   = cfg.getString("name");
+
+				World world = Bukkit.getWorld(Objects.requireNonNull(cfg.getString("worldName")));
+				if (world == null) continue;
+
+				Block point1 = SubArea.parseBlockLocation(world, Objects.requireNonNull(cfg.getString("point1")));
+				Block point2 = SubArea.parseBlockLocation(world, Objects.requireNonNull(cfg.getString("point2")));
+
+				List<SerializableMember> members = cfg.getStringList("members").stream()
+						.map(SerializableMember::fromString)
+						.collect(Collectors.toList());
+
+				long flags     = cfg.getLong("flags");
+				long createdAt = cfg.getLong("createdAt");
+
+				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
+						point1, point2, members, flags, createdAt);
+
+				Homestead.subAreasCache.putOrUpdate(subArea);
+				imported++;
+			} catch (Exception e) {
+				Homestead.getInstance().endInstance(e);
+				return;
+			}
+		}
+
+		Logger.info("Imported " + imported + " sub-areas.");
 	}
 
 	public void exportRegions() {
@@ -339,6 +396,58 @@ public class YAML {
 		if (Homestead.config.isDebugEnabled()) {
 			Logger.info(
 					"Exported " + savedCount + " wars and deleted " + deletedCount + " wars.");
+		}
+	}
+
+	public void exportSubAreas() {
+		int saved = 0, deleted = 0;
+
+		Set<UUID> existingFiles = new HashSet<>();
+		File[] files = subAreasFolder.listFiles((dir, name) -> name.startsWith("subarea_") && name.endsWith(".yml"));
+		if (files != null) {
+			for (File file : files) {
+				try {
+					existingFiles.add(UUID.fromString(file.getName().replace("subarea_", "").replace(".yml", "")));
+				} catch (IllegalArgumentException ignored) {}
+			}
+		}
+
+		Set<UUID> cacheIds = new HashSet<>();
+		for (SubArea sub : Homestead.subAreasCache.getAll()) {
+			try {
+				UUID id = sub.id;
+				cacheIds.add(id);
+
+				YamlConfiguration cfg = new YamlConfiguration();
+				cfg.set("id",        id.toString());
+				cfg.set("regionId",  sub.regionId.toString());
+				cfg.set("name",      sub.name);
+				cfg.set("worldName", sub.worldName);
+				cfg.set("point1",    SubArea.toStringBlockLocation(sub.getWorld(), sub.point1));
+				cfg.set("point2",    SubArea.toStringBlockLocation(sub.getWorld(), sub.point2));
+				cfg.set("members",   sub.members.stream()
+						.map(SerializableMember::toString)
+						.collect(Collectors.toList()));
+				cfg.set("flags",     sub.flags);
+				cfg.set("createdAt", sub.createdAt);
+
+				File out = new File(subAreasFolder, "subarea_" + id + ".yml");
+				cfg.save(out);
+				saved++;
+			} catch (IOException e) {
+				Homestead.getInstance().endInstance(e);
+				return;
+			}
+		}
+
+		existingFiles.removeAll(cacheIds);
+		for (UUID deletedId : existingFiles) {
+			File toDelete = new File(subAreasFolder, "subarea_" + deletedId + ".yml");
+			if (toDelete.delete()) deleted++;
+		}
+
+		if (Homestead.config.isDebugEnabled()) {
+			Logger.info("Exported " + saved + " sub-areas and deleted " + deleted + " sub-areas.");
 		}
 	}
 

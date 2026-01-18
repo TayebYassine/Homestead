@@ -117,19 +117,19 @@ public class Database {
 	public void importSubAreas() {
 		switch (provider) {
 			case PostgreSQL:
-				//postgreSQL.importWars();
+				postgreSQL.importSubAreas();
 				break;
 			case MariaDB:
-				//mariaDB.importWars();
+				mariaDB.importSubAreas();
 				break;
 			case MySQL:
-				//mySQL.importWars();
+				mySQL.importSubAreas();
 				break;
 			case SQLite:
 				sqLite.importSubAreas();
 				break;
 			case YAML:
-				//yaml.importWars();
+				yaml.importSubAreas();
 				break;
 			default:
 				break;
@@ -183,19 +183,19 @@ public class Database {
 	public void exportSubAreas() {
 		switch (provider) {
 			case PostgreSQL:
-				//postgreSQL.exportWars();
+				postgreSQL.exportSubAreas();
 				break;
 			case MariaDB:
-				//mariaDB.exportWars();
+				mariaDB.exportSubAreas();
 				break;
 			case MySQL:
-				//mySQL.exportWars();
+				mySQL.exportSubAreas();
 				break;
 			case SQLite:
 				sqLite.exportSubAreas();
 				break;
 			case YAML:
-				//yaml.exportWars();
+				yaml.exportWars();
 				break;
 			default:
 				break;

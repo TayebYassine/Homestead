@@ -1,9 +1,13 @@
 package tfagaming.projects.minecraft.homestead.database.providers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
@@ -70,9 +74,24 @@ public class PostgreSQL {
 				"started_at BIGINT NOT NULL" +
 				")";
 
+		String sql3 = """
+				CREATE TABLE IF NOT EXISTS %ssubareas (
+				    id         UUID PRIMARY KEY,
+				    region_id  UUID NOT NULL,
+				    name       TEXT NOT NULL,
+				    world_name TEXT NOT NULL,
+				    point1     TEXT NOT NULL,
+				    point2     TEXT NOT NULL,
+				    members    TEXT[] NOT NULL,
+				    flags      BIGINT NOT NULL,
+				    created_at BIGINT NOT NULL
+				)
+				""".formatted(TABLE_PREFIX);
+
 		try (Statement stmt = connection.createStatement()) {
 			stmt.executeUpdate(sql1);
 			stmt.executeUpdate(sql2);
+			stmt.executeUpdate(sql3);
 		}
 	}
 
@@ -206,6 +225,49 @@ public class PostgreSQL {
 
 		Logger.info("Imported " + Homestead.warsCache.size() + " wars.");
 	}
+
+	public void importSubAreas() {
+		final String sql = "SELECT * FROM " + TABLE_PREFIX + "subareas";
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(sql)) {
+
+			Homestead.subAreasCache.clear();
+
+			while (rs.next()) {
+				UUID id = (UUID) rs.getObject("id");
+				UUID regionId = (UUID) rs.getObject("region_id");
+				String name = rs.getString("name");
+
+				World world = Bukkit.getWorld(rs.getString("world_name"));
+
+				if (world == null) {
+					continue;
+				}
+
+				Block point1 = SubArea.parseBlockLocation(world, rs.getString("point1"));
+				Block point2 = SubArea.parseBlockLocation(world, rs.getString("point2"));
+
+				List<SerializableMember> members =
+						Arrays.stream((String[]) rs.getArray("members").getArray())
+								.map(SerializableMember::fromString)
+								.collect(Collectors.toList());
+
+				long flags = rs.getLong("flags");
+				long createdAt = rs.getLong("created_at");
+
+				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
+						point1, point2, members, flags, createdAt);
+
+				Homestead.subAreasCache.putOrUpdate(subArea);
+			}
+		} catch (SQLException e) {
+			Homestead.getInstance().endInstance(e);
+			return;
+		}
+
+		Logger.info("Imported " + Homestead.subAreasCache.size() + " sub-areas from PostgreSQL.");
+	}
+
 
 	public void exportRegions() {
 		Set<UUID> dbRegionIds = new HashSet<>();
@@ -395,6 +457,76 @@ public class PostgreSQL {
 			if (Homestead.config.isDebugEnabled()) {
 				Logger.info("Exported " + cacheWarIds.size() + " wars and deleted " + dbWarIds.size()
 						+ " wars.");
+			}
+		} catch (SQLException e) {
+			Homestead.getInstance().endInstance(e);
+		}
+	}
+
+	public void exportSubAreas() {
+		Set<UUID> dbSubAreaIds = new HashSet<>();
+		final String selectSql = "SELECT id FROM " + TABLE_PREFIX + "subareas";
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(selectSql)) {
+			while (rs.next()) dbSubAreaIds.add((UUID) rs.getObject("id"));
+		} catch (SQLException e) {
+			Homestead.getInstance().endInstance(e);
+			return;
+		}
+
+		final String upsertSql = """
+				INSERT INTO %ssubareas
+				    (id, region_id, name, world_name, point1, point2, members, flags, created_at)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+				ON CONFLICT (id) DO UPDATE SET
+				    region_id  = EXCLUDED.region_id,
+				    name       = EXCLUDED.name,
+				    world_name = EXCLUDED.world_name,
+				    point1     = EXCLUDED.point1,
+				    point2     = EXCLUDED.point2,
+				    members    = EXCLUDED.members,
+				    flags      = EXCLUDED.flags,
+				    created_at = EXCLUDED.created_at
+				""".formatted(TABLE_PREFIX);
+
+		final String deleteSql = "DELETE FROM " + TABLE_PREFIX + "subareas WHERE id = ?";
+
+		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
+			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
+
+			Set<UUID> cacheSubAreaIds = new HashSet<>();
+
+			for (SubArea subArea : Homestead.subAreasCache.getAll()) {
+				UUID subAreaId = subArea.id;
+				cacheSubAreaIds.add(subAreaId);
+
+				String[] membersArray = subArea.members.stream()
+						.map(SerializableMember::toString)
+						.toArray(String[]::new);
+
+				upsertStmt.setObject(1, subAreaId);
+				upsertStmt.setObject(2, subArea.regionId);
+				upsertStmt.setString(3, subArea.name);
+				upsertStmt.setString(4, subArea.worldName);
+				upsertStmt.setString(5, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point1));
+				upsertStmt.setString(6, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point2));
+				upsertStmt.setArray(7, connection.createArrayOf("text", membersArray));
+				upsertStmt.setLong(8, subArea.flags);
+				upsertStmt.setLong(9, subArea.createdAt);
+				upsertStmt.addBatch();
+			}
+			upsertStmt.executeBatch();
+
+			dbSubAreaIds.removeAll(cacheSubAreaIds);
+			for (UUID deletedId : dbSubAreaIds) {
+				deleteStmt.setObject(1, deletedId);
+				deleteStmt.addBatch();
+			}
+			deleteStmt.executeBatch();
+
+			if (Homestead.config.isDebugEnabled()) {
+				Logger.info("Exported " + cacheSubAreaIds.size() + " sub-areas and deleted " +
+						dbSubAreaIds.size() + " sub-areas.");
 			}
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
