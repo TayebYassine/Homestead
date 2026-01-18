@@ -16,7 +16,10 @@ import tfagaming.projects.minecraft.homestead.commands.commands.*;
 import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
 import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
 import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
-import tfagaming.projects.minecraft.homestead.database.*;
+import tfagaming.projects.minecraft.homestead.database.Database;
+import tfagaming.projects.minecraft.homestead.database.RegionsCache;
+import tfagaming.projects.minecraft.homestead.database.SubAreasCache;
+import tfagaming.projects.minecraft.homestead.database.WarsCache;
 import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
 import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
@@ -166,32 +169,9 @@ public class Homestead extends JavaPlugin {
 			return;
 		}
 
-		File claimsFolder = new File(getDataFolder(), "claims");
-		if (claimsFolder.exists() && claimsFolder.isDirectory()) {
-			Logger.warning("Detected \"claims\" folder, importing old regions data...");
-
-			int __a = OldDataLoader.loadRegions();
-
-			Logger.warning("Imported " + __a + " regions, deleting the \"claims\" folder...");
-
-			if (!OldDataLoader.deleteDirectory(claimsFolder)) {
-				for (int i = 0; i < 100; i++) {
-					Logger.error("Unable to delete the \"claims\" folder, please delete it manually.");
-				}
-
-				endInstance();
-
-				return;
-			} else {
-				Logger.warning("The migration was successfully done, welcome to version " + getVersion() + "!");
-
-				database.exportRegions();
-			}
-		} else {
-			database.importRegions();
-			database.importWars();
-			database.importSubAreas();
-		}
+		database.importRegions();
+		database.importWars();
+		database.importSubAreas();
 
 		if (!IntegrationsUtils.isVaultInstalled()) {
 			Logger.error("Unable to start the plugin; \"Vault\" is required. Shutting down plugin instance...");
