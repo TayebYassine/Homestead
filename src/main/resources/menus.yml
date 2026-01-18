@@ -23,6 +23,8 @@ titles:
   21: "Top Regions by Creation Date"
   22: "Top Regions by Player Rating"
   23: "Rewards: &2{region}"
+  24: "Sub-Area Members"
+  25: "Sub-Area Flags (&3{playername}&r)"
 
 buttons:
   0:
@@ -423,8 +425,10 @@ buttons:
     lore:
       - "&7Set flags for global players."
       - ""
+      - "&e&lNote:"
       - "&eRegion members won't have any effect with"
-      - "&ethe sub-area's flags!"
+      - "&ethe sub-area's flags, unless they're a"
+      - "&emember of this sub-area!"
       - ""
       - "&8➥ Left-click to set the flags."
     type: PLAYERHEAD-e8b8c6a46d87cf86a55df214cf84bf45cca25edb9a676e96364dd6a6eea235b3
@@ -603,6 +607,38 @@ buttons:
       - "&a🡫"
       - "&7Unlocked chunks: &6{chunks}"
     type: PAPER
+  68:
+    name: "&9Add Player"
+    lore:
+      - "&7Add a player to this sub-area."
+      - ""
+      - "&8➥ Left-click to add a player."
+    type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
+  69:
+    name: "&3{playername}"
+    lore:
+      - "&7This player is trusted in the region &2{region}&7,"
+      - "&7and a member of the sub-area &3{subarea}&7."
+      - ""
+      - "&8➥ Shift + Left-click to remove the player."
+      - "&8➥ Shift + Right-click to view detailed information."
+      - "&8➥ Left-click to configure player flags for this sub-area."
+    type: PLAYERHEAD-this
+  70:
+    name: "&9Sub-Area Players"
+    lore:
+      - "&7Set flags for players in this sub-area only."
+      - ""
+      - "&e&lNote:"
+      - "&eSub-Area member permissions have more priority"
+      - "&ethan normal region members! You can set specific"
+      - "&eregion member to manage something in the sub-area"
+      - "&ewithout letting the other members to do it."
+      - ""
+      - "&7• Players: &6{subarea-players}"
+      - ""
+      - "&8➥ Left-click to view the players."
+    type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
 
 button-types:
   world:

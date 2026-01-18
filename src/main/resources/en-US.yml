@@ -199,6 +199,13 @@ prefix: "&8[&6Homestead&8]&r"
 166: "{__prefix__} &7Mail sent. Please wait until &3{region-owner} &7sees your mail."
 167: "{__prefix__} &2{region}&7's balance is &c{balance}&7."
 168: "{__prefix__} &eRewards are disabled on this server."
+169: "{__prefix__} &7Flag &6{flag} &7was changed to &e{state} &7for the sub-area member &3{player} &7(Sub-Area: &2{subarea}&7, Region: &2{region}&7)."
+170: "{__prefix__} &cThis player is not a member of the sub-area."
+171: "{__prefix__} &cYou cannot add this player to the sub-area, they must be a member of the region!"
+172: "{__prefix__} &7Added player &3{player} &7to the sub-area &2{subarea}&7."
+173: "{__prefix__} &7Removed player &3{player} &7from the sub-area &2{subarea}&7."
+174: "{__prefix__} &cThe player is already added to the sub-area."
+175: "{__prefix__} &cThe player is already removed or never been added to the sub-area."
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."

@@ -342,17 +342,29 @@ public class RegionCommand extends CommandBuilder {
 			}
 			case "subareas": {
 				if (args.length == 2)
-					suggestions.addAll(List.of("create", "delete", "rename", "flags"));
-				else if (args.length == 3 && !args[1].equalsIgnoreCase("create")) {
+					suggestions.addAll(List.of("create", "delete", "rename", "flags", "players"));
+				else if (args.length == 3 && !args[1].equals("create")) {
 					Region region = TargetRegionSession.getRegion(player);
 
 					if (region != null) {
 						suggestions.addAll(SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).stream()
 								.map(SubArea::getName).toList());
 					}
-				} else if (args.length == 4 && args[1].equals("flags"))
+				} else if (args.length == 4 && args[1].equals("players")) {
+					Region region = TargetRegionSession.getRegion(player);
+
+					if (region != null) {
+						for (SerializableMember member : region.getMembers()) {
+							OfflinePlayer bukkitMember = member.getBukkitOfflinePlayer();
+
+							if (bukkitMember != null) {
+								suggestions.add(bukkitMember.getName());
+							}
+						}
+					}
+				} else if ((args.length == 4 && args[1].equals("flags") || (args.length == 6 && args[1].equals("players") && args[4].equals("flags"))))
 					suggestions.addAll(PlayerFlags.getFlags());
-				else if (args.length == 5)
+				else if ((args.length == 5 && args[1].equals("flags") || (args.length == 7 && args[1].equals("players") && args[4].equals("flags"))))
 					suggestions.addAll(List.of("allow", "deny"));
 				break;
 			}
