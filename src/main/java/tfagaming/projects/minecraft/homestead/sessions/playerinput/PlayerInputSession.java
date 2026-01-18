@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
@@ -24,21 +23,18 @@ import java.util.function.Consumer;
 
 public class PlayerInputSession implements Listener {
 
-	/* ---------- static state ---------- */
 	private static final Map<UUID, PlayerInputSession> SESSIONS = new ConcurrentHashMap<>();
 	private static final Map<UUID, BukkitTask> TIMERS = new ConcurrentHashMap<>();
 
-	/* ---------- instance fields ---------- */
 	private final Homestead plugin;
 	private final Player player;
 	private final BiConsumer<Player, String> callback;
 	private final Function<String, Boolean> validator;
 	private final Consumer<Player> onCancel;
-	private final String prompt;          // cached translated message
-	private final BukkitTask repeatTask;  // action-bar refresher
-	private final BukkitTask timeoutTask; // auto-remove after 60 s
+	private final String prompt;
+	private final BukkitTask repeatTask;
+	private final BukkitTask timeoutTask;
 
-	/* ---------- constructor ---------- */
 	public PlayerInputSession(Homestead plugin,
 							  Player player,
 							  BiConsumer<Player, String> callback,
@@ -72,7 +68,6 @@ public class PlayerInputSession implements Listener {
 		return SESSIONS.containsKey(player.getUniqueId());
 	}
 
-	/* ---------- internal cleanup ---------- */
 	private void internalDestroy() {
 		SESSIONS.remove(player.getUniqueId(), this);
 		HandlerList.unregisterAll(this);
@@ -80,7 +75,6 @@ public class PlayerInputSession implements Listener {
 		if (timeoutTask != null) timeoutTask.cancel();
 	}
 
-	/* ---------- event handlers ---------- */
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent e) {
 		if (!e.getPlayer().equals(player)) return;

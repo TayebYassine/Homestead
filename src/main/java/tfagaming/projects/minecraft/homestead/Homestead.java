@@ -16,10 +16,7 @@ import tfagaming.projects.minecraft.homestead.commands.commands.*;
 import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
 import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
 import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
-import tfagaming.projects.minecraft.homestead.database.Database;
-import tfagaming.projects.minecraft.homestead.database.OldDataLoader;
-import tfagaming.projects.minecraft.homestead.database.RegionsCache;
-import tfagaming.projects.minecraft.homestead.database.WarsCache;
+import tfagaming.projects.minecraft.homestead.database.*;
 import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
 import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
@@ -44,10 +41,13 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class Homestead extends JavaPlugin {
-	private final static String version = "4.3.1";
+	private final static String VERSION = "5.0.0.0-26w03a";
+	private final static boolean SNAPSHOT = true;
+
 	public static Database database;
 	public static RegionsCache regionsCache;
 	public static WarsCache warsCache;
+	public static SubAreasCache subAreasCache;
 	public static ConfigLoader config;
 	public static LanguageLoader language;
 	public static MenusConfigLoader menusConfig;
@@ -58,8 +58,10 @@ public class Homestead extends JavaPlugin {
 	private static BukkitTask moveCheckTask;
 
 	public static String getVersion() {
-		return version;
+		return VERSION;
 	}
+
+	public static boolean isSnapshot() { return SNAPSHOT; }
 
 	public static Homestead getInstance() {
 		return instance;
@@ -149,6 +151,7 @@ public class Homestead extends JavaPlugin {
 
 		Homestead.regionsCache = new RegionsCache(config.get("cache-interval"));
 		Homestead.warsCache = new WarsCache(config.get("cache-interval"));
+		Homestead.subAreasCache = new SubAreasCache(config.get("cache-interval"));
 
 		try {
 			Database.Provider provider = Database.parseProviderFromString(config.get("database.provider"));
@@ -187,6 +190,7 @@ public class Homestead extends JavaPlugin {
 		} else {
 			database.importRegions();
 			database.importWars();
+			database.importSubAreas();
 		}
 
 		if (!IntegrationsUtils.isVaultInstalled()) {

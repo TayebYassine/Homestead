@@ -63,6 +63,11 @@ public class Logger {
 		}
 
 		logger.info(lineSplitter.toString());
+
+		if (Homestead.isSnapshot()) {
+			Logger.warning("This Homestead version is a snapshot! Bugs and exploits may be present in this JAR file.");
+			Logger.warning("If you're not a developer or a contributor of Homestead, we recommend you use this JAR file for development, not for production!");
+		}
 	}
 
 	public static class Colors {

@@ -114,6 +114,28 @@ public class Database {
 		}
 	}
 
+	public void importSubAreas() {
+		switch (provider) {
+			case PostgreSQL:
+				//postgreSQL.importWars();
+				break;
+			case MariaDB:
+				//mariaDB.importWars();
+				break;
+			case MySQL:
+				//mySQL.importWars();
+				break;
+			case SQLite:
+				sqLite.importSubAreas();
+				break;
+			case YAML:
+				//yaml.importWars();
+				break;
+			default:
+				break;
+		}
+	}
+
 	public void exportRegions() {
 		switch (provider) {
 			case PostgreSQL:
@@ -152,6 +174,28 @@ public class Database {
 				break;
 			case YAML:
 				yaml.exportWars();
+				break;
+			default:
+				break;
+		}
+	}
+
+	public void exportSubAreas() {
+		switch (provider) {
+			case PostgreSQL:
+				//postgreSQL.exportWars();
+				break;
+			case MariaDB:
+				//mariaDB.exportWars();
+				break;
+			case MySQL:
+				//mySQL.exportWars();
+				break;
+			case SQLite:
+				sqLite.exportSubAreas();
+				break;
+			case YAML:
+				//yaml.exportWars();
 				break;
 			default:
 				break;
