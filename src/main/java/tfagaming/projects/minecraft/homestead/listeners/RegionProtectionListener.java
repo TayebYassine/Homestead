@@ -37,8 +37,9 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.*;
@@ -1614,10 +1615,10 @@ public final class RegionProtectionListener implements Listener {
 			assert player != null;
 			if (player.getUniqueId().equals(region.getOwnerId())) return true;
 
-			SerializableSubArea subArea = region.findSubAreaHasLocationInside(location);
+			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(location);
 
 			return subArea != null
-					? PlayerUtils.hasPermissionFlag(region.getUniqueId(), subArea.getId(), player, flag, true)
+					? PlayerUtils.hasPermissionFlag(region.getUniqueId(), subArea.getUniqueId(), player, flag, true)
 					: PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, flag, true);
 		}
 

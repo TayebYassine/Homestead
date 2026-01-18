@@ -5,6 +5,7 @@ import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.integrations.bstats.Metrics;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
@@ -29,13 +30,7 @@ public class bStats {
 			metrics.addCustomChart(new Metrics.SingleLineChart("subareas", new Callable<Integer>() {
 				@Override
 				public Integer call() throws Exception {
-					int subAreas = 0;
-
-					for (Region region : RegionsManager.getAll()) {
-						subAreas += region.getSubAreas().size();
-					}
-
-					return subAreas;
+					return SubAreasManager.getAll().size();
 				}
 			}));
 

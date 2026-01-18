@@ -36,7 +36,6 @@ public class Region {
 	public List<UUID> invitedPlayers = new ArrayList<>();
 	public List<SerializableBannedPlayer> bannedPlayers = new ArrayList<>();
 	public List<SerializableLog> logs = new ArrayList<>();
-	public List<SerializableSubArea> subAreas = new ArrayList<>();
 	public SerializableRent rent;
 	public long upkeepAt;
 	public double taxesAmount;
@@ -679,111 +678,6 @@ public class Region {
 				.orElse(null);
 
 		logs.remove(oldest);
-	}
-
-	// Sub-Areas
-	public List<SerializableSubArea> getSubAreas() {
-		return subAreas;
-	}
-
-	public void setSubAreas(List<SerializableSubArea> subAreas) {
-		this.subAreas = subAreas;
-		updateCache();
-	}
-
-	public SerializableSubArea getSubArea(UUID subAreaId) {
-		for (SerializableSubArea subArea : subAreas) {
-			if (subArea.getId().equals(subAreaId)) {
-				return subArea;
-			}
-		}
-
-		return null;
-	}
-
-	public SerializableSubArea getSubArea(String name) {
-		for (SerializableSubArea subArea : subAreas) {
-			if (subArea.getName().equalsIgnoreCase(name)) {
-				return subArea;
-			}
-		}
-
-		return null;
-	}
-
-	public boolean isSubAreaNameUsed(String name) {
-		for (SerializableSubArea subArea : subAreas) {
-			if (subArea.getName().equalsIgnoreCase(name)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public SerializableSubArea findSubAreaHasBlockInside(Block block) {
-		return findSubAreaHasLocationInside(block.getLocation());
-	}
-
-	public SerializableSubArea findSubAreaHasLocationInside(Location location) {
-		for (SerializableSubArea subArea : subAreas) {
-			if (subArea.isLocationInside(location)) {
-				return subArea;
-			}
-		}
-
-		return null;
-	}
-
-	public void addSubArea(SerializableSubArea subArea) {
-		if (!subAreas.stream().map(SerializableSubArea::getId).toList().contains(subArea.getId())) {
-			subAreas.add(subArea);
-			updateCache();
-		}
-	}
-
-	public void setSubAreaName(UUID subAreaId, String name) {
-		for (int i = 0; i < subAreas.size(); i++) {
-			SerializableSubArea subArea = subAreas.get(i);
-
-			if (subArea.getId().equals(subAreaId)) {
-				subArea.setName(name);
-				subAreas.set(i, subArea);
-
-				updateCache();
-
-				break;
-			}
-		}
-	}
-
-	public void setSubAreaFlags(UUID subAreaId, long flags) {
-		for (int i = 0; i < subAreas.size(); i++) {
-			SerializableSubArea subArea = subAreas.get(i);
-
-			if (subArea.getId().equals(subAreaId)) {
-				subArea.setFlags(flags);
-				subAreas.set(i, subArea);
-
-				updateCache();
-
-				break;
-			}
-		}
-	}
-
-	public void removeSubArea(UUID subAreaId) {
-		for (int i = 0; i < subAreas.size(); i++) {
-			SerializableSubArea subArea = subAreas.get(i);
-
-			if (subArea.getId().equals(subAreaId)) {
-				subAreas.remove(i);
-
-				updateCache();
-
-				break;
-			}
-		}
 	}
 
 	// Rent

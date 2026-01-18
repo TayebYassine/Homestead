@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
@@ -443,11 +444,11 @@ public final class RegionsManager {
 				}
 			}
 
-			for (SerializableSubArea area : region.getSubAreas()) {
+			for (SubArea area : SubAreasManager.getSubAreasOfRegion(region.getUniqueId())) {
 				World world = area.getWorld();
 
 				if (world == null) {
-					region.removeSubArea(area.getId());
+					SubAreasManager.deleteSubArea(area.getUniqueId());
 					updated++;
 				}
 			}

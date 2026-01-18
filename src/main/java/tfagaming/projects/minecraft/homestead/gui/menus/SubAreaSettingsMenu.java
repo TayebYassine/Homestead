@@ -5,9 +5,10 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -15,7 +16,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.HashMap;
 
 public class SubAreaSettingsMenu {
-	public SubAreaSettingsMenu(Player player, Region region, SerializableSubArea subArea) {
+	public SubAreaSettingsMenu(Player player, Region region, SubArea subArea) {
 		Menu gui = new Menu(MenuUtils.getTitle(15).replace("{subarea}", subArea.getName()), 9 * 3);
 
 		HashMap<String, String> replacements = new HashMap<>();
@@ -38,7 +39,7 @@ public class SubAreaSettingsMenu {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				final String oldName = subArea.getName();
 
-				region.setSubAreaName(subArea.getId(), input);
+				subArea.setName(input);
 
 				replacements.put("{oldname}", oldName);
 				replacements.put("{newname}", input);
@@ -64,7 +65,7 @@ public class SubAreaSettingsMenu {
 					return false;
 				}
 
-				if (region.isSubAreaNameUsed(message)) {
+				if (SubAreasManager.isNameUsed(region.getUniqueId(), message)) {
 					PlayerUtils.sendMessage(player, 58);
 					return false;
 				}
@@ -109,7 +110,7 @@ public class SubAreaSettingsMenu {
 				return;
 			}
 
-			region.removeSubArea(subArea.getId());
+			SubAreasManager.deleteSubArea(subArea.getUniqueId());
 
 			PlayerUtils.sendMessage(player, 62, replacements);
 

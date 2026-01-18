@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.players;
 import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
@@ -122,7 +123,7 @@ public class PlayerLimits {
 					return false;
 				}
 
-				int current = region.getSubAreas().size();
+				int current = SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).size();
 				int max = getLimitOfPlayer(player, limit);
 
 				return current >= max;

@@ -3,8 +3,9 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
@@ -13,10 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SubAreasMenu {
-	List<SerializableSubArea> subAreas;
+	List<SubArea> subAreas;
 
 	public SubAreasMenu(Player player, Region region) {
-		subAreas = region.getSubAreas();
+		subAreas = SubAreasManager.getSubAreasOfRegion(region.getUniqueId());
 
 		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(14), 9 * 4,
 				MenuUtils.getNextPageButton(),
@@ -27,7 +28,7 @@ public class SubAreasMenu {
 				return;
 			}
 
-			SerializableSubArea subArea = subAreas.get(context.getIndex());
+			SubArea subArea = subAreas.get(context.getIndex());
 
 			if (context.getEvent().isLeftClick()) {
 				new SubAreaSettingsMenu(player, region, subArea);
@@ -41,7 +42,7 @@ public class SubAreasMenu {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (int i = 0; i < subAreas.size(); i++) {
-			SerializableSubArea subArea = subAreas.get(i);
+			SubArea subArea = subAreas.get(i);
 
 			HashMap<String, String> replacements = new HashMap<>();
 

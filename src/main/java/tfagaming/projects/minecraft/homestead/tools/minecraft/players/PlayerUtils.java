@@ -16,12 +16,13 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits.LimitMethod;
@@ -263,7 +264,11 @@ public class PlayerUtils {
 			return FlagsCalculator.isFlagSet(member.getFlags(), flag);
 		}
 
-		SerializableSubArea subArea = region.getSubArea(subAreaId);
+		SubArea subArea = SubAreasManager.findSubArea(subAreaId);
+
+		if (subArea == null) {
+			return true;
+		}
 
 		return FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
 	}

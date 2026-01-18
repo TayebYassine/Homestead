@@ -1,9 +1,10 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.subareas;
 
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ public class SubAreaUtils {
 			return false;
 		}
 
-		for (SerializableSubArea subArea : region.getSubAreas()) {
+		for (SubArea subArea : SubAreasManager.getSubAreasOfRegion(id)) {
 			if (subArea.isIntersectingOtherSubArea(firstPoint, secondPoint)) {
 				return true;
 			}

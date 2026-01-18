@@ -7,8 +7,9 @@ import tfagaming.projects.minecraft.homestead.borders.BorderBlockRenderer;
 import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 
 public class ChunkBorder {
 	public static BorderType getMethod() {
@@ -41,10 +42,10 @@ public class ChunkBorder {
 
 	public static void show(Player player) {
 		Region region = ChunksManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
-		SerializableSubArea subArea = null;
+		SubArea subArea = null;
 
 		if (region != null) {
-			subArea = region.findSubAreaHasLocationInside(player.getLocation());
+			subArea = SubAreasManager.findSubAreaHasLocationInside(player.getLocation());
 		}
 
 		stop(player);

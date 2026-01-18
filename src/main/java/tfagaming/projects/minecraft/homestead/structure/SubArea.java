@@ -6,10 +6,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
 
 import java.util.ArrayList;
@@ -53,28 +51,60 @@ public class SubArea {
 		this.createdAt = createdAt;
 	}
 
+	public static int getMinX(Block firstPoint, Block secondPoint) {
+		return Math.min(firstPoint.getX(), secondPoint.getX());
+	}
+
 	public static int getMinX(SerializableBlock firstPoint, SerializableBlock secondPoint) {
 		return Math.min(firstPoint.getX(), secondPoint.getX());
+	}
+
+	public static int getMaxX(Block firstPoint, Block secondPoint) {
+		return Math.max(firstPoint.getX(), secondPoint.getX());
 	}
 
 	public static int getMaxX(SerializableBlock firstPoint, SerializableBlock secondPoint) {
 		return Math.max(firstPoint.getX(), secondPoint.getX());
 	}
 
+	public static int getMinY(Block firstPoint, Block secondPoint) {
+		return Math.min(firstPoint.getY(), secondPoint.getY());
+	}
+
 	public static int getMinY(SerializableBlock firstPoint, SerializableBlock secondPoint) {
 		return Math.min(firstPoint.getY(), secondPoint.getY());
+	}
+
+	public static int getMaxY(Block firstPoint, Block secondPoint) {
+		return Math.max(firstPoint.getY(), secondPoint.getY());
 	}
 
 	public static int getMaxY(SerializableBlock firstPoint, SerializableBlock secondPoint) {
 		return Math.max(firstPoint.getY(), secondPoint.getY());
 	}
 
+	public static int getMinZ(Block firstPoint, Block secondPoint) {
+		return Math.min(firstPoint.getZ(), secondPoint.getZ());
+	}
+
 	public static int getMinZ(SerializableBlock firstPoint, SerializableBlock secondPoint) {
 		return Math.min(firstPoint.getZ(), secondPoint.getZ());
 	}
 
+	public static int getMaxZ(Block firstPoint, Block secondPoint) {
+		return Math.max(firstPoint.getZ(), secondPoint.getZ());
+	}
+
 	public static int getMaxZ(SerializableBlock firstPoint, SerializableBlock secondPoint) {
 		return Math.max(firstPoint.getZ(), secondPoint.getZ());
+	}
+
+	public static int getVolume(Block firstPoint, Block secondPoint) {
+		int width = getMaxX(firstPoint, secondPoint) - getMinX(firstPoint, secondPoint) + 1;
+		int height = getMaxY(firstPoint, secondPoint) - getMinY(firstPoint, secondPoint) + 1;
+		int depth = getMaxZ(firstPoint, secondPoint) - getMinZ(firstPoint, secondPoint) + 1;
+
+		return width * height * depth;
 	}
 
 	public static int getVolume(SerializableBlock firstPoint, SerializableBlock secondPoint) {

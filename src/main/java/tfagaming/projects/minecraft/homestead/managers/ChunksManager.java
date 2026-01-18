@@ -8,8 +8,8 @@ import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
 import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 
 import java.util.*;
@@ -112,10 +112,10 @@ public final class ChunksManager {
 
 		region.removeChunk(chunk);
 
-		for (SerializableSubArea subArea : region.getSubAreas()) {
+		for (SubArea subArea : SubAreasManager.getSubAreasOfRegion(id)) {
 			for (Chunk subAreaChunk : ChunkUtils.getChunksInArea(subArea.getFirstPoint(), subArea.getSecondPoint())) {
 				if (ChunkUtils.areEqual(subAreaChunk, chunk)) {
-					region.removeSubArea(subArea.getId());
+					SubAreasManager.deleteSubArea(subArea.getUniqueId());
 					break;
 				}
 			}

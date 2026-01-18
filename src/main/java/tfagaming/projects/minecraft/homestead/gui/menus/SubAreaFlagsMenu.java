@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -19,7 +19,7 @@ import java.util.*;
 public class SubAreaFlagsMenu {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
-	public SubAreaFlagsMenu(Player player, Region region, SerializableSubArea subArea) {
+	public SubAreaFlagsMenu(Player player, Region region, SubArea subArea) {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (String flagString : PlayerFlags.getFlags()) {
@@ -67,7 +67,7 @@ public class SubAreaFlagsMenu {
 					newFlags = FlagsCalculator.addFlag(flags, flag);
 				}
 
-				region.setSubAreaFlags(subArea.getId(), newFlags);
+				subArea.setFlags(newFlags);
 
 				cooldowns.add(player.getUniqueId());
 

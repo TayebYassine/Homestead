@@ -12,10 +12,11 @@ import tfagaming.projects.minecraft.homestead.gui.menus.SubAreasMenu;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener.Selection;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
@@ -98,7 +99,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (region.isSubAreaNameUsed(name)) {
+				if (SubAreasManager.isNameUsed(region.getUniqueId(), name)) {
 					PlayerUtils.sendMessage(player, 58);
 					return true;
 				}
@@ -108,10 +109,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				SerializableSubArea subArea = new SerializableSubArea(region.getUniqueId(), name,
-						firstCorner.getWorld(), firstCorner, secondCorner, region.getPlayerFlags());
-
-				int volume = subArea.getVolume();
+				int volume = SubArea.getVolume(firstCorner, secondCorner);
 				int maxVolume = PlayerLimits.getDefaultLimitValue(player, PlayerLimits.LimitType.MAX_SUBAREA_VOLUME);
 
 				if (volume >= maxVolume) {
@@ -119,11 +117,11 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					replacements.put("{max}", String.valueOf(maxVolume));
 					replacements.put("{volume}", String.valueOf(volume));
 
-					PlayerUtils.sendMessage(player, 117);
+					PlayerUtils.sendMessage(player, 117, replacements);
 					return true;
 				}
 
-				region.addSubArea(subArea);
+				SubAreasManager.createSubArea(region.getUniqueId(), name, firstCorner.getWorld(), firstCorner, secondCorner, region.getPlayerFlags());
 
 				SelectionToolListener.cancelPlayerSession(player);
 
@@ -149,7 +147,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				String name = args[2];
 				String newName = args[3];
 
-				SerializableSubArea subArea = region.getSubArea(name);
+				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
 					PlayerUtils.sendMessage(player, 60);
@@ -166,14 +164,14 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (region.isSubAreaNameUsed(newName)) {
+				if (SubAreasManager.isNameUsed(region.getUniqueId(), newName)) {
 					PlayerUtils.sendMessage(player, 58);
 					return true;
 				}
 
 				final String oldName = subArea.getName();
 
-				region.setSubAreaName(subArea.getId(), newName);
+				subArea.setName(newName);
 
 				Map<String, String> replacements = new HashMap<String, String>();
 				replacements.put("{oldname}", oldName);
@@ -191,14 +189,14 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				String name = args[2];
 
-				SerializableSubArea subArea = region.getSubArea(name);
+				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
 					PlayerUtils.sendMessage(player, 60);
 					return true;
 				}
 
-				region.removeSubArea(subArea.getId());
+				SubAreasManager.deleteSubArea(subArea.getUniqueId());
 
 				Map<String, String> replacements = new HashMap<String, String>();
 				replacements.put("{subarea}", subArea.getName());
@@ -220,7 +218,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				String name = args[2];
 
-				SerializableSubArea subArea = region.getSubArea(name);
+				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
 					PlayerUtils.sendMessage(player, 60);
@@ -268,7 +266,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					newFlags = FlagsCalculator.addFlag(flags, flag);
 				}
 
-				region.setSubAreaFlags(subArea.getId(), newFlags);
+				subArea.setFlags(newFlags);
 
 				Map<String, String> replacements = new HashMap<String, String>();
 				replacements.put("{flag}", flagInput);

@@ -13,11 +13,12 @@ import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionsMenu;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBannedPlayer;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableSubArea;
 import tfagaming.projects.minecraft.homestead.tools.commands.AutoCompleteFilter;
 import tfagaming.projects.minecraft.homestead.tools.java.StringSimilarity;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -346,8 +347,8 @@ public class RegionCommand extends CommandBuilder {
 					Region region = TargetRegionSession.getRegion(player);
 
 					if (region != null) {
-						suggestions.addAll(region.getSubAreas().stream()
-								.map(SerializableSubArea::getName).toList());
+						suggestions.addAll(SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).stream()
+								.map(SubArea::getName).toList());
 					}
 				} else if (args.length == 4 && args[1].equals("flags"))
 					suggestions.addAll(PlayerFlags.getFlags());

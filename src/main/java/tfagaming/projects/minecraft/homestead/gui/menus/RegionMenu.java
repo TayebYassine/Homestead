@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager.RegionSorting;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
@@ -109,7 +110,7 @@ public class RegionMenu {
 		boolean isSubAreasEnabled = Homestead.config.get("sub-areas.enabled");
 
 		replacements.put("{subareas-enabled}", Formatters.getEnabled(isSubAreasEnabled));
-		replacements.put("{region-subareas}", String.valueOf(region.getSubAreas().size()));
+		replacements.put("{region-subareas}", String.valueOf(SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).size()));
 
 		ItemStack subareasButton = MenuUtils.getButton(10, replacements);
 
