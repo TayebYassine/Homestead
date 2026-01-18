@@ -366,6 +366,11 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					}
 
 					case "flags": {
+						if (args.length < 6) {
+							PlayerUtils.sendMessage(player, 0);
+							return true;
+						}
+
 						if (!subArea.isPlayerMember(target)) {
 							PlayerUtils.sendMessage(player, 170);
 							return true;

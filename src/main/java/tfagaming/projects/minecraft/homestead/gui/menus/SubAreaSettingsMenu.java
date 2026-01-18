@@ -80,7 +80,7 @@ public class SubAreaSettingsMenu {
 
 		ItemStack flagsSubAreabutton = MenuUtils.getButton(44, replacements);
 
-		gui.addItem(13, flagsSubAreabutton, (_player, event) -> {
+		gui.addItem(12, flagsSubAreabutton, (_player, event) -> {
 			if (!event.isLeftClick()) {
 				return;
 			}
@@ -91,6 +91,23 @@ public class SubAreaSettingsMenu {
 			}
 
 			new SubAreaFlagsMenu(player, region, subArea);
+		});
+
+		replacements.put("{subarea-players}", String.valueOf(subArea.getMembers().size()));
+
+		ItemStack membersSubAreabutton = MenuUtils.getButton(70, replacements);
+
+		gui.addItem(13, membersSubAreabutton, (_player, event) -> {
+			if (!event.isLeftClick()) {
+				return;
+			}
+
+			if (!player.hasPermission("homestead.region.subareas.flags")) {
+				PlayerUtils.sendMessage(player, 8);
+				return;
+			}
+
+			new SubAreaMembersMenu(player, region, subArea);
 		});
 
 		ItemStack deleteSubAreaButton = MenuUtils.getButton(45, replacements);

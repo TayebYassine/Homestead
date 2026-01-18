@@ -258,26 +258,32 @@ public class PlayerUtils {
 			return true;
 		}
 
-		if (region.isPlayerMember(player)) {
-			SerializableMember member = region.getMember(player);
-
-			return FlagsCalculator.isFlagSet(member.getFlags(), flag);
-		}
-
 		SubArea subArea = SubAreasManager.findSubArea(subAreaId);
 
 		if (subArea == null) {
+			if (region.isPlayerMember(player)) {
+				SerializableMember member = region.getMember(player);
+
+				return FlagsCalculator.isFlagSet(member.getFlags(), flag);
+			}
+
 			return true;
+		}
+
+		if (subArea.isPlayerMember(player)) {
+			SerializableMember member = subArea.getMember(player);
+
+			return FlagsCalculator.isFlagSet(member.getFlags(), flag);
 		}
 
 		return FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
 	}
 
 	private static void sendDenialMessage(Player player, Region region, long flag) {
-		Map<String, String> placeholders = Map.of(
-				"{flag}", PlayerFlags.from(flag),
-				"{region}", region.getName()
-		);
+		Map<String, String> placeholders = new HashMap<>();
+		placeholders.put("{flag}", PlayerFlags.from(flag));
+		placeholders.put("{region}", region.getName());
+
 		PlayerUtils.sendMessage(player, 50, placeholders);
 
 		COOLDOWN.add(player.getUniqueId());
