@@ -96,6 +96,13 @@ public class Homestead extends JavaPlugin {
 					throw new IOException("Unable to create wars directory");
 				}
 			}
+
+			File subAreasFolder = new File(getDataFolder(), "subareas");
+			if (!subAreasFolder.exists()) {
+				if (!subAreasFolder.mkdir()) {
+					throw new IOException("Unable to create subareas directory");
+				}
+			}
 		} catch (IOException | SecurityException e) {
 			endInstance(e);
 			return;
