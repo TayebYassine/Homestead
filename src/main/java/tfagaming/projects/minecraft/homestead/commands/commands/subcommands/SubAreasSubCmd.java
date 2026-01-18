@@ -1,9 +1,11 @@
 package tfagaming.projects.minecraft.homestead.commands.commands.subcommands;
 
 import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
@@ -17,6 +19,7 @@ import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegi
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
@@ -179,7 +182,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				PlayerUtils.sendMessage(player, 61, replacements);
 
-				break;
+				return true;
 			}
 			case "delete": {
 				if (!player.hasPermission("homestead.region.subareas.delete")) {
@@ -203,7 +206,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				PlayerUtils.sendMessage(player, 62, replacements);
 
-				break;
+				return true;
 			}
 			case "flags": {
 				if (!player.hasPermission("homestead.region.subareas.flags")) {
@@ -276,11 +279,165 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				PlayerUtils.sendMessage(player, 63, replacements);
 
-				break;
+				return true;
 			}
-			default:
+			case "players": {
+				if (!player.hasPermission("homestead.region.subareas.players")) {
+					PlayerUtils.sendMessage(player, 8);
+					return true;
+				}
+
+				if (args.length < 5) {
+					PlayerUtils.sendMessage(player, 0);
+					return true;
+				}
+
+				String name = args[2];
+
+				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
+
+				if (subArea == null) {
+					PlayerUtils.sendMessage(player, 60);
+					return true;
+				}
+
+				String playerName = args[3];
+
+				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
+
+				if (target == null) {
+					Map<String, String> replacements = new HashMap<String, String>();
+					replacements.put("{playername}", playerName);
+
+					PlayerUtils.sendMessage(player, 29, replacements);
+					return true;
+				}
+
+				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+						RegionControlFlags.MANAGE_SUBAREAS)) {
+					return true;
+				}
+
+				String action = args[4];
+
+				switch (action.toLowerCase()) {
+					case "add": {
+						if (target.getUniqueId().equals(region.getOwnerId())) {
+							PlayerUtils.sendMessage(player, 30);
+							return true;
+						}
+
+						if (!region.isPlayerMember(target)) {
+							PlayerUtils.sendMessage(player, 171);
+							return true;
+						}
+
+						if (subArea.isPlayerMember(target)) {
+							PlayerUtils.sendMessage(player, 174);
+							return true;
+						}
+
+						subArea.addMember(target);
+
+						Map<String, String> replacements = new HashMap<String, String>();
+						replacements.put("{subarea}", subArea.getName());
+						replacements.put("{player}", target.getName());
+
+						PlayerUtils.sendMessage(player, 172, replacements);
+
+						return true;
+					}
+
+					case "remove": {
+						if (!subArea.isPlayerMember(target)) {
+							PlayerUtils.sendMessage(player, 175);
+							return true;
+						}
+
+						subArea.removeMember(target);
+
+						Map<String, String> replacements = new HashMap<String, String>();
+						replacements.put("{subarea}", subArea.getName());
+						replacements.put("{player}", target.getName());
+
+						PlayerUtils.sendMessage(player, 173, replacements);
+
+						return true;
+					}
+
+					case "flags": {
+						if (!subArea.isPlayerMember(target)) {
+							PlayerUtils.sendMessage(player, 170);
+							return true;
+						}
+
+						String flagInput = args[5];
+
+						if (!PlayerFlags.getFlags().contains(flagInput)) {
+							PlayerUtils.sendMessage(player, 41);
+							return true;
+						}
+
+						SerializableMember member = subArea.getMember(target);
+
+						long flags = member.getFlags();
+						long flag = PlayerFlags.valueOf(flagInput);
+
+						boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
+
+						if (args.length > 6) {
+							String flagStateInput = args[6];
+
+							switch (flagStateInput.toLowerCase()) {
+								case "1":
+								case "t":
+								case "true":
+								case "allow":
+									currentState = false;
+									break;
+								case "0":
+								case "f":
+								case "false":
+								case "deny":
+									currentState = true;
+									break;
+								default:
+									break;
+							}
+						}
+
+						long newFlags;
+
+						if (currentState) {
+							newFlags = FlagsCalculator.removeFlag(flags, flag);
+						} else {
+							newFlags = FlagsCalculator.addFlag(flags, flag);
+						}
+
+						subArea.setMemberFlags(member, newFlags);
+
+						Map<String, String> replacements = new HashMap<String, String>();
+						replacements.put("{flag}", flagInput);
+						replacements.put("{state}", currentState ? "Deny" : "Allow");
+						replacements.put("{region}", region.getName());
+						replacements.put("{subarea}", subArea.getName());
+						replacements.put("{player}", target.getName());
+
+						PlayerUtils.sendMessage(player, 169, replacements);
+
+						return true;
+					}
+
+					default: {
+						PlayerUtils.sendMessage(player, 0);
+						return true;
+					}
+				}
+			}
+			default: {
 				PlayerUtils.sendMessage(player, 0);
 				break;
+			}
 		}
 
 		return true;

@@ -152,7 +152,22 @@ public class MojangBrigadier {
 												.then(RequiredArgumentBuilder
 														.argument("state",
 																StringArgumentType
-																		.string()))))))
+																		.string())))))
+						.then(LiteralArgumentBuilder.literal("players")
+								.then(RequiredArgumentBuilder.argument("subarea",
+												StringArgumentType.string())
+										.then(RequiredArgumentBuilder.argument("player", StringArgumentType.string())
+												.then(LiteralArgumentBuilder.literal("add"))
+												.then(LiteralArgumentBuilder.literal("remove"))
+												.then(LiteralArgumentBuilder.literal("flags")
+														.then(RequiredArgumentBuilder.argument(
+																		"flag",
+																		StringArgumentType
+																				.string())
+																.then(RequiredArgumentBuilder
+																		.argument("state",
+																				StringArgumentType
+																						.string()))))))))
 				.then(LiteralArgumentBuilder.literal("trust")
 						.then(RequiredArgumentBuilder.argument("player",
 								StringArgumentType.string())))
