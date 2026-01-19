@@ -195,7 +195,7 @@ public class Database {
 				sqLite.exportSubAreas();
 				break;
 			case YAML:
-				yaml.exportWars();
+				yaml.exportSubAreas();
 				break;
 			default:
 				break;

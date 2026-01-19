@@ -49,6 +49,7 @@ public class ExportSubCmd extends SubCommandBuilder {
 
 			instance.exportRegions();
 			instance.exportWars();
+			instance.exportSubAreas();
 
 			Map<String, String> replacements = new HashMap<>();
 			replacements.put("{regions}", String.valueOf(Homestead.regionsCache.getAll().size()));
