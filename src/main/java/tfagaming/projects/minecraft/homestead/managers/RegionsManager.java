@@ -134,6 +134,10 @@ public final class RegionsManager {
 			return;
 		}
 
+		for (SubArea subArea : SubAreasManager.getSubAreasOfRegion(id)) {
+			SubAreasManager.deleteSubArea(subArea.getUniqueId());
+		}
+
 		if (Homestead.config.regenerateChunksWithWorldEdit()) {
 			for (SerializableChunk chunk : region.getChunks()) {
 				Homestead.getInstance().runAsyncTask(() -> {
