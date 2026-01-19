@@ -65,15 +65,23 @@ public class PlayerUtils {
 		String message = Homestead.language.get(path);
 
 		if (message == null) {
-			sender.sendMessage("String not found from the language file: " + path);
+			sender.sendMessage("STRING MISS AT " + path);
 			return;
 		}
 
-		replacements.put("{__prefix__}", Homestead.config.getPrefix());
+		if (sender instanceof Player) {
+			replacements.put("{__prefix__}", Homestead.config.getPrefix());
 
-		message = Formatters.replace(message, replacements);
+			message = Formatters.replace(message, replacements);
 
-		sender.sendMessage(ChatColorTranslator.translate(message));
+			sender.sendMessage(ChatColorTranslator.translate(message));
+		} else {
+			replacements.put("{__prefix__}", Homestead.config.getPrefix());
+
+			message = Formatters.replace(message, replacements);
+
+			sender.sendMessage(ChatColorTranslator.removeColor(message, true));
+		}
 	}
 
 	public static void sendMessage(CommandSender sender, String path) {

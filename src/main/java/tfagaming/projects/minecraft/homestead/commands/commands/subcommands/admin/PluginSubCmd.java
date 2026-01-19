@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -25,6 +26,7 @@ public class PluginSubCmd extends SubCommandBuilder {
 			replacements.put("{plugin-version}", Homestead.getVersion());
 			replacements.put("{regions}", String.valueOf(RegionsManager.getAll().size()));
 			replacements.put("{wars}", String.valueOf(WarsManager.getAll().size()));
+			replacements.put("{subareas}", String.valueOf(SubAreasManager.getAll().size()));
 			replacements.put("{provider}", Homestead.database.getSelectedProvider());
 			replacements.put("{avg-response-db}", String.valueOf(Homestead.database.getLatency()));
 			replacements.put("{avg-response-cache}", String.valueOf(Homestead.regionsCache.getLatency()));
@@ -42,9 +44,10 @@ public class PluginSubCmd extends SubCommandBuilder {
 					{"Homestead", "v" + Homestead.getVersion()},
 					{"Regions", RegionsManager.getAll().size()},
 					{"Wars", WarsManager.getAll().size()},
+					{"Sub-Areas", SubAreasManager.getAll().size()},
 					{"Database", Homestead.database.getSelectedProvider()},
-					{"Latency", Homestead.database.getLatency()},
-					{"Latency (cache)", Homestead.regionsCache.getLatency()}
+					{"Latency", Homestead.database.getLatency() + " ms"},
+					{"Latency (cache)", Homestead.regionsCache.getLatency() + " ms"}
 			};
 
 			ListUtils.printTable(headers, data);
