@@ -8,6 +8,7 @@ import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.ChunkCoordinate;
 import me.angeschossen.lands.api.land.Land;
 import me.ryanhamshire.GriefPrevention.Claim;
+import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.william278.huskclaims.api.BukkitHuskClaimsAPI;
 import net.william278.huskclaims.claim.ClaimWorld;
@@ -114,6 +115,20 @@ public class ImportSubCmd extends SubCommandBuilder {
 					for (Chunk chunk : claim.getChunks()) {
 						if (!ChunksManager.isChunkClaimed(chunk)) {
 							ChunksManager.claimChunk(region.getUniqueId(), chunk);
+						}
+					}
+
+					for (OfflinePlayer player : Homestead.getInstance().getOfflinePlayersSync()) {
+						if (player.getUniqueId().equals(owner.getUniqueId())) {
+							continue;
+						}
+
+						ClaimPermission permission = claim.getPermission(player.getUniqueId().toString());
+
+						if (!region.isPlayerMember(player) && permission != null) {
+							region.addMember(player);
+
+							region.setMemberFlags(region.getMember(player), region.getPlayerFlags());
 						}
 					}
 
