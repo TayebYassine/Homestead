@@ -177,6 +177,10 @@ public class ImportSubCmd extends SubCommandBuilder {
 								continue;
 							}
 
+							if (friend.getUniqueId().equals(owner.getUniqueId())) {
+								continue;
+							}
+
 							if (!region.isPlayerMember(friend)) {
 								region.addMember(friend);
 
@@ -190,12 +194,16 @@ public class ImportSubCmd extends SubCommandBuilder {
 
 						imported++;
 					} else {
-						Region region = RegionsManager.getRegionsOwnedByPlayer(owner).get(0);
+						Region region = RegionsManager.getRegionsOwnedByPlayer(owner).getFirst();
 
 						for (UUID friendUuid : chunk.getFriends()) {
 							OfflinePlayer friend = Homestead.getInstance().getOfflinePlayerSync(friendUuid);
 
 							if (friend == null) {
+								continue;
+							}
+
+							if (friend.getUniqueId().equals(owner.getUniqueId())) {
 								continue;
 							}
 
@@ -295,6 +303,10 @@ public class ImportSubCmd extends SubCommandBuilder {
 						OfflinePlayer trusted = Homestead.getInstance().getOfflinePlayerSync(trustedUuid);
 
 						if (trusted == null) {
+							continue;
+						}
+
+						if (trusted.getUniqueId().equals(owner.getUniqueId())) {
 							continue;
 						}
 
