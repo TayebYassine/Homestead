@@ -4,7 +4,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
+import tfagaming.projects.minecraft.homestead.structure.War;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,5 +123,38 @@ public final class SubAreasManager {
 		}
 
 		return false;
+	}
+
+	public static void cleanStartup() {
+		Logger.warning("Cleaning up sub-areas data...");
+
+		int updated = 0;
+
+		for (SubArea subArea : Homestead.subAreasCache.getAll()) {
+			World world = subArea.getWorld();
+
+			if (world == null) {
+				SubAreasManager.deleteSubArea(subArea.getUniqueId());
+				updated++; continue;
+			}
+
+			if (RegionsManager.findRegion(subArea.getRegionId()) == null) {
+				SubAreasManager.deleteSubArea(subArea.getUniqueId());
+				updated++; continue;
+			}
+
+			for (SerializableMember member : subArea.getMembers()) {
+				if (member.getBukkitOfflinePlayer() == null) {
+					subArea.removeMember(member);
+					updated++;
+				}
+			}
+		}
+
+		if (updated == 0) {
+			Logger.info("No data corruption was found!");
+		} else {
+			Logger.info(updated + " updates have been applied to sub-areas data.");
+		}
 	}
 }

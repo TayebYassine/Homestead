@@ -31,6 +31,7 @@ import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
@@ -206,6 +207,12 @@ public class Homestead extends JavaPlugin {
 			Logger.info("Loaded service provider: Permissions [" + Homestead.vault.getPermissions().getName() + "]");
 		}
 
+		if ((boolean) Homestead.config.get("clean-startup")) {
+			RegionsManager.cleanStartup();
+			WarsManager.cleanStartup();
+			SubAreasManager.cleanStartup();
+		}
+
 		registerCommands();
 		registerEvents();
 		registerBrigadier();
@@ -218,11 +225,6 @@ public class Homestead extends JavaPlugin {
 
 		if (Homestead.config.isDebugEnabled()) {
 			Logger.warning("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
-		}
-
-		if ((boolean) Homestead.config.get("clean-startup")) {
-			RegionsManager.cleanStartup();
-			WarsManager.cleanStartup();
 		}
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - startedAt) + " ms to load.");

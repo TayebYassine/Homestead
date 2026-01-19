@@ -443,15 +443,6 @@ public final class RegionsManager {
 				}
 			}
 
-			for (SubArea area : SubAreasManager.getSubAreasOfRegion(region.getUniqueId())) {
-				World world = area.getWorld();
-
-				if (world == null) {
-					SubAreasManager.deleteSubArea(area.getUniqueId());
-					updated++;
-				}
-			}
-
 			SerializableLocation spawnLoc = region.getLocation();
 
 			if (spawnLoc != null && spawnLoc.getWorld() == null) {

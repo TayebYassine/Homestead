@@ -107,8 +107,7 @@ public final class WarsManager {
 
 		for (War war : Homestead.warsCache.getAll()) {
 			if (war.getRegions().size() < 2) {
-				Homestead.warsCache.remove(war.getUniqueId());
-
+				WarsManager.endWar(war.getUniqueId());
 				updated++;
 			}
 		}
@@ -116,7 +115,7 @@ public final class WarsManager {
 		if (updated == 0) {
 			Logger.info("No data corruption was found!");
 		} else {
-			Logger.info(updated + " updates have been applied to regions data.");
+			Logger.info(updated + " updates have been applied to wars data.");
 		}
 	}
 }
