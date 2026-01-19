@@ -7,6 +7,7 @@ import com.cjburkey.claimchunk.chunk.ChunkPos;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.ChunkCoordinate;
 import me.angeschossen.lands.api.land.Land;
+import me.angeschossen.lands.api.player.TrustedPlayer;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
@@ -287,6 +288,20 @@ public class ImportSubCmd extends SubCommandBuilder {
 							if (!ChunksManager.isChunkClaimed(chunk)) {
 								ChunksManager.claimChunk(region.getUniqueId(), chunk);
 							}
+						}
+					}
+
+					for (UUID trustedUuid : land.getTrustedPlayers()) {
+						OfflinePlayer trusted = Homestead.getInstance().getOfflinePlayerSync(trustedUuid);
+
+						if (trusted == null) {
+							continue;
+						}
+
+						if (!region.isPlayerMember(trusted)) {
+							region.addMember(trusted);
+
+							region.setMemberFlags(region.getMember(trusted), region.getPlayerFlags());
 						}
 					}
 
