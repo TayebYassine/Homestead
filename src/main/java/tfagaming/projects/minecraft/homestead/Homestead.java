@@ -45,7 +45,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class Homestead extends JavaPlugin {
-	private final static String VERSION = "5.0.0.0-26w03a";
+	private final static String VERSION = "5.0.0.0-26w04a";
 	private final static boolean SNAPSHOT = true;
 
 	public static Database database;
