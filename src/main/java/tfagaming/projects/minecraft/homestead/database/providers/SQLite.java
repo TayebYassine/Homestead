@@ -48,6 +48,7 @@ public class SQLite {
 				"rates TEXT NOT NULL, " +
 				"invitedPlayers TEXT NOT NULL, " +
 				"bannedPlayers TEXT NOT NULL, " +
+				"subAreas TEXT NOT NULL, " + // NOTE: Sub-Areas in regions table is completely ignored
 				"logs TEXT NOT NULL, " +
 				"rent TEXT, " +
 				"upkeepAt INTEGER NOT NULL, " +
