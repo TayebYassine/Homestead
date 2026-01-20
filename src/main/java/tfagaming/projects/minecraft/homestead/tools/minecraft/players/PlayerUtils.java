@@ -197,7 +197,7 @@ public class PlayerUtils {
 		War war = WarsManager.findWarByRegionId(regionId);
 
 		if (rent != null && rent.getPlayerId() != null
-				&& rent.getPlayerId().equals(player.getUniqueId()) && flag != PlayerFlags.PVP) {
+				&& rent.getPlayerId().equals(player.getUniqueId()) && !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag)) {
 			response = true;
 		} else if (war != null
 				&& WarsManager.getMembersOfWar(war.getUniqueId()).stream().map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId())
@@ -262,7 +262,7 @@ public class PlayerUtils {
 		if (rent != null
 				&& rent.getPlayerId() != null
 				&& rent.getPlayerId().equals(player.getUniqueId())
-				&& flag != PlayerFlags.PVP) {
+				&& !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag)) {
 			return true;
 		}
 

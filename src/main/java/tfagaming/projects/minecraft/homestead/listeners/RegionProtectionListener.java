@@ -1620,7 +1620,7 @@ public final class RegionProtectionListener implements Listener {
 			if (region == null) return true;
 
 			assert player != null;
-			if (player.getUniqueId().equals(region.getOwnerId())) return true;
+			if (player.getUniqueId().equals(region.getOwnerId()) && !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag)) return true;
 
 			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(location);
 
