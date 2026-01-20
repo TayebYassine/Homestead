@@ -350,6 +350,10 @@ dynamic-maps:
 flags-configuration:
   spawners: true # Spawner mobs ignore passive-entities-spawn / hostile-entities-spawn flags
 
+# Special features
+special-feat:
+  tnt-explodes-only-below-sea-level: false # Allow TNT to explode ONLY below the sea level (Y = 63) AND outside a region?
+
 # Teleport delay
 delayed-teleport:
   enabled: true

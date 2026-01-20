@@ -1063,19 +1063,26 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				}
 			} else {
-				List<Block> allowedBlocks = new ArrayList<Block>();
+				boolean belowSeaOnly = Homestead.config.get("special-feat.tnt-explodes-only-below-sea-level");
+
+				List<Block> allowed = new ArrayList<>();
 
 				for (Block block : event.blockList()) {
-					Location blockLocation = block.getLocation();
-					Chunk blockChunk = blockLocation.getChunk();
+					Chunk blockChunk = block.getChunk();
 
 					if (!ChunksManager.isChunkClaimed(blockChunk)) {
-						allowedBlocks.add(block);
+						if (belowSeaOnly && entity instanceof TNTPrimed) {
+							if (block.getY() <= block.getWorld().getSeaLevel()) {
+								allowed.add(block);
+							}
+						} else {
+							allowed.add(block);
+						}
 					}
 				}
 
 				event.blockList().clear();
-				event.blockList().addAll(allowedBlocks);
+				event.blockList().addAll(allowed);
 			}
 		}
 	}
