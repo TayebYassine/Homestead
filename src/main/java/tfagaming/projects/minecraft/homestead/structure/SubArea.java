@@ -148,6 +148,11 @@ public class SubArea {
 		return regionId;
 	}
 
+	public void setRegionId(UUID regionId) {
+		this.regionId = regionId;
+		updateCache();
+	}
+
 	public String getName() {
 		return name;
 	}

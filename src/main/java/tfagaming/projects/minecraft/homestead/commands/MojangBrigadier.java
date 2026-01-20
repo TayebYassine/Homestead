@@ -87,6 +87,10 @@ public class MojangBrigadier {
 										StringArgumentType.greedyString()))))
 				.then(LiteralArgumentBuilder.literal("members"))
 				.then(LiteralArgumentBuilder.literal("menu"))
+				.then(LiteralArgumentBuilder.literal("merge")
+						.then(RequiredArgumentBuilder.argument("region",
+								StringArgumentType.string())))
+				.then(LiteralArgumentBuilder.literal("mergeaccept"))
 				.then(LiteralArgumentBuilder.literal("player")
 						.then(RequiredArgumentBuilder.argument("player",
 								StringArgumentType.string())))

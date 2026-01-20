@@ -204,6 +204,33 @@ public final class RegionsManager {
 				Formatters.replace(message, replacements)));
 	}
 
+	public static void mergeRegions(Region from, Region to) {
+		if (from.getUniqueId().equals(to.getUniqueId())) {
+			return;
+		}
+
+		final double bank = from.getBank();
+		final List<SerializableChunk> chunks = from.getChunks();
+		final List<SubArea> subAreas = SubAreasManager.getSubAreasOfRegion(from.getUniqueId());
+		final List<SerializableMember> members = from.getMembers();
+
+		to.addBalanceToBank(bank);
+
+		for (SerializableChunk chunk : chunks) {
+			to.addChunk(chunk);
+		}
+
+		for (SubArea subArea : subAreas) {
+			subArea.setRegionId(to.getUniqueId());
+		}
+
+		for (SerializableMember member : members) {
+			to.addMember(member.getBukkitOfflinePlayer());
+		}
+
+		deleteRegion(from.getUniqueId());
+	}
+
 	/** Collects every unique owner across all regions. */
 	public static List<OfflinePlayer> getAllOwners() {
 		List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();

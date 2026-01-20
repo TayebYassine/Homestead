@@ -159,6 +159,12 @@ public class RegionCommand extends CommandBuilder {
 			case "rewards":
 				new RewardsSubCmd().onExecution(sender, args);
 				break;
+			case "merge":
+				new MergeRegionSubCmd().onExecution(sender, args);
+				break;
+			case "mergeaccept":
+				new MergeAcceptRegionSubCmd().onExecution(sender, args);
+				break;
 			default:
 				String similaritySubCmds = String.join(", ", StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand));
 
@@ -386,6 +392,11 @@ public class RegionCommand extends CommandBuilder {
 					suggestions
 							.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
 				break;
+			case "merge": {
+				if (args.length == 2)
+					suggestions
+							.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+			}
 		}
 
 		return AutoCompleteFilter.filter(suggestions, args);
@@ -395,6 +406,6 @@ public class RegionCommand extends CommandBuilder {
 		return Lists.newArrayList("create", "delete", "set", "rename", "borders", "ban", "unban", "trust", "untrust",
 				"flags", "accept", "deny", "visit", "subareas", "deposit", "withdraw", "menu", "player", "home",
 				"info", "banlist", "members", "claimlist", "help", "logs", "rate", "top", "auto", "kick", "war", "chat",
-				"mail", "balance", "rewards");
+				"mail", "balance", "rewards", "merge", "mergeaccept");
 	}
 }
