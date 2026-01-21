@@ -11,6 +11,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.*;
 
@@ -34,6 +35,10 @@ public final class ChunksManager {
 
 		if (region == null) {
 			return Error.REGION_NOT_FOUND;
+		}
+
+		if (isChunkInDisabledWorld(chunk)) {
+			return Error.CHUNK_IN_DISABLED_WORLD;
 		}
 
 		if (Homestead.config.isAdjacentChunksRuleEnabled() && !region.getChunks().isEmpty() && !hasAdjacentOwnedChunk(region, chunk)) {
@@ -189,12 +194,35 @@ public final class ChunksManager {
 	}
 
 	/**
-	 * Returns whether the chunk's world is disabled.
+	 * Returns true if the chunk's world is on the exact list OR matches any
+	 * configured glob-style pattern (supports * and ?).
 	 * @param chunk The chunk
 	 */
 	public static boolean isChunkInDisabledWorld(Chunk chunk) {
-		List<String> disabledWorlds = Homestead.config.get("disabled-worlds");
-		return disabledWorlds.contains(chunk.getWorld().getName());
+		String worldName = chunk.getWorld().getName();
+
+		List<String> exact = Homestead.config.get("disabled-worlds-exact");
+
+		if (exact.contains(worldName)) {
+			return true;
+		}
+
+		List<String> patterns = Homestead.config.get("disabled-worlds-pattern");
+
+		for (String pat : patterns) {
+			if (!pat.contains("*") && !pat.contains("?")) {
+				if (pat.equals(worldName)) return true;
+				continue;
+			}
+
+			String regex = "\\Q" + pat.replace("*", "\\E.*\\Q")
+					.replace("?", "\\E.\\Q") + "\\E";
+			if (worldName.matches(regex)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -410,6 +438,7 @@ public final class ChunksManager {
 
 	public enum Error {
 		REGION_NOT_FOUND,
+		CHUNK_IN_DISABLED_WORLD,
 		CHUNK_NOT_ADJACENT_TO_REGION,
 		CHUNK_WOULD_SPLIT_REGION
 	}

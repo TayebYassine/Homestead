@@ -1612,6 +1612,8 @@ public final class RegionProtectionListener implements Listener {
 											Chunk chunk,
 											Location location,
 											long flag) {
+			if ((boolean) Homestead.config.get("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk)) return true;
+
 			if (player != null && PlayerUtils.isOperator(player)) return true;
 
 			if (!ChunksManager.isChunkClaimed(chunk)) return true;
@@ -1635,6 +1637,11 @@ public final class RegionProtectionListener implements Listener {
 										 long flag,
 										 Runnable onTrue,
 										 Runnable onFalse) {
+			if ((boolean) Homestead.config.get("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk)) {
+				if (onTrue != null) onTrue.run();
+				return;
+			}
+
 			boolean allowed = hasPermission(player, chunk, location, flag);
 
 			if (allowed && onTrue != null) onTrue.run();
