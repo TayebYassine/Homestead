@@ -214,6 +214,12 @@ prefix: "&8[&6Homestead&8]&r"
 181: "{__prefix__} &7The player &3{player} &7wants to merge their region &2{region} &7to your region &2{targetregion}&7. To accept the request, use: &a/hs mergeaccept"
 182: "{__prefix__} &cNo merge request was sent to this region."
 183: "{__prefix__} &7Successfully merged &2{region} &7to your region."
+184: "{__prefix__} &cInvalid chunk coordinates!"
+185: "{__prefix__} &cThe radius must be a valid integer."
+186: "{__prefix__} &cNo unclaimed chunks found."
+187: "{__prefix__} &7Claimed &6{chunks} &7out of &6{total} &7chunks for the region &2{region}&7."
+188: "{__prefix__} &cUnable to find the world you're currently in!"
+189: "{__prefix__} &cThe radius must be at least 1 or not exceeding 20."
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."

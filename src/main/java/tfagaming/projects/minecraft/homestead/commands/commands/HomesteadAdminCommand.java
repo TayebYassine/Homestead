@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.commands.commands;
 
 import com.google.common.collect.Lists;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.commands.commands.subcommands.admin.*;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
+import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -60,6 +62,9 @@ public class HomesteadAdminCommand extends CommandBuilder {
 				break;
 			case "flagsoverride":
 				new FlagsOverrideSubCmd().onExecution(sender, args);
+				break;
+			case "claim":
+				new ClaimSubCmd().onExecution(sender, args);
 				break;
 			default:
 				String similaritySubCmds = StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand).stream()
@@ -146,12 +151,27 @@ public class HomesteadAdminCommand extends CommandBuilder {
 				}
 				break;
 			}
+			case "claim": {
+				if (args.length == 2)
+					suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+				else if (args.length == 3) {
+					suggestions.add("here");
+					Location loc = player.getLocation();
+					suggestions.add(String.valueOf(loc.getChunk().getX()));
+				} else if (args.length == 4 && !args[2].equalsIgnoreCase("here")) {
+					Location loc = player.getLocation();
+					suggestions.add(String.valueOf(loc.getChunk().getZ()));
+				} else if ((args.length == 4 && args[2].equalsIgnoreCase("here"))
+						|| args.length == 5) {
+					suggestions.addAll(List.of("1", "2", "3", "4", "5"));
+				}
+			}
 		}
 
 		return AutoCompleteFilter.filter(suggestions, args);
 	}
 
 	public List<String> getSubcommands() {
-		return Lists.newArrayList("export", "plugin", "reload", "updates", "import", "flagsoverride");
+		return Lists.newArrayList("export", "plugin", "reload", "updates", "import", "flagsoverride", "claim");
 	}
 }
