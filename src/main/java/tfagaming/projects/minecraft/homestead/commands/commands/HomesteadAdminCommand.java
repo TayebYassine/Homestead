@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.commands.commands.subcommands.admin.*;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
@@ -68,6 +69,9 @@ public class HomesteadAdminCommand extends CommandBuilder {
 				break;
 			case "unclaim":
 				new UnclaimSubCmd().onExecution(sender, args);
+				break;
+			case "transfer":
+				new TransferOwnershipSubCmd().onExecution(sender, args);
 				break;
 			default:
 				String similaritySubCmds = StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand).stream()
@@ -170,12 +174,19 @@ public class HomesteadAdminCommand extends CommandBuilder {
 					suggestions.addAll(List.of("1", "2", "3", "4", "5"));
 				}
 			}
+			case "transfer": {
+				if (args.length == 2)
+					suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+				if (args.length == 3)
+					suggestions.addAll(Homestead.getInstance().getOfflinePlayersSync().stream()
+							.map(OfflinePlayer::getName).toList());
+			}
 		}
 
 		return AutoCompleteFilter.filter(suggestions, args);
 	}
 
 	public List<String> getSubcommands() {
-		return Lists.newArrayList("export", "plugin", "reload", "updates", "import", "flagsoverride", "claim");
+		return Lists.newArrayList("export", "plugin", "reload", "updates", "import", "flagsoverride", "claim", "unclaim", "transfer");
 	}
 }

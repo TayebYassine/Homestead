@@ -281,6 +281,11 @@ public class MojangBrigadier {
 										.then(RequiredArgumentBuilder.argument("z", IntegerArgumentType.integer())
 												.executes(ctx -> 0)
 												.then(RequiredArgumentBuilder.argument("radius", IntegerArgumentType.integer(1, 20)))))))
+				.then(LiteralArgumentBuilder.literal("transfer")
+						.then(RequiredArgumentBuilder.argument("region",
+										StringArgumentType.string())
+								.then(RequiredArgumentBuilder.argument("player",
+										StringArgumentType.string()))))
 				.build();
 
 		PluginCommand homesteadAdminCommand = plugin.getCommand("homesteadadmin");
