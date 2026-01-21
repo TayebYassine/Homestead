@@ -28,17 +28,17 @@ titles:
 
 buttons:
   0:
-    name: "&cBack"
+    name: "&c&lBack"
     lore:
       - "&7Return to the previous menu."
     type: RED_STAINED_GLASS_PANE
   1:
-    name: "&9Previous"
+    name: "&9&lPrevious"
     lore:
       - "&7Go to the previous page."
     type: ARROW
   2:
-    name: "&9Next"
+    name: "&9&lNext"
     lore:
       - "&7Go to the next page."
     type: ARROW
@@ -46,19 +46,19 @@ buttons:
     name: " "
     type: GRAY_STAINED_GLASS_PANE
   4:
-    name: "&2{region} &7(&2{region-displayname}&7)"
+    name: "&#FFB74D&lRegion: &r&2{region} &8(&2{region-displayname}&8)"
     lore:
       - "&7• Owner: &3{region-owner}"
       - "&7• Bank: &c{region-bank}"
       - "&7• Created At: &6{region-createdat}"
       - ""
-      - "&8➥ Shift + Left-click to set as target."
-      - "&8➥ Shift + Right-click to show detailed information."
-      - "&8➥ Left-click to configure."
-      - "&8➥ Right-click to teleport to spawn."
+      - "&#FFB74D&n➥ Shift + Left-click to set as target."
+      - "&#FFB74D&n➥ Shift + Right-click to show detailed information."
+      - "&#FFB74D&n➥ Left-click to configure."
+      - "&#FFB74D&n➥ Right-click to teleport to spawn."
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   5:
-    name: "&2{region} &7(&2{region-displayname}&7)"
+    name: "&#FFB74D&lRegion: &r&2{region} &8(&2{region-displayname}&8)"
     lore:
       - "&7You set this region as targeted region. Any command"
       - "&7that manages a region (&e/claim&7, &e/rg trust&7) will be"
@@ -68,91 +68,91 @@ buttons:
       - "&7• Bank: &c{region-bank}"
       - "&7• Created At: &6{region-createdat}"
       - ""
-      - "&8➥ Shift + Left-click to set as target."
-      - "&8➥ Shift + Right-click to show detailed information."
-      - "&8➥ Left-click to configure."
-      - "&8➥ Right-click to teleport to spawn."
+      - "&#FF9A76&n➥ Shift + Left-click to set as target."
+      - "&#FF9A76&n➥ Shift + Right-click to show detailed information."
+      - "&#FF9A76&n➥ Left-click to configure."
+      - "&#FF9A76&n➥ Right-click to teleport to spawn."
     type: PLAYERHEAD-a79a5c95ee17abfef45c8dc224189964944d560f19a44f19f8a46aef3fee4756
   6:
-    name: "&9Manage Players"
+    name: "&#BA68C8&lManage Players"
     lore:
       - "&7Manage players for this region; Ban, unban,"
       - "&7trust, untrust, invite..."
       - ""
       - "&7• Members count: &6{region-members}"
       - ""
-      - "&8➥ Left-click to manage players."
+      - "&#BA68C8&n➥ Left-click to manage players."
     type: PLAYERHEAD-75ad626181111e55ebfc906a8e7040c66b8efe94f7c07448d5710012d68436c
   7:
-    name: "&9Chunk List"
+    name: "&#64B5F6&lChunk List"
     lore:
       - "&7View the list of claimed chunks."
       - ""
       - "&7• Chunks count: &6{region-chunks}"
       - ""
-      - "&8➥ Left-click to view chunks."
+      - "&#64B5F6&n➥ Left-click to view chunks."
     type: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
   8:
-    name: "&9Manage Flags"
+    name: "&#4FC3F7&lManage Flags"
     lore:
       - "&7Set flags for global players and the environment."
       - ""
       - "&eThe global player flags won't have any effect on members,"
       - "&eyou must set specific flags for each member."
       - ""
-      - "&8➥ Left-click to configure global player flags."
-      - "&8➥ Right-click to configure environment flags."
+      - "&#4FC3F7&n➥ Left-click to configure global player flags."
+      - "&#4FC3F7&n➥ Right-click to configure environment flags."
     type: PLAYERHEAD-e8b8c6a46d87cf86a55df214cf84bf45cca25edb9a676e96364dd6a6eea235b3
   9:
-    name: "&9Miscellaneous Settings"
+    name: "&#81C784&lMiscellaneous Settings"
     lore:
       - "&7Rename, set description or displayname, set spawn..."
       - ""
-      - "&8➥ Left-click to configure miscellaneous settings."
+      - "&#81C784&n➥ Left-click to configure miscellaneous settings."
     type: PLAYERHEAD-ec2ff244dfc9dd3a2cef63112e7502dc6367b0d02132950347b2b479a72366dd
   10:
-    name: "&9Sub-Areas &8({subareas-enabled}&8)"
+    name: "&#FFB74D&lSub-Areas &8({subareas-enabled}&8)"
     lore:
       - "&7Manage sub-areas inside the region."
       - ""
       - "&7• Sub-Areas count: &6{region-subareas}"
       - ""
-      - "&8➥ Left-click to manage sub-areas."
+      - "&#FFB74D&n➥ Left-click to manage sub-areas."
     type: OAK_FENCE
   11:
-    name: "&9Upkeep &8({upkeep-enabled}&8)"
+    name: "&#AED581&lUpkeep &8({upkeep-enabled}&8)"
     lore:
       - "&7• Chunks: &6{region-chunks}"
       - "&7• Payment: &6{upkeep-amount}"
       - "&7• Due In: &6{upkeep-date}"
     type: EMERALD
   12:
-    name: "&9Rent &8({rent-enabled}&8)"
+    name: "&#FF8A65&lRent &8({rent-enabled}&8)"
     lore:
       - "&7• Player: &6{rent-renter}"
       - "&7• Price: &6{rent-price}"
       - "&7• Expires In: &6{rent-until}"
       - ""
-      - "&8➥ Left-click to cancel the lease."
+      - "&#FF8A65&n➥ Left-click to cancel the lease."
     type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
   13:
-    name: "&9Logs"
+    name: "&#9575CD&lLogs"
     lore:
       - "&7View all logs for the region."
       - ""
       - "&7There are &6{region-logs} &7messages (&6{region-logs-unread} &7unread)."
       - ""
-      - "&8➥ Left-click to read and manage the logs."
+      - "&#9575CD&n➥ Left-click to read and manage the logs."
     type: PLAYERHEAD-c2af9b072d19455809dc9d09d9da8bb32f63ad16b015ac772acd9a9f22c77098
   14:
-    name: "&9Leave"
+    name: "&#EF5350&lLeave"
     lore:
       - "&7Quietly leave the region."
       - ""
-      - "&8➥ Left-click to leave this region."
+      - "&#EF5350&n➥ Left-click to leave this region."
     type: OAK_DOOR
   15:
-    name: "&9Information"
+    name: "&#42A5F5&lInformation"
     lore:
       - "&7• Owner: &3{region-owner}"
       - "&7• Bank: &c{region-bank}"
@@ -167,34 +167,33 @@ buttons:
       - "&7• Rank By Rating: &a#{region-rank-rating}"
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   16:
-    name: "&9Weather & Time"
+    name: "&#FFD54F&lWeather & Time"
     lore:
-      - "&7• Weather: &6{region-weather}"
-      - "&7• Time: &6{region-time}"
+      - "&7• Weather: &b{region-weather}"
+      - "&7• Time: &b{region-time}"
       - ""
-      - "&8➥ Left-click to change the weather."
-      - "&8➥ Right-click to change the time."
+      - "&#FFD54F&n➥ Left-click to change the weather."
+      - "&#FFD54F&n➥ Right-click to change the time."
     type: PLAYERHEAD-65f37826161c792d7f6c920b2fa06b88e6845288ab02ad9b65d4bbf5ca2ce1e3
   17:
-    name: "&9Flag: &6{flag}"
+    name: "&#81D4FA&lFlag: &6{flag}"
     lore:
       - "&7{flag-description}"
       - ""
       - "&7• State: {state}"
-      # - "&7• Unlocked: {flag-allowed}"
       - ""
-      - "&8➥ Left-click to change the state."
+      - "&#81D4FA&n➥ Left-click to change the state."
   18:
-    name: "&9Trusted Players"
+    name: "&#4DB6AC&lTrusted Players"
     lore:
       - "&7Untrust or set flags for trusted players."
       - ""
       - "&7• Members: &6{region-members}"
       - ""
-      - "&8➥ Left-click to view the members."
+      - "&#4DB6AC&n➥ Left-click to view the members."
     type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
   19:
-    name: "&9Banned Players"
+    name: "&#E57373&lBanned Players"
     lore:
       - "&7Ban or unban players."
       - ""
@@ -203,19 +202,19 @@ buttons:
       - ""
       - "&7• Banned players: &6{region-banned-players}"
       - ""
-      - "&8➥ Left-click to manage banned players."
+      - "&#E57373&n➥ Left-click to manage banned players."
     type: BARRIER
   20:
-    name: "&9Invited Players"
+    name: "&#FFB74D&lInvited Players"
     lore:
       - "&7Invite or revoke invitation of players."
       - ""
       - "&7• Invited players: &6{region-invited-players}"
       - ""
-      - "&8➥ Left-click to manage invitations."
+      - "&#FFB74D&n➥ Left-click to manage invitations."
     type: WRITABLE_BOOK
   21:
-    name: "&3{playername}"
+    name: "&#81C784&l{playername}"
     lore:
       - "&7The player is currently {player-status}&7."
       - ""
@@ -224,17 +223,17 @@ buttons:
       - "&7• Joined At: &6{player-joinedat}"
     type: PLAYERHEAD-this
   22:
-    name: "&9Owned Regions"
+    name: "&#4DD0E1&lOwned Regions"
     lore:
       - "{player-owned-regions}"
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   23:
-    name: "&9Regions as Member"
+    name: "&#7986CB&lRegions as Member"
     lore:
       - "{player-trusted-regions}"
     type: PLAYERHEAD-ae156eb5affddf208617aab7b430fad9f2c991ec2f38304a0c213f31e76cbbe4
   24:
-    name: "&3{playername}"
+    name: "&#AED581&l{playername}"
     lore:
       - "&7This player is trusted in the region &2{region}&7."
       - ""
@@ -242,13 +241,13 @@ buttons:
       - "&7• Taxes Amount: &c{tax-amount}"
       - "&7• Taxes Due In: &6{taxes-dueon}"
       - ""
-      - "&8➥ Shift + Left-click to remove the player."
-      - "&8➥ Shift + Right-click to view detailed information."
-      - "&8➥ Left-click to configure player flags."
-      - "&8➥ Right-click to configure region control flags."
+      - "&#AED581&n➥ Shift + Left-click to remove the player."
+      - "&#AED581&n➥ Shift + Right-click to view detailed information."
+      - "&#AED581&n➥ Left-click to configure player flags."
+      - "&#AED581&n➥ Right-click to configure region control flags."
     type: PLAYERHEAD-this
   25:
-    name: "&9Region: &2{region}"
+    name: "&#FFB74D&lRegion: &2{region}"
     lore:
       - "&7• Owner: &3{region-owner}"
       - "&7• Created At: &6{region-createdat}"
@@ -262,77 +261,77 @@ buttons:
       - "&7• Rank By Rating: &a#{region-rank-rating}"
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   26:
-    name: "&9Members"
+    name: "&#81C784&lMembers"
     lore:
       - "{region-members}"
     type: PLAYER_HEAD
   27:
-    name: "&3{playername}"
+    name: "&#EF9A9A&l{playername}"
     lore:
       - "&7This player is permanently banned."
       - ""
       - "&7• Banned At: &6{player-bannedat}"
       - "&7• Reason: &f{player-banreason}"
       - ""
-      - "&8➥ Left-click to unban the player."
+      - "&#EF9A9A&n➥ Left-click to unban the player."
     type: PLAYERHEAD-this
   28:
-    name: "&9Ban Player"
+    name: "&#D32F2F&lBan Player"
     lore:
       - "&7Ban a player by its name."
       - ""
-      - "&8➥ Left-click to ban a player."
+      - "&#D32F2F&n➥ Left-click to ban a player."
     type: MACE
   29:
-    name: "&9Invite Player"
+    name: "&#66BB6A&lInvite Player"
     lore:
       - "&7Invite a player to this region."
       - ""
-      - "&8➥ Left-click to invite a player."
+      - "&#66BB6A&n➥ Left-click to invite a player."
     type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
   30:
-    name: "&3{playername}"
+    name: "&#FFF176&l{playername}"
     lore:
       - "&7This player is invited, they need to accept"
       - "&7to join this region."
       - ""
-      - "&8➥ Left-click to revoke the invite."
+      - "&#FFF176&n➥ Left-click to revoke the invite."
     type: WRITABLE_BOOK
   31:
-    name: "&9Purge"
+    name: "&#FF7043&lPurge"
     lore:
       - "&7Revoke all invites."
       - ""
-      - "&8➥ Left-click to purge."
+      - "&#FF7043&n➥ Left-click to purge."
     type: BRUSH
   32:
-    name: "&9Unban All"
+    name: "&#FFAB91&lUnban All"
     lore:
       - "&7Unban all banned players."
       - ""
-      - "&8➥ Left-click to purge the bans."
+      - "&#FFAB91&n➥ Left-click to purge the bans."
     type: BRUSH
   33:
-    name: "&9Chunk #{index}"
+    name: "&#42A5F5&lChunk #{index}"
     lore:
       - "&7This chunk is part of the region &2{region}&7."
       - ""
       - "&7• Claimed At: &6{chunk-claimedat}"
       - "&7• Location: &6{chunk-location}"
       - ""
-      - "&8➥ Left-click to unclaim this chunk."
-      - "&8➥ Right-click to teleport to the chunk."
+      - "&#42A5F5&n➥ Left-click to unclaim this chunk."
+      - "&#42A5F5&n➥ Right-click to teleport to the chunk."
     type: CUSTOM::GETBYWORLD
   34:
-    name: "&9Rename Region"
+    name: "&#FFB74D&lRename Region"
     lore:
       - "&7Rename the region, the current name"
       - "&7is: &2{region}"
       - ""
-      - "&8➥ Left-click to rename this region."
+      - "&#FFB74D&n➥ Left-click to rename this region."
     type: NAME_TAG
   35:
-    name: "&9Set Displayname"
+    name: "&#FFD54F&lSet Displayname"
     lore:
       - "&7Set the displayname of the region, current"
       - "&7one is: &2{region-displayname}"
@@ -341,10 +340,10 @@ buttons:
       - "&eregion, which you can use spaces and any"
       - "&echaracter!"
       - ""
-      - "&8➥ Left-click to set the displayname."
+      - "&#FFD54F&n➥ Left-click to set the displayname."
     type: NAME_TAG
   36:
-    name: "&9Set Description"
+    name: "&#81C784&lSet Description"
     lore:
       - "&7Set the description of the region, current"
       - "&7one is: &r{region-description}"
@@ -352,17 +351,17 @@ buttons:
       - "&7Custom variables:"
       - "&7• &a%player%&7: The player that entered the region"
       - ""
-      - "&8➥ Left-click to set the description."
+      - "&#81C784&n➥ Left-click to set the description."
     type: OAK_SIGN
   37:
-    name: "&9Set Location"
+    name: "&#9575CD&lSet Location"
     lore:
       - "&7Set the region's location to your current position."
       - ""
-      - "&8➥ Left-click to update the location."
+      - "&#9575CD&n➥ Left-click to update the location."
     type: ENDER_PEARL
   38:
-    name: "&9Transfer Ownership"
+    name: "&#FF8A65&lTransfer Ownership"
     lore:
       - "&7Give your region to another player."
       - ""
@@ -372,56 +371,56 @@ buttons:
       - "&cregion again. All the members, chunks, and bank"
       - "&cwill not be modified except the new owner."
       - ""
-      - "&8➥ Left-click to transfer ownership."
+      - "&#FF8A65&n➥ Left-click to transfer ownership."
     type: PLAYER_HEAD
   39:
-    name: "&9Log #{index}"
+    name: "&#64B5F6&lLog #{index}"
     lore:
       - "&7• Author: &3{log-author}"
       - "&7• At: &6{log-sentat}"
       - ""
       - "&7➽ &f{log-message}"
       - ""
-      - "&8➥ Left-click to mark it as read."
-      - "&8➥ Right-click to delete this log."
+      - "&#64B5F6&n➥ Left-click to mark it as read."
+      - "&#64B5F6&n➥ Right-click to delete this log."
     type: BOOK
   40:
-    name: "&9Log #{index} &7(Marked as Read)"
+    name: "&#81C784&lLog #{index} &7(Marked as Read)"
     lore:
       - "&7• Author: &3{log-author}"
       - "&7• At: &6{log-sentat}"
       - ""
       - "&7➽ &f{log-message}"
       - ""
-      - "&8➥ Right-click to delete this log."
+      - "&#81C784&n➥ Right-click to delete this log."
     type: ENCHANTED_BOOK
   41:
-    name: "&9Purge"
+    name: "&#FF7043&lPurge"
     lore:
       - "&7Remove all logs."
       - ""
-      - "&8➥ Left-click to purge."
+      - "&#FF7043&n➥ Left-click to purge."
     type: BRUSH
   42:
-    name: "&2{subarea}"
+    name: "&#FFB74D&l{subarea}"
     lore:
       - "&7This sub-area is inside the region &2{region}&7."
       - ""
       - "&7• Volume: &6{subarea-volume}"
       - "&7• Created At: &6{subarea-createdat}"
       - ""
-      - "&8➥ Left-click to manage the sub-area."
+      - "&#FFB74D&n➥ Left-click to manage the sub-area."
     type: OAK_FENCE
   43:
-    name: "&9Rename Sub-Area"
+    name: "&#FFD54F&lRename Sub-Area"
     lore:
       - "&7Rename the sub-area, the current name"
       - "&7is: &2{subarea}"
       - ""
-      - "&8➥ Left-click to rename this sub-area."
+      - "&#FFD54F&n➥ Left-click to rename this sub-area."
     type: NAME_TAG
   44:
-    name: "&9Flags"
+    name: "&#4FC3F7&lFlags"
     lore:
       - "&7Set flags for global players."
       - ""
@@ -430,64 +429,65 @@ buttons:
       - "&ethe sub-area's flags, unless they're a"
       - "&emember of this sub-area!"
       - ""
-      - "&8➥ Left-click to set the flags."
+      - "&#4FC3F7&n➥ Left-click to set the flags."
     type: PLAYERHEAD-e8b8c6a46d87cf86a55df214cf84bf45cca25edb9a676e96364dd6a6eea235b3
   45:
-    name: "&9Delete"
+    name: "&#E57373&lDelete"
     lore:
       - "&7Delete the sub-area."
       - ""
-      - "&8➥ Left-click to delete the sub-area."
+      - "&#E57373&n➥ Left-click to delete the sub-area."
     type: BARRIER
   46:
-    name: "&9Mark All as Read"
+    name: "&#81C784&lMark All as Read"
     lore:
       - "&7Mark all logs as read."
       - ""
-      - "&8➥ Left-click to mark them."
+      - "&#81C784&n➥ Left-click to mark them."
     type: BOOKSHELF
   47:
-    name: "&2{region} &7(&2{region-displayname}&7)"
+    name: "&#FFD54F&l{region} &#FFD966&l(&#FFF176{region-displayname}&#FFD966&l)"
     lore:
       - "&7• Owner: &3{region-owner}"
-      - "&7• Bank: &c{region-bank}"
       - "&7• Created At: &6{region-createdat}"
+      - "&7• Bank: &c{region-bank}"
+      - "&7• Rating: &r{region-rating}"
       - ""
       - "&8➥ Left-click to visit."
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   48:
-    name: "&c★"
+    name: "&#FCE46D&l★"
     lore:
-      - "&8➥ Left-click to rate."
+      - "&#FCE46D&n➥ Left-click to rate."
     type: RED_STAINED_GLASS
   49:
-    name: "&6★★"
+    name: "&#FFB74D&l★★"
     lore:
-      - "&8➥ Left-click to rate."
+      - "&#FFB74D&n➥ Left-click to rate."
     type: ORANGE_STAINED_GLASS
   50:
-    name: "&e★★★"
+    name: "&#FFF176&l★★★"
     lore:
-      - "&8➥ Left-click to rate."
+      - "&#FFF176&n➥ Left-click to rate."
     type: YELLOW_STAINED_GLASS
   51:
-    name: "&a★★★★"
+    name: "&#AED581&l★★★★"
     lore:
-      - "&8➥ Left-click to rate."
+      - "&#AED581&n➥ Left-click to rate."
     type: LIME_STAINED_GLASS
   52:
-    name: "&2★★★★★"
+    name: "&#81C784&l★★★★★"
     lore:
-      - "&8➥ Left-click to rate."
+      - "&#81C784&n➥ Left-click to rate."
     type: GREEN_STAINED_GLASS
   53:
-    name: "&7You have never rated this region before!"
+    name: "&#E0E0E0&lYou have never rated this region before!"
     type: PAPER
   54:
-    name: "&7You rated this region: &r{player-rate}"
+    name: "&#FFF176&lYou rated this region: &r{player-rate}"
     type: PAPER
   55:
-    name: "&d#{rank} &2{region} &7(&2{region-displayname}&7)"
+    name: "&#CE93D8&l#{rank} &#F8BBD0{region} &#FFD966&l(&#FFF176{region-displayname}&#FFD966&l)"
     lore:
       - "&7• Owner: &3{region-owner}"
       - "&7• Created At: &6{region-createdat}"
@@ -496,10 +496,10 @@ buttons:
       - "&7• Members: &6{region-members}"
       - "&7• Chunks: &6{region-chunks}"
       - ""
-      - "&8➥ Left-click to show detailed information."
+      - "&#CE93D8&n➥ Left-click to show detailed information."
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   56:
-    name: "&9Filter"
+    name: "&#BA68C8&lFilter"
     lore:
       - "&a➤ Bank"
       - "&7➤ Chunks"
@@ -507,10 +507,10 @@ buttons:
       - "&7➤ Oldest"
       - "&7➤ Rating"
       - ""
-      - "&8➥ Left-click or right-click to change the filter."
+      - "&#BA68C8&n➥ Left-click or right-click to change the filter."
     type: HOPPER
   57:
-    name: "&9Filter"
+    name: "&#64B5F6&lFilter"
     lore:
       - "&7➤ Bank"
       - "&a➤ Chunks"
@@ -518,10 +518,10 @@ buttons:
       - "&7➤ Oldest"
       - "&7➤ Rating"
       - ""
-      - "&8➥ Left-click or right-click to change the filter."
+      - "&#64B5F6&n➥ Left-click or right-click to change the filter."
     type: HOPPER
   58:
-    name: "&9Filter"
+    name: "&#4FC3F7&lFilter"
     lore:
       - "&7➤ Bank"
       - "&7➤ Chunks"
@@ -529,10 +529,10 @@ buttons:
       - "&7➤ Oldest"
       - "&7➤ Rating"
       - ""
-      - "&8➥ Left-click or right-click to change the filter."
+      - "&#4FC3F7&n➥ Left-click or right-click to change the filter."
     type: HOPPER
   59:
-    name: "&9Filter"
+    name: "&#81C784&lFilter"
     lore:
       - "&7➤ Bank"
       - "&7➤ Chunks"
@@ -540,10 +540,10 @@ buttons:
       - "&a➤ Oldest"
       - "&7➤ Rating"
       - ""
-      - "&8➥ Left-click or right-click to change the filter."
+      - "&#81C784&n➥ Left-click or right-click to change the filter."
     type: HOPPER
   60:
-    name: "&9Filter"
+    name: "&#FFD54F&lFilter"
     lore:
       - "&7➤ Bank"
       - "&7➤ Chunks"
@@ -551,81 +551,81 @@ buttons:
       - "&7➤ Oldest"
       - "&a➤ Rating"
       - ""
-      - "&8➥ Left-click or right-click to change the filter."
+      - "&#FFD54F&n➥ Left-click or right-click to change the filter."
     type: HOPPER
   61:
-    name: "&9Rating"
+    name: "&#CE93D8&lRating"
     lore:
       - "&7Rate this region based on stars count!"
       - ""
-      - "&8➥ Left-click to rate this region."
+      - "&#CE93D8&n➥ Left-click to rate this region."
     type: NETHER_STAR
   62:
-    name: "&9Show All Regions"
+    name: "&#66BB6A&lShow All Regions"
     lore:
       - "&7Status: &aON"
       - "&aCurrently showing all regions."
       - ""
-      - "&8➥ Left-click to change."
+      - "&#66BB6A&n➥ Left-click to change."
     type: ENDER_EYE
   63:
-    name: "&9Show All Regions"
+    name: "&#FF7043&lShow All Regions"
     lore:
       - "&7Status: &cOFF"
       - "&cCurrently showing your regions."
       - ""
-      - "&8➥ Left-click to change."
+      - "&#FF7043&n➥ Left-click to change."
     type: ENDER_PEARL
   64:
-    name: "&9Delete Region"
+    name: "&#D32F2F&lDelete Region"
     lore:
       - "&c&lWarning:"
       - "&cOnly the owner or an operator can delete this region."
       - "&cThis action is &4irreversible&c."
       - ""
-      - "&8➥ Shift + Right-click to delete."
+      - "&#D32F2F&n➥ Shift + Right-click to delete."
     type: BARRIER
   65:
-    name: "&9Bulk toggle flags"
+    name: "&#FFB74D&lBulk toggle flags"
     lore:
       - "&7Toggle all flags at once!"
       - ""
-      - "&8➥ Left-click to enable all."
-      - "&8➥ Right-click to disable all."
+      - "&#FFB74D&n➥ Left-click to enable all."
+      - "&#FFB74D&n➥ Right-click to disable all."
     type: JIGSAW
   66:
-    name: "&9Rewards by Member"
+    name: "&#AED581&lRewards by Member"
     lore:
       - "&7Invited players: &6{members}"
       - "&a🡫"
       - "&7Unlocked chunks: &6{chunks}"
     type: PAPER
   67:
-    name: "&9Rewards by Playtime"
+    name: "&#81C784&lRewards by Playtime"
     lore:
       - "&7Playtime: &6%playtime_time%" # "%playtime_time%" Requires PAPI for the placeholder to work!
       - "&a🡫"
       - "&7Unlocked chunks: &6{chunks}"
     type: PAPER
   68:
-    name: "&9Add Player"
+    name: "&#66BB6A&lAdd Player"
     lore:
       - "&7Add a player to this sub-area."
       - ""
-      - "&8➥ Left-click to add a player."
+      - "&#66BB6A&n➥ Left-click to add a player."
     type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
   69:
-    name: "&3{playername}"
+    name: "&#C5E1A5&l{playername}"
     lore:
       - "&7This player is trusted in the region &2{region}&7,"
       - "&7and a member of the sub-area &3{subarea}&7."
       - ""
-      - "&8➥ Shift + Left-click to remove the player."
-      - "&8➥ Shift + Right-click to view detailed information."
-      - "&8➥ Left-click to configure player flags for this sub-area."
+      - "&#C5E1A5&n➥ Shift + Left-click to remove the player."
+      - "&#C5E1A5&n➥ Shift + Right-click to view detailed information."
+      - "&#C5E1A5&n➥ Left-click to configure player flags for this sub-area."
     type: PLAYERHEAD-this
   70:
-    name: "&9Sub-Area Players"
+    name: "&#7986CB&lSub-Area Players"
     lore:
       - "&7Set flags for players in this sub-area only."
       - ""
@@ -637,7 +637,7 @@ buttons:
       - ""
       - "&7• Players: &6{subarea-players}"
       - ""
-      - "&8➥ Left-click to view the players."
+      - "&#7986CB&n➥ Left-click to view the players."
     type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
 
 button-types:
