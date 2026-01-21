@@ -66,6 +66,9 @@ public class HomesteadAdminCommand extends CommandBuilder {
 			case "claim":
 				new ClaimSubCmd().onExecution(sender, args);
 				break;
+			case "unclaim":
+				new UnclaimSubCmd().onExecution(sender, args);
+				break;
 			default:
 				String similaritySubCmds = StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand).stream()
 						.collect(Collectors.joining(", "));
@@ -151,6 +154,7 @@ public class HomesteadAdminCommand extends CommandBuilder {
 				}
 				break;
 			}
+			case "unclaim":
 			case "claim": {
 				if (args.length == 2)
 					suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());

@@ -220,6 +220,8 @@ prefix: "&8[&6Homestead&8]&r"
 187: "{__prefix__} &7Claimed &6{chunks} &7out of &6{total} &7chunks for the region &2{region}&7."
 188: "{__prefix__} &cUnable to find the world you're currently in!"
 189: "{__prefix__} &cThe radius must be at least 1 or not exceeding 20."
+190:  "{__prefix__} &cNo claimed chunks by the region were found."
+191: "{__prefix__} &7Unclaimed &6{chunks} &7out of &6{total} &7chunks from the region &2{region}&7."
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."

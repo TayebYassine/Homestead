@@ -16,9 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ClaimSubCmd extends SubCommandBuilder {
-	public ClaimSubCmd() {
-		super("claim");
+public class UnclaimSubCmd extends SubCommandBuilder {
+	public UnclaimSubCmd() {
+		super("unclaim");
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class ClaimSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		List<Chunk> toClaim = new ArrayList<>();
+		List<Chunk> toUnclaim = new ArrayList<>();
 		int minCX = centreChunkX - radius;
 		int maxCX = centreChunkX + radius;
 		int minCZ = centreChunkZ - radius;
@@ -118,30 +118,31 @@ public class ClaimSubCmd extends SubCommandBuilder {
 				}
 
 				Chunk chunk = world.getChunkAt(cx, cz);
+				Region regionOwnsChunk = ChunksManager.getRegionOwnsTheChunk(chunk);
 
-				if (!ChunksManager.isChunkClaimed(chunk)) {
-					toClaim.add(chunk);
+				if (regionOwnsChunk != null && regionOwnsChunk.getUniqueId().equals(region.getUniqueId())) {
+					toUnclaim.add(chunk);
 				}
 			}
 		}
 
-		if (toClaim.isEmpty()) {
-			PlayerUtils.sendMessage(player, 186);
+		if (toUnclaim.isEmpty()) {
+			PlayerUtils.sendMessage(player, 190);
 			return true;
 		}
 
 		int success = 0;
-		for (Chunk chunk : toClaim) {
-			ChunksManager.Error err = ChunksManager.claimChunk(region.getUniqueId(), chunk);
+		for (Chunk chunk : toUnclaim) {
+			ChunksManager.Error err = ChunksManager.forceUnclaimChunk(region.getUniqueId(), chunk);
 			if (err == null) success++;
 		}
 
 		Map<String, String> replacements = new HashMap<>();
 		replacements.put("{region}", region.getName());
 		replacements.put("{chunks}", String.valueOf(success));
-		replacements.put("{total}", String.valueOf(toClaim.size()));
+		replacements.put("{total}", String.valueOf(toUnclaim.size()));
 
-		PlayerUtils.sendMessage(player, 187, replacements);
+		PlayerUtils.sendMessage(player, 191, replacements);
 
 		return true;
 	}

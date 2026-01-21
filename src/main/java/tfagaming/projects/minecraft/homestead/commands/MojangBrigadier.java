@@ -272,6 +272,15 @@ public class MojangBrigadier {
 										.then(RequiredArgumentBuilder.argument("z", IntegerArgumentType.integer())
 												.executes(ctx -> 0)
 												.then(RequiredArgumentBuilder.argument("radius", IntegerArgumentType.integer(1, 20)))))))
+				.then(LiteralArgumentBuilder.literal("unclaim")
+						.then(RequiredArgumentBuilder.argument("region", StringArgumentType.string())
+								.then(LiteralArgumentBuilder.literal("here")
+										.executes(ctx -> 0)
+										.then(RequiredArgumentBuilder.argument("radius", IntegerArgumentType.integer(1, 20))))
+								.then(RequiredArgumentBuilder.argument("x", IntegerArgumentType.integer())
+										.then(RequiredArgumentBuilder.argument("z", IntegerArgumentType.integer())
+												.executes(ctx -> 0)
+												.then(RequiredArgumentBuilder.argument("radius", IntegerArgumentType.integer(1, 20)))))))
 				.build();
 
 		PluginCommand homesteadAdminCommand = plugin.getCommand("homesteadadmin");

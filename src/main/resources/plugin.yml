@@ -226,6 +226,8 @@ permissions:
     default: op
   homestead.commands.homesteadadmin.claim:
     default: op
+  homestead.commands.homesteadadmin.unclaim:
+    default: op
   homestead.commands.homesteadadmin.*:
     default: op
     children:
@@ -236,3 +238,4 @@ permissions:
       homestead.commands.homesteadadmin.updates: true
       homestead.commands.homesteadadmin.flagsoverride: true
       homestead.commands.homesteadadmin.claim: true
+      homestead.commands.homesteadadmin.unclaim: true
