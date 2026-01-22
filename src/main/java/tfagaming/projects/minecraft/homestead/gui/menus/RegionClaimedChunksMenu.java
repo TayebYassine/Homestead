@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.ButtonData;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
@@ -93,6 +94,13 @@ public class RegionClaimedChunksMenu {
 						}
 					}
 				});
+
+		Map<String, String> replacements = new HashMap<>();
+		replacements.put("{max-chunks}", String.valueOf(PlayerLimits.getLimitOfPlayer(region.getOwner(), PlayerLimits.LimitType.CHUNKS_PER_REGION)));
+
+		gui.addActionButton(1, MenuUtils.getButton(73, replacements), (_a, _b) -> {
+
+		});
 
 		gui.open(player, MenuUtils.getEmptySlot());
 	}

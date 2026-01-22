@@ -648,6 +648,22 @@ buttons:
       - ""
       - "&#FF8A65&n➥ Left-click to cancel the lease for this sub-area."
     type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
+  72:
+    name: "&#42A5F5&lInformation"
+    lore:
+      - "&7This region can have &6{max-subareas} &7sub-area!"
+      - "&7Upgrade to higher rank to unlock more."
+      - " "
+      - "&7Check your rewards: &e/hs rewards"
+    type: PAPER
+  73:
+    name: "&#42A5F5&lInformation"
+    lore:
+      - "&7This region can have &6{max-chunks} &7claimed chunks!"
+      - "&7Upgrade to higher rank to unlock more."
+      - " "
+      - "&7Check your rewards: &e/hs rewards"
+    type: PAPER
 
 button-types:
   world:

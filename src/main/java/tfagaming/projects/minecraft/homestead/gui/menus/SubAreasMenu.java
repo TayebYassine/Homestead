@@ -8,10 +8,12 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SubAreasMenu {
 	List<SubArea> subAreas;
@@ -33,6 +35,13 @@ public class SubAreasMenu {
 			if (context.getEvent().isLeftClick()) {
 				new SubAreaSettingsMenu(player, region, subArea);
 			}
+		});
+
+		Map<String, String> replacements = new HashMap<>();
+		replacements.put("{max-subareas}", String.valueOf(PlayerLimits.getLimitOfPlayer(region.getOwner(), PlayerLimits.LimitType.SUBAREAS_PER_REGION)));
+
+		gui.addActionButton(1, MenuUtils.getButton(72, replacements), (_a, _b) -> {
+
 		});
 
 		gui.open(player, MenuUtils.getEmptySlot());
