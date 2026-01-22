@@ -22,6 +22,18 @@ public class PlayerRewards {
 		return region.getMembers().size() * chunksPerMember;
 	}
 
+	public static int getSubAreasByEachMember(OfflinePlayer player) {
+		Region region = TargetRegionSession.getRegion(player);
+
+		if (region == null) {
+			return 0;
+		}
+
+		int subAreasPerMember = Homestead.config.get("rewards.for-each-member.subareas");
+
+		return region.getMembers().size() * subAreasPerMember;
+	}
+
 	public static int getChunksByPlayTime(OfflinePlayer player) {
 		if (!player.hasPlayedBefore() && !player.isOnline()) return 0;
 
@@ -46,6 +58,32 @@ public class PlayerRewards {
 		}
 
 		return maxChunks;
+	}
+
+	public static int getSubAreasByPlayTime(OfflinePlayer player) {
+		if (!player.hasPlayedBefore() && !player.isOnline()) return 0;
+
+		long playerMinutes = player.getStatistic(Statistic.PLAY_ONE_MINUTE) / (20L * 60L);
+
+		List<Map<?, ?>> rewards = Homestead.config.getConfig().getMapList("rewards.by-playtime");
+
+		int maxSubAreas = 0;
+
+		for (Map<?, ?> entry : rewards) {
+			int min = getInt(entry, "minutes");
+			int hrs = getInt(entry, "hours");
+			int days = getInt(entry, "days");
+
+			int subAreas = getInt(entry, "subareas");
+
+			long requiredMinutes = min + hrs * 60L + days * 24L * 60L;
+
+			if (playerMinutes >= requiredMinutes && subAreas > maxSubAreas) {
+				maxSubAreas = subAreas;
+			}
+		}
+
+		return maxSubAreas;
 	}
 
 	private static int getInt(Map<?, ?> map, String key) {

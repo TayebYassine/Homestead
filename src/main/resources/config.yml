@@ -263,24 +263,29 @@ rewards:
 
   for-each-member: # Given to the owner when someone joins.
     chunks: 2 # 0 = disable
+    subareas: 1 # 0 = disable
 
   by-playtime: # Compares highest play-time; keep chunks rising as time rises.
     - minutes: 30
       hours: 0
       days: 0
       chunks: 1
+      subareas: 1
     - minutes: 0
       hours: 1
       days: 0
       chunks: 2
+      subareas: 3
     - minutes: 0
       hours: 3
       days: 0
       chunks: 4
+      subareas: 6
     - minutes: 0
       hours: 0
       days: 1
       chunks: 8
+      subareas: 10
 
 ############################################################
 # +------------------------------------------------------+ #

@@ -18,6 +18,7 @@ public class RewardsMenu {
 		replacements.put("{members}", String.valueOf(region.getMembers().size()));
 
 		replacements.put("{chunks}", String.valueOf(PlayerRewards.getChunksByEachMember(player)));
+		replacements.put("{subareas}", String.valueOf(PlayerRewards.getSubAreasByEachMember(player)));
 		ItemStack membersRewardButton = MenuUtils.getButton(66, replacements);
 
 		gui.addItem(12, membersRewardButton, (_player, event) -> {
@@ -25,6 +26,7 @@ public class RewardsMenu {
 		});
 
 		replacements.put("{chunks}", String.valueOf(PlayerRewards.getChunksByPlayTime(player)));
+		replacements.put("{subareas}", String.valueOf(PlayerRewards.getSubAreasByPlayTime(player)));
 		ItemStack playtimeRewardButton = MenuUtils.getButton(67, replacements);
 
 		gui.addItem(14, playtimeRewardButton, (_player, event) -> {

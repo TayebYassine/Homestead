@@ -79,6 +79,16 @@ public class PlayerLimits {
 			} else {
 				return defChunks;
 			}
+		} else if (Objects.requireNonNull(limit) == LimitType.SUBAREAS_PER_REGION) {
+			int defSubAreas = getDefaultLimitValue(player, limit);
+
+			boolean rewardsEnabled = Homestead.config.get("rewards.enabled");
+
+			if (rewardsEnabled) {
+				return PlayerRewards.getSubAreasByEachMember(player) + PlayerRewards.getSubAreasByPlayTime(player) + defSubAreas;
+			} else {
+				return defSubAreas;
+			}
 		}
 
 		return getDefaultLimitValue(player, limit);
