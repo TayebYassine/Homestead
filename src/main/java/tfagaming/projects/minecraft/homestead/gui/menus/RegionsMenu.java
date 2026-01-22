@@ -101,7 +101,7 @@ public class RegionsMenu {
 						}
 
 						boolean allowed = PlayerUtils.isOperator(_player)
-								|| _player.getUniqueId().equals(region.getOwnerId())
+								|| region.isOwner(player)
 								|| (PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN, true)
 								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true));
 

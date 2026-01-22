@@ -224,6 +224,8 @@ prefix: "&8[&6Homestead&8]&r"
 191: "{__prefix__} &7Unclaimed &6{chunks} &7out of &6{total} &7chunks from the region &2{region}&7."
 192: "{__prefix__} &cThe player already owns the region."
 193: "{__prefix__} &7Changed owner of the region &2{region} &7to the player &3{player}&7."
+194: "{__prefix__} &7Successfully leased the sub-area &2{subarea} &7of the region &2{region}&7. Your contract will end in: &6{rent-end}"
+195: "{__prefix__} &cThe sub-area is not leased."
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."

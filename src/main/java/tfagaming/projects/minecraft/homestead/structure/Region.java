@@ -113,6 +113,14 @@ public class Region {
 		updateCache();
 	}
 
+	public boolean isOwner(UUID playerId) {
+		return ownerId.equals(playerId);
+	}
+
+	public boolean isOwner(OfflinePlayer player) {
+		return ownerId.equals(player.getUniqueId());
+	}
+
 	// Location
 	public SerializableLocation getLocation() {
 		return location;

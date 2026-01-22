@@ -342,7 +342,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				}
 
 				if (!PlayerUtils.isOperator(player)
-						&& !(region.getOwnerId().equals(player.getUniqueId()) || region.isPlayerMember(player))) {
+						&& !(region.isOwner(player) || region.isPlayerMember(player))) {
 					PlayerUtils.sendMessage(player, 10);
 					return true;
 				}

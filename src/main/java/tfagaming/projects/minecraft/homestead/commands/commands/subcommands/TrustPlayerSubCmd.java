@@ -44,6 +44,11 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				RegionControlFlags.TRUST_PLAYERS)) {
+			return true;
+		}
+
 		String targetName = args[1];
 
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
@@ -53,11 +58,6 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			replacements.put("{playername}", targetName);
 
 			PlayerUtils.sendMessage(player, 29, replacements);
-			return true;
-		}
-
-		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.TRUST_PLAYERS)) {
 			return true;
 		}
 
@@ -82,7 +82,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (target.getUniqueId().equals(region.getOwnerId())) {
+		if (region.isOwner(target)) {
 			PlayerUtils.sendMessage(player, 30);
 			return true;
 		}

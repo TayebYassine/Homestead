@@ -51,7 +51,7 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.getOwnerId().equals(target.getUniqueId())) {
+		if (region.isOwner(target.getUniqueId())) {
 			PlayerUtils.sendMessage(sender, 192);
 			return false;
 		}

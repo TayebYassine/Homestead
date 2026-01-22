@@ -32,6 +32,10 @@ import java.util.*;
 public class PlayerUtils {
 	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
 	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
+	private static final Set<Long> RENT_BLACKLIST = Set.of(
+			PlayerFlags.PVP,
+			PlayerFlags.PASSTHROUGH
+	);
 
 	public static double getBalance(OfflinePlayer player) {
 		if (!Homestead.vault.isEconomyReady()) {
@@ -220,14 +224,7 @@ public class PlayerUtils {
 				&& flag != PlayerFlags.TAKE_FALL_DAMAGE
 				&& !COOLDOWN.contains(player.getUniqueId())
 				&& notify) {
-			Map<String, String> replacements = new HashMap<>();
-			replacements.put("{flag}", PlayerFlags.from(flag));
-			replacements.put("{region}", region.getName());
-
-			PlayerUtils.sendMessage(player, 50, replacements);
-
-			COOLDOWN.add(player.getUniqueId());
-			Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()), 3);
+			sendDenialMessage(player, region, flag);
 		}
 
 		return response;
@@ -258,33 +255,62 @@ public class PlayerUtils {
 											   UUID subAreaId,
 											   Player player,
 											   long flag) {
-		SerializableRent rent = region.getRent();
-		if (rent != null
-				&& rent.getPlayerId() != null
-				&& rent.getPlayerId().equals(player.getUniqueId())
-				&& !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag)) {
-			return true;
-		}
+		SubArea subArea = subAreaId != null ? SubAreasManager.findSubArea(subAreaId) : null;
 
-		SubArea subArea = SubAreasManager.findSubArea(subAreaId);
+		if (subArea != null) {
+			SerializableRent subRent = subArea.getRent();
+			if (subRent != null
+					&& subRent.getPlayerId() != null
+					&& subRent.getPlayerId().equals(player.getUniqueId())
+					&& !RENT_BLACKLIST.contains(flag)) {
+				return true;
+			}
 
-		if (subArea == null) {
-			if (region.isPlayerMember(player)) {
-				SerializableMember member = region.getMember(player);
+			if (subArea.isPlayerMember(player)) {
+				SerializableMember member = subArea.getMember(player);
 
 				return FlagsCalculator.isFlagSet(member.getFlags(), flag);
 			}
 
+			return FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
+		}
+
+		War war = WarsManager.findWarByRegionId(region.getUniqueId());
+
+		if (war != null) {
+			List<UUID> warMembers = WarsManager.getMembersOfWar(war.getUniqueId())
+					.stream()
+					.map(OfflinePlayer::getUniqueId)
+					.toList();
+
+			if (warMembers.contains(player.getUniqueId())) {
+				Set<Long> warFlags = Set.of(
+						PlayerFlags.PVP,
+						PlayerFlags.DOORS,
+						PlayerFlags.TRAP_DOORS,
+						PlayerFlags.PASSTHROUGH,
+						PlayerFlags.FENCE_GATES,
+						PlayerFlags.ELYTRA
+				);
+				if (warFlags.contains(flag)) return true;
+			}
+		}
+
+		SerializableRent regionRent = region.getRent();
+
+		if (regionRent != null
+				&& regionRent.getPlayerId() != null
+				&& regionRent.getPlayerId().equals(player.getUniqueId())
+				&& !RENT_BLACKLIST.contains(flag)) {
 			return true;
 		}
 
-		if (subArea.isPlayerMember(player)) {
-			SerializableMember member = subArea.getMember(player);
-
+		if (region.isPlayerMember(player)) {
+			SerializableMember member = region.getMember(player);
 			return FlagsCalculator.isFlagSet(member.getFlags(), flag);
 		}
 
-		return FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
+		return FlagsCalculator.isFlagSet(region.getPlayerFlags(), flag);
 	}
 
 	private static void sendDenialMessage(Player player, Region region, long flag) {
@@ -302,7 +328,7 @@ public class PlayerUtils {
 		Region region = RegionsManager.findRegion(regionId);
 
 		if (region != null) {
-			if (PlayerUtils.isOperator(player) || player.getUniqueId().equals(region.getOwnerId())) {
+			if (PlayerUtils.isOperator(player) || region.isOwner(player)) {
 				return true;
 			}
 

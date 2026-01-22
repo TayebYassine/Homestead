@@ -37,9 +37,7 @@ public class MemberRgControlFlagsMenu {
 				return;
 			}
 
-			boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
-
-			if (!isOwnerOrOperator) {
+			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
 				PlayerUtils.sendMessage(player, 159);
 				return;
 			}

@@ -84,6 +84,7 @@ public class PostgreSQL {
 				    point2     TEXT NOT NULL,
 				    members    TEXT[] NOT NULL,
 				    flags      BIGINT NOT NULL,
+				    rent       TEXT,
 				    created_at BIGINT NOT NULL
 				)
 				""".formatted(TABLE_PREFIX);
@@ -253,10 +254,13 @@ public class PostgreSQL {
 								.collect(Collectors.toList());
 
 				long flags = rs.getLong("flags");
+
+				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
+
 				long createdAt = rs.getLong("created_at");
 
 				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
-						point1, point2, members, flags, createdAt);
+						point1, point2, members, flags, rent, createdAt);
 
 				Homestead.subAreasCache.putOrUpdate(subArea);
 			}
@@ -476,7 +480,7 @@ public class PostgreSQL {
 
 		final String upsertSql = """
 				INSERT INTO %ssubareas
-				    (id, region_id, name, world_name, point1, point2, members, flags, created_at)
+				    (id, region_id, name, world_name, point1, point2, members, flags, rent, created_at)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON CONFLICT (id) DO UPDATE SET
 				    region_id  = EXCLUDED.region_id,
@@ -486,6 +490,7 @@ public class PostgreSQL {
 				    point2     = EXCLUDED.point2,
 				    members    = EXCLUDED.members,
 				    flags      = EXCLUDED.flags,
+				    rent       = EXCLUDED.rent,
 				    created_at = EXCLUDED.created_at
 				""".formatted(TABLE_PREFIX);
 
@@ -512,7 +517,8 @@ public class PostgreSQL {
 				upsertStmt.setString(6, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point2));
 				upsertStmt.setArray(7, connection.createArrayOf("text", membersArray));
 				upsertStmt.setLong(8, subArea.flags);
-				upsertStmt.setLong(9, subArea.createdAt);
+				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);
+				upsertStmt.setLong(10, subArea.createdAt);
 				upsertStmt.addBatch();
 			}
 			upsertStmt.executeBatch();

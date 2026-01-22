@@ -69,7 +69,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (target.getUniqueId().equals(region.getOwnerId())) {
+		if (region.isOwner(target)) {
 			PlayerUtils.sendMessage(player, 30);
 			return true;
 		}

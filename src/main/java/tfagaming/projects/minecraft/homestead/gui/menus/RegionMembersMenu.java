@@ -153,7 +153,7 @@ public class RegionMembersMenu {
 					return false;
 				}
 
-				if (target.getUniqueId().equals(region.getOwnerId())) {
+				if (region.isOwner(target)) {
 					PlayerUtils.sendMessage(player, 30);
 					return false;
 				}

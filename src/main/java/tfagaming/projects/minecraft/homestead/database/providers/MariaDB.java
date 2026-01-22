@@ -89,6 +89,7 @@ public class MariaDB {
 				    point2     TEXT NOT NULL,
 				    members    TEXT NOT NULL,
 				    flags      BIGINT NOT NULL,
+				    rent       TEXT,
 				    created_at BIGINT NOT NULL
 				)
 				""".formatted(TABLE_PREFIX);
@@ -274,10 +275,14 @@ public class MariaDB {
 								: new ArrayList<>();
 
 				long flags = rs.getLong("flags");
+
+				SerializableRent rent = rs.getString("rent") != null ? SerializableRent.fromString(rs.getString("rent"))
+						: null;
+
 				long createdAt = rs.getLong("created_at");
 
 				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
-						point1, point2, members, flags, createdAt);
+						point1, point2, members, flags, rent, createdAt);
 
 				Homestead.subAreasCache.putOrUpdate(subArea);
 			}
@@ -490,8 +495,8 @@ public class MariaDB {
 
 		final String upsertSql = """
 				INSERT INTO `%ssubareas`
-				    (id, region_id, name, world_name, point1, point2, members, flags, created_at)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+				    (id, region_id, name, world_name, point1, point2, members, flags, rent, created_at)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
 				    region_id  = VALUES(region_id),
 				    name       = VALUES(name),
@@ -500,6 +505,7 @@ public class MariaDB {
 				    point2     = VALUES(point2),
 				    members    = VALUES(members),
 				    flags      = VALUES(flags),
+				    rent       = VALUES(rent),
 				    created_at = VALUES(created_at)
 				""".formatted(TABLE_PREFIX);
 
@@ -526,7 +532,8 @@ public class MariaDB {
 				upsertStmt.setString(6, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point2));
 				upsertStmt.setString(7, membersStr);
 				upsertStmt.setLong(8, subArea.flags);
-				upsertStmt.setLong(9, subArea.createdAt);
+				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);
+				upsertStmt.setLong(10, subArea.createdAt);
 				upsertStmt.addBatch();
 			}
 			upsertStmt.executeBatch();

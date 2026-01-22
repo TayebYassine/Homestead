@@ -225,10 +225,15 @@ public class YAML {
 						.collect(Collectors.toList());
 
 				long flags     = cfg.getLong("flags");
+
+				SerializableRent rent = cfg.getString("rent") != null
+						? SerializableRent.fromString(cfg.getString("rent"))
+						: null;
+
 				long createdAt = cfg.getLong("createdAt");
 
 				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
-						point1, point2, members, flags, createdAt);
+						point1, point2, members, flags, rent, createdAt);
 
 				Homestead.subAreasCache.putOrUpdate(subArea);
 				imported++;
@@ -429,6 +434,7 @@ public class YAML {
 						.map(SerializableMember::toString)
 						.collect(Collectors.toList()));
 				cfg.set("flags",     sub.flags);
+				cfg.set("rent", sub.rent != null ? sub.rent.toString() : null);
 				cfg.set("createdAt", sub.createdAt);
 
 				File out = new File(subAreasFolder, "subarea_" + id + ".yml");

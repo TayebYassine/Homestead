@@ -39,6 +39,11 @@ public class MemberPlayerFlagsMenu {
 						return;
 					}
 
+					if (player.getUniqueId().equals(member.getPlayerId())) {
+						PlayerUtils.sendMessage(player, 159);
+						return;
+					}
+
 					int index = context.getIndex();
 
 					// === Bulk toggle item ===

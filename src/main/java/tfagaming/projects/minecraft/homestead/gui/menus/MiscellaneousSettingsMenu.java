@@ -191,7 +191,7 @@ public class MiscellaneousSettingsMenu {
 					PlayerUtils.sendMessage(player, 29, replacements);
 					return false;
 				}
-				if (!PlayerUtils.isOperator(player) && !region.getOwnerId().equals(player.getUniqueId())) {
+				if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
 					PlayerUtils.sendMessage(player, 30);
 					return false;
 				}
@@ -200,7 +200,7 @@ public class MiscellaneousSettingsMenu {
 					PlayerUtils.sendMessage(player, 32, replacements);
 					return false;
 				}
-				if (target.getUniqueId().equals(region.getOwnerId())) {
+				if (region.isOwner(target)) {
 					PlayerUtils.sendMessage(player, 30);
 					return false;
 				}
@@ -213,7 +213,7 @@ public class MiscellaneousSettingsMenu {
 		gui.addItem(22, deleteRegionButton, (_player, event) -> {
 			if (!(event.isRightClick() && event.isShiftClick())) return;
 
-			boolean canDelete = PlayerUtils.isOperator(_player) || region.getOwnerId().equals(_player.getUniqueId());
+			boolean canDelete = PlayerUtils.isOperator(_player) || region.isOwner(_player);
 			if (!canDelete) {
 				PlayerUtils.sendMessage(_player, 159);
 				_player.playSound(_player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);

@@ -46,7 +46,7 @@ public class RegionLogsMenu {
 
 				instance.setItems(getItems(player, region));
 			} else if (context.getEvent().isRightClick()) {
-				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.isOwner(player);
 				if (!isOwnerOrOperator) {
 					PlayerUtils.sendMessage(player, 159);
 					return;
@@ -88,7 +88,7 @@ public class RegionLogsMenu {
 				return;
 			}
 
-			boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+			boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.isOwner(player);
 			if (!isOwnerOrOperator) {
 				PlayerUtils.sendMessage(player, 159);
 				return;

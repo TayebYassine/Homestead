@@ -8,6 +8,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -16,8 +17,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLocation;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
@@ -31,7 +34,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public final class CustomSignsListener implements Listener {
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
 		Player player = event.getPlayer();
 		String[] lines = event.getLines();
@@ -41,7 +44,7 @@ public final class CustomSignsListener implements Listener {
 
 		String firstLine = lines[0].trim();
 
-		boolean breakBlock = false;
+		boolean breakBlock;
 
 		switch (firstLine.toLowerCase()) {
 			case "[welcome]":
@@ -62,7 +65,7 @@ public final class CustomSignsListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerRightClickSign(PlayerInteractEvent event) {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 			return;
@@ -112,7 +115,7 @@ public final class CustomSignsListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSignBreak(BlockBreakEvent event) {
 		Chunk chunk = event.getBlock().getChunk();
 
@@ -274,7 +277,7 @@ public final class CustomSignsListener implements Listener {
 	private Region validateRegion(Player player, Chunk chunk) {
 		Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
 
-		if (region == null || (region != null && !region.getOwnerId().equals(player.getUniqueId()))) {
+		if (region == null || !region.isOwner(player)) {
 			PlayerUtils.sendMessage(player, 119);
 			return null;
 		}
@@ -297,20 +300,14 @@ public final class CustomSignsListener implements Listener {
 
 			char unit = duration.replaceAll("[0-9]", "").toLowerCase().charAt(0);
 
-			switch (unit) {
-				case 's':
-					return num * 1000;
-				case 'm':
-					return num * 60 * 1000;
-				case 'h':
-					return num * 60 * 60 * 1000;
-				case 'd':
-					return num * 24 * 60 * 60 * 1000;
-				case 'w':
-					return num * 7 * 24 * 60 * 60 * 1000;
-				default:
-					return 0;
-			}
+			return switch (unit) {
+				case 's' -> num * 1000;
+				case 'm' -> num * 60 * 1000;
+				case 'h' -> num * 60 * 60 * 1000;
+				case 'd' -> num * 24 * 60 * 60 * 1000;
+				case 'w' -> num * 7 * 24 * 60 * 60 * 1000;
+				default -> 0;
+			};
 		} catch (Exception e) {
 			return 0;
 		}
@@ -366,7 +363,7 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
-			if (region.getOwnerId().equals(player.getUniqueId()) || region.isPlayerBanned(player)) {
+			if (region.isOwner(player) || region.isPlayerBanned(player)) {
 				PlayerUtils.sendMessage(player, 30);
 				return;
 			}
@@ -383,16 +380,25 @@ public final class CustomSignsListener implements Listener {
 
 			SerializableRent rent = new SerializableRent(player, price, rentEnd);
 
-			region.setRent(rent);
-
-			sign.breakNaturally();
+			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(player.getLocation());
 
 			Map<String, String> replacements = new HashMap<String, String>();
 			replacements.put("{region}", region.getName());
 			replacements.put("{rent-end}", Formatters.formatRemainingTime(rentEnd));
 
-			PlayerUtils.sendMessage(player, 126, replacements);
+			if (subArea != null) {
+				subArea.setRent(rent);
 
+				replacements.put("{subarea}", subArea.getName());
+
+				PlayerUtils.sendMessage(player, 194, replacements);
+			} else {
+				region.setRent(rent);
+
+				PlayerUtils.sendMessage(player, 126, replacements);
+			}
+
+			sign.breakNaturally();
 		} catch (NumberFormatException e) {
 			player.sendMessage(ChatColor.RED + "Error: This rent sign has invalid formatting!");
 		}
@@ -417,7 +423,7 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
-			if (region.getOwnerId().equals(player.getUniqueId()) || region.isPlayerBanned(player)) {
+			if (region.isOwner(player) || region.isPlayerBanned(player)) {
 				PlayerUtils.sendMessage(player, 30);
 				return;
 			}

@@ -83,6 +83,7 @@ public class MySQL {
 				"point2 TINYTEXT NOT NULL, " +
 				"members LONGTEXT NOT NULL, " +
 				"flags BIGINT NOT NULL, " +
+				"rent LONGTEXT, " +
 				"createdAt BIGINT NOT NULL" +
 				")";
 
@@ -261,10 +262,14 @@ public class MySQL {
 								: new ArrayList<>();
 
 				long flags = rs.getLong("flags");
+
+				SerializableRent rent = rs.getString("rent") != null ? SerializableRent.fromString(rs.getString("rent"))
+						: null;
+
 				long createdAt = rs.getLong("createdAt");
 
 				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
-						point1, point2, members, flags, createdAt);
+						point1, point2, members, flags, rent, createdAt);
 
 				Homestead.subAreasCache.putOrUpdate(subArea);
 			}
@@ -470,12 +475,12 @@ public class MySQL {
 
 		String upsertSql =
 				"INSERT INTO " + TABLE_PREFIX + "subareas " +
-						"(id, regionId, name, worldName, point1, point2, members, flags, createdAt) " +
-						"VALUES (?,?,?,?,?,?,?,?,?) " +
+						"(id, regionId, name, worldName, point1, point2, members, flags, rent, createdAt) " +
+						"VALUES (?,?,?,?,?,?,?,?,?,?) " +
 						"ON DUPLICATE KEY UPDATE " +
 						"regionId=VALUES(regionId), name=VALUES(name), worldName=VALUES(worldName), " +
 						"point1=VALUES(point1), point2=VALUES(point2), members=VALUES(members), " +
-						"flags=VALUES(flags), createdAt=VALUES(createdAt)";
+						"flags=VALUES(flags), rent=VALUES(rent), createdAt=VALUES(createdAt)";
 
 		String deleteSql = "DELETE FROM " + TABLE_PREFIX + "subareas WHERE id=?";
 
@@ -500,7 +505,8 @@ public class MySQL {
 				upsertStmt.setString(6, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point2));
 				upsertStmt.setString(7, membersStr);
 				upsertStmt.setLong(8, subArea.flags);
-				upsertStmt.setLong(9, subArea.createdAt);
+				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);
+				upsertStmt.setLong(10, subArea.createdAt);
 				upsertStmt.addBatch();
 			}
 

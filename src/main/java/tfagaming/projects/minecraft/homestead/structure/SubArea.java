@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class SubArea {
 	public int[] point2;
 	public List<SerializableMember> members = new ArrayList<>();
 	public long flags;
+	public SerializableRent rent;
 	public long createdAt;
 
 	public SubArea(UUID regionId, String name, World world, Block point1, Block point2, long flags) {
@@ -39,8 +41,9 @@ public class SubArea {
 	public SubArea(UUID id, UUID regionId, String name, String worldName, Block point1, Block point2,
 							   List<SerializableMember> members,
 							   long flags,
+							   SerializableRent rent,
 							   long createdAt) {
-		this.id = UUID.randomUUID();
+		this.id = id;
 		this.regionId = regionId;
 		this.name = name;
 		this.worldName = worldName;
@@ -48,9 +51,11 @@ public class SubArea {
 		this.point2 = getBlockLocation(point2);
 		this.members = members;
 		this.flags = flags;
+		this.rent = rent;
 		this.createdAt = createdAt;
 	}
 
+	// Utility methods
 	public static int getMinX(Block firstPoint, Block secondPoint) {
 		return Math.min(firstPoint.getX(), secondPoint.getX());
 	}
@@ -140,6 +145,7 @@ public class SubArea {
 		return new int[]{block.getX(), block.getY(), block.getZ()};
 	}
 
+	// Set and get
 	public UUID getUniqueId() {
 		return id;
 	}
@@ -173,6 +179,7 @@ public class SubArea {
 		return parseBlockLocation(getWorld(), point2);
 	}
 
+	// Members
 	public List<SerializableMember> getMembers() {
 		return members;
 	}
@@ -209,36 +216,6 @@ public class SubArea {
 
 			if (data.getPlayerId().equals(member.getPlayerId())) {
 				data.setFlags(flags);
-				members.set(i, data);
-
-				updateCache();
-
-				break;
-			}
-		}
-	}
-
-	public void setMemberRegionControlFlags(SerializableMember member, long flags) {
-		for (int i = 0; i < members.size(); i++) {
-			SerializableMember data = members.get(i);
-
-			if (data.getPlayerId().equals(member.getPlayerId())) {
-				data.setRegionControlFlags(flags);
-				members.set(i, data);
-
-				updateCache();
-
-				break;
-			}
-		}
-	}
-
-	public void setMemberTaxesAt(SerializableMember member, long taxesAt) {
-		for (int i = 0; i < members.size(); i++) {
-			SerializableMember data = members.get(i);
-
-			if (data.getPlayerId().equals(member.getPlayerId())) {
-				data.setTaxesAt(taxesAt);
 				members.set(i, data);
 
 				updateCache();
@@ -286,6 +263,7 @@ public class SubArea {
 		}
 	}
 
+	// Flags
 	public long getFlags() {
 		return flags;
 	}
@@ -294,10 +272,21 @@ public class SubArea {
 		this.flags = flags;
 	}
 
+	// Rent
+	public SerializableRent getRent() {
+		return rent;
+	}
+
+	public void setRent(SerializableRent rent) {
+		this.rent = rent;
+		updateCache();
+	}
+
 	public long getCreatedAt() {
 		return createdAt;
 	}
 
+	// Utility methods
 	private int getMinX() {
 		Block firstPoint = parseBlockLocation(getWorld(), point1), secondPoint = parseBlockLocation(getWorld(), point2);
 

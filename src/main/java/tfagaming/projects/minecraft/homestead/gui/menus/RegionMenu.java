@@ -146,7 +146,7 @@ public class RegionMenu {
 
 		gui.addItem(22, rentButton, (_player, event) -> {
 			if (event.isLeftClick()) {
-				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
+				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.isOwner(player);
 				if (!isOwnerOrOperator) {
 					PlayerUtils.sendMessage(player, 159);
 					return;

@@ -639,6 +639,15 @@ buttons:
       - ""
       - "&#7986CB&n➥ Left-click to view the players."
     type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
+  71:
+    name: "&#FF8A65&lRent &8({rent-enabled}&8)"
+    lore:
+      - "&7• Player: &6{rent-renter}"
+      - "&7• Price: &6{rent-price}"
+      - "&7• Expires In: &6{rent-until}"
+      - ""
+      - "&#FF8A65&n➥ Left-click to cancel the lease for this sub-area."
+    type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
 
 button-types:
   world:

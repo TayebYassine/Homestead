@@ -88,12 +88,12 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!region.getOwnerId().equals(player.getUniqueId()) && region.isPlayerMember(player)) {
+				if (!region.isOwner(player) && region.isPlayerMember(player)) {
 					PlayerUtils.sendMessage(player, 149);
 					return false;
 				}
 
-				if (region.getUniqueId().equals(targetRegion.getUniqueId()) || region.getOwnerId().equals(targetRegion.getOwnerId())) {
+				if (region.getUniqueId().equals(targetRegion.getUniqueId()) || region.isOwner(targetRegion.getOwnerId())) {
 					PlayerUtils.sendMessage(player, 148);
 					return false;
 				}

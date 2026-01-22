@@ -45,7 +45,7 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 			return false;
 		}
 
-		if (!PlayerUtils.isOperator(player) && !region.getOwnerId().equals(player.getUniqueId())) {
+		if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
 			PlayerUtils.sendMessage(player, 30);
 			return false;
 		}

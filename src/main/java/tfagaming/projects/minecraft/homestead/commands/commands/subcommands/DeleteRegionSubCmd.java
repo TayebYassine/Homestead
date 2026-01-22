@@ -42,10 +42,8 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		boolean canDelete = PlayerUtils.isOperator(player) || region.getOwnerId().equals(player.getUniqueId());
-		if (!canDelete) {
+		if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
 			PlayerUtils.sendMessage(player, 159);
-
 			return true;
 		}
 

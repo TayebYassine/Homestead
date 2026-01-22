@@ -78,6 +78,7 @@ public class SQLite {
 				"point2 TEXT NOT NULL, " +
 				"members TEXT NOT NULL, " +
 				"flags INTEGER NOT NULL, " +
+				"rent TEXT, " +
 				"createdAt INTEGER NOT NULL" +
 				")";
 
@@ -261,9 +262,13 @@ public class SQLite {
 						.map(SerializableMember::fromString).toList()
 						: new ArrayList<>();
 				long flags = rs.getLong("flags");
+
+				SerializableRent rent = rs.getString("rent") != null ? SerializableRent.fromString(rs.getString("rent"))
+						: null;
+
 				long createdAt = rs.getLong("createdAt");
 
-				SubArea subArea = new SubArea(id, regionId, name, world.getName(), point1, point2, members, flags, createdAt);
+				SubArea subArea = new SubArea(id, regionId, name, world.getName(), point1, point2, members, flags, rent, createdAt);
 
 				Homestead.subAreasCache.putOrUpdate(subArea);
 			}
@@ -443,8 +448,8 @@ public class SQLite {
 		}
 
 		String upsertSql = "INSERT OR REPLACE INTO subareas (" +
-				"id, regionId, name, worldName, point1, point2, members, flags, createdAt" +
-				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				"id, regionId, name, worldName, point1, point2, members, flags, rent, createdAt" +
+				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		String deleteSql = "DELETE FROM subareas WHERE id = ?";
 
@@ -468,7 +473,8 @@ public class SQLite {
 				upsertStmt.setString(6, SubArea.toStringBlockLocation(world, subArea.point2));
 				upsertStmt.setString(7, membersStr);
 				upsertStmt.setLong(8, subArea.flags);
-				upsertStmt.setLong(9, subArea.createdAt);
+				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);
+				upsertStmt.setLong(10, subArea.createdAt);
 
 				upsertStmt.addBatch();
 			}

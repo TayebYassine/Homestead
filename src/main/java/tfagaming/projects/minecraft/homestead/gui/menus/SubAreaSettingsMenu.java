@@ -9,6 +9,8 @@ import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -18,6 +20,9 @@ import java.util.HashMap;
 public class SubAreaSettingsMenu {
 	public SubAreaSettingsMenu(Player player, Region region, SubArea subArea) {
 		Menu gui = new Menu(MenuUtils.getTitle(15).replace("{subarea}", subArea.getName()), 9 * 3);
+
+		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
+		boolean isRentEnabled = isEconomyEnabled && (boolean) Homestead.config.get("renting.enabled");
 
 		HashMap<String, String> replacements = new HashMap<>();
 		replacements.put("{subarea}", subArea.getName());
@@ -108,6 +113,42 @@ public class SubAreaSettingsMenu {
 			}
 
 			new SubAreaMembersMenu(player, region, subArea);
+		});
+
+		SerializableRent rent = subArea.getRent();
+
+		if (rent != null) {
+			replacements.put("{rent-enabled}", Formatters.getEnabled(isRentEnabled));
+			replacements.put("{rent-renter}", rent.getPlayer().getName());
+			replacements.put("{rent-price}", Formatters.formatBalance(rent.getPrice()));
+			replacements.put("{rent-until}", Formatters.formatRemainingTime(rent.getUntilAt()));
+		} else {
+			replacements.put("{rent-enabled}", Formatters.getEnabled(isRentEnabled));
+			replacements.put("{rent-renter}", Formatters.getNone());
+			replacements.put("{rent-price}", Formatters.getNone());
+			replacements.put("{rent-until}", Formatters.getNone());
+		}
+
+		ItemStack rentButton = MenuUtils.getButton(71, replacements);
+
+		gui.addItem(14, rentButton, (_player, event) -> {
+			if (event.isLeftClick()) {
+				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.isOwner(player);
+				if (!isOwnerOrOperator) {
+					PlayerUtils.sendMessage(player, 159);
+					return;
+				}
+
+				if (subArea.getRent() == null) {
+					PlayerUtils.sendMessage(player, 195);
+				} else {
+					subArea.setRent(null);
+
+					PlayerUtils.sendMessage(player, 127);
+
+					new SubAreaSettingsMenu(player, region, subArea);
+				}
+			}
 		});
 
 		ItemStack deleteSubAreaButton = MenuUtils.getButton(45, replacements);

@@ -67,7 +67,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				return;
 			}
 
-			if (!PlayerUtils.isOperator(player) && !player.getUniqueId().equals(region.getOwnerId())
+			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)
 					&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true) && !WarsManager.isRegionInWar(region.getOwnerId())) {
 				Chunk nearbyChunk = ChunksManager.findNearbyUnclaimedChunk(player);
 
@@ -116,7 +116,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 
 			// Checking if player has an elytra
 			if (player.isGliding() && isWearingElytra(player) && !PlayerUtils.isOperator(player)) {
-				if (!player.getUniqueId().equals(region.getOwnerId())
+				if (!region.isOwner(player)
 						&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.ELYTRA, true)) {
 					player.setGliding(false);
 				}

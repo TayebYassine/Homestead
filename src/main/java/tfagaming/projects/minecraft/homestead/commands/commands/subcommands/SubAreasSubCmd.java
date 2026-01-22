@@ -322,7 +322,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				switch (action.toLowerCase()) {
 					case "add": {
-						if (target.getUniqueId().equals(region.getOwnerId())) {
+						if (region.isOwner(target)) {
 							PlayerUtils.sendMessage(player, 30);
 							return true;
 						}

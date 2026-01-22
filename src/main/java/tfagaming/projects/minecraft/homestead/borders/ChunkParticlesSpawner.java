@@ -138,7 +138,7 @@ public class ChunkParticlesSpawner {
 
 			// Determine particle color based on player relation
 			DustOptions dustOptions;
-			if (region.getOwnerId().equals(player.getUniqueId())) {
+			if (region.isOwner(player)) {
 				dustOptions = new DustOptions(Color.fromRGB(0, 255, 0), 2.0F); // green - owner
 			} else if (region.isPlayerMember(player)) {
 				dustOptions = new DustOptions(Color.fromRGB(255, 255, 0), 2.0F); // yellow - member

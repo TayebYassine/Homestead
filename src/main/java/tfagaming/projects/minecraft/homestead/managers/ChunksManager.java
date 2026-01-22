@@ -322,7 +322,7 @@ public final class ChunksManager {
 		for (Chunk neighbor : neighbors) {
 			if (isChunkClaimed(neighbor)) {
 				Region r = getRegionOwnsTheChunk(neighbor);
-				if (r != null && !r.getOwnerId().equals(player.getUniqueId())) {
+				if (r != null && !r.isOwner(player)) {
 					return true;
 				}
 			}
