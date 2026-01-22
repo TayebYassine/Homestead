@@ -1,10 +1,11 @@
 name: Homestead
 main: tfagaming.projects.minecraft.homestead.Homestead
 version: 5.0.0.0-26w04b
-description: 'The Ultimate and Premium-Free Grief Prevention Plugin.'
-author: TFAGaming
+description: 'A chunk-based land claiming plugin'
+author: TayebYassine
 api-version: 1.21.9
-softdepend: [Vault, BlueMap]
+depend: [Vault]
+softdepend: [BlueMap, squaremap, dynmap, Pl3xMap]
 commands:
   claim:
     description: 'Claim a chunk using Homestead'
