@@ -363,7 +363,7 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
-			if (region.isOwner(player) || region.isPlayerBanned(player)) {
+			if (region.isOwner(player) || region.isPlayerBanned(player) || region.getRent() != null) {
 				PlayerUtils.sendMessage(player, 30);
 				return;
 			}
@@ -380,7 +380,7 @@ public final class CustomSignsListener implements Listener {
 
 			SerializableRent rent = new SerializableRent(player, price, rentEnd);
 
-			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(player.getLocation());
+			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(sign.getLocation());
 
 			Map<String, String> replacements = new HashMap<String, String>();
 			replacements.put("{region}", region.getName());

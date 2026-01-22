@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.Arrays;
@@ -71,6 +72,13 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 
 		if (region.isOwner(target)) {
 			PlayerUtils.sendMessage(player, 30);
+			return true;
+		}
+
+		SerializableRent rent = region.getRent();
+
+		if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
+			PlayerUtils.sendMessage(player, 196);
 			return true;
 		}
 

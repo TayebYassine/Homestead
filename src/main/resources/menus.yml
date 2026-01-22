@@ -58,7 +58,7 @@ buttons:
       - "&#FFB74D&n➥ Right-click to teleport to spawn."
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   5:
-    name: "&#FFB74D&lRegion: &r&2{region} &8(&2{region-displayname}&8)"
+    name: "&#FF9A76&lRegion: &r&2{region} &8(&2{region-displayname}&8)"
     lore:
       - "&7You set this region as targeted region. Any command"
       - "&7that manages a region (&e/claim&7, &e/rg trust&7) will be"

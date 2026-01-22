@@ -65,7 +65,9 @@ public class Homestead extends JavaPlugin {
 		return VERSION;
 	}
 
-	public static boolean isSnapshot() { return SNAPSHOT; }
+	public static boolean isSnapshot() {
+		return SNAPSHOT;
+	}
 
 	public static Homestead getInstance() {
 		return instance;
@@ -229,11 +231,13 @@ public class Homestead extends JavaPlugin {
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - startedAt) + " ms to load.");
 
-		runAsyncTask(() -> {
-			Logger.warning("Downloading required web map render icons... This may take a while!");
-			RegionIconTools.downloadAllIcons();
-			Logger.info("Successfully downloaded all icons!");
-		});
+		if ((boolean) Homestead.config.get("dynamic-maps.icons.enabled")) {
+			runAsyncTask(() -> {
+				Logger.warning("Downloading required web map render icons... This may take a while!");
+				RegionIconTools.downloadAllIcons();
+				Logger.info("Successfully downloaded all icons!");
+			});
+		}
 
 		runAsyncTimerTask(() -> {
 			runAsyncTask(() -> {

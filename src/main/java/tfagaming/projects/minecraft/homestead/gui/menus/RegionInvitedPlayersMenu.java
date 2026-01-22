@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -120,6 +121,13 @@ public class RegionInvitedPlayersMenu {
 
 				if (region.isOwner(target)) {
 					PlayerUtils.sendMessage(player, 30);
+					return false;
+				}
+
+				SerializableRent rent = region.getRent();
+
+				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
+					PlayerUtils.sendMessage(player, 196);
 					return false;
 				}
 

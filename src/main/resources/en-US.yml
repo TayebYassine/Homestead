@@ -226,6 +226,7 @@ prefix: "&8[&6Homestead&8]&r"
 193: "{__prefix__} &7Changed owner of the region &2{region} &7to the player &3{player}&7."
 194: "{__prefix__} &7Successfully leased the sub-area &2{subarea} &7of the region &2{region}&7. Your contract will end in: &6{rent-end}"
 195: "{__prefix__} &cThe sub-area is not leased."
+196: "{__prefix__} &cA region or sub-area leaser cannot be banned, trusted, or kicked! You can cancel the lease if you're the region owner."
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."
