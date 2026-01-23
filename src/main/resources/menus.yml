@@ -456,9 +456,9 @@ buttons:
       - "&8➥ Left-click to visit."
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   48:
-    name: "&#FCE46D&l★"
+    name: "&#E57373&l★"
     lore:
-      - "&#FCE46D&n➥ Left-click to rate."
+      - "&#E57373&n➥ Left-click to rate."
     type: RED_STAINED_GLASS
   49:
     name: "&#FFB74D&l★★"

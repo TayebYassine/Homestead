@@ -82,15 +82,15 @@ public class Formatters {
 
 		switch (rate) {
 			case 1:
-				return ChatColorTranslator.translate("&#FF0000" + star.repeat(1));
+				return ChatColorTranslator.translate("&c" + star.repeat(1));
 			case 2:
-				return ChatColorTranslator.translate("&#FF5900" + star.repeat(2));
+				return ChatColorTranslator.translate("&6" + star.repeat(2));
 			case 3:
-				return ChatColorTranslator.translate("&#FFE600" + star.repeat(3));
+				return ChatColorTranslator.translate("&e" + star.repeat(3));
 			case 4:
-				return ChatColorTranslator.translate("&#80FF00" + star.repeat(4));
+				return ChatColorTranslator.translate("&a" + star.repeat(4));
 			case 5:
-				return ChatColorTranslator.translate("&#00FF08" + star.repeat(5));
+				return ChatColorTranslator.translate("&a" + star.repeat(5));
 			default:
 				return getNone();
 		}
