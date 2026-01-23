@@ -274,10 +274,7 @@ public class PaginationMenu implements Listener {
 
 		if (InventoryManager.getMenu(player) == this) {
 			InventoryManager.unregister(player);
-
-			if (!InventoryManager.hasMenu(player)) {
-				destroy();
-			}
+			destroy();
 		}
 	}
 

@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -78,6 +79,7 @@ public class Menu implements Listener {
 
 		if (InventoryManager.getMenu(player) == this && event.getInventory().equals(this.inventory)) {
 			event.setCancelled(true);
+			if (event.getClick() == ClickType.MIDDLE) return;
 
 			int slot = event.getRawSlot();
 
@@ -95,10 +97,7 @@ public class Menu implements Listener {
 
 		if (InventoryManager.getMenu(player) == this) {
 			InventoryManager.unregister(player);
-
-			if (!InventoryManager.hasMenu(player)) {
-				unregister();
-			}
+			unregister();
 		}
 	}
 }
