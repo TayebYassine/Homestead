@@ -138,6 +138,8 @@ permissions:
     default: true
   homestead.commands.region.kick:
     default: true
+  homestead.commands.region.levels:
+      default: true
   homestead.commands.region.logs:
     default: true
   homestead.commands.region.mail:
@@ -194,6 +196,7 @@ permissions:
       homestead.commands.region.help: true
       homestead.commands.region.home: true
       homestead.commands.region.kick: true
+      homestead.commands.region.levels: true
       homestead.commands.region.logs: true
       homestead.commands.region.mail: true
       homestead.commands.region.members: true

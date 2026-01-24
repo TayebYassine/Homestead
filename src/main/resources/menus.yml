@@ -25,6 +25,7 @@ titles:
   23: "Rewards: &2{region}"
   24: "Sub-Area Members"
   25: "Sub-Area Flags (&3{playername}&r)"
+  26: "Levels and Rank: &2{region}"
 
 buttons:
   0:
@@ -666,6 +667,36 @@ buttons:
       - " "
       - "&7Check your rewards: &e/hs rewards"
     type: PAPER
+  74:
+    name: "&#42A5F5&lInformation"
+    lore:
+      - "&7Earn XP to level up your region!"
+      - "&7Each level can give you more rewards, "
+      - "&7hover your mouse on each level number to"
+      - "&7see the rewards!"
+      - " "
+      - "&7There are other rewards, use: &e/hs rewards"
+    type: PAPER
+  75:
+    title: "&9Progress"
+    lore:
+      - "TEST"
+    type: BLUE_STAINED_GLASS_PANE
+  76:
+    title: "&7Remaining"
+    lore:
+      - "TEST"
+    type: LIGHT_GRAY_STAINED_GLASS_PANE
+  77:
+    title: "UNLOCKED LEVEL"
+    lore:
+      - "TEST"
+    type: GREEN_CONCRETE
+  78:
+    title: "LOCKED LEVEL"
+    lore:
+      - "TEST"
+    type: RED_CONCRETE
 
 button-types:
   world:

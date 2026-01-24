@@ -165,6 +165,9 @@ public class RegionCommand extends CommandBuilder {
 			case "mergeaccept":
 				new MergeAcceptRegionSubCmd().onExecution(sender, args);
 				break;
+			case "levels":
+				new LevelsSubCmd().onExecution(sender, args);
+				break;
 			default:
 				String similaritySubCmds = String.join(", ", StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand));
 
@@ -406,6 +409,6 @@ public class RegionCommand extends CommandBuilder {
 		return Lists.newArrayList("create", "delete", "set", "rename", "borders", "ban", "unban", "trust", "untrust",
 				"flags", "accept", "deny", "visit", "subareas", "deposit", "withdraw", "menu", "player", "home",
 				"info", "banlist", "members", "claimlist", "help", "logs", "rate", "top", "auto", "kick", "war", "chat",
-				"mail", "balance", "rewards", "merge", "mergeaccept");
+				"mail", "balance", "rewards", "merge", "mergeaccept", "levels");
 	}
 }

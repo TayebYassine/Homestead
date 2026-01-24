@@ -1,0 +1,52 @@
+package tfagaming.projects.minecraft.homestead.commands.commands.subcommands;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.gui.menus.RegionLevelMenu;
+import tfagaming.projects.minecraft.homestead.gui.menus.RewardsMenu;
+import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
+import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.structure.Level;
+import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+
+public class LevelsSubCmd extends SubCommandBuilder {
+	public LevelsSubCmd() {
+		super("levels");
+	}
+
+	@Override
+	public boolean onExecution(CommandSender sender, String[] args) {
+		if (!(sender instanceof Player player)) {
+			sender.sendMessage("You cannot use this command via the console.");
+			return false;
+		}
+
+		boolean levelsEnabled = Homestead.config.get("levels.enabled");
+
+		if (!levelsEnabled) {
+			PlayerUtils.sendMessage(player, 197);
+			return false;
+		}
+
+		Region region = TargetRegionSession.getRegion(player);
+
+		if (region == null) {
+			PlayerUtils.sendMessage(player, 4);
+			return true;
+		}
+
+		// TEST ADDING XP FOR NO REASON
+		Level level = LevelsManager.getOrCreateLevel(region.getUniqueId());
+
+		System.out.println("LEVEL ID = " + level.getUniqueId().toString());
+
+		LevelsManager.addRandomXp(region.getUniqueId(), 10, 50);
+
+		new RegionLevelMenu(player, region);
+
+		return true;
+	}
+}

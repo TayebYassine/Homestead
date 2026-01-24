@@ -16,10 +16,7 @@ import tfagaming.projects.minecraft.homestead.commands.commands.*;
 import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
 import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
 import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
-import tfagaming.projects.minecraft.homestead.database.Database;
-import tfagaming.projects.minecraft.homestead.database.RegionsCache;
-import tfagaming.projects.minecraft.homestead.database.SubAreasCache;
-import tfagaming.projects.minecraft.homestead.database.WarsCache;
+import tfagaming.projects.minecraft.homestead.database.*;
 import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
 import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
@@ -30,6 +27,7 @@ import tfagaming.projects.minecraft.homestead.integrations.bStats;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
@@ -47,16 +45,20 @@ import java.util.*;
 public class Homestead extends JavaPlugin {
 	private final static String VERSION = "5.0.0.0-26w04b";
 	private final static boolean SNAPSHOT = true;
+	private static Homestead INSTANCE;
 
 	public static Database database;
+
 	public static RegionsCache regionsCache;
 	public static WarsCache warsCache;
 	public static SubAreasCache subAreasCache;
+	public static LevelsCache levelsCache;
+
 	public static ConfigLoader config;
 	public static LanguageLoader language;
 	public static MenusConfigLoader menusConfig;
+
 	public static Vault vault;
-	private static Homestead instance;
 	private static long startedAt;
 
 	private static BukkitTask moveCheckTask;
@@ -70,11 +72,11 @@ public class Homestead extends JavaPlugin {
 	}
 
 	public static Homestead getInstance() {
-		return instance;
+		return INSTANCE;
 	}
 
 	public void onEnable() {
-		Homestead.instance = this;
+		Homestead.INSTANCE = this;
 		Homestead.startedAt = System.currentTimeMillis();
 
 		new Logger();
@@ -165,6 +167,7 @@ public class Homestead extends JavaPlugin {
 		Homestead.regionsCache = new RegionsCache(config.get("cache-interval"));
 		Homestead.warsCache = new WarsCache(config.get("cache-interval"));
 		Homestead.subAreasCache = new SubAreasCache(config.get("cache-interval"));
+		Homestead.levelsCache = new LevelsCache(config.get("cache-interval"));
 
 		try {
 			Database.Provider provider = Database.parseProviderFromString(config.get("database.provider"));
@@ -182,6 +185,7 @@ public class Homestead extends JavaPlugin {
 		database.importRegions();
 		database.importWars();
 		database.importSubAreas();
+		database.importLevels();
 
 		if (!IntegrationsUtils.isVaultInstalled()) {
 			Logger.error("Unable to start the plugin; \"Vault\" is required. Shutting down plugin instance...");
@@ -213,6 +217,7 @@ public class Homestead extends JavaPlugin {
 			RegionsManager.cleanStartup();
 			WarsManager.cleanStartup();
 			SubAreasManager.cleanStartup();
+			LevelsManager.cleanStartup();
 		}
 
 		registerCommands();

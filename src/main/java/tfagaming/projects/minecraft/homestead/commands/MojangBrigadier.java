@@ -79,6 +79,7 @@ public class MojangBrigadier {
 														.string())))))
 				.then(LiteralArgumentBuilder.literal("help"))
 				.then(LiteralArgumentBuilder.literal("home"))
+				.then(LiteralArgumentBuilder.literal("levels"))
 				.then(LiteralArgumentBuilder.literal("logs"))
 				.then(LiteralArgumentBuilder.literal("mail")
 						.then(RequiredArgumentBuilder.argument("region",

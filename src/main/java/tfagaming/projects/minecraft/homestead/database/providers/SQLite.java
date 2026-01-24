@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.War;
@@ -82,13 +83,24 @@ public class SQLite {
 				"createdAt INTEGER NOT NULL" +
 				")";
 
+		String sql4 = "CREATE TABLE IF NOT EXISTS levels (" +
+				"id TEXT PRIMARY KEY, " +
+				"regionId TEXT NOT NULL, " +
+				"level INTEGER NOT NULL, " +
+				"experience INTEGER NOT NULL, " +
+				"totalExperience INTEGER NOT NULL, " +
+				"createdAt INTEGER NOT NULL" +
+				")";
+
 		try (Statement stmt = connection.createStatement()) {
 			stmt.executeUpdate(sql1);
 			stmt.executeUpdate(sql2);
 			stmt.executeUpdate(sql3);
+			stmt.executeUpdate(sql4);
 		}
 	}
 
+	// Importing
 	public void importRegions() {
 		String sql = "SELECT * FROM regions";
 
@@ -280,6 +292,33 @@ public class SQLite {
 		Logger.info("Imported " + Homestead.subAreasCache.size() + " sub-areas.");
 	}
 
+	public void importLevels() {
+		String sql = "SELECT * FROM levels";
+
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(sql)) {
+			Homestead.levelsCache.clear();
+
+			while (rs.next()) {
+				UUID id = UUID.fromString(rs.getString("id"));
+				UUID regionId = UUID.fromString(rs.getString("regionId"));
+				int level = rs.getInt("level");
+				long xp = rs.getLong("experience");
+				long totalXp = rs.getLong("totalExperience");
+				long createdAt = rs.getLong("createdAt");
+
+				Level lvl = new Level(id, regionId, level, xp, totalXp, createdAt);
+				Homestead.levelsCache.putOrUpdate(lvl);
+			}
+		} catch (SQLException e) {
+			Homestead.getInstance().endInstance(e);
+			return;
+		}
+
+		Logger.info("Imported " + Homestead.levelsCache.size() + " levels.");
+	}
+
+	// Exporting
 	public void exportRegions() {
 		Set<UUID> dbRegionIds = new HashSet<>();
 		String selectSql = "SELECT id FROM regions";
@@ -492,6 +531,59 @@ public class SQLite {
 			if (Homestead.config.isDebugEnabled()) {
 				Logger.info("Exported " + cacheSubAreaIds.size() + " sub-areas and deleted " + dbSubAreaIds.size()
 						+ " sub-areas.");
+			}
+		} catch (SQLException e) {
+			Homestead.getInstance().endInstance(e);
+		}
+	}
+
+	public void exportLevels() {
+		Set<UUID> dbIds = new HashSet<>();
+		String selectSql = "SELECT id FROM levels";
+
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(selectSql)) {
+			while (rs.next()) dbIds.add(UUID.fromString(rs.getString("id")));
+		} catch (SQLException e) {
+			Homestead.getInstance().endInstance(e);
+			return;
+		}
+
+		String upsertSql = "INSERT OR REPLACE INTO levels (" +
+				"id, regionId, level, experience, totalExperience, createdAt" +
+				") VALUES (?, ?, ?, ?, ?, ?)";
+
+		String deleteSql = "DELETE FROM levels WHERE id = ?";
+
+		try (PreparedStatement upsert = connection.prepareStatement(upsertSql);
+			 PreparedStatement delete = connection.prepareStatement(deleteSql)) {
+
+			Set<UUID> cacheIds = new HashSet<>();
+
+			for (Level lvl : Homestead.levelsCache.getAll()) {
+				UUID lvlId = lvl.getUniqueId();
+				cacheIds.add(lvlId);
+
+				upsert.setString(1, lvlId.toString());
+				upsert.setString(2, lvl.getRegionId().toString());
+				upsert.setInt(3, lvl.getLevel());
+				upsert.setLong(4, lvl.getExperience());
+				upsert.setLong(5, lvl.getTotalExperience());
+				upsert.setLong(6, lvl.getCreatedAt());
+				upsert.addBatch();
+			}
+
+			upsert.executeBatch();
+
+			dbIds.removeAll(cacheIds);
+			for (UUID deletedId : dbIds) {
+				delete.setString(1, deletedId.toString());
+				delete.addBatch();
+			}
+			delete.executeBatch();
+
+			if (Homestead.config.isDebugEnabled()) {
+				Logger.info("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
 			}
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);

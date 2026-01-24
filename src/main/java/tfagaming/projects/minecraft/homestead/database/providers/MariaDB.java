@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.War;
@@ -94,13 +95,26 @@ public class MariaDB {
 				)
 				""".formatted(TABLE_PREFIX);
 
+		String sql4 = """
+				CREATE TABLE IF NOT EXISTS `%slevels` (
+				    id              CHAR(36) PRIMARY KEY,
+				    region_id       CHAR(36) NOT NULL,
+				    level           INT NOT NULL,
+				    experience      BIGINT NOT NULL,
+				    total_experience BIGINT NOT NULL,
+				    created_at      BIGINT NOT NULL
+				)
+				""".formatted(TABLE_PREFIX);
+
 		try (Statement stmt = connection.createStatement()) {
 			stmt.executeUpdate(sql1);
 			stmt.executeUpdate(sql2);
 			stmt.executeUpdate(sql3);
+			stmt.executeUpdate(sql4);
 		}
 	}
 
+	// Importing
 	public void importRegions() {
 		final String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
 		try (Statement stmt = connection.createStatement();
@@ -294,6 +308,33 @@ public class MariaDB {
 		Logger.info("Imported " + Homestead.subAreasCache.size() + " sub-areas.");
 	}
 
+	public void importLevels() {
+		final String sql = "SELECT * FROM " + TABLE_PREFIX + "levels";
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(sql)) {
+
+			Homestead.levelsCache.clear();
+
+			while (rs.next()) {
+				UUID id = UUID.fromString(rs.getString("id"));
+				UUID regionId = UUID.fromString(rs.getString("region_id"));
+				int level = rs.getInt("level");
+				long xp = rs.getLong("experience");
+				long totalXp = rs.getLong("total_experience");
+				long createdAt = rs.getLong("created_at");
+
+				Level lvl = new Level(id, regionId, level, xp, totalXp, createdAt);
+				Homestead.levelsCache.putOrUpdate(lvl);
+			}
+		} catch (SQLException e) {
+			Homestead.getInstance().endInstance(e);
+			return;
+		}
+
+		Logger.info("Imported " + Homestead.levelsCache.size() + " levels.");
+	}
+
+	// Exporting
 	public void exportRegions() {
 		Set<UUID> dbRegionIds = new HashSet<>();
 		final String selectSql = "SELECT id FROM " + TABLE_PREFIX + "regions";
@@ -548,6 +589,67 @@ public class MariaDB {
 			if (Homestead.config.isDebugEnabled()) {
 				Logger.info("Exported " + cacheSubAreaIds.size() + " sub-areas and deleted " +
 						dbSubAreaIds.size() + " sub-areas.");
+			}
+		} catch (SQLException e) {
+			Homestead.getInstance().endInstance(e);
+		}
+	}
+
+	public void exportLevels() {
+		Set<UUID> dbIds = new HashSet<>();
+		final String selectSql = "SELECT id FROM " + TABLE_PREFIX + "levels";
+
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(selectSql)) {
+			while (rs.next()) dbIds.add(UUID.fromString(rs.getString("id")));
+		} catch (SQLException e) {
+			Homestead.getInstance().endInstance(e);
+			return;
+		}
+
+		final String upsertSql = """
+				INSERT INTO `%slevels`
+				    (id, region_id, level, experience, total_experience, created_at)
+				VALUES (?, ?, ?, ?, ?, ?)
+				ON DUPLICATE KEY UPDATE
+				    region_id       = VALUES(region_id),
+				    level           = VALUES(level),
+				    experience      = VALUES(experience),
+				    total_experience = VALUES(total_experience),
+				    created_at      = VALUES(created_at)
+				""".formatted(TABLE_PREFIX);
+
+		final String deleteSql = "DELETE FROM " + TABLE_PREFIX + "levels WHERE id = ?";
+
+		try (PreparedStatement upsert = connection.prepareStatement(upsertSql);
+			 PreparedStatement delete = connection.prepareStatement(deleteSql)) {
+
+			Set<UUID> cacheIds = new HashSet<>();
+
+			for (Level lvl : Homestead.levelsCache.getAll()) {
+				UUID lvlId = lvl.getUniqueId();
+				cacheIds.add(lvlId);
+
+				upsert.setString(1, lvlId.toString());
+				upsert.setString(2, lvl.getRegionId().toString());
+				upsert.setInt(3, lvl.getLevel());
+				upsert.setLong(4, lvl.getExperience());
+				upsert.setLong(5, lvl.getTotalExperience());
+				upsert.setLong(6, lvl.getCreatedAt());
+				upsert.addBatch();
+			}
+
+			upsert.executeBatch();
+
+			dbIds.removeAll(cacheIds);
+			for (UUID deletedId : dbIds) {
+				delete.setString(1, deletedId.toString());
+				delete.addBatch();
+			}
+			delete.executeBatch();
+
+			if (Homestead.config.isDebugEnabled()) {
+				Logger.info("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
 			}
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);

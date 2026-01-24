@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class PaginationMenu implements Listener {
 	private final Homestead plugin;
@@ -35,6 +36,8 @@ public class PaginationMenu implements Listener {
 	private boolean pageChanged = false;
 	private Player player;
 	private ItemStack fillerItemstack = null;
+	private Consumer<Inventory> openHandler;
+	private int itemsPerPage = -1;
 
 	private int currentPage;
 
@@ -69,6 +72,14 @@ public class PaginationMenu implements Listener {
 
 		bottomRowActions.put(slot, callback);
 		bottomRowActionItems.put(slot, item);
+	}
+
+	public void addOpenHandler(Consumer<Inventory> handler){
+		this.openHandler = handler;
+	}
+
+	public void setItemsPerPage(int n) {
+		this.itemsPerPage = n;
 	}
 
 	public void open(Player player) {
@@ -159,15 +170,21 @@ public class PaginationMenu implements Listener {
 	}
 
 	public int getTotalPages() {
-		return (int) Math.ceil((double) items.size() / contentSize);
+		int buttonsPerPage = (itemsPerPage > 0) ? itemsPerPage : contentSize;
+
+		return (int) Math.ceil((double) items.size() / buttonsPerPage);
 	}
 
 	private Inventory createPage(int page) {
 		Inventory inventory = Bukkit.createInventory(null, size,
 				Formatters.formatPaginationMenuTitle(title, page + 1, getTotalPages()));
 
-		int start = page * contentSize;
-		int end = Math.min(start + contentSize, items.size());
+		int buttonsPerPage = (itemsPerPage > 0) ? itemsPerPage : contentSize;
+		boolean hasNext = (page + 1) * buttonsPerPage < items.size();
+		if (hasNext) inventory.setItem(size - 1, nextPageItem);
+
+		int start = page * buttonsPerPage;
+		int end   = Math.min(start + buttonsPerPage, items.size());
 
 		for (int i = start, slot = 9; i < end; i++, slot++) {
 			inventory.setItem(slot, items.get(i));
@@ -202,6 +219,8 @@ public class PaginationMenu implements Listener {
 				}
 			}
 		}
+
+		if (openHandler != null) openHandler.accept(inventory);
 
 		return inventory;
 	}
@@ -239,7 +258,9 @@ public class PaginationMenu implements Listener {
 			return;
 		}
 
-		if (slot == size - 1 && (currentPage + 1) * contentSize < items.size()) {
+		int buttonsPerPage = (itemsPerPage > 0) ? itemsPerPage : contentSize;
+
+		if (slot == size - 1 && (currentPage + 1) * buttonsPerPage < items.size()) {
 			currentPage++;
 			pageChanged = true;
 			player.openInventory(createPage(currentPage));
@@ -255,7 +276,7 @@ public class PaginationMenu implements Listener {
 		}
 
 		if (slot >= 9 && slot < size - 9) {
-			int itemIndex = currentPage * contentSize + (slot - 9);
+			int itemIndex = currentPage * buttonsPerPage + (slot - 9);
 
 			if (itemIndex < items.size()) {
 				clickCallback.accept(player, new ClickContext(event, itemIndex, items, this));

@@ -136,6 +136,28 @@ public class Database {
 		}
 	}
 
+	public void importLevels() {
+		switch (provider) {
+			case PostgreSQL:
+				postgreSQL.importLevels();
+				break;
+			case MariaDB:
+				mariaDB.importLevels();
+				break;
+			case MySQL:
+				mySQL.importLevels();
+				break;
+			case SQLite:
+				sqLite.importLevels();
+				break;
+			case YAML:
+				yaml.importLevels();
+				break;
+			default:
+				break;
+		}
+	}
+
 	public void exportRegions() {
 		switch (provider) {
 			case PostgreSQL:
@@ -201,6 +223,29 @@ public class Database {
 				break;
 		}
 	}
+
+	public void exportLevels() {
+		switch (provider) {
+			case PostgreSQL:
+				postgreSQL.exportLevels();
+				break;
+			case MariaDB:
+				mariaDB.exportLevels();
+				break;
+			case MySQL:
+				mySQL.exportLevels();
+				break;
+			case SQLite:
+				sqLite.exportLevels();
+				break;
+			case YAML:
+				yaml.exportLevels();
+				break;
+			default:
+				break;
+		}
+	}
+
 
 	public void closeConnection() {
 		switch (provider) {

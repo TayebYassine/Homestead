@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.War;
@@ -15,6 +16,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,32 +24,34 @@ public class YAML {
 	private final File regionsFolder;
 	private final File warsFolder;
 	private final File subAreasFolder;
+	private final File levelsFolder;
 
 	public YAML(File dataFolder) throws IOException {
 		this.regionsFolder = new File(dataFolder, "regions");
-		if (!regionsFolder.exists()) {
-			if (!regionsFolder.mkdirs()) {
-				throw new IOException("Unable to create regions directory");
-			}
+		if (!regionsFolder.exists() && !regionsFolder.mkdirs()) {
+			throw new IOException("Unable to create regions directory");
 		}
 
 		this.warsFolder = new File(dataFolder, "wars");
-		if (!warsFolder.exists()) {
-			if (!warsFolder.mkdirs()) {
-				throw new IOException("Unable to create wars directory");
-			}
+		if (!warsFolder.exists() && !warsFolder.mkdirs()) {
+			throw new IOException("Unable to create wars directory");
 		}
 
 		this.subAreasFolder = new File(dataFolder, "subareas");
-		if (!subAreasFolder.exists()) {
-			if (!subAreasFolder.mkdirs()) {
-				throw new IOException("Unable to create subareas directory");
-			}
+		if (!subAreasFolder.exists() && !subAreasFolder.mkdirs()) {
+			throw new IOException("Unable to create subareas directory");
 		}
 
-		Logger.info("New database connection established, path: " + regionsFolder.getPath());
+		this.levelsFolder = new File(dataFolder, "levels");
+		if (!levelsFolder.exists() && !levelsFolder.mkdirs()) {
+			throw new IOException("Unable to create levels directory");
+		}
+
+		Logger.info("New database connection established, paths: ");
+		Logger.info(String.join("\n", List.of(regionsFolder.getAbsolutePath(), warsFolder.getAbsolutePath(), subAreasFolder.getAbsolutePath(), levelsFolder.getAbsolutePath())));
 	}
 
+	// Importing
 	public void importRegions() {
 		File[] regionFiles = regionsFolder
 				.listFiles((dir, name) -> name.startsWith("region_") && name.endsWith(".yml"));
@@ -246,6 +250,38 @@ public class YAML {
 		Logger.info("Imported " + imported + " sub-areas.");
 	}
 
+	public void importLevels() {
+		File[] files = levelsFolder.listFiles((d, n) -> n.startsWith("level_") && n.endsWith(".yml"));
+		if (files == null || files.length == 0) {
+			Logger.info("No level files found to import.");
+			return;
+		}
+
+		Homestead.levelsCache.clear();
+		int imported = 0;
+
+		for (File file : files) {
+			try {
+				YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+				UUID id        = UUID.fromString(Objects.requireNonNull(cfg.getString("id")));
+				UUID regionId  = UUID.fromString(Objects.requireNonNull(cfg.getString("regionId")));
+				int  level     = cfg.getInt("level");
+				long xp        = cfg.getLong("experience");
+				long totalXp   = cfg.getLong("totalExperience");
+				long createdAt = cfg.getLong("createdAt");
+
+				Level lvl = new Level(id, regionId, level, xp, totalXp, createdAt);
+				Homestead.levelsCache.putOrUpdate(lvl);
+				imported++;
+			} catch (Exception e) {
+				Homestead.getInstance().endInstance(e);
+				return;
+			}
+		}
+		Logger.info("Imported " + imported + " levels.");
+	}
+
+	// Exporting
 	public void exportRegions() {
 		int savedCount = 0;
 		int deletedCount = 0;
@@ -454,6 +490,53 @@ public class YAML {
 
 		if (Homestead.config.isDebugEnabled()) {
 			Logger.info("Exported " + saved + " sub-areas and deleted " + deleted + " sub-areas.");
+		}
+	}
+
+	public void exportLevels() {
+		int saved = 0, deleted = 0;
+
+		Set<UUID> existingFiles = new HashSet<>();
+		File[] files = levelsFolder.listFiles((d, n) -> n.startsWith("level_") && n.endsWith(".yml"));
+		if (files != null) {
+			for (File f : files) {
+				try {
+					existingFiles.add(UUID.fromString(f.getName().replace("level_", "").replace(".yml", "")));
+				} catch (IllegalArgumentException ignored) {}
+			}
+		}
+
+		Set<UUID> cacheIds = new HashSet<>();
+		for (Level lvl : Homestead.levelsCache.getAll()) {
+			try {
+				UUID id = lvl.getUniqueId();
+				cacheIds.add(id);
+
+				YamlConfiguration cfg = new YamlConfiguration();
+				cfg.set("id", id.toString());
+				cfg.set("regionId", lvl.getRegionId().toString());
+				cfg.set("level", lvl.getLevel());
+				cfg.set("experience", lvl.getExperience());
+				cfg.set("totalExperience", lvl.getTotalExperience());
+				cfg.set("createdAt", lvl.getCreatedAt());
+
+				File out = new File(levelsFolder, "level_" + id + ".yml");
+				cfg.save(out);
+				saved++;
+			} catch (IOException e) {
+				Homestead.getInstance().endInstance(e);
+				return;
+			}
+		}
+
+		existingFiles.removeAll(cacheIds);
+		for (UUID deletedId : existingFiles) {
+			File toDelete = new File(levelsFolder, "level_" + deletedId + ".yml");
+			if (toDelete.delete()) deleted++;
+		}
+
+		if (Homestead.config.isDebugEnabled()) {
+			Logger.info("Exported " + saved + " levels and deleted " + deleted + " levels.");
 		}
 	}
 
