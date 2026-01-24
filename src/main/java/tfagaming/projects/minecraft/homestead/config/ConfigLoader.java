@@ -100,8 +100,11 @@ public class ConfigLoader {
 		return get("worldedit.regenerate-chunks");
 	}
 
+	public boolean isRewardsEnabled() { return get("rewards.enabled"); }
+
+	public boolean isLevelsEnabled() { return get("levels.enabled"); }
+
 	public boolean isDebugEnabled() {
 		return get("debug");
 	}
-
 }

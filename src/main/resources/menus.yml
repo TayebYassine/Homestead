@@ -678,24 +678,35 @@ buttons:
       - "&7There are other rewards, use: &e/hs rewards"
     type: PAPER
   75:
-    title: "&9Progress"
+    name: "&#391AE8&lProgress"
     lore:
-      - "TEST"
+      - "&7• Level: &6{level}"
+      - "&7• Next: &6{next-lvl} &7(&6{next-lvl-xp} XP&7)"
+      - "&7• XP: &6{xp}&7/&6{next-lvl-xp}"
     type: BLUE_STAINED_GLASS_PANE
   76:
-    title: "&7Remaining"
+    name: "&#808080&lRemaining"
     lore:
-      - "TEST"
+      - "&7• Level: &6{level}"
+      - "&7• Next: &6{next-lvl} &7(&6{next-lvl-xp} XP&7)"
+      - "&7• XP: &6{xp}&7/&6{next-lvl-xp}"
     type: LIGHT_GRAY_STAINED_GLASS_PANE
   77:
-    title: "UNLOCKED LEVEL"
+    name: "&#81C784&lLevel {level}"
     lore:
-      - "TEST"
+      - "&7This level is unlocked!"
+      - " "
+      - "&7Rewards:"
+      - "{level-rewards}"
     type: GREEN_CONCRETE
   78:
-    title: "LOCKED LEVEL"
+    name: "&#E57373&lLevel {level}"
     lore:
-      - "TEST"
+      - "&7This level is locked. You need &6{xp} XP &7to"
+      - "&7unlock it! This region has &6{current-xp} XP &7now."
+      - " "
+      - "&7Rewards:"
+      - "{level-rewards}"
     type: RED_CONCRETE
 
 button-types:
@@ -703,4 +714,26 @@ button-types:
     overworld: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
     nether: PLAYERHEAD-99c6a378a72da175831c9394fa45eb7343f31d7d058fa76a9a646be007b7888d
     the_end: PLAYERHEAD-bba96aa005acf805a15b3ba49e5004dcff0cc127c57be0266b8b7a52dd8df753
-  
+
+# Make sure the level rewards are synchronized as in config.yml
+button-levels:
+  5:
+    - "&a✔ 1 Chunk"
+  10:
+    - "&a✔ 2 Chunks"
+    - "&a✔ 1 Member"
+    - "&a✔ 2% Upkeep price"
+  15:
+    - "&a✔ 4 Chunks"
+    - "&a✔ 2 Members"
+    - "&a✔ 1 Sub-Area"
+    - "&a✔ 5% Upkeep price"
+  20:
+    - "&a✔ 10% Upkeep price"
+  30:
+    - "&a✔ 30% Upkeep price"
+  50:
+    - "&a✔ 10 Chunks"
+    - "&a✔ 6 Members"
+    - "&a✔ 5 Sub-Areas"
+    - "&a✔ 70% Upkeep price"

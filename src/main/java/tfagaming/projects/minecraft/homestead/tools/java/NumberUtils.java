@@ -1,20 +1,29 @@
 package tfagaming.projects.minecraft.homestead.tools.java;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class NumberUtils {
 	public static double truncateToTwoDecimalPlaces(double number) {
 		return Math.floor(number * 100) / 100;
 	}
 
-	public static String convertDoubleToBalance(double number) {
-		String[] suffixes = {"", "k", "M", "B", "T"};
-		int index = 0;
+	public static String convertToBalance(double number) {
+		NumberFormat formatter = NumberFormat.getCompactNumberInstance(
+				Locale.US, NumberFormat.Style.SHORT);
 
-		while (number >= 1000 && index < suffixes.length - 1) {
-			number /= 1000;
-			index++;
-		}
+		formatter.setMaximumFractionDigits(2);
 
-		return String.format("%.2f%s", number, suffixes[index]);
+		return formatter.format(number);
+	}
+
+	public static String convertToBalance(long number) {
+		NumberFormat formatter = NumberFormat.getCompactNumberInstance(
+				Locale.US, NumberFormat.Style.SHORT);
+
+		formatter.setMaximumFractionDigits(2);
+
+		return formatter.format(number);
 	}
 
 	public static boolean isValidDouble(String string) {

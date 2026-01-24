@@ -21,9 +21,7 @@ public class RewardsSubCmd extends SubCommandBuilder {
 			return false;
 		}
 
-		boolean rewardsEnabled = Homestead.config.get("rewards.enabled");
-
-		if (!rewardsEnabled) {
+		if (!Homestead.config.isRewardsEnabled()) {
 			PlayerUtils.sendMessage(player, 168);
 			return false;
 		}

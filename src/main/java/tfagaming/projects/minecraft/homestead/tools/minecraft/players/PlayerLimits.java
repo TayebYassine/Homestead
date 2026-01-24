@@ -6,6 +6,8 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards;
 
 import java.util.Objects;
 
@@ -70,25 +72,17 @@ public class PlayerLimits {
 
 	public static int getLimitOfPlayer(OfflinePlayer player, LimitType limit) {
 		if (Objects.requireNonNull(limit) == LimitType.CHUNKS_PER_REGION) {
-			int defChunks = getDefaultLimitValue(player, limit);
+			int def = getDefaultLimitValue(player, limit);
 
-			boolean rewardsEnabled = Homestead.config.get("rewards.enabled");
-
-			if (rewardsEnabled) {
-				return PlayerRewards.getChunksByEachMember(player) + PlayerRewards.getChunksByPlayTime(player) + defChunks;
-			} else {
-				return defChunks;
-			}
+			return Rewards.getChunksByEachMember(player) + Rewards.getChunksByPlayTime(player) + LevelRewards.getChunksByLevel(player) + def;
 		} else if (Objects.requireNonNull(limit) == LimitType.SUBAREAS_PER_REGION) {
-			int defSubAreas = getDefaultLimitValue(player, limit);
+			int def= getDefaultLimitValue(player, limit);
 
-			boolean rewardsEnabled = Homestead.config.get("rewards.enabled");
+			return Rewards.getSubAreasByEachMember(player) + Rewards.getSubAreasByPlayTime(player) + LevelRewards.getSubAreasByLevel(player) + def;
+		} else if (Objects.requireNonNull(limit) == LimitType.MEMBERS_PER_REGION) {
+			int def = getDefaultLimitValue(player, limit);
 
-			if (rewardsEnabled) {
-				return PlayerRewards.getSubAreasByEachMember(player) + PlayerRewards.getSubAreasByPlayTime(player) + defSubAreas;
-			} else {
-				return defSubAreas;
-			}
+			return LevelRewards.getMembersByLevel(player) + def;
 		}
 
 		return getDefaultLimitValue(player, limit);

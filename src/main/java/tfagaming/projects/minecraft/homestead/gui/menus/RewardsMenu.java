@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerRewards;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards;
 
 import java.util.HashMap;
 
@@ -17,16 +17,16 @@ public class RewardsMenu {
 		replacements.put("{region}", region.getName());
 		replacements.put("{members}", String.valueOf(region.getMembers().size()));
 
-		replacements.put("{chunks}", String.valueOf(PlayerRewards.getChunksByEachMember(player)));
-		replacements.put("{subareas}", String.valueOf(PlayerRewards.getSubAreasByEachMember(player)));
+		replacements.put("{chunks}", String.valueOf(Rewards.getChunksByEachMember(player)));
+		replacements.put("{subareas}", String.valueOf(Rewards.getSubAreasByEachMember(player)));
 		ItemStack membersRewardButton = MenuUtils.getButton(66, replacements);
 
 		gui.addItem(12, membersRewardButton, (_player, event) -> {
 			// Do nothing
 		});
 
-		replacements.put("{chunks}", String.valueOf(PlayerRewards.getChunksByPlayTime(player)));
-		replacements.put("{subareas}", String.valueOf(PlayerRewards.getSubAreasByPlayTime(player)));
+		replacements.put("{chunks}", String.valueOf(Rewards.getChunksByPlayTime(player)));
+		replacements.put("{subareas}", String.valueOf(Rewards.getSubAreasByPlayTime(player)));
 		ItemStack playtimeRewardButton = MenuUtils.getButton(67, replacements);
 
 		gui.addItem(14, playtimeRewardButton, (_player, event) -> {

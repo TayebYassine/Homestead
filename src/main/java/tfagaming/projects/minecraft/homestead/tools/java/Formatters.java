@@ -52,7 +52,7 @@ public class Formatters {
 	}
 
 	public static String formatBalance(double amount) {
-		String balance = NumberUtils.convertDoubleToBalance(amount);
+		String balance = NumberUtils.convertToBalance(amount);
 		String format = Homestead.config.get("formatters.balance");
 
 		return format.replace("{balance}", balance);

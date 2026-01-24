@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.tools.minecraft.players;
+package tfagaming.projects.minecraft.homestead.tools.minecraft.rewards;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
@@ -9,8 +9,10 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import java.util.List;
 import java.util.Map;
 
-public class PlayerRewards {
+public class Rewards {
 	public static int getChunksByEachMember(OfflinePlayer player) {
+		if (!Homestead.config.isRewardsEnabled()) return 0;
+
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
@@ -23,6 +25,8 @@ public class PlayerRewards {
 	}
 
 	public static int getSubAreasByEachMember(OfflinePlayer player) {
+		if (!Homestead.config.isRewardsEnabled()) return 0;
+
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
@@ -35,6 +39,8 @@ public class PlayerRewards {
 	}
 
 	public static int getChunksByPlayTime(OfflinePlayer player) {
+		if (!Homestead.config.isRewardsEnabled()) return 0;
+
 		if (!player.hasPlayedBefore() && !player.isOnline()) return 0;
 
 		long playerMinutes = player.getStatistic(Statistic.PLAY_ONE_MINUTE) / (20L * 60L);
@@ -61,6 +67,8 @@ public class PlayerRewards {
 	}
 
 	public static int getSubAreasByPlayTime(OfflinePlayer player) {
+		if (!Homestead.config.isRewardsEnabled()) return 0;
+
 		if (!player.hasPlayedBefore() && !player.isOnline()) return 0;
 
 		long playerMinutes = player.getStatistic(Statistic.PLAY_ONE_MINUTE) / (20L * 60L);

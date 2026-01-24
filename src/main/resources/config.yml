@@ -127,11 +127,11 @@ enter-exit-region-message:
   
   messages:
     enter:
-      title: ["&2{region-displayname}", "&7{region-description}"]
+      title: [ "&2{region-displayname}", "&7{region-description}" ]
       actionbar: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
       chat: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
     exit:
-      title: ["&3Wilderness", "&7Roam the wild!"]
+      title: [ "&3Wilderness", "&7Roam the wild!" ]
       actionbar: "&7You left the territory of &2{region-displayname}&7."
       chat: "&7You left the territory of &2{region-displayname}&7."
 
@@ -257,15 +257,15 @@ player-limits:
 # +------------------------------------------------------+ #
 ############################################################
 
-# Hand out extra claim chunks for activity.
+# Hand out rewards.
 rewards:
   enabled: true
 
-  for-each-member: # Given to the owner when someone joins.
+  for-each-member: # Given to the owner when someone joins a region.
     chunks: 2 # 0 = disable
     subareas: 1 # 0 = disable
 
-  by-playtime: # Compares highest play-time; keep chunks rising as time rises.
+  by-playtime: # Compares highest play-time; keep chunks and subareas rising as time rises.
     - minutes: 30
       hours: 0
       days: 0
@@ -293,8 +293,52 @@ rewards:
 # +------------------------------------------------------+ #
 ############################################################
 
+# Hand out rewards by leveling up the region.
 levels:
   enabled: true
+
+  on-kill-entity:
+    ENDER_DRAGON: [ 1000, 3000 ]
+    WARDEN: [ 500, 1000 ]
+    WITHER: [ 200,500 ]
+    ZOMBIE: [ 10, 20 ]
+    SKELETON: [ 10, 20 ]
+    HUSK: [ 10, 20 ]
+    PIG: [ 10, 20 ]
+    SHEEP: [ 10, 20 ]
+    COW: [ 10, 20 ]
+
+  rewards:  # Compares highest level; keep the reward values rising as level rises.
+    5:
+      chunks: 1
+      members: 0
+      subareas: 0
+      upkeep-reduction: 0 # %
+    10:
+      chunks: 2
+      members: 1
+      subareas: 0
+      upkeep-reduction: 2 # %
+    15:
+      chunks: 4
+      members: 2
+      subareas: 1
+      upkeep-reduction: 5 # %
+    20:
+      chunks: 4
+      members: 2
+      subareas: 1
+      upkeep-reduction: 10 # %
+    30:
+      chunks: 4
+      members: 2
+      subareas: 1
+      upkeep-reduction: 30 # %
+    50:
+      chunks: 10
+      members: 6
+      subareas: 5
+      upkeep-reduction: 70 # %
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -349,7 +393,7 @@ dynamic-maps:
       Bastion: https://imgur.com/FwuLrG4.png
       Netherite: https://i.imgur.com/DTpAqCP.png
       Diamond: https://imgur.com/MQSe8Qs.png
-      
+
   chunks:
     operator-color: 0xFF0000
     operator-description: "<div style='font-size:16px;'><b>[Operator] {region} (#{global-rank})</b></div>{region-description}<br><br><b>Owner</b>: {region-owner}<br><b>Members</b>: {region-members}<br><b>Chunks</b>: {region-chunks}<br><b>Size</b>: {region-size} blocks"
