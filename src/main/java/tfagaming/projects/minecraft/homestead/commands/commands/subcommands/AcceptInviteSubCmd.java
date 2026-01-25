@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (PlayerLimits.hasPlayerReachedLimit(region.getOwner(), PlayerLimits.LimitType.MEMBERS_PER_REGION)) {
+		if (Limits.hasPlayerReachedLimit(region.getOwner(), Limits.LimitType.MEMBERS_PER_REGION)) {
 			PlayerUtils.sendMessage(player, 116);
 			return true;
 		}

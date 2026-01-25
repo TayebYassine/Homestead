@@ -38,12 +38,7 @@ public class LevelsSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		// TEST ADDING XP FOR NO REASON
-		Level level = LevelsManager.getOrCreateLevel(region.getUniqueId());
-
-		System.out.println("LEVEL ID = " + level.getUniqueId().toString());
-
-		LevelsManager.addRandomXp(region.getUniqueId(), 10, 50);
+		LevelsManager.getOrCreateLevel(region.getUniqueId());
 
 		new RegionLevelMenu(player, region);
 

@@ -25,7 +25,8 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits.LimitMethod;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits.LimitMethod;
 
 import java.util.*;
 
@@ -361,7 +362,7 @@ public class PlayerUtils {
 	}
 
 	public static String getPlayerGroup(OfflinePlayer player) {
-		if (PlayerLimits.getLimitsMethod() != LimitMethod.GROUPS) {
+		if (Limits.getLimitsMethod() != LimitMethod.GROUPS) {
 			return null;
 		}
 

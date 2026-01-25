@@ -109,7 +109,7 @@ public final class LevelsManager {
      * @param min Minimum XP (can be double, will be floored)
      * @param max Maximum XP (can be double, will be floored)
      */
-    public static void addRandomXp(UUID regionId, double min, double max) {
+    public static long addRandomXp(UUID regionId, double min, double max) {
         long minLong = (long) Math.floor(min);
         long maxLong = (long) Math.floor(max);
 
@@ -123,6 +123,8 @@ public final class LevelsManager {
         long amount = minLong + (long) (random.nextDouble() * range);
 
         addXp(regionId, amount);
+
+        return amount;
     }
 
     /**
@@ -131,8 +133,8 @@ public final class LevelsManager {
      * @param min Minimum XP
      * @param max Maximum XP
      */
-    public static void addRandomXp(UUID regionId, long min, long max) {
-        addRandomXp(regionId, (double) min, (double) max);
+    public static long addRandomXp(UUID regionId, long min, long max) {
+        return addRandomXp(regionId, (double) min, (double) max);
     }
 
     /**

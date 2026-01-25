@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
 public class PlaceholderAPI extends PlaceholderExpansion {
@@ -80,7 +80,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 					yield Homestead.config.get("placeholderapi.default.region_max_chunks");
 				}
 
-				yield String.valueOf(PlayerLimits.getLimitOfPlayer(player, PlayerLimits.LimitType.CHUNKS_PER_REGION));
+				yield String.valueOf(Limits.getPlayerLimit(player, Limits.LimitType.CHUNKS_PER_REGION));
 			}
 			case "region_trusted_members" -> {
 				if (region == null) {
@@ -94,7 +94,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 					yield Homestead.config.get("placeholderapi.default.region_max_members");
 				}
 
-				yield String.valueOf(PlayerLimits.getDefaultLimitValue(player, PlayerLimits.LimitType.MEMBERS_PER_REGION));
+				yield String.valueOf(Limits.getPlayerLimit(player, Limits.LimitType.MEMBERS_PER_REGION));
 			}
 			case "region_current" -> {
 				if (currentRegion == null) {

@@ -22,7 +22,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtils;
 
@@ -107,13 +107,13 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (PlayerLimits.hasPlayerReachedLimit(region.getOwner(), PlayerLimits.LimitType.SUBAREAS_PER_REGION)) {
+				if (Limits.hasPlayerReachedLimit(region.getOwner(), Limits.LimitType.SUBAREAS_PER_REGION)) {
 					PlayerUtils.sendMessage(player, 116);
 					return true;
 				}
 
 				int volume = SubArea.getVolume(firstCorner, secondCorner);
-				int maxVolume = PlayerLimits.getDefaultLimitValue(player, PlayerLimits.LimitType.MAX_SUBAREA_VOLUME);
+				int maxVolume = Limits.getRegionLimit(region, Limits.LimitType.MAX_SUBAREA_VOLUME);
 
 				if (volume >= maxVolume) {
 					Map<String, String> replacements = new HashMap<String, String>();

@@ -11,7 +11,7 @@ import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSe
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -131,7 +131,7 @@ public class RegionInvitedPlayersMenu {
 					return false;
 				}
 
-				if (PlayerLimits.hasPlayerReachedLimit(region.getOwner(), PlayerLimits.LimitType.MEMBERS_PER_REGION)) {
+				if (Limits.hasPlayerReachedLimit(region.getOwner(), Limits.LimitType.MEMBERS_PER_REGION)) {
 					PlayerUtils.sendMessage(player, 116);
 					return false;
 				}

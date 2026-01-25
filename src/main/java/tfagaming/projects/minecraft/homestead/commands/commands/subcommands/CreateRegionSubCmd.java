@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (PlayerLimits.hasPlayerReachedLimit(player, PlayerLimits.LimitType.REGIONS)) {
+		if (Limits.hasPlayerReachedLimit(player, Limits.LimitType.REGIONS)) {
 			PlayerUtils.sendMessage(player, 116);
 			return true;
 		}

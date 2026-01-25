@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerLimits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashSet;
@@ -29,7 +29,7 @@ public final class CommandsCooldownListener implements Listener {
 
 				PlayerUtils.sendMessage(player, 118);
 			} else {
-				int cooldownPlayer = PlayerLimits.getDefaultLimitValue(player, PlayerLimits.LimitType.COMMANDS_COOLDOWN);
+				int cooldownPlayer = Limits.getPlayerLimit(player, Limits.LimitType.COMMANDS_COOLDOWN);
 
 				if (cooldownPlayer > 0) {
 					cooldown.add(player.getUniqueId());

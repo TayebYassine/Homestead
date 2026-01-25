@@ -17,11 +17,11 @@ titles:
   15: "Sub-Area: &2{subarea}"
   16: "Sub-Area Flags"
   17: "Region Rating: &2{region}"
-  18: "Top Regions by Bank Balance"
-  19: "Top Regions by Chunks"
-  20: "Top Regions by Members"
-  21: "Top Regions by Creation Date"
-  22: "Top Regions by Player Rating"
+  18: "Top Regions" # by Bank Balance
+  19: "Top Regions" # by Chunks
+  20: "Top Regions" # by Members
+  21: "Top Regions" # by Creation Date
+  22: "Top Regions" # by Player Rating
   23: "Rewards: &2{region}"
   24: "Sub-Area Members"
   25: "Sub-Area Flags (&3{playername}&r)"
@@ -80,7 +80,7 @@ buttons:
       - "&7Manage players for this region; Ban, unban,"
       - "&7trust, untrust, invite..."
       - ""
-      - "&7• Members count: &6{region-members}"
+      - "&7This region has &6{region-members} &7members."
       - ""
       - "&#BA68C8&n➥ Left-click to manage players."
     type: PLAYERHEAD-75ad626181111e55ebfc906a8e7040c66b8efe94f7c07448d5710012d68436c
@@ -89,7 +89,7 @@ buttons:
     lore:
       - "&7View the list of claimed chunks."
       - ""
-      - "&7• Chunks count: &6{region-chunks}"
+      - "&7This region has &6{region-chunks} &7claimed chunks."
       - ""
       - "&#64B5F6&n➥ Left-click to view chunks."
     type: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
@@ -98,6 +98,7 @@ buttons:
     lore:
       - "&7Set flags for global players and the environment."
       - ""
+      - "&e&lNote:"
       - "&eThe global player flags won't have any effect on members,"
       - "&eyou must set specific flags for each member."
       - ""
@@ -116,7 +117,7 @@ buttons:
     lore:
       - "&7Manage sub-areas inside the region."
       - ""
-      - "&7• Sub-Areas count: &6{region-subareas}"
+      - "&7This region has &6{region-subareas} &7sub-areas."
       - ""
       - "&#FFB74D&n➥ Left-click to manage sub-areas."
     type: OAK_FENCE
@@ -181,7 +182,7 @@ buttons:
     lore:
       - "&7{flag-description}"
       - ""
-      - "&7• State: {state}"
+      - "&7➤ State: {state}"
       - ""
       - "&#81D4FA&n➥ Left-click to change the state."
   18:
@@ -189,7 +190,8 @@ buttons:
     lore:
       - "&7Untrust or set flags for trusted players."
       - ""
-      - "&7• Members: &6{region-members}"
+      - "&7There are &6{region-members} &7trusted players"
+      - "&7in this region."
       - ""
       - "&#4DB6AC&n➥ Left-click to view the members."
     type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
@@ -201,7 +203,8 @@ buttons:
       - "&eYou cannot trust any banned player. You must"
       - "&eunban them to send an invite."
       - ""
-      - "&7• Banned players: &6{region-banned-players}"
+      - "&7There are &6{region-banned-players} &7banned players"
+      - "&7from this region."
       - ""
       - "&#E57373&n➥ Left-click to manage banned players."
     type: BARRIER
@@ -210,7 +213,8 @@ buttons:
     lore:
       - "&7Invite or revoke invitation of players."
       - ""
-      - "&7• Invited players: &6{region-invited-players}"
+      - "&7There are &6{region-invited-players} &7invited players"
+      - "&7to join this region."
       - ""
       - "&#FFB74D&n➥ Left-click to manage invitations."
     type: WRITABLE_BOOK
@@ -226,11 +230,15 @@ buttons:
   22:
     name: "&#4DD0E1&lOwned Regions"
     lore:
+      - "&7The regions which this player owns."
+      - ""
       - "{player-owned-regions}"
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   23:
     name: "&#7986CB&lRegions as Member"
     lore:
+      - "&7The regions which trusted this player."
+      - ""
       - "{player-trusted-regions}"
     type: PLAYERHEAD-ae156eb5affddf208617aab7b430fad9f2c991ec2f38304a0c213f31e76cbbe4
   24:
@@ -347,11 +355,12 @@ buttons:
     name: "&#81C784&lSet Description"
     lore:
       - "&7Set the description of the region, current"
-      - "&7one is: &r{region-description}"
+      - "&7one is: &7{region-description}"
       - ""
       - "&7Custom variables:"
       - "&7• &a%player%&7: The player that entered the region"
       - ""
+      - "&7Example variable usage: &aWelcome, %player%!"
       - "&#81C784&n➥ Left-click to set the description."
     type: OAK_SIGN
   37:
@@ -502,6 +511,9 @@ buttons:
   56:
     name: "&#BA68C8&lFilter"
     lore:
+      - "&7The filter will show regions ranked by the"
+      - "&7amount of balance (highest to lowest)."
+      - ""
       - "&a➤ Bank"
       - "&7➤ Chunks"
       - "&7➤ Members"
@@ -513,6 +525,9 @@ buttons:
   57:
     name: "&#64B5F6&lFilter"
     lore:
+      - "&7The filter will show regions ranked by the"
+      - "&7number of claimed chunks (highest to lowest)."
+      - ""
       - "&7➤ Bank"
       - "&a➤ Chunks"
       - "&7➤ Members"
@@ -524,6 +539,9 @@ buttons:
   58:
     name: "&#4FC3F7&lFilter"
     lore:
+      - "&7The filter will show regions ranked by the"
+      - "&7number of trusted players (highest to lowest)."
+      - ""
       - "&7➤ Bank"
       - "&7➤ Chunks"
       - "&a➤ Members"
@@ -535,6 +553,9 @@ buttons:
   59:
     name: "&#81C784&lFilter"
     lore:
+      - "&7The filter will show regions ranked by the"
+      - "&7date of creation (oldest to newest)."
+      - ""
       - "&7➤ Bank"
       - "&7➤ Chunks"
       - "&7➤ Members"
@@ -546,6 +567,9 @@ buttons:
   60:
     name: "&#FFD54F&lFilter"
     lore:
+      - "&7The filter will show regions ranked by the"
+      - "&7public rating (highest to lowest)."
+      - ""
       - "&7➤ Bank"
       - "&7➤ Chunks"
       - "&7➤ Members"
@@ -598,17 +622,21 @@ buttons:
     name: "&#AED581&lRewards by Member"
     lore:
       - "&7Invited players: &6{members}"
-      - "&a🡫"
-      - "&a⮕ &7Unlocked chunks: &6{chunks}"
-      - "&a⮕ &7Unlocked sub-areas: &6{subareas}"
+      - ""
+      - "  &a🡫"
+      - ""
+      - "  &7- &a✔ Unlocked chunks: &6{chunks}"
+      - "  &7- &a✔ Unlocked sub-areas: &6{subareas}"
     type: PAPER
   67:
     name: "&#81C784&lRewards by Playtime"
     lore:
       - "&7Playtime: &6%playtime_time%" # "%playtime_time%" Requires PAPI for the placeholder to work!
-      - "&a🡫"
-      - "&a⮕ &7Unlocked chunks: &6{chunks}"
-      - "&a⮕ &7Unlocked sub-areas: &6{subareas}"
+      - ""
+      - "  &a🡫"
+      - ""
+      - "  &7- &a✔ Unlocked chunks: &6{chunks}"
+      - "  &7- &a✔ Unlocked sub-areas: &6{subareas}"
     type: PAPER
   68:
     name: "&#66BB6A&lAdd Player"
