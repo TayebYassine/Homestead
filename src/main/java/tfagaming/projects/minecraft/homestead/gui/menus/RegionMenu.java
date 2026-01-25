@@ -122,6 +122,16 @@ public class RegionMenu {
 			new SubAreasMenu(player, region);
 		});
 
+		ItemStack rewardsButton = MenuUtils.getButton(79, replacements);
+
+		gui.addItem(20, rewardsButton, (_player, event) -> {
+			if (!event.isLeftClick()) {
+				return;
+			}
+
+			new RewardsMenu(player, region, () -> new RegionMenu(player, region));
+		});
+
 		ItemStack upkeepButton = MenuUtils.getButton(11, replacements);
 
 		gui.addItem(21, upkeepButton, (_player, event) -> {
@@ -164,9 +174,19 @@ public class RegionMenu {
 			}
 		});
 
+		ItemStack levelsButton = MenuUtils.getButton(80, replacements);
+
+		gui.addItem(23, levelsButton, (_player, event) -> {
+			if (!event.isLeftClick()) {
+				return;
+			}
+
+			new RegionLevelMenu(player, region, () -> new RegionMenu(player, region));
+		});
+
 		ItemStack informationButton = MenuUtils.getButton(15, replacements);
 
-		gui.addItem(23, informationButton, (_player, event) -> {
+		gui.addItem(24, informationButton, (_player, event) -> {
 			// Do nothing
 		});
 

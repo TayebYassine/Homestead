@@ -497,7 +497,7 @@ buttons:
     name: "&#FFF176&lYou rated this region: &r{player-rate}"
     type: PAPER
   55:
-    name: "&#CE93D8&l#{rank} &#F8BBD0{region} &#FFD966&l(&#FFF176{region-displayname}&#FFD966&l)"
+    name: "&#CE93D8&l#{rank} &r&2{region} &8(&2{region-displayname}&8)"
     lore:
       - "&7• Owner: &3{region-owner}"
       - "&7• Created At: &6{region-createdat}"
@@ -738,6 +738,20 @@ buttons:
       - "&7Rewards:"
       - "{level-rewards}"
     type: RED_CONCRETE
+  79:
+    name: "&#AED581&lRewards"
+    lore:
+      - "&7View the rewards you have earned."
+      - ""
+      - "&#AED581&n➥ Left-click to view the rewards."
+    type: PLAYERHEAD-d1c3e87f30290045d019506c805834ba971f5aeec0d7d0505261f314a5465638
+  80:
+    name: "&#1DCAE0&lLevels"
+    lore:
+      - "&7View the levels for this region."
+      - ""
+      - "&#1DCAE0&n➥ Left-click to view the levels."
+    type: NETHER_STAR
 
 button-types:
   world:

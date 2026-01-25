@@ -34,9 +34,7 @@ public class RegionRateSubCmd extends SubCommandBuilder {
 			return false;
 		}
 
-		new RegionRatingMenu(player, region, () -> {
-			player.closeInventory();
-		});
+		new RegionRatingMenu(player, region, player::closeInventory);
 
 		return true;
 	}

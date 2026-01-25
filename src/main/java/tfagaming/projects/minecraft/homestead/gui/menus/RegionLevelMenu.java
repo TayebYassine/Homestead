@@ -20,7 +20,7 @@ import java.util.Map;
 public class RegionLevelMenu {
 	private static final int MAX_LEVEL = 50;
 
-	public RegionLevelMenu(Player player, Region region) {
+	public RegionLevelMenu(Player player, Region region, Runnable backButton) {
 		Level lvl = LevelsManager.getLevelByRegion(region.getUniqueId());
 
 		List<ItemStack> levelButtons = buildLevelButtons(region);
@@ -32,7 +32,7 @@ public class RegionLevelMenu {
 				MenuUtils.getPreviousPageButton(),
 				levelButtons,
 				(p, e) -> {
-					player.closeInventory();
+					backButton.run();
 				},
 				(p, c) -> { }
 		);

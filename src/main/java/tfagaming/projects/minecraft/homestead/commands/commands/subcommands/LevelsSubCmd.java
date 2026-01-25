@@ -40,7 +40,7 @@ public class LevelsSubCmd extends SubCommandBuilder {
 
 		LevelsManager.getOrCreateLevel(region.getUniqueId());
 
-		new RegionLevelMenu(player, region);
+		new RegionLevelMenu(player, region, player::closeInventory);
 
 		return true;
 	}
