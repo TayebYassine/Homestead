@@ -1,58 +1,39 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.rewards;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
-import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
 import java.util.*;
 
 public class LevelRewards {
-	public static int getChunksByLevel(OfflinePlayer player) {
+	public static int getChunksByLevel(Region region) {
 		if (!Homestead.config.isLevelsEnabled()) return 0;
 
-		Region region = TargetRegionSession.getRegion(player);
+		Level lvl = LevelsManager.getLevelByRegion(region.getUniqueId());
+		int current = lvl == null ? 0 : lvl.getLevel();
 
-		if (region == null) {
-			return 0;
-		}
-
-		Level level = LevelsManager.getLevelByRegion(region.getUniqueId());
-		if (level == null) return 0;
-
-		int currentLevel = level.getLevel();
-		int maxChunks = 0;
-
-		Map<String, Object> rewards = getLevelRewardsSection();
+		ConfigurationSection rewards = Homestead.config.getConfig().getConfigurationSection("levels.rewards");
 		if (rewards == null) return 0;
 
-		for (String key : rewards.keySet()) {
-			int requiredLevel = parseInt(key);
-			if (requiredLevel < 0) continue;
+		int maxChunks = 0;
+		for (String key : rewards.getKeys(false)) {
+			int requiredLevel = Integer.parseInt(key);
+			if (current < requiredLevel) continue;
 
-			Map<?, ?> reward = (Map<?, ?>) rewards.get(key);
-			if (currentLevel >= requiredLevel) {
-				int chunks = getInt(reward, "chunks");
-				if (chunks > maxChunks) {
-					maxChunks = chunks;
-				}
-			}
+			ConfigurationSection reward = rewards.getConfigurationSection(key);
+			if (reward == null) continue;
+
+			maxChunks = Math.max(maxChunks, reward.getInt("chunks", 0));
 		}
 
 		return maxChunks;
 	}
 
-	public static int getMembersByLevel(OfflinePlayer player) {
+	public static int getMembersByLevel(Region region) {
 		if (!Homestead.config.isLevelsEnabled()) return 0;
-
-		Region region = TargetRegionSession.getRegion(player);
-
-		if (region == null) {
-			return 0;
-		}
 
 		Level level = LevelsManager.getLevelByRegion(region.getUniqueId());
 		if (level == null) return 0;
@@ -60,33 +41,24 @@ public class LevelRewards {
 		int currentLevel = level.getLevel();
 		int maxMembers = 0;
 
-		Map<String, Object> rewards = getLevelRewardsSection();
+		ConfigurationSection rewards = Homestead.config.getConfig().getConfigurationSection("levels.rewards");
 		if (rewards == null) return 0;
 
-		for (String key : rewards.keySet()) {
-			int requiredLevel = parseInt(key);
-			if (requiredLevel < 0) continue;
+		for (String key : rewards.getKeys(false)) {
+			int requiredLevel = Integer.parseInt(key);
+			if (currentLevel < requiredLevel) continue;
 
-			Map<?, ?> reward = (Map<?, ?>) rewards.get(key);
-			if (currentLevel >= requiredLevel) {
-				int members = getInt(reward, "members");
-				if (members > maxMembers) {
-					maxMembers = members;
-				}
-			}
+			ConfigurationSection reward = rewards.getConfigurationSection(key);
+			if (reward == null) continue;
+
+			maxMembers = Math.max(maxMembers, reward.getInt("members", 0));
 		}
 
 		return maxMembers;
 	}
 
-	public static int getSubAreasByLevel(OfflinePlayer player) {
+	public static int getSubAreasByLevel(Region region) {
 		if (!Homestead.config.isLevelsEnabled()) return 0;
-
-		Region region = TargetRegionSession.getRegion(player);
-
-		if (region == null) {
-			return 0;
-		}
 
 		Level level = LevelsManager.getLevelByRegion(region.getUniqueId());
 		if (level == null) return 0;
@@ -94,33 +66,24 @@ public class LevelRewards {
 		int currentLevel = level.getLevel();
 		int maxSubAreas = 0;
 
-		Map<String, Object> rewards = getLevelRewardsSection();
+		ConfigurationSection rewards = Homestead.config.getConfig().getConfigurationSection("levels.rewards");
 		if (rewards == null) return 0;
 
-		for (String key : rewards.keySet()) {
-			int requiredLevel = parseInt(key);
-			if (requiredLevel < 0) continue;
+		for (String key : rewards.getKeys(false)) {
+			int requiredLevel = Integer.parseInt(key);
+			if (currentLevel < requiredLevel) continue;
 
-			Map<?, ?> reward = (Map<?, ?>) rewards.get(key);
-			if (currentLevel >= requiredLevel) {
-				int subAreas = getInt(reward, "subareas");
-				if (subAreas > maxSubAreas) {
-					maxSubAreas = subAreas;
-				}
-			}
+			ConfigurationSection reward = rewards.getConfigurationSection(key);
+			if (reward == null) continue;
+
+			maxSubAreas = Math.max(maxSubAreas, reward.getInt("subareas", 0));
 		}
 
 		return maxSubAreas;
 	}
 
-	public static int getUpkeepReductionByLevel(OfflinePlayer player) {
+	public static int getUpkeepReductionByLevel(Region region) {
 		if (!Homestead.config.isLevelsEnabled()) return 0;
-
-		Region region = TargetRegionSession.getRegion(player);
-
-		if (region == null) {
-			return 0;
-		}
 
 		Level level = LevelsManager.getLevelByRegion(region.getUniqueId());
 		if (level == null) return 0;
@@ -128,20 +91,17 @@ public class LevelRewards {
 		int currentLevel = level.getLevel();
 		int maxReduction = 0;
 
-		Map<String, Object> rewards = getLevelRewardsSection();
+		ConfigurationSection rewards = Homestead.config.getConfig().getConfigurationSection("levels.rewards");
 		if (rewards == null) return 0;
 
-		for (String key : rewards.keySet()) {
-			int requiredLevel = parseInt(key);
-			if (requiredLevel < 0) continue;
+		for (String key : rewards.getKeys(false)) {
+			int requiredLevel = Integer.parseInt(key);
+			if (currentLevel < requiredLevel) continue;
 
-			Map<?, ?> reward = (Map<?, ?>) rewards.get(key);
-			if (currentLevel >= requiredLevel) {
-				int reduction = getInt(reward, "upkeep-reduction");
-				if (reduction > maxReduction) {
-					maxReduction = reduction;
-				}
-			}
+			ConfigurationSection reward = rewards.getConfigurationSection(key);
+			if (reward == null) continue;
+
+			maxReduction = Math.max(maxReduction, reward.getInt("upkeep-reduction", 0));
 		}
 
 		return Math.min(maxReduction, 100);

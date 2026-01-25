@@ -74,15 +74,11 @@ public class PlayerLimits {
 		if (Objects.requireNonNull(limit) == LimitType.CHUNKS_PER_REGION) {
 			int def = getDefaultLimitValue(player, limit);
 
-			return Rewards.getChunksByEachMember(player) + Rewards.getChunksByPlayTime(player) + LevelRewards.getChunksByLevel(player) + def;
+			return Rewards.getChunksByEachMember(player) + Rewards.getChunksByPlayTime(player) + def;
 		} else if (Objects.requireNonNull(limit) == LimitType.SUBAREAS_PER_REGION) {
 			int def= getDefaultLimitValue(player, limit);
 
-			return Rewards.getSubAreasByEachMember(player) + Rewards.getSubAreasByPlayTime(player) + LevelRewards.getSubAreasByLevel(player) + def;
-		} else if (Objects.requireNonNull(limit) == LimitType.MEMBERS_PER_REGION) {
-			int def = getDefaultLimitValue(player, limit);
-
-			return LevelRewards.getMembersByLevel(player) + def;
+			return Rewards.getSubAreasByEachMember(player) + Rewards.getSubAreasByPlayTime(player) + def;
 		}
 
 		return getDefaultLimitValue(player, limit);

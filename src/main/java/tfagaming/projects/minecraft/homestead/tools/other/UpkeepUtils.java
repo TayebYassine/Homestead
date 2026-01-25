@@ -1,7 +1,10 @@
 package tfagaming.projects.minecraft.homestead.tools.other;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
+import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 
 public class UpkeepUtils {
 	public static long getNewUpkeepAt() {
@@ -12,14 +15,20 @@ public class UpkeepUtils {
 		return 0;
 	}
 
-	public static double getAmountToPay(int chunks) {
+	public static double getAmountToPay(Region region) {
 		double amountPerChunk = Homestead.config.get("upkeep.per-chunk");
 
-		return amountPerChunk * chunks;
+		double price = amountPerChunk * region.getChunks().size();
+		int reduction = LevelRewards.getUpkeepReductionByLevel(region);
+
+		double reductedPrice = price - (price * (reduction / 100.0));
+
+		System.out.println("PRICE: " + price + ", REDUCTION: " + reduction + "%, REDUCTED PRICE: " + reductedPrice);
+		return reductedPrice;
 	}
 
 	public static int getChunksToRemove(Region region) {
-		if (region.getBank() >= getAmountToPay(region.getChunks().size())) {
+		if (region.getBank() >= getAmountToPay(region)) {
 			return 0;
 		}
 

@@ -108,7 +108,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 					yield Homestead.config.get("placeholderapi.default.upkeep_amount");
 				}
 
-				yield Formatters.formatBalance(UpkeepUtils.getAmountToPay(region.getChunks().size()));
+				yield Formatters.formatBalance(UpkeepUtils.getAmountToPay(region));
 			}
 			case "upkeep_at" -> {
 				if (region == null) {

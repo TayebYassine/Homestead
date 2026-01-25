@@ -39,7 +39,7 @@ public class RegionMenu {
 		replacements.put("{upkeep-enabled}", Formatters.getEnabled(isUpkeepEnabled));
 		replacements.put("{upkeep-date}", Formatters.formatRemainingTime(region.getUpkeepAt()));
 		replacements.put("{upkeep-amount}",
-				Formatters.formatBalance(UpkeepUtils.getAmountToPay(region.getChunks().size())));
+				Formatters.formatBalance(UpkeepUtils.getAmountToPay(region)));
 		replacements.put("{region-global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
 		replacements.put("{region-rank-bank}",
 				String.valueOf(RegionsManager.getRank(RegionSorting.BANK, region.getUniqueId())));

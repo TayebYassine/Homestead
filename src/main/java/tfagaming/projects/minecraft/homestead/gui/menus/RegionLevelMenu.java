@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ public class RegionLevelMenu {
 	private static final int MAX_LEVEL = 50;
 
 	public RegionLevelMenu(Player player, Region region) {
+		Level lvl = LevelsManager.getLevelByRegion(region.getUniqueId());
+
 		List<ItemStack> levelButtons = buildLevelButtons(region);
 
 		PaginationMenu gui = new PaginationMenu(
@@ -41,7 +44,6 @@ public class RegionLevelMenu {
 
 			for (int i = 18; i < 27; i++) inv.setItem(i, empty);
 
-			Level lvl = LevelsManager.getLevelByRegion(region.getUniqueId());
 			int current = lvl == null ? 0 : lvl.getLevel();
 			long xp = lvl == null ? 0 : lvl.getExperience();
 			long needed = Level.getXpForLevel(current);
@@ -50,6 +52,7 @@ public class RegionLevelMenu {
 			int gray = 9 - blue;
 
 			Map<String, String> replacements = new HashMap<>();
+
 			replacements.put("{level}", String.valueOf(current));
 			replacements.put("{next-lvl}", String.valueOf(current + 1));
 			replacements.put("{xp}", NumberUtils.convertToBalance(xp));
@@ -63,7 +66,15 @@ public class RegionLevelMenu {
 			for (int i = 0; i < gray; i++) inv.setItem(start + blue + i, grayPane);
 		});
 
-		gui.addActionButton(1, MenuUtils.getButton(74), (_a, _c) -> {
+		Map<String, String> replacements = new HashMap<>();
+		replacements.put("{level}", String.valueOf(lvl == null ? 0 : lvl.getLevel()));
+		replacements.put("{xp}", NumberUtils.convertToBalance(lvl == null ? 0 : lvl.getExperience()));
+		replacements.put("{reward-chunks}", String.valueOf(LevelRewards.getChunksByLevel(region)));
+		replacements.put("{reward-members}", String.valueOf(LevelRewards.getMembersByLevel(region)));
+		replacements.put("{reward-subareas}", String.valueOf(LevelRewards.getSubAreasByLevel(region)));
+		replacements.put("{reward-upkeep}", String.valueOf(LevelRewards.getUpkeepReductionByLevel(region)));
+
+		gui.addActionButton(1, MenuUtils.getButton(74, replacements), (_a, _c) -> {
 
 		});
 

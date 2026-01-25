@@ -16,7 +16,7 @@ public class RegionUpkeep {
 	public RegionUpkeep(Homestead instance) {
 		for (Region region : RegionsManager.getAll()) {
 			if (System.currentTimeMillis() > region.getUpkeepAt()) {
-				double amountToPay = UpkeepUtils.getAmountToPay(region.getChunks().size());
+				double amountToPay = UpkeepUtils.getAmountToPay(region);
 
 				if (amountToPay > region.getBank()) {
 					int chunksToRemove = UpkeepUtils.getChunksToRemove(region);
