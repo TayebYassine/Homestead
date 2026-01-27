@@ -20,8 +20,14 @@ public final class LevelsManager {
      * @param regionId The region ID
      */
     public static Level createLevel(UUID regionId) {
+        if (getLevelByRegion(regionId) != null) {
+            return null;
+        }
+
         Level level = new Level(regionId);
+
         Homestead.levelsCache.putOrUpdate(level);
+
         return level;
     }
 

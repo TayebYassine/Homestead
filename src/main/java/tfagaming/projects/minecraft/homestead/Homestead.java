@@ -34,6 +34,7 @@ import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
 
@@ -205,10 +206,15 @@ public class Homestead extends JavaPlugin {
 		}
 
 		if (!Homestead.vault.setupPermissions()) {
-			Logger.error("No Permissions service provider found.");
-			Logger.error("Permissions are required for Homestead to run. Shutting down plugin instance...");
-			endInstance();
-			return;
+			if (Limits.getLimitsMethod() == Limits.LimitMethod.GROUPS) {
+				Logger.error("No Permissions service provider found.");
+				Logger.error("You are using groups as a limit method, and permission services are required for Homestead to run. Shutting down plugin instance...");
+				endInstance();
+				return;
+			} else {
+				Logger.warning("No Permission service provider found.");
+				Logger.warning("The plugin is using static permissions; operator and non-operator.");
+			}
 		} else {
 			Logger.info("Loaded service provider: Permissions [" + Homestead.vault.getPermissions().getName() + "]");
 		}
