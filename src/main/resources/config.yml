@@ -163,7 +163,7 @@ selection-tool:
 # Upkeep – charge owners per chunk or lose the land.
 upkeep:
   # Enable this setting? true to enable, false to disable.
-  enabled: true
+  enabled: false
 
   per-chunk: 100.0          # $ per chunk
   unclaim-chunks: true      # Unclaim chunks that can't be paid for
@@ -173,7 +173,7 @@ upkeep:
 # Member taxes – kick players who don't pay their share.
 taxes:
   # Enable this setting? true to enable, false to disable.
-  enabled: true
+  enabled: false
 
   min-tax: 0.0
   max-tax: 10000.0
