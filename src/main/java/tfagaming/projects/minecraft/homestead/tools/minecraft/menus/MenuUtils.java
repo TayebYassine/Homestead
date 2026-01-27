@@ -93,7 +93,7 @@ public class MenuUtils {
 		replacements.put("{flag-description}", description instanceof String ? description.toString() : String.join("\n", (List<String>) description));
 		replacements.put("{state}", Formatters.getFlag(value));
 		replacements.put("{flag-allowed}",
-				Formatters.getBoolean(!((List<String>) Homestead.config.get("disabled-flags")).contains(flag)));
+				Formatters.getBoolean(!Homestead.config.isFlagDisabled(flag)));
 
 		ButtonData data = getButtonData(17);
 		String type = Homestead.language.get("flags-info." + flag + ".type");

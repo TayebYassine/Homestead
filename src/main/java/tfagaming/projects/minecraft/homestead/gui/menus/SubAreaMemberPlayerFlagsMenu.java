@@ -48,15 +48,12 @@ public class SubAreaMemberPlayerFlagsMenu {
 
 						if (!enableAll && !disableAll) return;
 
-						@SuppressWarnings("unchecked")
-						List<String> disabledFlags = Homestead.config.get("disabled-flags");
-
 						long current = member.getFlags();
 						long newFlags = current;
 
 						int changed = 0;
 						for (String flagString : PlayerFlags.getFlags()) {
-							if (disabledFlags.contains(flagString)) continue; // locked -> skip
+							if (Homestead.config.isFlagDisabled(flagString)) continue; // locked -> skip
 							long flag = PlayerFlags.valueOf(flagString);
 
 							boolean isSet = FlagsCalculator.isFlagSet(newFlags, flag);
@@ -96,10 +93,8 @@ public class SubAreaMemberPlayerFlagsMenu {
 					if (flagListIndex < 0 || flagListIndex >= PlayerFlags.getFlags().size()) return;
 
 					String flagString = PlayerFlags.getFlags().get(flagListIndex);
-
-					@SuppressWarnings("unchecked")
-					List<String> disabledFlags = Homestead.config.get("disabled-flags");
-					if (disabledFlags.contains(flagString)) {
+					
+					if (Homestead.config.isFlagDisabled(flagString)) {
 						PlayerUtils.sendMessage(player, 42);
 						return;
 					}

@@ -6,6 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
+import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
 
@@ -307,7 +308,20 @@ public class Region {
 
 	public void addMember(OfflinePlayer player) {
 		if (!isPlayerMember(player)) {
-			SerializableMember member = new SerializableMember(player, playerFlags, 0);
+			long newFlags = playerFlags;
+
+			for (String flagString : PlayerFlags.getFlags()) {
+				if (Homestead.config.isFlagDisabled(flagString)) continue;
+
+				long flag = PlayerFlags.valueOf(flagString);
+
+				boolean isSet = FlagsCalculator.isFlagSet(newFlags, flag);
+				if (!isSet) {
+					newFlags = FlagsCalculator.addFlag(newFlags, flag);
+				}
+			}
+
+			SerializableMember member = new SerializableMember(player, newFlags, 0L);
 
 			member.setTaxesAt(TaxesUtils.getNewTaxesAt());
 
