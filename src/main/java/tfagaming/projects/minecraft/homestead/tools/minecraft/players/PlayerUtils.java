@@ -67,6 +67,10 @@ public class PlayerUtils {
 	}
 
 	public static void sendMessage(CommandSender sender, String path, Map<String, String> replacements) {
+		if (sender == null) {
+			return;
+		}
+
 		String message = Homestead.language.get(path);
 
 		if (message == null) {
