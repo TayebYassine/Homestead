@@ -317,6 +317,10 @@ flags-info:
   general-interaction:
     description:
       - "&7Allow players to interact generally?"
+      - "&7The interactions are:"
+      - " &7- Eating Cake"
+      - " &7- Pick/put flowers in pots"
+      - " &7- Any kind of pot"
     type: STRING
   armor-stands:
     description:
