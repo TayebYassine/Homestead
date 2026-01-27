@@ -453,6 +453,8 @@ special-feat:
 
   ignore-region-protection-if-action-in-disabled-world: true # Disable region protection if a grief or an action occurred in a disabled world
 
+  ignore-trust-acceptance-system: false # Instantly trust players without waiting requested players to accept or deny the invites?
+
 # Teleport delay
 delayed-teleport:
   # Enable this setting? true to enable, false to disable.

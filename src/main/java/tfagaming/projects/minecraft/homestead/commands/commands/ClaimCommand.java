@@ -61,7 +61,7 @@ public class ClaimCommand extends CommandBuilder {
 					return true;
 				}
 
-				if (Limits.hasPlayerReachedLimit(player, Limits.LimitType.REGIONS)) {
+				if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
 					PlayerUtils.sendMessage(player, 116);
 					return true;
 				}
@@ -88,7 +88,7 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		if (Limits.hasPlayerReachedLimit(region.getOwner(), Limits.LimitType.CHUNKS_PER_REGION)) {
+		if (Limits.hasReachedLimit(null, region, Limits.LimitType.CHUNKS_PER_REGION)) {
 			PlayerUtils.sendMessage(player, 116);
 			return true;
 		}

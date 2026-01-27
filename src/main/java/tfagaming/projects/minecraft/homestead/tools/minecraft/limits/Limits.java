@@ -59,12 +59,12 @@ public class Limits {
 		};
 	}
 
-	public static boolean hasPlayerReachedLimit(OfflinePlayer player, LimitType limit) {
+	public static boolean hasReachedLimit(OfflinePlayer player, Region region, LimitType limit) {
 		return switch (limit) {
 			case REGIONS -> hasReachedRegionsLimit(player);
-			case CHUNKS_PER_REGION -> hasReachedChunksLimit(player);
-			case MEMBERS_PER_REGION -> hasReachedMembersLimit(player);
-			case SUBAREAS_PER_REGION -> hasReachedSubAreasLimit(player);
+			case CHUNKS_PER_REGION -> hasReachedChunksLimit(region);
+			case MEMBERS_PER_REGION -> hasReachedMembersLimit(region);
+			case SUBAREAS_PER_REGION -> hasReachedSubAreasLimit(region);
 			default -> false;
 		};
 	}
@@ -105,13 +105,16 @@ public class Limits {
 	}
 
 	private static boolean hasReachedRegionsLimit(OfflinePlayer player) {
+		if (player == null) {
+			return false;
+		}
+
 		int current = RegionsManager.getRegionsOwnedByPlayer(player).size();
 		int max = getPlayerLimit(player, LimitType.REGIONS);
 		return current >= max;
 	}
 
-	private static boolean hasReachedChunksLimit(OfflinePlayer player) {
-		Region region = TargetRegionSession.getRegion(player);
+	private static boolean hasReachedChunksLimit(Region region) {
 		if (region == null) {
 			return false;
 		}
@@ -121,8 +124,7 @@ public class Limits {
 		return current >= max;
 	}
 
-	private static boolean hasReachedMembersLimit(OfflinePlayer player) {
-		Region region = TargetRegionSession.getRegion(player);
+	private static boolean hasReachedMembersLimit(Region region) {
 		if (region == null) {
 			return false;
 		}
@@ -132,8 +134,7 @@ public class Limits {
 		return current >= max;
 	}
 
-	private static boolean hasReachedSubAreasLimit(OfflinePlayer player) {
-		Region region = TargetRegionSession.getRegion(player);
+	private static boolean hasReachedSubAreasLimit(Region region) {
 		if (region == null) {
 			return false;
 		}

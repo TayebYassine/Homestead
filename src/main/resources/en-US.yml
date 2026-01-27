@@ -229,6 +229,7 @@ prefix: "&8[&6Homestead&8]&r"
 196: "{__prefix__} &cA region or sub-area leaser cannot be banned, trusted, or kicked! You can cancel the lease if you're the region owner."
 197: "{__prefix__} &cLevels are disabled on this server."
 198: "&7You killed &3{entity}&7, you have earned &6{xp} XP &7for the region &2{region}&7!"
+199: "{__prefix__} &7The player &3{playername} &7joined the region &2{region}."
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."

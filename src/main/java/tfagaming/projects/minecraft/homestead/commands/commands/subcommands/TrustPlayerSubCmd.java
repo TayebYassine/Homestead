@@ -95,25 +95,37 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (Limits.hasPlayerReachedLimit(region.getOwner(), Limits.LimitType.MEMBERS_PER_REGION)) {
+		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
 			PlayerUtils.sendMessage(player, 116);
 			return true;
 		}
 
-		region.addPlayerInvite(target);
+		if ((boolean) Homestead.config.get("special-feat.ignore-trust-acceptance-system")) {
+			region.removePlayerInvite(target);
 
-		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put("{playername}", target.getName());
-		replacements.put("{region}", region.getName());
-		replacements.put("{ownername}", region.getOwner().getName());
+			region.addMember(target);
 
-		PlayerUtils.sendMessage(player, 36, replacements);
+			Map<String, String> replacements = new HashMap<String, String>();
+			replacements.put("{region}", region.getName());
+			replacements.put("{playername}", target.getName());
 
-		if (target.isOnline()) {
-			PlayerUtils.sendMessage(target.getPlayer(), 139, replacements);
+			PlayerUtils.sendMessage(player, 199, replacements);
+ 		} else {
+			region.addPlayerInvite(target);
+
+			Map<String, String> replacements = new HashMap<String, String>();
+			replacements.put("{playername}", target.getName());
+			replacements.put("{region}", region.getName());
+			replacements.put("{ownername}", region.getOwner().getName());
+
+			PlayerUtils.sendMessage(player, 36, replacements);
+
+			if (target.isOnline()) {
+				PlayerUtils.sendMessage(target.getPlayer(), 139, replacements);
+			}
+
+			RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
 		}
-
-		RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
 
 		return true;
 	}

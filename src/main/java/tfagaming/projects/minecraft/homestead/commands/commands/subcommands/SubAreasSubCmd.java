@@ -107,7 +107,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (Limits.hasPlayerReachedLimit(region.getOwner(), Limits.LimitType.SUBAREAS_PER_REGION)) {
+				if (Limits.hasReachedLimit(null, region, Limits.LimitType.SUBAREAS_PER_REGION)) {
 					PlayerUtils.sendMessage(player, 116);
 					return true;
 				}

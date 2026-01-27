@@ -69,15 +69,27 @@ public class RegionInvitedPlayersMenu {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
-				region.addPlayerInvite(targetPlayer);
+				if ((boolean) Homestead.config.get("special-feat.ignore-trust-acceptance-system")) {
+					region.removePlayerInvite(targetPlayer);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{playername}", targetPlayer.getName());
-				replacements.put("{region}", region.getName());
+					region.addMember(targetPlayer);
 
-				PlayerUtils.sendMessage(player, 36, replacements);
+					Map<String, String> replacements = new HashMap<String, String>();
+					replacements.put("{region}", region.getName());
+					replacements.put("{playername}", targetPlayer.getName());
 
-				RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
+					PlayerUtils.sendMessage(player, 199, replacements);
+				} else {
+					region.addPlayerInvite(targetPlayer);
+
+					Map<String, String> replacements = new HashMap<String, String>();
+					replacements.put("{playername}", targetPlayer.getName());
+					replacements.put("{region}", region.getName());
+
+					PlayerUtils.sendMessage(player, 36, replacements);
+
+					RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
+				}
 
 				Homestead.getInstance().runSyncTask(() -> {
 					new RegionInvitedPlayersMenu(player, region);
@@ -131,7 +143,7 @@ public class RegionInvitedPlayersMenu {
 					return false;
 				}
 
-				if (Limits.hasPlayerReachedLimit(region.getOwner(), Limits.LimitType.MEMBERS_PER_REGION)) {
+				if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
 					PlayerUtils.sendMessage(player, 116);
 					return false;
 				}

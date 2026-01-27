@@ -47,7 +47,7 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (Limits.hasPlayerReachedLimit(player, Limits.LimitType.REGIONS)) {
+		if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
 			PlayerUtils.sendMessage(player, 116);
 			return true;
 		}
