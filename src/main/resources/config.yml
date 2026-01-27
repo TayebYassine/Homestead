@@ -44,8 +44,10 @@ language: "en-US"
 # - sqlite     (small servers)
 # - yaml       (friends-only servers)
 database:
+  # The provider name
   provider: "sqlite"
 
+  # PostgreSQL configuration
   postgresql:
     host: "localhost"
     port: 3306
@@ -54,6 +56,7 @@ database:
     database: "homestead_data"
     table_prefix: ""
 
+  # MariaDB configuration
   mariadb:
     host: "localhost"
     port: 3306
@@ -62,6 +65,7 @@ database:
     database: "homestead_data"
     table_prefix: ""
 
+  # MySQL configuration
   mysql:
     host: "localhost"
     port: 3306
@@ -70,6 +74,7 @@ database:
     database: "homestead_data"
     table_prefix: ""
 
+  # SQLite configuration
   sqlite: "homestead_data.db"   # File is placed in the server root.
 
 # How often (in seconds) the cache flushes to disk.
@@ -86,12 +91,18 @@ cache-interval: 30
 clean-startup: true
 
 # Print private region chat to the console.
+# Recommended to be on to moderate player messages, like if a player is making confession of something
+# that broke the rules, such as ban evasion, insulting players, or worse, attempting to raid the server.
 log-private-chat: true
 
 # Force region chunks to be contiguous.
+# If set to true, players can only claim a region in one single world. Recommended to be on false to
+# allow players to create farms in different worlds, for example, main base in the overworld and a
+# gold farm in the nether world.
 adjacent-chunks: true
 
 # Auto-select the region a player is standing in for commands.
+# If true, players no longer need to use /hs set target [region] after joining the server.
 autoset-target-region: true
 
 # Worlds where claiming is disabled. World name must be exact.
@@ -107,12 +118,14 @@ disabled-worlds-pattern:
   - "minigame_*_end"
 
 # Flags players are NOT allowed to toggle.
+# Check documentation for the list of flags.
 disabled-flags:
   - "use-bells"
   - "take-fall-damage"
 
 # Show region and sub-area borders.
 borders:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
 
   type: particles # particles, blocks
@@ -121,6 +134,7 @@ borders:
 
 # Title/Action-bar/Chat messages shown when entering or leaving a region.
 enter-exit-region-message:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
   
   type: 'title' # title, actionbar, chat
@@ -137,6 +151,7 @@ enter-exit-region-message:
 
 # Tool used to create sub-areas inside a region.
 selection-tool:
+  # The item to select two points.
   item: GOLDEN_HOE
   
   messages:
@@ -147,7 +162,9 @@ selection-tool:
 
 # Upkeep – charge owners per chunk or lose the land.
 upkeep:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
+
   per-chunk: 100.0          # $ per chunk
   unclaim-chunks: true      # Unclaim chunks that can't be paid for
   start-upkeep: 604800      # 1-week grace period for new regions (seconds)
@@ -155,6 +172,7 @@ upkeep:
 
 # Member taxes – kick players who don't pay their share.
 taxes:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
 
   min-tax: 0.0
@@ -163,6 +181,7 @@ taxes:
 
 # Renting – let owners lease regions.
 renting:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
 
   min-rent: 500.0
@@ -170,6 +189,7 @@ renting:
 
 # Selling – let owners sell regions.
 selling:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
 
   min-sell: 10.0
@@ -177,10 +197,12 @@ selling:
 
 # Sub-areas – smaller zones inside a region.
 sub-areas:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
 
 # Wars – allow region-vs-region combat.
 wars:
+  # Enable this setting? true to enable, false to disable.
   enabled: false
 
   min-prize: 1000.0
@@ -188,6 +210,7 @@ wars:
 
 # Welcome signs – teleport by clicking signs.
 welcome-signs:
+  # Enable this setting? true to enable, false to disable.
   enabled: false
 
 ############################################################
@@ -202,39 +225,41 @@ welcome-signs:
 limits:
   method: 'static'
 
+  # If method is groups
   groups:
     default: # Group: default
-      regions: 2
-      chunks-per-region: 10
-      members-per-region: 4
-      subareas-per-region: 2
+      regions: 1
+      chunks-per-region: 4
+      members-per-region: 2
+      subareas-per-region: 1
       max-subarea-volume: 400
       commands-cooldown: 2
     vip: # Group: vip
-      regions: 4
-      chunks-per-region: 20
+      regions: 2
+      chunks-per-region: 6
       members-per-region: 8
-      subareas-per-region: 5
+      subareas-per-region: 3
       max-subarea-volume: 800
       commands-cooldown: 2
     admin: # Group: admin
-      regions: 10
+      regions: 4
       chunks-per-region: 100
       members-per-region: 16
       subareas-per-region: 10
       max-subarea-volume: 1200
       commands-cooldown: 0
 
+  # If method is static
   static:
     non-op:
-      regions: 2
-      chunks-per-region: 10
-      members-per-region: 4
-      subareas-per-region: 2
+      regions: 1
+      chunks-per-region: 4
+      members-per-region: 2
+      subareas-per-region: 1
       max-subarea-volume: 400
       commands-cooldown: 2
     op:
-      regions: 10
+      regions: 4
       chunks-per-region: 100
       members-per-region: 16
       subareas-per-region: 10
@@ -243,6 +268,8 @@ limits:
 
 # Per-player overrides – add as many names as you like.
 player-limits:
+  # Replace 'A_PLAYER_NAME_GOES_HERE_FOR_SPECIAL_LIMITS' with a player name, you can add as
+  # many players as you want.
   A_PLAYER_NAME_GOES_HERE_FOR_SPECIAL_LIMITS:
     regions: 10
     chunks-per-region: 100
@@ -259,6 +286,7 @@ player-limits:
 
 # Hand out rewards.
 rewards:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
 
   for-each-member: # Given to the owner when someone joins a region.
@@ -272,20 +300,20 @@ rewards:
       chunks: 1
       subareas: 1
     - minutes: 0
-      hours: 1
-      days: 0
-      chunks: 2
-      subareas: 3
-    - minutes: 0
       hours: 3
       days: 0
-      chunks: 4
-      subareas: 6
+      chunks: 2
+      subareas: 2
     - minutes: 0
       hours: 0
       days: 1
-      chunks: 8
-      subareas: 10
+      chunks: 4
+      subareas: 3
+    - minutes: 0
+      hours: 0
+      days: 10
+      chunks: 6
+      subareas: 4
 
 ############################################################
 # +------------------------------------------------------+ #
@@ -295,6 +323,7 @@ rewards:
 
 # Hand out rewards by leveling up the region.
 levels:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
 
   on-kill-entity:
@@ -335,9 +364,9 @@ levels:
       subareas: 1
       upkeep-reduction: 30 # %
     50:
-      chunks: 10
+      chunks: 8
       members: 6
-      subareas: 5
+      subareas: 4
       upkeep-reduction: 50 # %
 
 ############################################################
@@ -371,12 +400,16 @@ placeholderapi:
 
 # Dynamic web maps – dynmap / Squaremap / BlueMap / Pl3xMap
 dynamic-maps:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
 
   update-interval: 60 # seconds
 
+  # Region icons
   icons:
-    enabled: true # let players pick icons
+    # Enable this setting? true to enable, false to disable.
+    # If true, players can pick icons for their regions.
+    enabled: true
     
     default: https://imgur.com/TUQzlCK.png
     size: 20 # px
@@ -422,6 +455,7 @@ special-feat:
 
 # Teleport delay
 delayed-teleport:
+  # Enable this setting? true to enable, false to disable.
   enabled: true
   
   delay: 3 # seconds
