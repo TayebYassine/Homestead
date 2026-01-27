@@ -21,10 +21,7 @@ public class UpkeepUtils {
 		double price = amountPerChunk * region.getChunks().size();
 		int reduction = LevelRewards.getUpkeepReductionByLevel(region);
 
-		double reductedPrice = price - (price * (reduction / 100.0));
-
-		System.out.println("PRICE: " + price + ", REDUCTION: " + reduction + "%, REDUCTED PRICE: " + reductedPrice);
-		return reductedPrice;
+		return price - (price * (reduction / 100.0));
 	}
 
 	public static int getChunksToRemove(Region region) {
