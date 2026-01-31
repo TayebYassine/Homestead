@@ -10,7 +10,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
@@ -74,7 +73,7 @@ public class PaginationMenu implements Listener {
 		bottomRowActionItems.put(slot, item);
 	}
 
-	public void addOpenHandler(Consumer<Inventory> handler){
+	public void addOpenHandler(Consumer<Inventory> handler) {
 		this.openHandler = handler;
 	}
 
@@ -184,7 +183,7 @@ public class PaginationMenu implements Listener {
 		if (hasNext) inventory.setItem(size - 1, nextPageItem);
 
 		int start = page * buttonsPerPage;
-		int end   = Math.min(start + buttonsPerPage, items.size());
+		int end = Math.min(start + buttonsPerPage, items.size());
 
 		for (int i = start, slot = 9; i < end; i++, slot++) {
 			inventory.setItem(slot, items.get(i));

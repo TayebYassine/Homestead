@@ -2,7 +2,6 @@ package tfagaming.projects.minecraft.homestead.database;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
-import tfagaming.projects.minecraft.homestead.structure.War;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -294,11 +294,11 @@ public class PostgreSQL {
 			Homestead.levelsCache.clear();
 
 			while (rs.next()) {
-				UUID id        = (UUID) rs.getObject("id");
-				UUID regionId  = (UUID) rs.getObject("region_id");
-				int  level     = rs.getInt("level");
-				long xp        = rs.getLong("experience");
-				long totalXp   = rs.getLong("total_experience");
+				UUID id = (UUID) rs.getObject("id");
+				UUID regionId = (UUID) rs.getObject("region_id");
+				int level = rs.getInt("level");
+				long xp = rs.getLong("experience");
+				long totalXp = rs.getLong("total_experience");
 				long createdAt = rs.getLong("created_at");
 
 				Level lvl = new Level(id, regionId, level, xp, totalXp, createdAt);
@@ -592,16 +592,16 @@ public class PostgreSQL {
 		}
 
 		final String upsertSql = """
-            INSERT INTO %slevels
-                (id, region_id, level, experience, total_experience, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)
-            ON CONFLICT (id) DO UPDATE SET
-                region_id       = EXCLUDED.region_id,
-                level           = EXCLUDED.level,
-                experience      = EXCLUDED.experience,
-                total_experience = EXCLUDED.total_experience,
-                created_at      = EXCLUDED.created_at
-            """.formatted(TABLE_PREFIX);
+				INSERT INTO %slevels
+				    (id, region_id, level, experience, total_experience, created_at)
+				VALUES (?, ?, ?, ?, ?, ?)
+				ON CONFLICT (id) DO UPDATE SET
+				    region_id       = EXCLUDED.region_id,
+				    level           = EXCLUDED.level,
+				    experience      = EXCLUDED.experience,
+				    total_experience = EXCLUDED.total_experience,
+				    created_at      = EXCLUDED.created_at
+				""".formatted(TABLE_PREFIX);
 
 		final String deleteSql = "DELETE FROM " + TABLE_PREFIX + "levels WHERE id = ?";
 

@@ -34,7 +34,8 @@ public class RegionLevelMenu {
 				(p, e) -> {
 					backButton.run();
 				},
-				(p, c) -> { }
+				(p, c) -> {
+				}
 		);
 
 		gui.setItemsPerPage(9);
@@ -109,6 +110,6 @@ public class RegionLevelMenu {
 			return Formatters.getNone();
 		}
 
-		return String.join("\n",  rewards);
+		return String.join("\n", rewards);
 	}
 }

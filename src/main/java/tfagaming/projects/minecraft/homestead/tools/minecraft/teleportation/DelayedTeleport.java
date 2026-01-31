@@ -4,7 +4,6 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
@@ -39,22 +38,18 @@ public class DelayedTeleport {
 		PlayerUtils.sendMessage(player, 53);
 
 		int delay = Homestead.config.get("delayed-teleport.delay");
-		long ticks = (delay * 1000L) / 50;
 
-		BukkitTask task = new BukkitRunnable() {
-			@Override
-			public void run() {
-				teleportPlayer(player, location);
+		BukkitTask task = Homestead.getInstance().runAsyncTaskLater(() -> {
+			teleportPlayer(player, location);
 
-				BukkitTask playerTask = tasks.get(player.getUniqueId());
+			BukkitTask playerTask = tasks.get(player.getUniqueId());
 
-				if (playerTask != null) {
-					playerTask.cancel();
+			if (playerTask != null) {
+				playerTask.cancel();
 
-					tasks.remove(player.getUniqueId());
-				}
+				tasks.remove(player.getUniqueId());
 			}
-		}.runTaskLater(Homestead.getInstance(), ticks);
+		}, delay);
 
 		tasks.put(player.getUniqueId(), task);
 	}

@@ -7,7 +7,6 @@ import com.cjburkey.claimchunk.chunk.ChunkPos;
 import me.angeschossen.lands.api.integration.LandsIntegration;
 import me.angeschossen.lands.api.land.ChunkCoordinate;
 import me.angeschossen.lands.api.land.Land;
-import me.angeschossen.lands.api.player.TrustedPlayer;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;

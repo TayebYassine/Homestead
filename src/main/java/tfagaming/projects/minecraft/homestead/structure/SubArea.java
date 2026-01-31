@@ -39,10 +39,10 @@ public class SubArea {
 	}
 
 	public SubArea(UUID id, UUID regionId, String name, String worldName, Block point1, Block point2,
-							   List<SerializableMember> members,
-							   long flags,
-							   SerializableRent rent,
-							   long createdAt) {
+				   List<SerializableMember> members,
+				   long flags,
+				   SerializableRent rent,
+				   long createdAt) {
 		this.id = id;
 		this.regionId = regionId;
 		this.name = name;

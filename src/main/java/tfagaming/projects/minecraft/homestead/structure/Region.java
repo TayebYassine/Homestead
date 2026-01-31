@@ -3,7 +3,6 @@ package tfagaming.projects.minecraft.homestead.structure;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;

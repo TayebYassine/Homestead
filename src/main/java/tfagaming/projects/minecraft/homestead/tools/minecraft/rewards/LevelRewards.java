@@ -1,12 +1,9 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.rewards;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
-import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 

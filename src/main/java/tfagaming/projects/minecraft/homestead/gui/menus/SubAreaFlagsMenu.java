@@ -43,7 +43,7 @@ public class SubAreaFlagsMenu {
 			}
 
 			String flagString = PlayerFlags.getFlags().get(context.getIndex());
-			
+
 			if (Homestead.config.isFlagDisabled(flagString)) {
 				PlayerUtils.sendMessage(player, 42);
 				return;

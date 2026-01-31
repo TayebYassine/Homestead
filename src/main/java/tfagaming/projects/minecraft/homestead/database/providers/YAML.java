@@ -16,7 +16,6 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -214,9 +213,9 @@ public class YAML {
 			try {
 				YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
-				UUID id       = UUID.fromString(Objects.requireNonNull(cfg.getString("id")));
+				UUID id = UUID.fromString(Objects.requireNonNull(cfg.getString("id")));
 				UUID regionId = UUID.fromString(Objects.requireNonNull(cfg.getString("regionId")));
-				String name   = cfg.getString("name");
+				String name = cfg.getString("name");
 
 				World world = Bukkit.getWorld(Objects.requireNonNull(cfg.getString("worldName")));
 				if (world == null) continue;
@@ -228,7 +227,7 @@ public class YAML {
 						.map(SerializableMember::fromString)
 						.collect(Collectors.toList());
 
-				long flags     = cfg.getLong("flags");
+				long flags = cfg.getLong("flags");
 
 				SerializableRent rent = cfg.getString("rent") != null
 						? SerializableRent.fromString(cfg.getString("rent"))
@@ -263,11 +262,11 @@ public class YAML {
 		for (File file : files) {
 			try {
 				YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-				UUID id        = UUID.fromString(Objects.requireNonNull(cfg.getString("id")));
-				UUID regionId  = UUID.fromString(Objects.requireNonNull(cfg.getString("regionId")));
-				int  level     = cfg.getInt("level");
-				long xp        = cfg.getLong("experience");
-				long totalXp   = cfg.getLong("totalExperience");
+				UUID id = UUID.fromString(Objects.requireNonNull(cfg.getString("id")));
+				UUID regionId = UUID.fromString(Objects.requireNonNull(cfg.getString("regionId")));
+				int level = cfg.getInt("level");
+				long xp = cfg.getLong("experience");
+				long totalXp = cfg.getLong("totalExperience");
 				long createdAt = cfg.getLong("createdAt");
 
 				Level lvl = new Level(id, regionId, level, xp, totalXp, createdAt);
@@ -449,7 +448,8 @@ public class YAML {
 			for (File file : files) {
 				try {
 					existingFiles.add(UUID.fromString(file.getName().replace("subarea_", "").replace(".yml", "")));
-				} catch (IllegalArgumentException ignored) {}
+				} catch (IllegalArgumentException ignored) {
+				}
 			}
 		}
 
@@ -460,16 +460,16 @@ public class YAML {
 				cacheIds.add(id);
 
 				YamlConfiguration cfg = new YamlConfiguration();
-				cfg.set("id",        id.toString());
-				cfg.set("regionId",  sub.regionId.toString());
-				cfg.set("name",      sub.name);
+				cfg.set("id", id.toString());
+				cfg.set("regionId", sub.regionId.toString());
+				cfg.set("name", sub.name);
 				cfg.set("worldName", sub.worldName);
-				cfg.set("point1",    SubArea.toStringBlockLocation(sub.getWorld(), sub.point1));
-				cfg.set("point2",    SubArea.toStringBlockLocation(sub.getWorld(), sub.point2));
-				cfg.set("members",   sub.members.stream()
+				cfg.set("point1", SubArea.toStringBlockLocation(sub.getWorld(), sub.point1));
+				cfg.set("point2", SubArea.toStringBlockLocation(sub.getWorld(), sub.point2));
+				cfg.set("members", sub.members.stream()
 						.map(SerializableMember::toString)
 						.collect(Collectors.toList()));
-				cfg.set("flags",     sub.flags);
+				cfg.set("flags", sub.flags);
 				cfg.set("rent", sub.rent != null ? sub.rent.toString() : null);
 				cfg.set("createdAt", sub.createdAt);
 
@@ -502,7 +502,8 @@ public class YAML {
 			for (File f : files) {
 				try {
 					existingFiles.add(UUID.fromString(f.getName().replace("level_", "").replace(".yml", "")));
-				} catch (IllegalArgumentException ignored) {}
+				} catch (IllegalArgumentException ignored) {
+				}
 			}
 		}
 

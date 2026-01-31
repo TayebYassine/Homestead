@@ -11,7 +11,6 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.*;
 

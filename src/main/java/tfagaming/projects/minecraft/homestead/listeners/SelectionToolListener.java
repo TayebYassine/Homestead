@@ -11,7 +11,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
@@ -171,14 +170,11 @@ public final class SelectionToolListener implements Listener {
 
 		cancelTask(player);
 
-		BukkitTask task = new BukkitRunnable() {
-			@Override
-			public void run() {
-				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-						new TextComponent(ChatColorTranslator
-								.translate(message)));
-			}
-		}.runTaskTimer(Homestead.getInstance(), 0L, 20L);
+		BukkitTask task = Homestead.getInstance().runAsyncTimerTask(() -> {
+			player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+					new TextComponent(ChatColorTranslator
+							.translate(message)));
+		}, 1);
 
 		tasks.put(player.getUniqueId(), task);
 	}

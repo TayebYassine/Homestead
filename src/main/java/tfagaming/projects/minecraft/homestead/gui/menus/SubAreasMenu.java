@@ -7,8 +7,8 @@ import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

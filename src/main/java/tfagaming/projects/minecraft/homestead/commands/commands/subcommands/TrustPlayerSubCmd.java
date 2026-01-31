@@ -110,7 +110,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			replacements.put("{playername}", target.getName());
 
 			PlayerUtils.sendMessage(player, 199, replacements);
- 		} else {
+		} else {
 			region.addPlayerInvite(target);
 
 			Map<String, String> replacements = new HashMap<String, String>();

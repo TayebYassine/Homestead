@@ -1612,7 +1612,8 @@ public final class RegionProtectionListener implements Listener {
 											Chunk chunk,
 											Location location,
 											long flag) {
-			if ((boolean) Homestead.config.get("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk)) return true;
+			if ((boolean) Homestead.config.get("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk))
+				return true;
 
 			if (player != null && PlayerUtils.isOperator(player)) return true;
 
@@ -1622,7 +1623,8 @@ public final class RegionProtectionListener implements Listener {
 			if (region == null) return true;
 
 			assert player != null;
-			if (region.isOwner(player) && !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag)) return true;
+			if (region.isOwner(player) && !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag))
+				return true;
 
 			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(location);
 

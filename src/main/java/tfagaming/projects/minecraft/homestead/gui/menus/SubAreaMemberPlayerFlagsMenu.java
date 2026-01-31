@@ -93,7 +93,7 @@ public class SubAreaMemberPlayerFlagsMenu {
 					if (flagListIndex < 0 || flagListIndex >= PlayerFlags.getFlags().size()) return;
 
 					String flagString = PlayerFlags.getFlags().get(flagListIndex);
-					
+
 					if (Homestead.config.isFlagDisabled(flagString)) {
 						PlayerUtils.sendMessage(player, 42);
 						return;

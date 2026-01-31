@@ -1,8 +1,6 @@
 package tfagaming.projects.minecraft.homestead.tools.other;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
-import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 

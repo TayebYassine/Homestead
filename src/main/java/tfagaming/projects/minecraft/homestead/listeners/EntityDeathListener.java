@@ -1,7 +1,6 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
 import org.bukkit.Sound;
-import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -25,6 +24,20 @@ import java.util.UUID;
 
 public class EntityDeathListener implements Listener {
 	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
+
+	private static String getBeautifulName(Entity entity) {
+		String rawName = entity.getType().name();
+		String[] words = rawName.split("_");
+		StringBuilder nameBuilder = new StringBuilder();
+
+		for (String word : words) {
+			nameBuilder.append(word.substring(0, 1).toUpperCase())
+					.append(word.substring(1).toLowerCase())
+					.append(" ");
+		}
+
+		return nameBuilder.toString().trim();
+	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent event) {
@@ -59,25 +72,11 @@ public class EntityDeathListener implements Listener {
 		replacements.put("{entity}", getBeautifulName(entity));
 		replacements.put("{xp}", NumberUtils.convertToBalance(amount));
 
-		PlayerUtils.sendMessage(killer,198, replacements);
+		PlayerUtils.sendMessage(killer, 198, replacements);
 
 		killer.playSound(killer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.2f);
 
 		COOLDOWN.add(killer.getUniqueId());
 		Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(killer.getUniqueId()), 5);
-	}
-
-	private static String getBeautifulName(Entity entity) {
-		String rawName = entity.getType().name();
-		String[] words = rawName.split("_");
-		StringBuilder nameBuilder = new StringBuilder();
-
-		for (String word : words) {
-			nameBuilder.append(word.substring(0, 1).toUpperCase())
-					.append(word.substring(1).toLowerCase())
-					.append(" ");
-		}
-
-		return nameBuilder.toString().trim();
 	}
 }

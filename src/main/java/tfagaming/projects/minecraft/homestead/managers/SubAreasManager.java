@@ -6,7 +6,6 @@ import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
-import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 
 import java.util.ArrayList;
@@ -135,12 +134,14 @@ public final class SubAreasManager {
 
 			if (world == null) {
 				SubAreasManager.deleteSubArea(subArea.getUniqueId());
-				updated++; continue;
+				updated++;
+				continue;
 			}
 
 			if (RegionsManager.findRegion(subArea.getRegionId()) == null) {
 				SubAreasManager.deleteSubArea(subArea.getUniqueId());
-				updated++; continue;
+				updated++;
+				continue;
 			}
 
 			for (SerializableMember member : subArea.getMembers()) {

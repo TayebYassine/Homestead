@@ -46,20 +46,16 @@ import java.util.*;
 public class Homestead extends JavaPlugin {
 	private final static String VERSION = "5.0.0.0-26w05a";
 	private final static boolean SNAPSHOT = true;
-	private static Homestead INSTANCE;
-
 	public static Database database;
-
 	public static RegionsCache regionsCache;
 	public static WarsCache warsCache;
 	public static SubAreasCache subAreasCache;
 	public static LevelsCache levelsCache;
-
 	public static ConfigLoader config;
 	public static LanguageLoader language;
 	public static MenusConfigLoader menusConfig;
-
 	public static Vault vault;
+	private static Homestead INSTANCE;
 	private static long startedAt;
 
 	private static BukkitTask moveCheckTask;

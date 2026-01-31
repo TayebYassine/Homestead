@@ -4,27 +4,12 @@ import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
-import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards;
 
 public class Limits {
-
-	public enum LimitType {
-		REGIONS,
-		CHUNKS_PER_REGION,
-		MEMBERS_PER_REGION,
-		SUBAREAS_PER_REGION,
-		MAX_SUBAREA_VOLUME,
-		COMMANDS_COOLDOWN
-	}
-
-	public enum LimitMethod {
-		GROUPS,
-		STATIC
-	}
 
 	public static int getPlayerLimit(OfflinePlayer player, LimitType limit) {
 		return switch (limit) {
@@ -162,5 +147,19 @@ public class Limits {
 			case "groups" -> LimitMethod.GROUPS;
 			default -> LimitMethod.STATIC;
 		};
+	}
+
+	public enum LimitType {
+		REGIONS,
+		CHUNKS_PER_REGION,
+		MEMBERS_PER_REGION,
+		SUBAREAS_PER_REGION,
+		MAX_SUBAREA_VOLUME,
+		COMMANDS_COOLDOWN
+	}
+
+	public enum LimitMethod {
+		GROUPS,
+		STATIC
 	}
 }

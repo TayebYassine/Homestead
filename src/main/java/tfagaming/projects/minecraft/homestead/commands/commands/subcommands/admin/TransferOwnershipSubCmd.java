@@ -1,21 +1,14 @@
 package tfagaming.projects.minecraft.homestead.commands.commands.subcommands.admin;
 
-import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TransferOwnershipSubCmd extends SubCommandBuilder {

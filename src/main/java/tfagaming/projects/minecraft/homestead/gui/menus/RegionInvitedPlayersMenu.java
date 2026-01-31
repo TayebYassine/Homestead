@@ -10,8 +10,8 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
