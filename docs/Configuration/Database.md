@@ -9,7 +9,7 @@ A database is a way to store data for all regions on a server. Homestead provide
 | PostgreSQL       | :material-check: | For big servers (~1,000 players daily)           |
 | MariaDB          | :material-check: | For big servers (~1,000 players daily)           |
 | MySQL            | :material-check: | For big servers (~1,000 players daily)           |
-| MongoDB          |   Upcoming...    | For medium servers (~500 players daily)          |
+| MongoDB          | Release 5.0.1.0  | For medium servers (~500 players daily)          |
 | SQLite (Default) | :material-check: | For small servers (~100 players daily)           |
 | YAML             | :material-check: | For small and friends-only servers (~50 players) |
 

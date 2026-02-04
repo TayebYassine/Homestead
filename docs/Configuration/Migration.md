@@ -1,4 +1,4 @@
-# Importing Claims
+# Migration
 
 Are you migrating from a different anti-grief plugin to Homestead? Follow the steps:
 

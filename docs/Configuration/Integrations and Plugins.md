@@ -53,49 +53,35 @@ Available placeholders:
 
 Install one of these plugins, and restart the server. You should be able to see all claimed chunks via these links:
 
-- **BlueMap**: http://localhost:8100/
-- **Squaremap**: http://localhost:8080/
-- **Pl3xMap**: http://localhost:8080/
-- **dynmap**: http://localhost:8123/
+- **BlueMap**: [http://localhost:8100/](http://localhost:8100/)
+- **Squaremap**: [http://localhost:8080/](http://localhost:8080/)
+- **Pl3xMap**: [http://localhost:8080/](http://localhost:8080/)
+- **dynmap**: [http://localhost:8123/](http://localhost:8123/)
 
 ```yaml
 dynamic-maps:
-  # Enable this feature? "true" to enable, "false" to disable.
+  # Enable this setting? true to enable, false to disable.
   enabled: true
 
-  # The interval to update the regions on the web, use seconds.
-  update-interval: 60 # 60 seconds (1 minute)
+  update-interval: 60 # seconds
 
-  # The icons for regions.
-  # NOTE: ".png"s are the only supported image format.
+  # Region icons
   icons:
-    # Enable this feature? "true" to enable, "false" to disable.
-    # NOTE: If you enable icons, players can set custom icons for their regions.
+    # Enable this setting? true to enable, false to disable.
+    # If true, players can pick icons for their regions.
     enabled: true
 
-    # The default icon.
-    default: ...
+    default: https://imgur.com/TUQzlCK.png
+    size: 20 # px
 
-    # The size for icons, must be a valid integer.
-    size: 20 # 20x20
-
-    # The list of icons that players can use. You can add as many icons as you want!
     list:
+      Hut: https://imgur.com/GFrfD0H.png
       ...
 
-  # Customization; HTML syntax is supported!
   chunks:
-    # For chunks that are owned by a server operator.
-    operator-color: 0xFF0000 # RGB; Red, Green, Blue: 255, 0, 0
+    operator-color: 0xFF0000
     operator-description: ...
 
-    # For chunks that are owned by ordinary players (non operators).
-    color: 0x00FF00 # RGB; Red, Green, Blue: 0, 255, 0
-    description: ...
-
-    # For every chunk.
-    # These features currently only works for the BLueMap Plugin.
-    transparency-fill: 40 # Value 0 - 255 (For now only made for BlueMapAPI)
-    transparency-outline: 125 # # Value 0 - 255 (For now only made for BlueMapAPI)
+    ...
 ```
 

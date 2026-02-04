@@ -39,7 +39,7 @@ borders:
 
     Please check the resource packs you are using; some of them could have disabled particles, or in the accessibility settings of your Minecraft client, you could have disabled particles.
 
-## Clean startup
+## Clean Startup
 
 Clears corrupted data in regions and wars data.
 
@@ -47,19 +47,25 @@ Clears corrupted data in regions and wars data.
 clean-startup: true
 ```
 
-## Disabled worlds
+## Disabled Worlds
 
 List of worlds where players cannot claim chunks.
 
 ```yaml
-disabled-worlds:
+# Worlds where claiming is disabled. World name must be exact.
+disabled-worlds-exact:
   - "world_the_end"
-  - "creative"
   - "factions"
-  - ...
+  - "pvp_arena"
+
+# Worlds where claiming is disabled. World name must be validated under the pattern.
+# Use this for temporary worlds like EliteMobs plugin.
+disabled-worlds-pattern:
+  - "em_*"
+  - "minigame_*_end"
 ```
 
-## Disabled flags
+## Disabled Flags
 
 Flags that players cannot modify. You can find the list of flags [here](./Flags.md).
 
@@ -68,4 +74,22 @@ disabled-flags:
   - "use-bells"
   - "no-fall-damage"
   - ...
+```
+
+## TNT Exploding Outside Regions + Below Sea Level
+
+Allow TNT to explode only below the sea level (Y = 63) and outside a region?
+
+```yaml
+special-feat:
+  tnt-explodes-only-below-sea-level: false
+```
+
+## No Acceptance System
+
+Instantly trust players without waiting requested players to accept or deny the invites.
+
+```yaml
+special-feat:
+  ignore-trust-acceptance-system: false
 ```

@@ -4,9 +4,7 @@ This is a document that lists all releases made to Homestead, including the obso
 
 ## Latest Releases
 
-- [Release 4.3.1 (stable)](https://www.spigotmc.org/resources/121873/update?update=624740)
-- [Release 4.3.0](https://www.spigotmc.org/resources/121873/update?update=622543)
-- [Release 4.2.0](https://www.spigotmc.org/resources/121873/update?update=620915)
+- [Release 5.0.0.0 (stable)](https://www.spigotmc.org/resources/121873/update?update=627772)
 
 ## Table of Releases
 
@@ -21,23 +19,13 @@ First release: **January 11th, 2025**
 
 | Release | Series |  API   |    Supported?    |
 |:-------:|:------:|:------:|:----------------:|
-|  4.3.1  |  4.x   | 1.21.9 | :material-check: |
-|  4.3.0  |  4.x   | 1.21.9 | :material-close: |
-|  4.2.0  |  4.x   |  1.21  | :material-check: |
-|  4.1.3  |  4.x   |  1.21  | :material-close: |
-|  4.1.2  |  4.x   |  1.21  | :material-close: |
-|  4.1.1  |  4.x   |  1.21  | :material-close: |
-|  4.1.0  |  4.x   |  1.21  | :material-close: |
-|  4.0.4  |  4.x   |  1.21  | :material-close: |
-|  4.0.3  |  4.x   |  1.21  | :material-close: |
-|  4.0.2  |  4.x   |  1.21  | :material-close: |
-|  4.0.1  |  4.x   |  1.21  | :material-close: |
-|  4.0.0  |  4.x   |  1.21  | :material-close: |
+| 5.0.0.0 |  5.x   | 1.21.9 | :material-check: |
 
 ## Obsolete Major Releases
 
 | Release | Series |  API   |    Supported?    |
 |:-------:|:------:|:------:|:----------------:|
+|  4.3.1  |  4.x   | 1.21.9 | :material-close: |
 |  3.6.1  |  3.x   |  1.21  | :material-close: |
 |  2.6.2  |  2.x   |  1.21  | :material-close: |
 |  1.3.1  |  1.x   |  1.21  | :material-close: |
