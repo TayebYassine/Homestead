@@ -101,6 +101,9 @@ log-private-chat: true
 # gold farm in the nether world.
 adjacent-chunks: true
 
+# The chunk price.
+chunk-price: 0.0 # $0
+
 # Auto-select the region a player is standing in for commands.
 # If true, players no longer need to use /hs set target [region] after joining the server.
 autoset-target-region: true

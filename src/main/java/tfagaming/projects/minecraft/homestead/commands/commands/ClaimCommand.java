@@ -11,6 +11,7 @@ import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -78,6 +79,17 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
+		double chunkPrice = Homestead.config.get("chunk-price");
+
+		if (chunkPrice > 0 && PlayerUtils.getBalance(region.getOwner()) < chunkPrice) {
+			Map<String, String> replacements = new HashMap<String, String>();
+			replacements.put("{price}", Formatters.formatBalance(chunkPrice));
+			replacements.put("{player}", region.getOwner().getName());
+
+			PlayerUtils.sendMessage(player, 200, replacements);
+			return true;
+		}
+
 		Region regionOwnsThisChunk = ChunksManager.getRegionOwnsTheChunk(chunk);
 
 		if (regionOwnsThisChunk != null) {
@@ -96,6 +108,10 @@ public class ClaimCommand extends CommandBuilder {
 		ChunksManager.Error error = ChunksManager.claimChunk(region.getUniqueId(), chunk);
 
 		if (error == null) {
+			if (chunkPrice > 0) {
+				PlayerUtils.removeBalance(region.getOwner(), chunkPrice);
+			}
+
 			Map<String, String> replacements = new HashMap<String, String>();
 			replacements.put("{region}", region.getName());
 
