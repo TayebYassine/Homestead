@@ -231,6 +231,7 @@ prefix: "&8[&6Homestead&8]&r"
 198: "&7You killed &3{entity}&7, you have earned &6{xp} XP &7for the region &2{region}&7!"
 199: "{__prefix__} &7The player &3{playername} &7joined the region &2{region}."
 200: "{__prefix__} &3{player} &cdoesn't have {price}, you cannot claim this chunk!"
+201: "{__prefix__} &cI told you not to move, teleportation canceled!"
 
 logs:
   0: "&7Updated name from &2{oldname} &7to &2{newname}&7."

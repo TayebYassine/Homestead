@@ -10,14 +10,19 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DelayedTeleport {
-	public static ConcurrentHashMap<UUID, BukkitTask> tasks = new ConcurrentHashMap<UUID, BukkitTask>();
+	public static ConcurrentHashMap<UUID, BukkitTask> tasks = new ConcurrentHashMap<>();
+	public static ConcurrentHashMap<UUID, Location> initialLocations = new ConcurrentHashMap<>();
 
 	public DelayedTeleport(Player player, Location location) {
-		if (tasks.containsKey(player.getUniqueId())) {
+		UUID playerId = player.getUniqueId();
+
+		if (tasks.containsKey(playerId)) {
+			cancelTeleport(playerId);
 			return;
 		}
 
@@ -39,19 +44,25 @@ public class DelayedTeleport {
 
 		int delay = Homestead.config.get("delayed-teleport.delay");
 
+		initialLocations.put(playerId, player.getLocation().clone());
+
 		BukkitTask task = Homestead.getInstance().runSyncTaskLater(() -> {
+			tasks.remove(playerId);
+			initialLocations.remove(playerId);
+
 			teleportPlayer(player, location);
-
-			BukkitTask playerTask = tasks.get(player.getUniqueId());
-
-			if (playerTask != null) {
-				playerTask.cancel();
-
-				tasks.remove(player.getUniqueId());
-			}
 		}, delay);
 
-		tasks.put(player.getUniqueId(), task);
+		tasks.put(playerId, task);
+	}
+
+	public static void cancelTeleport(UUID playerId) {
+		BukkitTask task = tasks.get(playerId);
+		if (task != null) {
+			task.cancel();
+			tasks.remove(playerId);
+			initialLocations.remove(playerId);
+		}
 	}
 
 	private void teleportPlayer(Player player, Location location) {
@@ -61,11 +72,9 @@ public class DelayedTeleport {
 		}
 
 		player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-
 		player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 500.0f, 1.0f);
 
-		HashMap<String, String> replacements = new HashMap<>();
-
+		Map<String, String> replacements = new HashMap<>();
 		replacements.put("{location}", Formatters.formatLocation(location));
 
 		PlayerUtils.sendMessage(player, 51, replacements);

@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-public class EntityDeathListener implements Listener {
+public final class EntityDeathListener implements Listener {
 	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
 
 	private static String getBeautifulName(Entity entity) {

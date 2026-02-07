@@ -305,6 +305,7 @@ public class Homestead extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
 		getServer().getPluginManager().registerEvents(new BorderBreakListener(), this);
 		getServer().getPluginManager().registerEvents(new EntityDeathListener(), this);
+		getServer().getPluginManager().registerEvents(new DelayedTeleportListener(), this);
 	}
 
 	private void registerBrigadier() {
