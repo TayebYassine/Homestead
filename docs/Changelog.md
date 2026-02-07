@@ -4,7 +4,8 @@ This is a document that lists all releases made to Homestead, including the obso
 
 ## Latest Releases
 
-- [Release 5.0.0.0 (stable)](https://www.spigotmc.org/resources/121873/update?update=627772)
+- [Release 5.0.0.1 (stable)](https://www.spigotmc.org/resources/121873/update?update=628106)
+- [Release 5.0.0.0](https://www.spigotmc.org/resources/121873/update?update=627772)
 
 ## Table of Releases
 
@@ -19,6 +20,7 @@ First release: **January 11th, 2025**
 
 | Release | Series |  API   |    Supported?    |
 |:-------:|:------:|:------:|:----------------:|
+| 5.0.0.1 |  5.x   | 1.21.9 | :material-check: |
 | 5.0.0.0 |  5.x   | 1.21.9 | :material-check: |
 
 ## Obsolete Major Releases
