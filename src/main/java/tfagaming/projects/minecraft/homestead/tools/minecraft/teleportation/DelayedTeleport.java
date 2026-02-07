@@ -39,7 +39,7 @@ public class DelayedTeleport {
 
 		int delay = Homestead.config.get("delayed-teleport.delay");
 
-		BukkitTask task = Homestead.getInstance().runAsyncTaskLater(() -> {
+		BukkitTask task = Homestead.getInstance().runSyncTaskLater(() -> {
 			teleportPlayer(player, location);
 
 			BukkitTask playerTask = tasks.get(player.getUniqueId());

@@ -343,6 +343,18 @@ public class Homestead extends JavaPlugin {
 	}
 
 	/**
+	 * Run a task synchronously after a delay in seconds.
+	 *
+	 * @param callable The task to run.
+	 * @param delay    The delay, in seconds.
+	 */
+	public BukkitTask runSyncTaskLater(Runnable callable, int delay) {
+		long delayTicks = delay * 20L;
+
+		return Bukkit.getScheduler().runTaskLater(this, callable, delayTicks);
+	}
+
+	/**
 	 * Run a repeating task asynchronously with interval in seconds, with a delay in seconds.
 	 *
 	 * @param callable The task to run.
