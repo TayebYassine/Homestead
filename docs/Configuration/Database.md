@@ -93,7 +93,7 @@ database:
 
 **For SQLite:**
 
-Simply specify the filename. The file will be created in the Homestead plugin folder.
+Simply specify the filename. The file will be created in the server folder.
 
 **For YAML:**
 

@@ -14,7 +14,7 @@ Every region has its own bank account where owners can securely store money. The
 
 - Deposit money into your region's bank
 - Withdraw funds when needed
-- Safe storage that can't be lost on death
+- Safe storage that can't be lost on death (depends on your server's style)
 - Useful for saving up for upkeep or member taxes
 
 **Note:** This feature cannot be disabled as it's essential for other economy features.
@@ -126,8 +126,7 @@ upkeep:
 
 ### Understanding Upkeep Settings
 
-**per-chunk:**  
-The amount charged for each claimed chunk. Higher values make claiming expensive, while lower values are more forgiving.
+**per-chunk:** The amount charged for each claimed chunk. Higher values make claiming expensive, while lower values are more forgiving.
 
 **unclaim-chunks:**
 

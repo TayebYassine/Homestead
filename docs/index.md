@@ -4,11 +4,6 @@
 
 Each claimed region includes 50+ customizable flags, enabling owners to configure gameplay settings, from PvP and mob spawning to block interaction and environmental effects. Whether you're building a town, managing a private base, or running a faction server, Homestead provides the tools for a secure and customized experience.
 
-## Compatibility
-
-- **Minecraft Version**: 1.21.9 and higher
-- **Server Software**: Any software that supports the Bukkit API (Paper, Spigot, Purpur, etc.)
-
 ## Key Features
 
 ### **Land Management**

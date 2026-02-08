@@ -82,14 +82,14 @@ worldedit:
 
 **Region Information:**
 
-| Placeholder                           | Description                                  | Example Output        |
-|---------------------------------------|----------------------------------------------|-----------------------|
-| `%homestead_region_name%`             | Name of player's primary region              | "MyBase"              |
-| `%homestead_region_current%`          | Name of region player is standing in         | "ShopDistrict" or "-" |
-| `%homestead_region_claimed_chunks%`   | Number of chunks claimed in current region   | "8"                   |
-| `%homestead_region_max_chunks%`       | Maximum chunks player can claim              | "16"                  |
-| `%homestead_region_trusted_members%`  | Number of members in current region          | "3"                   |
-| `%homestead_region_max_members%`      | Maximum members allowed in current region    | "5"                   |
+| Placeholder                           | Description                                  | Example Output           |
+|---------------------------------------|----------------------------------------------|--------------------------|
+| `%homestead_region_name%`             | Name of player's primary region              | "MyBase"                 |
+| `%homestead_region_current%`          | Name of region player is standing in         | "ShopDistrict" or "None" |
+| `%homestead_region_claimed_chunks%`   | Number of chunks claimed in current region   | "8"                      |
+| `%homestead_region_max_chunks%`       | Maximum chunks player can claim              | "16"                     |
+| `%homestead_region_trusted_members%`  | Number of members in current region          | "3"                      |
+| `%homestead_region_max_members%`      | Maximum members allowed in current region    | "5"                      |
 
 **Economy Information:**
 
@@ -211,7 +211,7 @@ list:
   Portal: https://i.imgur.com/portal789.png
 ```
 
-Players can then select these icons for their regions using the region menu.
+Players can then select these icons for their regions using the command `/region set icon [name]`.
 
 ### Customizing Colors
 
@@ -223,19 +223,6 @@ Colors use hexadecimal format:
 - Yellow: `0xFFFF00`
 - Purple: `0x800080`
 - Orange: `0xFFA500`
-
-**Example for VIP players:**
-```yaml
-chunks:
-  operator-color: 0xFF0000
-  operator-description: "Admin Land"
-  
-  vip-color: 0xFFD700
-  vip-description: "VIP Territory"
-  
-  default-color: 0x00FF00
-  default-description: "Claimed Land"
-```
 
 ### Update Interval
 
