@@ -66,14 +66,14 @@ public class DynmapAPI {
 			return;
 		}
 
-		int chunkTransparencyInfill = Homestead.config.get("dynamic-maps.chunks.transparency-fill");
-		int chunkTransparencyOutline = Homestead.config.get("dynamic-maps.chunks.transparency-outline");
+		int chunkTransparencyInfill = Homestead.config.getInt("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Homestead.config.getInt("dynamic-maps.chunks.transparency-outline");
 
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
 		int chunkColor = region.getMapColor() == 0
-				? (isOperator ? Homestead.config.get("dynamic-maps.chunks.operator-color")
-				: Homestead.config.get("dynamic-maps.chunks.color"))
+				? (isOperator ? Homestead.config.getInt("dynamic-maps.chunks.operator-color")
+				: Homestead.config.getInt("dynamic-maps.chunks.color"))
 				: region.getMapColor();
 
 		areaMarker.setLineStyle(1, (double) chunkTransparencyInfill / 100, chunkColor);
@@ -91,8 +91,8 @@ public class DynmapAPI {
 		replacements.put("{region-size}", String.valueOf(region.getChunks().size() * 256));
 
 		String description = Formatters
-				.replace(isOperator ? Homestead.config.get("dynamic-maps.chunks.operator-description")
-						: Homestead.config.get("dynamic-maps.chunks.description"), replacements);
+				.replace(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
+						: Homestead.config.getString("dynamic-maps.chunks.description"), replacements);
 
 		areaMarker.setDescription(description);
 	}

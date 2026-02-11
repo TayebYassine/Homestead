@@ -94,7 +94,7 @@ public final class PlayerAutoClaimListener implements Listener {
 			return;
 		}
 
-		boolean wgEnabled = Homestead.config.get("worldguard.protect-existing-regions");
+		boolean wgEnabled = Homestead.config.getBoolean("worldguard.protect-existing-regions");
 		if (wgEnabled && WorldGuardAPI.isChunkInWorldGuardRegion(chunk)) {
 			PlayerUtils.sendMessage(player, 133);
 			return;

@@ -26,8 +26,8 @@ public class RegionMenu {
 		Menu gui = new Menu(MenuUtils.getTitle(1).replace("{region}", region.getName()), 9 * 4);
 
 		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
-		boolean isUpkeepEnabled = isEconomyEnabled && (boolean) Homestead.config.get("upkeep.enabled");
-		boolean isRentEnabled = isEconomyEnabled && (boolean) Homestead.config.get("renting.enabled");
+		boolean isUpkeepEnabled = isEconomyEnabled && Homestead.config.getBoolean("upkeep.enabled");
+		boolean isRentEnabled = isEconomyEnabled && Homestead.config.getBoolean("renting.enabled");
 
 		HashMap<String, String> replacements = new HashMap<>();
 		replacements.put("{region}", region.getName());
@@ -36,8 +36,8 @@ public class RegionMenu {
 		replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
 		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 		replacements.put("{region-members}", String.valueOf(region.getMembers().size()));
-		replacements.put("{upkeep-enabled}", Formatters.getEnabled(isUpkeepEnabled));
-		replacements.put("{upkeep-date}", Formatters.formatRemainingTime(region.getUpkeepAt()));
+		replacements.put("{upkeep-enabled}", Formatters.getEnabled(isEconomyEnabled && isUpkeepEnabled));
+		replacements.put("{upkeep-date}", isEconomyEnabled && isUpkeepEnabled ? Formatters.formatRemainingTime(region.getUpkeepAt()) : Formatters.getNone());
 		replacements.put("{upkeep-amount}",
 				Formatters.formatBalance(UpkeepUtils.getAmountToPay(region)));
 		replacements.put("{region-global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
@@ -107,7 +107,7 @@ public class RegionMenu {
 			new MiscellaneousSettingsMenu(player, region);
 		});
 
-		boolean isSubAreasEnabled = Homestead.config.get("sub-areas.enabled");
+		boolean isSubAreasEnabled = Homestead.config.getBoolean("sub-areas.enabled");
 
 		replacements.put("{subareas-enabled}", Formatters.getEnabled(isSubAreasEnabled));
 		replacements.put("{region-subareas}", String.valueOf(SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).size()));
@@ -141,12 +141,12 @@ public class RegionMenu {
 		SerializableRent rent = region.getRent();
 
 		if (rent != null) {
-			replacements.put("{rent-enabled}", Formatters.getEnabled(isRentEnabled));
+			replacements.put("{rent-enabled}", Formatters.getEnabled(isEconomyEnabled && isRentEnabled));
 			replacements.put("{rent-renter}", rent.getPlayer().getName());
 			replacements.put("{rent-price}", Formatters.formatBalance(rent.getPrice()));
 			replacements.put("{rent-until}", Formatters.formatRemainingTime(rent.getUntilAt()));
 		} else {
-			replacements.put("{rent-enabled}", Formatters.getEnabled(isRentEnabled));
+			replacements.put("{rent-enabled}", Formatters.getEnabled(isEconomyEnabled && isRentEnabled));
 			replacements.put("{rent-renter}", Formatters.getNone());
 			replacements.put("{rent-price}", Formatters.getNone());
 			replacements.put("{rent-until}", Formatters.getNone());

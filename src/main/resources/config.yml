@@ -1,259 +1,753 @@
-# Homestead, a premium-free land claiming plugin.
-# Developed with <3 by TayebYassine.
+# ============================================================================
+#                    HOMESTEAD CONFIGURATION FILE
+# ============================================================================
+#
+# Homestead - A free, open-source land claiming plugin for Minecraft
+# Developed with <3 by TayebYassine
+#
+# Official Documentation: https://tayebyassine.github.io/Homestead/
+# Discord Support: https://discord.gg/uh7gqDY6sz
+# Repository: https://github.com/TayebYassine/Homestead
+#
+# ============================================================================
+# IMPORTANT NOTES:
+# ============================================================================
+#
+# - Made a mistake? Delete this file and restart - a fresh one will generate
+# - Need help? Check the documentation or join our Discord server
+# - Found a bug? Report it on GitHub with full details
+# - All settings take effect after /hsadmin reload or server restart
+# - Some features require economy plugins (Vault + EssentialsX or similar)
+# - Some features require permissions plugins (LuckPerms recommended)
+#
+# ============================================================================
 
-# This is the configuration file for the Homestead plugin.
-# Made a mistake? Delete the file and restart the server—the plugin will generate a fresh one.
-# Posting "it doesn't work" spam in the repo issues or Spigot reviews won't fix anything.
-# If you have a real bug report or suggestion, please open a new issue on GitHub. Thanks!
+# ============================================================================
+# CORE SETTINGS
+# ============================================================================
 
-# Documentation: https://tayebyassine.github.io/Homestead/
-
-# Receive important messages (dynamic-map updates, cache saves, etc.) in the console?
-# true = enable, false = disable.
-# NOTE: On very busy servers this can flood logs.txt.
+# Debug Mode - Show detailed console messages for troubleshooting
+# When enabled, you'll see extra information about:
+# - Dynamic map updates
+# - Cache saves to database
+# - Region operations
+# - Plugin events
+#
+# WARNING: On busy servers (50+ concurrent players), this can flood your
+# console and make logs.txt very large. Only enable when debugging issues.
+#
+# Values: true = Enable debug logging, false = Quiet mode
 debug: false
 
-# Allow Homestead to publish anonymous usage data to bStats servers?
-# true = Allow, false = Keep my data private.
-# Usually, it's recommended to keep it on so the developers and the users (including you) will see how many servers are using Homestead,
-# including the features such as how many regions are currently being managed, claimed chunks count...
-# But still, if you want to keep your server's data private, keep the setting off.
+# Anonymous Usage Statistics (bStats)
+# Help us improve Homestead by sharing anonymous server statistics:
+# - Number of servers using Homestead
+# - Total regions managed across all servers
+# - Total chunks claimed
+# - Feature usage statistics
+#
+# NO personal data, IP addresses, or server names are collected.
+# View public stats: https://bstats.org/plugin/bukkit/Homestead
+#
+# Benefits of keeping this enabled:
+# - Developers know which features are popular
+# - Shows community size to potential users
+# - Helps justify continued development
+#
+# Values: true = Share anonymous stats, false = Keep data private
 metrics: true
 
-############################################################
-# +------------------------------------------------------+ #
-# |                      Language                        | #
-# +------------------------------------------------------+ #
-############################################################
+# ============================================================================
+# LANGUAGE SETTINGS
+# ============================================================================
 
-# Language file to load from the languages folder.
-# If the file isn't found, en-US is used by default.
+# Language File Selection
+# Choose which language file to load from the languages/ folder
+#
+# Default available: en-US (English - United States)
+# Custom languages: Create a copy of en-US.yml, translate it, and reference here
+#
+# Format: "filename" (without .yml extension)
+# Example: "es-ES" loads languages/es-ES.yml (Spanish)
+#
+# If the specified file doesn't exist, en-US is used as fallback
+# See documentation for translation guide: docs/Configuration/Language.md
 language: "en-US"
 
-############################################################
-# +------------------------------------------------------+ #
-# |                      Database                        | #
-# +------------------------------------------------------+ #
-############################################################
+# ============================================================================
+# DATABASE CONFIGURATION
+# ============================================================================
 
-# Where should region data be stored?
-# Providers:
-# - postgresql (advanced servers)
-# - mariadb    (advanced servers)
-# - mysql      (advanced servers)
-# - sqlite     (small servers)
-# - yaml       (friends-only servers)
 database:
-  # The provider name
+  # Database Provider Selection
+  # Choose where to store all region data, claims, and player information
+  #
+  # Available providers:
+  #
+  # - sqlite (Default, recommended for most servers)
+  #   Good for: Small to medium servers (< 100 daily players)
+  #   Pros: No setup required, automatic, simple
+  #   Cons: Less performant with many players, single file
+  #
+  # - mysql
+  #   Good for: Large servers (100+ daily players)
+  #   Pros: Excellent performance, can run on separate machine, scalable
+  #   Cons: Requires MySQL server setup and configuration
+  #
+  # - mariadb
+  #   Good for: Large servers (100+ daily players)
+  #   Pros: MySQL alternative, same performance benefits
+  #   Cons: Requires MariaDB server setup
+  #
+  # - postgresql
+  #   Good for: Large servers (100+ daily players)
+  #   Pros: Advanced features, excellent reliability
+  #   Cons: Requires PostgreSQL server setup
+  #
+  # - yaml
+  #   Good for: Very small/friend servers (< 20 players)
+  #   Pros: Human-readable files, easy to edit manually
+  #   Cons: Slowest option, not recommended for production
   provider: "sqlite"
 
-  # PostgreSQL configuration
+  # PostgreSQL Connection Settings
+  # Only used if provider is set to "postgresql"
+  # Note: Default PostgreSQL port is 5432, not 3306
   postgresql:
-    host: "localhost"
-    port: 3306
-    username: "USERNAME"
-    password: "PASSWORD"
-    database: "homestead_data"
-    table_prefix: ""
+    host: "localhost"           # Database server address (IP or domain)
+    port: 3306                  # PostgreSQL port (default: 5432)
+    username: "USERNAME"        # Database user with full permissions
+    password: "PASSWORD"        # Database password (keep secure!)
+    database: "homestead_data"  # Database name (create this first)
+    table_prefix: ""            # Optional prefix for table names (e.g., "hs_")
 
-  # MariaDB configuration
+  # MariaDB Connection Settings
+  # Only used if provider is set to "mariadb"
+  # MariaDB is a MySQL fork with similar configuration
   mariadb:
-    host: "localhost"
-    port: 3306
-    username: "USERNAME"
-    password: "PASSWORD"
-    database: "homestead_data"
-    table_prefix: ""
+    host: "localhost"           # Database server address
+    port: 3306                  # MariaDB port (default: 3306)
+    username: "USERNAME"        # Database user
+    password: "PASSWORD"        # Database password
+    database: "homestead_data"  # Database name
+    table_prefix: ""            # Table name prefix (optional)
 
-  # MySQL configuration
+  # MySQL Connection Settings
+  # Only used if provider is set to "mysql"
+  # Most popular choice for Minecraft servers
   mysql:
-    host: "localhost"
-    port: 3306
-    username: "USERNAME"
-    password: "PASSWORD"
-    database: "homestead_data"
-    table_prefix: ""
+    host: "localhost"           # Database server address
+    port: 3306                  # MySQL port (default: 3306)
+    username: "USERNAME"        # Database user
+    password: "PASSWORD"        # Database password
+    database: "homestead_data"  # Database name
+    table_prefix: ""            # Table name prefix (optional)
 
-  # SQLite configuration
-  sqlite: "homestead_data.db"   # File is placed in the server root.
+  # SQLite Configuration
+  # Only used if provider is set to "sqlite"
+  # File will be created automatically in plugins/Homestead/ folder
+  # No additional setup required - works out of the box
+  sqlite: "homestead_data.db"
 
-# How often (in seconds) the cache flushes to disk.
-# SQLite + high player count? Raise this to 300 (5 min).
+# Cache Flush Interval
+# How often (in seconds) cached data is written to the database
+#
+# What is caching?
+# Homestead keeps recent region data in memory for fast access, then periodically
+# saves changes to disk. This improves performance significantly.
+#
+# Recommendations by server size:
+# - Small servers (< 20 players): 30 seconds (default)
+# - Medium servers (20-50 players): 60 seconds
+# - Large servers (50-100 players): 120-180 seconds
+# - Very large servers (100+ players with SQLite): 300 seconds (5 minutes)
+#
+# Lower values = More frequent saves, slightly more CPU usage
+# Higher values = Less frequent saves, better performance, slight data loss risk on crash
+#
+# Note: Data is ALWAYS saved when:
+# - Server stops gracefully
+# - Player logs out
+# - Region is deleted
+# - /hsadmin reload is used
 cache-interval: 30
 
-############################################################
-# +------------------------------------------------------+ #
-# |                       Regions                        | #
-# +------------------------------------------------------+ #
-############################################################
+# ============================================================================
+# REGION SETTINGS
+# ============================================================================
 
-# Clean startup – purge unknown worlds, bad locations, and invalid UUIDs.
+# Startup Data Cleanup
+# Automatically fix corrupted data when server starts
+#
+# Removes/fixes:
+# - Regions in worlds that no longer exist
+# - Invalid player UUIDs
+# - Broken chunk coordinates
+# - Orphaned sub-areas
+# - Corrupted war data
+#
+# Recommended: Keep enabled unless it causes startup issues
+# Disable if: Your server has many worlds that load later, or uses dynamic world loading
+#
+# Values: true = Clean on startup, false = Skip cleanup
 clean-startup: true
 
-# Print private region chat to the console.
-# Recommended to be on to moderate player messages, like if a player is making confession of something
-# that broke the rules, such as ban evasion, insulting players, or worse, attempting to raid the server.
+# Log Private Region Chat to Console
+# Save all region chat messages to server console/logs
+#
+# Region chat is the private communication channel between region members
+# Enable this to:
+# - Moderate player messages for rule violations
+# - Investigate reports of harassment
+# - Detect ban evasion discussions
+# - Monitor suspicious activity
+# - Keep records for appeals
+#
+# Privacy note: Players should be informed their region chat may be logged
+#
+# Values: true = Log all region chat, false = Private (not logged)
 log-private-chat: true
 
-# Force region chunks to be contiguous.
-# If set to true, players can only claim a region in one single world. Recommended to be on false to
-# allow players to create farms in different worlds, for example, main base in the overworld and a
-# gold farm in the nether world.
+# Adjacent Chunks Requirement
+# Force all claimed chunks in a region to be touching each other
+#
+# When enabled (true):
+# - Players can only claim chunks next to existing chunks (connected)
+# - Creates compact, organized regions
+# - Prevents scattered claims
+# - Easier to visualize on maps
+#
+# When disabled (false):
+# - Players can claim chunks anywhere, even far apart
+# - Useful for multi-location builds (overworld base + nether farm)
+# - More flexibility but messier world
+#
+# Recommendation: Enable (true) for cleaner, organized server
+# Disable (false) if you want maximum player freedom
 adjacent-chunks: true
 
-# The chunk price.
-chunk-price: 0.0 # $0
+# Chunk Purchase Price
+# How much money players must pay to claim each chunk
+#
+# Set to 0.0 for free claiming (no economy required)
+# Set higher to create an economic sink and limit excessive claiming
+#
+# Examples:
+# - 0.0 = Free claiming (good for small servers)
+# - 100.0 = $100 per chunk (moderate cost)
+# - 1000.0 = $1000 per chunk (expensive, limits sprawl)
+#
+# Note: Requires economy plugin (Vault + EssentialsX or similar)
+# Note: This is SEPARATE from upkeep (which is recurring)
+chunk-price: 0.0
 
-# Auto-select the region a player is standing in for commands.
-# If true, players no longer need to use /hs set target [region] after joining the server.
+# Auto-Select Target Region
+# Automatically set the region a player is standing in as their active region
+#
+# When enabled (true):
+# - Standing in your region automatically targets it for commands
+# - No need to use /region set target [region] every time
+# - More convenient for players
+# - Commands like /claim, /unclaim work immediately
+#
+# When disabled (false):
+# - Players must manually target regions with /region set target
+# - More control but less convenient
+# - Useful if players frequently work with multiple regions
+#
+# Recommendation: Keep enabled (true) for ease of use
 autoset-target-region: true
 
-# Worlds where claiming is disabled. World name must be exact.
+# Disabled Worlds (Exact Names)
+# List of worlds where players CANNOT claim chunks
+#
+# World names must match EXACTLY (case-sensitive)
+# Use this for:
+# - Resource worlds that reset
+# - PvP arenas
+# - Minigame worlds
+# - Event areas
+# - Any world where claims shouldn't persist
+#
+# Example world names:
+# - "world_the_end" (default end world)
+# - "world_nether" (if you don't want nether claims)
+# - "pvp_arena" (custom PvP world)
+# - "resource_world" (mining world that resets)
+#
+# Find world names: Look in your server folder - each folder is a world
+# Or use /worlds if you have a world management plugin
 disabled-worlds-exact:
   - "world_the_end"
   - "factions"
   - "pvp_arena"
 
-# Worlds where claiming is disabled. World name must be validated under the pattern.
-# Use this for temporary worlds like EliteMobs plugin.
+# Disabled Worlds (Pattern Matching)
+# Disable claiming in worlds matching these patterns
+#
+# Uses wildcards (*) for flexible matching:
+# - "em_*" matches any world starting with "em_" (EliteMobs dungeons)
+# - "*_temp" matches any world ending with "_temp"
+# - "minigame_*_end" matches "minigame_skywars_end", "minigame_bedwars_end", etc.
+#
+# Perfect for:
+# - Temporary/dynamic worlds (EliteMobs, MythicDungeons)
+# - Auto-generated minigame worlds
+# - Test/development worlds
+# - Any worlds with consistent naming patterns
+#
+# Examples:
+# EliteMobs creates worlds like: em_dungeon1, em_dungeon2, em_lair
+# Pattern "em_*" disables all of them without listing each one
 disabled-worlds-pattern:
   - "em_*"
   - "minigame_*_end"
 
-# Flags players are NOT allowed to toggle.
-# Check documentation for the list of flags.
+# Disabled Flags
+# Prevent players from changing these specific flags
+#
+# Listed flags:
+# - Won't appear in the flags menu
+# - Can't be changed with /region flags commands
+# - Always use the default value from this config
+# - Can still be changed by operators directly in database (not recommended)
+#
+# Use this to:
+# - Enforce server-wide rules (e.g., no PvP anywhere)
+# - Prevent exploit-enabling flag combinations
+# - Lock down dangerous settings
+# - Maintain consistent gameplay
+#
+# Examples of flags to disable:
+# - "pvp" (if you want PvP off everywhere)
+# - "wither-damage" (prevent wither griefing)
+# - "explosions-damage" (prevent TNT/creeper damage)
 disabled-flags:
   - "use-bells"
   - "take-fall-damage"
 
-# Show region and sub-area borders.
+# Region Borders Visualization
+# Show region boundaries using particles or blocks
 borders:
-  # Enable this setting? true to enable, false to disable.
+  # Enable border display for players
+  # When enabled, players can toggle borders with /region borders
+  # Helpful for:
+  # - Seeing exactly where your region ends
+  # - Planning expansions
+  # - Avoiding claiming into others' regions
+  # - Visualizing sub-areas
   enabled: true
 
-  type: particles # particles, blocks
+  # Border Display Type
+  # How borders are shown to players
+  #
+  # particles: Floating particle effects along chunk edges
+  #   Pros: Non-intrusive, doesn't block building, clear visibility
+  #   Cons: Some resource packs disable particles
+  #
+  # blocks: Client-side blocks appear at chunk edges
+  #   Pros: Very visible, works even if particles are disabled
+  #   Cons: Can interfere with building view, may look cluttered
+  #
+  # Recommendation: Use "particles" for most servers
+  type: particles
 
+  # Block Type for Borders (only used if type is "blocks")
+  # What block appears when using block-based borders
+  # Can be any Minecraft block type (GLASS, GLOWSTONE, BARRIER, etc.)
+  # GRAY_GLAZED_TERRACOTTA is nice because it's distinctive
   block-type: GRAY_GLAZED_TERRACOTTA
 
-# Title/Action-bar/Chat messages shown when entering or leaving a region.
+# Enter/Exit Region Messages
+# Display messages when players enter or leave regions
 enter-exit-region-message:
-  # Enable this setting? true to enable, false to disable.
+  # Enable enter/exit messages
+  # Shows region name and description when crossing boundaries
   enabled: true
-  
-  type: 'title' # title, actionbar, chat
-  
+
+  # Message Display Type
+  # Where the message appears on screen
+  #
+  # title: Large text in center of screen (most visible)
+  # actionbar: Small text above hotbar (less intrusive)
+  # chat: Regular chat message (least intrusive)
+  type: 'title'
+
+  # Message Content for Each Display Type
+  # Customize what players see when entering/exiting
+  #
+  # Available variables:
+  # {region-displayname} - The region's name
+  # {region-description} - The region's description
+  # {region-owner} - Who owns the region
+  #
+  # Color codes: Use & for colors (&2 = green, &7 = gray, etc.)
   messages:
+    # Messages shown when entering a region
     enter:
       title: [ "&2{region-displayname}", "&7{region-description}" ]
       actionbar: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
       chat: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
+
+    # Messages shown when leaving a region
     exit:
       title: [ "&3Wilderness", "&7Roam the wild!" ]
       actionbar: "&7You left the territory of &2{region-displayname}&7."
       chat: "&7You left the territory of &2{region-displayname}&7."
 
-# Tool used to create sub-areas inside a region.
+# Sub-Area Selection Tool
+# Configure the tool used to create sub-areas within regions
 selection-tool:
-  # The item to select two points.
+  # Item used for selecting sub-area corners
+  # Default: GOLDEN_HOE (easy to craft, distinctive)
+  #
+  # Can be changed to any Minecraft item:
+  # - WOODEN_AXE (WorldEdit-style)
+  # - STICK (simple and cheap)
+  # - BLAZE_ROD (more distinctive)
+  # - Any other item type
+  #
+  # Players craft/obtain this item, then:
+  # - Left-click a block = First corner
+  # - Right-click a block = Second corner
+  # - Run /region subareas create [name]
   item: GOLDEN_HOE
-  
+
+  # Title Messages During Selection
+  # Shown to players as they select corners
+  # Provides feedback on selection progress
+  #
+  # Color codes supported (&7 = gray, &a = green, &c = red, &e = yellow)
   messages:
     none: "&7Please select two corners inside your region."
     firstCorner: "&7First corner: &a✔ &7| Second corner: &c✘"
     secondCorner: "&7First corner: &c✘ &7| Second corner: &a✔"
     selectionDone: "&7Use &e/rg subareas create [name] &7to finish."
 
-# Upkeep – charge owners per chunk or lose the land.
+# ============================================================================
+# ECONOMY FEATURES
+# ============================================================================
+# All economy features require:
+# - Vault plugin installed
+# - Economy plugin installed (EssentialsX recommended)
+# ============================================================================
+
+# Region Upkeep System
+# Require region owners to pay recurring maintenance fees based on claimed chunks
+#
+# How it works:
+# 1. Owner claims chunks
+# 2. After grace period, upkeep becomes due
+# 3. Payment auto-deducted from region bank
+# 4. If you can't pay, chunks are unclaimed (if enabled)
+# 5. Timer resets for next payment
+#
+# Purpose:
+# - Prevents land hoarding (players only claim what they use)
+# - Creates money sink for economy
+# - Encourages active players over inactive
+# - Keeps world from being completely claimed
 upkeep:
-  # Enable this setting? true to enable, false to disable.
+  # Enable upkeep system
+  # Requires economy plugin
   enabled: false
 
-  per-chunk: 100.0          # $ per chunk
-  unclaim-chunks: true      # Unclaim chunks that can't be paid for
-  start-upkeep: 604800      # 1-week grace period for new regions (seconds)
-  upkeep-timer: 604800      # Due again 1 week after last payment
+  # Cost Per Chunk (per upkeep period)
+  # How much each claimed chunk costs to maintain
+  #
+  # Formula: Total Upkeep = Chunks Claimed × Per-Chunk Cost
+  #
+  # Examples:
+  # - 10 chunks × $100 = $1,000 upkeep
+  # - 20 chunks × $100 = $2,000 upkeep
+  #
+  # Balancing suggestions:
+  # - Small casual server: $10-50 per chunk
+  # - Medium server: $100-200 per chunk
+  # - Large competitive server: $500-1000 per chunk
+  per-chunk: 100.0
 
-# Member taxes – kick players who don't pay their share.
+  # Automatically Unclaim Unpaid Chunks
+  # What happens if a player can't afford upkeep
+  #
+  # When true:
+  # - Chunks are automatically unclaimed if payment fails
+  # - Usually last-claimed chunks are removed first
+  # - Player keeps chunks they can afford
+  #
+  # When false:
+  # - Chunks stay claimed even if payment fails
+  # - Region goes into "debt" status
+  # - May have grace period before forced unclaim
+  #
+  # Recommendation: true for automatic cleanup
+  unclaim-chunks: true
+
+  # Grace Period for New Regions (in seconds)
+  # How long before the FIRST upkeep payment is due
+  # Gives new players time to establish themselves and earn money
+  #
+  # Common values:
+  # - 604800 = 1 week (recommended)
+  # - 1209600 = 2 weeks (generous)
+  # - 2592000 = ~30 days (very generous)
+  # - 259200 = 3 days (competitive servers)
+  #
+  # Set higher for casual servers, lower for competitive ones
+  start-upkeep: 604800
+
+  # Upkeep Payment Frequency (in seconds)
+  # How often upkeep payments are required
+  #
+  # Common values:
+  # - 604800 = 1 week (recommended)
+  # - 1209600 = 2 weeks
+  # - 2592000 = ~30 days
+  # - 86400 = 1 day (very frequent, for testing)
+  #
+  # Shorter intervals = More active economy, more player engagement
+  # Longer intervals = Less micromanagement, more casual
+  upkeep-timer: 604800
+
+# Member Taxes System
+# Require trusted members to pay fees to stay in a region
+#
+# How it works:
+# 1. Owner sets tax amount with /region set tax [amount]
+# 2. Members must pay on schedule
+# 3. Payment auto-deducted from member's personal balance
+# 4. Money goes to region bank
+# 5. If member can't pay, they're auto-untrusted
+#
+# Purpose:
+# - Help owners cover upkeep costs
+# - Share region expenses among members
+# - Generate income for region improvements
+# - Automatic membership management
 taxes:
-  # Enable this setting? true to enable, false to disable.
+  # Enable member tax system
+  # Requires economy plugin
   enabled: false
 
+  # Minimum Tax Amount
+  # Lowest tax owners can set
+  # Set to 0.0 to allow free membership
   min-tax: 0.0
-  max-tax: 10000.0
-  tax-timer: 604800 # 1 week
 
-# Renting – let owners lease regions.
+  # Maximum Tax Amount
+  # Highest tax owners can set
+  # Prevents excessive fees
+  # Example: $10,000 = very high but not unlimited
+  max-tax: 10000.0
+
+  # Tax Payment Frequency (in seconds)
+  # How often members must pay
+  #
+  # Usually matches upkeep-timer so members can help pay upkeep
+  # Common value: 604800 = 1 week
+  tax-timer: 604800
+
+# Region Renting System
+# Allow owners to rent their regions to other players temporarily
+#
+# How it works:
+# 1. Owner creates rental sign or uses /region set rent
+# 2. Player clicks sign or uses command
+# 3. Renter pays fee, gets access for duration
+# 4. After time expires, access is removed
+# 5. Owner can cancel early with /region rent cancel
+#
+# Perfect for:
+# - Shop spaces in marketplaces
+# - Event venues
+# - Temporary housing
+# - Seasonal builds
 renting:
-  # Enable this setting? true to enable, false to disable.
+  # Enable region renting
+  # Requires economy plugin
   enabled: true
 
+  # Minimum Rental Price
+  # Lowest amount owners can charge per rental period
+  # Prevents underselling/exploits
   min-rent: 500.0
+
+  # Maximum Rental Price
+  # Highest amount owners can charge
+  # Prevents inflation/excessive fees
   max-rent: 10000000.0
 
-# Selling – let owners sell regions.
+# Region Selling System
+# Allow owners to sell their regions permanently to other players
+#
+# How it works:
+# 1. Owner creates sale sign or uses /region set sell
+# 2. Buyer clicks sign or uses command
+# 3. Buyer pays, immediately becomes new owner
+# 4. Original owner loses all access
+# 5. Cannot be reversed (permanent)
+#
+# Perfect for:
+# - Trading prime locations
+# - Selling developed builds
+# - Player-driven real estate market
+# - Quitting players liquidating assets
 selling:
-  # Enable this setting? true to enable, false to disable.
+  # Enable region selling
+  # Requires economy plugin
   enabled: true
 
+  # Minimum Sale Price
+  # Lowest price owners can sell for
+  # Prevents giving away valuable regions
   min-sell: 10.0
+
+  # Maximum Sale Price
+  # Highest price owners can sell for
+  # Prevents economy inflation
   max-sell: 1000000000.0
 
-# Sub-areas – smaller zones inside a region.
+# Sub-Areas Feature
+# Allow creating smaller zones within regions with different permissions
+#
+# Use cases:
+# - Shop inside private base (public access to shop only)
+# - PvP arena in safe town
+# - Public farm in protected region
+# - Guest areas with limited permissions
 sub-areas:
-  # Enable this setting? true to enable, false to disable.
+  # Enable sub-areas creation
+  # Requires selection tool (configured above)
   enabled: true
 
-# Wars – allow region-vs-region combat.
+# Wars System
+# Enable region-vs-region PvP conflicts with economic stakes
+#
+# How it works:
+# 1. Owner declares war on another region with prize money
+# 2. Special combat rules activate
+# 3. If declarer dies (any death), they lose and pay prize
+# 4. If they kill enemy owner, they win and receive prize
+# 5. Either side can surrender to end war early
+#
+# Changes during war:
+# - PvP enabled in both regions
+# - Doors/gates accessible to enemies
+# - Passthrough allowed
+# - High-risk, high-reward gameplay
+#
+# Perfect for:
+# - Faction/nation conflicts
+# - Territory disputes
+# - Competitive gameplay
+# - Economic warfare
 wars:
-  # Enable this setting? true to enable, false to disable.
+  # Enable wars feature
+  # Requires economy plugin
   enabled: false
 
+  # Minimum War Prize
+  # Smallest prize that can be wagered
+  # Too low = pointless wars
   min-prize: 1000.0
+
+  # Maximum War Prize
+  # Largest prize that can be wagered
+  # Prevents bankrupting players
   max-prize: 1000000000.0
 
-# Welcome signs – teleport by clicking signs.
+# Welcome Signs Feature
+# Allow players to create clickable signs that teleport to regions
+#
+# How it works:
+# 1. Player places sign with format: [Welcome] / RegionName / /
+# 2. Other players click sign
+# 3. They teleport to region's home point
+#
+# Perfect for:
+# - Spawn marketplace directories
+# - Player base showcases
+# - Easy navigation without commands
+# - Non-technical player access
 welcome-signs:
-  # Enable this setting? true to enable, false to disable.
+  # Enable welcome signs
+  # Alternative to /region visit command
   enabled: false
 
-############################################################
-# +------------------------------------------------------+ #
-# |                   Groups & Limits                    | #
-# +------------------------------------------------------+ #
-############################################################
+# ============================================================================
+# LIMITS & PERMISSIONS CONFIGURATION
+# ============================================================================
 
-# Limit style:
-# - static – hard-coded op vs non-op
-# - groups – uses your permissions plugin (LuckPerms, etc.)
+# Claim Limits System
+# Control how many regions/chunks/members each player can have
 limits:
+  # Limit Assignment Method
+  #
+  # 'static': Everyone gets same limits (except operators)
+  #   - Simple, no permissions plugin needed
+  #   - Two tiers: non-op and op
+  #   - Good for small/friend servers
+  #
+  # 'groups': Limits based on permission groups (LuckPerms, etc.)
+  #   - Different limits per rank (default, vip, mvp, admin, etc.)
+  #   - Rewards players for donating/ranking up
+  #   - Requires permissions plugin
+  #   - Good for servers with donation ranks
   method: 'static'
 
-  # If method is groups
+  # Group-Based Limits (only used if method = 'groups')
+  # Define limits for each permission group
+  #
+  # For each group, configure:
+  # - regions: Max regions player can create
+  # - chunks-per-region: Max chunks claimable per region
+  # - members-per-region: Max trusted members per region
+  # - subareas-per-region: Max sub-areas per region
+  # - max-subarea-volume: Max size of a sub-area (in blocks³)
+  # - commands-cooldown: Seconds between region commands
+  #
+  # Example progression: default → vip → mvp → admin
   groups:
-    default: # Group: default
-      regions: 1
-      chunks-per-region: 4
-      members-per-region: 2
-      subareas-per-region: 1
-      max-subarea-volume: 400
-      commands-cooldown: 2
-    vip: # Group: vip
-      regions: 2
-      chunks-per-region: 6
-      members-per-region: 8
-      subareas-per-region: 3
-      max-subarea-volume: 800
-      commands-cooldown: 2
-    admin: # Group: admin
-      regions: 4
-      chunks-per-region: 100
+    # Default group (free players, no perks)
+    default:
+      regions: 1              # Can create 1 region
+      chunks-per-region: 4    # Can claim 4 chunks (32x32 area)
+      members-per-region: 2   # Can trust 2 other players
+      subareas-per-region: 1  # Can create 1 sub-area
+      max-subarea-volume: 400 # Sub-area max 400 blocks³ (e.g., 10x10x4)
+      commands-cooldown: 2    # 2 second cooldown between commands
+
+    # VIP group (donors/supporters)
+    vip:
+      regions: 2              # Can have 2 separate regions
+      chunks-per-region: 6    # Larger regions (48x32 area)
+      members-per-region: 8   # Can trust more friends
+      subareas-per-region: 3  # More sub-areas for organization
+      max-subarea-volume: 800 # Larger sub-areas
+      commands-cooldown: 1    # Faster command usage
+
+    # MVP group (premium donors)
+    mvp:
+      regions: 3
+      chunks-per-region: 12
       members-per-region: 16
-      subareas-per-region: 10
-      max-subarea-volume: 1200
+      subareas-per-region: 6
+      max-subarea-volume: 1600
       commands-cooldown: 0
 
-  # If method is static
+    # Admin group (staff)
+    admin:
+      regions: 10
+      chunks-per-region: 100
+      members-per-region: 50
+      subareas-per-region: 20
+      max-subarea-volume: 5000
+      commands-cooldown: 0
+
+  # Static Limits (only used if method = 'static')
+  # Simple two-tier system: non-operators and operators
   static:
+    # Limits for regular players (non-operators)
     non-op:
       regions: 1
       chunks-per-region: 4
@@ -261,18 +755,40 @@ limits:
       subareas-per-region: 1
       max-subarea-volume: 400
       commands-cooldown: 2
+
+    # Limits for server operators
+    # Typically much higher for admin builds and testing
     op:
-      regions: 4
+      regions: 10
       chunks-per-region: 100
-      members-per-region: 16
-      subareas-per-region: 10
-      max-subarea-volume: 1200
+      members-per-region: 50
+      subareas-per-region: 20
+      max-subarea-volume: 5000
       commands-cooldown: 0
 
-# Per-player overrides – add as many names as you like.
+# Per-Player Custom Limits
+# Override limits for specific players by username
+#
+# Use cases:
+# - Special limits for content creators
+# - Rewards for events/contests
+# - Builder team members
+# - Testing new limit values
+# - Grandfathered limits for old players
+#
+# IMPORTANT: Usernames are case-sensitive!
+# "Steve" is different from "steve"
+#
+# These override both group and static limits
 player-limits:
-  # Replace 'A_PLAYER_NAME_GOES_HERE_FOR_SPECIAL_LIMITS' with a player name, you can add as
-  # many players as you want.
+  # Example: Custom limits for specific player
+  # ExamplePlayer:
+  #   regions: 5
+  #   chunks-per-region: 25
+  #   members-per-region: 15
+  #   subareas-per-region: 10
+  #   max-subarea-volume: 2000
+  #   commands-cooldown: 0
   A_PLAYER_NAME_GOES_HERE_FOR_SPECIAL_LIMITS:
     regions: 10
     chunks-per-region: 100
@@ -281,142 +797,334 @@ player-limits:
     max-subarea-volume: 1200
     commands-cooldown: 0
 
-############################################################
-# +------------------------------------------------------+ #
-# |                      Rewards                         | #
-# +------------------------------------------------------+ #
-############################################################
-
-# Hand out rewards.
+# Reward System - Bonus chunks/members for member count
+# Give region owners extra claims for building a community
 rewards:
-  # Enable this setting? true to enable, false to disable.
+  # Enable rewards system
+  # Requires economy plugin
   enabled: true
 
-  for-each-member: # Given to the owner when someone joins a region.
-    chunks: 2 # 0 = disable
-    subareas: 1 # 0 = disable
+  # Reward per Trusted Member
+  # For each member in the region, owner gets bonus chunks/sub-areas
+  #
+  # Example: If you have 3 members and for-each-member.chunks is 2:
+  # - Base limit: 10 chunks
+  # - Bonus: 3 members × 2 chunks = +6 chunks
+  # - Total: 16 chunks available
+  #
+  # Set to 0 to disable that reward type
+  for-each-member:
+    chunks: 2     # Bonus chunks per member (0 = disabled)
+    subareas: 1   # Bonus sub-areas per member (0 = disabled)
 
-  by-playtime: # Compares highest play-time; keep chunks and subareas rising as time rises.
+  # Reward by Playtime
+  # Give bonuses based on total time played on the server
+  #
+  # How it works:
+  # - Plugin tracks active playtime (AFK time doesn't count)
+  # - When player reaches a tier, they get those rewards
+  # - Only the HIGHEST tier applies (not cumulative)
+  #
+  # Example: Player has 10 hours playtime
+  # - Qualifies for 30min tier (1 chunk)
+  # - Qualifies for 3hr tier (2 chunks)
+  # - Gets 2 chunks total (from highest tier)
+  #
+  # Time format:
+  # - minutes: Number of minutes
+  # - hours: Number of hours
+  # - days: Number of days
+  # All three add together: 1d + 2h + 30m = 1 day, 2 hours, 30 minutes
+  #
+  # IMPORTANT: Keep values ASCENDING (higher time = more rewards)
+  by-playtime:
+    # 30 minutes played
     - minutes: 30
       hours: 0
       days: 0
       chunks: 1
       subareas: 1
+
+    # 3 hours played
     - minutes: 0
       hours: 3
       days: 0
       chunks: 2
       subareas: 2
+
+    # 12 hours played
+    - minutes: 0
+      hours: 12
+      days: 0
+      chunks: 4
+      subareas: 3
+
+    # 1 day (24 hours) played
     - minutes: 0
       hours: 0
       days: 1
-      chunks: 4
-      subareas: 3
-    - minutes: 0
-      hours: 0
-      days: 10
       chunks: 6
       subareas: 4
 
-############################################################
-# +------------------------------------------------------+ #
-# |                       Levels                         | #
-# +------------------------------------------------------+ #
-############################################################
+    # 3 days played
+    - minutes: 0
+      hours: 0
+      days: 3
+      chunks: 8
+      subareas: 6
 
-# Hand out rewards by leveling up the region.
+    # 1 week (7 days) played
+    - minutes: 0
+      hours: 0
+      days: 7
+      chunks: 10
+      subareas: 8
+
+# Region Leveling System
+# Reward players for killing mobs inside their region
+#
+# How it works:
+# 1. Player kills mob in their region
+# 2. Region gains XP based on mob type
+# 3. At certain levels, region unlocks rewards
+# 4. Rewards stack with other bonuses
+#
+# Perfect for:
+# - Encouraging active gameplay
+# - Rewarding grinders/farmers
+# - Progressive gameplay mechanics
+# - Extra goals beyond just building
 levels:
-  # Enable this setting? true to enable, false to disable.
+  # Enable region leveling
+  # XP is earned by killing mobs inside your region
   enabled: true
 
+  # XP Gained by Killing Each Entity Type
+  # Format: ENTITY_NAME: [ min_xp, max_xp ]
+  # Actual XP given is random between min and max
+  #
+  # Balance considerations:
+  # - Common mobs (zombie, skeleton): Lower XP (10-20)
+  # - Uncommon mobs (piglin, enderman): Medium XP (50-100)
+  # - Rare mobs (wither, ender dragon): High XP (500-3000)
+  # - Passive mobs (pig, cow): Low XP (10-20)
+  #
+  # Prevents exploits by requiring kills IN your region
   on-kill-entity:
-    ENDER_DRAGON: [ 1000, 3000 ]
-    WARDEN: [ 500, 1000 ]
-    WITHER: [ 200,500 ]
-    ZOMBIE: [ 10, 20 ]
-    SKELETON: [ 10, 20 ]
-    HUSK: [ 10, 20 ]
-    PIG: [ 10, 20 ]
-    SHEEP: [ 10, 20 ]
-    COW: [ 10, 20 ]
+    ENDER_DRAGON: [ 1000, 3000 ]  # Hardest boss
+    WARDEN: [ 500, 1000 ]         # Difficult mob
+    WITHER: [ 200, 500 ]          # Boss fight
+    ZOMBIE: [ 10, 20 ]            # Common hostile
+    SKELETON: [ 10, 20 ]          # Common hostile
+    HUSK: [ 10, 20 ]              # Desert zombie
+    PIG: [ 10, 20 ]               # Passive mob
+    SHEEP: [ 10, 20 ]             # Passive mob
+    COW: [ 10, 20 ]               # Passive mob
 
-  rewards:  # Compares highest level; keep the reward values rising as level rises.
+  # Level-Based Rewards
+  # When region reaches a level, owner gets these bonuses
+  #
+  # Format for each level:
+  # level_number:
+  #   chunks: Bonus chunks
+  #   members: Bonus member slots
+  #   subareas: Bonus sub-areas
+  #   upkeep-reduction: Percentage reduction (0-100)
+  #
+  # IMPORTANT: Keep levels in ASCENDING order
+  # Higher levels should have better/equal rewards than lower levels
+  #
+  # Upkeep reduction stacks: Level 5 (5%) + Level 10 (5%) = 10% total at level 10
+  rewards:
+    # Level 5 rewards
     5:
-      chunks: 1
-      members: 0
-      subareas: 0
-      upkeep-reduction: 5 # %
+      chunks: 1                 # +1 chunk
+      members: 0                # No member bonus yet
+      subareas: 0               # No subarea bonus yet
+      upkeep-reduction: 5       # 5% cheaper upkeep
+
+    # Level 10 rewards
     10:
-      chunks: 2
-      members: 1
-      subareas: 0
-      upkeep-reduction: 5 # %
+      chunks: 2                 # +2 chunks total (not cumulative)
+      members: 1                # +1 member slot
+      subareas: 0               # Still no subarea bonus
+      upkeep-reduction: 5       # Another 5% (10% total now)
+
+    # Level 15 rewards
     15:
       chunks: 4
       members: 2
       subareas: 1
-      upkeep-reduction: 10 # %
+      upkeep-reduction: 10      # +10% more (20% total)
+
+    # Level 20 rewards
     20:
-      chunks: 4
+      chunks: 4                 # Same as 15 (keeping consistent)
       members: 2
       subareas: 1
-      upkeep-reduction: 15 # %
+      upkeep-reduction: 15      # +15% more (35% total)
+
+    # Level 30 rewards
     30:
       chunks: 4
       members: 2
       subareas: 1
-      upkeep-reduction: 30 # %
+      upkeep-reduction: 30      # +30% more (65% total)
+
+    # Level 50 rewards (max example)
     50:
-      chunks: 8
-      members: 6
-      subareas: 4
-      upkeep-reduction: 50 # %
+      chunks: 8                 # Significant chunk boost
+      members: 6                # Large member increase
+      subareas: 4               # Many sub-areas
+      upkeep-reduction: 50      # +50% more (115% total... free upkeep at this point!)
 
-############################################################
-# +------------------------------------------------------+ #
-# |                      Plugins                         | #
-# +------------------------------------------------------+ #
-############################################################
+# ============================================================================
+# PLUGIN INTEGRATIONS
+# ============================================================================
 
-# WorldGuard hooks (requires WorldEdit)
+# WorldGuard Integration
+# Prevent claiming inside WorldGuard-protected regions
+#
+# Requires: WorldGuard plugin installed
+#
+# When enabled:
+# - Players can't claim chunks inside WorldGuard regions
+# - Protects spawn, arenas, admin areas, event zones
+# - Existing Homestead regions inside WG areas are unaffected
+#
+# Perfect for:
+# - Protecting spawn from claims
+# - Reserving PvP arenas
+# - Admin/staff building areas
+# - Event locations
 worldguard:
-  protect-existing-regions: true # Stop claiming inside WG regions (spawn, arena, etc.)
+  # Prevent claiming in WorldGuard regions
+  # Recommended: true (prevents conflicts and protects special areas)
+  protect-existing-regions: true
 
-# WorldEdit hooks (DEPRECATED)
+# WorldEdit Integration
+# Regenerate chunks when regions are deleted
+#
+# Requires: WorldEdit plugin installed
+#
+# WARNING: This feature is deprecated by WorldEdit developers
+# Use with extreme caution!
+#
+# When enabled:
+# - Deleting a region regenerates all claimed chunks
+# - Terrain restored to original world generation
+# - All builds, chests, entities in those chunks are DELETED
+# - Cannot be undone!
+#
+# Performance impact:
+# - Very heavy on server resources
+# - Can cause lag spikes or freezes
+# - Not recommended for servers with 30+ concurrent players
+# - Especially bad with large regions (10+ chunks)
+#
+# When to use:
+# - Small servers with good hardware
+# - Low player count
+# - You want automated cleanup
+# - Understand and accept the risks
+#
+# When NOT to use:
+# - Shared/budget hosting
+# - High player count
+# - Large regions common
+# - Any lag concerns
 worldedit:
-  regenerate-chunks: false # Restore terrain when unclaiming. HEAVY LAG WARNING!
+  # Enable chunk regeneration on region deletion
+  # DEPRECATED: Use at your own risk
+  # Recommendation: false (disabled)
+  regenerate-chunks: false
 
-# PlaceholderAPI support
+# PlaceholderAPI Integration
+# Display Homestead data in chat, tab lists, scoreboards, etc.
+#
+# Requires: PlaceholderAPI plugin installed
 placeholderapi:
+  # Default values when player has no region or data unavailable
+  # These prevent ugly "null" or blank spaces in displays
   default:
-    region_bank: "None"
-    region_name: "None"
-    region_claimed_chunks: "0"
-    region_max_chunks: "0"
-    region_trusted_members: "0"
-    region_max_members: "0"
-    region_current: "&2Wilderness"
-    upkeep_amount: "0,00"
-    upkeep_at: "Never"
-    war_name: "None"
-    war_prize: "0,00"
+    region_bank: "None"              # No region = no bank
+    region_name: "None"              # No region owned
+    region_claimed_chunks: "0"       # No chunks claimed
+    region_max_chunks: "0"           # No claim limit (no region)
+    region_trusted_members: "0"      # No members
+    region_max_members: "0"          # No member limit
+    region_current: "&2Wilderness"   # Not in any region
+    upkeep_amount: "0,00"            # No upkeep owed
+    upkeep_at: "Never"               # No upkeep scheduled
+    war_name: "None"                 # No active war
+    war_prize: "0,00"                # No war prize
 
-# Dynamic web maps – dynmap / Squaremap / BlueMap / Pl3xMap
+# Dynamic Web Maps Integration
+# Show claimed regions on dynmap, Squaremap, BlueMap, or Pl3xMap
+#
+# Requires: One of these map plugins installed:
+# - dynmap (http://localhost:8123/)
+# - Squaremap (http://localhost:8080/)
+# - Pl3xMap (http://localhost:8080/)
+# - BlueMap (http://localhost:8100/)
+#
+# Features:
+# - Claimed chunks visible on web map
+# - Custom icons per region
+# - Custom colors per region
+# - Region information on click
+# - Auto-updates when claims change
 dynamic-maps:
-  # Enable this setting? true to enable, false to disable.
+  # Enable map integration
+  # Automatically detects which map plugin you have
   enabled: true
 
-  update-interval: 60 # seconds
+  # Update Frequency (in seconds)
+  # How often the map refreshes to show new/changed claims
+  #
+  # Lower values (30-60):
+  # - More frequent updates
+  # - Shows changes faster
+  # - Slightly more CPU usage
+  #
+  # Higher values (120-300):
+  # - Less frequent updates
+  # - Better performance
+  # - Slight delay showing changes
+  #
+  # Recommendation: 60 for most servers
+  update-interval: 60
 
-  # Region icons
+  # Custom Region Icons
+  # Let players choose icons for their regions on the map
   icons:
-    # Enable this setting? true to enable, false to disable.
-    # If true, players can pick icons for their regions.
+    # Enable custom icons feature
+    # Players can select from the list below
     enabled: true
-    
+
+    # Default icon (shown when player hasn't chosen one)
+    # Must be a direct link to an image file
     default: https://imgur.com/TUQzlCK.png
-    size: 20 # px
-    
+
+    # Icon size on map (in pixels)
+    # 16-32 is typical, too large can be overwhelming
+    size: 20
+
+    # Available Icons
+    # Players can choose from these with /region set icon [name]
+    #
+    # Format: IconName: https://direct-url-to-image.png
+    #
+    # Tips:
+    # - Use Imgur or other reliable image hosts
+    # - Must be direct image links (ending in .png, .jpg, etc.)
+    # - Keep icon names simple and descriptive
+    # - 20-50 options is good variety without overwhelming
+    #
+    # Finding icons:
+    # - minecraft-heads.com (player head textures)
+    # - Imgur (upload custom icons)
+    # - Icon websites (flaticon, etc.)
     list:
       Hut: https://imgur.com/GFrfD0H.png
       Outpost: https://imgur.com/4EvpONv.png
@@ -430,140 +1138,276 @@ dynamic-maps:
       Netherite: https://i.imgur.com/DTpAqCP.png
       Diamond: https://imgur.com/MQSe8Qs.png
 
+  # Chunk Display Settings
+  # Customize how claimed chunks appear on the map
   chunks:
+    # Operator-Claimed Regions
+    # Special styling for regions owned by server operators
+    #
+    # Hex color format: 0xRRGGBB
+    # 0xFF0000 = Red, 0x00FF00 = Green, 0x0000FF = Blue
     operator-color: 0xFF0000
+
+    # HTML description shown when clicking operator region
+    # Supports HTML tags for formatting
+    # Available variables: {region}, {global-rank}, {region-description},
+    #                      {region-owner}, {region-members}, {region-chunks}, {region-size}
     operator-description: "<div style='font-size:16px;'><b>[Operator] {region} (#{global-rank})</b></div>{region-description}<br><br><b>Owner</b>: {region-owner}<br><b>Members</b>: {region-members}<br><b>Chunks</b>: {region-chunks}<br><b>Size</b>: {region-size} blocks"
-    
+
+    # Regular Player Regions
+    # Default styling for all non-operator regions
     color: 0x00FF00
     description: "<div style='font-size:16px;'><b>{region} (#{global-rank})</b></div>{region-description}<br><br><b>Owner</b>: {region-owner}<br><b>Members</b>: {region-members}<br><b>Chunks</b>: {region-chunks}<br><b>Size</b>: {region-size} blocks"
-    
+
+    # Fill Transparency (0-255)
+    # How see-through the claimed area is
+    # 0 = Completely transparent (invisible fill)
+    # 255 = Completely opaque (solid fill)
+    # 40 = Mostly transparent (recommended for readability)
     transparency-fill: 40
+
+    # Outline Transparency (0-255)
+    # How see-through the borderline is
+    # Higher values make borders more visible
+    # 125 = Semi-transparent (recommended)
     transparency-outline: 125
 
-############################################################
-# +------------------------------------------------------+ #
-# |                    Miscellaneous                     | #
-# +------------------------------------------------------+ #
-############################################################
+# ============================================================================
+# MISCELLANEOUS SETTINGS
+# ============================================================================
 
-# Special flag tweaks
+# Flag-Specific Configuration
+# Special behavior tweaks for specific flags
 flags-configuration:
-  spawners: true # Spawner mobs ignore passive-entities-spawn / hostile-entities-spawn flags
+  # Spawner Mob Spawn Behavior
+  # Should mobs from spawners ignore the spawn flags?
+  #
+  # When true:
+  # - Mobs from spawners always spawn
+  # - Ignores passive-entities-spawn flag
+  # - Ignores hostile-entities-spawn flag
+  # - Prevents griefing spawner farms via flags
+  #
+  # When false:
+  # - Spawners respect the spawn flags
+  # - Can disable spawner farms with flags
+  # - Less realistic but more control
+  #
+  # Recommendation: true (spawners should always work)
+  spawners: true
 
-# Special features
+# Special Features
+# Unique gameplay tweaks and experimental features
 special-feat:
-  tnt-explodes-only-below-sea-level: false # Allow TNT to explode ONLY below the sea level (Y = 63) AND outside a region?
+  # TNT Explosion Restrictions
+  # Only allow TNT to explode below sea level (Y=63) in unclaimed areas
+  #
+  # When enabled (true):
+  # - TNT explodes normally below Y=63 in wilderness
+  # - TNT above Y=63 in wilderness doesn't explode
+  # - TNT in claimed regions follows region explosion flags
+  # - Useful for allowing underground mining while protecting surface
+  #
+  # When disabled (false):
+  # - TNT behaves normally everywhere
+  # - Region flags are only protection
+  #
+  # Perfect for:
+  # - Servers wanting mining with TNT
+  # - Protecting surface builds
+  # - Preventing surface griefing
+  tnt-explodes-only-below-sea-level: false
 
-  ignore-region-protection-if-action-in-disabled-world: true # Disable region protection if a grief or an action occurred in a disabled world
+  # Disabled World Protection Bypass
+  # Should region protection work in worlds where claiming is disabled?
+  #
+  # When true (recommended):
+  # - In disabled worlds, NO region protection applies
+  # - Anyone can build/break anywhere in disabled worlds
+  # - Useful for resource worlds, minigames, etc.
+  #
+  # When false:
+  # - Existing regions still protect even in disabled worlds
+  # - More protection but may cause confusion
+  #
+  # Recommendation: true (clean separation)
+  ignore-region-protection-if-action-in-disabled-world: true
 
-  ignore-trust-acceptance-system: false # Instantly trust players without waiting requested players to accept or deny the invites?
+  # Trust Acceptance System Bypass
+  # Should trusted players join regions without accepting invites?
+  #
+  # When false (default):
+  # - Owner uses /region trust PlayerName
+  # - Player receives notification
+  # - Player must use /region accept to join
+  # - Gives players choice and control
+  #
+  # When true:
+  # - Owner uses /region trust PlayerName
+  # - Player is immediately trusted (no acceptance needed)
+  # - Faster but no player consent
+  #
+  # Use true for:
+  # - Small friend servers where coordination is easy
+  # - Faster trust management
+  #
+  # Use false for:
+  # - Public servers
+  # - Player consent important
+  # - Standard accept/deny workflow
+  ignore-trust-acceptance-system: false
 
-# Teleport delay
+# Teleport Delay System
+# Add countdown before teleporting (prevents combat escape)
 delayed-teleport:
-  # Enable this setting? true to enable, false to disable.
+  # Enable teleport delays
+  # Applies to: /region visit, /region home, welcome signs
   enabled: true
-  
-  delay: 3 # seconds
-  
+
+  # Delay Duration (in seconds)
+  # How long players must wait before teleporting
+  # Common values:
+  # - 3 seconds: Standard, prevents quick escapes
+  # - 5 seconds: Longer delay for more anti-combat
+  # - 0 seconds: Instant (not recommended for survival)
+  delay: 3
+
+  # Cancel on Movement
+  # Should teleport cancel if player moves during countdown?
+  #
+  # When true:
+  # - Player must stand still
+  # - Moving cancels teleport
+  # - Prevents teleporting while running from combat
+  #
+  # When false:
+  # - Player can move freely
+  # - Teleport happens regardless
+  # - Less strict but more convenient
   cancel-on-move: true
-  ignore-operators: true # ops teleport instantly
 
-# Chat/formatting strings – edit only if you know what you're doing!
+  # Operator Bypass
+  # Should server operators skip the delay and teleport instantly?
+  #
+  # When true:
+  # - Ops teleport immediately
+  # - Useful for admin duties
+  #
+  # When false:
+  # - Ops wait like everyone else
+  # - Fair for all players
+  ignore-operators: true
+
+# Formatting Strings
+# Advanced: Customize how dates, money, locations, etc. are displayed
+#
+# WARNING: Only edit if you know what you're doing!
+# Breaking these can cause display issues throughout the plugin
 formatters:
-  date-format: "dd/M/yyyy hh:mm a"
-  date: "{date} &7({time-ago} ago)"
-  balance: "${balance}"
-  location: "&6{world} &7(X: &6{x} &7Y: &6{y} &7Z: &6{z}&7)"
-  chunk: "&6{world} &7(X: &6{x} &7Z: &6{z}&7)"
-  player-regions: "&7• &2{region}"
-  player-regions-joining: "\n"
-  region-members: "&7• &3{playername}"
-  region-members-joining: "\n"
-  gui-pagination-title: "&r{title} &r| &3{current-page}&r/&c{total-pages}"
-  remaining-time: "{d} days, {h} hours, {m} minutes, {s} seconds"
-  ago-days: "{v} days"
-  ago-hours: "{v} hours"
-  ago-minutes: "{v} minutes"
-  ago-seconds: "{v} seconds"
-  war-regions: "&2{region}"
-  war-regions-joining: ", "
-  private-chat: "&2{region} &7- &e{sender}&7: &r{message}"
+  date-format: "dd/M/yyyy hh:mm a"                                          # Java SimpleDateFormat pattern
+  date: "{date} &7({time-ago} ago)"                                         # How dates display with relative time
+  balance: "${balance}"                                                     # Money format (add currency symbols here)
+  location: "&6{world} &7(X: &6{x} &7Y: &6{y} &7Z: &6{z}&7)"                # Full 3D location
+  chunk: "&6{world} &7(X: &6{x} &7Z: &6{z}&7)"                              # 2D chunk location
+  player-regions: "&7• &2{region}"                                          # How each region listed for player
+  player-regions-joining: "\n"                                              # Separator between region names (newline)
+  region-members: "&7• &3{playername}"                                      # How each member is listed
+  region-members-joining: "\n"                                              # Separator between member names (newline)
+  gui-pagination-title: "&r{title} &r| &3{current-page}&r/&c{total-pages}"  # GUI page indicator
+  duration: "{d} days, {h} hours, {m} minutes, {s} seconds"                 # Duration format
+  ago-days: "{v} days"                                                      # X days ago
+  ago-hours: "{v} hours"                                                    # X hours ago
+  ago-minutes: "{v} minutes"                                                # X minutes ago
+  ago-seconds: "{v} seconds"                                                # X seconds ago
+  war-regions: "&2{region}"                                                 # Region name in war display
+  war-regions-joining: ", "                                                 # Separator between war regions (comma-space)
+  private-chat: "&2{region} &7- &e{sender}&7: &r{message}"                  # Region chat message format
 
-############################################################
-# +------------------------------------------------------+ #
-# |                 Global Player Flags                  | #
-# +------------------------------------------------------+ #
-############################################################
+# ============================================================================
+# DEFAULT FLAG VALUES
+# ============================================================================
+# These are the DEFAULT values for all new regions
+# Players can change these for their own regions (unless flag is disabled above)
+# ============================================================================
 
-# These flags apply to NON-members.
-# true = allow, false = deny
+# Global Player Flags (Non-Members)
+# Controls what players who are NOT trusted members can do
+#
+# These apply to:
+# - Non-members trying to interact in regions
+# - Random players passing through
+# - Visitors to public regions
+#
+# These do NOT apply to:
+# - Region owners (they have full access)
+# - Trusted members (they have full access unless member flags set)
+#
+# Format: true = allow action, false = deny action
 default-players-flags:
-  break-blocks: false
-  place-blocks: false
-  containers: false
-  doors: false
-  trap-doors: false
-  fence-gates: false
-  use-anvil: false
-  redstone: false
-  levers: false
-  buttons: false
-  pressure-plates: false
-  use-bells: false
-  trigger-tripwire: false
-  frost-walker: false
-  harvest-crops: false
-  block-trampling: false
-  general-interaction: false
-  armor-stands: false
-  interact-entities: false
-  item-frame-interaction: false
-  damage-passive-entities: false
-  damage-hostile-entities: false
-  trade-villagers: false
-  ignite: false
-  vehicles: false
-  teleport-spawn: false
-  passthrough: true
-  pvp: false
-  take-fall-damage: true
-  teleport: false
-  throw-potions: false
-  pickup-items: true
-  sleep: false
-  trigger-raid: false
-  elytra: true
-  spawn-entities: true
+  break-blocks: false            # Break/destroy blocks
+  place-blocks: false            # Place blocks
+  containers: false              # Open chests, barrels, shulker boxes, etc.
+  doors: false                   # Open/close doors
+  trap-doors: false              # Open/close trapdoors
+  fence-gates: false             # Open/close fence gates
+  use-anvil: false               # Use anvils
+  redstone: false                # Interact with redstone components
+  levers: false                  # Use levers
+  buttons: false                 # Press buttons
+  pressure-plates: false         # Trigger pressure plates
+  use-bells: false               # Ring bells
+  trigger-tripwire: false        # Activate tripwires
+  frost-walker: false            # Use frost walker boots (creates ice)
+  harvest-crops: false           # Harvest/break crops
+  block-trampling: false         # Trample farmland and turtle eggs
+  general-interaction: false     # General interaction catch-all
+  armor-stands: false            # Remove armor from armor stands
+  interact-entities: false       # Interact with entities (general)
+  item-frame-interaction: false  # Add/remove items from item frames
+  damage-passive-entities: false # Kill passive mobs (cows, sheep, pigs, etc.)
+  damage-hostile-entities: false # Kill hostile mobs (zombies, skeletons, etc.)
+  trade-villagers: false         # Trade with villagers
+  ignite: false                  # Start fires with flint and steel
+  vehicles: false                # Ride minecarts, horses, boats, etc.
+  teleport-spawn: false          # Teleport to region spawn with /region home
+  passthrough: true              # Enter and move through the region (set false for private)
+  pvp: false                     # Fight other players (enable for PvP arenas)
+  take-fall-damage: true         # Take fall damage (set false for parkour areas)
+  teleport: false                # Teleport with ender pearls or chorus fruit
+  throw-potions: false           # Throw splash/lingering potions
+  pickup-items: true             # Pick up dropped items
+  sleep: false                   # Use beds to sleep
+  trigger-raid: false            # Start raids by entering with Bad Omen effect
+  elytra: true                   # Fly with elytra
+  spawn-entities: true           # Use spawn eggs
 
-############################################################
-# +------------------------------------------------------+ #
-# |                     World Flags                      | #
-# +------------------------------------------------------+ #
-############################################################
-
-# Environment rules inside claims (ignored in wilderness).
-# true = allow, false = deny
+# World/Environment Flags
+# Controls environmental effects and mob behavior inside regions
+#
+# These do NOT apply to wilderness (unclaimed areas)
+# Only affect claimed chunks
+#
+# Format: true = allow, false = prevent
 default-world-flags:
-  passive-entities-spawn: true
-  hostile-entities-spawn: true
-  entities-grief: false
-  entities-damage-entities: false
-  leaves-decay: true
-  fire-spread: false
-  liquid-flow: false
-  explosions-damage: false
-  wither-damage: false
-  wilderness-pistons: false
-  wilderness-dispensers: false
-  wilderness-minecarts: false
-  plant-growth: true
-  grass-growth: true
-  sculk-spread: true
-  player-glowing: true
-  snow-melting: true
-  ice-melting: true
-  snowman-trails: true
-  windcharge-burst: false
-  wilderness-copper-golems: false
-  wars: false
-  
+  passive-entities-spawn: true      # Allow passive mobs (animals) to spawn
+  hostile-entities-spawn: true      # Allow hostile mobs (monsters) to spawn
+  entities-grief: false             # Allow entities (except creepers) to damage blocks
+  entities-damage-entities: false   # Allow entities to attack each other
+  leaves-decay: true                # Allow leaves to decay naturally
+  fire-spread: false                # Allow fire to spread to other blocks
+  liquid-flow: false                # Allow water/lava to flow into region from outside
+  explosions-damage: false          # Allow explosions (except wither) to damage blocks
+  wither-damage: false              # Allow wither to damage blocks
+  wilderness-pistons: false         # Allow pistons OUTSIDE region to push blocks into region
+  wilderness-dispensers: false      # Allow dispensers OUTSIDE region to dispense into region
+  wilderness-minecarts: false       # Allow minecarts from outside to enter region
+  plant-growth: true                # Allow crops, saplings, etc. to grow
+  grass-growth: true                # Allow grass to spread
+  sculk-spread: true                # Allow sculk to spread from shriekers
+  player-glowing: true              # Give players glowing effect in region
+  snow-melting: true                # Allow snow to melt
+  ice-melting: true                 # Allow ice to melt
+  snowman-trails: true              # Allow snow golems to leave snow trails
+  windcharge-burst: false           # Allow wind charges to burst in region
+  wilderness-copper-golems: false   # Allow copper golems from outside to enter region
+  wars: false                       # Allow this region to be targeted for war declarations

@@ -40,7 +40,7 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		boolean isWorldGuardProtectingRegionsEnabled = Homestead.config.get("worldguard.protect-existing-regions");
+		boolean isWorldGuardProtectingRegionsEnabled = Homestead.config.getBoolean("worldguard.protect-existing-regions");
 
 		if (isWorldGuardProtectingRegionsEnabled) {
 			if (WorldGuardAPI.isChunkInWorldGuardRegion(chunk)) {
@@ -79,7 +79,7 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		double chunkPrice = Homestead.config.get("chunk-price");
+		double chunkPrice = Homestead.config.getDouble("chunk-price");
 
 		if (chunkPrice > 0 && PlayerUtils.getBalance(region.getOwner()) < chunkPrice) {
 			Map<String, String> replacements = new HashMap<String, String>();

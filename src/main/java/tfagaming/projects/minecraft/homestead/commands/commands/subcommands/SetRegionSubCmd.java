@@ -219,7 +219,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				boolean isEnabled = Homestead.config.get("dynamic-maps.icons.enabled");
+				boolean isEnabled = Homestead.config.getBoolean("dynamic-maps.icons.enabled");
 
 				if (!isEnabled) {
 					PlayerUtils.sendMessage(player, 105);
@@ -278,7 +278,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				boolean isEnabled = Homestead.config.get("taxes.enabled");
+				boolean isEnabled = Homestead.config.getBoolean("taxes.enabled");
 
 				if (!isEnabled) {
 					PlayerUtils.sendMessage(player, 105);
@@ -303,8 +303,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				double taxAmount = Double.parseDouble(taxInput);
 
-				double minTax = Homestead.config.get("taxes.min-tax");
-				double maxTax = Homestead.config.get("taxes.max-tax");
+				double minTax = Homestead.config.getDouble("taxes.min-tax");
+				double maxTax = Homestead.config.getDouble("taxes.max-tax");
 
 				if (taxAmount <= minTax || taxAmount > maxTax) {
 					Map<String, String> replacements = new HashMap<String, String>();

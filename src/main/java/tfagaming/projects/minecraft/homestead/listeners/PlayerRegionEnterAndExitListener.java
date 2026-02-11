@@ -38,7 +38,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			return;
 		}
 
-		boolean isFeatureEnabled = Homestead.config.get("enter-exit-region-message.enabled");
+		boolean isFeatureEnabled = Homestead.config.getBoolean("enter-exit-region-message.enabled");
 
 		if (ChunksManager.isChunkClaimed(chunk)) {
 			// Player enters a region

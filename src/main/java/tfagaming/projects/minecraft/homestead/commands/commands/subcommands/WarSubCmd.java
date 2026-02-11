@@ -41,7 +41,7 @@ public class WarSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		boolean isEnabled = Homestead.config.get("wars.enabled");
+		boolean isEnabled = Homestead.config.getBoolean("wars.enabled");
 
 		if (!isEnabled) {
 			PlayerUtils.sendMessage(player, 105);
@@ -118,8 +118,8 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				double prize = Double.parseDouble(prizeInput);
 
-				double minPrize = Homestead.config.get("wars.min-prize");
-				double maxPrize = Homestead.config.get("wars.max-prize");
+				double minPrize = Homestead.config.getDouble("wars.min-prize");
+				double maxPrize = Homestead.config.getDouble("wars.max-prize");
 
 				if (prize < minPrize || prize > maxPrize) {
 					PlayerUtils.sendMessage(player, 160);

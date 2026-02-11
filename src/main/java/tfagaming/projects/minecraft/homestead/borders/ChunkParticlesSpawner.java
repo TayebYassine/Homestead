@@ -46,7 +46,7 @@ public class ChunkParticlesSpawner {
 	public ChunkParticlesSpawner(Player player) {
 		this.player = player;
 
-		boolean isEnabled = Homestead.config.get("borders.enabled");
+		boolean isEnabled = Homestead.config.getBoolean("borders.enabled");
 
 		if (isEnabled) {
 			// Cancel any previously running particle task for this player

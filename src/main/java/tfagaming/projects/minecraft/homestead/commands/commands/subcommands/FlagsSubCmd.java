@@ -90,7 +90,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				List<String> disabledFlags = Homestead.config.get("disabled-flags");
+				List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
 
 				if (Homestead.config.isFlagDisabled(flagInput)) {
 					PlayerUtils.sendMessage(player, 42);
@@ -171,7 +171,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				List<String> disabledFlags = Homestead.config.get("disabled-flags");
+				List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
 
 				if (Homestead.config.isFlagDisabled(flagInput)) {
 					PlayerUtils.sendMessage(player, 42);
@@ -251,7 +251,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				List<String> disabledFlags = Homestead.config.get("disabled-flags");
+				List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
 
 				if (Homestead.config.isFlagDisabled(flagInput)) {
 					PlayerUtils.sendMessage(player, 42);

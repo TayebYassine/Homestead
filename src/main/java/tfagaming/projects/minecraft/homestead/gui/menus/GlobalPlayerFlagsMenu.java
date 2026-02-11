@@ -43,7 +43,7 @@ public class GlobalPlayerFlagsMenu {
 
 			String flagString = PlayerFlags.getFlags().get(context.getIndex());
 
-			List<String> disabledFlags = Homestead.config.get("disabled-flags");
+			List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
 
 			if (Homestead.config.isFlagDisabled(flagString)) {
 				PlayerUtils.sendMessage(player, 42);

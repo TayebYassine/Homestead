@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards;
 
@@ -25,6 +26,7 @@ public class RewardsMenu {
 			// Do nothing
 		});
 
+		replacements.put("{player-playtime}", Formatters.formatPlayerPlaytimeDuration(player));
 		replacements.put("{chunks}", String.valueOf(Rewards.getChunksByPlayTime(player)));
 		replacements.put("{subareas}", String.valueOf(Rewards.getSubAreasByPlayTime(player)));
 		ItemStack playtimeRewardButton = MenuUtils.getButton(67, replacements);

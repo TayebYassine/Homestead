@@ -13,7 +13,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.Dela
 public final class DelayedTeleportListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event) {
-		boolean cancelOnMove = Homestead.config.get("delayed-teleport.cancel-on-move");
+		boolean cancelOnMove = Homestead.config.getBoolean("delayed-teleport.cancel-on-move");
 		if (!cancelOnMove) {
 			return;
 		}

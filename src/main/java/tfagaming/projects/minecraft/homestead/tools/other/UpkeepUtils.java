@@ -6,15 +6,15 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewar
 
 public class UpkeepUtils {
 	public static long getNewUpkeepAt() {
-		if ((boolean) Homestead.config.get("upkeep.enabled")) {
-			return System.currentTimeMillis() + ((int) Homestead.config.get("upkeep.upkeep-timer") * 1000);
+		if (Homestead.config.getBoolean("upkeep.enabled")) {
+			return System.currentTimeMillis() + (Homestead.config.getInt("upkeep.upkeep-timer") * 1000L);
 		}
 
 		return 0;
 	}
 
 	public static double getAmountToPay(Region region) {
-		double amountPerChunk = Homestead.config.get("upkeep.per-chunk");
+		double amountPerChunk = Homestead.config.getDouble("upkeep.per-chunk");
 
 		double price = amountPerChunk * region.getChunks().size();
 		int reduction = LevelRewards.getUpkeepReductionByLevel(region);
@@ -27,7 +27,7 @@ public class UpkeepUtils {
 			return 0;
 		}
 
-		double amountPerChunk = Homestead.config.get("upkeep.per-chunk");
+		double amountPerChunk = Homestead.config.getDouble("upkeep.per-chunk");
 		double amountToPay = 0.0;
 		int chunksToRemove = 1;
 

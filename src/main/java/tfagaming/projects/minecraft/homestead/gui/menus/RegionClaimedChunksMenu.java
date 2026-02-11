@@ -80,7 +80,7 @@ public class RegionClaimedChunksMenu {
 
 							/** Only send success message if the unclaim was successful. */
 							if (after < before) {
-								double chunkPrice = Homestead.config.get("chunk-price");
+								double chunkPrice = Homestead.config.getDouble("chunk-price");
 
 								if (chunkPrice > 0) {
 									PlayerUtils.addBalance(region.getOwner(), chunkPrice);

@@ -47,9 +47,7 @@ public class RegionsWithWelcomeSignsMenu {
 	public List<ItemStack> getItems(Player player) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (int i = 0; i < regions.size(); i++) {
-			Region region = regions.get(i);
-
+		for (Region region : regions) {
 			HashMap<String, String> replacements = new HashMap<>();
 
 			replacements.put("{region}", region.getName());
@@ -57,9 +55,9 @@ public class RegionsWithWelcomeSignsMenu {
 			replacements.put("{region-owner}", region.getOwner().getName());
 			replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
 			replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
+			replacements.put("{region-rating}", Formatters.formatRating(RegionsManager.getAverageRating(region)));
 
 			items.add(MenuUtils.getButton(47, replacements));
-
 		}
 
 		return items;

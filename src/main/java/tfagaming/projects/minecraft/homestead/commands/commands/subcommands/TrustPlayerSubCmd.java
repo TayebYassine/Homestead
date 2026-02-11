@@ -100,7 +100,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if ((boolean) Homestead.config.get("special-feat.ignore-trust-acceptance-system")) {
+		if (Homestead.config.getBoolean("special-feat.ignore-trust-acceptance-system")) {
 			region.removePlayerInvite(target);
 
 			region.addMember(target);

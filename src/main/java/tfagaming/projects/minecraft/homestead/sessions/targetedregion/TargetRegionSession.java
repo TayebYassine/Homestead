@@ -35,7 +35,7 @@ public final class TargetRegionSession {
 	public static Region getRegion(OfflinePlayer player) {
 		Region region = sessions.get(player.getUniqueId());
 
-		if (region == null && (boolean) Homestead.config.get("autoset-target-region") && player.isOnline() && !RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
+		if (region == null && Homestead.config.getBoolean("autoset-target-region") && player.isOnline() && !RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 			randomizeRegion((Player) player);
 
 			return getRegion(player);

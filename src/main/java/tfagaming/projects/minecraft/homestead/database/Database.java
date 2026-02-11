@@ -22,30 +22,30 @@ public class Database {
 
 		switch (provider) {
 			case PostgreSQL:
-				postgreSQL = new PostgreSQL(Homestead.config.get("database.postgresql.username"),
-						Homestead.config.get("database.postgresql.password"),
-						Homestead.config.get("database.postgresql.host"),
-						Homestead.config.get("database.postgresql.port"),
-						Homestead.config.get("database.postgresql.database"),
-						Homestead.config.get("database.postgresql.table_prefix"));
+				postgreSQL = new PostgreSQL(Homestead.config.getString("database.postgresql.username"),
+						Homestead.config.getString("database.postgresql.password"),
+						Homestead.config.getString("database.postgresql.host"),
+						Homestead.config.getInt("database.postgresql.port"),
+						Homestead.config.getString("database.postgresql.database"),
+						Homestead.config.getString("database.postgresql.table_prefix"));
 				break;
 			case MariaDB:
-				mariaDB = new MariaDB(Homestead.config.get("database.mariadb.username"),
-						Homestead.config.get("database.mariadb.password"),
-						Homestead.config.get("database.mariadb.host"),
-						Homestead.config.get("database.mariadb.port"),
-						Homestead.config.get("database.mariadb.database"),
-						Homestead.config.get("database.mariadb.table_prefix"));
+				mariaDB = new MariaDB(Homestead.config.getString("database.mariadb.username"),
+						Homestead.config.getString("database.mariadb.password"),
+						Homestead.config.getString("database.mariadb.host"),
+						Homestead.config.getInt("database.mariadb.port"),
+						Homestead.config.getString("database.mariadb.database"),
+						Homestead.config.getString("database.mariadb.table_prefix"));
 				break;
 			case MySQL:
-				mySQL = new MySQL(Homestead.config.get("database.mysql.username"),
-						Homestead.config.get("database.mysql.password"), Homestead.config.get("database.mysql.host"),
-						Homestead.config.get("database.mysql.port"),
-						Homestead.config.get("database.mysql.database"),
-						Homestead.config.get("database.mysql.table_prefix"));
+				mySQL = new MySQL(Homestead.config.getString("database.mysql.username"),
+						Homestead.config.getString("database.mysql.password"), Homestead.config.getString("database.mysql.host"),
+						Homestead.config.getInt("database.mysql.port"),
+						Homestead.config.getString("database.mysql.database"),
+						Homestead.config.getString("database.mysql.table_prefix"));
 				break;
 			case SQLite:
-				sqLite = new SQLite(Homestead.config.get("database.sqlite"));
+				sqLite = new SQLite(Homestead.config.getString("database.sqlite"));
 				break;
 			case YAML:
 				yaml = new YAML(Homestead.getInstance().getDataFolder());

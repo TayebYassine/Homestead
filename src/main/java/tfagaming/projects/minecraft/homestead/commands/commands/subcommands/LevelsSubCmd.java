@@ -22,7 +22,7 @@ public class LevelsSubCmd extends SubCommandBuilder {
 			return false;
 		}
 
-		boolean levelsEnabled = Homestead.config.get("levels.enabled");
+		boolean levelsEnabled = Homestead.config.getBoolean("levels.enabled");
 
 		if (!levelsEnabled) {
 			PlayerUtils.sendMessage(player, 197);

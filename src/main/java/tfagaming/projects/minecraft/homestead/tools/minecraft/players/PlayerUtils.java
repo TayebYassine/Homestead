@@ -114,9 +114,9 @@ public class PlayerUtils {
 	}
 
 	public static void sendMessageRegionEnter(Player player, Map<String, String> replacements) {
-		switch (((String) Homestead.config.get("enter-exit-region-message.type")).toLowerCase()) {
+		switch (Homestead.config.getString("enter-exit-region-message.type").toLowerCase()) {
 			case "title":
-				List<String> titleData = Homestead.config.get("enter-exit-region-message.messages.enter.title");
+				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.enter.title");
 
 				player.sendTitle(ChatColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
 						ChatColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
@@ -127,22 +127,22 @@ public class PlayerUtils {
 				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
 						new TextComponent(ChatColorTranslator
 								.translate(Formatters.replace(
-										Homestead.config.get("enter-exit-region-message.messages.enter.actionbar"),
+										Homestead.config.getString("enter-exit-region-message.messages.enter.actionbar"),
 										replacements))));
 
 				break;
 			default:
 				player.sendMessage(ChatColorTranslator.translate(Formatters.replace(
-						Homestead.config.get("enter-exit-region-message.messages.enter.chat"),
+						Homestead.config.getString("enter-exit-region-message.messages.enter.chat"),
 						replacements)));
 				break;
 		}
 	}
 
 	public static void sendMessageRegionExit(Player player, Map<String, String> replacements) {
-		switch (((String) Homestead.config.get("enter-exit-region-message.type")).toLowerCase()) {
+		switch (Homestead.config.getString("enter-exit-region-message.type").toLowerCase()) {
 			case "title":
-				List<String> titleData = Homestead.config.get("enter-exit-region-message.messages.exit.title");
+				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.exit.title");
 
 				player.sendTitle(ChatColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
 						ChatColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
@@ -153,13 +153,13 @@ public class PlayerUtils {
 				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
 						new TextComponent(ChatColorTranslator
 								.translate(Formatters.replace(
-										Homestead.config.get("enter-exit-region-message.messages.exit.actionbar"),
+										Homestead.config.getString("enter-exit-region-message.messages.exit.actionbar"),
 										replacements))));
 
 				break;
 			default:
 				player.sendMessage(ChatColorTranslator.translate(Formatters.replace(
-						Homestead.config.get("enter-exit-region-message.messages.exit.chat"),
+						Homestead.config.getString("enter-exit-region-message.messages.exit.chat"),
 						replacements)));
 				break;
 		}

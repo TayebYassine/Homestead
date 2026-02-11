@@ -114,7 +114,7 @@ public class Homestead extends JavaPlugin {
 
 		config = new ConfigLoader(this);
 
-		language = new LanguageLoader(this, config.get("language"));
+		language = new LanguageLoader(this, config.getString("language", "en-US"));
 
 		menusConfig = new MenusConfigLoader(this);
 
@@ -134,13 +134,13 @@ public class Homestead extends JavaPlugin {
 			return;
 		}
 
-		YAMLValidator languageValidator = new YAMLValidator("en-US.yml", language.getLanguageFile(config.get("language")));
+		YAMLValidator languageValidator = new YAMLValidator("en-US.yml", language.getLanguageFile(config.getString("language", "en-US")));
 
 		try {
 			if (!languageValidator.validate()) {
 				languageValidator.fix();
 
-				language = new LanguageLoader(this, config.get("language"));
+				language = new LanguageLoader(this, config.getString("language", "en-US"));
 			}
 		} catch (IOException e) {
 			endInstance(e);
@@ -161,13 +161,13 @@ public class Homestead extends JavaPlugin {
 			return;
 		}
 
-		Homestead.regionsCache = new RegionsCache(config.get("cache-interval"));
-		Homestead.warsCache = new WarsCache(config.get("cache-interval"));
-		Homestead.subAreasCache = new SubAreasCache(config.get("cache-interval"));
-		Homestead.levelsCache = new LevelsCache(config.get("cache-interval"));
+		Homestead.regionsCache = new RegionsCache(config.getInt("cache-interval"));
+		Homestead.warsCache = new WarsCache(config.getInt("cache-interval"));
+		Homestead.subAreasCache = new SubAreasCache(config.getInt("cache-interval"));
+		Homestead.levelsCache = new LevelsCache(config.getInt("cache-interval"));
 
 		try {
-			Database.Provider provider = Database.parseProviderFromString(config.get("database.provider"));
+			Database.Provider provider = Database.parseProviderFromString(config.getString("database.provider"));
 
 			if (provider == null) {
 				throw new IllegalStateException("Database provider not found.");
@@ -215,7 +215,7 @@ public class Homestead extends JavaPlugin {
 			Logger.info("Loaded service provider: Permissions [" + Homestead.vault.getPermissions().getName() + "]");
 		}
 
-		if ((boolean) Homestead.config.get("clean-startup")) {
+		if (Homestead.config.getBoolean("clean-startup")) {
 			RegionsManager.cleanStartup();
 			WarsManager.cleanStartup();
 			SubAreasManager.cleanStartup();
@@ -226,7 +226,7 @@ public class Homestead extends JavaPlugin {
 		registerEvents();
 		registerBrigadier();
 
-		if ((boolean) Homestead.config.get("metrics")) {
+		if (Homestead.config.getBoolean("metrics")) {
 			new bStats(this);
 
 			Logger.info("bStats metrics is enabled, anonymous data is being sent every 30 minutes.");
@@ -238,7 +238,7 @@ public class Homestead extends JavaPlugin {
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - startedAt) + " ms to load.");
 
-		if ((boolean) Homestead.config.get("dynamic-maps.icons.enabled")) {
+		if (Homestead.config.getBoolean("dynamic-maps.icons.enabled")) {
 			runAsyncTask(() -> {
 				Logger.warning("Downloading required web map render icons... This may take a while!");
 				RegionIconTools.downloadAllIcons();
@@ -250,21 +250,21 @@ public class Homestead extends JavaPlugin {
 			runAsyncTask(() -> {
 				new DynamicMaps(this);
 			});
-		}, Homestead.config.get("dynamic-maps.update-interval"));
+		}, Homestead.config.getInt("dynamic-maps.update-interval"));
 
-		if (Homestead.vault.isEconomyReady() && (boolean) Homestead.config.get("taxes.enabled")) {
+		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("taxes.enabled")) {
 			runAsyncTimerTask(() -> {
 				new MemberTaxes(this);
 			}, 10);
 		}
 
-		if (Homestead.vault.isEconomyReady() && (boolean) Homestead.config.get("upkeep.enabled")) {
+		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("upkeep.enabled")) {
 			runAsyncTimerTask(() -> {
 				new RegionUpkeep(this);
 			}, 10);
 		}
 
-		if (Homestead.vault.isEconomyReady() && (boolean) Homestead.config.get("renting.enabled")) {
+		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("renting.enabled")) {
 			runAsyncTimerTask(() -> {
 				new RegionRent(this);
 			}, 10);

@@ -57,7 +57,7 @@ public class Limits {
 	private static int getBaseLimitValue(OfflinePlayer player, LimitType limit) {
 		String limitKey = getLimitConfigKey(limit);
 
-		Object playerOverride = Homestead.config.get(
+		Object playerOverride = Homestead.config.getRaw(
 				"player-limits." + player.getName() + "." + limitKey
 		);
 		if (playerOverride != null) {
@@ -69,7 +69,7 @@ public class Limits {
 		switch (method) {
 			case STATIC:
 				String opKey = PlayerUtils.isOperator(player) ? "op" : "non-op";
-				Object staticValue = Homestead.config.get(
+				Object staticValue = Homestead.config.getRaw(
 						"limits.static." + opKey + "." + limitKey
 				);
 				return staticValue == null ? 0 : (int) staticValue;
@@ -79,7 +79,7 @@ public class Limits {
 				if (group == null) {
 					group = "default";
 				}
-				Object groupValue = Homestead.config.get(
+				Object groupValue = Homestead.config.getRaw(
 						"limits.groups." + group + "." + limitKey
 				);
 				return groupValue == null ? 0 : (int) groupValue;
@@ -96,6 +96,7 @@ public class Limits {
 
 		int current = RegionsManager.getRegionsOwnedByPlayer(player).size();
 		int max = getPlayerLimit(player, LimitType.REGIONS);
+
 		return current >= max;
 	}
 
@@ -141,7 +142,7 @@ public class Limits {
 	}
 
 	public static LimitMethod getLimitsMethod() {
-		String method = Homestead.config.get("limits.method");
+		String method = Homestead.config.getString("limits.method");
 		return switch (method) {
 			case "static" -> LimitMethod.STATIC;
 			case "groups" -> LimitMethod.GROUPS;

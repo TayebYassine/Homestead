@@ -166,7 +166,7 @@ public final class SelectionToolListener implements Listener {
 	}
 
 	private void sendActionBarMessage(Player player, String path) {
-		String message = Homestead.config.get("selection-tool.messages." + path);
+		String message = Homestead.config.getString("selection-tool.messages." + path);
 
 		cancelTask(player);
 
@@ -180,7 +180,7 @@ public final class SelectionToolListener implements Listener {
 	}
 
 	private Material getSelectionToolType() {
-		String itemString = Homestead.config.get("selection-tool.item");
+		String itemString = Homestead.config.getString("selection-tool.item");
 
 		return Material.getMaterial(itemString);
 	}

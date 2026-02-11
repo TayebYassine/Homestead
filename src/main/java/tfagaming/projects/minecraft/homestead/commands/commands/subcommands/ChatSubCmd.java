@@ -65,7 +65,7 @@ public class ChatSubCmd extends SubCommandBuilder {
 			}
 		}
 
-		boolean logToConsole = Homestead.config.get("log-private-chat");
+		boolean logToConsole = Homestead.config.getBoolean("log-private-chat");
 
 		if (logToConsole) {
 			Logger.info(String.format("[Chat] %s (UUID: %s) -> %s: %s", player.getName(), player.getUniqueId(), region.getName(), message));

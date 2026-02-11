@@ -456,14 +456,14 @@ buttons:
       - "&#81C784&n➥ Left-click to mark them."
     type: BOOKSHELF
   47:
-    name: "&#FFD54F&l{region} &#FFD966&l(&#FFF176{region-displayname}&#FFD966&l)"
+    name: "&#FFD54F&l{region-displayname}"
     lore:
       - "&7• Owner: &3{region-owner}"
       - "&7• Created At: &6{region-createdat}"
       - "&7• Bank: &c{region-bank}"
       - "&7• Rating: &r{region-rating}"
       - ""
-      - "&8➥ Left-click to visit."
+      - "&#FFD54F&n➥ Left-click to visit."
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   48:
     name: "&#E57373&l★"
@@ -630,7 +630,7 @@ buttons:
   67:
     name: "&#81C784&lRewards by Playtime"
     lore:
-      - "&7Playtime: &6%playtime_time%" # "%playtime_time%" Requires PAPI for the placeholder to work!
+      - "&7Playtime: &6{player-playtime}"
       - ""
       - "&7• Unlocked Rewards:"
       - "  &7- &a✔ {chunks} Unlocked Chunks"

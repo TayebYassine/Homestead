@@ -39,14 +39,14 @@ public class RegionIconTools {
 
 		Logger.warning("Downloaded icons status: 0% (0 / " + totalIcons + ")");
 
-		defaultIcon = downloadIcon(Homestead.config.get("dynamic-maps.icons.default"));
+		defaultIcon = downloadIcon(Homestead.config.getString("dynamic-maps.icons.default"));
 
 		for (String icon : getAllIcons()) {
 			if (icons.containsKey(icon)) {
 				continue;
 			}
 
-			String url = Homestead.config.get("dynamic-maps.icons.list." + icon);
+			String url = Homestead.config.getString("dynamic-maps.icons.list." + icon);
 
 			if (url != null) {
 				BufferedImage downloaded = downloadIcon(url);

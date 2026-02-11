@@ -13,13 +13,13 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 
 public class ChunkBorder {
 	public static BorderType getMethod() {
-		boolean isEnabled = Homestead.config.get("borders.enabled");
+		boolean isEnabled = Homestead.config.getBoolean("borders.enabled");
 
 		if (!isEnabled) {
 			return null;
 		}
 
-		String type = Homestead.config.get("borders.type");
+		String type = Homestead.config.getString("borders.type");
 
 		return switch (type) {
 			case "particles" -> BorderType.PARTICLES;
@@ -29,7 +29,7 @@ public class ChunkBorder {
 	}
 
 	public static Material getBlockType() {
-		String blockType = Homestead.config.get("borders.block-type");
+		String blockType = Homestead.config.getString("borders.block-type");
 
 		return Material.getMaterial(blockType) == null ? Material.GOLD_BLOCK : Material.getMaterial(blockType);
 	}

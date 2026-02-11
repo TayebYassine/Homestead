@@ -14,7 +14,7 @@ public class Rewards {
 			return 0;
 		}
 
-		int chunksPerMember = Homestead.config.get("rewards.for-each-member.chunks");
+		int chunksPerMember = Homestead.config.getInt("rewards.for-each-member.chunks");
 		return region.getMembers().size() * chunksPerMember;
 	}
 
@@ -23,7 +23,7 @@ public class Rewards {
 			return 0;
 		}
 
-		int subAreasPerMember = Homestead.config.get("rewards.for-each-member.subareas");
+		int subAreasPerMember = Homestead.config.getInt("rewards.for-each-member.subareas");
 		return region.getMembers().size() * subAreasPerMember;
 	}
 

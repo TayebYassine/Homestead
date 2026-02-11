@@ -26,7 +26,7 @@ public class SelectedAreaParticlesSpawner {
 		this.firstBlock = new SerializableBlock(firstBlock);
 		this.secondBlock = new SerializableBlock(secondBlock);
 
-		boolean isEnabled = Homestead.config.get("borders.enabled");
+		boolean isEnabled = Homestead.config.getBoolean("borders.enabled");
 
 		if (isEnabled) {
 			if (tasks.containsKey(player.getUniqueId())) {
@@ -44,7 +44,7 @@ public class SelectedAreaParticlesSpawner {
 		this.firstBlock = firstBlock;
 		this.secondBlock = secondBlock;
 
-		boolean isEnabled = Homestead.config.get("borders.enabled");
+		boolean isEnabled = Homestead.config.getBoolean("borders.enabled");
 
 		if (isEnabled) {
 			if (tasks.containsKey(player.getUniqueId())) {

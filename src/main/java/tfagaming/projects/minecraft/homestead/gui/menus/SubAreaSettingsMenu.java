@@ -22,7 +22,7 @@ public class SubAreaSettingsMenu {
 		Menu gui = new Menu(MenuUtils.getTitle(15).replace("{subarea}", subArea.getName()), 9 * 3);
 
 		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
-		boolean isRentEnabled = isEconomyEnabled && (boolean) Homestead.config.get("renting.enabled");
+		boolean isRentEnabled = isEconomyEnabled && Homestead.config.getBoolean("renting.enabled");
 
 		HashMap<String, String> replacements = new HashMap<>();
 		replacements.put("{subarea}", subArea.getName());

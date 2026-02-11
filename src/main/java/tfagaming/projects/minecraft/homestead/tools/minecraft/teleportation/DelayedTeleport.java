@@ -26,14 +26,14 @@ public class DelayedTeleport {
 			return;
 		}
 
-		boolean delayedTeleportEnabled = Homestead.config.get("delayed-teleport.enabled");
+		boolean delayedTeleportEnabled = Homestead.config.getBoolean("delayed-teleport.enabled");
 
 		if (!delayedTeleportEnabled) {
 			teleportPlayer(player, location);
 			return;
 		}
 
-		boolean ignoreOperators = Homestead.config.get("delayed-teleport.ignore-operators");
+		boolean ignoreOperators = Homestead.config.getBoolean("delayed-teleport.ignore-operators");
 
 		if (ignoreOperators && PlayerUtils.isOperator(player)) {
 			teleportPlayer(player, location);
@@ -42,7 +42,7 @@ public class DelayedTeleport {
 
 		PlayerUtils.sendMessage(player, 53);
 
-		int delay = Homestead.config.get("delayed-teleport.delay");
+		int delay = Homestead.config.getInt("delayed-teleport.delay");
 
 		initialLocations.put(playerId, player.getLocation().clone());
 

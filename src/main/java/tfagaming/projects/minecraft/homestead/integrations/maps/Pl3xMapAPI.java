@@ -61,12 +61,12 @@ public class Pl3xMapAPI {
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
 		String hoverText = Formatters
-				.replace(isOperator ? Homestead.config.get("dynamic-maps.chunks.operator-description")
-						: Homestead.config.get("dynamic-maps.chunks.description"), replacements);
+				.replace(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
+						: Homestead.config.getString("dynamic-maps.chunks.description"), replacements);
 
 		int chunkColor = region.getMapColor() == 0
-				? (isOperator ? Homestead.config.get("dynamic-maps.chunks.operator-color")
-				: Homestead.config.get("dynamic-maps.chunks.color"))
+				? (isOperator ? Homestead.config.getInt("dynamic-maps.chunks.operator-color")
+				: Homestead.config.getInt("dynamic-maps.chunks.color"))
 				: region.getMapColor();
 
 		World world = chunk.getWorld();
@@ -94,7 +94,7 @@ public class Pl3xMapAPI {
 				!isChunkClaimed(region, chunk, GeoDirection.EAST), !isChunkClaimed(region, chunk, GeoDirection.SOUTH),
 				!isChunkClaimed(region, chunk, GeoDirection.WEST));
 
-		boolean isEnabled = Homestead.config.get("dynamic-maps.icons.enabled");
+		boolean isEnabled = Homestead.config.getBoolean("dynamic-maps.icons.enabled");
 
 		if (isEnabled) {
 			final SimpleLayer finalLayer = layer;
@@ -121,8 +121,8 @@ public class Pl3xMapAPI {
 		Point point1 = Point.of(chunk.getX() * 16, chunk.getZ() * 16);
 		Point point2 = Point.of(chunk.getX() * 16 + 16, chunk.getZ() * 16 + 16);
 
-		int chunkTransparencyInfill = Homestead.config.get("dynamic-maps.chunks.transparency-fill");
-		int chunkTransparencyOutline = Homestead.config.get("dynamic-maps.chunks.transparency-outline");
+		int chunkTransparencyInfill = Homestead.config.getInt("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Homestead.config.getInt("dynamic-maps.chunks.transparency-outline");
 
 		Rectangle rectangle = new Rectangle(markerId, point1, point2);
 		rectangle.setOptions(Options.builder()
@@ -234,7 +234,7 @@ public class Pl3xMapAPI {
 	private void addRegionIcon(SimpleLayer layer, Region region, String hoverText) {
 		BufferedImage bufferedIcon = RegionIconTools.getIconBufferedImage(region.getIcon());
 
-		int iconSize = Homestead.config.get("dynamic-maps.icons.size");
+		int iconSize = Homestead.config.getInt("dynamic-maps.icons.size");
 
 		if (region.getLocation() == null) {
 			return;

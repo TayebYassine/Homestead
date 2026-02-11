@@ -175,7 +175,7 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private boolean handleRentSign(SignChangeEvent event, Player player, String[] lines) {
-		boolean isEnabled = Homestead.config.get("renting.enabled");
+		boolean isEnabled = Homestead.config.getBoolean("renting.enabled");
 
 		if (!isEnabled) {
 			PlayerUtils.sendMessage(player, 105);
@@ -202,8 +202,8 @@ public final class CustomSignsListener implements Listener {
 
 		double price = Double.parseDouble(priceStr);
 
-		double minRent = Homestead.config.get("renting.min-rent");
-		double maxRent = Homestead.config.get("renting.max-rent");
+		double minRent = Homestead.config.getDouble("renting.min-rent");
+		double maxRent = Homestead.config.getDouble("renting.max-rent");
 
 		if (price < minRent || price > maxRent) {
 			PlayerUtils.sendMessage(player, 122);
@@ -227,7 +227,7 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private boolean handleSellSign(SignChangeEvent event, Player player, String[] lines) {
-		boolean isEnabled = Homestead.config.get("selling.enabled");
+		boolean isEnabled = Homestead.config.getBoolean("selling.enabled");
 
 		if (!isEnabled) {
 			PlayerUtils.sendMessage(player, 105);
@@ -253,8 +253,8 @@ public final class CustomSignsListener implements Listener {
 
 		double price = Double.parseDouble(priceStr);
 
-		double minSell = Homestead.config.get("selling.min-sell");
-		double maxSell = Homestead.config.get("selling.max-sell");
+		double minSell = Homestead.config.getDouble("selling.min-sell");
+		double maxSell = Homestead.config.getDouble("selling.max-sell");
 
 		if (price < minSell || price > maxSell) {
 			PlayerUtils.sendMessage(player, 122);

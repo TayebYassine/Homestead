@@ -4,8 +4,8 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 
 public class TaxesUtils {
 	public static long getNewTaxesAt() {
-		if ((boolean) Homestead.config.get("taxes.enabled")) {
-			return System.currentTimeMillis() + ((int) Homestead.config.get("taxes.tax-timer") * 1000);
+		if (Homestead.config.getBoolean("taxes.enabled")) {
+			return System.currentTimeMillis() + (Homestead.config.getInt("taxes.tax-timer") * 1000L);
 		}
 
 		return 0;

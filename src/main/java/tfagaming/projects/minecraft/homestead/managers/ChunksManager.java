@@ -200,13 +200,13 @@ public final class ChunksManager {
 	public static boolean isChunkInDisabledWorld(Chunk chunk) {
 		String worldName = chunk.getWorld().getName();
 
-		List<String> exact = Homestead.config.get("disabled-worlds-exact");
+		List<String> exact = Homestead.config.getStringList("disabled-worlds-exact");
 
 		if (exact.contains(worldName)) {
 			return true;
 		}
 
-		List<String> patterns = Homestead.config.get("disabled-worlds-pattern");
+		List<String> patterns = Homestead.config.getStringList("disabled-worlds-pattern");
 
 		for (String pat : patterns) {
 			if (!pat.contains("*") && !pat.contains("?")) {

@@ -40,8 +40,8 @@ public final class RegionsManager {
 	public static Region createRegion(String name, OfflinePlayer player) {
 		Region region = new Region(name, player);
 
-		if ((boolean) Homestead.config.get("upkeep.enabled")) {
-			int delay = Homestead.config.get("upkeep.start-upkeep");
+		if (Homestead.config.getBoolean("upkeep.enabled")) {
+			int delay = Homestead.config.getInt("upkeep.start-upkeep");
 
 			region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
 		}
@@ -73,8 +73,8 @@ public final class RegionsManager {
 
 			Region region = new Region(newName, player);
 
-			if ((boolean) Homestead.config.get("upkeep.enabled")) {
-				int delay = Homestead.config.get("upkeep.start-upkeep");
+			if (Homestead.config.getBoolean("upkeep.enabled")) {
+				int delay = Homestead.config.getInt("upkeep.start-upkeep");
 
 				region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
 			}

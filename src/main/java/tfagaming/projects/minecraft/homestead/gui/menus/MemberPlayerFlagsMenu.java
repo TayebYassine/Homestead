@@ -54,7 +54,7 @@ public class MemberPlayerFlagsMenu {
 						if (!enableAll && !disableAll) return;
 
 						@SuppressWarnings("unchecked")
-						List<String> disabledFlags = Homestead.config.get("disabled-flags");
+						List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
 
 						long current = member.getFlags();
 						long newFlags = current;

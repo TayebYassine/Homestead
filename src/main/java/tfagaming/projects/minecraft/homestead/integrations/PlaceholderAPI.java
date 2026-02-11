@@ -56,77 +56,77 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 		return switch (params.toLowerCase()) {
 			case "region_bank" -> {
 				if (region == null) {
-					yield Homestead.config.get("placeholderapi.default.region_bank");
+					yield Homestead.config.getString("placeholderapi.default.region_bank");
 				}
 
 				yield Formatters.formatBalance(region.getBank());
 			}
 			case "region_name" -> {
 				if (region == null) {
-					yield Homestead.config.get("placeholderapi.default.region_name");
+					yield Homestead.config.getString("placeholderapi.default.region_name");
 				}
 
 				yield region.getName();
 			}
 			case "region_claimed_chunks" -> {
 				if (region == null) {
-					yield Homestead.config.get("placeholderapi.default.region_claimed_chunks");
+					yield Homestead.config.getString("placeholderapi.default.region_claimed_chunks");
 				}
 
 				yield String.valueOf(region.getChunks().size());
 			}
 			case "region_max_chunks" -> {
 				if (region == null) {
-					yield Homestead.config.get("placeholderapi.default.region_max_chunks");
+					yield Homestead.config.getString("placeholderapi.default.region_max_chunks");
 				}
 
 				yield String.valueOf(Limits.getPlayerLimit(player, Limits.LimitType.CHUNKS_PER_REGION));
 			}
 			case "region_trusted_members" -> {
 				if (region == null) {
-					yield Homestead.config.get("placeholderapi.default.region_trusted_members");
+					yield Homestead.config.getString("placeholderapi.default.region_trusted_members");
 				}
 
 				yield String.valueOf(region.getMembers().size());
 			}
 			case "region_max_members" -> {
 				if (region == null) {
-					yield Homestead.config.get("placeholderapi.default.region_max_members");
+					yield Homestead.config.getString("placeholderapi.default.region_max_members");
 				}
 
 				yield String.valueOf(Limits.getPlayerLimit(player, Limits.LimitType.MEMBERS_PER_REGION));
 			}
 			case "region_current" -> {
 				if (currentRegion == null) {
-					yield Homestead.config.get("placeholderapi.default.region_current");
+					yield Homestead.config.getString("placeholderapi.default.region_current");
 				}
 
 				yield currentRegion.getName();
 			}
 			case "upkeep_amount" -> {
 				if (region == null) {
-					yield Homestead.config.get("placeholderapi.default.upkeep_amount");
+					yield Homestead.config.getString("placeholderapi.default.upkeep_amount");
 				}
 
 				yield Formatters.formatBalance(UpkeepUtils.getAmountToPay(region));
 			}
 			case "upkeep_at" -> {
 				if (region == null) {
-					yield Homestead.config.get("placeholderapi.default.upkeep_at");
+					yield Homestead.config.getString("placeholderapi.default.upkeep_at");
 				}
 
 				yield Formatters.formatDate(region.getUpkeepAt());
 			}
 			case "war_name" -> {
 				if (region == null || !WarsManager.isRegionInWar(region.getUniqueId())) {
-					yield Homestead.config.get("placeholderapi.default.war_name");
+					yield Homestead.config.getString("placeholderapi.default.war_name");
 				}
 
 				yield WarsManager.findWarByRegionId(region.getUniqueId()).getName();
 			}
 			case "war_prize" -> {
 				if (region == null || !WarsManager.isRegionInWar(region.getUniqueId())) {
-					yield Homestead.config.get("placeholderapi.default.war_prize");
+					yield Homestead.config.getString("placeholderapi.default.war_prize");
 				}
 
 				yield Formatters.formatBalance(WarsManager.findWarByRegionId(region.getUniqueId()).getPrize());

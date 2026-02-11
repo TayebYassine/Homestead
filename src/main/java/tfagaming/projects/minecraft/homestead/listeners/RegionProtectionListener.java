@@ -1063,7 +1063,7 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				}
 			} else {
-				boolean belowSeaOnly = Homestead.config.get("special-feat.tnt-explodes-only-below-sea-level");
+				boolean belowSeaOnly = Homestead.config.getBoolean("special-feat.tnt-explodes-only-below-sea-level");
 
 				List<Block> allowed = new ArrayList<>();
 
@@ -1377,7 +1377,7 @@ public final class RegionProtectionListener implements Listener {
 		Entity entity = event.getEntity();
 		CreatureSpawnEvent.SpawnReason spawnReason = event.getSpawnReason();
 
-		boolean ignoreSpawners = Homestead.config.get("flags-configuration.spawners");
+		boolean ignoreSpawners = Homestead.config.getBoolean("flags-configuration.spawners");
 
 		if (ignoreSpawners && event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
 			return;
@@ -1612,7 +1612,7 @@ public final class RegionProtectionListener implements Listener {
 											Chunk chunk,
 											Location location,
 											long flag) {
-			if ((boolean) Homestead.config.get("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk))
+			if (Homestead.config.getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk))
 				return true;
 
 			if (player != null && PlayerUtils.isOperator(player)) return true;
@@ -1639,7 +1639,7 @@ public final class RegionProtectionListener implements Listener {
 										 long flag,
 										 Runnable onTrue,
 										 Runnable onFalse) {
-			if ((boolean) Homestead.config.get("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk)) {
+			if (Homestead.config.getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk)) {
 				if (onTrue != null) onTrue.run();
 				return;
 			}

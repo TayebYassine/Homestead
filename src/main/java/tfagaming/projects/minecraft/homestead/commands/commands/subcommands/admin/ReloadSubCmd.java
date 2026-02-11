@@ -27,7 +27,7 @@ public class ReloadSubCmd extends SubCommandBuilder {
 		try {
 			Homestead.config = new ConfigLoader(instance);
 
-			Homestead.language = new LanguageLoader(instance, Homestead.config.get("language"));
+			Homestead.language = new LanguageLoader(instance, Homestead.config.getString("language", "en-US"));
 
 			Homestead.menusConfig = new MenusConfigLoader(instance);
 
@@ -42,12 +42,12 @@ public class ReloadSubCmd extends SubCommandBuilder {
 				Homestead.config = new ConfigLoader(instance);
 			}
 
-			YAMLValidator languageValidator = new YAMLValidator("en-US.yml", Homestead.language.getLanguageFile(Homestead.config.get("language")));
+			YAMLValidator languageValidator = new YAMLValidator("en-US.yml", Homestead.language.getLanguageFile(Homestead.config.getString("language", "en-US")));
 
 			if (!languageValidator.validate()) {
 				languageValidator.fix();
 
-				Homestead.language = new LanguageLoader(instance, Homestead.config.get("language"));
+				Homestead.language = new LanguageLoader(instance, Homestead.config.getString("language", "en-US"));
 			}
 
 			YAMLValidator menusConfigValidator = new YAMLValidator("menus.yml", new File(instance.getDataFolder(), "menus.yml"),
