@@ -1,5 +1,9 @@
 # War
 
+!!! failure "Deprecation in the Future"
+
+    The wars feature is implemented and never been used, this feature will become deprecated unless servers enable Wars.
+
 A war is an organized armed conflict involving PvP between nations (or regions), characterized by clashes, or territorial disputes, leading to mass killing of players, social disruption, and economic destruction between them.
 
 ## Declaring a War

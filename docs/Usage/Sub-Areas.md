@@ -1,23 +1,25 @@
 # Sub-Areas
 
-Sub-Areas are specific areas inside a region that have specific flags for global players.
+Sub-Areas are specific areas inside a region that have specific flags for players.
 
-To create a sub-area, you must select two points. To get the selection tool, craft a **Golden Hoe**.
+## How to Create A Sub-Area
 
-!!! bug "Unresolved Glitch"
-
-    There is a bug that when you instantly get the selection tool on your selected item slot, the title won't appear. To avoid this, change your slot and hold the selection tool back.
-
-    This glitch won't affect the server's performance or the plugin's functionality.
-
-## Selecting Two Points
+### Selecting Two Points
 
 After getting the selection tool, hold the tool, left-click on the first point, and right-click on the second point.
 
-You cannot select a point outside a region!
+If you have used the WorldEdit plugin before, it's basically the same as the command `//wand`, where you select two points, but instead of a wooden axe, you use a golden hoe!
 
-## Creating Sub-Area
+!!! warning
+    
+    You cannot select a point outside a region or select a point that will create a sub-area intersecting another sub-area!
+
+### Applying Changes
 
 After selecting two points, use `/region subareas create [name]`.
 
-To set a sub-areas flags, use `/region subareas flags [subarea] [flag] <allow/deny>`.
+## Usage
+
+Sub-Area will allow specific actions from players to do in that area. For example, you can allow one trusted player to open chests in that area, while the rest cannot open them!
+
+You can place rental signs in sub-areas too! [Click here](./Renting%20&%20Selling%20Regions.md) for more information.
