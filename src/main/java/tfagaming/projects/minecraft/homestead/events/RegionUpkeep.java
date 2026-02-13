@@ -12,8 +12,15 @@ import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegionUpkeep {
-	public RegionUpkeep(Homestead instance) {
+public final class RegionUpkeep {
+	private RegionUpkeep() {
+	}
+
+	/**
+	 * Trigger event for: Region Upkeep
+	 * @param instance Homestead's instance
+	 */
+	public static void trigger(Homestead instance) {
 		for (Region region : RegionsManager.getAll()) {
 			if (System.currentTimeMillis() > region.getUpkeepAt()) {
 				double amountToPay = UpkeepUtils.getAmountToPay(region);

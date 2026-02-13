@@ -13,8 +13,15 @@ import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemberTaxes {
-	public MemberTaxes(Homestead instance) {
+public final class MemberTaxes {
+	private MemberTaxes() {
+	}
+
+	/**
+	 * Trigger event for: Member Taxes
+	 * @param instance Homestead's instance
+	 */
+	public static void trigger(Homestead instance) {
 		for (Region region : RegionsManager.getAll()) {
 			double amountToPay = region.getTaxesAmount();
 

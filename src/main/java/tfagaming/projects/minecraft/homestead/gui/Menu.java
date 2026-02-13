@@ -31,14 +31,6 @@ public class Menu implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
-	public Menu(String title, int size, boolean beautiful) {
-		this.plugin = Homestead.getInstance();
-		this.inventory = Bukkit.createInventory(null, size, ChatColorTranslator.translate(title));
-		this.callbacks = new HashMap<>();
-
-		Bukkit.getPluginManager().registerEvents(this, plugin);
-	}
-
 	public void addItem(int slot, ItemStack itemStack, BiConsumer<Player, InventoryClickEvent> callback) {
 		if (slot < 0 || slot >= inventory.getSize()) {
 			return;

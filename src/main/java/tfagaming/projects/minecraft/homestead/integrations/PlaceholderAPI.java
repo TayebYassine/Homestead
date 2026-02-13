@@ -13,10 +13,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
 public class PlaceholderAPI extends PlaceholderExpansion {
-	private final Homestead plugin;
-
-	public PlaceholderAPI(Homestead plugin) {
-		this.plugin = plugin;
+	public PlaceholderAPI() {
 	}
 
 	@Override
@@ -31,7 +28,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 
 	@Override
 	public @NotNull String getVersion() {
-		return plugin.getDescription().getVersion();
+		return Homestead.getVersion();
 	}
 
 	@Override

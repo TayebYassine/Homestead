@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LogsFile {
+public final class LogsFile {
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss MM/dd/yyyy");
 	private final File logFile;
 	private boolean isReady = false;
@@ -26,14 +26,10 @@ public class LogsFile {
 	}
 
 	private void createLogFile() {
-		if (!Homestead.getInstance().getDataFolder().exists()) {
-			Homestead.getInstance().getDataFolder().mkdirs();
-		}
-
 		if (!logFile.exists()) {
 			try {
 				logFile.createNewFile();
-			} catch (IOException e) {
+			} catch (IOException ignored) {
 
 			}
 		}

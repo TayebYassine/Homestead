@@ -1,26 +1,26 @@
-package tfagaming.projects.minecraft.homestead.database;
+package tfagaming.projects.minecraft.homestead.database.cache;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.structure.SubArea;
+import tfagaming.projects.minecraft.homestead.structure.War;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SubAreasCache extends ConcurrentHashMap<UUID, SubArea> {
-	public SubAreasCache(int interval) {
+public class WarsCache extends ConcurrentHashMap<UUID, War> {
+	public WarsCache(int interval) {
 		Homestead.getInstance().runAsyncTimerTask(() -> {
-			Homestead.database.exportSubAreas();
+			Homestead.database.exportWars();
 		}, 10, interval);
 	}
 
-	public List<SubArea> getAll() {
+	public List<War> getAll() {
 		return new ArrayList<>(this.values());
 	}
 
-	public void putOrUpdate(SubArea subArea) {
-		this.put(subArea.getUniqueId(), subArea);
+	public void putOrUpdate(War war) {
+		this.put(war.getUniqueId(), war);
 	}
 
 	public long getLatency() {

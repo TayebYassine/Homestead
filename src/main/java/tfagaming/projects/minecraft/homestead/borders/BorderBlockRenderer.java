@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class BorderBlockRenderer {
-
 	public static void show(Player player, Region region) {
 		removeAll(player);                                       // clean old
 		Set<FakeBorderRegistry.FakeBorderBlock> batch = Sets.newHashSet();

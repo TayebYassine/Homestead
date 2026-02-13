@@ -16,7 +16,11 @@ import tfagaming.projects.minecraft.homestead.commands.commands.*;
 import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
 import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
 import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
-import tfagaming.projects.minecraft.homestead.database.*;
+import tfagaming.projects.minecraft.homestead.database.Database;
+import tfagaming.projects.minecraft.homestead.database.cache.LevelsCache;
+import tfagaming.projects.minecraft.homestead.database.cache.RegionsCache;
+import tfagaming.projects.minecraft.homestead.database.cache.SubAreasCache;
+import tfagaming.projects.minecraft.homestead.database.cache.WarsCache;
 import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
 import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
@@ -56,8 +60,7 @@ public class Homestead extends JavaPlugin {
 	public static MenusConfigLoader menusConfig;
 	public static Vault vault;
 	private static Homestead INSTANCE;
-	private static long startedAt;
-
+	private static long STARTED_AT;
 	private static BukkitTask moveCheckTask;
 
 	public static String getVersion() {
@@ -74,7 +77,7 @@ public class Homestead extends JavaPlugin {
 
 	public void onEnable() {
 		Homestead.INSTANCE = this;
-		Homestead.startedAt = System.currentTimeMillis();
+		Homestead.STARTED_AT = System.currentTimeMillis();
 
 		new Logger();
 
@@ -85,26 +88,10 @@ public class Homestead extends JavaPlugin {
 				}
 			}
 
-			File regionsFolder = new File(getDataFolder(), "regions");
-			if (!regionsFolder.exists()) {
-				if (!regionsFolder.mkdir()) {
-					throw new IOException("Unable to create regions directory");
-				}
-			}
-
-			File warsFolder = new File(getDataFolder(), "wars");
-			if (!warsFolder.exists()) {
-				if (!warsFolder.mkdir()) {
-					throw new IOException("Unable to create wars directory");
-				}
-			}
-
-			File subAreasFolder = new File(getDataFolder(), "subareas");
-			if (!subAreasFolder.exists()) {
-				if (!subAreasFolder.mkdir()) {
-					throw new IOException("Unable to create subareas directory");
-				}
-			}
+			prepareDataFolder("regions");
+			prepareDataFolder("wars");
+			prepareDataFolder("subareas");
+			prepareDataFolder("levels");
 		} catch (IOException | SecurityException e) {
 			endInstance(e);
 			return;
@@ -236,8 +223,9 @@ public class Homestead extends JavaPlugin {
 			Logger.warning("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
 		}
 
-		Logger.info("Ready, took " + (System.currentTimeMillis() - startedAt) + " ms to load.");
+		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
 
+		// Download icons
 		if (Homestead.config.getBoolean("dynamic-maps.icons.enabled")) {
 			runAsyncTask(() -> {
 				Logger.warning("Downloading required web map render icons... This may take a while!");
@@ -246,38 +234,42 @@ public class Homestead extends JavaPlugin {
 			});
 		}
 
+		// Triggers
 		runAsyncTimerTask(() -> {
 			runAsyncTask(() -> {
-				new DynamicMaps(this);
+				DynamicMaps.trigger(this);
 			});
 		}, Homestead.config.getInt("dynamic-maps.update-interval"));
 
 		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("taxes.enabled")) {
 			runAsyncTimerTask(() -> {
-				new MemberTaxes(this);
+				MemberTaxes.trigger(this);
 			}, 10);
 		}
 
 		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("upkeep.enabled")) {
 			runAsyncTimerTask(() -> {
-				new RegionUpkeep(this);
+				RegionUpkeep.trigger(this);
 			}, 10);
 		}
 
 		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("renting.enabled")) {
 			runAsyncTimerTask(() -> {
-				new RegionRent(this);
+				RegionRent.trigger(this);
 			}, 10);
 		}
 
+		// Check for updates every 24 hours
 		runAsyncTimerTask(() -> {
 			runAsyncTask(() -> {
 				UpdateChecker.check(this);
 			});
 		}, 86400);
 
+		// Register external plugins
 		registerExternalPlugins();
 
+		// Do NOT touch this one
 		moveCheckTask = runSyncTimerTask(() -> {
 			for (World world : Bukkit.getWorlds()) {
 				for (Entity entity : world.getEntities()) {
@@ -475,9 +467,17 @@ public class Homestead extends JavaPlugin {
 		Logger.info("Homestead has been disabled. Goodbye!");
 	}
 
+	private void prepareDataFolder(String dirName) throws IOException {
+		File dir = new File(getDataFolder(), dirName);
+
+		if (!dir.exists() && !dir.mkdir()) {
+			throw new IOException("Unable to create '" + dirName + "' directory, path: " + dir.getAbsolutePath());
+		}
+	}
+
 	public void registerExternalPlugins() {
 		if (isExternalPluginEnabled("PlaceholderAPI")) {
-			boolean placeholderRegistered = new PlaceholderAPI(this).register();
+			boolean placeholderRegistered = new PlaceholderAPI().register();
 
 			if (!placeholderRegistered) {
 				Logger.error("Failed to register hooks.");

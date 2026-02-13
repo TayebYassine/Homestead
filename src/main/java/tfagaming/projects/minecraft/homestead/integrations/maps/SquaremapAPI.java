@@ -29,8 +29,7 @@ public class SquaremapAPI {
 		try {
 			api = SquaremapProvider.get();
 			update();
-		} catch (NoClassDefFoundError e) {
-
+		} catch (NoClassDefFoundError ignored) {
 		}
 	}
 

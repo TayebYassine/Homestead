@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.integrations;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.integrations.maps.BlueMapAPI;
 import tfagaming.projects.minecraft.homestead.integrations.maps.DynmapAPI;
@@ -8,50 +9,56 @@ import tfagaming.projects.minecraft.homestead.integrations.maps.Pl3xMapAPI;
 import tfagaming.projects.minecraft.homestead.integrations.maps.SquaremapAPI;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 
-public class DynamicMaps {
+public final class DynamicMaps {
 	public static DynmapAPI dynmap;
 	public static Pl3xMapAPI pl3xmap;
 	public static SquaremapAPI squaremap;
 	public static BlueMapAPI bluemap;
 
-	public DynamicMaps(Homestead plugin) {
-		if (dynmap == null) {
+	private DynamicMaps() {
+	}
+
+	/**
+	 * Apply or create new instances for each web map renderer plugin.
+	 * <p>
+	 * Targets: <b>dynmap</b>, <b>Pl3xMap</b>, <b>squaremap</b>, and <b>BlueMap</b>
+	 * @param instance Homestead's instance
+	 */
+	public static void trigger(Homestead instance) {
+		if (dynmap == null && isDynmapInstalled()) {
 			try {
-				dynmap = new DynmapAPI(plugin);
+				dynmap = new DynmapAPI(instance);
 
 				Logger.info("Successfully connected to dynmap's API.");
 
 				dynmap.update();
-			} catch (NoClassDefFoundError e) {
-
+			} catch (NoClassDefFoundError ignored) {
 			}
 		} else {
 			dynmap.update();
 		}
 
-		if (pl3xmap == null) {
+		if (pl3xmap == null && isPl3xMapInstalled()) {
 			try {
-				pl3xmap = new Pl3xMapAPI(plugin);
+				pl3xmap = new Pl3xMapAPI(instance);
 
 				Logger.info("Successfully connected to Pl3xMap's API.");
 
 				pl3xmap.update();
-			} catch (NoClassDefFoundError e) {
-
+			} catch (NoClassDefFoundError ignored) {
 			}
 		} else {
 			pl3xmap.update();
 		}
 
-		if (squaremap == null) {
+		if (squaremap == null && isSquaremapInstalled()) {
 			try {
-				squaremap = new SquaremapAPI(plugin);
+				squaremap = new SquaremapAPI(instance);
 
 				Logger.info("Successfully connected to Squaremap's API.");
 
 				squaremap.update();
-			} catch (NoClassDefFoundError e) {
-
+			} catch (NoClassDefFoundError ignored) {
 			}
 		} else {
 			squaremap.update();
@@ -62,14 +69,13 @@ public class DynamicMaps {
 				Class.forName("de.bluecolored.bluemap.api.BlueMapAPI");
 
 				de.bluecolored.bluemap.api.BlueMapAPI.onEnable((api) -> {
-					bluemap = new BlueMapAPI(plugin, api);
+					bluemap = new BlueMapAPI(instance, api);
 
 					Logger.info("Successfully connected to BlueMap's API.");
 
 					bluemap.update();
 				});
-			} catch (NoClassDefFoundError | ClassNotFoundException e) {
-
+			} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
 			}
 		} else {
 			bluemap.update();
@@ -80,18 +86,21 @@ public class DynamicMaps {
 		}
 	}
 
-	public boolean isDynmapInstalled() {
-		return Bukkit.getServer().getPluginManager().getPlugin("dynmap") != null
-				&& Bukkit.getServer().getPluginManager().getPlugin("dynmap").isEnabled();
+	public static boolean isDynmapInstalled() {
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("dynmap");
+
+		return plugin != null && plugin.isEnabled();
 	}
 
-	public boolean isPl3xMapInstalled() {
-		return Bukkit.getServer().getPluginManager().getPlugin("Pl3xMap") != null
-				&& Bukkit.getServer().getPluginManager().getPlugin("Pl3xMap").isEnabled();
+	public static boolean isPl3xMapInstalled() {
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Pl3xMap");
+
+		return plugin != null && plugin.isEnabled();
 	}
 
-	public boolean isSquaremapInstalled() {
-		return Bukkit.getServer().getPluginManager().getPlugin("squaremap") != null
-				&& Bukkit.getServer().getPluginManager().getPlugin("squaremap").isEnabled();
+	public static boolean isSquaremapInstalled() {
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("squaremap");
+
+		return plugin != null && plugin.isEnabled();
 	}
 }

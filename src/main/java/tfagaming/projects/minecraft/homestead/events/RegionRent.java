@@ -13,8 +13,15 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegionRent {
-	public RegionRent(Homestead instance) {
+public final class RegionRent {
+	private RegionRent() {
+	}
+
+	/**
+	 * Trigger event for: Region Rent
+	 * @param instance Homestead's instance
+	 */
+	public static void trigger(Homestead instance) {
 		for (Region region : RegionsManager.getAll()) {
 			final SerializableRent rent = region.getRent();
 

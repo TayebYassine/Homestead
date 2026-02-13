@@ -77,7 +77,6 @@ public class ConfigLoader {
 		return getString(path, "");
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<String> getStringList(String path) {
 		if (config == null) return Collections.emptyList();
 

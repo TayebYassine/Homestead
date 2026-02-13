@@ -26,6 +26,13 @@ public class Logger {
 		logs.save("[WARN] " + String.join(" ", message));
 	}
 
+	public static void debug(String... message) {
+		if (Homestead.config.isDebugEnabled()) {
+			logger.warning("DEBUG » " + String.join(" ", message));
+			logs.save("[DEBUG] " + String.join(" ", message));
+		}
+	}
+
 	public static void error(String message) {
 		logger.severe("ERROR » " + String.join(" ", message));
 		logs.save("[ERROR] " + message);

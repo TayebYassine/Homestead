@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InventoryManager {
+public final class InventoryManager {
 	private static final Map<Player, Object> playerMenus = new HashMap<>();
 
 	public static void register(Player player, Menu menu) {

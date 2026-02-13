@@ -1,26 +1,26 @@
-package tfagaming.projects.minecraft.homestead.database;
+package tfagaming.projects.minecraft.homestead.database.cache;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.structure.Level;
+import tfagaming.projects.minecraft.homestead.structure.Region;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class LevelsCache extends ConcurrentHashMap<UUID, Level> {
-	public LevelsCache(int interval) {
+public class RegionsCache extends ConcurrentHashMap<UUID, Region> {
+	public RegionsCache(int interval) {
 		Homestead.getInstance().runAsyncTimerTask(() -> {
-			Homestead.database.exportLevels();
+			Homestead.database.exportRegions();
 		}, 10, interval);
 	}
 
-	public List<Level> getAll() {
+	public List<Region> getAll() {
 		return new ArrayList<>(this.values());
 	}
 
-	public void putOrUpdate(Level level) {
-		this.put(level.getUniqueId(), level);
+	public void putOrUpdate(Region region) {
+		this.put(region.getUniqueId(), region);
 	}
 
 	public long getLatency() {
