@@ -88,7 +88,7 @@ public class RegionClaimedChunksMenu {
 
 								Map<String, String> replacements = new HashMap<>();
 								replacements.put("{region}", region.getName());
-								PlayerUtils.sendMessage(player, 24, replacements);
+								Messages.send(player, 24, replacements);
 							}
 
 							ChunkBorder.show(player);

@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -43,7 +44,7 @@ public class RegionInvitedPlayersMenu {
 					Map<String, String> replacements = new HashMap<String, String>();
 					replacements.put("{playername}", invitedPlayer.getName());
 
-					PlayerUtils.sendMessage(player, 37, replacements);
+					Messages.send(player, 37, replacements);
 
 					PaginationMenu instance = context.getInstance();
 
@@ -60,7 +61,7 @@ public class RegionInvitedPlayersMenu {
 			}
 
 			if (!player.hasPermission("homestead.region.players.trust")) {
-				PlayerUtils.sendMessage(player, 8);
+				Messages.send(player, 8);
 				return;
 			}
 
@@ -78,7 +79,7 @@ public class RegionInvitedPlayersMenu {
 					replacements.put("{region}", region.getName());
 					replacements.put("{playername}", targetPlayer.getName());
 
-					PlayerUtils.sendMessage(player, 199, replacements);
+					Messages.send(player, 199, replacements);
 				} else {
 					region.addPlayerInvite(targetPlayer);
 
@@ -86,7 +87,7 @@ public class RegionInvitedPlayersMenu {
 					replacements.put("{playername}", targetPlayer.getName());
 					replacements.put("{region}", region.getName());
 
-					PlayerUtils.sendMessage(player, 36, replacements);
+					Messages.send(player, 36, replacements);
 
 					RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
 				}
@@ -101,7 +102,7 @@ public class RegionInvitedPlayersMenu {
 					Map<String, String> replacements = new HashMap<String, String>();
 					replacements.put("{playername}", message);
 
-					PlayerUtils.sendMessage(player, 29, replacements);
+					Messages.send(player, 29, replacements);
 					return false;
 				}
 
@@ -111,7 +112,7 @@ public class RegionInvitedPlayersMenu {
 				}
 
 				if (region.isPlayerBanned(target)) {
-					PlayerUtils.sendMessage(player, 74);
+					Messages.send(player, 74);
 					return false;
 				}
 
@@ -119,7 +120,7 @@ public class RegionInvitedPlayersMenu {
 					Map<String, String> replacements = new HashMap<String, String>();
 					replacements.put("{playername}", target.getName());
 
-					PlayerUtils.sendMessage(player, 48, replacements);
+					Messages.send(player, 48, replacements);
 					return false;
 				}
 
@@ -127,24 +128,24 @@ public class RegionInvitedPlayersMenu {
 					Map<String, String> replacements = new HashMap<String, String>();
 					replacements.put("{playername}", target.getName());
 
-					PlayerUtils.sendMessage(player, 35, replacements);
+					Messages.send(player, 35, replacements);
 					return false;
 				}
 
 				if (region.isOwner(target)) {
-					PlayerUtils.sendMessage(player, 30);
+					Messages.send(player, 30);
 					return false;
 				}
 
 				SerializableRent rent = region.getRent();
 
 				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
-					PlayerUtils.sendMessage(player, 196);
+					Messages.send(player, 196);
 					return false;
 				}
 
 				if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-					PlayerUtils.sendMessage(player, 116);
+					Messages.send(player, 116);
 					return false;
 				}
 
@@ -162,13 +163,13 @@ public class RegionInvitedPlayersMenu {
 			}
 
 			if (region.getInvitedPlayers().isEmpty()) {
-				PlayerUtils.sendMessage(player, 76);
+				Messages.send(player, 76);
 				return;
 			}
 
 			region.setInvitedPlayers(new ArrayList<>());
 
-			PlayerUtils.sendMessage(player, 95);
+			Messages.send(player, 95);
 
 			Homestead.getInstance().runSyncTask(() -> {
 				new RegionInvitedPlayersMenu(player, region);

@@ -90,13 +90,13 @@ public final class PlayerAutoClaimListener implements Listener {
 		lastClaimAttempt.put(player, now);
 
 		if (ChunksManager.isChunkInDisabledWorld(chunk)) {
-			PlayerUtils.sendMessage(player, 20);
+			Messages.send(player, 20);
 			return;
 		}
 
 		boolean wgEnabled = Homestead.config.getBoolean("worldguard.protect-existing-regions");
 		if (wgEnabled && WorldGuardAPI.isChunkInWorldGuardRegion(chunk)) {
-			PlayerUtils.sendMessage(player, 133);
+			Messages.send(player, 133);
 			return;
 		}
 
@@ -107,12 +107,12 @@ public final class PlayerAutoClaimListener implements Listener {
 				region = TargetRegionSession.getRegion(player);
 			} else {
 				if (!player.hasPermission("homestead.region.create")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return;
 				}
 
 				if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
-					PlayerUtils.sendMessage(player, 116);
+					Messages.send(player, 116);
 					return;
 				}
 
@@ -130,12 +130,12 @@ public final class PlayerAutoClaimListener implements Listener {
 		if (owner != null) {
 			Map<String, String> replacements = new HashMap<>();
 			replacements.put("{region}", owner.getName());
-			PlayerUtils.sendMessage(player, 21, replacements);
+			Messages.send(player, 21, replacements);
 			return;
 		}
 
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.CHUNKS_PER_REGION)) {
-			PlayerUtils.sendMessage(player, 116);
+			Messages.send(player, 116);
 			return;
 		}
 
@@ -149,7 +149,7 @@ public final class PlayerAutoClaimListener implements Listener {
 			if (after > before) {
 				Map<String, String> replacements = new HashMap<>();
 				replacements.put("{region}", region.getName());
-				PlayerUtils.sendMessage(player, 22, replacements);
+				Messages.send(player, 22, replacements);
 			}
 
 			if (region.getLocation() == null) {
@@ -161,8 +161,8 @@ public final class PlayerAutoClaimListener implements Listener {
 			}
 		} else {
 			switch (error) {
-				case REGION_NOT_FOUND -> PlayerUtils.sendMessage(player, 9);
-				case CHUNK_NOT_ADJACENT_TO_REGION -> PlayerUtils.sendMessage(player, 140);
+				case REGION_NOT_FOUND -> Messages.send(player, 9);
+				case CHUNK_NOT_ADJACENT_TO_REGION -> Messages.send(player, 140);
 			}
 		}
 	}

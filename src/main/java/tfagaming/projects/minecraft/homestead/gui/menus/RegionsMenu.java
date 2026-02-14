@@ -10,6 +10,8 @@ import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegi
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
@@ -94,9 +96,9 @@ public class RegionsMenu {
 
 					if (context.getEvent().isRightClick()) {
 						if (region.getLocation() == null) {
-							Map<String, String> replacements = new HashMap<>();
-							replacements.put("{region}", region.getName());
-							PlayerUtils.sendMessage(_player, 71, replacements);
+							Messages.send(_player, 71, new Placeholder()
+									.add("{region}", region.getName())
+							);
 							return;
 						}
 
@@ -106,9 +108,9 @@ public class RegionsMenu {
 								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true));
 
 						if (!allowed) {
-							Map<String, String> replacements = new HashMap<>();
-							replacements.put("{region}", region.getName());
-							PlayerUtils.sendMessage(_player, 45, replacements);
+							Messages.send(_player, 45, new Placeholder()
+									.add("{region}", region.getName())
+							);
 							return;
 						}
 
@@ -125,9 +127,9 @@ public class RegionsMenu {
 						TargetRegionSession.newSession(_player, region);
 						_player.playSound(_player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
 
-						Map<String, String> replacements = new HashMap<>();
-						replacements.put("{region}", region.getName());
-						PlayerUtils.sendMessage(_player, 12, replacements);
+						Messages.send(_player, 12, new Placeholder()
+								.add("{region}", region.getName())
+						);
 
 						PaginationMenu instance = context.getInstance();
 						regions = computeRegionList(_player);
@@ -221,8 +223,8 @@ public class RegionsMenu {
 			replacements.put("{region}", region.getName());
 			replacements.put("{region-displayname}", region.getDisplayName());
 			replacements.put("{region-owner}", region.getOwner().getName());
-			replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
-			replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
+			replacements.put("{region-bank}", Formatters.getBalance(region.getBank()));
+			replacements.put("{region-createdat}", Formatters.getBalance(region.getCreatedAt()));
 
 			Region targetRegion = TargetRegionSession.getRegion(player);
 			if (targetRegion != null && targetRegion.getUniqueId().equals(region.getUniqueId())) {

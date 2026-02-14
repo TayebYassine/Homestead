@@ -29,7 +29,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 		}
 
 		if (args.length < 3) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
@@ -38,7 +38,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 		Region region = RegionsManager.findRegion(regionName);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 9);
+			Messages.send(player, 9);
 			return true;
 		}
 
@@ -56,18 +56,18 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 				try {
 					radius = Integer.parseInt(args[3]);
 				} catch (NumberFormatException e) {
-					PlayerUtils.sendMessage(player, 185);
+					Messages.send(player, 185);
 					return true;
 				}
 
 				if (radius < 1 || radius > 20) {
-					PlayerUtils.sendMessage(player, 189);
+					Messages.send(player, 189);
 					return true;
 				}
 			}
 		} else {
 			if (args.length < 4) {
-				PlayerUtils.sendMessage(player, 0);
+				Messages.send(player, 0);
 				return true;
 			}
 
@@ -77,7 +77,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 				centreChunkX = Integer.parseInt(args[2]);
 				centreChunkZ = Integer.parseInt(args[3]);
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(player, 184);
+				Messages.send(player, 184);
 				return true;
 			}
 
@@ -85,19 +85,19 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 				try {
 					radius = Integer.parseInt(args[4]);
 				} catch (NumberFormatException e) {
-					PlayerUtils.sendMessage(player, 185);
+					Messages.send(player, 185);
 					return true;
 				}
 
 				if (radius < 1 || radius > 20) {
-					PlayerUtils.sendMessage(player, 189);
+					Messages.send(player, 189);
 					return true;
 				}
 			}
 		}
 
 		if (world == null) {
-			PlayerUtils.sendMessage(player, 188);
+			Messages.send(player, 188);
 			return true;
 		}
 
@@ -127,7 +127,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 		}
 
 		if (toUnclaim.isEmpty()) {
-			PlayerUtils.sendMessage(player, 190);
+			Messages.send(player, 190);
 			return true;
 		}
 
@@ -142,7 +142,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 		replacements.put("{chunks}", String.valueOf(success));
 		replacements.put("{total}", String.valueOf(toUnclaim.size()));
 
-		PlayerUtils.sendMessage(player, 191, replacements);
+		Messages.send(player, 191, replacements);
 
 		return true;
 	}

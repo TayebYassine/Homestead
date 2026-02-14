@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSe
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -51,8 +52,10 @@ public class MiscellaneousSettingsMenu {
 				replacements.put("{oldname}", oldName);
 				replacements.put("{newname}", input);
 
-				PlayerUtils.sendMessage(player, 13, replacements);
-				RegionsManager.addNewLog(region.getUniqueId(), 0, replacements);
+				Messages.send(player, 13, replacements);
+
+				// TODO Fix this
+				// RegionsManager.addNewLog(region.getUniqueId(), 0, replacements);
 
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
 			}, (message) -> {
@@ -60,15 +63,15 @@ public class MiscellaneousSettingsMenu {
 					return false;
 
 				if (!StringUtils.isValidRegionName(message)) {
-					PlayerUtils.sendMessage(player, 1);
+					Messages.send(player, 1);
 					return false;
 				}
 				if (message.equalsIgnoreCase(region.getName())) {
-					PlayerUtils.sendMessage(player, 11);
+					Messages.send(player, 11);
 					return false;
 				}
 				if (RegionsManager.isNameUsed(message)) {
-					PlayerUtils.sendMessage(player, 2);
+					Messages.send(player, 2);
 					return false;
 				}
 				return true;
@@ -89,18 +92,18 @@ public class MiscellaneousSettingsMenu {
 				replacements.put("{olddisplayname}", oldDisplayName);
 				replacements.put("{newdisplayname}", region.getDisplayName());
 
-				PlayerUtils.sendMessage(player, 15, replacements);
+				Messages.send(player, 15, replacements);
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
 					return false;
 
 				if (!StringUtils.isValidRegionDisplayName(message)) {
-					PlayerUtils.sendMessage(player, 14);
+					Messages.send(player, 14);
 					return false;
 				}
 				if (region.getDisplayName().equals(message)) {
-					PlayerUtils.sendMessage(player, 11);
+					Messages.send(player, 11);
 					return false;
 				}
 				return true;
@@ -121,18 +124,18 @@ public class MiscellaneousSettingsMenu {
 				replacements.put("{olddescription}", oldDescription);
 				replacements.put("{newdescription}", region.getDescription());
 
-				PlayerUtils.sendMessage(player, 17, replacements);
+				Messages.send(player, 17, replacements);
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_DESCRIPTION))
 					return false;
 
 				if (!StringUtils.isValidRegionDescription(message)) {
-					PlayerUtils.sendMessage(player, 16);
+					Messages.send(player, 16);
 					return false;
 				}
 				if (region.getDescription().equals(message)) {
-					PlayerUtils.sendMessage(player, 11);
+					Messages.send(player, 11);
 					return false;
 				}
 				return true;
@@ -151,7 +154,7 @@ public class MiscellaneousSettingsMenu {
 			Chunk chunk = location.getChunk();
 
 			if (ChunksManager.getRegionOwnsTheChunk(chunk) == null || !ChunksManager.getRegionOwnsTheChunk(chunk).getUniqueId().equals(region.getUniqueId())) {
-				PlayerUtils.sendMessage(player, 142);
+				Messages.send(player, 142);
 				return;
 			}
 
@@ -159,7 +162,7 @@ public class MiscellaneousSettingsMenu {
 
 			replacements.put("{region}", region.getName());
 			replacements.put("{location}", Formatters.formatLocation(location));
-			PlayerUtils.sendMessage(player, 72, replacements);
+			Messages.send(player, 72, replacements);
 
 			RegionsManager.addNewLog(region.getUniqueId(), 1, replacements);
 		});
@@ -177,7 +180,7 @@ public class MiscellaneousSettingsMenu {
 
 				replacements.put("{playername}", targetPlayer.getName());
 				replacements.put("{region}", region.getName());
-				PlayerUtils.sendMessage(player, 82, replacements);
+				Messages.send(player, 82, replacements);
 
 				if (region.isPlayerMember(targetPlayer)) region.removeMember(targetPlayer);
 				if (region.isPlayerInvited(targetPlayer)) region.removePlayerInvite(targetPlayer);
@@ -188,20 +191,20 @@ public class MiscellaneousSettingsMenu {
 
 				if (target == null) {
 					replacements.put("{playername}", message);
-					PlayerUtils.sendMessage(player, 29, replacements);
+					Messages.send(player, 29, replacements);
 					return false;
 				}
 				if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
-					PlayerUtils.sendMessage(player, 30);
+					Messages.send(player, 30);
 					return false;
 				}
 				if (region.isPlayerBanned(target)) {
 					replacements.put("{playername}", target.getName());
-					PlayerUtils.sendMessage(player, 32, replacements);
+					Messages.send(player, 32, replacements);
 					return false;
 				}
 				if (region.isOwner(target)) {
-					PlayerUtils.sendMessage(player, 30);
+					Messages.send(player, 30);
 					return false;
 				}
 				return true;
@@ -215,7 +218,7 @@ public class MiscellaneousSettingsMenu {
 
 			boolean canDelete = PlayerUtils.isOperator(_player) || region.isOwner(_player);
 			if (!canDelete) {
-				PlayerUtils.sendMessage(_player, 159);
+				Messages.send(_player, 159);
 				_player.playSound(_player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 
 				return;
@@ -244,7 +247,7 @@ public class MiscellaneousSettingsMenu {
 				replacements1.put("{region}", region.getDisplayName());
 				replacements1.put("{region-bank}", Formatters.formatBalance(amountToGive));
 
-				PlayerUtils.sendMessage(player, 6, replacements1);
+				Messages.send(player, 6, replacements1);
 				_player.playSound(_player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1.2f);
 
 				new RegionsMenu(_player);
@@ -254,7 +257,7 @@ public class MiscellaneousSettingsMenu {
 			DELETE_CONFIRM_REGION.put(pid, region.getUniqueId());
 			DELETE_CONFIRM_TIME.put(pid, now);
 
-			PlayerUtils.sendMessage(player, 158);
+			Messages.send(player, 158);
 			_player.playSound(_player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1f, 1f);
 		});
 

@@ -9,6 +9,8 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.Arrays;
@@ -29,19 +31,19 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		if (!player.hasPermission("homestead.region.players.ban")) {
-			PlayerUtils.sendMessage(player, 8);
+			Messages.send(player, 8);
 			return true;
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
@@ -55,34 +57,33 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{playername}", targetName);
-
-			PlayerUtils.sendMessage(player, 29, replacements);
+			Messages.send(player, 29, new Placeholder()
+					.add("{playername}", targetName)
+			);
 			return true;
 		}
 
 		if (region.isPlayerBanned(target)) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{playername}", target.getName());
-
-			PlayerUtils.sendMessage(player, 32, replacements);
+			Messages.send(player, 32, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{playername}", target.getName())
+			);
 			return true;
 		}
 
 		if (region.isOwner(target)) {
-			PlayerUtils.sendMessage(player, 30);
+			Messages.send(player, 30);
 			return true;
 		}
 
 		SerializableRent rent = region.getRent();
 
 		if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
-			PlayerUtils.sendMessage(player, 196);
+			Messages.send(player, 196);
 			return true;
 		}
 
-		String reason = Homestead.language.get("default.reason");
+		String reason = Homestead.language.getString("default.reason");
 
 		if (args.length > 2) {
 			List<String> reasonList = Arrays.asList(args).subList(2, args.length);
@@ -91,12 +92,11 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 
 		region.banPlayer(target, reason);
 
-		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put("{playername}", target.getName());
-		replacements.put("{region}", region.getName());
-		replacements.put("{reason}", reason);
-
-		PlayerUtils.sendMessage(player, 31, replacements);
+		Messages.send(player, 31, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{playername}", target.getName())
+				.add("{region}", reason)
+		);
 
 		if (region.isPlayerMember(target)) {
 			region.removeMember(target);

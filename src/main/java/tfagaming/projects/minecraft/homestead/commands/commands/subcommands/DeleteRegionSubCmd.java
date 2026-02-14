@@ -8,6 +8,9 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -26,47 +29,46 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 		}
 
 		if (!player.hasPermission("homestead.region.delete")) {
-			PlayerUtils.sendMessage(player, 8);
+			Messages.send(player, 8);
 			return true;
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
 		if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
-			PlayerUtils.sendMessage(player, 159);
+			Messages.send(player, 159);
 			return true;
 		}
 
 		String confirmInput = args[1];
 
 		if (!confirmInput.equalsIgnoreCase("confirm")) {
-			PlayerUtils.sendMessage(player, 5);
+			Messages.send(player, 5);
 			return true;
 		}
 
-		double amountToGive = region.getBank();
+		final double bankAmount = region.getBank();
 
 		RegionsManager.deleteRegion(region.getUniqueId(), player);
 
 		if (Homestead.vault.isEconomyReady()) {
-			PlayerUtils.addBalance(region.getOwner(), amountToGive);
+			PlayerBank.deposit(region.getOwner(), bankAmount);
 		}
 
-		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put("{region}", region.getDisplayName());
-		replacements.put("{region-bank}", Formatters.formatBalance(amountToGive));
-
-		PlayerUtils.sendMessage(player, 6, replacements);
+		Messages.send(player, 6, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{region-bank}", Formatters.getBalance(bankAmount))
+		);
 
 		TargetRegionSession.randomizeRegion(player);
 

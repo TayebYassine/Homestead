@@ -7,7 +7,9 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -26,14 +28,14 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
@@ -45,17 +47,17 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 		String regionName = args[1];
 
 		if (!StringUtils.isValidRegionName(regionName)) {
-			PlayerUtils.sendMessage(player, 1);
+			Messages.send(player, 1);
 			return true;
 		}
 
 		if (regionName.equalsIgnoreCase(region.getName())) {
-			PlayerUtils.sendMessage(player, 11);
+			Messages.send(player, 11);
 			return true;
 		}
 
 		if (RegionsManager.isNameUsed(regionName)) {
-			PlayerUtils.sendMessage(player, 2);
+			Messages.send(player, 2);
 			return true;
 		}
 
@@ -63,13 +65,13 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 
 		region.setName(regionName);
 
-		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put("{oldname}", oldName);
-		replacements.put("{newname}", regionName);
+		Messages.send(player, 13, new Placeholder()
+				.add("{oldname}", oldName)
+				.add("{newname}", regionName)
+		);
 
-		PlayerUtils.sendMessage(player, 13, replacements);
-
-		RegionsManager.addNewLog(region.getUniqueId(), 0, replacements);
+		// TODO Fix this
+		// RegionsManager.addNewLog(region.getUniqueId(), 0, replacements);
 
 		return true;
 	}

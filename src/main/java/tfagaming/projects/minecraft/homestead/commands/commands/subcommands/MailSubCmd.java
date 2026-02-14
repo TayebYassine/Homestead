@@ -6,6 +6,8 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLog;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.Arrays;
@@ -26,12 +28,12 @@ public class MailSubCmd extends SubCommandBuilder {
 		}
 
 		if (!player.hasPermission("homestead.region.mail")) {
-			PlayerUtils.sendMessage(player, 8);
+			Messages.send(player, 8);
 			return true;
 		}
 
 		if (args.length < 3) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
@@ -40,7 +42,7 @@ public class MailSubCmd extends SubCommandBuilder {
 		Region region = RegionsManager.findRegion(regionName);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 9);
+			Messages.send(player, 9);
 			return false;
 		}
 
@@ -53,7 +55,7 @@ public class MailSubCmd extends SubCommandBuilder {
 		}
 
 		if (mailsCount >= 5) {
-			PlayerUtils.sendMessage(player, 165);
+			Messages.send(player, 165);
 			return false;
 		}
 
@@ -62,10 +64,9 @@ public class MailSubCmd extends SubCommandBuilder {
 
 		RegionsManager.addNewLog(region.getUniqueId(), player.getName(), message);
 
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("{region-owner}", region.getOwner().getName());
-
-		PlayerUtils.sendMessage(player, 166, replacements);
+		Messages.send(player, 166, new Placeholder()
+				.add("{region-owner}", region.getOwner().getName())
+		);
 
 		return true;
 	}

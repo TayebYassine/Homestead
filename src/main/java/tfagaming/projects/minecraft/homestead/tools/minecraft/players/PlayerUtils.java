@@ -24,7 +24,7 @@ import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits.LimitMethod;
 
@@ -38,101 +38,26 @@ public class PlayerUtils {
 			PlayerFlags.PASSTHROUGH
 	);
 
-	public static double getBalance(OfflinePlayer player) {
-		if (!Homestead.vault.isEconomyReady()) {
-			return 0.0;
-		}
-
-		return Homestead.vault.getEconomy().getBalance(player);
-	}
-
-	public static void addBalance(OfflinePlayer player, double amount) {
-		if (!Homestead.vault.isEconomyReady()) {
-			return;
-		}
-
-		Homestead.vault.getEconomy().depositPlayer(player, amount);
-	}
-
-	public static void removeBalance(OfflinePlayer player, double amount) {
-		if (!Homestead.vault.isEconomyReady()) {
-			return;
-		}
-
-		Homestead.vault.getEconomy().withdrawPlayer(player, amount);
-	}
-
-	public static void sendMessage(Player player, String... messages) {
-		player.sendMessage(ChatColorTranslator.translate(String.join("", messages)));
-	}
-
-	public static void sendMessage(CommandSender sender, String path, Map<String, String> replacements) {
-		if (sender == null) {
-			return;
-		}
-
-		String message = Homestead.language.get(path);
-
-		if (message == null) {
-			sender.sendMessage("STRING MISS AT " + path);
-			return;
-		}
-
-		if (sender instanceof Player) {
-			replacements.put("{__prefix__}", Homestead.config.getPrefix());
-
-			message = Formatters.replace(message, replacements);
-
-			sender.sendMessage(ChatColorTranslator.translate(message));
-		} else {
-			replacements.put("{__prefix__}", Homestead.config.getPrefix());
-
-			message = Formatters.replace(message, replacements);
-
-			sender.sendMessage(ChatColorTranslator.removeColor(message, true));
-		}
-	}
-
-	public static void sendMessage(CommandSender sender, String path) {
-		sendMessage(sender, path, new HashMap<>());
-	}
-
-	public static void sendMessage(Player player, int path, Map<String, String> replacements) {
-		sendMessage(player, String.valueOf(path), replacements);
-	}
-
-	public static void sendMessage(CommandSender sender, int path, Map<String, String> replacements) {
-		sendMessage(sender, String.valueOf(path), replacements);
-	}
-
-	public static void sendMessage(CommandSender sender, int path) {
-		sendMessage(sender, String.valueOf(path));
-	}
-
-	public static void sendMessage(Player player, int path) {
-		sendMessage(player, String.valueOf(path));
-	}
-
 	public static void sendMessageRegionEnter(Player player, Map<String, String> replacements) {
 		switch (Homestead.config.getString("enter-exit-region-message.type").toLowerCase()) {
 			case "title":
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.enter.title");
 
-				player.sendTitle(ChatColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
-						ChatColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
+				player.sendTitle(ColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
+						ColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
 						20);
 
 				break;
 			case "actionbar":
 				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-						new TextComponent(ChatColorTranslator
+						new TextComponent(ColorTranslator
 								.translate(Formatters.replace(
 										Homestead.config.getString("enter-exit-region-message.messages.enter.actionbar"),
 										replacements))));
 
 				break;
 			default:
-				player.sendMessage(ChatColorTranslator.translate(Formatters.replace(
+				player.sendMessage(ColorTranslator.translate(Formatters.replace(
 						Homestead.config.getString("enter-exit-region-message.messages.enter.chat"),
 						replacements)));
 				break;
@@ -144,21 +69,21 @@ public class PlayerUtils {
 			case "title":
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.exit.title");
 
-				player.sendTitle(ChatColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
-						ChatColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
+				player.sendTitle(ColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
+						ColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
 						20);
 
 				break;
 			case "actionbar":
 				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-						new TextComponent(ChatColorTranslator
-								.translate(Formatters.replace(
+						new TextComponent(ColorTranslator
+								.translate(Formatters.applyPlaceholders(
 										Homestead.config.getString("enter-exit-region-message.messages.exit.actionbar"),
 										replacements))));
 
 				break;
 			default:
-				player.sendMessage(ChatColorTranslator.translate(Formatters.replace(
+				player.sendMessage(ColorTranslator.translate(Formatters.replace(
 						Homestead.config.getString("enter-exit-region-message.messages.exit.chat"),
 						replacements)));
 				break;
@@ -323,7 +248,7 @@ public class PlayerUtils {
 		placeholders.put("{flag}", PlayerFlags.from(flag));
 		placeholders.put("{region}", region.getName());
 
-		PlayerUtils.sendMessage(player, 50, placeholders);
+		Messages.send(player, 50, placeholders);
 
 		COOLDOWN.add(player.getUniqueId());
 		Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()), MESSAGE_COOLDOWN_SECONDS);
@@ -350,7 +275,7 @@ public class PlayerUtils {
 				replacements.put("{flag}", RegionControlFlags.from(flag));
 				replacements.put("{region}", region.getName());
 
-				PlayerUtils.sendMessage(player, 70, replacements);
+				Messages.send(player, 70, replacements);
 
 				COOLDOWN.add(player.getUniqueId());
 

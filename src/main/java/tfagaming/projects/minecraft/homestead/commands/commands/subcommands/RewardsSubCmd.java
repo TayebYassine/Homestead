@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RewardsMenu;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 public class RewardsSubCmd extends SubCommandBuilder {
@@ -22,14 +23,14 @@ public class RewardsSubCmd extends SubCommandBuilder {
 		}
 
 		if (!Homestead.config.isRewardsEnabled()) {
-			PlayerUtils.sendMessage(player, 168);
+			Messages.send(player, 168);
 			return false;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 

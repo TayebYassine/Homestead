@@ -8,6 +8,8 @@ import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -33,10 +35,9 @@ public final class RegionRent {
 				if (leaser != null && leaser.isOnline()) {
 					Player player = (Player) leaser;
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{region}", region.getName());
-
-					PlayerUtils.sendMessage(player, 130, replacements);
+					Messages.send(player, 130, new Placeholder()
+							.add("{region}", region.getName())
+					);
 				}
 			}
 		}
@@ -52,10 +53,10 @@ public final class RegionRent {
 				if (leaser != null && leaser.isOnline()) {
 					Player player = (Player) leaser;
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{region}", subArea.getName());
-
-					PlayerUtils.sendMessage(player, 130, replacements);
+					// TODO Update this
+					Messages.send(player, 130, new Placeholder()
+							.add("{region}", subArea.getName())
+					);
 				}
 			}
 		}

@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.util.Map;
 import java.util.UUID;
@@ -49,7 +49,7 @@ public class PlayerInputSession implements Listener {
 		this.onCancel = onCancel;
 
 		String key = String.valueOf(messagePath);
-		this.prompt = ChatColorTranslator.translate(Homestead.language.get(key));
+		this.prompt = ColorTranslator.translate(Homestead.language.getString(key));
 
 		PlayerInputSession old = SESSIONS.put(player.getUniqueId(), this);
 		if (old != null) old.internalDestroy();

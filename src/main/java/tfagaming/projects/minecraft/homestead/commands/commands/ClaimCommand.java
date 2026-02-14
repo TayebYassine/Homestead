@@ -12,8 +12,11 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ public class ClaimCommand extends CommandBuilder {
 		Chunk chunk = player.getLocation().getChunk();
 
 		if (ChunksManager.isChunkInDisabledWorld(chunk)) {
-			PlayerUtils.sendMessage(player, 20);
+			Messages.send(player, 20);
 			return true;
 		}
 
@@ -44,7 +47,7 @@ public class ClaimCommand extends CommandBuilder {
 
 		if (isWorldGuardProtectingRegionsEnabled) {
 			if (WorldGuardAPI.isChunkInWorldGuardRegion(chunk)) {
-				PlayerUtils.sendMessage(player, 133);
+				Messages.send(player, 133);
 				return true;
 			}
 		}
@@ -58,12 +61,12 @@ public class ClaimCommand extends CommandBuilder {
 				region = TargetRegionSession.getRegion(player);
 			} else {
 				if (!player.hasPermission("homestead.region.create")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
 				if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
-					PlayerUtils.sendMessage(player, 116);
+					Messages.send(player, 116);
 					return true;
 				}
 
@@ -81,41 +84,39 @@ public class ClaimCommand extends CommandBuilder {
 
 		double chunkPrice = Homestead.config.getDouble("chunk-price");
 
-		if (chunkPrice > 0 && PlayerUtils.getBalance(region.getOwner()) < chunkPrice) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{price}", Formatters.formatBalance(chunkPrice));
-			replacements.put("{player}", region.getOwner().getName());
+		if (chunkPrice > 0 && PlayerBank.get(region.getOwner()) < chunkPrice) {
+			Messages.send(player, 200, new Placeholder()
+					.add("{price}", Formatters.getBalance(chunkPrice))
+					.add("{player}", region.getOwner().getName())
+			);
 
-			PlayerUtils.sendMessage(player, 200, replacements);
 			return true;
 		}
 
 		Region regionOwnsThisChunk = ChunksManager.getRegionOwnsTheChunk(chunk);
 
 		if (regionOwnsThisChunk != null) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{region}", regionOwnsThisChunk.getName());
+			Messages.send(player, 21, new Placeholder()
+					.add("{region}", regionOwnsThisChunk.getName())
+			);
 
-			PlayerUtils.sendMessage(player, 21, replacements);
 			return true;
 		}
 
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.CHUNKS_PER_REGION)) {
-			PlayerUtils.sendMessage(player, 116);
+			Messages.send(player, 116);
+
 			return true;
 		}
 
 		ChunksManager.Error error = ChunksManager.claimChunk(region.getUniqueId(), chunk);
 
 		if (error == null) {
-			if (chunkPrice > 0) {
-				PlayerUtils.removeBalance(region.getOwner(), chunkPrice);
-			}
+			PlayerBank.withdraw(region.getOwner(), chunkPrice);
 
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{region}", region.getName());
-
-			PlayerUtils.sendMessage(player, 22, replacements);
+			Messages.send(player, 22, new Placeholder()
+					.add("{region}", region.getName())
+			);
 
 			if (region.getLocation() == null) {
 				region.setLocation(player.getLocation());
@@ -124,8 +125,8 @@ public class ClaimCommand extends CommandBuilder {
 			ChunkBorder.show(player);
 		} else {
 			switch (error) {
-				case REGION_NOT_FOUND -> PlayerUtils.sendMessage(player, 9);
-				case CHUNK_NOT_ADJACENT_TO_REGION -> PlayerUtils.sendMessage(player, 140);
+				case REGION_NOT_FOUND -> Messages.send(player, 9);
+				case CHUNK_NOT_ADJACENT_TO_REGION -> Messages.send(player, 140);
 			}
 		}
 

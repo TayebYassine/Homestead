@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -84,14 +84,14 @@ public class DynmapAPI {
 		replacements.put("{region}", region.getName());
 		replacements.put("{region-owner}", region.getOwner().getName());
 		replacements.put("{region-members}",
-				ChatColorTranslator.removeColor(Formatters.getMembersOfRegion(region), false));
+				ColorTranslator.preserve(Formatters.getMembersOfRegion(region)));
 		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 		replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
 		replacements.put("{region-description}", region.getDescription());
 		replacements.put("{region-size}", String.valueOf(region.getChunks().size() * 256));
 
 		String description = Formatters
-				.replace(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
+				.applyPlaceholders(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
 						: Homestead.config.getString("dynamic-maps.chunks.description"), replacements);
 
 		areaMarker.setDescription(description);

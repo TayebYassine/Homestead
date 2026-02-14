@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.gui.menus.RegionInfoMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 public class RegionInfoSubCmd extends SubCommandBuilder {
@@ -27,7 +28,7 @@ public class RegionInfoSubCmd extends SubCommandBuilder {
 			Region region = RegionsManager.findRegion(regionName);
 
 			if (region == null) {
-				PlayerUtils.sendMessage(player, 9);
+				Messages.send(player, 9);
 				return false;
 			}
 
@@ -38,7 +39,7 @@ public class RegionInfoSubCmd extends SubCommandBuilder {
 			Region region = ChunksManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
 
 			if (region == null) {
-				PlayerUtils.sendMessage(player, 4);
+				Messages.send(player, 4);
 				return true;
 			}
 

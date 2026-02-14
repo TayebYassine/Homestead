@@ -12,7 +12,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class Menu implements Listener {
 
 	public Menu(String title, int size) {
 		this.plugin = Homestead.getInstance();
-		this.inventory = Bukkit.createInventory(null, size, ChatColorTranslator.translate(title));
+		this.inventory = Bukkit.createInventory(null, size, ColorTranslator.translate(title));
 		this.callbacks = new HashMap<>();
 
 		Bukkit.getPluginManager().registerEvents(this, plugin);

@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 public class AutoSubCmd extends SubCommandBuilder {
@@ -21,11 +22,11 @@ public class AutoSubCmd extends SubCommandBuilder {
 		if (AutoClaimSession.hasSession(player)) {
 			AutoClaimSession.removeSession(player);
 
-			PlayerUtils.sendMessage(player, 136);
+			Messages.send(player, 136);
 		} else {
 			new AutoClaimSession(player);
 
-			PlayerUtils.sendMessage(player, 135);
+			Messages.send(player, 135);
 		}
 
 		return true;

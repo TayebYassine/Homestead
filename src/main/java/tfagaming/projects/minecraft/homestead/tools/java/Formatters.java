@@ -6,7 +6,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Formatters {
-	public static String replace(String string, Map<String, String> replacements) {
+public final class Formatters {
+	public static String applyPlaceholders(String string, Map<String, String> replacements) {
 		if (string == null) {
-			return "[Homestead: String is null]";
+			return "NULL";
 		}
 
 		for (Map.Entry<String, String> entry : replacements.entrySet()) {
@@ -35,7 +35,7 @@ public class Formatters {
 		replacements.put("{y}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getY())));
 		replacements.put("{z}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getZ())));
 
-		return ChatColorTranslator.translate(replace(Homestead.config.getString("formatters.location"), replacements));
+		return ColorTranslator.translate(replace(Homestead.config.getString("formatters.location"), replacements));
 	}
 
 	public static String formatChunk(Chunk chunk) {
@@ -45,17 +45,17 @@ public class Formatters {
 		replacements.put("{x}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(chunk.getX())));
 		replacements.put("{z}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(chunk.getZ())));
 
-		return ChatColorTranslator.translate(replace(Homestead.config.getString("formatters.location"), replacements));
+		return ColorTranslator.translate(replace(Homestead.config.getString("formatters.location"), replacements));
 	}
 
-	public static String formatBalance(double amount) {
+	public static String getBalance(double amount) {
 		String balance = NumberUtils.convertToBalance(amount);
 		String format = Homestead.config.getString("formatters.balance");
 
 		return format.replace("{balance}", balance);
 	}
 
-	public static String formatDate(long date) {
+	public static String getDate(long date) {
 		String pattern = Homestead.config.getString("formatters.date-format");
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
@@ -79,15 +79,15 @@ public class Formatters {
 
 		switch (rate) {
 			case 1:
-				return ChatColorTranslator.translate("&c" + star.repeat(1));
+				return ColorTranslator.translate("&c" + star.repeat(1));
 			case 2:
-				return ChatColorTranslator.translate("&6" + star.repeat(2));
+				return ColorTranslator.translate("&6" + star.repeat(2));
 			case 3:
-				return ChatColorTranslator.translate("&e" + star.repeat(3));
+				return ColorTranslator.translate("&e" + star.repeat(3));
 			case 4:
-				return ChatColorTranslator.translate("&a" + star.repeat(4));
+				return ColorTranslator.translate("&a" + star.repeat(4));
 			case 5:
-				return ChatColorTranslator.translate("&a" + star.repeat(5));
+				return ColorTranslator.translate("&a" + star.repeat(5));
 			default:
 				return getNone();
 		}
@@ -115,7 +115,7 @@ public class Formatters {
 		replacements.put("{m}", String.valueOf(minutes));
 		replacements.put("{s}", String.valueOf(seconds));
 
-		return ChatColorTranslator
+		return ColorTranslator
 				.translate(replace(Homestead.config.getString("formatters.duration"), replacements));
 	}
 
@@ -139,7 +139,7 @@ public class Formatters {
 		replacements.put("{m}", String.valueOf(minutes));
 		replacements.put("{s}", String.valueOf(seconds));
 
-		return ChatColorTranslator
+		return ColorTranslator
 				.translate(replace(Homestead.config.getString("formatters.duration"), replacements));
 	}
 
@@ -154,7 +154,7 @@ public class Formatters {
 		replacements.put("{current-page}", String.valueOf(currentPage));
 		replacements.put("{total-pages}", String.valueOf(totalPages));
 
-		return ChatColorTranslator
+		return ColorTranslator
 				.translate(replace(Homestead.config.getString("formatters.gui-pagination-title"), replacements));
 	}
 
@@ -165,7 +165,7 @@ public class Formatters {
 		replacements.put("{sender}", sender);
 		replacements.put("{message}", message);
 
-		return ChatColorTranslator
+		return ColorTranslator
 				.translate(replace(Homestead.config.getString("formatters.private-chat"), replacements));
 	}
 
@@ -178,7 +178,7 @@ public class Formatters {
 
 		String format = Homestead.config.getString("formatters.player-regions");
 
-		return ChatColorTranslator.translate(regions.stream()
+		return ColorTranslator.translate(regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
 				.collect(Collectors.joining(Homestead.config.getString("formatters.player-regions-joining"))));
 	}
@@ -192,7 +192,7 @@ public class Formatters {
 
 		String format = Homestead.config.getString("formatters.player-regions");
 
-		return ChatColorTranslator.translate(regions.stream()
+		return ColorTranslator.translate(regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
 				.collect(Collectors.joining(Homestead.config.getString("formatters.player-regions-joining"))));
 	}
@@ -206,7 +206,7 @@ public class Formatters {
 
 		String format = Homestead.config.getString("formatters.region-members");
 
-		return ChatColorTranslator.translate(members.stream()
+		return ColorTranslator.translate(members.stream()
 				.map((member) -> format.replace("{playername}", member.getBukkitOfflinePlayer().getName()))
 				.collect(Collectors.joining(Homestead.config.getString("formatters.region-members-joining"))));
 	}
@@ -220,30 +220,30 @@ public class Formatters {
 
 		String format = Homestead.config.getString("formatters.war-regions");
 
-		return ChatColorTranslator.translate(regions.stream()
+		return ColorTranslator.translate(regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
 				.collect(Collectors.joining(Homestead.config.getString("formatters.war-regions-joining"))));
 	}
 
 	public static String getNone() {
-		return ChatColorTranslator.translate(Homestead.language.get("default.none"));
+		return ColorTranslator.translate(Homestead.language.get("default.none"));
 	}
 
 	public static String getBoolean(boolean value) {
-		return ChatColorTranslator.translate(Homestead.language.get(value ? "default.isTrue" : "default.isFalse"));
+		return ColorTranslator.translate(Homestead.language.get(value ? "default.isTrue" : "default.isFalse"));
 	}
 
 	public static String getEnabled(boolean value) {
-		return ChatColorTranslator
+		return ColorTranslator
 				.translate(Homestead.language.get(value ? "default.isEnabled" : "default.isDisabled"));
 	}
 
 	public static String getFlag(boolean value) {
-		return ChatColorTranslator.translate(Homestead.language.get(value ? "default.flagSet" : "default.flagUnset"));
+		return ColorTranslator.translate(Homestead.language.get(value ? "default.flagSet" : "default.flagUnset"));
 	}
 
 	public static String getPlayerStatus(OfflinePlayer player) {
-		return ChatColorTranslator
+		return ColorTranslator
 				.translate(Bukkit.getBannedPlayers().contains(player) ? Homestead.language.get("default.banned")
 						: (player.isOnline() ? Homestead.language.get("default.online")
 						: Homestead.language.get("default.offline")));

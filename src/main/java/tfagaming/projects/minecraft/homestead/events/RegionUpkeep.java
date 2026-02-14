@@ -42,8 +42,8 @@ public final class RegionUpkeep {
 						replacements.put("{region}", region.getName());
 						replacements.put("{chunks}", String.valueOf(chunksToRemove));
 
-						PlayerUtils.sendMessage(regionOwner, 111, replacements);
-						PlayerUtils.sendMessage(regionOwner, 112, replacements);
+						Messages.send(regionOwner, 111, replacements);
+						Messages.send(regionOwner, 112, replacements);
 					}
 				} else {
 					region.removeBalanceFromBank(amountToPay);
@@ -58,8 +58,8 @@ public final class RegionUpkeep {
 						replacements.put("{region}", region.getName());
 						replacements.put("{bank}", Formatters.formatBalance(region.getBank()));
 
-						PlayerUtils.sendMessage(regionOwner, 109, replacements);
-						PlayerUtils.sendMessage(regionOwner, 110, replacements);
+						Messages.send(regionOwner, 109, replacements);
+						Messages.send(regionOwner, 110, replacements);
 					}
 				}
 			}

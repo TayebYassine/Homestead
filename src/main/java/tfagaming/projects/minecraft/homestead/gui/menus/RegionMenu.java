@@ -80,14 +80,14 @@ public class RegionMenu {
 		gui.addItem(12, flagsButton, (_player, event) -> {
 			if (event.isLeftClick()) {
 				if (!player.hasPermission("homestead.region.flags.global")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return;
 				}
 
 				new GlobalPlayerFlagsMenu(player, region);
 			} else if (event.isRightClick()) {
 				if (!player.hasPermission("homestead.region.flags.world")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return;
 				}
 
@@ -158,16 +158,16 @@ public class RegionMenu {
 			if (event.isLeftClick()) {
 				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.isOwner(player);
 				if (!isOwnerOrOperator) {
-					PlayerUtils.sendMessage(player, 159);
+					Messages.send(player, 159);
 					return;
 				}
 
 				if (region.getRent() == null) {
-					PlayerUtils.sendMessage(player, 128);
+					Messages.send(player, 128);
 				} else {
 					region.setRent(null);
 
-					PlayerUtils.sendMessage(player, 127);
+					Messages.send(player, 127);
 
 					new RegionMenu(player, region);
 				}

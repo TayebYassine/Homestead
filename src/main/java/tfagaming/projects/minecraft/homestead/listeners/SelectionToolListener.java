@@ -16,7 +16,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -172,7 +172,7 @@ public final class SelectionToolListener implements Listener {
 
 		BukkitTask task = Homestead.getInstance().runAsyncTimerTask(() -> {
 			player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-					new TextComponent(ChatColorTranslator
+					new TextComponent(ColorTranslator
 							.translate(message)));
 		}, 1);
 

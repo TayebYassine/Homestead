@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.List;
@@ -28,17 +29,17 @@ public final class PlayerDeathListener implements Listener {
 
 					double prize = war.getPrize();
 
-					region.removeBalanceFromBank(prize);
+					region.withdrawBank(prize);
 					winner.addBalanceToBank(prize);
 
 					if (winner.getOwner().isOnline()) {
-						PlayerUtils.sendMessage((Player) winner.getOwner(), 155);
+						Messages.send((Player) winner.getOwner(), 155);
 					}
 
 					WarsManager.endWar(war.getUniqueId());
 				}
 
-				PlayerUtils.sendMessage(victim, 163);
+				Messages.send(victim, 163);
 
 				break;
 			}

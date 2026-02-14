@@ -15,7 +15,9 @@ import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegi
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.commands.AutoCompleteFilter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringSimilarity;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class HomesteadAdminCommand extends CommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 1) {
-			PlayerUtils.sendMessage(sender, 0);
+			Messages.send(sender, 0);
 			return true;
 		}
 
@@ -40,55 +42,37 @@ public class HomesteadAdminCommand extends CommandBuilder {
 
 		if (getSubcommands().contains(subCommand)) {
 			if (sender instanceof Player && !sender.hasPermission("homestead.commands.homesteadadmin." + subCommand)) {
-				PlayerUtils.sendMessage(sender, 8);
+				Messages.send(sender, 8);
 				return true;
 			}
 		}
 
-		switch (subCommand) {
-			case "export":
-				new ExportSubCmd().onExecution(sender, args);
-				break;
-			case "plugin":
-				new PluginSubCmd().onExecution(sender, args);
-				break;
-			case "reload":
-				new ReloadSubCmd().onExecution(sender, args);
-				break;
-			case "updates":
-				new CheckUpdatesSubCmd().onExecution(sender, args);
-				break;
-			case "import":
-				new ImportSubCmd().onExecution(sender, args);
-				break;
-			case "flagsoverride":
-				new FlagsOverrideSubCmd().onExecution(sender, args);
-				break;
-			case "claim":
-				new ClaimSubCmd().onExecution(sender, args);
-				break;
-			case "unclaim":
-				new UnclaimSubCmd().onExecution(sender, args);
-				break;
-			case "transfer":
-				new TransferOwnershipSubCmd().onExecution(sender, args);
-				break;
-			default:
+		return switch (subCommand) {
+			case "export" -> new ExportSubCmd().onExecution(sender, args);
+			case "plugin" -> new PluginSubCmd().onExecution(sender, args);
+			case "reload" -> new ReloadSubCmd().onExecution(sender, args);
+			case "updates" -> new CheckUpdatesSubCmd().onExecution(sender, args);
+			case "import" -> new ImportSubCmd().onExecution(sender, args);
+			case "flagsoverride" -> new FlagsOverrideSubCmd().onExecution(sender, args);
+			case "claim" -> new ClaimSubCmd().onExecution(sender, args);
+			case "unclaim" -> new UnclaimSubCmd().onExecution(sender, args);
+			case "transfer" -> new TransferOwnershipSubCmd().onExecution(sender, args);
+			default -> {
 				String similaritySubCmds = StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand).stream()
 						.collect(Collectors.joining(", "));
 
-				if (sender instanceof Player) {
-					Map<String, String> replacements = new HashMap<>();
-					replacements.put("{similarity-subcmds}", similaritySubCmds);
 
-					PlayerUtils.sendMessage(sender, 7, replacements);
+				if (sender instanceof Player) {
+					Messages.send(sender, 7, new Placeholder()
+							.add("{similarity-subcmds}", similaritySubCmds)
+					);
 				} else {
 					sender.sendMessage("Unknown sub-command, maybe you meant...", similaritySubCmds);
 				}
-				break;
-		}
 
-		return true;
+				yield true;
+			}
+		};
 	}
 
 	@Override
@@ -102,7 +86,7 @@ public class HomesteadAdminCommand extends CommandBuilder {
 		if (args.length == 1) {
 			List<String> subcommands = getSubcommands().stream()
 					.filter(cmd -> cmd.startsWith(args[0].toLowerCase()))
-					.collect(Collectors.toList());
+					.toList();
 
 			for (String subcommand : subcommands) {
 				if (player.hasPermission("homestead.commands.homesteadadmin." + subcommand)) {

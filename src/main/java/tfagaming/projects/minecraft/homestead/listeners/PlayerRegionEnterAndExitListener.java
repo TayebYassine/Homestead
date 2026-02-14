@@ -17,6 +17,8 @@ import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
 
@@ -58,11 +60,10 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 					PlayerUtils.teleportPlayerToChunk(player, nearbyChunk);
 				}
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{region}", region.getName());
-				replacements.put("{ban-reason}", region.getBannedPlayer(player).getReason());
-
-				PlayerUtils.sendMessage(player, 28, replacements);
+				Messages.send(player, 28, new Placeholder()
+						.add("{region}", region.getName())
+						.add("{ban-reason}", region.getBannedPlayer(player).getReason())
+				);
 
 				return;
 			}

@@ -2,7 +2,7 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.chat;
 
 import org.bukkit.ChatColor;
 
-public class ChatColorTranslator {
+public final class ColorTranslator {
 	static final String WITH_DELIMITER = "((?<=%1$s)|(?=%1$s))";
 
 	public static String translate(String input) {
@@ -38,6 +38,17 @@ public class ChatColorTranslator {
 		return out.toString();
 	}
 
+	public static String preserve(String string) {
+		if (string == null) {
+			return null;
+		}
+
+		string = string.replaceAll("&[a-fA-F0-9k-orK-OR]", "");
+		string = string.replaceAll("§[a-fA-F0-9k-orK-OR]", "");
+
+		return string;
+	}
+
 	private static String expandHex(String hex) {
 		if (hex.length() == 6 && hex.matches("[0-9A-Fa-f]{6}")) return hex;
 		if (hex.length() == 3 && hex.matches("[0-9A-Fa-f]{3}")) {
@@ -46,17 +57,5 @@ public class ChatColorTranslator {
 					hex.charAt(2) + hex.charAt(2);
 		}
 		return null;
-	}
-
-	public static String removeColor(String string, boolean neverBeenTranslated) {
-		if (string == null) {
-			return null;
-		}
-
-		if (neverBeenTranslated) {
-			return string.replaceAll("&[a-fA-F0-9k-orK-OR]", "");
-		} else {
-			return string.replaceAll("§[a-fA-F0-9k-orK-OR]", "");
-		}
 	}
 }

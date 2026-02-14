@@ -6,6 +6,8 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
@@ -27,15 +29,14 @@ public class HomeSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
 		if (region.getLocation() == null) {
-			Map<String, String> replacements = new HashMap<>();
-			replacements.put("{region}", region.getName());
-
-			PlayerUtils.sendMessage(player, 71, replacements);
+			Messages.send(player, 71, new Placeholder()
+					.add("{region}", region.getName())
+			);
 			return true;
 		}
 
@@ -43,10 +44,9 @@ public class HomeSubCmd extends SubCommandBuilder {
 				&& !region.isOwner(player)
 				&& !(PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
 				&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{region}", region.getName());
-
-			PlayerUtils.sendMessage(player, 45, replacements);
+			Messages.send(player, 45, new Placeholder()
+					.add("{region}", region.getName())
+			);
 			return true;
 		}
 

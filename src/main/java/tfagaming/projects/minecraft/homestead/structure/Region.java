@@ -54,7 +54,7 @@ public class Region {
 		this.id = UUID.randomUUID();
 		this.displayName = name;
 		this.name = name;
-		this.description = ((String) Homestead.language.get("default.description")).replace("{owner}",
+		this.description = ((String) Homestead.language.getString("default.description")).replace("{owner}",
 				player.getName() == null ? "Unknown" : player.getName());
 		this.ownerId = player.getUniqueId();
 		this.location = new SerializableLocation(player.getLocation());
@@ -237,7 +237,7 @@ public class Region {
 		updateCache();
 	}
 
-	public void removeBalanceFromBank(double money) {
+	public void withdrawBank(double money) {
 		this.bank -= money;
 
 		if (this.bank < 0) {
@@ -613,7 +613,7 @@ public class Region {
 
 	public void banPlayer(OfflinePlayer player) {
 		if (!isPlayerBanned(player)) {
-			bannedPlayers.add(new SerializableBannedPlayer(player, Homestead.language.get("default.reason")));
+			bannedPlayers.add(new SerializableBannedPlayer(player, Homestead.language.getString("default.reason")));
 			updateCache();
 		}
 	}

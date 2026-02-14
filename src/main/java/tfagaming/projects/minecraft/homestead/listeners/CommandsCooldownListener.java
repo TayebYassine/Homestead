@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -27,7 +28,7 @@ public final class CommandsCooldownListener implements Listener {
 			if (cooldown.contains(player.getUniqueId())) {
 				event.setCancelled(true);
 
-				PlayerUtils.sendMessage(player, 118);
+				Messages.send(player, 118);
 			} else {
 				int cooldownPlayer = Limits.getPlayerLimit(player, Limits.LimitType.COMMANDS_COOLDOWN);
 

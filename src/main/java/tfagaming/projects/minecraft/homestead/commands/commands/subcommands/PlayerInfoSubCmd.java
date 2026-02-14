@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.PlayerInfoMenu;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -33,10 +35,9 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 			OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 			if (target == null) {
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{playername}", playerName);
-
-				PlayerUtils.sendMessage(player, 29, replacements);
+				Messages.send(player, 29, new Placeholder()
+						.add("{playername}", playerName)
+				);
 				return true;
 			}
 

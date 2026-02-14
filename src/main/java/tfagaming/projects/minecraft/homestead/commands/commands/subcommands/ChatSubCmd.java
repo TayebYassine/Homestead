@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegi
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -30,19 +31,19 @@ public class ChatSubCmd extends SubCommandBuilder {
 		}
 
 		if (!player.hasPermission("homestead.region.chat")) {
-			PlayerUtils.sendMessage(player, 8);
+			Messages.send(player, 8);
 			return true;
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 

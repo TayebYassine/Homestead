@@ -6,6 +6,8 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -19,7 +21,7 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 3) {
-			PlayerUtils.sendMessage(sender, 0);
+			Messages.send(sender, 0);
 			return true;
 		}
 
@@ -28,7 +30,7 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 		Region region = RegionsManager.findRegion(regionName);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(sender, 9);
+			Messages.send(sender, 9);
 			return true;
 		}
 
@@ -37,15 +39,14 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 		if (target == null) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{playername}", playerName);
-
-			PlayerUtils.sendMessage(sender, 29, replacements);
+			Messages.send(sender, 29, new Placeholder()
+					.add("{playername}", playerName)
+			);
 			return true;
 		}
 
 		if (region.isOwner(target.getUniqueId())) {
-			PlayerUtils.sendMessage(sender, 192);
+			Messages.send(sender, 192);
 			return false;
 		}
 
@@ -58,11 +59,10 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 		if (region.isPlayerMember(target)) region.removeMember(target);
 		if (region.isPlayerInvited(target)) region.removePlayerInvite(target);
 
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{player}", target.getName());
-
-		PlayerUtils.sendMessage(sender, 193, replacements);
+		Messages.send(sender, 193, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{player}", target.getName())
+		);
 
 		return true;
 	}

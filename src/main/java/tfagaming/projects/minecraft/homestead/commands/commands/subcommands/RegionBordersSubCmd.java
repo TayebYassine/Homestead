@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.commands.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -21,14 +22,14 @@ public class RegionBordersSubCmd extends SubCommandBuilder {
 		if (args.length == 2 && args[1].equalsIgnoreCase("stop")) {
 			ChunkBorder.stop(player);
 
-			PlayerUtils.sendMessage(player, 26);
+			Messages.send(player, 26);
 
 			return true;
 		}
 
 		ChunkBorder.show(player);
 
-		PlayerUtils.sendMessage(player, 27);
+		Messages.send(player, 27);
 
 		return true;
 	}

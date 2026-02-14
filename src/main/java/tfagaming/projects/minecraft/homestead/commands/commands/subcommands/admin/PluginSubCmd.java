@@ -9,6 +9,8 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -22,16 +24,15 @@ public class PluginSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (sender instanceof Player) {
-			Map<String, String> replacements = new HashMap<>();
-			replacements.put("{plugin-version}", Homestead.getVersion());
-			replacements.put("{regions}", String.valueOf(RegionsManager.getAll().size()));
-			replacements.put("{wars}", String.valueOf(WarsManager.getAll().size()));
-			replacements.put("{subareas}", String.valueOf(SubAreasManager.getAll().size()));
-			replacements.put("{provider}", Homestead.database.getSelectedProvider());
-			replacements.put("{avg-response-db}", String.valueOf(Homestead.database.getLatency()));
-			replacements.put("{avg-response-cache}", String.valueOf(Homestead.regionsCache.getLatency()));
-
-			PlayerUtils.sendMessage(sender, 89, replacements);
+			Messages.send(sender, 89, new Placeholder()
+					.add("{plugin-version}", Homestead.getVersion())
+					.add("{regions}", RegionsManager.getAll().size())
+					.add("{wars}", WarsManager.getAll().size())
+					.add("{subareas}", SubAreasManager.getAll().size())
+					.add("{provider}", Homestead.database.getSelectedProvider())
+					.add("{avg-response-db}", Homestead.database.getLatency())
+					.add("{avg-response-cache}", Homestead.regionsCache.getLatency())
+			);
 		} else {
 			sender.sendMessage("Please wait...");
 

@@ -20,7 +20,9 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -44,7 +46,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
@@ -54,7 +56,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 		}
 
 		if (args.length < 3) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
@@ -66,14 +68,14 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 		switch (args[1]) {
 			case "create": {
 				if (!player.hasPermission("homestead.region.subareas.create")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
 				Selection session = SelectionToolListener.getPlayerSession(player);
 
 				if (session == null) {
-					PlayerUtils.sendMessage(player, 54);
+					Messages.send(player, 54);
 					return true;
 				}
 
@@ -84,31 +86,31 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					Region chunkRegion = ChunksManager.getRegionOwnsTheChunk(chunk);
 
 					if (chunkRegion == null || !chunkRegion.getUniqueId().equals(region.getUniqueId())) {
-						PlayerUtils.sendMessage(player, 55);
+						Messages.send(player, 55);
 						return true;
 					}
 				}
 
 				if (SubAreaUtils.isIntersectingOtherSubArea(region.getUniqueId(), new SerializableBlock(firstCorner),
 						new SerializableBlock(secondCorner))) {
-					PlayerUtils.sendMessage(player, 56);
+					Messages.send(player, 56);
 					return true;
 				}
 
 				String name = args[2];
 
 				if (!StringUtils.isValidSubAreaName(name)) {
-					PlayerUtils.sendMessage(player, 57);
+					Messages.send(player, 57);
 					return true;
 				}
 
 				if (SubAreasManager.isNameUsed(region.getUniqueId(), name)) {
-					PlayerUtils.sendMessage(player, 58);
+					Messages.send(player, 58);
 					return true;
 				}
 
 				if (Limits.hasReachedLimit(null, region, Limits.LimitType.SUBAREAS_PER_REGION)) {
-					PlayerUtils.sendMessage(player, 116);
+					Messages.send(player, 116);
 					return true;
 				}
 
@@ -116,11 +118,10 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				int maxVolume = Limits.getRegionLimit(region, Limits.LimitType.MAX_SUBAREA_VOLUME);
 
 				if (volume >= maxVolume) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{max}", String.valueOf(maxVolume));
-					replacements.put("{volume}", String.valueOf(volume));
-
-					PlayerUtils.sendMessage(player, 117, replacements);
+					Messages.send(player, 117, new Placeholder()
+							.add("{max}", maxVolume)
+							.add("{volume}", volume)
+					);
 					return true;
 				}
 
@@ -128,22 +129,21 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				SelectionToolListener.cancelPlayerSession(player);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{subarea}", name);
-				replacements.put("{subarea-volume}", String.valueOf(volume));
-
-				PlayerUtils.sendMessage(player, 59, replacements);
+				Messages.send(player, 59, new Placeholder()
+						.add("{subarea}", name)
+						.add("{subarea-volume}", volume)
+				);
 
 				break;
 			}
 			case "rename": {
 				if (!player.hasPermission("homestead.region.subareas.rename")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
 				if (args.length < 4) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
@@ -153,22 +153,22 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
-					PlayerUtils.sendMessage(player, 60);
+					Messages.send(player, 60);
 					return true;
 				}
 
 				if (!StringUtils.isValidSubAreaName(newName)) {
-					PlayerUtils.sendMessage(player, 57);
+					Messages.send(player, 57);
 					return true;
 				}
 
 				if (subArea.getName().equalsIgnoreCase(newName)) {
-					PlayerUtils.sendMessage(player, 11);
+					Messages.send(player, 11);
 					return true;
 				}
 
 				if (SubAreasManager.isNameUsed(region.getUniqueId(), newName)) {
-					PlayerUtils.sendMessage(player, 58);
+					Messages.send(player, 58);
 					return true;
 				}
 
@@ -176,17 +176,16 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				subArea.setName(newName);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{oldname}", oldName);
-				replacements.put("{newname}", newName);
-
-				PlayerUtils.sendMessage(player, 61, replacements);
+				Messages.send(player, 61, new Placeholder()
+						.add("{oldname}", oldName)
+						.add("{newname}", newName)
+				);
 
 				return true;
 			}
 			case "delete": {
 				if (!player.hasPermission("homestead.region.subareas.delete")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
@@ -195,27 +194,26 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
-					PlayerUtils.sendMessage(player, 60);
+					Messages.send(player, 60);
 					return true;
 				}
 
 				SubAreasManager.deleteSubArea(subArea.getUniqueId());
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{subarea}", subArea.getName());
-
-				PlayerUtils.sendMessage(player, 62, replacements);
+				Messages.send(player, 62, new Placeholder()
+						.add("{subarea}", subArea.getName())
+				);
 
 				return true;
 			}
 			case "flags": {
 				if (!player.hasPermission("homestead.region.subareas.flags")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
 				if (args.length < 4) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
@@ -224,14 +222,14 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
-					PlayerUtils.sendMessage(player, 60);
+					Messages.send(player, 60);
 					return true;
 				}
 
 				String flagInput = args[3];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {
-					PlayerUtils.sendMessage(player, 41);
+					Messages.send(player, 41);
 					return true;
 				}
 
@@ -271,24 +269,23 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				subArea.setFlags(newFlags);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{flag}", flagInput);
-				replacements.put("{state}", currentState ? "Deny" : "Allow");
-				replacements.put("{region}", region.getName());
-				replacements.put("{subarea}", subArea.getName());
-
-				PlayerUtils.sendMessage(player, 63, replacements);
+				Messages.send(player, 63, new Placeholder()
+						.add("{region}", region.getName())
+						.add("{flag}", flagInput)
+						.add("{subarea}", subArea.getName())
+						.add("{state}", currentState ? "Deny" : "Allow")
+				);
 
 				return true;
 			}
 			case "players": {
 				if (!player.hasPermission("homestead.region.subareas.players")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
 				if (args.length < 5) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
@@ -297,7 +294,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
-					PlayerUtils.sendMessage(player, 60);
+					Messages.send(player, 60);
 					return true;
 				}
 
@@ -306,10 +303,9 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 				if (target == null) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", playerName);
-
-					PlayerUtils.sendMessage(player, 29, replacements);
+					Messages.send(player, 29, new Placeholder()
+							.add("{playername}", playerName)
+					);
 					return true;
 				}
 
@@ -323,63 +319,61 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				switch (action.toLowerCase()) {
 					case "add": {
 						if (region.isOwner(target)) {
-							PlayerUtils.sendMessage(player, 30);
+							Messages.send(player, 30);
 							return true;
 						}
 
 						if (!region.isPlayerMember(target)) {
-							PlayerUtils.sendMessage(player, 171);
+							Messages.send(player, 171);
 							return true;
 						}
 
 						if (subArea.isPlayerMember(target)) {
-							PlayerUtils.sendMessage(player, 174);
+							Messages.send(player, 174);
 							return true;
 						}
 
 						subArea.addMember(target);
 
-						Map<String, String> replacements = new HashMap<String, String>();
-						replacements.put("{subarea}", subArea.getName());
-						replacements.put("{player}", target.getName());
-
-						PlayerUtils.sendMessage(player, 172, replacements);
+						Messages.send(player, 172, new Placeholder()
+								.add("{subarea}", subArea.getName())
+								.add("{player}", target.getName())
+						);
 
 						return true;
 					}
 
 					case "remove": {
 						if (!subArea.isPlayerMember(target)) {
-							PlayerUtils.sendMessage(player, 175);
+							Messages.send(player, 175);
 							return true;
 						}
 
 						subArea.removeMember(target);
 
-						Map<String, String> replacements = new HashMap<String, String>();
-						replacements.put("{subarea}", subArea.getName());
-						replacements.put("{player}", target.getName());
-
-						PlayerUtils.sendMessage(player, 173, replacements);
+						Messages.send(player, 173, new Placeholder()
+								.add("{subarea}", subArea.getName())
+								.add("{player}", target.getName())
+						);
 
 						return true;
 					}
 
 					case "flags": {
 						if (args.length < 6) {
-							PlayerUtils.sendMessage(player, 0);
+							Messages.send(player, 0);
 							return true;
 						}
 
 						if (!subArea.isPlayerMember(target)) {
-							PlayerUtils.sendMessage(player, 170);
+							Messages.send(player, 170);
 							return true;
 						}
 
 						String flagInput = args[5];
 
 						if (!PlayerFlags.getFlags().contains(flagInput)) {
-							PlayerUtils.sendMessage(player, 41);
+							Messages.send(player, 41);
 							return true;
 						}
 
@@ -421,26 +415,25 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 						subArea.setMemberFlags(member, newFlags);
 
-						Map<String, String> replacements = new HashMap<String, String>();
-						replacements.put("{flag}", flagInput);
-						replacements.put("{state}", currentState ? "Deny" : "Allow");
-						replacements.put("{region}", region.getName());
-						replacements.put("{subarea}", subArea.getName());
-						replacements.put("{player}", target.getName());
-
-						PlayerUtils.sendMessage(player, 169, replacements);
+						Messages.send(player, 169, new Placeholder()
+								.add("{region}", region.getName())
+								.add("{flag}", flagInput)
+								.add("{state}", currentState ? "Deny" : "Allow")
+								.add("{subarea}", subArea.getName())
+								.add("{player}", target.getName())
+						);
 
 						return true;
 					}
 
 					default: {
-						PlayerUtils.sendMessage(player, 0);
+						Messages.send(player, 0);
 						return true;
 					}
 				}
 			}
 			default: {
-				PlayerUtils.sendMessage(player, 0);
+				Messages.send(player, 0);
 				break;
 			}
 		}

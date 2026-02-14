@@ -16,7 +16,9 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.Arrays;
@@ -37,24 +39,24 @@ public class WarSubCmd extends SubCommandBuilder {
 		}
 
 		if (!player.hasPermission("homestead.region.war")) {
-			PlayerUtils.sendMessage(player, 8);
+			Messages.send(player, 8);
 			return true;
 		}
 
 		boolean isEnabled = Homestead.config.getBoolean("wars.enabled");
 
 		if (!isEnabled) {
-			PlayerUtils.sendMessage(player, 105);
+			Messages.send(player, 105);
 			return true;
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
 		if (!Homestead.vault.isEconomyReady()) {
-			PlayerUtils.sendMessage(player, 69);
+			Messages.send(player, 69);
 			Logger.warning("The player \"" + player.getName() + "\" (UUID: " + player.getUniqueId() + ") executed a command that requires economy implementation, but it's disabled.");
 			Logger.warning("The execution has been ignored, you may resolve this issue by installing a plugin that implements economy on the server.");
 
@@ -66,17 +68,17 @@ public class WarSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region != null && WarsManager.isRegionInWar(region.getUniqueId())) {
-					PlayerUtils.sendMessage(player, 151);
+					Messages.send(player, 151);
 					return false;
 				}
 
 				if (args.length < 4) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 4);
+					Messages.send(player, 4);
 					return false;
 				}
 
@@ -84,27 +86,27 @@ public class WarSubCmd extends SubCommandBuilder {
 				Region targetRegion = RegionsManager.findRegion(targetRegionName);
 
 				if (targetRegion == null) {
-					PlayerUtils.sendMessage(player, 9);
+					Messages.send(player, 9);
 					return true;
 				}
 
 				if (!region.isOwner(player) && region.isPlayerMember(player)) {
-					PlayerUtils.sendMessage(player, 149);
+					Messages.send(player, 149);
 					return false;
 				}
 
 				if (region.getUniqueId().equals(targetRegion.getUniqueId()) || region.isOwner(targetRegion.getOwnerId())) {
-					PlayerUtils.sendMessage(player, 148);
+					Messages.send(player, 148);
 					return false;
 				}
 
 				if (!(region.isWorldFlagSet(WorldFlags.WARS) && targetRegion.isWorldFlagSet(WorldFlags.WARS))) {
-					PlayerUtils.sendMessage(player, 164);
+					Messages.send(player, 164);
 					return false;
 				}
 
 				if (WarsManager.isRegionInWar(targetRegion.getUniqueId())) {
-					PlayerUtils.sendMessage(player, 150);
+					Messages.send(player, 150);
 					return false;
 				}
 
@@ -112,7 +114,7 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				if ((!NumberUtils.isValidDouble(prizeInput))
 						|| (NumberUtils.isValidDouble(prizeInput) && Double.parseDouble(prizeInput) > Integer.MAX_VALUE)) {
-					PlayerUtils.sendMessage(player, 146);
+					Messages.send(player, 146);
 					return true;
 				}
 
@@ -122,12 +124,12 @@ public class WarSubCmd extends SubCommandBuilder {
 				double maxPrize = Homestead.config.getDouble("wars.max-prize");
 
 				if (prize < minPrize || prize > maxPrize) {
-					PlayerUtils.sendMessage(player, 160);
+					Messages.send(player, 160);
 					return true;
 				}
 
 				if (!(targetRegion.getBank() >= prize && region.getBank() >= prize)) {
-					PlayerUtils.sendMessage(player, 157);
+					Messages.send(player, 157);
 					return true;
 				}
 
@@ -137,7 +139,7 @@ public class WarSubCmd extends SubCommandBuilder {
 				if (name.isEmpty()) name = "Unnamed War";
 
 				if (name.length() > 512) {
-					PlayerUtils.sendMessage(player, 145);
+					Messages.send(player, 145);
 					return true;
 				}
 
@@ -149,7 +151,7 @@ public class WarSubCmd extends SubCommandBuilder {
 				replacements.put("{war-name}", war.getName());
 				replacements.put("{regionplayer}", region.getName());
 				replacements.put("{regiontarget}", targetRegion.getName());
-				replacements.put("{prize}", Formatters.formatBalance(prize));
+				replacements.put("{prize}", Formatters.getBalance(prize));
 
 				List<OfflinePlayer> players = WarsManager.getMembersOfWar(war.getUniqueId());
 
@@ -160,7 +162,7 @@ public class WarSubCmd extends SubCommandBuilder {
 						player1.playSound(player1.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
 
 						for (String string : listString) {
-							player1.sendMessage(ChatColorTranslator.translate(Formatters.replace(string, replacements)));
+							player1.sendMessage(ColorTranslator.translate(Formatters.applyPlaceholders(string, replacements)));
 						}
 					}
 				}
@@ -170,19 +172,19 @@ public class WarSubCmd extends SubCommandBuilder {
 
 			case "surrender": {
 				if (args.length < 2) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 4);
+					Messages.send(player, 4);
 					return false;
 				}
 
 				if (!WarsManager.isRegionInWar(region.getUniqueId())) {
-					PlayerUtils.sendMessage(player, 152);
+					Messages.send(player, 152);
 					return true;
 				}
 
@@ -193,17 +195,17 @@ public class WarSubCmd extends SubCommandBuilder {
 
 					double prize = war.getPrize();
 
-					region.removeBalanceFromBank(prize);
+					region.withdrawBank(prize);
 					winner.addBalanceToBank(prize);
 
 					if (winner.getOwner().isOnline()) {
-						PlayerUtils.sendMessage((Player) winner.getOwner(), 155);
+						Messages.send((Player) winner.getOwner(), 155);
 					}
 
 					WarsManager.endWar(war.getUniqueId());
 				}
 
-				PlayerUtils.sendMessage(player, 153);
+				Messages.send(player, 153);
 
 				break;
 			}
@@ -212,22 +214,21 @@ public class WarSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 4);
+					Messages.send(player, 4);
 					return false;
 				}
 
 				War war = WarsManager.findWarByRegionId(region.getUniqueId());
 
 				if (!WarsManager.isRegionInWar(region.getUniqueId()) || war == null) {
-					PlayerUtils.sendMessage(player, 152);
+					Messages.send(player, 152);
 					return true;
 				}
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{regions}", Formatters.getRegionsOfWar(war));
-				replacements.put("{prize}", Formatters.formatBalance(war.prize));
-
-				PlayerUtils.sendMessage(player, 154, replacements);
+				Messages.send(player, 154, new Placeholder()
+						.add("{regions}", Formatters.getRegionsOfWar(war))
+						.add("{prize}", Formatters.getBalance(war.getPrize()))
+				);
 			}
 		}
 

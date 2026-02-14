@@ -72,7 +72,7 @@ public final class EntityDeathListener implements Listener {
 		replacements.put("{entity}", getBeautifulName(entity));
 		replacements.put("{xp}", NumberUtils.convertToBalance(amount));
 
-		PlayerUtils.sendMessage(killer, 198, replacements);
+		Messages.send(killer, 198, replacements);
 
 		killer.playSound(killer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.2f);
 

@@ -29,7 +29,7 @@ public class RegionRatingMenu {
 
 			region.addPlayerRate(player, 1);
 
-			PlayerUtils.sendMessage(player, 134);
+			Messages.send(player, 134);
 
 			new RegionRatingMenu(player, region, backButton);
 		});
@@ -43,7 +43,7 @@ public class RegionRatingMenu {
 
 			region.addPlayerRate(player, 2);
 
-			PlayerUtils.sendMessage(player, 134);
+			Messages.send(player, 134);
 
 			new RegionRatingMenu(player, region, backButton);
 		});
@@ -57,7 +57,7 @@ public class RegionRatingMenu {
 
 			region.addPlayerRate(player, 3);
 
-			PlayerUtils.sendMessage(player, 134);
+			Messages.send(player, 134);
 
 			new RegionRatingMenu(player, region, backButton);
 		});
@@ -71,7 +71,7 @@ public class RegionRatingMenu {
 
 			region.addPlayerRate(player, 4);
 
-			PlayerUtils.sendMessage(player, 134);
+			Messages.send(player, 134);
 
 			new RegionRatingMenu(player, region, backButton);
 		});
@@ -85,7 +85,7 @@ public class RegionRatingMenu {
 
 			region.addPlayerRate(player, 5);
 
-			PlayerUtils.sendMessage(player, 134);
+			Messages.send(player, 134);
 
 			new RegionRatingMenu(player, region, backButton);
 		});

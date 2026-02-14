@@ -84,7 +84,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(sender, 0);
+			Messages.send(sender, 0);
 			return true;
 		}
 
@@ -93,7 +93,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 		switch (pluginInput.toLowerCase()) {
 			case "griefprevention": {
 				if (!isGriefPreventionInstalled()) {
-					PlayerUtils.sendMessage(sender, 114);
+					Messages.send(sender, 114);
 					return true;
 				}
 
@@ -142,13 +142,13 @@ public class ImportSubCmd extends SubCommandBuilder {
 				Map<String, String> replacements = new HashMap<>();
 				replacements.put("{regions}", String.valueOf(imported));
 
-				PlayerUtils.sendMessage(sender, 115, replacements);
+				Messages.send(sender, 115, replacements);
 
 				break;
 			}
 			case "landlord": {
 				if (!isLandLordInstalled()) {
-					PlayerUtils.sendMessage(sender, 114);
+					Messages.send(sender, 114);
 					return true;
 				}
 
@@ -222,13 +222,13 @@ public class ImportSubCmd extends SubCommandBuilder {
 				Map<String, String> replacements = new HashMap<>();
 				replacements.put("{regions}", String.valueOf(imported));
 
-				PlayerUtils.sendMessage(sender, 115, replacements);
+				Messages.send(sender, 115, replacements);
 
 				break;
 			}
 			case "claimchunk": {
 				if (!isClaimChunkInstalled()) {
-					PlayerUtils.sendMessage(sender, 114);
+					Messages.send(sender, 114);
 					return true;
 				}
 
@@ -265,13 +265,13 @@ public class ImportSubCmd extends SubCommandBuilder {
 				Map<String, String> replacements = new HashMap<>();
 				replacements.put("{regions}", String.valueOf(imported));
 
-				PlayerUtils.sendMessage(sender, 115, replacements);
+				Messages.send(sender, 115, replacements);
 
 				break;
 			}
 			case "lands": {
 				if (!isLandsInstalled()) {
-					PlayerUtils.sendMessage(sender, 114);
+					Messages.send(sender, 114);
 					return true;
 				}
 
@@ -326,14 +326,14 @@ public class ImportSubCmd extends SubCommandBuilder {
 				Map<String, String> replacements = new HashMap<>();
 				replacements.put("{regions}", String.valueOf(imported));
 
-				PlayerUtils.sendMessage(sender, 115, replacements);
+				Messages.send(sender, 115, replacements);
 
 				break;
 			}
 			// this api gave me headache, please do not touch it
 			case "huskclaims": {
 				if (!isHuskClaimsInstalled()) {
-					PlayerUtils.sendMessage(sender, 114);
+					Messages.send(sender, 114);
 					return true;
 				}
 
@@ -378,12 +378,12 @@ public class ImportSubCmd extends SubCommandBuilder {
 				Map<String, String> replacements = new HashMap<>();
 				replacements.put("{regions}", String.valueOf(imported));
 
-				PlayerUtils.sendMessage(sender, 115, replacements);
+				Messages.send(sender, 115, replacements);
 
 				break;
 			}
 			default:
-				PlayerUtils.sendMessage(sender, 113);
+				Messages.send(sender, 113);
 				break;
 		}
 

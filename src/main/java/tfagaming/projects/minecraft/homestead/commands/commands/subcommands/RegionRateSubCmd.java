@@ -6,6 +6,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionRatingMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 public class RegionRateSubCmd extends SubCommandBuilder {
@@ -21,7 +22,7 @@ public class RegionRateSubCmd extends SubCommandBuilder {
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
@@ -30,7 +31,7 @@ public class RegionRateSubCmd extends SubCommandBuilder {
 		Region region = RegionsManager.findRegion(regionName);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 9);
+			Messages.send(player, 9);
 			return false;
 		}
 

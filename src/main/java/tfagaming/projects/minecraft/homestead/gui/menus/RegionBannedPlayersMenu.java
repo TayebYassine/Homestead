@@ -39,7 +39,7 @@ public class RegionBannedPlayersMenu {
 			if (context.getEvent().isLeftClick()) {
 				if (region.isPlayerBanned(bannedPlayer.getBukkitOfflinePlayer())) {
 					if (!player.hasPermission("homestead.region.players.unban")) {
-						PlayerUtils.sendMessage(player, 8);
+						Messages.send(player, 8);
 						return;
 					}
 
@@ -54,7 +54,7 @@ public class RegionBannedPlayersMenu {
 					replacements.put("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName());
 					replacements.put("{region}", region.getName());
 
-					PlayerUtils.sendMessage(player, 34, replacements);
+					Messages.send(player, 34, replacements);
 
 					PaginationMenu instance = context.getInstance();
 
@@ -71,7 +71,7 @@ public class RegionBannedPlayersMenu {
 			}
 
 			if (!player.hasPermission("homestead.region.players.ban")) {
-				PlayerUtils.sendMessage(player, 8);
+				Messages.send(player, 8);
 				return;
 			}
 
@@ -87,7 +87,7 @@ public class RegionBannedPlayersMenu {
 				replacements.put("{region}", region.getName());
 				replacements.put("{reason}", Homestead.language.get("default.reason"));
 
-				PlayerUtils.sendMessage(player, 31, replacements);
+				Messages.send(player, 31, replacements);
 
 				if (region.isPlayerMember(targetPlayer)) {
 					region.removeMember(targetPlayer);
@@ -107,7 +107,7 @@ public class RegionBannedPlayersMenu {
 					Map<String, String> replacements = new HashMap<String, String>();
 					replacements.put("{playername}", message);
 
-					PlayerUtils.sendMessage(player, 29, replacements);
+					Messages.send(player, 29, replacements);
 					return false;
 				}
 
@@ -120,19 +120,19 @@ public class RegionBannedPlayersMenu {
 					Map<String, String> replacements = new HashMap<String, String>();
 					replacements.put("{playername}", target.getName());
 
-					PlayerUtils.sendMessage(player, 32, replacements);
+					Messages.send(player, 32, replacements);
 					return false;
 				}
 
 				if (region.isOwner(target)) {
-					PlayerUtils.sendMessage(player, 30);
+					Messages.send(player, 30);
 					return false;
 				}
 
 				SerializableRent rent = region.getRent();
 
 				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
-					PlayerUtils.sendMessage(player, 196);
+					Messages.send(player, 196);
 					return true;
 				}
 
@@ -150,7 +150,7 @@ public class RegionBannedPlayersMenu {
 			}
 
 			if (!player.hasPermission("homestead.region.players.unban")) {
-				PlayerUtils.sendMessage(player, 8);
+				Messages.send(player, 8);
 				return;
 			}
 
@@ -160,13 +160,13 @@ public class RegionBannedPlayersMenu {
 			}
 
 			if (region.getBannedPlayers().isEmpty()) {
-				PlayerUtils.sendMessage(player, 77);
+				Messages.send(player, 77);
 				return;
 			}
 
 			region.setBannedPlayers(new ArrayList<>());
 
-			PlayerUtils.sendMessage(player, 94);
+			Messages.send(player, 94);
 
 			Homestead.getInstance().runSyncTask(() -> {
 				new RegionBannedPlayersMenu(player, region);

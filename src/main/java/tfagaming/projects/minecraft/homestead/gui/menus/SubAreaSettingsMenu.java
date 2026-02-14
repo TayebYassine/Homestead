@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -35,21 +36,14 @@ public class SubAreaSettingsMenu {
 			}
 
 			if (!player.hasPermission("homestead.region.subareas.rename")) {
-				PlayerUtils.sendMessage(player, 8);
+				Messages.send(player, 8);
 				return;
 			}
 
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
-				final String oldName = subArea.getName();
-
 				subArea.setName(input);
-
-				replacements.put("{oldname}", oldName);
-				replacements.put("{newname}", input);
-
-				PlayerUtils.sendMessage(player, 61, replacements);
 
 				Homestead.getInstance().runSyncTask(() -> {
 					new SubAreaSettingsMenu(player, region, subArea);
@@ -61,17 +55,17 @@ public class SubAreaSettingsMenu {
 				}
 
 				if (!StringUtils.isValidSubAreaName(message)) {
-					PlayerUtils.sendMessage(player, 57);
+					Messages.send(player, 57);
 					return false;
 				}
 
 				if (subArea.getName().equalsIgnoreCase(message)) {
-					PlayerUtils.sendMessage(player, 11);
+					Messages.send(player, 11);
 					return false;
 				}
 
 				if (SubAreasManager.isNameUsed(region.getUniqueId(), message)) {
-					PlayerUtils.sendMessage(player, 58);
+					Messages.send(player, 58);
 					return false;
 				}
 
@@ -91,7 +85,7 @@ public class SubAreaSettingsMenu {
 			}
 
 			if (!player.hasPermission("homestead.region.subareas.flags")) {
-				PlayerUtils.sendMessage(player, 8);
+				Messages.send(player, 8);
 				return;
 			}
 
@@ -108,7 +102,7 @@ public class SubAreaSettingsMenu {
 			}
 
 			if (!player.hasPermission("homestead.region.subareas.flags")) {
-				PlayerUtils.sendMessage(player, 8);
+				Messages.send(player, 8);
 				return;
 			}
 
@@ -120,7 +114,7 @@ public class SubAreaSettingsMenu {
 		if (rent != null) {
 			replacements.put("{rent-enabled}", Formatters.getEnabled(isRentEnabled));
 			replacements.put("{rent-renter}", rent.getPlayer().getName());
-			replacements.put("{rent-price}", Formatters.formatBalance(rent.getPrice()));
+			replacements.put("{rent-price}", Formatters.getBalance(rent.getPrice()));
 			replacements.put("{rent-until}", Formatters.formatRemainingTime(rent.getUntilAt()));
 		} else {
 			replacements.put("{rent-enabled}", Formatters.getEnabled(isRentEnabled));
@@ -135,16 +129,16 @@ public class SubAreaSettingsMenu {
 			if (event.isLeftClick()) {
 				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.isOwner(player);
 				if (!isOwnerOrOperator) {
-					PlayerUtils.sendMessage(player, 159);
+					Messages.send(player, 159);
 					return;
 				}
 
 				if (subArea.getRent() == null) {
-					PlayerUtils.sendMessage(player, 195);
+					Messages.send(player, 195);
 				} else {
 					subArea.setRent(null);
 
-					PlayerUtils.sendMessage(player, 127);
+					Messages.send(player, 127);
 
 					new SubAreaSettingsMenu(player, region, subArea);
 				}
@@ -159,7 +153,7 @@ public class SubAreaSettingsMenu {
 			}
 
 			if (!player.hasPermission("homestead.region.subareas.delete")) {
-				PlayerUtils.sendMessage(player, 8);
+				Messages.send(player, 8);
 				return;
 			}
 
@@ -169,8 +163,6 @@ public class SubAreaSettingsMenu {
 			}
 
 			SubAreasManager.deleteSubArea(subArea.getUniqueId());
-
-			PlayerUtils.sendMessage(player, 62, replacements);
 
 			new SubAreasMenu(player, region);
 		});

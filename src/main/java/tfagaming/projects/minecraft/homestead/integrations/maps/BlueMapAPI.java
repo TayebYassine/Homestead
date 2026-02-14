@@ -16,7 +16,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.Collection;
@@ -99,7 +99,7 @@ public class BlueMapAPI {
 		Map<String, String> replacements = new HashMap<>();
 		replacements.put("{region}", region.getName());
 		replacements.put("{region-owner}", region.getOwner().getName());
-		replacements.put("{region-members}", ChatColorTranslator.removeColor(
+		replacements.put("{region-members}", ColorTranslator.removeColor(
 				Formatters.getMembersOfRegion(region), false));
 		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 		replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
@@ -114,7 +114,7 @@ public class BlueMapAPI {
 		);
 
 		String plainLabel = region.getName() + " (#" + RegionsManager.getGlobalRank(region.getUniqueId()) + ")";
-		plainLabel = ChatColorTranslator.removeColor(plainLabel, false)
+		plainLabel = ColorTranslator.removeColor(plainLabel, false)
 				.replaceAll("<[^>]*>", "")
 				.replaceAll("&lt;[^&]*&gt;", "")
 				.trim();

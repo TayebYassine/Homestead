@@ -5,6 +5,11 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
+import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.io.IOException;
@@ -20,21 +25,21 @@ public class ExportSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(sender, 0);
+			Messages.send(sender, 0);
 			return true;
 		}
 
 		String provider = args[1];
 
 		if (Database.parseProviderFromString(provider) == null) {
-			PlayerUtils.sendMessage(sender, 84);
+			Messages.send(sender, 84);
 			return true;
 		}
 
 		String currentProvider = Homestead.database.getSelectedProvider();
 
 		if (currentProvider.equalsIgnoreCase(provider)) {
-			PlayerUtils.sendMessage(sender, 85);
+			Messages.send(sender, 85);
 			return true;
 		}
 
@@ -51,19 +56,18 @@ public class ExportSubCmd extends SubCommandBuilder {
 			instance.exportWars();
 			instance.exportSubAreas();
 
-			Map<String, String> replacements = new HashMap<>();
-			replacements.put("{regions}", String.valueOf(Homestead.regionsCache.getAll().size()));
-			replacements.put("{wars}", String.valueOf(Homestead.warsCache.getAll().size()));
-			replacements.put("{subareas}", String.valueOf(Homestead.subAreasCache.getAll().size()));
-			replacements.put("{current-provider}", currentProvider);
-			replacements.put("{selected-provider}", provider);
-
-			PlayerUtils.sendMessage(sender, 86, replacements);
+			Messages.send(sender, 86, new Placeholder()
+					.add("{regions}", RegionsManager.getAll().size())
+					.add("{wars}", WarsManager.getAll().size())
+					.add("{subareas}", SubAreasManager.getAll().size())
+					.add("{current-provider}", currentProvider)
+					.add("{selected-provider}", provider)
+			);
 
 			instance.closeConnection();
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			Logger.error(e);
-			PlayerUtils.sendMessage(sender, 87);
+			Messages.send(sender, 87);
 		}
 
 		return true;

@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class DelayedTeleport {
 			return;
 		}
 
-		PlayerUtils.sendMessage(player, 53);
+		Messages.send(player, 53);
 
 		int delay = Homestead.config.getInt("delayed-teleport.delay");
 
@@ -67,7 +68,7 @@ public class DelayedTeleport {
 
 	private void teleportPlayer(Player player, Location location) {
 		if (location == null) {
-			PlayerUtils.sendMessage(player, 52);
+			Messages.send(player, 52);
 			return;
 		}
 
@@ -77,6 +78,6 @@ public class DelayedTeleport {
 		Map<String, String> replacements = new HashMap<>();
 		replacements.put("{location}", Formatters.formatLocation(location));
 
-		PlayerUtils.sendMessage(player, 51, replacements);
+		Messages.send(player, 51, replacements);
 	}
 }

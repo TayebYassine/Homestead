@@ -38,14 +38,14 @@ public class MemberRgControlFlagsMenu {
 			}
 
 			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
-				PlayerUtils.sendMessage(player, 159);
+				Messages.send(player, 159);
 				return;
 			}
 
 			String flagString = RegionControlFlags.getFlags().get(context.getIndex());
 
 			if (Homestead.config.isFlagDisabled(flagString)) {
-				PlayerUtils.sendMessage(player, 42);
+				Messages.send(player, 42);
 				return;
 			}
 
@@ -77,7 +77,7 @@ public class MemberRgControlFlagsMenu {
 				replacements.put("{region}", region.getName());
 				replacements.put("{player}", member.getBukkitOfflinePlayer().getName());
 
-				PlayerUtils.sendMessage(player, 43, replacements);
+				Messages.send(player, 43, replacements);
 
 				instance.replaceSlot(context.getIndex(),
 						MenuUtils.getFlagButton(flagString, !isSet));

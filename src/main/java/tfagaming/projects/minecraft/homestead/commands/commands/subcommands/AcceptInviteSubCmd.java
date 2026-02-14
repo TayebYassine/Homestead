@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -24,7 +26,7 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
@@ -33,20 +35,19 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 		Region region = RegionsManager.findRegion(regionName);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 9);
+			Messages.send(player, 9);
 			return false;
 		}
 
 		if (!region.isPlayerInvited(player)) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{region}", region.getName());
-
-			PlayerUtils.sendMessage(player, 45, replacements);
+			Messages.send(player, 45, new Placeholder()
+					.add("{region}", region.getName())
+			);
 			return true;
 		}
 
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-			PlayerUtils.sendMessage(player, 116);
+			Messages.send(player, 116);
 			return true;
 		}
 
@@ -54,12 +55,15 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 
 		region.addMember(player);
 
-		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{playername}", player.getName());
+		Messages.send(player, 46, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{playername}", player.getName())
+		);
 
-		PlayerUtils.sendMessage(player, 46, replacements);
-		PlayerUtils.sendMessage(region.getOwner().getPlayer(), 138, replacements);
+		Messages.send(region.getOwner().getPlayer(), 138, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{playername}", player.getName())
+		);
 
 		return true;
 	}

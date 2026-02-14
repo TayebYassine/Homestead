@@ -10,7 +10,7 @@ import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ChatColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.ButtonData;
 
 import java.net.MalformedURLException;
@@ -42,7 +42,7 @@ public class ItemUtils {
 		ItemMeta meta = item.getItemMeta();
 
 		if (meta != null) {
-			meta.setDisplayName(ChatColorTranslator.translate(displayname));
+			meta.setDisplayName(ColorTranslator.translate(displayname));
 
 			if (loreCopy != null) {
 				ArrayList<String> lorelist = new ArrayList<>();
@@ -52,7 +52,7 @@ public class ItemUtils {
 						if (!line.contains("&")) {
 							line = "&f" + line;
 						}
-						lorelist.add(ChatColorTranslator.translate(line));
+						lorelist.add(ColorTranslator.translate(line));
 					}
 				}
 				meta.setLore(lorelist);
@@ -93,7 +93,7 @@ public class ItemUtils {
 		ItemMeta meta = item.getItemMeta();
 
 		if (meta != null) {
-			meta.setDisplayName(ChatColorTranslator.translate(displayname));
+			meta.setDisplayName(ColorTranslator.translate(displayname));
 
 			if (loreCopy != null) {
 				ArrayList<String> lorelist = new ArrayList<>();
@@ -103,7 +103,7 @@ public class ItemUtils {
 						if (!line.contains("&")) {
 							line = "&f" + line;
 						}
-						lorelist.add(ChatColorTranslator.translate(line));
+						lorelist.add(ColorTranslator.translate(line));
 					}
 				}
 				meta.setLore(lorelist);
@@ -175,7 +175,7 @@ public class ItemUtils {
 		ItemMeta meta = item.getItemMeta();
 
 		if (meta != null) {
-			meta.setDisplayName(ChatColorTranslator.translate(displayname));
+			meta.setDisplayName(ColorTranslator.translate(displayname));
 
 			if (loreCopy != null) {
 				ArrayList<String> lorelist = new ArrayList<>();
@@ -183,7 +183,7 @@ public class ItemUtils {
 					if (!each.contains("&")) {
 						each = "&f" + each;
 					}
-					lorelist.add(ChatColorTranslator.translate(each));
+					lorelist.add(ColorTranslator.translate(each));
 				}
 				meta.setLore(lorelist);
 			}

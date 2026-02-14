@@ -48,7 +48,7 @@ public class RegionLogsMenu {
 			} else if (context.getEvent().isRightClick()) {
 				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.isOwner(player);
 				if (!isOwnerOrOperator) {
-					PlayerUtils.sendMessage(player, 159);
+					Messages.send(player, 159);
 					return;
 				}
 
@@ -68,7 +68,7 @@ public class RegionLogsMenu {
 			}
 
 			if (region.getLogs().isEmpty()) {
-				PlayerUtils.sendMessage(player, 91);
+				Messages.send(player, 91);
 				return;
 			}
 
@@ -76,7 +76,7 @@ public class RegionLogsMenu {
 				region.setLogAsRead(log.getId());
 			}
 
-			PlayerUtils.sendMessage(player, 92);
+			Messages.send(player, 92);
 
 			Homestead.getInstance().runSyncTask(() -> {
 				new RegionLogsMenu(player, region);
@@ -90,18 +90,18 @@ public class RegionLogsMenu {
 
 			boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.isOwner(player);
 			if (!isOwnerOrOperator) {
-				PlayerUtils.sendMessage(player, 159);
+				Messages.send(player, 159);
 				return;
 			}
 
 			if (region.getLogs().isEmpty()) {
-				PlayerUtils.sendMessage(player, 83);
+				Messages.send(player, 83);
 				return;
 			}
 
 			region.setLogs(new ArrayList<>());
 
-			PlayerUtils.sendMessage(player, 93);
+			Messages.send(player, 93);
 
 			Homestead.getInstance().runSyncTask(() -> {
 				new RegionLogsMenu(player, region);

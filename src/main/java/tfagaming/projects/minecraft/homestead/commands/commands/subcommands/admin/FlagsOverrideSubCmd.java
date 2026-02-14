@@ -9,6 +9,8 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -22,7 +24,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(sender, 0);
+			Messages.send(sender, 0);
 			return true;
 		}
 
@@ -32,7 +34,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 			switch (setType) {
 				case "member": {
 					if (args.length < 4) {
-						PlayerUtils.sendMessage(sender, 0);
+						Messages.send(sender, 0);
 						return true;
 					}
 
@@ -41,10 +43,9 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 					OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 					if (target == null) {
-						Map<String, String> replacements = new HashMap<String, String>();
-						replacements.put("{playername}", targetName);
-
-						PlayerUtils.sendMessage(sender, 29, replacements);
+						Messages.send(sender, 29, new Placeholder()
+								.add("{playername}", targetName)
+						);
 						return true;
 					}
 
@@ -55,7 +56,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 					String flagInput = args[3];
 
 					if (!PlayerFlags.getFlags().contains(flagInput)) {
-						PlayerUtils.sendMessage(sender, 41);
+						Messages.send(sender, 41);
 						return true;
 					}
 
@@ -95,26 +96,25 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 
 					region.setMemberFlags(region.getMember(target), newFlags);
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{flag}", flagInput);
-					replacements.put("{state}", currentState ? "Deny" : "Allow");
-					replacements.put("{player}", target.getName());
-					replacements.put("{region}", region.getName());
-
-					PlayerUtils.sendMessage(sender, 43, replacements);
+					Messages.send(sender, 43, new Placeholder()
+							.add("{region}", region.getName())
+							.add("{flag}", flagInput)
+							.add("{state}", currentState ? "Deny" : "Allow")
+							.add("{player}", target.getName())
+					);
 
 					break;
 				}
 				case "global": {
 					if (args.length < 3) {
-						PlayerUtils.sendMessage(sender, 0);
+						Messages.send(sender, 0);
 						return true;
 					}
 
 					String flagInput = args[2];
 
 					if (!PlayerFlags.getFlags().contains(flagInput)) {
-						PlayerUtils.sendMessage(sender, 41);
+						Messages.send(sender, 41);
 						return true;
 					}
 
@@ -154,25 +154,24 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 
 					region.setPlayerFlags(newFlags);
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{flag}", flagInput);
-					replacements.put("{state}", currentState ? "Deny" : "Allow");
-					replacements.put("{region}", region.getName());
-
-					PlayerUtils.sendMessage(sender, 44, replacements);
+					Messages.send(sender, 44, new Placeholder()
+							.add("{region}", region.getName())
+							.add("{flag}", flagInput)
+							.add("{state}", currentState ? "Deny" : "Allow")
+					);
 
 					break;
 				}
 				case "world": {
 					if (args.length < 3) {
-						PlayerUtils.sendMessage(sender, 0);
+						Messages.send(sender, 0);
 						return true;
 					}
 
 					String flagInput = args[2];
 
 					if (!WorldFlags.getFlags().contains(flagInput)) {
-						PlayerUtils.sendMessage(sender, 41);
+						Messages.send(sender, 41);
 						return true;
 					}
 
@@ -212,17 +211,16 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 
 					region.setWorldFlags(newFlags);
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{flag}", flagInput);
-					replacements.put("{state}", currentState ? "Deny" : "Allow");
-					replacements.put("{region}", region.getName());
-
-					PlayerUtils.sendMessage(sender, 49, replacements);
+					Messages.send(sender, 49, new Placeholder()
+							.add("{region}", region.getName())
+							.add("{flag}", flagInput)
+							.add("{state}", currentState ? "Deny" : "Allow")
+					);
 
 					break;
 				}
 				default: {
-					PlayerUtils.sendMessage(sender, 0);
+					Messages.send(sender, 0);
 					break;
 				}
 			}

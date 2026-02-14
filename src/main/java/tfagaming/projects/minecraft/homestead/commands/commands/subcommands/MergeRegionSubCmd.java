@@ -7,6 +7,8 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.mergingregion.MergeRegionSession;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -27,12 +29,12 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
@@ -41,46 +43,45 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 		Region targetRegion = RegionsManager.findRegion(regionName);
 
 		if (targetRegion == null) {
-			PlayerUtils.sendMessage(player, 9);
+			Messages.send(player, 9);
 			return false;
 		}
 
 		if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
-			PlayerUtils.sendMessage(player, 30);
+			Messages.send(player, 30);
 			return false;
 		}
 
 		if (region.getUniqueId().equals(targetRegion.getUniqueId())) {
-			PlayerUtils.sendMessage(player, 176);
+			Messages.send(player, 176);
 			return false;
 		}
 
 		if (targetRegion.getOwner() != null && !targetRegion.getOwner().isOnline()) {
-			PlayerUtils.sendMessage(player, 179);
+			Messages.send(player, 179);
 			return false;
 		}
 
 		if (MergeRegionSession.isFromHaveRequest(region)) {
-			PlayerUtils.sendMessage(player, 177);
+			Messages.send(player, 177);
 			return false;
 		}
 
 		if (MergeRegionSession.isToHaveRequest(targetRegion)) {
-			PlayerUtils.sendMessage(player, 178);
+			Messages.send(player, 178);
 			return false;
 		}
 
 		MergeRegionSession.newMergeRequest(region, targetRegion);
 
-		PlayerUtils.sendMessage(player, 180);
+		Messages.send(player, 180);
 
 		if (targetRegion.getOwner() != null && targetRegion.getOwner().isOnline()) {
-			Map<String, String> replacements = new HashMap<>();
-			replacements.put("{region}", region.getName());
-			replacements.put("{targetregion}", targetRegion.getName());
-			replacements.put("{player}", player.getName());
-
-			PlayerUtils.sendMessage((Player) targetRegion.getOwner(), 181, replacements);
+			Messages.send((Player) targetRegion.getOwner(), 181, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{targetregion}", targetRegion.getName())
+					.add("{player}", player.getName())
+			);
 		}
 
 		return true;

@@ -11,6 +11,9 @@ import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegi
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -29,17 +32,17 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 		}
 
 		if (!player.hasPermission("homestead.region.bank")) {
-			PlayerUtils.sendMessage(player, 8);
+			Messages.send(player, 8);
 			return true;
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
 		if (!Homestead.vault.isEconomyReady()) {
-			PlayerUtils.sendMessage(player, 69);
+			Messages.send(player, 69);
 			Logger.warning("The player \"" + player.getName() + "\" (UUID: " + player.getUniqueId()
 					+ ") executed a command that requires economy implementation, but it's disabled.");
 			Logger.warning(
@@ -51,12 +54,12 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
 		if (WarsManager.isRegionInWar(region.getUniqueId())) {
-			PlayerUtils.sendMessage(player, 156);
+			Messages.send(player, 156);
 			return true;
 		}
 
@@ -69,31 +72,29 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 
 		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput))
 				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > 2147483647)) {
-			PlayerUtils.sendMessage(player, 64);
+			Messages.send(player, 64);
 			return true;
 		}
 
-		double amount = amountInput.equalsIgnoreCase("all") ? PlayerUtils.getBalance(player)
-				: Double.parseDouble(amountInput);
+		double amount = amountInput.equalsIgnoreCase("all") ? PlayerBank.get(player) : Double.parseDouble(amountInput);
 
 		if (amount <= 0) {
-			PlayerUtils.sendMessage(player, 64);
+			Messages.send(player, 64);
 			return true;
 		}
 
-		if (amount > PlayerUtils.getBalance(player)) {
-			PlayerUtils.sendMessage(player, 65);
+		if (amount > PlayerBank.get(player)) {
+			Messages.send(player, 65);
 			return true;
 		}
 
-		PlayerUtils.removeBalance(player, amount);
+		PlayerBank.withdraw(player, amount);
 		region.addBalanceToBank(amount);
 
-		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{amount}", Formatters.formatBalance(amount));
-
-		PlayerUtils.sendMessage(player, 66, replacements);
+		Messages.send(player, 66, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{amount}", Formatters.getBalance(amount))
+		);
 
 		return true;
 	}

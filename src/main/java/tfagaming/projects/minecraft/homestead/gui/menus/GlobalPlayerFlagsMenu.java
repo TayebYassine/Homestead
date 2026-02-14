@@ -46,7 +46,7 @@ public class GlobalPlayerFlagsMenu {
 			List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
 
 			if (Homestead.config.isFlagDisabled(flagString)) {
-				PlayerUtils.sendMessage(player, 42);
+				Messages.send(player, 42);
 				return;
 			}
 
@@ -77,7 +77,7 @@ public class GlobalPlayerFlagsMenu {
 				replacements.put("{state}", Formatters.getFlag(!isSet));
 				replacements.put("{region}", region.getName());
 
-				PlayerUtils.sendMessage(player, 44, replacements);
+				Messages.send(player, 44, replacements);
 
 				instance.replaceSlot(context.getIndex(),
 						MenuUtils.getFlagButton(flagString, !isSet));

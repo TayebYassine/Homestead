@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
 
@@ -54,8 +55,8 @@ public final class MemberTaxes {
 							replacements.put("{balance}",
 									Formatters.formatBalance(PlayerUtils.getBalance(targetPlayer)));
 
-							PlayerUtils.sendMessage(targetPlayerOnline, 106, replacements);
-							PlayerUtils.sendMessage(targetPlayerOnline, 107, replacements);
+							Messages.send(targetPlayerOnline, 106, replacements);
+							Messages.send(targetPlayerOnline, 107, replacements);
 						}
 					} else {
 						region.removeMember(targetPlayer);
@@ -65,13 +66,14 @@ public final class MemberTaxes {
 							Map<String, String> replacements = new HashMap<String, String>();
 							replacements.put("{region}", region.getName());
 
-							PlayerUtils.sendMessage(targetPlayerOnline, 108, replacements);
+							Messages.send(targetPlayerOnline, 108, replacements);
 						}
 
 						Map<String, String> replacements = new HashMap<String, String>();
 						replacements.put("{playername}", member.getBukkitOfflinePlayer().getName());
 
-						RegionsManager.addNewLog(region.getUniqueId(), 5, replacements);
+						// TODO Fix this
+						// RegionsManager.addNewLog(region.getUniqueId(), 5, replacements);
 					}
 				}
 			}

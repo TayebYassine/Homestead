@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 public class CheckUpdatesSubCmd extends SubCommandBuilder {
@@ -13,13 +14,13 @@ public class CheckUpdatesSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		PlayerUtils.sendMessage(sender, 98);
+		Messages.send(sender, 98);
 
 		Homestead.getInstance().runAsyncTask(() -> {
 			if (UpdateChecker.check(Homestead.getInstance())) {
-				PlayerUtils.sendMessage(sender, 97);
+				Messages.send(sender, 97);
 			} else {
-				PlayerUtils.sendMessage(sender, 96);
+				Messages.send(sender, 96);
 			}
 		});
 

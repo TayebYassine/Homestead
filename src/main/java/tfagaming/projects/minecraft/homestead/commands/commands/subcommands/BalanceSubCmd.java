@@ -9,6 +9,8 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -27,12 +29,12 @@ public class BalanceSubCmd extends SubCommandBuilder {
 		}
 
 		if (!player.hasPermission("homestead.region.bank")) {
-			PlayerUtils.sendMessage(player, 8);
+			Messages.send(player, 8);
 			return true;
 		}
 
 		if (!Homestead.vault.isEconomyReady()) {
-			PlayerUtils.sendMessage(player, 69);
+			Messages.send(player, 69);
 			Logger.warning("The player \"" + player.getName() + "\" (UUID: " + player.getUniqueId()
 					+ ") executed a command that requires economy implementation, but it's disabled.");
 			Logger.warning(
@@ -49,23 +51,22 @@ public class BalanceSubCmd extends SubCommandBuilder {
 			region = RegionsManager.findRegion(regionName);
 
 			if (region == null) {
-				PlayerUtils.sendMessage(player, 9);
+				Messages.send(player, 9);
 				return false;
 			}
 		} else {
 			region = TargetRegionSession.getRegion(player);
 
 			if (region == null) {
-				PlayerUtils.sendMessage(player, 4);
+				Messages.send(player, 4);
 				return true;
 			}
 		}
 
-		Map<String, String> replacements = new HashMap<String, String>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{balance}", Formatters.formatBalance(region.getBank()));
-
-		PlayerUtils.sendMessage(player, 167, replacements);
+		Messages.send(player, 167, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{balance}", Formatters.getBalance(region.getBank()))
+		);
 
 		return true;
 	}

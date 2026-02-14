@@ -10,6 +10,8 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -29,19 +31,19 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		if (!player.hasPermission("homestead.region.players.trust")) {
-			PlayerUtils.sendMessage(player, 8);
+			Messages.send(player, 8);
 			return true;
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
@@ -58,45 +60,45 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			Map<String, String> replacements = new HashMap<String, String>();
 			replacements.put("{playername}", targetName);
 
-			PlayerUtils.sendMessage(player, 29, replacements);
+			Messages.send(player, 29, new Placeholder()
+					.add("{playername}", targetName)
+			);
 			return true;
 		}
 
 		if (region.isPlayerBanned(target)) {
-			PlayerUtils.sendMessage(player, 74);
+			Messages.send(player, 74);
 			return true;
 		}
 
 		if (region.isPlayerMember(target)) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{playername}", target.getName());
-
-			PlayerUtils.sendMessage(player, 48, replacements);
+			Messages.send(player, 48, new Placeholder()
+					.add("{playername}", target.getName())
+			);
 			return true;
 		}
 
 		if (region.isPlayerInvited(target)) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{playername}", target.getName());
-
-			PlayerUtils.sendMessage(player, 35, replacements);
+			Messages.send(player, 35, new Placeholder()
+					.add("{playername}", target.getName())
+			);
 			return true;
 		}
 
 		if (region.isOwner(target)) {
-			PlayerUtils.sendMessage(player, 30);
+			Messages.send(player, 30);
 			return true;
 		}
 
 		SerializableRent rent = region.getRent();
 
 		if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
-			PlayerUtils.sendMessage(player, 196);
+			Messages.send(player, 196);
 			return true;
 		}
 
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-			PlayerUtils.sendMessage(player, 116);
+			Messages.send(player, 116);
 			return true;
 		}
 
@@ -105,26 +107,29 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 
 			region.addMember(target);
 
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{region}", region.getName());
-			replacements.put("{playername}", target.getName());
-
-			PlayerUtils.sendMessage(player, 199, replacements);
+			Messages.send(player, 199, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{playername}", target.getName())
+			);
 		} else {
 			region.addPlayerInvite(target);
 
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{playername}", target.getName());
-			replacements.put("{region}", region.getName());
-			replacements.put("{ownername}", region.getOwner().getName());
-
-			PlayerUtils.sendMessage(player, 36, replacements);
+			Messages.send(player, 36, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{playername}", target.getName())
+					.add("{ownername}", region.getOwner().getName())
+			);
 
 			if (target.isOnline()) {
-				PlayerUtils.sendMessage(target.getPlayer(), 139, replacements);
+				Messages.send(target.getPlayer(), 139, new Placeholder()
+						.add("{region}", region.getName())
+						.add("{playername}", target.getName())
+						.add("{ownername}", region.getOwner().getName())
+				);
 			}
 
-			RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
+			// TODO Fix this
+			// RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
 		}
 
 		return true;

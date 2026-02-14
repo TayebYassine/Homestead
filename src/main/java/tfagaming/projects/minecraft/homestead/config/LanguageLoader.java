@@ -53,8 +53,7 @@ public class LanguageLoader {
 				"languages/" + language + (language.endsWith(".yml") ? "" : ".yml"));
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> T get(String path) {
-		return (T) language.get(path);
+	public String getString(String path) {
+		return language.getString(path, "NULL");
 	}
 }

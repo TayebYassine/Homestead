@@ -20,7 +20,9 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBannedPlayer;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.commands.AutoCompleteFilter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringSimilarity;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
 
@@ -51,134 +53,59 @@ public class RegionCommand extends CommandBuilder {
 
 		if (getSubcommands().contains(subCommand)) {
 			if (!player.hasPermission("homestead.commands.region." + subCommand)) {
-				PlayerUtils.sendMessage(player, 8);
+				Messages.send(player, 8);
 				return true;
 			}
 		}
 
-		switch (subCommand) {
-			case "create":
-				new CreateRegionSubCmd().onExecution(sender, args);
-				break;
-			case "delete":
-				new DeleteRegionSubCmd().onExecution(sender, args);
-				break;
-			case "set":
-				new SetRegionSubCmd().onExecution(sender, args);
-				break;
-			case "rename":
-				new RenameRegionSubCmd().onExecution(sender, args);
-				break;
-			case "borders":
-				new RegionBordersSubCmd().onExecution(sender, args);
-				break;
-			case "ban":
-				new BanPlayerSubCmd().onExecution(sender, args);
-				break;
-			case "unban":
-				new UnbanPlayerSubCmd().onExecution(sender, args);
-				break;
-			case "trust":
-				new TrustPlayerSubCmd().onExecution(sender, args);
-				break;
-			case "untrust":
-				new UntrustPlayerSubCmd().onExecution(sender, args);
-				break;
-			case "flags":
-				new FlagsSubCmd().onExecution(sender, args);
-				break;
-			case "accept":
-				new AcceptInviteSubCmd().onExecution(sender, args);
-				break;
-			case "deny":
-				new DenyInviteSubCmd().onExecution(sender, args);
-				break;
-			case "visit":
-				new VisitRegionSubCmd().onExecution(sender, args);
-				break;
-			case "subareas":
-				new SubAreasSubCmd().onExecution(sender, args);
-				break;
-			case "deposit":
-				new DepositBankSubCmd().onExecution(sender, args);
-				break;
-			case "withdraw":
-				new WithdrawBankSubCmd().onExecution(sender, args);
-				break;
-			case "menu":
-				new MenuSubCmd().onExecution(sender, args);
-				break;
-			case "player":
-				new PlayerInfoSubCmd().onExecution(sender, args);
-				break;
-			case "home":
-				new HomeSubCmd().onExecution(sender, args);
-				break;
-			case "info":
-				new RegionInfoSubCmd().onExecution(sender, args);
-				break;
-			case "banlist":
-				new BanlistSubCmd().onExecution(sender, args);
-				break;
-			case "members":
-				new MembersSubCmd().onExecution(sender, args);
-				break;
-			case "claimlist":
-				new ClaimlistSubCmd().onExecution(sender, args);
-				break;
-			case "help":
-				new HelpSubCmd().onExecution(sender, args);
-				break;
-			case "logs":
-				new LogsSubCmd().onExecution(sender, args);
-				break;
-			case "rate":
-				new RegionRateSubCmd().onExecution(sender, args);
-				break;
-			case "top":
-				new RegionTopSubCmd().onExecution(sender, args);
-				break;
-			case "auto":
-				new AutoSubCmd().onExecution(sender, args);
-				break;
-			case "kick":
-				new KickPlayerSubCmd().onExecution(sender, args);
-				break;
-			case "war":
-				new WarSubCmd().onExecution(sender, args);
-				break;
-			case "chat":
-				new ChatSubCmd().onExecution(sender, args);
-				break;
-			case "mail":
-				new MailSubCmd().onExecution(sender, args);
-				break;
-			case "balance":
-				new BalanceSubCmd().onExecution(sender, args);
-				break;
-			case "rewards":
-				new RewardsSubCmd().onExecution(sender, args);
-				break;
-			case "merge":
-				new MergeRegionSubCmd().onExecution(sender, args);
-				break;
-			case "mergeaccept":
-				new MergeAcceptRegionSubCmd().onExecution(sender, args);
-				break;
-			case "levels":
-				new LevelsSubCmd().onExecution(sender, args);
-				break;
-			default:
-				String similaritySubCmds = String.join(", ", StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand));
+		return switch (subCommand) {
+			case "create" -> new CreateRegionSubCmd().onExecution(sender, args);
+			case "delete" -> new DeleteRegionSubCmd().onExecution(sender, args);
+			case "set" -> new SetRegionSubCmd().onExecution(sender, args);
+			case "rename" -> new RenameRegionSubCmd().onExecution(sender, args);
+			case "borders" -> new RegionBordersSubCmd().onExecution(sender, args);
+			case "ban" -> new BanPlayerSubCmd().onExecution(sender, args);
+			case "unban" -> new UnbanPlayerSubCmd().onExecution(sender, args);
+			case "trust" -> new TrustPlayerSubCmd().onExecution(sender, args);
+			case "untrust" -> new UntrustPlayerSubCmd().onExecution(sender, args);
+			case "flags" -> new FlagsSubCmd().onExecution(sender, args);
+			case "accept" -> new AcceptInviteSubCmd().onExecution(sender, args);
+			case "deny" -> new DenyInviteSubCmd().onExecution(sender, args);
+			case "visit" -> new VisitRegionSubCmd().onExecution(sender, args);
+			case "subareas" -> new SubAreasSubCmd().onExecution(sender, args);
+			case "deposit" -> new DepositBankSubCmd().onExecution(sender, args);
+			case "withdraw" -> new WithdrawBankSubCmd().onExecution(sender, args);
+			case "menu" -> new MenuSubCmd().onExecution(sender, args);
+			case "player" -> new PlayerInfoSubCmd().onExecution(sender, args);
+			case "home" -> new HomeSubCmd().onExecution(sender, args);
+			case "info" -> new RegionInfoSubCmd().onExecution(sender, args);
+			case "banlist" -> new BanlistSubCmd().onExecution(sender, args);
+			case "members" -> new MembersSubCmd().onExecution(sender, args);
+			case "claimlist" -> new ClaimlistSubCmd().onExecution(sender, args);
+			case "help" -> new HelpSubCmd().onExecution(sender, args);
+			case "logs" -> new LogsSubCmd().onExecution(sender, args);
+			case "rate" -> new RegionRateSubCmd().onExecution(sender, args);
+			case "top" -> new RegionTopSubCmd().onExecution(sender, args);
+			case "auto" -> new AutoSubCmd().onExecution(sender, args);
+			case "kick" -> new KickPlayerSubCmd().onExecution(sender, args);
+			case "war" -> new WarSubCmd().onExecution(sender, args);
+			case "chat" -> new ChatSubCmd().onExecution(sender, args);
+			case "mail" -> new MailSubCmd().onExecution(sender, args);
+			case "balance" -> new BalanceSubCmd().onExecution(sender, args);
+			case "rewards" -> new RewardsSubCmd().onExecution(sender, args);
+			case "merge" -> new MergeRegionSubCmd().onExecution(sender, args);
+			case "mergeaccept" -> new MergeAcceptRegionSubCmd().onExecution(sender, args);
+			case "levels" -> new LevelsSubCmd().onExecution(sender, args);
+			default -> {
+				String similarity = String.join(", ", StringSimilarity.findTopSimilarStrings(getSubcommands(), subCommand));
 
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{similarity-subcmds}", similaritySubCmds);
+				Messages.send(player, 7, new Placeholder()
+						.add("{similarity-subcms}", similarity)
+				);
 
-				PlayerUtils.sendMessage(player, 7, replacements);
-				break;
-		}
-
-		return true;
+				yield true;
+			}
+		};
 	}
 
 	@Override

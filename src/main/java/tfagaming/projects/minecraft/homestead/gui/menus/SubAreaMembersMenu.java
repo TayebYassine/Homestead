@@ -10,6 +10,8 @@ import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSe
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -42,7 +44,7 @@ public class SubAreaMembersMenu {
 			} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
 				if (region.isPlayerMember(member.getBukkitOfflinePlayer()) && subArea.isPlayerMember(member.getBukkitOfflinePlayer())) {
 					if (!player.hasPermission("homestead.region.subareas.players")) {
-						PlayerUtils.sendMessage(player, 8);
+						Messages.send(player, 8);
 						return;
 					}
 
@@ -53,12 +55,6 @@ public class SubAreaMembersMenu {
 
 					subArea.removeMember(member.getBukkitOfflinePlayer());
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{player}", member.getBukkitOfflinePlayer().getName());
-					replacements.put("{subarea}", subArea.getName());
-
-					PlayerUtils.sendMessage(player, 173, replacements);
-
 					PaginationMenu instance = context.getInstance();
 
 					members = subArea.getMembers();
@@ -67,7 +63,7 @@ public class SubAreaMembersMenu {
 				}
 			} else if (context.getEvent().isLeftClick()) {
 				if (!player.hasPermission("homestead.region.subareas.players")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return;
 				}
 
@@ -81,7 +77,7 @@ public class SubAreaMembersMenu {
 			}
 
 			if (!player.hasPermission("homestead.region.subareas.players")) {
-				PlayerUtils.sendMessage(player, 8);
+				Messages.send(player, 8);
 				return;
 			}
 
@@ -92,12 +88,6 @@ public class SubAreaMembersMenu {
 
 				subArea.addMember(targetPlayer);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{subarea}", subArea.getName());
-				replacements.put("{player}", targetPlayer.getName());
-
-				PlayerUtils.sendMessage(player, 172, replacements);
-
 				Homestead.getInstance().runSyncTask(() -> {
 					new SubAreaMembersMenu(player, region, subArea);
 				});
@@ -105,10 +95,9 @@ public class SubAreaMembersMenu {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 				if (target == null) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", message);
-
-					PlayerUtils.sendMessage(player, 29, replacements);
+					Messages.send(player, 29, new Placeholder()
+							.add("{playername}", message)
+					);
 					return false;
 				}
 
@@ -118,17 +107,17 @@ public class SubAreaMembersMenu {
 				}
 
 				if (region.isOwner(target)) {
-					PlayerUtils.sendMessage(player, 30);
+					Messages.send(player, 30);
 					return false;
 				}
 
 				if (!region.isPlayerMember(target)) {
-					PlayerUtils.sendMessage(player, 171);
+					Messages.send(player, 171);
 					return false;
 				}
 
 				if (subArea.isPlayerMember(target)) {
-					PlayerUtils.sendMessage(player, 174);
+					Messages.send(player, 174);
 					return false;
 				}
 

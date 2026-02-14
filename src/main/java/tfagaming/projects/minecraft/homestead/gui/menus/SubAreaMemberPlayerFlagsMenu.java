@@ -75,7 +75,7 @@ public class SubAreaMemberPlayerFlagsMenu {
 							replacements.put("{changes}", String.valueOf(changed));
 							replacements.put("{new-value}", Formatters.getBoolean(enableAll));
 
-							PlayerUtils.sendMessage(player, 161, replacements);
+							Messages.send(player, 161, replacements);
 
 							PaginationMenu instance = context.getInstance();
 							instance.setItems(buildItemsList(member));
@@ -84,7 +84,7 @@ public class SubAreaMemberPlayerFlagsMenu {
 							Homestead.getInstance().runAsyncTaskLater(() ->
 									cooldowns.remove(player.getUniqueId()), 1);
 						} else {
-							PlayerUtils.sendMessage(player, 162);
+							Messages.send(player, 162);
 						}
 						return;
 					}
@@ -95,7 +95,7 @@ public class SubAreaMemberPlayerFlagsMenu {
 					String flagString = PlayerFlags.getFlags().get(flagListIndex);
 
 					if (Homestead.config.isFlagDisabled(flagString)) {
-						PlayerUtils.sendMessage(player, 42);
+						Messages.send(player, 42);
 						return;
 					}
 
@@ -128,7 +128,7 @@ public class SubAreaMemberPlayerFlagsMenu {
 						replacements.put("{subarea}", subArea.getName());
 						replacements.put("{player}", member.getBukkitOfflinePlayer().getName());
 
-						PlayerUtils.sendMessage(player, 169, replacements);
+						Messages.send(player, 169, replacements);
 
 						instance.replaceSlot(index, MenuUtils.getFlagButton(flagString, !isSet));
 

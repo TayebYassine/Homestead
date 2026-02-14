@@ -15,7 +15,9 @@ import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegi
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
 
@@ -37,7 +39,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
@@ -46,7 +48,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 		switch (setType) {
 			case "displayname": {
 				if (args.length < 3) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
@@ -56,7 +58,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 4);
+					Messages.send(player, 4);
 					return false;
 				}
 
@@ -66,12 +68,12 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				}
 
 				if (!StringUtils.isValidRegionDisplayName(regionDisplayName)) {
-					PlayerUtils.sendMessage(player, 14);
+					Messages.send(player, 14);
 					return true;
 				}
 
 				if (region.getDisplayName().equals(regionDisplayName)) {
-					PlayerUtils.sendMessage(player, 11);
+					Messages.send(player, 11);
 					return true;
 				}
 
@@ -79,17 +81,16 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				region.setDisplayName(regionDisplayName);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{olddisplayname}", oldDisplayName);
-				replacements.put("{newdisplayname}", region.getDisplayName());
-
-				PlayerUtils.sendMessage(player, 15, replacements);
+				Messages.send(player, 15, new Placeholder()
+						.add("{olddisplayname}", oldDisplayName)
+						.add("{newdisplayname}", region.getDisplayName())
+				);
 
 				break;
 			}
 			case "description": {
 				if (args.length < 3) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
@@ -99,7 +100,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 4);
+					Messages.send(player, 4);
 					return false;
 				}
 
@@ -109,12 +110,12 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				}
 
 				if (!StringUtils.isValidRegionDescription(description)) {
-					PlayerUtils.sendMessage(player, 16);
+					Messages.send(player, 16);
 					return true;
 				}
 
 				if (region.getDescription().equals(description)) {
-					PlayerUtils.sendMessage(player, 11);
+					Messages.send(player, 11);
 					return true;
 				}
 
@@ -122,22 +123,21 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				region.setDescription(description);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{olddescription}", oldDescription);
-				replacements.put("{newdescription}", region.getDescription());
-
-				PlayerUtils.sendMessage(player, 17, replacements);
+				Messages.send(player, 17, new Placeholder()
+						.add("{olddescription}", oldDescription)
+						.add("{newdescription}", region.getDescription())
+				);
 
 				break;
 			}
 			case "mapcolor": {
 				if (!player.hasPermission("homestead.region.dynamicmaps.color")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
 				if (args.length < 3) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
@@ -146,19 +146,19 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 4);
+					Messages.send(player, 4);
 					return false;
 				}
 
 				if (!MapColor.getAll().contains(colorInput)) {
-					PlayerUtils.sendMessage(player, 18);
+					Messages.send(player, 18);
 					return true;
 				}
 
 				int color = MapColor.parseFromString(colorInput);
 
 				if (region.getMapColor() == color) {
-					PlayerUtils.sendMessage(player, 11);
+					Messages.send(player, 11);
 					return true;
 				}
 
@@ -166,11 +166,10 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				region.setMapColor(color);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{oldcolor}", MapColor.convertToColoredStringWithColorName(oldColor));
-				replacements.put("{newcolor}", MapColor.convertToColoredStringWithColorName(region.getMapColor()));
-
-				PlayerUtils.sendMessage(player, 19, replacements);
+				Messages.send(player, 19, new Placeholder()
+						.add("{oldcolor}", MapColor.convertToColoredStringWithColorName(oldColor))
+						.add("{newcolor}", MapColor.convertToColoredStringWithColorName(region.getMapColor()))
+				);
 
 				break;
 			}
@@ -178,7 +177,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 4);
+					Messages.send(player, 4);
 					return false;
 				}
 
@@ -192,37 +191,37 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				Chunk chunk = location.getChunk();
 
 				if (ChunksManager.getRegionOwnsTheChunk(chunk) == null || !ChunksManager.getRegionOwnsTheChunk(chunk).getUniqueId().equals(region.getUniqueId())) {
-					PlayerUtils.sendMessage(player, 142);
+					Messages.send(player, 142);
 					return false;
 				}
 
 				region.setLocation(location);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{region}", region.getName());
-				replacements.put("{location}", Formatters.formatLocation(location));
+				Messages.send(player, 72, new Placeholder()
+						.add("{region}", region.getName())
+						.add("{location}", Formatters.formatLocation(location))
+				);
 
-				PlayerUtils.sendMessage(player, 72, replacements);
-
-				RegionsManager.addNewLog(region.getUniqueId(), 1, replacements);
+				// TODO Fix this
+				// RegionsManager.addNewLog(region.getUniqueId(), 1, replacements);
 
 				break;
 			}
 			case "icon": {
 				if (!player.hasPermission("homestead.region.dynamicmaps.icon")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
 				if (args.length < 3) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
 				boolean isEnabled = Homestead.config.getBoolean("dynamic-maps.icons.enabled");
 
 				if (!isEnabled) {
-					PlayerUtils.sendMessage(player, 105);
+					Messages.send(player, 105);
 
 					return true;
 				}
@@ -232,44 +231,42 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 4);
+					Messages.send(player, 4);
 					return false;
 				}
 
 				if (iconInput.equalsIgnoreCase("none") || iconInput.equalsIgnoreCase("default")) {
 					region.setIcon(iconInput);
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{region}", region.getName());
-
-					PlayerUtils.sendMessage(player, 100, replacements);
+					Messages.send(player, 100, new Placeholder()
+							.add("{region}", region.getName())
+					);
 
 					return true;
 				}
 
 				if (!RegionIconTools.isValidIcon(iconInput)) {
-					PlayerUtils.sendMessage(player, 99);
+					Messages.send(player, 99);
 
 					return true;
 				}
 
 				region.setIcon(iconInput);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{region}", region.getName());
-
-				PlayerUtils.sendMessage(player, 100, replacements);
+				Messages.send(player, 100, new Placeholder()
+						.add("{region}", region.getName())
+				);
 
 				break;
 			}
 			case "tax": {
 				if (args.length < 3) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
 				if (!Homestead.vault.isEconomyReady()) {
-					PlayerUtils.sendMessage(player, 69);
+					Messages.send(player, 69);
 					Logger.warning("The player \"" + player.getName() + "\" (UUID: " + player.getUniqueId()
 							+ ") executed a command that requires economy implementation, but it's disabled.");
 					Logger.warning(
@@ -281,7 +278,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				boolean isEnabled = Homestead.config.getBoolean("taxes.enabled");
 
 				if (!isEnabled) {
-					PlayerUtils.sendMessage(player, 105);
+					Messages.send(player, 105);
 
 					return true;
 				}
@@ -291,12 +288,12 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 4);
+					Messages.send(player, 4);
 					return false;
 				}
 
 				if (!NumberUtils.isValidDouble(taxInput)) {
-					PlayerUtils.sendMessage(player, 102);
+					Messages.send(player, 102);
 
 					return true;
 				}
@@ -307,28 +304,26 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				double maxTax = Homestead.config.getDouble("taxes.max-tax");
 
 				if (taxAmount <= minTax || taxAmount > maxTax) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{min}", Formatters.formatBalance(minTax));
-					replacements.put("{max}", Formatters.formatBalance(maxTax));
-
-					PlayerUtils.sendMessage(player, 104, replacements);
+					Messages.send(player, 104, new Placeholder()
+							.add("{min}", Formatters.getBalance(minTax))
+							.add("{max}", Formatters.getBalance(maxTax))
+					);
 
 					return true;
 				}
 
 				region.setTaxesAmount(taxAmount);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{region}", region.getName());
-				replacements.put("{tax-amount}", Formatters.formatBalance(taxAmount));
-
-				PlayerUtils.sendMessage(player, 103, replacements);
+				Messages.send(player, 103, new Placeholder()
+						.add("{region}", region.getName())
+						.add("{tax-amount}", Formatters.getBalance(taxAmount))
+				);
 
 				break;
 			}
 			case "target": {
 				if (args.length < 3) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
@@ -337,33 +332,32 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				Region region = RegionsManager.findRegion(regionName);
 
 				if (region == null) {
-					PlayerUtils.sendMessage(player, 9);
+					Messages.send(player, 9);
 					return true;
 				}
 
 				if (!PlayerUtils.isOperator(player)
 						&& !(region.isOwner(player) || region.isPlayerMember(player))) {
-					PlayerUtils.sendMessage(player, 10);
+					Messages.send(player, 10);
 					return true;
 				}
 
 				if (TargetRegionSession.hasSession(player)
 						&& TargetRegionSession.getRegion(player).getUniqueId().equals(region.getUniqueId())) {
-					PlayerUtils.sendMessage(player, 11);
+					Messages.send(player, 11);
 					return true;
 				}
 
 				TargetRegionSession.newSession(player, region);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{region}", region.getName());
-
-				PlayerUtils.sendMessage(player, 12, replacements);
+				Messages.send(player, 12, new Placeholder()
+						.add("{region}", region.getName())
+				);
 
 				break;
 			}
 			default: {
-				PlayerUtils.sendMessage(player, 0);
+				Messages.send(player, 0);
 				break;
 			}
 		}

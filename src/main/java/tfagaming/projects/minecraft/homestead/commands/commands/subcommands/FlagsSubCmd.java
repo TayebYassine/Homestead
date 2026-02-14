@@ -13,6 +13,8 @@ import tfagaming.projects.minecraft.homestead.gui.menus.GlobalPlayerFlagsMenu;
 import tfagaming.projects.minecraft.homestead.gui.menus.WorldFlagsMenu;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -32,14 +34,14 @@ public class FlagsSubCmd extends SubCommandBuilder {
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
@@ -48,7 +50,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 		switch (setType) {
 			case "member": {
 				if (!player.hasPermission("homestead.region.flags.members")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
@@ -58,7 +60,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				}
 
 				if (args.length < 4) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
@@ -67,33 +69,29 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 				if (target == null) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", targetName);
-
-					PlayerUtils.sendMessage(player, 29, replacements);
+					Messages.send(player, 29, new Placeholder()
+							.add("{playername}", targetName)
+					);
 					return true;
 				}
 
 				if (!region.isPlayerMember(target)) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", target.getName());
-					replacements.put("{region}", region.getName());
-
-					PlayerUtils.sendMessage(player, 40, replacements);
+					Messages.send(player, 40, new Placeholder()
+							.add("{region}", region.getName())
+							.add("{playername}", target.getName())
+					);
 					return true;
 				}
 
 				String flagInput = args[3];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {
-					PlayerUtils.sendMessage(player, 41);
+					Messages.send(player, 41);
 					return true;
 				}
 
-				List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
-
 				if (Homestead.config.isFlagDisabled(flagInput)) {
-					PlayerUtils.sendMessage(player, 42);
+					Messages.send(player, 42);
 					return true;
 				}
 
@@ -133,19 +131,18 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				region.setMemberFlags(region.getMember(target), newFlags);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{flag}", flagInput);
-				replacements.put("{state}", currentState ? "Deny" : "Allow");
-				replacements.put("{player}", target.getName());
-				replacements.put("{region}", region.getName());
-
-				PlayerUtils.sendMessage(player, 43, replacements);
+				Messages.send(player, 43, new Placeholder()
+						.add("{region}", region.getName())
+						.add("{player}", target.getName())
+						.add("{flag}", flagInput)
+						.add("{state}", currentState ? "Deny" : "Allow")
+				);
 
 				break;
 			}
 			case "global": {
 				if (!player.hasPermission("homestead.region.flags.global")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
@@ -160,21 +157,21 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				}
 
 				if (args.length < 3) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
 				String flagInput = args[2];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {
-					PlayerUtils.sendMessage(player, 41);
+					Messages.send(player, 41);
 					return true;
 				}
 
 				List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
 
 				if (Homestead.config.isFlagDisabled(flagInput)) {
-					PlayerUtils.sendMessage(player, 42);
+					Messages.send(player, 42);
 					return true;
 				}
 
@@ -214,18 +211,17 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				region.setPlayerFlags(newFlags);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{flag}", flagInput);
-				replacements.put("{state}", currentState ? "Deny" : "Allow");
-				replacements.put("{region}", region.getName());
-
-				PlayerUtils.sendMessage(player, 44, replacements);
+				Messages.send(player, 44, new Placeholder()
+						.add("{region}", region.getName())
+						.add("{flag}", flagInput)
+						.add("{state}", currentState ? "Deny" : "Allow")
+				);
 
 				break;
 			}
 			case "world": {
 				if (!player.hasPermission("homestead.region.flags.world")) {
-					PlayerUtils.sendMessage(player, 8);
+					Messages.send(player, 8);
 					return true;
 				}
 
@@ -240,21 +236,21 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				}
 
 				if (args.length < 3) {
-					PlayerUtils.sendMessage(player, 0);
+					Messages.send(player, 0);
 					return true;
 				}
 
 				String flagInput = args[2];
 
 				if (!WorldFlags.getFlags().contains(flagInput)) {
-					PlayerUtils.sendMessage(player, 41);
+					Messages.send(player, 41);
 					return true;
 				}
 
 				List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
 
 				if (Homestead.config.isFlagDisabled(flagInput)) {
-					PlayerUtils.sendMessage(player, 42);
+					Messages.send(player, 42);
 					return true;
 				}
 
@@ -294,17 +290,16 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				region.setWorldFlags(newFlags);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{flag}", flagInput);
-				replacements.put("{state}", currentState ? "Deny" : "Allow");
-				replacements.put("{region}", region.getName());
-
-				PlayerUtils.sendMessage(player, 49, replacements);
+				Messages.send(player, 49, new Placeholder()
+						.add("{region}", region.getName())
+						.add("{flag}", flagInput)
+						.add("{state}", currentState ? "Deny" : "Allow")
+				);
 
 				break;
 			}
 			default: {
-				PlayerUtils.sendMessage(player, 0);
+				Messages.send(player, 0);
 				break;
 			}
 		}

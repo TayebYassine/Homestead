@@ -7,6 +7,8 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.mergingregion.MergeRegionSession;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -27,33 +29,32 @@ public class MergeAcceptRegionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
 		if (!MergeRegionSession.isToHaveRequest(region)) {
-			PlayerUtils.sendMessage(player, 182);
+			Messages.send(player, 182);
 			return true;
 		}
 
 		if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
-			PlayerUtils.sendMessage(player, 30);
+			Messages.send(player, 30);
 			return false;
 		}
 
 		Region from = RegionsManager.findRegion(MergeRegionSession.getFrom(region));
 
 		if (from == null) {
-			PlayerUtils.sendMessage(player, 182);
+			Messages.send(player, 182);
 			return false;
 		}
 
 		RegionsManager.mergeRegions(from, region);
 
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", from.getName());
-
-		PlayerUtils.sendMessage(player, 183, replacements);
+		Messages.send(player, 183, new Placeholder()
+				.add("{region}", from.getName())
+		);
 
 		return true;
 	}

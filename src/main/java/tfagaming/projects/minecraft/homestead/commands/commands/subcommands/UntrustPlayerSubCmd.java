@@ -9,6 +9,8 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -27,19 +29,19 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		if (!player.hasPermission("homestead.region.players.untrust")) {
-			PlayerUtils.sendMessage(player, 8);
+			Messages.send(player, 8);
 			return true;
 		}
 
 		if (args.length < 2) {
-			PlayerUtils.sendMessage(player, 0);
+			Messages.send(player, 0);
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			PlayerUtils.sendMessage(player, 4);
+			Messages.send(player, 4);
 			return true;
 		}
 
@@ -53,36 +55,33 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{playername}", targetName);
-
-			PlayerUtils.sendMessage(player, 29, replacements);
+			Messages.send(player, 29, new Placeholder()
+					.add("{playername}", targetName)
+			);
 			return true;
 		}
 
 		if (region.isPlayerInvited(target)) {
 			region.removePlayerInvite(target);
 
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{playername}", target.getName());
-
-			PlayerUtils.sendMessage(player, 37, replacements);
+			Messages.send(player, 37, new Placeholder()
+					.add("{playername}", target.getName())
+			);
 		} else if (region.isPlayerMember(target)) {
 			region.removeMember(target);
 
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{player}", target.getName());
-			replacements.put("{region}", region.getName());
+			Messages.send(player, 38, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{player}", target.getName())
+			);
 
-			PlayerUtils.sendMessage(player, 38, replacements);
-
-			RegionsManager.addNewLog(region.getUniqueId(), 3, replacements);
+			// TODO Fix this
+			// RegionsManager.addNewLog(region.getUniqueId(), 3, replacements);
 		} else {
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{playername}", target.getName());
-			replacements.put("{region}", region.getName());
-
-			PlayerUtils.sendMessage(player, 39, replacements);
+			Messages.send(player, 39, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{playername}", target.getName())
+			);
 		}
 
 		return true;

@@ -10,6 +10,8 @@ import tfagaming.projects.minecraft.homestead.gui.menus.RegionsWithWelcomeSignsM
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
@@ -42,17 +44,16 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 			if (target == null) {
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{playername}", playerName);
-
-				PlayerUtils.sendMessage(player, 29, replacements);
+				Messages.send(player, 29, new Placeholder()
+						.add("{playername}", playerName)
+				);
 				return true;
 			}
 
 			String indexInput = args.length >= 3 ? args[2] : "0";
 
 			if (!NumberUtils.isValidInteger(indexInput)) {
-				PlayerUtils.sendMessage(player, 137);
+				Messages.send(player, 137);
 				return true;
 			}
 
@@ -68,19 +69,19 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			}
 
 			if (filteredRegions.isEmpty()) {
-				PlayerUtils.sendMessage(player, 137);
+				Messages.send(player, 137);
 				return true;
 			}
 
 			if (index < 0 || index > filteredRegions.size() - 1) {
-				PlayerUtils.sendMessage(player, 137);
+				Messages.send(player, 137);
 				return true;
 			}
 
 			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().getBukkitLocation());
 		} else {
 			if (args.length < 2) {
-				PlayerUtils.sendMessage(player, 0);
+				Messages.send(player, 0);
 				return true;
 			}
 
@@ -89,15 +90,14 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			Region region = RegionsManager.findRegion(regionName);
 
 			if (region == null) {
-				PlayerUtils.sendMessage(player, 9);
+				Messages.send(player, 9);
 				return false;
 			}
 
 			if (region.getLocation() == null) {
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{region}", region.getName());
-
-				PlayerUtils.sendMessage(player, 71, replacements);
+				Messages.send(player, 71, new Placeholder()
+						.add("{region}", region.getName())
+				);
 				return true;
 			}
 
@@ -105,10 +105,9 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 					&& !region.isOwner(player)
 					&& !(PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
 					&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{region}", region.getName());
-
-				PlayerUtils.sendMessage(player, 131, replacements);
+				Messages.send(player, 131, new Placeholder()
+						.add("{region}", region.getName())
+				);
 				return true;
 			}
 
