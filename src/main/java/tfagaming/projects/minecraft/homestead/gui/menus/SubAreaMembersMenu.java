@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ public class SubAreaMembersMenu {
 
 					subArea.removeMember(member.getBukkitOfflinePlayer());
 
+					PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
 					PaginationMenu instance = context.getInstance();
 
 					members = subArea.getMembers();
@@ -86,6 +89,8 @@ public class SubAreaMembersMenu {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
 				subArea.addMember(targetPlayer);
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> {
 					new SubAreaMembersMenu(player, region, subArea);

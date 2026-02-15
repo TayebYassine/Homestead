@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
@@ -76,8 +77,6 @@ public class RegionsMenu {
 						if (context.getEvent().isLeftClick()) {
 							toggleShowAll(_player);
 
-							player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
-
 							new RegionsMenu(_player);
 						}
 						return;
@@ -125,7 +124,8 @@ public class RegionsMenu {
 						}
 
 						TargetRegionSession.newSession(_player, region);
-						_player.playSound(_player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+
+						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
 						Messages.send(_player, 12, new Placeholder()
 								.add("{region}", region.getName())
@@ -168,6 +168,8 @@ public class RegionsMenu {
 		UUID id = p.getUniqueId();
 
 		if (!ADMIN_SHOW_ALL.add(id)) ADMIN_SHOW_ALL.remove(id);
+
+		PlayerSound.play(p, PlayerSound.PredefinedSound.CLICK);
 	}
 
 	/**

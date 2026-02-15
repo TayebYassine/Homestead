@@ -14,6 +14,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ public class RegionBannedPlayersMenu {
 
 					region.unbanPlayer(bannedPlayer.getBukkitOfflinePlayer());
 
+					PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
 					PaginationMenu instance = context.getInstance();
 
 					bannedPlayers = region.getBannedPlayers();
@@ -84,6 +87,8 @@ public class RegionBannedPlayersMenu {
 				if (region.isPlayerInvited(targetPlayer)) {
 					region.removePlayerInvite(targetPlayer);
 				}
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> {
 					new RegionBannedPlayersMenu(player, region);
@@ -151,6 +156,8 @@ public class RegionBannedPlayersMenu {
 			}
 
 			region.setBannedPlayers(new ArrayList<>());
+
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			Messages.send(player, 94);
 

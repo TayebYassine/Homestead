@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.UUID;
@@ -72,7 +73,8 @@ public class DelayedTeleport {
 		}
 
 		player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-		player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 500.0f, 1.0f);
+
+		PlayerSound.play(player, PlayerSound.PredefinedSound.TELEPORT);
 
 		Messages.send(player, 51, new Placeholder()
 				.add("{location}", Formatters.formatLocation(location))

@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ public class TopOldestRegionMenu {
 				new TopMembersRegionMenu(player);
 			}
 
-			player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+			PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 		});
 
 		gui.open(player, MenuUtils.getEmptySlot());

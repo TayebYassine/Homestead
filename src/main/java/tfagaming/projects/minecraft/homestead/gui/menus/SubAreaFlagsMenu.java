@@ -72,8 +72,6 @@ public class SubAreaFlagsMenu {
 
 				cooldowns.add(player.getUniqueId());
 
-				player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
-
 				instance.replaceSlot(context.getIndex(),
 						MenuUtils.getFlagButton(flagString, !isSet));
 

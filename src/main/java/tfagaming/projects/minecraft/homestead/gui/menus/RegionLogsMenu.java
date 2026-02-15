@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -101,6 +102,8 @@ public class RegionLogsMenu {
 			}
 
 			region.setLogs(new ArrayList<>());
+
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			Messages.send(player, 93);
 

@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -63,6 +64,8 @@ public class RegionMembersMenu {
 
 					region.removeMember(member.getBukkitOfflinePlayer());
 
+					PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
 					// TODO Fix this
 					// RegionsManager.addNewLog(region.getUniqueId(), 3, replacements);
 
@@ -107,6 +110,8 @@ public class RegionMembersMenu {
 					// TODO Fix this
 					// RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
 				}
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> {
 					new RegionMembersMenu(player, region);

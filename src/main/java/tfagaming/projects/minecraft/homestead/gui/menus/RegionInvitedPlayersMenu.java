@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -74,6 +75,8 @@ public class RegionInvitedPlayersMenu {
 					// TODO Fix this
 					// RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
 				}
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> {
 					new RegionInvitedPlayersMenu(player, region);
@@ -148,6 +151,8 @@ public class RegionInvitedPlayersMenu {
 			}
 
 			region.setInvitedPlayers(new ArrayList<>());
+
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			Messages.send(player, 95);
 

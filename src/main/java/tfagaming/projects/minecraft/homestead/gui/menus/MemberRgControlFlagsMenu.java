@@ -11,6 +11,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -70,9 +71,9 @@ public class MemberRgControlFlagsMenu {
 
 				region.setMemberRegionControlFlags(member, newFlags);
 
-				cooldowns.add(player.getUniqueId());
+				PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-				player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+				cooldowns.add(player.getUniqueId());
 
 				instance.replaceSlot(context.getIndex(),
 						MenuUtils.getFlagButton(flagString, !isSet));

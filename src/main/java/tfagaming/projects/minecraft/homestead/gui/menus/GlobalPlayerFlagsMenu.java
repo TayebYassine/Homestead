@@ -11,6 +11,7 @@ import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -69,12 +70,11 @@ public class GlobalPlayerFlagsMenu {
 
 				region.setPlayerFlags(newFlags);
 
+				PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
+
 				cooldowns.add(player.getUniqueId());
 
-				player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
-
-				instance.replaceSlot(context.getIndex(),
-						MenuUtils.getFlagButton(flagString, !isSet));
+				instance.replaceSlot(context.getIndex(), MenuUtils.getFlagButton(flagString, !isSet));
 
 				Homestead.getInstance().runAsyncTaskLater(() -> {
 					cooldowns.remove(player.getUniqueId());

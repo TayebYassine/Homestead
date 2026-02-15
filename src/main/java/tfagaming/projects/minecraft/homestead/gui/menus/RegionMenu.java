@@ -14,6 +14,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
@@ -214,7 +215,7 @@ public class RegionMenu {
 				region.setTime(TimeType.next(region.getTime()));
 			}
 
-			player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+			PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
 			new RegionMenu(player, region);
 
@@ -238,9 +239,10 @@ public class RegionMenu {
 
 				region.removeMember(player);
 
-				replacements.put("{playername}", player.getName());
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-				RegionsManager.addNewLog(region.getUniqueId(), 4, replacements);
+				// TODO Fix this
+				// RegionsManager.addNewLog(region.getUniqueId(), 4, replacements);
 
 				new RegionsMenu(player);
 			});

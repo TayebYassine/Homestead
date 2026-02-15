@@ -19,6 +19,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -48,6 +49,8 @@ public class MiscellaneousSettingsMenu {
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				region.setName(input);
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				// TODO Fix this
 				// RegionsManager.addNewLog(region.getUniqueId(), 0, replacements);
@@ -80,9 +83,9 @@ public class MiscellaneousSettingsMenu {
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
-				final String oldDisplayName = region.getDisplayName();
-
 				region.setDisplayName(input);
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
 			}, (message) -> {
@@ -108,9 +111,9 @@ public class MiscellaneousSettingsMenu {
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
-				final String oldDescription = region.getDescription();
-
 				region.setDescription(input);
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
 			}, (message) -> {
@@ -147,6 +150,8 @@ public class MiscellaneousSettingsMenu {
 
 			region.setLocation(location);
 
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
 			// TODO Fix this
 			// RegionsManager.addNewLog(region.getUniqueId(), 1, replacements);
 		});
@@ -161,6 +166,8 @@ public class MiscellaneousSettingsMenu {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
 				region.setOwner(targetPlayer);
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				if (region.isPlayerMember(targetPlayer)) region.removeMember(targetPlayer);
 				if (region.isPlayerInvited(targetPlayer)) region.removePlayerInvite(targetPlayer);
@@ -201,7 +208,8 @@ public class MiscellaneousSettingsMenu {
 			boolean canDelete = PlayerUtils.isOperator(_player) || region.isOwner(_player);
 			if (!canDelete) {
 				Messages.send(_player, 159);
-				_player.playSound(_player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 
 				return;
 			}
@@ -227,7 +235,8 @@ public class MiscellaneousSettingsMenu {
 						.add("{region}", region.getDisplayName())
 						.add("{region-bank}", Formatters.getBalance(amountToGive))
 				);
-				_player.playSound(_player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1.2f);
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				new RegionsMenu(_player);
 				return;
@@ -237,7 +246,6 @@ public class MiscellaneousSettingsMenu {
 			DELETE_CONFIRM_TIME.put(pid, now);
 
 			Messages.send(player, 158);
-			_player.playSound(_player.getLocation(), Sound.BLOCK_LEVER_CLICK, 1f, 1f);
 		});
 
 		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {

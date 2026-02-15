@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.*;
@@ -69,7 +70,7 @@ public class SubAreaMemberPlayerFlagsMenu {
 						if (changed > 0) {
 							subArea.setMemberFlags(member, newFlags);
 
-							player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+							PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
 							PaginationMenu instance = context.getInstance();
 							instance.setItems(buildItemsList(member));
@@ -111,9 +112,9 @@ public class SubAreaMemberPlayerFlagsMenu {
 
 						subArea.setMemberFlags(member, newFlags);
 
-						cooldowns.add(player.getUniqueId());
+						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-						player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
+						cooldowns.add(player.getUniqueId());
 
 						instance.replaceSlot(index, MenuUtils.getFlagButton(flagString, !isSet));
 

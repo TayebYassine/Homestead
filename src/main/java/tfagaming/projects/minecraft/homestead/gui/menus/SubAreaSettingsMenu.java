@@ -14,6 +14,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -44,6 +45,8 @@ public class SubAreaSettingsMenu {
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				subArea.setName(input);
+
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> {
 					new SubAreaSettingsMenu(player, region, subArea);
@@ -163,6 +166,8 @@ public class SubAreaSettingsMenu {
 			}
 
 			SubAreasManager.deleteSubArea(subArea.getUniqueId());
+
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			new SubAreasMenu(player, region);
 		});

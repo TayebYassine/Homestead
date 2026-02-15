@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
 import java.util.HashMap;
 
@@ -29,6 +30,8 @@ public class RegionRatingMenu {
 
 			region.addPlayerRate(player, 1);
 
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
 			Messages.send(player, 134);
 
 			new RegionRatingMenu(player, region, backButton);
@@ -42,6 +45,8 @@ public class RegionRatingMenu {
 			}
 
 			region.addPlayerRate(player, 2);
+
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			Messages.send(player, 134);
 
@@ -57,6 +62,8 @@ public class RegionRatingMenu {
 
 			region.addPlayerRate(player, 3);
 
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
 			Messages.send(player, 134);
 
 			new RegionRatingMenu(player, region, backButton);
@@ -71,6 +78,8 @@ public class RegionRatingMenu {
 
 			region.addPlayerRate(player, 4);
 
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
 			Messages.send(player, 134);
 
 			new RegionRatingMenu(player, region, backButton);
@@ -84,6 +93,8 @@ public class RegionRatingMenu {
 			}
 
 			region.addPlayerRate(player, 5);
+
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			Messages.send(player, 134);
 
