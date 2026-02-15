@@ -19,12 +19,15 @@ import java.util.List;
 public class ExportSubCmd extends SubCommandBuilder {
 	public ExportSubCmd() {
 		super("export", null, false);
+		setUsage("/hsadmin export [provider]");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 1) {
-			Messages.send(sender, 0);
+			Messages.send(sender, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 

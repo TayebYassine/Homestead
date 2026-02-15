@@ -27,12 +27,14 @@ public class HomesteadAdminCommand extends CommandBuilder {
 	@Override
 	public boolean onDefaultExecution(CommandSender sender, String[] args) {
 		if (args.length == 0) {
-			Messages.send(sender, 0);
+			Messages.send(sender, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 
 		String attempted = args[0].toLowerCase();
-		String similarity = String.join(", ", StringSimilarity.findTopSimilarStrings(getSubCommandNames(), attempted));
+		String similarity = String.join(", ", StringSimilarity.find(getSubCommandNames(), attempted));
 
 		if (sender instanceof org.bukkit.entity.Player) {
 			Messages.send(sender, 7, new Placeholder()

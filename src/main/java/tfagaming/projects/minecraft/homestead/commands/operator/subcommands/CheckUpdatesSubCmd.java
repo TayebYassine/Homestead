@@ -6,12 +6,10 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CheckUpdatesSubCmd extends SubCommandBuilder {
 	public CheckUpdatesSubCmd() {
 		super("updates", null, false);
+		setUsage("/hsadmin updates");
 	}
 
 	@Override
@@ -27,10 +25,5 @@ public class CheckUpdatesSubCmd extends SubCommandBuilder {
 		});
 
 		return true;
-	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		return new ArrayList<>();
 	}
 }

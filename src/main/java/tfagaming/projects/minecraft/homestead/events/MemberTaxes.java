@@ -50,10 +50,10 @@ public final class MemberTaxes {
 						if (targetPlayer.isOnline()) {
 							Player targetPlayerOnline = (Player) targetPlayer;
 
-							Placeholder placeholder = new Placeholder();
-							placeholder.add("{amount}", Formatters.getBalance(amountToPay));
-							placeholder.add("{region}", region.getName());
-							placeholder.add("{balance}", Formatters.getBalance(PlayerBank.get(targetPlayer)));
+							Placeholder placeholder = new Placeholder()
+								.add("{amount}", Formatters.getBalance(amountToPay))
+								.add("{region}", region.getName())
+								.add("{balance}", Formatters.getBalance(PlayerBank.get(targetPlayer)));
 
 							Messages.send(targetPlayerOnline, 106, placeholder);
 							Messages.send(targetPlayerOnline, 107, placeholder);

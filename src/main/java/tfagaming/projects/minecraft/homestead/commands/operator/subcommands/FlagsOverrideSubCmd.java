@@ -21,12 +21,15 @@ import java.util.List;
 public class FlagsOverrideSubCmd extends SubCommandBuilder {
 	public FlagsOverrideSubCmd() {
 		super("flagsoverride");
+		setUsage("/hsadmin flagsoverride [global/world/member] {member} [flag] (allow/deny)");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 1) {
-			Messages.send(sender, 0);
+			Messages.send(sender, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 
@@ -36,7 +39,9 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 			case "member" -> handleMemberFlags(sender, args);
 			case "global" -> handleGlobalFlags(sender, args);
 			case "world" -> handleWorldFlags(sender, args);
-			default -> Messages.send(sender, 0);
+			default -> Messages.send(sender, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 		}
 
 		return true;
@@ -44,7 +49,9 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 
 	private void handleMemberFlags(CommandSender sender, String[] args) {
 		if (args.length < 3) {
-			Messages.send(sender, 0);
+			Messages.send(sender, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return;
 		}
 
@@ -96,7 +103,9 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 
 	private void handleGlobalFlags(CommandSender sender, String[] args) {
 		if (args.length < 2) {
-			Messages.send(sender, 0);
+			Messages.send(sender, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return;
 		}
 
@@ -133,7 +142,9 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 
 	private void handleWorldFlags(CommandSender sender, String[] args) {
 		if (args.length < 2) {
-			Messages.send(sender, 0);
+			Messages.send(sender, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return;
 		}
 

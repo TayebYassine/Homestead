@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.commands;
 
 import org.bukkit.command.*;
+import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 
 import java.util.*;
@@ -11,6 +12,7 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 	private final String name;
 	private final String[] aliases;
 	private final Map<String, SubCommandBuilder> subCommands = new HashMap<>();
+	private String usage = "";
 
 	public CommandBuilder(String name) {
 		this.name = name;
@@ -21,7 +23,7 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 		this.name = name;
 		this.aliases = aliases;
 	}
-	
+
 	public static void register(CommandBuilder command) {
 		PluginCommand bukkitCommand = Homestead.getInstance().getCommand(command.getName());
 
@@ -39,7 +41,7 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 			}
 		}
 	}
-	
+
 	protected void registerSubCommand(SubCommandBuilder subCommand) {
 		subCommands.put(subCommand.getName().toLowerCase(), subCommand);
 
@@ -47,24 +49,34 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 			subCommands.put(alias.toLowerCase(), subCommand);
 		}
 	}
-	
+
+	public String getUsage() {
+		return usage;
+	}
+
+	public CommandBuilder setUsage(String usage) {
+		this.usage = usage;
+
+		return this;
+	}
+
 	protected SubCommandBuilder getSubCommand(String name) {
 		return subCommands.get(name.toLowerCase());
 	}
-	
+
 	protected Collection<SubCommandBuilder> getAllSubCommands() {
 		return new HashSet<>(subCommands.values());
 	}
-	
+
 	protected List<String> getSubCommandNames() {
 		return getAllSubCommands().stream()
 				.map(SubCommandBuilder::getName)
 				.sorted()
 				.collect(Collectors.toList());
 	}
-	
+
 	public abstract boolean onDefaultExecution(CommandSender sender, String[] args);
-	
+
 	public List<String> onDefaultTabComplete(CommandSender sender, String[] args) {
 		return getAllSubCommands().stream()
 				.filter(sub -> sub.hasPermission(sender, name))
@@ -72,7 +84,7 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 				.sorted()
 				.collect(Collectors.toList());
 	}
-	
+
 	@Override
 	public final boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 0) {
@@ -98,7 +110,7 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 
 		return subCommand.onExecution(sender, subArgs);
 	}
-	
+
 	@Override
 	public final List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
 		if (args.length == 1) {
@@ -130,5 +142,9 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 
 	public String[] getAliases() {
 		return aliases;
+	}
+
+	protected Player asPlayer(CommandSender sender) {
+		return sender instanceof Player ? (Player) sender : null;
 	}
 }

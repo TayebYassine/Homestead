@@ -31,12 +31,15 @@ import java.util.*;
 public class ImportSubCmd extends SubCommandBuilder {
 	public ImportSubCmd() {
 		super("import", null, false);
+		setUsage("/hsadmin import [plugin]");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 1) {
-			Messages.send(sender, 0);
+			Messages.send(sender, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 

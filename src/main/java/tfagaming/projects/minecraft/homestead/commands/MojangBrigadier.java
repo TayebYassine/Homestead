@@ -9,7 +9,7 @@ import me.lucko.commodore.Commodore;
 import org.bukkit.command.PluginCommand;
 import tfagaming.projects.minecraft.homestead.Homestead;
 
-public class MojangBrigadier {
+public final class MojangBrigadier {
 	private final Homestead plugin;
 	private final Commodore commodore;
 

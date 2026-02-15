@@ -15,12 +15,15 @@ import java.util.List;
 public class TransferOwnershipSubCmd extends SubCommandBuilder {
 	public TransferOwnershipSubCmd() {
 		super("transfer", null, false);
+		setUsage("/hsadmin transfer [region] [new-owner]");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 2) {
-			Messages.send(sender, 0);
+			Messages.send(sender, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 

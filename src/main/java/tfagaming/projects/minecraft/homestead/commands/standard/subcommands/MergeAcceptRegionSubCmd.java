@@ -2,7 +2,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.commands.LegacySubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.mergingregion.MergeRegionSession;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
@@ -11,16 +11,17 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-public class MergeAcceptRegionSubCmd extends LegacySubCommandBuilder {
+public class MergeAcceptRegionSubCmd extends SubCommandBuilder {
 	public MergeAcceptRegionSubCmd() {
 		super("mergeaccept");
+		setUsage("/region mergeaccept");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
+			sender.sendMessage("This command can only be used by players.");
+			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
@@ -37,14 +38,14 @@ public class MergeAcceptRegionSubCmd extends LegacySubCommandBuilder {
 
 		if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
 			Messages.send(player, 30);
-			return false;
+			return true;
 		}
 
 		Region from = RegionsManager.findRegion(MergeRegionSession.getFrom(region));
 
 		if (from == null) {
 			Messages.send(player, 182);
-			return false;
+			return true;
 		}
 
 		RegionsManager.mergeRegions(from, region);

@@ -27,11 +27,6 @@ public class ConfigLoader {
 		Logger.info("The configuration file is ready.");
 	}
 
-//	@SuppressWarnings("unchecked")
-//	public <T> T get(String path) {
-//		return (T) config.get(path);
-//	}
-
 	public boolean getBoolean(String path, boolean defaultValue) {
 		if (config == null) return defaultValue;
 		return config.getBoolean(path, defaultValue);
@@ -152,17 +147,16 @@ public class ConfigLoader {
 		return flags;
 	}
 
-	@SuppressWarnings("unchecked")
+	public String getPrefix() {
+		return Homestead.language.getString("prefix");
+	}
+
 	public boolean isFlagDisabled(String flag) {
 		return getStringList("disabled-flags").contains(flag);
 	}
 
 	public boolean isWelcomeSignEnabled() {
 		return getBoolean("welcome-signs.enabled");
-	}
-
-	public String getPrefix() {
-		return Homestead.language.getString("prefix");
 	}
 
 	public boolean isAdjacentChunksRuleEnabled() {
@@ -179,6 +173,10 @@ public class ConfigLoader {
 
 	public boolean isLevelsEnabled() {
 		return getBoolean("levels.enabled");
+	}
+
+	public boolean isInstantTrustSystemEnabled() {
+		return getBoolean("special-feat.ignore-trust-acceptance-system");
 	}
 
 	public boolean isDebugEnabled() {

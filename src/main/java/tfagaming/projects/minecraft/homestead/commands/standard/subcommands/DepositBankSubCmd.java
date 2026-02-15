@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.commands.LegacySubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
@@ -16,16 +16,20 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-public class DepositBankSubCmd extends LegacySubCommandBuilder {
+import java.util.ArrayList;
+import java.util.List;
+
+public class DepositBankSubCmd extends SubCommandBuilder {
 	public DepositBankSubCmd() {
 		super("deposit");
+		setUsage("/region deposit [amount/all]");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
+			sender.sendMessage("This command can only be used by players.");
+			return true;
 		}
 
 		if (!player.hasPermission("homestead.region.bank")) {
@@ -34,7 +38,9 @@ public class DepositBankSubCmd extends LegacySubCommandBuilder {
 		}
 
 		if (args.length < 2) {
-			Messages.send(player, 0);
+			Messages.send(player, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 
@@ -65,7 +71,7 @@ public class DepositBankSubCmd extends LegacySubCommandBuilder {
 			return true;
 		}
 
-		String amountInput = args[1];
+		String amountInput = args[0];
 
 		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput))
 				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > 2147483647)) {
@@ -94,5 +100,19 @@ public class DepositBankSubCmd extends LegacySubCommandBuilder {
 		);
 
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return new ArrayList<>();
+
+		List<String> suggestions = new ArrayList<>();
+
+		if (args.length == 0) {
+			suggestions.add("all");
+		}
+
+		return suggestions;
 	}
 }

@@ -4,7 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.commands.LegacyCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
@@ -18,16 +18,18 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class UnclaimCommand extends LegacyCommandBuilder {
+public class UnclaimCommand extends CommandBuilder {
 	public UnclaimCommand() {
 		super("unclaim");
 	}
 
 	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
+	public boolean onDefaultExecution(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+
+		if (player == null) {
+			sender.sendMessage("This command can only be used by players.");
+			return true;
 		}
 
 		Chunk chunk = player.getLocation().getChunk();
@@ -44,7 +46,9 @@ public class UnclaimCommand extends LegacyCommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+		if (!PlayerUtils.hasControlRegionPermissionFlag(
+				region.getUniqueId(),
+				player,
 				RegionControlFlags.UNCLAIM_CHUNKS)) {
 			return true;
 		}
@@ -65,7 +69,6 @@ public class UnclaimCommand extends LegacyCommandBuilder {
 
 		if (error == null) {
 			double chunkPrice = Homestead.config.getDouble("chunk-price");
-
 			PlayerBank.deposit(region.getOwner(), chunkPrice);
 
 			Messages.send(player, 24, new Placeholder()
@@ -84,7 +87,7 @@ public class UnclaimCommand extends LegacyCommandBuilder {
 	}
 
 	@Override
-	public List<String> onAutoComplete(CommandSender sender, String[] args) {
+	public List<String> onDefaultTabComplete(CommandSender sender, String[] args) {
 		return new ArrayList<>();
 	}
 }

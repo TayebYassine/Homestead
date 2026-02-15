@@ -5,10 +5,14 @@ import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class AutoClaimSession {
+public final class AutoClaimSession {
 	public static final HashSet<UUID> sessions = new HashSet<UUID>();
 
-	public AutoClaimSession(Player player) {
+	private AutoClaimSession() {
+
+	}
+
+	public static void newSession(Player player) {
 		sessions.add(player.getUniqueId());
 	}
 

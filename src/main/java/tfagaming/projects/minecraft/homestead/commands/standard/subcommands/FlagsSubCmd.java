@@ -4,7 +4,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.commands.LegacySubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -17,22 +17,26 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class FlagsSubCmd extends LegacySubCommandBuilder {
+public class FlagsSubCmd extends SubCommandBuilder {
 	public FlagsSubCmd() {
 		super("flags");
+		setUsage("/region flags [global/world/member] {member} [flag] (allow/deny)");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
+			sender.sendMessage("This command can only be used by players.");
+			return true;
 		}
 
 		if (args.length < 2) {
-			Messages.send(player, 0);
+			Messages.send(player, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 
@@ -43,7 +47,7 @@ public class FlagsSubCmd extends LegacySubCommandBuilder {
 			return true;
 		}
 
-		String setType = args[1].toLowerCase();
+		String setType = args[0].toLowerCase();
 
 		switch (setType) {
 			case "member": {
@@ -58,11 +62,13 @@ public class FlagsSubCmd extends LegacySubCommandBuilder {
 				}
 
 				if (args.length < 4) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
-				String targetName = args[2];
+				String targetName = args[1];
 
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
@@ -81,7 +87,7 @@ public class FlagsSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				String flagInput = args[3];
+				String flagInput = args[2];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {
 					Messages.send(player, 41);
@@ -98,8 +104,8 @@ public class FlagsSubCmd extends LegacySubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 4) {
-					String flagStateInput = args[4];
+				if (args.length > 3) {
+					String flagStateInput = args[3];
 
 					switch (flagStateInput.toLowerCase()) {
 						case "1":
@@ -149,17 +155,19 @@ public class FlagsSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				if (args.length == 2) {
+				if (args.length == 1) {
 					new GlobalPlayerFlagsMenu(player, region);
 					return true;
 				}
 
 				if (args.length < 3) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
-				String flagInput = args[2];
+				String flagInput = args[1];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {
 					Messages.send(player, 41);
@@ -178,8 +186,8 @@ public class FlagsSubCmd extends LegacySubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 3) {
-					String flagStateInput = args[3];
+				if (args.length > 2) {
+					String flagStateInput = args[2];
 
 					switch (flagStateInput.toLowerCase()) {
 						case "1":
@@ -228,17 +236,19 @@ public class FlagsSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				if (args.length == 2) {
+				if (args.length == 1) {
 					new WorldFlagsMenu(player, region);
 					return true;
 				}
 
 				if (args.length < 3) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
-				String flagInput = args[2];
+				String flagInput = args[1];
 
 				if (!WorldFlags.getFlags().contains(flagInput)) {
 					Messages.send(player, 41);
@@ -257,8 +267,8 @@ public class FlagsSubCmd extends LegacySubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 3) {
-					String flagStateInput = args[3];
+				if (args.length > 2) {
+					String flagStateInput = args[2];
 
 					switch (flagStateInput.toLowerCase()) {
 						case "1":
@@ -297,11 +307,27 @@ public class FlagsSubCmd extends LegacySubCommandBuilder {
 				break;
 			}
 			default: {
-				Messages.send(player, 0);
+				Messages.send(player, 0, new Placeholder()
+						.add("{usage}", getUsage())
+				);
 				break;
 			}
 		}
 
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return new ArrayList<>();
+
+		List<String> suggestions = new ArrayList<>();
+
+		if (args.length == 0) {
+
+		}
+
+		return suggestions;
 	}
 }

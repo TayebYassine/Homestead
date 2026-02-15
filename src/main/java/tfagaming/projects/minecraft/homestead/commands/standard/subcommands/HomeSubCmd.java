@@ -2,7 +2,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.commands.LegacySubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -11,16 +11,17 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
-public class HomeSubCmd extends LegacySubCommandBuilder {
+public class HomeSubCmd extends SubCommandBuilder {
 	public HomeSubCmd() {
 		super("home");
+		setUsage("/region home");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
+			sender.sendMessage("This command can only be used by players.");
+			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);

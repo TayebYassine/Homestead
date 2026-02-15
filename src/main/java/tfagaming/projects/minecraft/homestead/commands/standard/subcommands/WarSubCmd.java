@@ -6,7 +6,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.commands.LegacySubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
@@ -20,21 +20,19 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class WarSubCmd extends LegacySubCommandBuilder {
+public class WarSubCmd extends SubCommandBuilder {
 	public WarSubCmd() {
 		super("war");
+		setUsage("/region war [action] (params)");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
+			sender.sendMessage("This command can only be used by players.");
+			return true;
 		}
 
 		if (!player.hasPermission("homestead.region.war")) {
@@ -50,7 +48,9 @@ public class WarSubCmd extends LegacySubCommandBuilder {
 		}
 
 		if (args.length < 2) {
-			Messages.send(player, 0);
+			Messages.send(player, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 
@@ -62,26 +62,28 @@ public class WarSubCmd extends LegacySubCommandBuilder {
 			return true;
 		}
 
-		switch (args[1]) {
+		switch (args[0]) {
 			case "declare": {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region != null && WarsManager.isRegionInWar(region.getUniqueId())) {
 					Messages.send(player, 151);
-					return false;
+					return true;
 				}
 
 				if (args.length < 4) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
 				if (region == null) {
 					Messages.send(player, 4);
-					return false;
+					return true;
 				}
 
-				String targetRegionName = args[2];
+				String targetRegionName = args[1];
 				Region targetRegion = RegionsManager.findRegion(targetRegionName);
 
 				if (targetRegion == null) {
@@ -91,25 +93,25 @@ public class WarSubCmd extends LegacySubCommandBuilder {
 
 				if (!region.isOwner(player) && region.isPlayerMember(player)) {
 					Messages.send(player, 149);
-					return false;
+					return true;
 				}
 
 				if (region.getUniqueId().equals(targetRegion.getUniqueId()) || region.isOwner(targetRegion.getOwnerId())) {
 					Messages.send(player, 148);
-					return false;
+					return true;
 				}
 
 				if (!(region.isWorldFlagSet(WorldFlags.WARS) && targetRegion.isWorldFlagSet(WorldFlags.WARS))) {
 					Messages.send(player, 164);
-					return false;
+					return true;
 				}
 
 				if (WarsManager.isRegionInWar(targetRegion.getUniqueId())) {
 					Messages.send(player, 150);
-					return false;
+					return true;
 				}
 
-				String prizeInput = args[3];
+				String prizeInput = args[2];
 
 				if ((!NumberUtils.isValidDouble(prizeInput))
 						|| (NumberUtils.isValidDouble(prizeInput) && Double.parseDouble(prizeInput) > Integer.MAX_VALUE)) {
@@ -171,7 +173,9 @@ public class WarSubCmd extends LegacySubCommandBuilder {
 
 			case "surrender": {
 				if (args.length < 2) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
@@ -179,7 +183,7 @@ public class WarSubCmd extends LegacySubCommandBuilder {
 
 				if (region == null) {
 					Messages.send(player, 4);
-					return false;
+					return true;
 				}
 
 				if (!WarsManager.isRegionInWar(region.getUniqueId())) {
@@ -214,7 +218,7 @@ public class WarSubCmd extends LegacySubCommandBuilder {
 
 				if (region == null) {
 					Messages.send(player, 4);
-					return false;
+					return true;
 				}
 
 				War war = WarsManager.findWarByRegionId(region.getUniqueId());
@@ -232,5 +236,19 @@ public class WarSubCmd extends LegacySubCommandBuilder {
 		}
 
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return new ArrayList<>();
+
+		List<String> suggestions = new ArrayList<>();
+
+		if (args.length == 0) {
+
+		}
+
+		return suggestions;
 	}
 }

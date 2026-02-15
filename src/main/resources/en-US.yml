@@ -15,7 +15,7 @@ default:
   author: Server
 
 prefix: "&8[&6Homestead&8]&r"
-0: "{__prefix__} &7Insufficient arguments. Please use: &e/help <command>"
+0: "{__prefix__} &7Insufficient arguments, usage: &e{usage}"
 1: "{__prefix__} &cThe region name must be alphanumerical, other characters are prohibited."
 2: "{__prefix__} &cThe region name was taken, please choose another name."
 3: "{__prefix__} &7Successfully created a new region: &2{name}"

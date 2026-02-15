@@ -6,7 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.commands.LegacySubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -28,16 +28,20 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtils;
 
-public class SubAreasSubCmd extends LegacySubCommandBuilder {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SubAreasSubCmd extends SubCommandBuilder {
 	public SubAreasSubCmd() {
 		super("subareas");
+		setUsage("/region subareas [action] [subarea] (params)");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
+			sender.sendMessage("This command can only be used by players.");
+			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
@@ -47,13 +51,15 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 			return true;
 		}
 
-		if (args.length == 1) {
+		if (args.length == 0) {
 			new SubAreasMenu(player, region);
 			return true;
 		}
 
 		if (args.length < 3) {
-			Messages.send(player, 0);
+			Messages.send(player, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 
@@ -62,7 +68,7 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 			return true;
 		}
 
-		switch (args[1]) {
+		switch (args[0]) {
 			case "create": {
 				if (!player.hasPermission("homestead.region.subareas.create")) {
 					Messages.send(player, 8);
@@ -94,7 +100,7 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				String name = args[2];
+				String name = args[1];
 
 				if (!StringUtils.isValidSubAreaName(name)) {
 					Messages.send(player, 57);
@@ -140,12 +146,14 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 				}
 
 				if (args.length < 4) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
-				String name = args[2];
-				String newName = args[3];
+				String name = args[1];
+				String newName = args[2];
 
 				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
@@ -186,7 +194,7 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				String name = args[2];
+				String name = args[1];
 
 				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
@@ -210,11 +218,13 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 				}
 
 				if (args.length < 4) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
-				String name = args[2];
+				String name = args[1];
 
 				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
@@ -223,7 +233,7 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				String flagInput = args[3];
+				String flagInput = args[2];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {
 					Messages.send(player, 41);
@@ -235,8 +245,8 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 4) {
-					String flagStateInput = args[4];
+				if (args.length > 3) {
+					String flagStateInput = args[3];
 
 					switch (flagStateInput.toLowerCase()) {
 						case "1":
@@ -282,11 +292,13 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 				}
 
 				if (args.length < 5) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
-				String name = args[2];
+				String name = args[1];
 
 				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
 
@@ -295,7 +307,7 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				String playerName = args[3];
+				String playerName = args[2];
 
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
@@ -311,7 +323,7 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				String action = args[4];
+				String action = args[3];
 
 				switch (action.toLowerCase()) {
 					case "add": {
@@ -358,7 +370,9 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 
 					case "flags": {
 						if (args.length < 6) {
-							Messages.send(player, 0);
+							Messages.send(player, 0, new Placeholder()
+									.add("{usage}", getUsage())
+							);
 							return true;
 						}
 
@@ -367,7 +381,7 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 							return true;
 						}
 
-						String flagInput = args[5];
+						String flagInput = args[4];
 
 						if (!PlayerFlags.getFlags().contains(flagInput)) {
 							Messages.send(player, 41);
@@ -381,8 +395,8 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 
 						boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-						if (args.length > 6) {
-							String flagStateInput = args[6];
+						if (args.length > 5) {
+							String flagStateInput = args[5];
 
 							switch (flagStateInput.toLowerCase()) {
 								case "1":
@@ -424,17 +438,35 @@ public class SubAreasSubCmd extends LegacySubCommandBuilder {
 					}
 
 					default: {
-						Messages.send(player, 0);
+						Messages.send(player, 0, new Placeholder()
+								.add("{usage}", getUsage())
+						);
 						return true;
 					}
 				}
 			}
 			default: {
-				Messages.send(player, 0);
+				Messages.send(player, 0, new Placeholder()
+						.add("{usage}", getUsage())
+				);
 				break;
 			}
 		}
 
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return new ArrayList<>();
+
+		List<String> suggestions = new ArrayList<>();
+
+		if (args.length == 0) {
+
+		}
+
+		return suggestions;
 	}
 }

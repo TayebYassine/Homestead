@@ -12,12 +12,10 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PluginSubCmd extends SubCommandBuilder {
 	public PluginSubCmd() {
 		super("plugin", null, false);
+		setUsage("/hsadmin plugin");
 	}
 
 	@Override
@@ -54,10 +52,5 @@ public class PluginSubCmd extends SubCommandBuilder {
 		}
 
 		return true;
-	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		return new ArrayList<>();
 	}
 }

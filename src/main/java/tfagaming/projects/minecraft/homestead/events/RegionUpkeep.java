@@ -35,10 +35,10 @@ public final class RegionUpkeep {
 					if (region.getOwner().isOnline()) {
 						Player regionOwner = (Player) region.getOwner();
 
-						Placeholder placeholder = new Placeholder();
-						placeholder.add("{amount}", Formatters.getBalance(amountToPay));
-						placeholder.add("{region}", region.getName());
-						placeholder.add("{chunks}", String.valueOf(chunksToRemove));
+						Placeholder placeholder = new Placeholder()
+							.add("{amount}", Formatters.getBalance(amountToPay))
+							.add("{region}", region.getName())
+							.add("{chunks}", String.valueOf(chunksToRemove));
 
 						Messages.send(regionOwner, 111, placeholder);
 						Messages.send(regionOwner, 112, placeholder);
@@ -51,10 +51,10 @@ public final class RegionUpkeep {
 					if (region.getOwner().isOnline()) {
 						Player regionOwner = (Player) region.getOwner();
 
-						Placeholder placeholder = new Placeholder();
-						placeholder.add("{amount}", Formatters.getBalance(amountToPay));
-						placeholder.add("{region}", region.getName());
-						placeholder.add("{bank}", Formatters.getBalance(region.getBank()));
+						Placeholder placeholder = new Placeholder()
+							.add("{amount}", Formatters.getBalance(amountToPay))
+							.add("{region}", region.getName())
+							.add("{bank}", Formatters.getBalance(region.getBank()));
 
 						Messages.send(regionOwner, 109, placeholder);
 						Messages.send(regionOwner, 110, placeholder);

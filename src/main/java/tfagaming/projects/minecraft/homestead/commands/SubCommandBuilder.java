@@ -13,6 +13,7 @@ public abstract class SubCommandBuilder {
 	private final String permission;
 	private final String[] aliases;
 	private final boolean playerOnly;
+	private String usage = "";
 
 	public SubCommandBuilder(String name) {
 		this(name, null, true);
@@ -49,6 +50,16 @@ public abstract class SubCommandBuilder {
 
 	public String[] getAliases() {
 		return aliases;
+	}
+
+	public String getUsage() {
+		return usage;
+	}
+
+	public SubCommandBuilder setUsage(String usage) {
+		this.usage = usage;
+
+		return this;
 	}
 
 	public boolean isPlayerOnly() {

@@ -18,6 +18,7 @@ import java.util.List;
 public class UnclaimSubCmd extends SubCommandBuilder {
 	public UnclaimSubCmd() {
 		super("unclaim");
+		setUsage("/hsadmin unclaim [region] [location] [radius]");
 	}
 
 	@Override
@@ -25,12 +26,14 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 		Player player = asPlayer(sender);
 
 		if (player == null) {
-			sender.sendMessage("You cannot use this command via the console.");
+			sender.sendMessage("This command can only be used by players.");
 			return false;
 		}
 
 		if (args.length < 2) {
-			Messages.send(player, 0);
+			Messages.send(player, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
 			return true;
 		}
 
@@ -67,7 +70,9 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 			}
 		} else {
 			if (args.length < 3) {
-				Messages.send(player, 0);
+				Messages.send(player, 0, new Placeholder()
+						.add("{usage}", getUsage())
+				);
 				return true;
 			}
 

@@ -5,7 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.commands.LegacySubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
@@ -21,32 +21,38 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SetRegionSubCmd extends LegacySubCommandBuilder {
+public class SetRegionSubCmd extends SubCommandBuilder {
 	public SetRegionSubCmd() {
 		super("set");
+		setUsage("/region set [setting] [value]");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
-		}
-
-		if (args.length < 2) {
-			Messages.send(player, 0);
+			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}
 
-		String setType = args[1].toLowerCase();
+		if (args.length < 2) {
+			Messages.send(player, 0, new Placeholder()
+					.add("{usage}", getUsage())
+			);
+			return true;
+		}
+
+		String setType = args[0].toLowerCase();
 
 		switch (setType) {
 			case "displayname": {
 				if (args.length < 3) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
@@ -57,7 +63,7 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 
 				if (region == null) {
 					Messages.send(player, 4);
-					return false;
+					return true;
 				}
 
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
@@ -88,7 +94,9 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 			}
 			case "description": {
 				if (args.length < 3) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
@@ -99,7 +107,7 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 
 				if (region == null) {
 					Messages.send(player, 4);
-					return false;
+					return true;
 				}
 
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
@@ -135,17 +143,19 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 				}
 
 				if (args.length < 3) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
-				String colorInput = args[2].toLowerCase();
+				String colorInput = args[1].toLowerCase();
 
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
 					Messages.send(player, 4);
-					return false;
+					return true;
 				}
 
 				if (!MapColor.getAll().contains(colorInput)) {
@@ -176,7 +186,7 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 
 				if (region == null) {
 					Messages.send(player, 4);
-					return false;
+					return true;
 				}
 
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
@@ -190,7 +200,7 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 
 				if (ChunksManager.getRegionOwnsTheChunk(chunk) == null || !ChunksManager.getRegionOwnsTheChunk(chunk).getUniqueId().equals(region.getUniqueId())) {
 					Messages.send(player, 142);
-					return false;
+					return true;
 				}
 
 				region.setLocation(location);
@@ -212,7 +222,9 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 				}
 
 				if (args.length < 3) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
@@ -224,13 +236,13 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				String iconInput = args[2];
+				String iconInput = args[1];
 
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
 					Messages.send(player, 4);
-					return false;
+					return true;
 				}
 
 				if (iconInput.equalsIgnoreCase("none") || iconInput.equalsIgnoreCase("default")) {
@@ -259,7 +271,9 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 			}
 			case "tax": {
 				if (args.length < 3) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
@@ -281,13 +295,13 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 					return true;
 				}
 
-				String taxInput = args[2];
+				String taxInput = args[1];
 
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
 					Messages.send(player, 4);
-					return false;
+					return true;
 				}
 
 				if (!NumberUtils.isValidDouble(taxInput)) {
@@ -321,11 +335,13 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 			}
 			case "target": {
 				if (args.length < 3) {
-					Messages.send(player, 0);
+					Messages.send(player, 0, new Placeholder()
+							.add("{usage}", getUsage())
+					);
 					return true;
 				}
 
-				String regionName = args[2];
+				String regionName = args[1];
 
 				Region region = RegionsManager.findRegion(regionName);
 
@@ -355,11 +371,27 @@ public class SetRegionSubCmd extends LegacySubCommandBuilder {
 				break;
 			}
 			default: {
-				Messages.send(player, 0);
+				Messages.send(player, 0, new Placeholder()
+						.add("{usage}", getUsage())
+				);
 				break;
 			}
 		}
 
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return new ArrayList<>();
+
+		List<String> suggestions = new ArrayList<>();
+
+		if (args.length == 0) {
+
+		}
+
+		return suggestions;
 	}
 }

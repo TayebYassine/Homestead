@@ -382,9 +382,9 @@ public final class CustomSignsListener implements Listener {
 
 			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(sign.getLocation());
 
-			Placeholder placeholder = new Placeholder();
-			placeholder.add("{region}", region.getName());
-			placeholder.add("{rent-end}", Formatters.formatRemainingTime(rentEnd));
+			Placeholder placeholder = new Placeholder()
+				.add("{region}", region.getName())
+				.add("{rent-end}", Formatters.formatRemainingTime(rentEnd));
 
 			if (subArea != null) {
 				subArea.setRent(rent);

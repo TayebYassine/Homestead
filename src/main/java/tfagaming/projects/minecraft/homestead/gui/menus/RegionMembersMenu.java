@@ -100,7 +100,7 @@ public class RegionMembersMenu {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
-				if (Homestead.config.getBoolean("special-feat.ignore-trust-acceptance-system")) {
+				if (Homestead.config.isInstantTrustSystemEnabled()) {
 					region.removePlayerInvite(targetPlayer);
 
 					region.addMember(targetPlayer);

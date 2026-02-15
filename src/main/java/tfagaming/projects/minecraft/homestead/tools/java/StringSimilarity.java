@@ -1,15 +1,13 @@
 package tfagaming.projects.minecraft.homestead.tools.java;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
  * I used DeepSeek for this.
  */
 public class StringSimilarity {
-	public static List<String> findTopSimilarStrings(List<String> list, String comparison) {
+	public static List<String> find(List<String> list, String comparison) {
 		if (list == null || comparison == null) {
 			throw new IllegalArgumentException("Input list and comparison string cannot be null");
 		}
@@ -24,12 +22,7 @@ public class StringSimilarity {
 			scoredStrings.add(new StringScore(str, score));
 		}
 
-		Collections.sort(scoredStrings, new Comparator<StringScore>() {
-			@Override
-			public int compare(StringScore o1, StringScore o2) {
-				return Double.compare(o2.score, o1.score);
-			}
-		});
+		scoredStrings.sort((o1, o2) -> Double.compare(o2.score, o1.score));
 
 		List<String> result = new ArrayList<>();
 		for (int i = 0; i < Math.min(3, scoredStrings.size()); i++) {
@@ -47,7 +40,7 @@ public class StringSimilarity {
 		String longer = s1.length() > s2.length() ? s1 : s2;
 		String shorter = s1.length() > s2.length() ? s2 : s1;
 
-		if (longer.length() == 0) {
+		if (longer.isEmpty()) {
 			return 1.0;
 		}
 

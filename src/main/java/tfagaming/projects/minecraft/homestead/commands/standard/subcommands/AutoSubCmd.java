@@ -2,20 +2,21 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.commands.LegacySubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
-public class AutoSubCmd extends LegacySubCommandBuilder {
+public class AutoSubCmd extends SubCommandBuilder {
 	public AutoSubCmd() {
 		super("auto");
+		setUsage("/region auto");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
+			sender.sendMessage("This command can only be used by players.");
+			return true;
 		}
 
 		if (AutoClaimSession.hasSession(player)) {
@@ -23,7 +24,7 @@ public class AutoSubCmd extends LegacySubCommandBuilder {
 
 			Messages.send(player, 136);
 		} else {
-			new AutoClaimSession(player);
+			AutoClaimSession.newSession(player);
 
 			Messages.send(player, 135);
 		}

@@ -12,14 +12,13 @@ import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ReloadSubCmd extends SubCommandBuilder {
 	public ReloadSubCmd() {
 		super("reload", null, false);
+		setUsage("/hsadmin reload");
 	}
 
 	@Override
@@ -74,10 +73,5 @@ public class ReloadSubCmd extends SubCommandBuilder {
 		}
 
 		return true;
-	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		return new ArrayList<>();
 	}
 }

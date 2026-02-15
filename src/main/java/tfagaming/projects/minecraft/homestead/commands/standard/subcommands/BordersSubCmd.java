@@ -1,21 +1,18 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.gui.menus.PlayerInfoMenu;
-import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerInfoSubCmd extends SubCommandBuilder {
-	public PlayerInfoSubCmd() {
-		super("player");
-		setUsage("/region player [player]");
+public class BordersSubCmd extends SubCommandBuilder {
+	public BordersSubCmd() {
+		super("borders");
+		setUsage("/region borders (stop)");
 	}
 
 	@Override
@@ -25,26 +22,17 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 2) {
-			new PlayerInfoMenu(player, player, () -> {
-				player.closeInventory();
-			});
-		} else {
-			String playerName = args[0];
+		if (args.length == 1 && args[0].equalsIgnoreCase("stop")) {
+			ChunkBorder.stop(player);
 
-			OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
+			Messages.send(player, 26);
 
-			if (target == null) {
-				Messages.send(player, 29, new Placeholder()
-						.add("{playername}", playerName)
-				);
-				return true;
-			}
-
-			new PlayerInfoMenu(player, target, () -> {
-				player.closeInventory();
-			});
+			return true;
 		}
+
+		ChunkBorder.show(player);
+
+		Messages.send(player, 27);
 
 		return true;
 	}
@@ -57,7 +45,7 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 0) {
-
+			suggestions.add("stop");
 		}
 
 		return suggestions;

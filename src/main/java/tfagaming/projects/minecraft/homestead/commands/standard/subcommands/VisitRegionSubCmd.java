@@ -4,7 +4,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.commands.LegacySubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionsWithWelcomeSignsMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
@@ -18,16 +18,17 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.Dela
 import java.util.ArrayList;
 import java.util.List;
 
-public class VisitRegionSubCmd extends LegacySubCommandBuilder {
+public class VisitRegionSubCmd extends SubCommandBuilder {
 	public VisitRegionSubCmd() {
 		super("visit");
+		setUsage("/region visit [region/playername] (index)");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player player)) {
-			sender.sendMessage("You cannot use this command via the console.");
-			return false;
+			sender.sendMessage("This command can only be used by players.");
+			return true;
 		}
 
 		if (Homestead.config.isWelcomeSignEnabled()) {
@@ -37,7 +38,7 @@ public class VisitRegionSubCmd extends LegacySubCommandBuilder {
 				return true;
 			}
 
-			String playerName = args[1];
+			String playerName = args[0];
 
 			OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
@@ -48,7 +49,7 @@ public class VisitRegionSubCmd extends LegacySubCommandBuilder {
 				return true;
 			}
 
-			String indexInput = args.length >= 3 ? args[2] : "0";
+			String indexInput = args.length >= 2 ? args[1] : "0";
 
 			if (!NumberUtils.isValidInteger(indexInput)) {
 				Messages.send(player, 137);
@@ -79,17 +80,19 @@ public class VisitRegionSubCmd extends LegacySubCommandBuilder {
 			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().getBukkitLocation());
 		} else {
 			if (args.length < 2) {
-				Messages.send(player, 0);
+				Messages.send(player, 0, new Placeholder()
+						.add("{usage}", getUsage())
+				);
 				return true;
 			}
 
-			String regionName = args[1];
+			String regionName = args[0];
 
 			Region region = RegionsManager.findRegion(regionName);
 
 			if (region == null) {
 				Messages.send(player, 9);
-				return false;
+				return true;
 			}
 
 			if (region.getLocation() == null) {
@@ -113,5 +116,19 @@ public class VisitRegionSubCmd extends LegacySubCommandBuilder {
 		}
 
 		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return new ArrayList<>();
+
+		List<String> suggestions = new ArrayList<>();
+
+		if (args.length == 0) {
+
+		}
+
+		return suggestions;
 	}
 }
