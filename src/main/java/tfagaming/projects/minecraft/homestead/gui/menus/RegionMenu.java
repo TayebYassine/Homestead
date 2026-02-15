@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
@@ -19,7 +20,6 @@ import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
 import tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType;
 
 import java.util.HashMap;
-import java.util.stream.Collectors;
 
 public class RegionMenu {
 	public RegionMenu(Player player, Region region) {
@@ -32,14 +32,14 @@ public class RegionMenu {
 		HashMap<String, String> replacements = new HashMap<>();
 		replacements.put("{region}", region.getName());
 		replacements.put("{region-owner}", region.getOwner().getName());
-		replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
-		replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
+		replacements.put("{region-bank}", Formatters.getBalance(region.getBank()));
+		replacements.put("{region-createdat}", Formatters.getDate(region.getCreatedAt()));
 		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 		replacements.put("{region-members}", String.valueOf(region.getMembers().size()));
 		replacements.put("{upkeep-enabled}", Formatters.getEnabled(isEconomyEnabled && isUpkeepEnabled));
 		replacements.put("{upkeep-date}", isEconomyEnabled && isUpkeepEnabled ? Formatters.formatRemainingTime(region.getUpkeepAt()) : Formatters.getNone());
 		replacements.put("{upkeep-amount}",
-				Formatters.formatBalance(UpkeepUtils.getAmountToPay(region)));
+				Formatters.getBalance(UpkeepUtils.getAmountToPay(region)));
 		replacements.put("{region-global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
 		replacements.put("{region-rank-bank}",
 				String.valueOf(RegionsManager.getRank(RegionSorting.BANK, region.getUniqueId())));
@@ -51,7 +51,7 @@ public class RegionMenu {
 				String.valueOf(RegionsManager.getRank(RegionSorting.RATING, region.getUniqueId())));
 		replacements.put("{region-logs}", String.valueOf(region.getLogs().size()));
 		replacements.put("{region-logs-unread}", String
-				.valueOf(region.getLogs().stream().filter((log) -> !log.isRead()).collect(Collectors.toList()).size()));
+				.valueOf(region.getLogs().stream().filter((log) -> !log.isRead()).toList().size()));
 		replacements.put("{region-weather}", WeatherType.from(region.getWeather()));
 		replacements.put("{region-time}", TimeType.from(region.getTime()));
 
@@ -143,7 +143,7 @@ public class RegionMenu {
 		if (rent != null) {
 			replacements.put("{rent-enabled}", Formatters.getEnabled(isEconomyEnabled && isRentEnabled));
 			replacements.put("{rent-renter}", rent.getPlayer().getName());
-			replacements.put("{rent-price}", Formatters.formatBalance(rent.getPrice()));
+			replacements.put("{rent-price}", Formatters.getBalance(rent.getPrice()));
 			replacements.put("{rent-until}", Formatters.formatRemainingTime(rent.getUntilAt()));
 		} else {
 			replacements.put("{rent-enabled}", Formatters.getEnabled(isEconomyEnabled && isRentEnabled));

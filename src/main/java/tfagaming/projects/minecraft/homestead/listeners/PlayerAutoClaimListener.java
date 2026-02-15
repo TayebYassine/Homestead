@@ -14,11 +14,12 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -128,9 +129,9 @@ public final class PlayerAutoClaimListener implements Listener {
 
 		Region owner = ChunksManager.getRegionOwnsTheChunk(chunk);
 		if (owner != null) {
-			Map<String, String> replacements = new HashMap<>();
-			replacements.put("{region}", owner.getName());
-			Messages.send(player, 21, replacements);
+			Messages.send(player, 21, new Placeholder()
+					.add("{region}", owner.getName())
+			);
 			return;
 		}
 
@@ -147,9 +148,9 @@ public final class PlayerAutoClaimListener implements Listener {
 
 		if (error == null) {
 			if (after > before) {
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{region}", region.getName());
-				Messages.send(player, 22, replacements);
+				Messages.send(player, 22, new Placeholder()
+						.add("{region}", region.getName())
+				);
 			}
 
 			if (region.getLocation() == null) {

@@ -99,14 +99,13 @@ public class BlueMapAPI {
 		Map<String, String> replacements = new HashMap<>();
 		replacements.put("{region}", region.getName());
 		replacements.put("{region-owner}", region.getOwner().getName());
-		replacements.put("{region-members}", ColorTranslator.removeColor(
-				Formatters.getMembersOfRegion(region), false));
+		replacements.put("{region-members}", ColorTranslator.preserve(Formatters.getMembersOfRegion(region)));
 		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 		replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
 		replacements.put("{region-description}", region.getDescription());
 		replacements.put("{region-size}", String.valueOf(region.getChunks().size() * 256));
 
-		String hoverTextRaw = Formatters.replace(
+		String hoverTextRaw = Formatters.applyPlaceholders(
 				isOperator
 						? Homestead.config.getString("dynamic-maps.chunks.operator-description")
 						: Homestead.config.getString("dynamic-maps.chunks.description"),
@@ -114,7 +113,7 @@ public class BlueMapAPI {
 		);
 
 		String plainLabel = region.getName() + " (#" + RegionsManager.getGlobalRank(region.getUniqueId()) + ")";
-		plainLabel = ColorTranslator.removeColor(plainLabel, false)
+		plainLabel = ColorTranslator.preserve(plainLabel)
 				.replaceAll("<[^>]*>", "")
 				.replaceAll("&lt;[^&]*&gt;", "")
 				.trim();

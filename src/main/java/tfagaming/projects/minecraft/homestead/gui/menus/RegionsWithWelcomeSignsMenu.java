@@ -53,8 +53,8 @@ public class RegionsWithWelcomeSignsMenu {
 			replacements.put("{region}", region.getName());
 			replacements.put("{region-displayname}", region.getDisplayName());
 			replacements.put("{region-owner}", region.getOwner().getName());
-			replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
-			replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
+			replacements.put("{region-bank}", Formatters.getBalance(region.getBank()));
+			replacements.put("{region-createdat}", Formatters.getDate(region.getCreatedAt()));
 			replacements.put("{region-rating}", Formatters.formatRating(RegionsManager.getAverageRating(region)));
 
 			items.add(MenuUtils.getButton(47, replacements));

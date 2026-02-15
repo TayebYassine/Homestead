@@ -52,7 +52,7 @@ public class Pl3xMapAPI {
 		replacements.put("{region}", region.getName());
 		replacements.put("{region-owner}", region.getOwner().getName());
 		replacements.put("{region-members}",
-				ColorTranslator.removeColor(Formatters.getMembersOfRegion(region), false));
+				ColorTranslator.preserve(Formatters.getMembersOfRegion(region)));
 		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 		replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
 		replacements.put("{region-description}", region.getDescription());
@@ -61,7 +61,7 @@ public class Pl3xMapAPI {
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
 		String hoverText = Formatters
-				.replace(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
+				.applyPlaceholders(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
 						: Homestead.config.getString("dynamic-maps.chunks.description"), replacements);
 
 		int chunkColor = region.getMapColor() == 0

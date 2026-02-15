@@ -12,9 +12,6 @@ import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class RenameRegionSubCmd extends SubCommandBuilder {
 	public RenameRegionSubCmd() {
 		super("rename");

@@ -11,10 +11,6 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class BalanceSubCmd extends SubCommandBuilder {
 	public BalanceSubCmd() {

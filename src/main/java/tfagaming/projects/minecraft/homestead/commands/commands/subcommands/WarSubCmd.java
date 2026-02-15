@@ -19,7 +19,6 @@ import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -145,7 +144,7 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				War war = WarsManager.declareWar(name, prize, List.of(region, targetRegion));
 
-				List<String> listString = Homestead.language.get("147");
+				List<String> listString = Homestead.language.getStringList("147");
 
 				Map<String, String> replacements = new HashMap<String, String>();
 				replacements.put("{war-name}", war.getName());

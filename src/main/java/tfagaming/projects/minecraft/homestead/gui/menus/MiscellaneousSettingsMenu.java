@@ -14,9 +14,11 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.HashMap;
@@ -45,14 +47,7 @@ public class MiscellaneousSettingsMenu {
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
-				final String oldName = region.getName();
-
 				region.setName(input);
-
-				replacements.put("{oldname}", oldName);
-				replacements.put("{newname}", input);
-
-				Messages.send(player, 13, replacements);
 
 				// TODO Fix this
 				// RegionsManager.addNewLog(region.getUniqueId(), 0, replacements);
@@ -89,10 +84,6 @@ public class MiscellaneousSettingsMenu {
 
 				region.setDisplayName(input);
 
-				replacements.put("{olddisplayname}", oldDisplayName);
-				replacements.put("{newdisplayname}", region.getDisplayName());
-
-				Messages.send(player, 15, replacements);
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
@@ -121,10 +112,6 @@ public class MiscellaneousSettingsMenu {
 
 				region.setDescription(input);
 
-				replacements.put("{olddescription}", oldDescription);
-				replacements.put("{newdescription}", region.getDescription());
-
-				Messages.send(player, 17, replacements);
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_DESCRIPTION))
@@ -160,11 +147,8 @@ public class MiscellaneousSettingsMenu {
 
 			region.setLocation(location);
 
-			replacements.put("{region}", region.getName());
-			replacements.put("{location}", Formatters.formatLocation(location));
-			Messages.send(player, 72, replacements);
-
-			RegionsManager.addNewLog(region.getUniqueId(), 1, replacements);
+			// TODO Fix this
+			// RegionsManager.addNewLog(region.getUniqueId(), 1, replacements);
 		});
 
 		ItemStack transferOwnershipRegionButton = MenuUtils.getButton(38, replacements);
@@ -178,10 +162,6 @@ public class MiscellaneousSettingsMenu {
 
 				region.setOwner(targetPlayer);
 
-				replacements.put("{playername}", targetPlayer.getName());
-				replacements.put("{region}", region.getName());
-				Messages.send(player, 82, replacements);
-
 				if (region.isPlayerMember(targetPlayer)) region.removeMember(targetPlayer);
 				if (region.isPlayerInvited(targetPlayer)) region.removePlayerInvite(targetPlayer);
 
@@ -190,8 +170,9 @@ public class MiscellaneousSettingsMenu {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 				if (target == null) {
-					replacements.put("{playername}", message);
-					Messages.send(player, 29, replacements);
+					Messages.send(player, 29, new Placeholder()
+							.add("{playername}", message)
+					);
 					return false;
 				}
 				if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
@@ -199,8 +180,9 @@ public class MiscellaneousSettingsMenu {
 					return false;
 				}
 				if (region.isPlayerBanned(target)) {
-					replacements.put("{playername}", target.getName());
-					Messages.send(player, 32, replacements);
+					Messages.send(player, 32, new Placeholder()
+							.add("{playername}", target.getName())
+					);
 					return false;
 				}
 				if (region.isOwner(target)) {
@@ -239,15 +221,12 @@ public class MiscellaneousSettingsMenu {
 
 				RegionsManager.deleteRegion(region.getUniqueId(), player);
 
-				if (Homestead.vault.isEconomyReady()) {
-					PlayerUtils.addBalance(region.getOwner(), amountToGive);
-				}
+				PlayerBank.deposit(region.getOwner(), amountToGive);
 
-				Map<String, String> replacements1 = new HashMap<String, String>();
-				replacements1.put("{region}", region.getDisplayName());
-				replacements1.put("{region-bank}", Formatters.formatBalance(amountToGive));
-
-				Messages.send(player, 6, replacements1);
+				Messages.send(player, 6, new Placeholder()
+						.add("{region}", region.getDisplayName())
+						.add("{region-bank}", Formatters.getBalance(amountToGive))
+				);
 				_player.playSound(_player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1.2f);
 
 				new RegionsMenu(_player);

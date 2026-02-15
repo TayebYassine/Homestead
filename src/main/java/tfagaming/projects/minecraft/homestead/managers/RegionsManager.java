@@ -180,9 +180,9 @@ public final class RegionsManager {
 			return;
 		}
 
-		String message = Homestead.language.get("logs." + messagePath);
+		String message = Homestead.language.getString("logs." + messagePath);
 
-		region.addLog(new SerializableLog(Homestead.language.get("default.author"), message));
+		region.addLog(new SerializableLog(Homestead.language.getString("default.author"), message));
 	}
 
 	/**
@@ -198,10 +198,10 @@ public final class RegionsManager {
 			return;
 		}
 
-		String message = Homestead.language.get("logs." + messagePath);
+		String message = Homestead.language.getString("logs." + messagePath);
 
-		region.addLog(new SerializableLog(Homestead.language.get("default.author"),
-				Formatters.replace(message, replacements)));
+		region.addLog(new SerializableLog(Homestead.language.getString("default.author"),
+				Formatters.applyPlaceholders(message, replacements)));
 	}
 
 	public static void mergeRegions(Region from, Region to) {

@@ -17,9 +17,9 @@ public class RegionInfoMenu {
 
 		HashMap<String, String> replacements = new HashMap<>();
 		replacements.put("{region}", region.getName());
-		replacements.put("{region-createdat}", Formatters.formatDate(region.getCreatedAt()));
+		replacements.put("{region-createdat}", Formatters.getDate(region.getCreatedAt()));
 		replacements.put("{region-members}", Formatters.getMembersOfRegion(region));
-		replacements.put("{region-bank}", Formatters.formatBalance(region.getBank()));
+		replacements.put("{region-bank}", Formatters.getBalance(region.getBank()));
 		replacements.put("{region-rating}", Formatters.formatRating(RegionsManager.getAverageRating(region)));
 		replacements.put("{region-owner}", region.getOwner().getName());
 		replacements.put("{region-global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));

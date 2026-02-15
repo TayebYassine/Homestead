@@ -8,7 +8,6 @@ import tfagaming.projects.minecraft.homestead.gui.menus.RewardsMenu;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 public class RewardsSubCmd extends SubCommandBuilder {
 	public RewardsSubCmd() {

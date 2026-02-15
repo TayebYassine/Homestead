@@ -162,7 +162,7 @@ public class ConfigLoader {
 	}
 
 	public String getPrefix() {
-		return Homestead.language.get("prefix");
+		return Homestead.language.getString("prefix");
 	}
 
 	public boolean isAdjacentChunksRuleEnabled() {

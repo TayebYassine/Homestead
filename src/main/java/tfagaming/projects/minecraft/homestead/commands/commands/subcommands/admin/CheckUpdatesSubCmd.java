@@ -5,7 +5,6 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 public class CheckUpdatesSubCmd extends SubCommandBuilder {
 	public CheckUpdatesSubCmd() {

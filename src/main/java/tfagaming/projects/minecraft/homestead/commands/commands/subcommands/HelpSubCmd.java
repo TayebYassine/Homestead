@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class HelpSubCmd extends SubCommandBuilder {
 			return false;
 		}
 
-		List<String> listString = Homestead.language.get("101");
+		List<String> listString = Homestead.language.getStringList("101");
 
 		for (String string : listString) {
 			Messages.send(player, string, "");

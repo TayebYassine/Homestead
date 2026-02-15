@@ -8,7 +8,6 @@ import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
 import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
 
 import java.io.File;

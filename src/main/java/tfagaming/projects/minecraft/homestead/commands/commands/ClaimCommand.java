@@ -20,9 +20,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ClaimCommand extends CommandBuilder {
 	public ClaimCommand() {

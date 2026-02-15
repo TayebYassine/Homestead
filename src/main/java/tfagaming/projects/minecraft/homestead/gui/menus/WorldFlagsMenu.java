@@ -9,12 +9,14 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 public class WorldFlagsMenu {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
@@ -70,13 +72,6 @@ public class WorldFlagsMenu {
 				cooldowns.add(player.getUniqueId());
 
 				player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
-
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{flag}", flagString);
-				replacements.put("{state}", Formatters.getFlag(!isSet));
-				replacements.put("{region}", region.getName());
-
-				Messages.send(player, 49, replacements);
 
 				instance.replaceSlot(context.getIndex(),
 						MenuUtils.getFlagButton(flagString, !isSet));

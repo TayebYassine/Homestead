@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 public class RegionBordersSubCmd extends SubCommandBuilder {
 	public RegionBordersSubCmd() {

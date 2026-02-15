@@ -8,10 +8,6 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.PlayerInfoMenu;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class PlayerInfoSubCmd extends SubCommandBuilder {
 	public PlayerInfoSubCmd() {

@@ -7,8 +7,9 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
 
 import java.util.HashMap;
@@ -40,8 +41,8 @@ public final class MemberTaxes {
 				if (System.currentTimeMillis() >= member.getTaxesAt()) {
 					OfflinePlayer targetPlayer = member.getBukkitOfflinePlayer();
 
-					if (PlayerUtils.getBalance(targetPlayer) >= amountToPay) {
-						PlayerUtils.removeBalance(targetPlayer, amountToPay);
+					if (PlayerBank.get(targetPlayer) >= amountToPay) {
+						PlayerBank.withdraw(targetPlayer, amountToPay);
 						region.addBalanceToBank(amountToPay);
 
 						region.setMemberTaxesAt(member, TaxesUtils.getNewTaxesAt());
@@ -49,24 +50,23 @@ public final class MemberTaxes {
 						if (targetPlayer.isOnline()) {
 							Player targetPlayerOnline = (Player) targetPlayer;
 
-							Map<String, String> replacements = new HashMap<String, String>();
-							replacements.put("{amount}", Formatters.formatBalance(amountToPay));
-							replacements.put("{region}", region.getName());
-							replacements.put("{balance}",
-									Formatters.formatBalance(PlayerUtils.getBalance(targetPlayer)));
+							Placeholder placeholder = new Placeholder();
+							placeholder.add("{amount}", Formatters.getBalance(amountToPay));
+							placeholder.add("{region}", region.getName());
+							placeholder.add("{balance}", Formatters.getBalance(PlayerBank.get(targetPlayer)));
 
-							Messages.send(targetPlayerOnline, 106, replacements);
-							Messages.send(targetPlayerOnline, 107, replacements);
+							Messages.send(targetPlayerOnline, 106, placeholder);
+							Messages.send(targetPlayerOnline, 107, placeholder);
 						}
 					} else {
 						region.removeMember(targetPlayer);
 
 						if (targetPlayer.isOnline()) {
 							Player targetPlayerOnline = (Player) targetPlayer;
-							Map<String, String> replacements = new HashMap<String, String>();
-							replacements.put("{region}", region.getName());
 
-							Messages.send(targetPlayerOnline, 108, replacements);
+							Messages.send(targetPlayerOnline, 108, new Placeholder()
+									.add("{region}", region.getName())
+							);
 						}
 
 						Map<String, String> replacements = new HashMap<String, String>();

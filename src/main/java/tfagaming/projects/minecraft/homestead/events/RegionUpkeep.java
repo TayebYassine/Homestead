@@ -6,11 +6,9 @@ import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public final class RegionUpkeep {
 	private RegionUpkeep() {
@@ -37,29 +35,29 @@ public final class RegionUpkeep {
 					if (region.getOwner().isOnline()) {
 						Player regionOwner = (Player) region.getOwner();
 
-						Map<String, String> replacements = new HashMap<String, String>();
-						replacements.put("{amount}", Formatters.formatBalance(amountToPay));
-						replacements.put("{region}", region.getName());
-						replacements.put("{chunks}", String.valueOf(chunksToRemove));
+						Placeholder placeholder = new Placeholder();
+						placeholder.add("{amount}", Formatters.getBalance(amountToPay));
+						placeholder.add("{region}", region.getName());
+						placeholder.add("{chunks}", String.valueOf(chunksToRemove));
 
-						Messages.send(regionOwner, 111, replacements);
-						Messages.send(regionOwner, 112, replacements);
+						Messages.send(regionOwner, 111, placeholder);
+						Messages.send(regionOwner, 112, placeholder);
 					}
 				} else {
-					region.removeBalanceFromBank(amountToPay);
+					region.withdrawBank(amountToPay);
 
 					region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt());
 
 					if (region.getOwner().isOnline()) {
 						Player regionOwner = (Player) region.getOwner();
 
-						Map<String, String> replacements = new HashMap<String, String>();
-						replacements.put("{amount}", Formatters.formatBalance(amountToPay));
-						replacements.put("{region}", region.getName());
-						replacements.put("{bank}", Formatters.formatBalance(region.getBank()));
+						Placeholder placeholder = new Placeholder();
+						placeholder.add("{amount}", Formatters.getBalance(amountToPay));
+						placeholder.add("{region}", region.getName());
+						placeholder.add("{bank}", Formatters.getBalance(region.getBank()));
 
-						Messages.send(regionOwner, 109, replacements);
-						Messages.send(regionOwner, 110, replacements);
+						Messages.send(regionOwner, 109, placeholder);
+						Messages.send(regionOwner, 110, placeholder);
 					}
 				}
 			}

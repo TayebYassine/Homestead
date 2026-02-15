@@ -6,7 +6,6 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -24,7 +23,9 @@ import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits.LimitMethod;
 
@@ -43,21 +44,21 @@ public class PlayerUtils {
 			case "title":
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.enter.title");
 
-				player.sendTitle(ColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
-						ColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
+				player.sendTitle(ColorTranslator.translate(Formatters.applyPlaceholders(titleData.get(0), replacements)),
+						ColorTranslator.translate(Formatters.applyPlaceholders(titleData.get(1), replacements)), 10, 70,
 						20);
 
 				break;
 			case "actionbar":
 				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
 						new TextComponent(ColorTranslator
-								.translate(Formatters.replace(
+								.translate(Formatters.applyPlaceholders(
 										Homestead.config.getString("enter-exit-region-message.messages.enter.actionbar"),
 										replacements))));
 
 				break;
 			default:
-				player.sendMessage(ColorTranslator.translate(Formatters.replace(
+				player.sendMessage(ColorTranslator.translate(Formatters.applyPlaceholders(
 						Homestead.config.getString("enter-exit-region-message.messages.enter.chat"),
 						replacements)));
 				break;
@@ -69,8 +70,8 @@ public class PlayerUtils {
 			case "title":
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.exit.title");
 
-				player.sendTitle(ColorTranslator.translate(Formatters.replace(titleData.get(0), replacements)),
-						ColorTranslator.translate(Formatters.replace(titleData.get(1), replacements)), 10, 70,
+				player.sendTitle(ColorTranslator.translate(Formatters.applyPlaceholders(titleData.get(0), replacements)),
+						ColorTranslator.translate(Formatters.applyPlaceholders(titleData.get(1), replacements)), 10, 70,
 						20);
 
 				break;
@@ -83,7 +84,7 @@ public class PlayerUtils {
 
 				break;
 			default:
-				player.sendMessage(ColorTranslator.translate(Formatters.replace(
+				player.sendMessage(ColorTranslator.translate(Formatters.applyPlaceholders(
 						Homestead.config.getString("enter-exit-region-message.messages.exit.chat"),
 						replacements)));
 				break;
@@ -244,11 +245,10 @@ public class PlayerUtils {
 	}
 
 	private static void sendDenialMessage(Player player, Region region, long flag) {
-		Map<String, String> placeholders = new HashMap<>();
-		placeholders.put("{flag}", PlayerFlags.from(flag));
-		placeholders.put("{region}", region.getName());
-
-		Messages.send(player, 50, placeholders);
+		Messages.send(player, 50, new Placeholder()
+				.add("{flag}", PlayerFlags.from(flag))
+				.add("{region}", region.getName())
+		);
 
 		COOLDOWN.add(player.getUniqueId());
 		Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()), MESSAGE_COOLDOWN_SECONDS);
@@ -271,11 +271,10 @@ public class PlayerUtils {
 			}
 
 			if (!response && !COOLDOWN.contains(player.getUniqueId())) {
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{flag}", RegionControlFlags.from(flag));
-				replacements.put("{region}", region.getName());
-
-				Messages.send(player, 70, replacements);
+				Messages.send(player, 70, new Placeholder()
+						.add("{flag}", RegionControlFlags.from(flag))
+						.add("{region}", region.getName())
+				);
 
 				COOLDOWN.add(player.getUniqueId());
 
@@ -311,10 +310,9 @@ public class PlayerUtils {
 					return null;
 				}
 
-				return Homestead.vault.getPermissions().getPrimaryGroup(world.getName(),
-						player);
+				return Homestead.vault.getPermissions().getPrimaryGroup(world.getName(), player);
 			}
-		} catch (UnsupportedOperationException e) {
+		} catch (Exception e) {
 			Logger.error(
 					"Unable to find a service provider for permissions and groups, using the default group \"default\".");
 			Logger.error(

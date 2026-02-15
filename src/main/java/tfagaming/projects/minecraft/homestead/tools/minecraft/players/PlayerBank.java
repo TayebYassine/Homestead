@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.players;
 
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
 

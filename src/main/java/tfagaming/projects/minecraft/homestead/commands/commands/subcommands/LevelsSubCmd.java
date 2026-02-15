@@ -9,7 +9,6 @@ import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 public class LevelsSubCmd extends SubCommandBuilder {
 	public LevelsSubCmd() {

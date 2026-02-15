@@ -14,12 +14,11 @@ import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.UUID;
 
 public final class EntityDeathListener implements Listener {
@@ -67,12 +66,11 @@ public final class EntityDeathListener implements Listener {
 
 		long amount = LevelsManager.addRandomXp(region.getUniqueId(), xpRange[0], xpRange[1]);
 
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{entity}", getBeautifulName(entity));
-		replacements.put("{xp}", NumberUtils.convertToBalance(amount));
-
-		Messages.send(killer, 198, replacements);
+		Messages.send(killer, 198, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{entity}", getBeautifulName(entity))
+				.add("{xp}", NumberUtils.convertToBalance(amount))
+		);
 
 		killer.playSound(killer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.2f);
 

@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 
 import java.util.HashMap;
 
@@ -20,10 +20,10 @@ public class PlayerInfoMenu {
 				+ RegionsManager.getRegionsHasPlayerAsMember(target).size()));
 		replacements.put("{playername}", target.getName());
 		replacements.put("{player-status}", Formatters.getPlayerStatus(target));
-		replacements.put("{player-balance}", Formatters.formatBalance(PlayerUtils.getBalance(target)));
+		replacements.put("{player-balance}", Formatters.getBalance(PlayerBank.get(target)));
 		replacements.put("{player-ping}",
 				String.valueOf(target.isOnline() ? ((Player) target).getPing() : 0));
-		replacements.put("{player-joinedat}", Formatters.formatDate(target.getFirstPlayed()));
+		replacements.put("{player-joinedat}", Formatters.getDate(target.getFirstPlayed()));
 		replacements.put("{player-owned-regions}", Formatters.getPlayerOwnedRegions(target));
 		replacements.put("{player-trusted-regions}", Formatters.getPlayerTrustedRegions(target));
 

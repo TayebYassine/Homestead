@@ -49,6 +49,8 @@ public final class Messages {
 
 	private static void sendFormatted(Object receiver, String message, Placeholder placeholder) {
 		if (placeholder != null) {
+			placeholder.add("{__prefix__}", Homestead.config.getPrefix());
+
 			message = Formatters.applyPlaceholders(message, placeholder.build());
 		}
 

@@ -8,7 +8,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
 public final class DelayedTeleportListener implements Listener {

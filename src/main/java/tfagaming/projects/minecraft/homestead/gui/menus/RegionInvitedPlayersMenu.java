@@ -6,10 +6,10 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
@@ -18,7 +18,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RegionInvitedPlayersMenu {
 	List<OfflinePlayer> invitedPlayers;
@@ -40,11 +39,6 @@ public class RegionInvitedPlayersMenu {
 			if (context.getEvent().isLeftClick()) {
 				if (region.isPlayerInvited(invitedPlayer)) {
 					region.removePlayerInvite(invitedPlayer);
-
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", invitedPlayer.getName());
-
-					Messages.send(player, 37, replacements);
 
 					PaginationMenu instance = context.getInstance();
 
@@ -74,22 +68,11 @@ public class RegionInvitedPlayersMenu {
 					region.removePlayerInvite(targetPlayer);
 
 					region.addMember(targetPlayer);
-
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{region}", region.getName());
-					replacements.put("{playername}", targetPlayer.getName());
-
-					Messages.send(player, 199, replacements);
 				} else {
 					region.addPlayerInvite(targetPlayer);
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", targetPlayer.getName());
-					replacements.put("{region}", region.getName());
-
-					Messages.send(player, 36, replacements);
-
-					RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
+					// TODO Fix this
+					// RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
 				}
 
 				Homestead.getInstance().runSyncTask(() -> {
@@ -99,10 +82,9 @@ public class RegionInvitedPlayersMenu {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 				if (target == null) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", message);
-
-					Messages.send(player, 29, replacements);
+					Messages.send(player, 29, new Placeholder()
+							.add("{playername}", message)
+					);
 					return false;
 				}
 
@@ -117,18 +99,16 @@ public class RegionInvitedPlayersMenu {
 				}
 
 				if (region.isPlayerMember(target)) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", target.getName());
-
-					Messages.send(player, 48, replacements);
+					Messages.send(player, 48, new Placeholder()
+							.add("{playername}", target.getName())
+					);
 					return false;
 				}
 
 				if (region.isPlayerInvited(target)) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", target.getName());
-
-					Messages.send(player, 35, replacements);
+					Messages.send(player, 35, new Placeholder()
+							.add("{playername}", target.getName())
+					);
 					return false;
 				}
 

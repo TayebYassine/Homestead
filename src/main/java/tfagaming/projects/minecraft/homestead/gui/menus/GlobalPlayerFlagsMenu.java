@@ -9,11 +9,14 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 public class GlobalPlayerFlagsMenu {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
@@ -43,8 +46,6 @@ public class GlobalPlayerFlagsMenu {
 
 			String flagString = PlayerFlags.getFlags().get(context.getIndex());
 
-			List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
-
 			if (Homestead.config.isFlagDisabled(flagString)) {
 				Messages.send(player, 42);
 				return;
@@ -71,13 +72,6 @@ public class GlobalPlayerFlagsMenu {
 				cooldowns.add(player.getUniqueId());
 
 				player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
-
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{flag}", flagString);
-				replacements.put("{state}", Formatters.getFlag(!isSet));
-				replacements.put("{region}", region.getName());
-
-				Messages.send(player, 44, replacements);
 
 				instance.replaceSlot(context.getIndex(),
 						MenuUtils.getFlagButton(flagString, !isSet));

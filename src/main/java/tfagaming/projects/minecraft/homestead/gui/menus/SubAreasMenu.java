@@ -58,7 +58,7 @@ public class SubAreasMenu {
 			replacements.put("{region}", region.getName());
 			replacements.put("{subarea}", subArea.getName());
 			replacements.put("{subarea-volume}", String.valueOf(subArea.getVolume()));
-			replacements.put("{subarea-createdat}", Formatters.formatDate(subArea.getCreatedAt()));
+			replacements.put("{subarea-createdat}", Formatters.getDate(subArea.getCreatedAt()));
 
 			items.add(MenuUtils.getButton(42, replacements));
 		}

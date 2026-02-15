@@ -11,13 +11,14 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBannedPlayer;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RegionBannedPlayersMenu {
 	List<SerializableBannedPlayer> bannedPlayers;
@@ -50,12 +51,6 @@ public class RegionBannedPlayersMenu {
 
 					region.unbanPlayer(bannedPlayer.getBukkitOfflinePlayer());
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName());
-					replacements.put("{region}", region.getName());
-
-					Messages.send(player, 34, replacements);
-
 					PaginationMenu instance = context.getInstance();
 
 					bannedPlayers = region.getBannedPlayers();
@@ -82,13 +77,6 @@ public class RegionBannedPlayersMenu {
 
 				region.banPlayer(targetPlayer);
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{playername}", targetPlayer.getName());
-				replacements.put("{region}", region.getName());
-				replacements.put("{reason}", Homestead.language.get("default.reason"));
-
-				Messages.send(player, 31, replacements);
-
 				if (region.isPlayerMember(targetPlayer)) {
 					region.removeMember(targetPlayer);
 				}
@@ -104,10 +92,9 @@ public class RegionBannedPlayersMenu {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 				if (target == null) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", message);
-
-					Messages.send(player, 29, replacements);
+					Messages.send(player, 29, new Placeholder()
+							.add("{playername}", message)
+					);
 					return false;
 				}
 
@@ -117,10 +104,9 @@ public class RegionBannedPlayersMenu {
 				}
 
 				if (region.isPlayerBanned(target)) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", target.getName());
-
-					Messages.send(player, 32, replacements);
+					Messages.send(player, 32, new Placeholder()
+							.add("{playername}", target.getName())
+					);
 					return false;
 				}
 
@@ -186,7 +172,7 @@ public class RegionBannedPlayersMenu {
 
 			replacements.put("{region}", region.getName());
 			replacements.put("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName());
-			replacements.put("{player-bannedat}", Formatters.formatDate(bannedPlayer.getBannedAt()));
+			replacements.put("{player-bannedat}", Formatters.getDate(bannedPlayer.getBannedAt()));
 			replacements.put("{player-banreason}", bannedPlayer.getReason());
 
 			items.add(MenuUtils.getButton(27, replacements, bannedPlayer.getBukkitOfflinePlayer()));

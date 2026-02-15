@@ -12,9 +12,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * OP-only admin command to unclaim the chunk the executor is standing in,

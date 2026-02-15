@@ -66,14 +66,14 @@ public class ItemUtils {
 
 	public static ItemStack getItem(String displayname, List<String> lore, Material material,
 									Map<String, String> replacements) {
-		displayname = Formatters.replace(displayname, replacements);
+		displayname = Formatters.applyPlaceholders(displayname, replacements);
 
 		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
 
 		if (loreCopy != null) {
 			for (int i = 0; i < loreCopy.size(); i++) {
 				String string = loreCopy.get(i);
-				string = Formatters.replace(string, replacements);
+				string = Formatters.applyPlaceholders(string, replacements);
 				loreCopy.set(i, string);
 			}
 		}
@@ -117,14 +117,14 @@ public class ItemUtils {
 
 	public static ItemStack getPlayerHead(String displayname, List<String> lore, String texture,
 										  Map<String, String> replacements) {
-		displayname = Formatters.replace(displayname, replacements);
+		displayname = Formatters.applyPlaceholders(displayname, replacements);
 
 		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
 
 		if (loreCopy != null) {
 			for (int i = 0; i < loreCopy.size(); i++) {
 				String string = loreCopy.get(i);
-				string = Formatters.replace(string, replacements);
+				string = Formatters.applyPlaceholders(string, replacements);
 				loreCopy.set(i, string);
 			}
 		}
@@ -195,14 +195,14 @@ public class ItemUtils {
 
 	public static ItemStack getPlayerHead(String displayname, List<String> lore, UUID playerId,
 										  Map<String, String> replacements) {
-		displayname = Formatters.replace(displayname, replacements);
+		displayname = Formatters.applyPlaceholders(displayname, replacements);
 
 		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
 
 		if (loreCopy != null) {
 			for (int i = 0; i < loreCopy.size(); i++) {
 				String string = loreCopy.get(i);
-				string = Formatters.replace(string, replacements);
+				string = Formatters.applyPlaceholders(string, replacements);
 				loreCopy.set(i, string);
 			}
 		}

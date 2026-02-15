@@ -25,12 +25,12 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public final class CustomSignsListener implements Listener {
@@ -220,7 +220,7 @@ public final class CustomSignsListener implements Listener {
 
 		event.setLine(0, ChatColor.GREEN + "[Rent]");
 		event.setLine(1, ChatColor.DARK_GREEN + region.getName());
-		event.setLine(2, ChatColor.RED + Formatters.formatBalance(price));
+		event.setLine(2, ChatColor.RED + Formatters.getBalance(price));
 		event.setLine(3, ChatColor.GOLD + formatMillisToReadable(durationMs));
 
 		return false;
@@ -268,7 +268,7 @@ public final class CustomSignsListener implements Listener {
 
 		event.setLine(0, ChatColor.GREEN + "[Sell]");
 		event.setLine(1, ChatColor.DARK_GREEN + region.getName());
-		event.setLine(2, ChatColor.RED + Formatters.formatBalance(price));
+		event.setLine(2, ChatColor.RED + Formatters.getBalance(price));
 		event.setLine(3, "");
 
 		return false;
@@ -368,34 +368,34 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
-			if (price > PlayerUtils.getBalance(player)) {
+			if (price > PlayerBank.get(player)) {
 				Messages.send(player, 125);
 				return;
 			}
 
 			long rentEnd = System.currentTimeMillis() + durationMs;
 
-			PlayerUtils.removeBalance(player, price);
-			PlayerUtils.addBalance(region.getOwner(), price);
+			PlayerBank.withdraw(player, price);
+			PlayerBank.deposit(region.getOwner(), price);
 
 			SerializableRent rent = new SerializableRent(player, price, rentEnd);
 
 			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(sign.getLocation());
 
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{region}", region.getName());
-			replacements.put("{rent-end}", Formatters.formatRemainingTime(rentEnd));
+			Placeholder placeholder = new Placeholder();
+			placeholder.add("{region}", region.getName());
+			placeholder.add("{rent-end}", Formatters.formatRemainingTime(rentEnd));
 
 			if (subArea != null) {
 				subArea.setRent(rent);
 
-				replacements.put("{subarea}", subArea.getName());
+				placeholder.add("{subarea}", subArea.getName());
 
-				Messages.send(player, 194, replacements);
+				Messages.send(player, 194, placeholder);
 			} else {
 				region.setRent(rent);
 
-				Messages.send(player, 126, replacements);
+				Messages.send(player, 126, placeholder);
 			}
 
 			sign.breakNaturally();
@@ -428,13 +428,13 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
-			if (price > PlayerUtils.getBalance(player)) {
+			if (price > PlayerBank.get(player)) {
 				Messages.send(player, 125);
 				return;
 			}
 
-			PlayerUtils.removeBalance(player, price);
-			PlayerUtils.addBalance(region.getOwner(), price);
+			PlayerBank.withdraw(player, price);
+			PlayerBank.deposit(region.getOwner(), price);
 
 			region.setOwner(player);
 
@@ -444,11 +444,10 @@ public final class CustomSignsListener implements Listener {
 				region.removeMember(player);
 			}
 
-			Map<String, String> replacements = new HashMap<String, String>();
-			replacements.put("{region}", region.getName());
-			replacements.put("{price}", Formatters.formatBalance(price));
-
-			Messages.send(player, 124, replacements);
+			Messages.send(player, 124, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{price}", Formatters.getBalance(price))
+			);
 		} catch (NumberFormatException e) {
 			player.sendMessage(ChatColor.RED + "Error: This sell sign has invalid formatting!");
 		}

@@ -87,16 +87,22 @@ public class MenuUtils {
 	public static ItemStack getFlagButton(String flag, boolean value) {
 		HashMap<String, String> replacements = new HashMap<>();
 
-		Object description = Homestead.language.get("flags-info." + flag + ".description");
+		Object description = Homestead.language.getString("flags-info." + flag + ".description");
 
 		replacements.put("{flag}", flag);
-		replacements.put("{flag-description}", description instanceof String ? description.toString() : String.join("\n", (List<String>) description));
+
+		if (description instanceof String) {
+			replacements.put("{flag-description}", description.toString());
+		} else if (description instanceof List<?> list) {
+			replacements.put("{flag-description}", String.join("\n", (CharSequence) list));
+		}
+
 		replacements.put("{state}", Formatters.getFlag(value));
 		replacements.put("{flag-allowed}",
 				Formatters.getBoolean(!Homestead.config.isFlagDisabled(flag)));
 
 		ButtonData data = getButtonData(17);
-		String type = Homestead.language.get("flags-info." + flag + ".type");
+		String type = Homestead.language.getString("flags-info." + flag + ".type");
 
 		if (type != null && type.startsWith("PLAYERHEAD-")) {
 			String texture = type.split("-")[1];

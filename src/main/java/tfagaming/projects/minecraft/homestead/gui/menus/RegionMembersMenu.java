@@ -6,12 +6,13 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -19,7 +20,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RegionMembersMenu {
 	List<SerializableMember> members;
@@ -63,13 +63,8 @@ public class RegionMembersMenu {
 
 					region.removeMember(member.getBukkitOfflinePlayer());
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{player}", member.getBukkitOfflinePlayer().getName());
-					replacements.put("{region}", region.getName());
-
-					Messages.send(player, 38, replacements);
-
-					RegionsManager.addNewLog(region.getUniqueId(), 3, replacements);
+					// TODO Fix this
+					// RegionsManager.addNewLog(region.getUniqueId(), 3, replacements);
 
 					PaginationMenu instance = context.getInstance();
 
@@ -106,24 +101,11 @@ public class RegionMembersMenu {
 					region.removePlayerInvite(targetPlayer);
 
 					region.addMember(targetPlayer);
-
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{region}", region.getName());
-					replacements.put("{playername}", targetPlayer.getName());
-
-					Messages.send(player, 199, replacements);
 				} else {
 					region.addPlayerInvite(targetPlayer);
 
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", targetPlayer.getName());
-					replacements.put("{region}", region.getName());
-					replacements.put("{ownername}", region.getOwner().getName());
-
-					Messages.send(player, 36, replacements);
-					Messages.send(targetPlayer.getPlayer(), 139, replacements);
-
-					RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
+					// TODO Fix this
+					// RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
 				}
 
 				Homestead.getInstance().runSyncTask(() -> {
@@ -133,10 +115,9 @@ public class RegionMembersMenu {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 				if (target == null) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", message);
-
-					Messages.send(player, 29, replacements);
+					Messages.send(player, 29, new Placeholder()
+							.add("{playername}", message)
+					);
 					return false;
 				}
 
@@ -151,18 +132,16 @@ public class RegionMembersMenu {
 				}
 
 				if (region.isPlayerMember(target)) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", target.getName());
-
-					Messages.send(player, 48, replacements);
+					Messages.send(player, 48, new Placeholder()
+							.add("{playername}", target.getName())
+					);
 					return false;
 				}
 
 				if (region.isPlayerInvited(target)) {
-					Map<String, String> replacements = new HashMap<String, String>();
-					replacements.put("{playername}", target.getName());
-
-					Messages.send(player, 35, replacements);
+					Messages.send(player, 35, new Placeholder()
+							.add("{playername}", target.getName())
+					);
 					return false;
 				}
 
@@ -204,9 +183,9 @@ public class RegionMembersMenu {
 
 			replacements.put("{region}", region.getName());
 			replacements.put("{playername}", member.getBukkitOfflinePlayer().getName());
-			replacements.put("{member-joinedat}", Formatters.formatDate(member.getJoinedAt()));
+			replacements.put("{member-joinedat}", Formatters.getDate(member.getJoinedAt()));
 			replacements.put("{taxes-dueon}", Formatters.formatRemainingTime(member.getTaxesAt()));
-			replacements.put("{tax-amount}", Formatters.formatBalance(region.getTaxesAmount()));
+			replacements.put("{tax-amount}", Formatters.getBalance(region.getTaxesAmount()));
 
 			items.add(MenuUtils.getButton(24, replacements, member.getBukkitOfflinePlayer()));
 		}

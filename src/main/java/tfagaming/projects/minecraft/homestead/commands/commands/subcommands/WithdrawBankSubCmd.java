@@ -16,9 +16,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class WithdrawBankSubCmd extends SubCommandBuilder {
 	public WithdrawBankSubCmd() {
 		super("withdraw");

@@ -9,12 +9,11 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ClaimSubCmd extends SubCommandBuilder {
 	public ClaimSubCmd() {
@@ -136,12 +135,11 @@ public class ClaimSubCmd extends SubCommandBuilder {
 			if (err == null) success++;
 		}
 
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{chunks}", String.valueOf(success));
-		replacements.put("{total}", String.valueOf(toClaim.size()));
-
-		Messages.send(player, 187, replacements);
+		Messages.send(player, 187, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{chunks}", success)
+				.add("{total}", toClaim.size())
+		);
 
 		return true;
 	}

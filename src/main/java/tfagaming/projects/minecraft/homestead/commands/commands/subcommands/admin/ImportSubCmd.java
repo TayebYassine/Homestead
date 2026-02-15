@@ -23,7 +23,8 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.*;
 
@@ -139,10 +140,9 @@ public class ImportSubCmd extends SubCommandBuilder {
 					imported++;
 				}
 
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{regions}", String.valueOf(imported));
-
-				Messages.send(sender, 115, replacements);
+				Messages.send(sender, 115, new Placeholder()
+						.add("{regions}", imported)
+				);
 
 				break;
 			}
@@ -219,10 +219,9 @@ public class ImportSubCmd extends SubCommandBuilder {
 					}
 				}
 
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{regions}", String.valueOf(imported));
-
-				Messages.send(sender, 115, replacements);
+				Messages.send(sender, 115, new Placeholder()
+						.add("{regions}", imported)
+				);
 
 				break;
 			}
@@ -262,10 +261,9 @@ public class ImportSubCmd extends SubCommandBuilder {
 					imported++;
 				}
 
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{regions}", String.valueOf(imported));
-
-				Messages.send(sender, 115, replacements);
+				Messages.send(sender, 115, new Placeholder()
+						.add("{regions}", imported)
+				);
 
 				break;
 			}
@@ -323,10 +321,9 @@ public class ImportSubCmd extends SubCommandBuilder {
 					imported++;
 				}
 
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{regions}", String.valueOf(imported));
-
-				Messages.send(sender, 115, replacements);
+				Messages.send(sender, 115, new Placeholder()
+						.add("{regions}", imported)
+				);
 
 				break;
 			}
@@ -375,10 +372,9 @@ public class ImportSubCmd extends SubCommandBuilder {
 					}
 				}
 
-				Map<String, String> replacements = new HashMap<>();
-				replacements.put("{regions}", String.valueOf(imported));
-
-				Messages.send(sender, 115, replacements);
+				Messages.send(sender, 115, new Placeholder()
+						.add("{regions}", imported)
+				);
 
 				break;
 			}

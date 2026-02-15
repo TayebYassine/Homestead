@@ -15,9 +15,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class KickPlayerSubCmd extends SubCommandBuilder {
 	public KickPlayerSubCmd() {
 		super("kick");

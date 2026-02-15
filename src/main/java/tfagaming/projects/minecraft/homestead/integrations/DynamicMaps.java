@@ -25,8 +25,12 @@ public final class DynamicMaps {
 	 * @param instance Homestead's instance
 	 */
 	public static void trigger(Homestead instance) {
-		if (dynmap == null && isDynmapInstalled()) {
+		if (dynmap == null) {
 			try {
+				if (!isDynmapInstalled()) {
+					throw new NoClassDefFoundError("dynmap not installed");
+				}
+
 				dynmap = new DynmapAPI(instance);
 
 				Logger.info("Successfully connected to dynmap's API.");
@@ -38,8 +42,12 @@ public final class DynamicMaps {
 			dynmap.update();
 		}
 
-		if (pl3xmap == null && isPl3xMapInstalled()) {
+		if (pl3xmap == null) {
 			try {
+				if (!isPl3xMapInstalled()) {
+					throw new NoClassDefFoundError("Pl3xMap not installed");
+				}
+
 				pl3xmap = new Pl3xMapAPI(instance);
 
 				Logger.info("Successfully connected to Pl3xMap's API.");
@@ -51,8 +59,12 @@ public final class DynamicMaps {
 			pl3xmap.update();
 		}
 
-		if (squaremap == null && isSquaremapInstalled()) {
+		if (squaremap == null) {
 			try {
+				if (!isSquaremapInstalled()) {
+					throw new NoClassDefFoundError("squaremap not installed");
+				}
+
 				squaremap = new SquaremapAPI(instance);
 
 				Logger.info("Successfully connected to Squaremap's API.");

@@ -9,6 +9,9 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class LanguageLoader {
 	private final Homestead plugin;
@@ -53,7 +56,34 @@ public class LanguageLoader {
 				"languages/" + language + (language.endsWith(".yml") ? "" : ".yml"));
 	}
 
+	public String getString(String path, String defaultValue) {
+		if (language == null) return defaultValue;
+		return language.getString(path, defaultValue);
+	}
+
 	public String getString(String path) {
-		return language.getString(path, "NULL");
+		return getString(path, "NULL @ " + path);
+	}
+
+	public List<String> getStringList(String path) {
+		if (language == null) return Collections.emptyList();
+
+		if (!language.isList(path)) {
+			Logger.warning("Config path '" + path + "' is not a list! Returning empty list.");
+			return Collections.emptyList();
+		}
+
+		List<?> rawList = language.getList(path);
+		if (rawList == null) return Collections.emptyList();
+
+		List<String> result = new ArrayList<>();
+		for (Object obj : rawList) {
+			if (obj instanceof String) {
+				result.add((String) obj);
+			} else {
+				Logger.warning("Config path '" + path + "' contains non-string value: " + obj);
+			}
+		}
+		return result;
 	}
 }

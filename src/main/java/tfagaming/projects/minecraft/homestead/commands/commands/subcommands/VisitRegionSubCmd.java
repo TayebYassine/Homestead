@@ -16,9 +16,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class VisitRegionSubCmd extends SubCommandBuilder {
 	public VisitRegionSubCmd() {

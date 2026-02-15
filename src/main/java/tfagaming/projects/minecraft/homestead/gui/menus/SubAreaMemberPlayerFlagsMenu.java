@@ -11,7 +11,7 @@ import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -71,12 +71,6 @@ public class SubAreaMemberPlayerFlagsMenu {
 
 							player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
 
-							Map<String, String> replacements = new HashMap<>();
-							replacements.put("{changes}", String.valueOf(changed));
-							replacements.put("{new-value}", Formatters.getBoolean(enableAll));
-
-							Messages.send(player, 161, replacements);
-
 							PaginationMenu instance = context.getInstance();
 							instance.setItems(buildItemsList(member));
 
@@ -120,15 +114,6 @@ public class SubAreaMemberPlayerFlagsMenu {
 						cooldowns.add(player.getUniqueId());
 
 						player.playSound(player.getLocation(), Sound.BLOCK_LEVER_CLICK, 500.0f, 1.0f);
-
-						Map<String, String> replacements = new HashMap<>();
-						replacements.put("{flag}", flagString);
-						replacements.put("{state}", Formatters.getFlag(!isSet));
-						replacements.put("{region}", region.getName());
-						replacements.put("{subarea}", subArea.getName());
-						replacements.put("{player}", member.getBukkitOfflinePlayer().getName());
-
-						Messages.send(player, 169, replacements);
 
 						instance.replaceSlot(index, MenuUtils.getFlagButton(flagString, !isSet));
 

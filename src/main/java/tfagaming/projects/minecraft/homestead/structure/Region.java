@@ -54,7 +54,7 @@ public class Region {
 		this.id = UUID.randomUUID();
 		this.displayName = name;
 		this.name = name;
-		this.description = ((String) Homestead.language.getString("default.description")).replace("{owner}",
+		this.description = Homestead.language.getString("default.description").replace("{owner}",
 				player.getName() == null ? "Unknown" : player.getName());
 		this.ownerId = player.getUniqueId();
 		this.location = new SerializableLocation(player.getLocation());

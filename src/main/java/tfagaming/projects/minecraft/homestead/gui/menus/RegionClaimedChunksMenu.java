@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.ButtonData;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
@@ -78,17 +79,12 @@ public class RegionClaimedChunksMenu {
 							ChunksManager.unclaimChunk(region.getUniqueId(), chunk.getBukkitChunk());
 							int after = region.getChunks().size();
 
-							/** Only send success message if the unclaim was successful. */
 							if (after < before) {
 								double chunkPrice = Homestead.config.getDouble("chunk-price");
 
 								if (chunkPrice > 0) {
-									PlayerUtils.addBalance(region.getOwner(), chunkPrice);
+									PlayerBank.deposit(region.getOwner(), chunkPrice);
 								}
-
-								Map<String, String> replacements = new HashMap<>();
-								replacements.put("{region}", region.getName());
-								Messages.send(player, 24, replacements);
 							}
 
 							ChunkBorder.show(player);
@@ -127,7 +123,7 @@ public class RegionClaimedChunksMenu {
 			HashMap<String, String> replacements = new HashMap<>();
 			replacements.put("{region}", region.getName());
 			replacements.put("{index}", String.valueOf(i + 1));
-			replacements.put("{chunk-claimedat}", Formatters.formatDate(chunk.getClaimedAt()));
+			replacements.put("{chunk-claimedat}", Formatters.getDate(chunk.getClaimedAt()));
 			replacements.put("{chunk-location}", Formatters.formatLocation(chunk.getBukkitLocation()));
 
 			ButtonData data = MenuUtils.getButtonData(33);

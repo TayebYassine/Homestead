@@ -15,6 +15,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class Formatters {
+	public static String applyPlaceholders(String string, Placeholder placeholder) {
+		Map<String, String> replacements = placeholder.build();
+
+		return applyPlaceholders(string, replacements);
+	}
+
 	public static String applyPlaceholders(String string, Map<String, String> replacements) {
 		if (string == null) {
 			return "NULL";
@@ -35,7 +41,7 @@ public final class Formatters {
 		replacements.put("{y}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getY())));
 		replacements.put("{z}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(location.getZ())));
 
-		return ColorTranslator.translate(replace(Homestead.config.getString("formatters.location"), replacements));
+		return ColorTranslator.translate(applyPlaceholders(Homestead.config.getString("formatters.location"), replacements));
 	}
 
 	public static String formatChunk(Chunk chunk) {
@@ -45,7 +51,7 @@ public final class Formatters {
 		replacements.put("{x}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(chunk.getX())));
 		replacements.put("{z}", String.valueOf(NumberUtils.truncateToTwoDecimalPlaces(chunk.getZ())));
 
-		return ColorTranslator.translate(replace(Homestead.config.getString("formatters.location"), replacements));
+		return ColorTranslator.translate(applyPlaceholders(Homestead.config.getString("formatters.location"), replacements));
 	}
 
 	public static String getBalance(double amount) {
@@ -67,7 +73,7 @@ public final class Formatters {
 		replacements.put("{date}", formatted);
 		replacements.put("{time-ago}", getAgo(date));
 
-		return replace(dateWithAgo, replacements);
+		return applyPlaceholders(dateWithAgo, replacements);
 	}
 
 	public static String formatRating(double rate) {
@@ -75,7 +81,7 @@ public final class Formatters {
 	}
 
 	public static String formatRating(int rate) {
-		String star = Homestead.language.get("default.star");
+		String star = Homestead.language.getString("default.star");
 
 		switch (rate) {
 			case 1:
@@ -116,7 +122,7 @@ public final class Formatters {
 		replacements.put("{s}", String.valueOf(seconds));
 
 		return ColorTranslator
-				.translate(replace(Homestead.config.getString("formatters.duration"), replacements));
+				.translate(applyPlaceholders(Homestead.config.getString("formatters.duration"), replacements));
 	}
 
 	public static String formatPlayerPlaytimeDuration(OfflinePlayer player) {
@@ -140,7 +146,7 @@ public final class Formatters {
 		replacements.put("{s}", String.valueOf(seconds));
 
 		return ColorTranslator
-				.translate(replace(Homestead.config.getString("formatters.duration"), replacements));
+				.translate(applyPlaceholders(Homestead.config.getString("formatters.duration"), replacements));
 	}
 
 	private static long getPlayerMinutes(OfflinePlayer player) {
@@ -155,7 +161,7 @@ public final class Formatters {
 		replacements.put("{total-pages}", String.valueOf(totalPages));
 
 		return ColorTranslator
-				.translate(replace(Homestead.config.getString("formatters.gui-pagination-title"), replacements));
+				.translate(applyPlaceholders(Homestead.config.getString("formatters.gui-pagination-title"), replacements));
 	}
 
 	public static String formatPrivateChat(String regionName, String sender, String message) {
@@ -166,7 +172,7 @@ public final class Formatters {
 		replacements.put("{message}", message);
 
 		return ColorTranslator
-				.translate(replace(Homestead.config.getString("formatters.private-chat"), replacements));
+				.translate(applyPlaceholders(Homestead.config.getString("formatters.private-chat"), replacements));
 	}
 
 	public static String getPlayerOwnedRegions(OfflinePlayer player) {
@@ -226,27 +232,27 @@ public final class Formatters {
 	}
 
 	public static String getNone() {
-		return ColorTranslator.translate(Homestead.language.get("default.none"));
+		return ColorTranslator.translate(Homestead.language.getString("default.none"));
 	}
 
 	public static String getBoolean(boolean value) {
-		return ColorTranslator.translate(Homestead.language.get(value ? "default.isTrue" : "default.isFalse"));
+		return ColorTranslator.translate(Homestead.language.getString(value ? "default.isTrue" : "default.isFalse"));
 	}
 
 	public static String getEnabled(boolean value) {
 		return ColorTranslator
-				.translate(Homestead.language.get(value ? "default.isEnabled" : "default.isDisabled"));
+				.translate(Homestead.language.getString(value ? "default.isEnabled" : "default.isDisabled"));
 	}
 
 	public static String getFlag(boolean value) {
-		return ColorTranslator.translate(Homestead.language.get(value ? "default.flagSet" : "default.flagUnset"));
+		return ColorTranslator.translate(Homestead.language.getString(value ? "default.flagSet" : "default.flagUnset"));
 	}
 
 	public static String getPlayerStatus(OfflinePlayer player) {
 		return ColorTranslator
-				.translate(Bukkit.getBannedPlayers().contains(player) ? Homestead.language.get("default.banned")
-						: (player.isOnline() ? Homestead.language.get("default.online")
-						: Homestead.language.get("default.offline")));
+				.translate(Bukkit.getBannedPlayers().contains(player) ? Homestead.language.getString("default.banned")
+						: (player.isOnline() ? Homestead.language.getString("default.online")
+						: Homestead.language.getString("default.offline")));
 	}
 
 	public static String getAgo(long time) {

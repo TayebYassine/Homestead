@@ -11,10 +11,6 @@ import tfagaming.projects.minecraft.homestead.managers.WarsManager;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class PluginSubCmd extends SubCommandBuilder {
 	public PluginSubCmd() {

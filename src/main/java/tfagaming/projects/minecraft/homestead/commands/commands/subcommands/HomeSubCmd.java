@@ -11,9 +11,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class HomeSubCmd extends SubCommandBuilder {
 	public HomeSubCmd() {
 		super("home");

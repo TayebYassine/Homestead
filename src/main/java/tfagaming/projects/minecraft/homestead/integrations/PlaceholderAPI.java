@@ -56,7 +56,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 					yield Homestead.config.getString("placeholderapi.default.region_bank");
 				}
 
-				yield Formatters.formatBalance(region.getBank());
+				yield Formatters.getBalance(region.getBank());
 			}
 			case "region_name" -> {
 				if (region == null) {
@@ -105,14 +105,14 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 					yield Homestead.config.getString("placeholderapi.default.upkeep_amount");
 				}
 
-				yield Formatters.formatBalance(UpkeepUtils.getAmountToPay(region));
+				yield Formatters.getBalance(UpkeepUtils.getAmountToPay(region));
 			}
 			case "upkeep_at" -> {
 				if (region == null) {
 					yield Homestead.config.getString("placeholderapi.default.upkeep_at");
 				}
 
-				yield Formatters.formatDate(region.getUpkeepAt());
+				yield Formatters.getDate(region.getUpkeepAt());
 			}
 			case "war_name" -> {
 				if (region == null || !WarsManager.isRegionInWar(region.getUniqueId())) {
@@ -126,7 +126,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 					yield Homestead.config.getString("placeholderapi.default.war_prize");
 				}
 
-				yield Formatters.formatBalance(WarsManager.findWarByRegionId(region.getUniqueId()).getPrize());
+				yield Formatters.getBalance(WarsManager.findWarByRegionId(region.getUniqueId()).getPrize());
 			}
 			default -> null;
 		};
