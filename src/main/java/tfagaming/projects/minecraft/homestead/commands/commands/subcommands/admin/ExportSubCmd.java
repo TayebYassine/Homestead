@@ -52,6 +52,7 @@ public class ExportSubCmd extends SubCommandBuilder {
 			instance.exportRegions();
 			instance.exportWars();
 			instance.exportSubAreas();
+			instance.exportLevels();
 
 			Messages.send(sender, 86, new Placeholder()
 					.add("{regions}", RegionsManager.getAll().size())
