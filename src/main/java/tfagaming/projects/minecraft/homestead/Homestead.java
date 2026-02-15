@@ -11,8 +11,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
+import tfagaming.projects.minecraft.homestead.commands.LegacyCommandBuilder;
 import tfagaming.projects.minecraft.homestead.commands.MojangBrigadier;
-import tfagaming.projects.minecraft.homestead.commands.commands.*;
+import tfagaming.projects.minecraft.homestead.commands.operator.ForceUnclaimCommand;
+import tfagaming.projects.minecraft.homestead.commands.operator.HomesteadAdminCommand;
+import tfagaming.projects.minecraft.homestead.commands.standard.*;
 import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
 import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
 import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
@@ -280,9 +283,10 @@ public class Homestead extends JavaPlugin {
 	}
 
 	private void registerCommands() {
-		CommandBuilder.register(new RegionCommand());
-		CommandBuilder.register(new ClaimCommand());
-		CommandBuilder.register(new UnclaimCommand());
+		LegacyCommandBuilder.register(new RegionCommand());
+		LegacyCommandBuilder.register(new ClaimCommand());
+		LegacyCommandBuilder.register(new UnclaimCommand());
+
 		CommandBuilder.register(new HomesteadAdminCommand());
 		CommandBuilder.register(new ForceUnclaimCommand());
 	}

@@ -3,22 +3,25 @@ package tfagaming.projects.minecraft.homestead.commands;
 import org.bukkit.command.*;
 import tfagaming.projects.minecraft.homestead.Homestead;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 	public final Homestead plugin = Homestead.getInstance();
 	private final String name;
-	private String[] aliases = {};
+	private final String[] aliases;
+	private final Map<String, SubCommandBuilder> subCommands = new HashMap<>();
 
 	public CommandBuilder(String name) {
 		this.name = name;
+		this.aliases = new String[0];
 	}
 
 	public CommandBuilder(String name, String... aliases) {
 		this.name = name;
 		this.aliases = aliases;
 	}
-
+	
 	public static void register(CommandBuilder command) {
 		PluginCommand bukkitCommand = Homestead.getInstance().getCommand(command.getName());
 
@@ -36,19 +39,89 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 			}
 		}
 	}
+	
+	protected void registerSubCommand(SubCommandBuilder subCommand) {
+		subCommands.put(subCommand.getName().toLowerCase(), subCommand);
 
-	public abstract boolean onExecution(CommandSender sender, String[] args);
-
-	public abstract List<String> onAutoComplete(CommandSender sender, String[] args);
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		return onExecution(sender, args);
+		for (String alias : subCommand.getAliases()) {
+			subCommands.put(alias.toLowerCase(), subCommand);
+		}
 	}
-
+	
+	protected SubCommandBuilder getSubCommand(String name) {
+		return subCommands.get(name.toLowerCase());
+	}
+	
+	protected Collection<SubCommandBuilder> getAllSubCommands() {
+		return new HashSet<>(subCommands.values());
+	}
+	
+	protected List<String> getSubCommandNames() {
+		return getAllSubCommands().stream()
+				.map(SubCommandBuilder::getName)
+				.sorted()
+				.collect(Collectors.toList());
+	}
+	
+	public abstract boolean onDefaultExecution(CommandSender sender, String[] args);
+	
+	public List<String> onDefaultTabComplete(CommandSender sender, String[] args) {
+		return getAllSubCommands().stream()
+				.filter(sub -> sub.hasPermission(sender, name))
+				.map(SubCommandBuilder::getName)
+				.sorted()
+				.collect(Collectors.toList());
+	}
+	
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
-		return onAutoComplete(sender, args);
+	public final boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (args.length == 0) {
+			return onDefaultExecution(sender, args);
+		}
+
+		SubCommandBuilder subCommand = getSubCommand(args[0]);
+
+		if (subCommand == null) {
+			return onDefaultExecution(sender, args);
+		}
+
+		if (subCommand.isPlayerOnly() && !(sender instanceof org.bukkit.entity.Player)) {
+			sender.sendMessage("This command can only be used by players.");
+			return true;
+		}
+
+		if (!subCommand.hasPermission(sender, name)) {
+			return onDefaultExecution(sender, args);
+		}
+
+		String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
+
+		return subCommand.onExecution(sender, subArgs);
+	}
+	
+	@Override
+	public final List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
+		if (args.length == 1) {
+			List<String> suggestions = onDefaultTabComplete(sender, args);
+
+			String partial = args[0].toLowerCase();
+			return suggestions.stream()
+					.filter(s -> s.toLowerCase().startsWith(partial))
+					.collect(Collectors.toList());
+		}
+
+		SubCommandBuilder subCommand = getSubCommand(args[0]);
+
+		if (subCommand == null) {
+			return new ArrayList<>();
+		}
+
+		if (!subCommand.hasPermission(sender, name)) {
+			return new ArrayList<>();
+		}
+
+		String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
+		return subCommand.onTabComplete(sender, subArgs);
 	}
 
 	public String getName() {

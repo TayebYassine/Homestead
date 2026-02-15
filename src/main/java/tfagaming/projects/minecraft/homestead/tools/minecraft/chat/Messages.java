@@ -48,11 +48,13 @@ public final class Messages {
 	}
 
 	private static void sendFormatted(Object receiver, String message, Placeholder placeholder) {
-		if (placeholder != null) {
-			placeholder.add("{__prefix__}", Homestead.config.getPrefix());
-
-			message = Formatters.applyPlaceholders(message, placeholder.build());
+		if (placeholder == null) {
+			placeholder = new Placeholder();
 		}
+
+		placeholder.add("{__prefix__}", Homestead.config.getPrefix());
+
+		message = Formatters.applyPlaceholders(message, placeholder);
 
 		if (receiver instanceof Player player) {
 			player.sendMessage(ColorTranslator.translate(message));

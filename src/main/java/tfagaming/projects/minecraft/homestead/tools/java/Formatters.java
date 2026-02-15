@@ -27,7 +27,7 @@ public final class Formatters {
 		}
 
 		for (Map.Entry<String, String> entry : replacements.entrySet()) {
-			string = string.replace(entry.getKey(), entry.getValue() == null ? "null" : entry.getValue());
+			string = string.replace(entry.getKey(), entry.getValue() == null ? "NULL" : entry.getValue());
 		}
 
 		return string;
