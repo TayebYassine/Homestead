@@ -279,10 +279,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				if (!Homestead.vault.isEconomyReady()) {
 					Messages.send(player, 69);
-					Logger.warning("The player \"" + player.getName() + "\" (UUID: " + player.getUniqueId()
-							+ ") executed a command that requires economy implementation, but it's disabled.");
-					Logger.warning(
-							"The execution has been ignored, you may resolve this issue by installing a plugin that implements economy on the server.");
+
+					Logger.warning(Logger.PredefinedMessages.ECONOMY_INTEGRATION_DISABLED.getMessage());
 
 					return true;
 				}
@@ -388,8 +386,23 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 0) {
-
+		if (args.length == 1)
+			suggestions.addAll(
+					List.of("displayname", "target", "description", "mapcolor", "spawn", "icon", "tax"));
+		else if (args.length == 2 && args[0].equalsIgnoreCase("target")) {
+			if (PlayerUtils.isOperator(player)) {
+				suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+			} else {
+				suggestions.addAll(
+						RegionsManager.getRegionsOwnedByPlayer(player).stream().map(Region::getName).toList());
+				suggestions.addAll(
+						RegionsManager.getRegionsHasPlayerAsMember(player).stream().map(Region::getName).toList());
+			}
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("mapcolor"))
+			suggestions.addAll(MapColor.getAll());
+		else if (args.length == 2 && args[0].equalsIgnoreCase("icon")) {
+			suggestions.addAll(RegionIconTools.getAllIcons());
+			suggestions.add("Default");
 		}
 
 		return suggestions;

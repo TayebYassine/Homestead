@@ -125,8 +125,22 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 0) {
-
+		if (args.length == 1) {
+			if (Homestead.config.isWelcomeSignEnabled()) {
+				suggestions.addAll(RegionsManager.getPlayersWithRegionsHasWelcomeSigns().stream().map(OfflinePlayer::getName).toList());
+			} else {
+				if (PlayerUtils.isOperator(player)) {
+					suggestions.addAll(
+							RegionsManager.getAll().stream().map(Region::getName).toList());
+				} else {
+					suggestions.addAll(
+							RegionsManager.getPublicRegions().stream().map(Region::getName).toList());
+				}
+			}
+		} else if (args.length == 2 && Homestead.config.isWelcomeSignEnabled()) {
+			for (int i = 0; i < RegionsManager.getPlayersWithRegionsHasWelcomeSigns().size(); i++) {
+				suggestions.add(String.valueOf(i));
+			}
 		}
 
 		return suggestions;

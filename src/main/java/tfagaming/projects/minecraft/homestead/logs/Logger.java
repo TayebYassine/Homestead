@@ -10,6 +10,31 @@ public class Logger {
 	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Homestead");
 	private static LogsFile logs;
 
+	public enum PredefinedMessages {
+		WORLDGUARD_PLUGIN_NOT_FOUND(new String[]{
+				"Unable to find the plugin 'WorldGuard' or execute API methods for its class.",
+				"Please install the plugin, or disable any feature that requires the API of that extension."
+		}),
+		ECONOMY_INTEGRATION_DISABLED(new String[]{
+				"Unable to find an economy integration or execute API methods for its class.",
+				"Please install a plugin that includes Economy API, or disable any feature that requires the API of that extension."
+		});
+
+		private final String[] message;
+
+		PredefinedMessages(String[] message) {
+			this.message = message;
+		}
+
+		PredefinedMessages(String message) {
+			this.message = new String[]{message};
+		}
+
+		public String[] getMessage() {
+			return message;
+		}
+	}
+
 	public Logger() {
 		Logger.logs = new LogsFile();
 

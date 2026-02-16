@@ -463,9 +463,31 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 0) {
+		if (args.length == 1)
+			suggestions.addAll(List.of("create", "delete", "rename", "flags", "players"));
+		else if (args.length == 2 && !args[0].equals("create")) {
+			Region region = TargetRegionSession.getRegion(player);
 
-		}
+			if (region != null) {
+				suggestions.addAll(SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).stream()
+						.map(SubArea::getName).toList());
+			}
+		} else if (args.length == 3 && args[0].equals("players")) {
+			Region region = TargetRegionSession.getRegion(player);
+
+			if (region != null) {
+				for (SerializableMember member : region.getMembers()) {
+					OfflinePlayer bukkitMember = member.getBukkitOfflinePlayer();
+
+					if (bukkitMember != null) {
+						suggestions.add(bukkitMember.getName());
+					}
+				}
+			}
+		} else if ((args.length == 3 && args[0].equals("flags") || (args.length == 5 && args[0].equals("players") && args[3].equals("flags"))))
+			suggestions.addAll(PlayerFlags.getFlags());
+		else if ((args.length == 4 && args[0].equals("flags") || (args.length == 6 && args[0].equals("players") && args[3].equals("flags"))))
+			suggestions.addAll(List.of("allow", "deny"));
 
 		return suggestions;
 	}

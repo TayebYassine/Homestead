@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.gui.menus.GlobalPlayerFlagsMenu;
 import tfagaming.projects.minecraft.homestead.gui.menus.WorldFlagsMenu;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -324,8 +325,30 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 0) {
+		if (args.length == 1)
+			suggestions.addAll(List.of("member", "global", "world"));
+		else if (args.length == 2 && args[0].equalsIgnoreCase("member")) {
+			Region region = TargetRegionSession.getRegion(player);
 
+			if (region != null) {
+				for (SerializableMember member : region.getMembers()) {
+					OfflinePlayer m = member.getBukkitOfflinePlayer();
+
+					if (m != null) {
+						suggestions.add(m.getName());
+					}
+				}
+			}
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("global")) {
+			suggestions.addAll(PlayerFlags.getFlags());
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("world")) {
+			suggestions.addAll(WorldFlags.getFlags());
+		} else if (args.length == 3 && args[0].equalsIgnoreCase("member")) {
+			suggestions.addAll(PlayerFlags.getFlags());
+		} else if ((args.length == 3 && args[0].equalsIgnoreCase("global"))
+				|| (args.length == 3 && args[0].equalsIgnoreCase("world"))
+				|| args.length == 4 && args[0].equalsIgnoreCase("member")) {
+			suggestions.addAll(List.of("allow", "deny"));
 		}
 
 		return suggestions;

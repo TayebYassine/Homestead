@@ -35,10 +35,8 @@ public class BalanceSubCmd extends SubCommandBuilder {
 
 		if (!Homestead.vault.isEconomyReady()) {
 			Messages.send(player, 69);
-			Logger.warning("The player \"" + player.getName() + "\" (UUID: " + player.getUniqueId()
-					+ ") executed a command that requires economy implementation, but it's disabled.");
-			Logger.warning(
-					"The execution has been ignored, you may resolve this issue by installing a plugin that implements economy on the server.");
+
+			Logger.warning(Logger.PredefinedMessages.ECONOMY_INTEGRATION_DISABLED.getMessage());
 
 			return true;
 		}

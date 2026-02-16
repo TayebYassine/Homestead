@@ -2,8 +2,10 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
@@ -112,7 +114,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 0) {
-
+			suggestions.addAll(Homestead.getInstance().getOfflinePlayersSync().stream().map(OfflinePlayer::getName).toList());
 		}
 
 		return suggestions;

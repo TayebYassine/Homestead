@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -97,7 +98,19 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 0) {
+			Region region = TargetRegionSession.getRegion(player);
 
+			if (region != null) {
+				for (SerializableMember member : region.getMembers()) {
+					OfflinePlayer m = member.getBukkitOfflinePlayer();
+
+					if (m != null) {
+						suggestions.add(m.getName());
+					}
+				}
+
+				suggestions.addAll(region.getInvitedPlayers().stream().map(OfflinePlayer::getName).toList());
+			}
 		}
 
 		return suggestions;

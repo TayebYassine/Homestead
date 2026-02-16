@@ -66,18 +66,4 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 
 		return true;
 	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
-
-		List<String> suggestions = new ArrayList<>();
-
-		if (args.length == 0) {
-
-		}
-
-		return suggestions;
-	}
 }

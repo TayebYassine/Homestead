@@ -9,8 +9,6 @@ import org.bukkit.Location;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 
 public class WorldGuardAPI {
-	public static boolean WARNING_SENT = false;
-
 	public static boolean isChunkInWorldGuardRegion(Chunk chunk) {
 		try {
 			RegionContainer regionContainer = getInstance().getPlatform().getRegionContainer();
@@ -44,14 +42,7 @@ public class WorldGuardAPI {
 
 			return false;
 		} catch (NoClassDefFoundError e) {
-			if (!WARNING_SENT) {
-				Logger.warning(
-						"Protection against claiming inside WorldGuard regions is enabled, but the WorldGuard class was not found.");
-				Logger.warning(
-						"Please install the WorldGuard plugin on your server or turn off this feature in the config.yml file.");
-
-				WARNING_SENT = true;
-			}
+			Logger.warning(Logger.PredefinedMessages.WORLDGUARD_PLUGIN_NOT_FOUND.getMessage());
 
 			return false;
 		}
