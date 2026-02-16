@@ -25,7 +25,7 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 2) {
+		if (args.length < 1) {
 			new PlayerInfoMenu(player, player, () -> {
 				player.closeInventory();
 			});

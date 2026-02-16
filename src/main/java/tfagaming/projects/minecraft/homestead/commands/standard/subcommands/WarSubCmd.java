@@ -11,10 +11,10 @@ import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
-import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
@@ -47,7 +47,7 @@ public class WarSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 2) {
+		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()
 					.add("{usage}", getUsage())
 			);
@@ -152,7 +152,7 @@ public class WarSubCmd extends SubCommandBuilder {
 				replacements.put("{war-name}", war.getName());
 				replacements.put("{regionplayer}", region.getName());
 				replacements.put("{regiontarget}", targetRegion.getName());
-				replacements.put("{prize}", Formatters.getBalance(prize));
+				replacements.put("{prize}", Formatter.getBalance(prize));
 
 				List<OfflinePlayer> players = WarsManager.getMembersOfWar(war.getUniqueId());
 
@@ -163,7 +163,7 @@ public class WarSubCmd extends SubCommandBuilder {
 						player1.playSound(player1.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
 
 						for (String string : listString) {
-							player1.sendMessage(ColorTranslator.translate(Formatters.applyPlaceholders(string, replacements)));
+							player1.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(string, replacements)));
 						}
 					}
 				}
@@ -229,8 +229,8 @@ public class WarSubCmd extends SubCommandBuilder {
 				}
 
 				Messages.send(player, 154, new Placeholder()
-						.add("{regions}", Formatters.getRegionsOfWar(war))
-						.add("{prize}", Formatters.getBalance(war.getPrize()))
+						.add("{regions}", Formatter.getRegionsOfWar(war))
+						.add("{prize}", Formatter.getBalance(war.getPrize()))
 				);
 			}
 		}

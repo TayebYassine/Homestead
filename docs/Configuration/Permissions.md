@@ -287,7 +287,7 @@ Homestead uses permission groups to assign claiming limits. See [Ranks and Limit
 ### Test a Specific Permission
 
 ```yaml
-/lp user PlayerName permission check homestead.commands.region.create
+/lp user PlayerName permission fetch homestead.commands.region.create
 ```
 
 ## Troubleshooting

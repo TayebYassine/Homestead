@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
@@ -53,9 +53,9 @@ public class RegionsWithWelcomeSignsMenu {
 			replacements.put("{region}", region.getName());
 			replacements.put("{region-displayname}", region.getDisplayName());
 			replacements.put("{region-owner}", region.getOwner().getName());
-			replacements.put("{region-bank}", Formatters.getBalance(region.getBank()));
-			replacements.put("{region-createdat}", Formatters.getDate(region.getCreatedAt()));
-			replacements.put("{region-rating}", Formatters.formatRating(RegionsManager.getAverageRating(region)));
+			replacements.put("{region-bank}", Formatter.getBalance(region.getBank()));
+			replacements.put("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
+			replacements.put("{region-rating}", Formatter.getRating(RegionsManager.getAverageRating(region)));
 
 			items.add(MenuUtils.getButton(47, replacements));
 		}

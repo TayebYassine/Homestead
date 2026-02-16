@@ -6,11 +6,11 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
-import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
+import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
@@ -115,15 +115,15 @@ public class SubAreaSettingsMenu {
 		SerializableRent rent = subArea.getRent();
 
 		if (rent != null) {
-			replacements.put("{rent-enabled}", Formatters.getEnabled(isRentEnabled));
+			replacements.put("{rent-enabled}", Formatter.getToggle(isRentEnabled));
 			replacements.put("{rent-renter}", rent.getPlayer().getName());
-			replacements.put("{rent-price}", Formatters.getBalance(rent.getPrice()));
-			replacements.put("{rent-until}", Formatters.formatRemainingTime(rent.getUntilAt()));
+			replacements.put("{rent-price}", Formatter.getBalance(rent.getPrice()));
+			replacements.put("{rent-until}", Formatter.getRemainingTime(rent.getUntilAt()));
 		} else {
-			replacements.put("{rent-enabled}", Formatters.getEnabled(isRentEnabled));
-			replacements.put("{rent-renter}", Formatters.getNone());
-			replacements.put("{rent-price}", Formatters.getNone());
-			replacements.put("{rent-until}", Formatters.getNone());
+			replacements.put("{rent-enabled}", Formatter.getToggle(isRentEnabled));
+			replacements.put("{rent-renter}", Formatter.getNone());
+			replacements.put("{rent-price}", Formatter.getNone());
+			replacements.put("{rent-until}", Formatter.getNone());
 		}
 
 		ItemStack rentButton = MenuUtils.getButton(71, replacements);

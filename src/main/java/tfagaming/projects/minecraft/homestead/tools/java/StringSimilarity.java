@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * I used DeepSeek for this.
  */
-public class StringSimilarity {
+public final class StringSimilarity {
 	public static List<String> find(List<String> list, String comparison) {
 		if (list == null || comparison == null) {
 			throw new IllegalArgumentException("Input list and comparison string cannot be null");

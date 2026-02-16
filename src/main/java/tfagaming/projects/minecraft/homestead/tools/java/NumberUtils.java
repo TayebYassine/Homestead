@@ -3,8 +3,8 @@ package tfagaming.projects.minecraft.homestead.tools.java;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class NumberUtils {
-	public static double truncateToTwoDecimalPlaces(double number) {
+public final class NumberUtils {
+	public static double truncate(double number) {
 		return Math.floor(number * 100) / 100;
 	}
 

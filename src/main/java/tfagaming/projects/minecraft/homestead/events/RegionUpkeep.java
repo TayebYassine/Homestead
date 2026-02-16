@@ -5,7 +5,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
@@ -36,7 +36,7 @@ public final class RegionUpkeep {
 						Player regionOwner = (Player) region.getOwner();
 
 						Placeholder placeholder = new Placeholder()
-							.add("{amount}", Formatters.getBalance(amountToPay))
+							.add("{amount}", Formatter.getBalance(amountToPay))
 							.add("{region}", region.getName())
 							.add("{chunks}", String.valueOf(chunksToRemove));
 
@@ -52,9 +52,9 @@ public final class RegionUpkeep {
 						Player regionOwner = (Player) region.getOwner();
 
 						Placeholder placeholder = new Placeholder()
-							.add("{amount}", Formatters.getBalance(amountToPay))
+							.add("{amount}", Formatter.getBalance(amountToPay))
 							.add("{region}", region.getName())
-							.add("{bank}", Formatters.getBalance(region.getBank()));
+							.add("{bank}", Formatter.getBalance(region.getBank()));
 
 						Messages.send(regionOwner, 109, placeholder);
 						Messages.send(regionOwner, 110, placeholder);

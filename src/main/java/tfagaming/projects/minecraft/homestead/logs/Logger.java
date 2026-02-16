@@ -18,6 +18,17 @@ public class Logger {
 		ECONOMY_INTEGRATION_DISABLED(new String[]{
 				"Unable to find an economy integration or execute API methods for its class.",
 				"Please install a plugin that includes Economy API, or disable any feature that requires the API of that extension."
+		}),
+		UPDATE_FOUND(new String[]{
+			"There is an available update for Homestead.",
+			"Download links:",
+			" - https://www.spigotmc.org/resources/121873/",
+			" - https://modrinth.com/plugin/homestead-plugin",
+			" - https://hangar.papermc.io/TayebYassine/Homestead"
+		}),
+		UPDATE_FETCH_FAILURE(new String[]{
+				"Failed to fetch for updates, maybe GitHub is down or you are not connected to the internet.",
+				"You can manually look for updates on SpigotMC, Modrinth, or Hangar!"
 		});
 
 		private final String[] message;
@@ -58,9 +69,9 @@ public class Logger {
 		}
 	}
 
-	public static void error(String message) {
+	public static void error(String... message) {
 		logger.severe("ERROR » " + String.join(" ", message));
-		logs.save("[ERROR] " + message);
+		logs.save("[ERROR] " + String.join(" ", message));
 	}
 
 	public static void error(Throwable error) {

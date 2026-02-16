@@ -1,14 +1,13 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -225,8 +224,8 @@ public class RegionsMenu {
 			replacements.put("{region}", region.getName());
 			replacements.put("{region-displayname}", region.getDisplayName());
 			replacements.put("{region-owner}", region.getOwner().getName());
-			replacements.put("{region-bank}", Formatters.getBalance(region.getBank()));
-			replacements.put("{region-createdat}", Formatters.getBalance(region.getCreatedAt()));
+			replacements.put("{region-bank}", Formatter.getBalance(region.getBank()));
+			replacements.put("{region-createdat}", Formatter.getBalance(region.getCreatedAt()));
 
 			Region targetRegion = TargetRegionSession.getRegion(player);
 			if (targetRegion != null && targetRegion.getUniqueId().equals(region.getUniqueId())) {

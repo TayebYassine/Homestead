@@ -11,9 +11,9 @@ import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
@@ -38,7 +38,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 2) {
+		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()
 					.add("{usage}", getUsage())
 			);
@@ -49,7 +49,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 		switch (setType) {
 			case "displayname": {
-				if (args.length < 3) {
+				if (args.length < 2) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
@@ -93,14 +93,14 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				break;
 			}
 			case "description": {
-				if (args.length < 3) {
+				if (args.length < 2) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
 					return true;
 				}
 
-				List<String> descriptionList = Arrays.asList(args).subList(2, args.length);
+				List<String> descriptionList = Arrays.asList(args).subList(1, args.length);
 				String description = String.join(" ", descriptionList);
 
 				Region region = TargetRegionSession.getRegion(player);
@@ -142,7 +142,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length < 3) {
+				if (args.length < 2) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
@@ -207,7 +207,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				Messages.send(player, 72, new Placeholder()
 						.add("{region}", region.getName())
-						.add("{location}", Formatters.formatLocation(location))
+						.add("{location}", Formatter.getLocation(location))
 				);
 
 				// TODO Fix this
@@ -221,7 +221,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length < 3) {
+				if (args.length < 2) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
@@ -270,7 +270,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				break;
 			}
 			case "tax": {
-				if (args.length < 3) {
+				if (args.length < 2) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
@@ -315,8 +315,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				if (taxAmount <= minTax || taxAmount > maxTax) {
 					Messages.send(player, 104, new Placeholder()
-							.add("{min}", Formatters.getBalance(minTax))
-							.add("{max}", Formatters.getBalance(maxTax))
+							.add("{min}", Formatter.getBalance(minTax))
+							.add("{max}", Formatter.getBalance(maxTax))
 					);
 
 					return true;
@@ -326,13 +326,13 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				Messages.send(player, 103, new Placeholder()
 						.add("{region}", region.getName())
-						.add("{tax-amount}", Formatters.getBalance(taxAmount))
+						.add("{tax-amount}", Formatter.getBalance(taxAmount))
 				);
 
 				break;
 			}
 			case "target": {
-				if (args.length < 3) {
+				if (args.length < 2) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);

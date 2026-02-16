@@ -1306,21 +1306,28 @@ delayed-teleport:
 formatters:
   date-format: "dd/M/yyyy hh:mm a"                                          # Java SimpleDateFormat pattern
   date: "{date} &7({time-ago} ago)"                                         # How dates display with relative time
-  balance: "${balance}"                                                     # Money format (add currency symbols here)
-  location: "&6{world} &7(X: &6{x} &7Y: &6{y} &7Z: &6{z}&7)"                # Full 3D location
-  chunk: "&6{world} &7(X: &6{x} &7Z: &6{z}&7)"                              # 2D chunk location
-  player-regions: "&7• &2{region}"                                          # How each region listed for player
-  player-regions-joining: "\n"                                              # Separator between region names (newline)
-  region-members: "&7• &3{playername}"                                      # How each member is listed
-  region-members-joining: "\n"                                              # Separator between member names (newline)
-  gui-pagination-title: "&r{title} &r| &3{current-page}&r/&c{total-pages}"  # GUI page indicator
   duration: "{d} days, {h} hours, {m} minutes, {s} seconds"                 # Duration format
+
   ago-days: "{v} days"                                                      # X days ago
   ago-hours: "{v} hours"                                                    # X hours ago
   ago-minutes: "{v} minutes"                                                # X minutes ago
   ago-seconds: "{v} seconds"                                                # X seconds ago
+
+  balance: "${balance}"                                                     # Money format (add currency symbols here)
+  location: "&6{world} &7(X: &6{x} &7Y: &6{y} &7Z: &6{z}&7)"                # Full 3D location
+  chunk: "&6{world} &7(X: &6{x} &7Z: &6{z}&7)"                              # 2D chunk location
+
+  player-regions: "&7• &2{region}"                                          # How each region listed for player
+  player-regions-joining: "\n"                                              # Separator between region names (newline)
+
+  region-members: "&7• &3{playername}"                                      # How each member is listed
+  region-members-joining: "\n"                                              # Separator between member names (newline)
+
+  gui-pagination-title: "&r{title} &r| &3{current-page}&r/&c{total-pages}"  # GUI page indicator
+
   war-regions: "&2{region}"                                                 # Region name in war display
   war-regions-joining: ", "                                                 # Separator between war regions (comma-space)
+
   private-chat: "&2{region} &7- &e{sender}&7: &r{message}"                  # Region chat message format
 
 # ============================================================================

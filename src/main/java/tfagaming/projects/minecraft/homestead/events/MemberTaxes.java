@@ -6,7 +6,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
@@ -51,9 +51,9 @@ public final class MemberTaxes {
 							Player targetPlayerOnline = (Player) targetPlayer;
 
 							Placeholder placeholder = new Placeholder()
-								.add("{amount}", Formatters.getBalance(amountToPay))
+								.add("{amount}", Formatter.getBalance(amountToPay))
 								.add("{region}", region.getName())
-								.add("{balance}", Formatters.getBalance(PlayerBank.get(targetPlayer)));
+								.add("{balance}", Formatter.getBalance(PlayerBank.get(targetPlayer)));
 
 							Messages.send(targetPlayerOnline, 106, placeholder);
 							Messages.send(targetPlayerOnline, 107, placeholder);

@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
 import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
@@ -107,7 +107,7 @@ public class RegionLevelMenu {
 		List<String> rewards = Homestead.menusConfig.get("button-levels." + lvl);
 
 		if (rewards == null || rewards.isEmpty()) {
-			return Formatters.getNone();
+			return Formatter.getNone();
 		}
 
 		return String.join("\n", rewards);

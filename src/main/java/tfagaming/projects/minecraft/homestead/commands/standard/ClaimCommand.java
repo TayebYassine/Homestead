@@ -9,9 +9,9 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
@@ -68,7 +68,7 @@ public class ClaimCommand extends CommandBuilder {
 
 		if (chunkPrice > 0 && PlayerBank.get(region.getOwner()) < chunkPrice) {
 			Messages.send(player, 200, new Placeholder()
-					.add("{price}", Formatters.getBalance(chunkPrice))
+					.add("{price}", Formatter.getBalance(chunkPrice))
 					.add("{player}", region.getOwner().getName())
 			);
 			return true;

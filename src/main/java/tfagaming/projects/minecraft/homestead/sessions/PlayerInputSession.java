@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.sessions.playerinput;
+package tfagaming.projects.minecraft.homestead.sessions;
 
 import com.google.common.base.Function;
 import net.md_5.bungee.api.ChatMessageType;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class PlayerInputSession implements Listener {
+public final class PlayerInputSession implements Listener {
 
 	private static final Map<UUID, PlayerInputSession> SESSIONS = new ConcurrentHashMap<>();
 	private static final Map<UUID, BukkitTask> TIMERS = new ConcurrentHashMap<>();

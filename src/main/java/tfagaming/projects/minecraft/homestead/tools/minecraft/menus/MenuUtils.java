@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtils;
 
 import java.util.ArrayList;
@@ -97,9 +97,9 @@ public class MenuUtils {
 			replacements.put("{flag-description}", String.join("\n", (CharSequence) list));
 		}
 
-		replacements.put("{state}", Formatters.getFlag(value));
+		replacements.put("{state}", Formatter.getFlagState(value));
 		replacements.put("{flag-allowed}",
-				Formatters.getBoolean(!Homestead.config.isFlagDisabled(flag)));
+				Formatter.getBoolean(!Homestead.config.isFlagDisabled(flag)));
 
 		ButtonData data = getButtonData(17);
 		String type = Homestead.language.getString("flags-info." + flag + ".type");

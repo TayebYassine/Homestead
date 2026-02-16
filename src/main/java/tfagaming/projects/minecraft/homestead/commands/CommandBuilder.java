@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.commands.AutoCompleteFilter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -116,10 +117,7 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 		if (args.length == 1) {
 			List<String> suggestions = onDefaultTabComplete(sender, args);
 
-			String partial = args[0].toLowerCase();
-			return suggestions.stream()
-					.filter(s -> s.toLowerCase().startsWith(partial))
-					.collect(Collectors.toList());
+			return AutoCompleteFilter.filter(suggestions, args);
 		}
 
 		SubCommandBuilder subCommand = getSubCommand(args[0]);
@@ -133,7 +131,10 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 		}
 
 		String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
-		return subCommand.onTabComplete(sender, subArgs);
+
+		List<String> suggestions = subCommand.onTabComplete(sender, subArgs);
+
+		return AutoCompleteFilter.filter(suggestions, args);
 	}
 
 	public String getName() {

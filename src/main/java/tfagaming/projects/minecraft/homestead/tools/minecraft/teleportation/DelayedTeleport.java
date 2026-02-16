@@ -1,12 +1,11 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation;
 
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -77,7 +76,7 @@ public class DelayedTeleport {
 		PlayerSound.play(player, PlayerSound.PredefinedSound.TELEPORT);
 
 		Messages.send(player, 51, new Placeholder()
-				.add("{location}", Formatters.formatLocation(location))
+				.add("{location}", Formatter.getLocation(location))
 		);
 	}
 }

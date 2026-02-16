@@ -6,11 +6,11 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
+import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
@@ -188,9 +188,9 @@ public class RegionMembersMenu {
 
 			replacements.put("{region}", region.getName());
 			replacements.put("{playername}", member.getBukkitOfflinePlayer().getName());
-			replacements.put("{member-joinedat}", Formatters.getDate(member.getJoinedAt()));
-			replacements.put("{taxes-dueon}", Formatters.formatRemainingTime(member.getTaxesAt()));
-			replacements.put("{tax-amount}", Formatters.getBalance(region.getTaxesAmount()));
+			replacements.put("{member-joinedat}", Formatter.getDate(member.getJoinedAt()));
+			replacements.put("{taxes-dueon}", Formatter.getRemainingTime(member.getTaxesAt()));
+			replacements.put("{tax-amount}", Formatter.getBalance(region.getTaxesAmount()));
 
 			items.add(MenuUtils.getButton(24, replacements, member.getBukkitOfflinePlayer()));
 		}

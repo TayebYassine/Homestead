@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.chat;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 
 public final class Messages {
@@ -54,7 +54,7 @@ public final class Messages {
 
 		placeholder.add("{__prefix__}", Homestead.config.getPrefix());
 
-		message = Formatters.applyPlaceholders(message, placeholder);
+		message = Formatter.applyPlaceholders(message, placeholder);
 
 		if (receiver instanceof Player player) {
 			player.sendMessage(ColorTranslator.translate(message));

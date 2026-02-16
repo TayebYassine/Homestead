@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLog;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -125,7 +125,7 @@ public class RegionLogsMenu {
 
 			replacements.put("{region}", region.getName());
 			replacements.put("{index}", String.valueOf(i + 1));
-			replacements.put("{log-sentat}", Formatters.getDate(log.getSentAt()));
+			replacements.put("{log-sentat}", Formatter.getDate(log.getSentAt()));
 			replacements.put("{log-author}", log.getAuthor());
 			replacements.put("{log-message}", log.getAuthor().equals(Homestead.language.getString("default.author")) ? log.getMessage() : wrapMessage(log.getMessage()));
 

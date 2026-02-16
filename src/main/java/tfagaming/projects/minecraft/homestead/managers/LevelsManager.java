@@ -156,7 +156,7 @@ public final class LevelsManager {
 	}
 
 	/**
-	 * Set exact XP amount (triggers level check).
+	 * Set exact XP amount (triggers level fetch).
 	 * @param regionId The region ID
 	 * @param experience XP amount
 	 */

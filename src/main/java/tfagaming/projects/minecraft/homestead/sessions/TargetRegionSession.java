@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.sessions.targetedregion;
+package tfagaming.projects.minecraft.homestead.sessions;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

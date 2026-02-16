@@ -37,8 +37,8 @@ import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
-import tfagaming.projects.minecraft.homestead.sessions.autoclaim.AutoClaimSession;
-import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
@@ -264,7 +264,7 @@ public class Homestead extends JavaPlugin {
 		// Check for updates every 24 hours
 		runAsyncTimerTask(() -> {
 			runAsyncTask(() -> {
-				UpdateChecker.check(this);
+				UpdateChecker.fetch(this);
 			});
 		}, 86400);
 

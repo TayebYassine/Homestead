@@ -32,7 +32,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 		}
 
 		if (Homestead.config.isWelcomeSignEnabled()) {
-			if (args.length < 2) {
+			if (args.length < 1) {
 				new RegionsWithWelcomeSignsMenu(player);
 
 				return true;
@@ -79,7 +79,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 
 			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().getBukkitLocation());
 		} else {
-			if (args.length < 2) {
+			if (args.length < 1) {
 				Messages.send(player, 0, new Placeholder()
 						.add("{usage}", getUsage())
 				);

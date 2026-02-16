@@ -24,7 +24,7 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 2) {
+		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()
 					.add("{usage}", getUsage())
 			);

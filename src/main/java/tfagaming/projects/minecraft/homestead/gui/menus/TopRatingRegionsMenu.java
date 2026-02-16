@@ -1,12 +1,11 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -67,9 +66,9 @@ public class TopRatingRegionsMenu {
 			replacements.put("{region}", region.getName());
 			replacements.put("{region-displayname}", region.getDisplayName());
 			replacements.put("{region-owner}", region.getOwner().getName());
-			replacements.put("{region-bank}", Formatters.getBalance(region.getBank()));
-			replacements.put("{region-createdat}", Formatters.getDate(region.getCreatedAt()));
-			replacements.put("{region-rating}", Formatters.formatRating(RegionsManager.getAverageRating(region)));
+			replacements.put("{region-bank}", Formatter.getBalance(region.getBank()));
+			replacements.put("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
+			replacements.put("{region-rating}", Formatter.getRating(RegionsManager.getAverageRating(region)));
 			replacements.put("{region-members}", String.valueOf(region.getMembers().size()));
 			replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 

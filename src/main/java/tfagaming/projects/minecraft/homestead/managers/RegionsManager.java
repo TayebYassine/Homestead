@@ -15,7 +15,7 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
@@ -201,7 +201,7 @@ public final class RegionsManager {
 		String message = Homestead.language.getString("logs." + messagePath);
 
 		region.addLog(new SerializableLog(Homestead.language.getString("default.author"),
-				Formatters.applyPlaceholders(message, replacements)));
+				Formatter.applyPlaceholders(message, replacements)));
 	}
 
 	public static void mergeRegions(Region from, Region to) {

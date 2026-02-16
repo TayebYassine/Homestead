@@ -31,7 +31,7 @@ public class MailSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 3) {
+		if (args.length < 2) {
 			Messages.send(player, 0, new Placeholder()
 					.add("{usage}", getUsage())
 			);

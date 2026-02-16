@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class ListUtils {
+public final class ListUtils {
 	public static <T> List<T> removeDuplications(List<T> list) {
 		return new ArrayList<>(new LinkedHashSet<>(list));
 	}

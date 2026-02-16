@@ -3,7 +3,6 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -11,9 +10,9 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
+import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -233,7 +232,7 @@ public class MiscellaneousSettingsMenu {
 
 				Messages.send(player, 6, new Placeholder()
 						.add("{region}", region.getDisplayName())
-						.add("{region-bank}", Formatters.getBalance(amountToGive))
+						.add("{region-bank}", Formatter.getBalance(amountToGive))
 				);
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);

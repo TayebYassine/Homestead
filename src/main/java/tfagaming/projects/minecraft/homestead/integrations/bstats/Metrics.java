@@ -44,7 +44,7 @@ public class Metrics {
 	private static String serverUUID;
 
 	static {
-		// You can use the property to disable the check in your test environment
+		// You can use the property to disable the fetch in your test environment
 		if (System.getProperty("bstats.relocatecheck") == null || !System.getProperty("bstats.relocatecheck").equals("false")) {
 			// Maven's Relocate is clever and changes strings, too. So we have to use this little "trick" ... :D
 			final String defaultPackage = new String(

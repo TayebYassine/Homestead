@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -18,8 +18,8 @@ public class RegionRatingMenu {
 		HashMap<String, String> replacements = new HashMap<>();
 		replacements.put("{region}", region.getName());
 		replacements.put("{player-rate}",
-				region.isPlayerRated(player) ? Formatters.formatRating(region.getPlayerRate(player).getRate())
-						: Formatters.getNone());
+				region.isPlayerRated(player) ? Formatter.getRating(region.getPlayerRate(player).getRate())
+						: Formatter.getNone());
 
 		ItemStack rateNumber1 = MenuUtils.getButton(48, replacements);
 

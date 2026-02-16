@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
@@ -123,8 +123,8 @@ public class RegionClaimedChunksMenu {
 			HashMap<String, String> replacements = new HashMap<>();
 			replacements.put("{region}", region.getName());
 			replacements.put("{index}", String.valueOf(i + 1));
-			replacements.put("{chunk-claimedat}", Formatters.getDate(chunk.getClaimedAt()));
-			replacements.put("{chunk-location}", Formatters.formatLocation(chunk.getBukkitLocation()));
+			replacements.put("{chunk-claimedat}", Formatter.getDate(chunk.getClaimedAt()));
+			replacements.put("{chunk-location}", Formatter.getLocation(chunk.getBukkitLocation()));
 
 			ButtonData data = MenuUtils.getButtonData(33);
 

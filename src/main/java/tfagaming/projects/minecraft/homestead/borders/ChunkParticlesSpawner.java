@@ -76,7 +76,7 @@ public class ChunkParticlesSpawner {
 	/**
 	 * Checks if a particle task is already running for the given player.
 	 *
-	 * @param player the player to check
+	 * @param player the player to fetch
 	 * @return true if a task is currently running for this player
 	 */
 	public static boolean isTaskRunning(Player player) {

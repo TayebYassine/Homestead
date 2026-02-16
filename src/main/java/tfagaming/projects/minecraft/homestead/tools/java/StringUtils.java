@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.tools.java;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringUtils {
+public final class StringUtils {
 	public static String[] splitWithLimit(String input, String delimiter, int limit, boolean trim, boolean skipEmpty) {
 		String[] parts = input.split(delimiter, limit);
 		List<String> result = new ArrayList<>();

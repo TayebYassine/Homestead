@@ -6,7 +6,7 @@ import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
@@ -58,7 +58,7 @@ public class SubAreasMenu {
 			replacements.put("{region}", region.getName());
 			replacements.put("{subarea}", subArea.getName());
 			replacements.put("{subarea-volume}", String.valueOf(subArea.getVolume()));
-			replacements.put("{subarea-createdat}", Formatters.getDate(subArea.getCreatedAt()));
+			replacements.put("{subarea-createdat}", Formatter.getDate(subArea.getCreatedAt()));
 
 			items.add(MenuUtils.getButton(42, replacements));
 		}

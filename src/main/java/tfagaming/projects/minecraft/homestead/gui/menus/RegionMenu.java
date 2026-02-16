@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -11,7 +10,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager.RegionSort
 import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -33,14 +32,14 @@ public class RegionMenu {
 		HashMap<String, String> replacements = new HashMap<>();
 		replacements.put("{region}", region.getName());
 		replacements.put("{region-owner}", region.getOwner().getName());
-		replacements.put("{region-bank}", Formatters.getBalance(region.getBank()));
-		replacements.put("{region-createdat}", Formatters.getDate(region.getCreatedAt()));
+		replacements.put("{region-bank}", Formatter.getBalance(region.getBank()));
+		replacements.put("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
 		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 		replacements.put("{region-members}", String.valueOf(region.getMembers().size()));
-		replacements.put("{upkeep-enabled}", Formatters.getEnabled(isEconomyEnabled && isUpkeepEnabled));
-		replacements.put("{upkeep-date}", isEconomyEnabled && isUpkeepEnabled ? Formatters.formatRemainingTime(region.getUpkeepAt()) : Formatters.getNone());
+		replacements.put("{upkeep-enabled}", Formatter.getToggle(isUpkeepEnabled));
+		replacements.put("{upkeep-date}", isUpkeepEnabled ? Formatter.getRemainingTime(region.getUpkeepAt()) : Formatter.getNone());
 		replacements.put("{upkeep-amount}",
-				Formatters.getBalance(UpkeepUtils.getAmountToPay(region)));
+				Formatter.getBalance(UpkeepUtils.getAmountToPay(region)));
 		replacements.put("{region-global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
 		replacements.put("{region-rank-bank}",
 				String.valueOf(RegionsManager.getRank(RegionSorting.BANK, region.getUniqueId())));
@@ -110,7 +109,7 @@ public class RegionMenu {
 
 		boolean isSubAreasEnabled = Homestead.config.getBoolean("sub-areas.enabled");
 
-		replacements.put("{subareas-enabled}", Formatters.getEnabled(isSubAreasEnabled));
+		replacements.put("{subareas-enabled}", Formatter.getToggle(isSubAreasEnabled));
 		replacements.put("{region-subareas}", String.valueOf(SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).size()));
 
 		ItemStack subareasButton = MenuUtils.getButton(10, replacements);
@@ -142,15 +141,15 @@ public class RegionMenu {
 		SerializableRent rent = region.getRent();
 
 		if (rent != null) {
-			replacements.put("{rent-enabled}", Formatters.getEnabled(isEconomyEnabled && isRentEnabled));
+			replacements.put("{rent-enabled}", Formatter.getToggle(isRentEnabled));
 			replacements.put("{rent-renter}", rent.getPlayer().getName());
-			replacements.put("{rent-price}", Formatters.getBalance(rent.getPrice()));
-			replacements.put("{rent-until}", Formatters.formatRemainingTime(rent.getUntilAt()));
+			replacements.put("{rent-price}", Formatter.getBalance(rent.getPrice()));
+			replacements.put("{rent-until}", Formatter.getRemainingTime(rent.getUntilAt()));
 		} else {
-			replacements.put("{rent-enabled}", Formatters.getEnabled(isEconomyEnabled && isRentEnabled));
-			replacements.put("{rent-renter}", Formatters.getNone());
-			replacements.put("{rent-price}", Formatters.getNone());
-			replacements.put("{rent-until}", Formatters.getNone());
+			replacements.put("{rent-enabled}", Formatter.getToggle(isRentEnabled));
+			replacements.put("{rent-renter}", Formatter.getNone());
+			replacements.put("{rent-price}", Formatter.getNone());
+			replacements.put("{rent-until}", Formatter.getNone());
 		}
 
 		ItemStack rentButton = MenuUtils.getButton(12, replacements);

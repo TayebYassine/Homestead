@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.WarsManager;
-import tfagaming.projects.minecraft.homestead.sessions.targetedregion.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
@@ -56,7 +56,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 					yield Homestead.config.getString("placeholderapi.default.region_bank");
 				}
 
-				yield Formatters.getBalance(region.getBank());
+				yield Formatter.getBalance(region.getBank());
 			}
 			case "region_name" -> {
 				if (region == null) {
@@ -105,14 +105,14 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 					yield Homestead.config.getString("placeholderapi.default.upkeep_amount");
 				}
 
-				yield Formatters.getBalance(UpkeepUtils.getAmountToPay(region));
+				yield Formatter.getBalance(UpkeepUtils.getAmountToPay(region));
 			}
 			case "upkeep_at" -> {
 				if (region == null) {
 					yield Homestead.config.getString("placeholderapi.default.upkeep_at");
 				}
 
-				yield Formatters.getDate(region.getUpkeepAt());
+				yield Formatter.getDate(region.getUpkeepAt());
 			}
 			case "war_name" -> {
 				if (region == null || !WarsManager.isRegionInWar(region.getUniqueId())) {
@@ -126,7 +126,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 					yield Homestead.config.getString("placeholderapi.default.war_prize");
 				}
 
-				yield Formatters.getBalance(WarsManager.findWarByRegionId(region.getUniqueId()).getPrize());
+				yield Formatter.getBalance(WarsManager.findWarByRegionId(region.getUniqueId()).getPrize());
 			}
 			default -> null;
 		};

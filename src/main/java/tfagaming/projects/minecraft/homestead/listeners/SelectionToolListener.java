@@ -15,7 +15,7 @@ import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.util.HashMap;
@@ -104,7 +104,7 @@ public final class SelectionToolListener implements Listener {
 					cooldowns.remove(player.getUniqueId());
 				}, 1);
 
-				replacements.put("{location}", Formatters.formatLocation(firstPosition.getLocation()));
+				replacements.put("{location}", Formatter.getLocation(firstPosition.getLocation()));
 
 				sendActionBarMessage(player, "firstCorner");
 
@@ -136,7 +136,7 @@ public final class SelectionToolListener implements Listener {
 					cooldowns.remove(player.getUniqueId());
 				}, 1);
 
-				replacements.put("{location}", Formatters.formatLocation(secondPosition.getLocation()));
+				replacements.put("{location}", Formatter.getLocation(secondPosition.getLocation()));
 
 				sendActionBarMessage(player, "secondCorner");
 

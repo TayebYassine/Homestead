@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.sessions.mergingregion;
+package tfagaming.projects.minecraft.homestead.sessions;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.structure.Region;

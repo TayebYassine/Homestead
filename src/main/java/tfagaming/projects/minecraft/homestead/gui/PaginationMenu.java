@@ -11,9 +11,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +176,7 @@ public class PaginationMenu implements Listener {
 
 	private Inventory createPage(int page) {
 		Inventory inventory = Bukkit.createInventory(null, size,
-				Formatters.formatPaginationMenuTitle(title, page + 1, getTotalPages()));
+				Formatter.formatPaginationMenuTitle(title, page + 1, getTotalPages()));
 
 		int buttonsPerPage = (itemsPerPage > 0) ? itemsPerPage : contentSize;
 		boolean hasNext = (page + 1) * buttonsPerPage < items.size();
@@ -235,7 +234,7 @@ public class PaginationMenu implements Listener {
 			return;
 		}
 
-		if (!event.getView().getTitle().startsWith(Formatters.formatPaginationMenuTitle(title, currentPage + 1, getTotalPages()))) {
+		if (!event.getView().getTitle().startsWith(Formatter.formatPaginationMenuTitle(title, currentPage + 1, getTotalPages()))) {
 			return;
 		}
 

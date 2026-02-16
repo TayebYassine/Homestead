@@ -9,7 +9,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.ButtonData;
 
@@ -66,14 +66,14 @@ public class ItemUtils {
 
 	public static ItemStack getItem(String displayname, List<String> lore, Material material,
 									Map<String, String> replacements) {
-		displayname = Formatters.applyPlaceholders(displayname, replacements);
+		displayname = Formatter.applyPlaceholders(displayname, replacements);
 
 		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
 
 		if (loreCopy != null) {
 			for (int i = 0; i < loreCopy.size(); i++) {
 				String string = loreCopy.get(i);
-				string = Formatters.applyPlaceholders(string, replacements);
+				string = Formatter.applyPlaceholders(string, replacements);
 				loreCopy.set(i, string);
 			}
 		}
@@ -117,14 +117,14 @@ public class ItemUtils {
 
 	public static ItemStack getPlayerHead(String displayname, List<String> lore, String texture,
 										  Map<String, String> replacements) {
-		displayname = Formatters.applyPlaceholders(displayname, replacements);
+		displayname = Formatter.applyPlaceholders(displayname, replacements);
 
 		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
 
 		if (loreCopy != null) {
 			for (int i = 0; i < loreCopy.size(); i++) {
 				String string = loreCopy.get(i);
-				string = Formatters.applyPlaceholders(string, replacements);
+				string = Formatter.applyPlaceholders(string, replacements);
 				loreCopy.set(i, string);
 			}
 		}
@@ -195,14 +195,14 @@ public class ItemUtils {
 
 	public static ItemStack getPlayerHead(String displayname, List<String> lore, UUID playerId,
 										  Map<String, String> replacements) {
-		displayname = Formatters.applyPlaceholders(displayname, replacements);
+		displayname = Formatter.applyPlaceholders(displayname, replacements);
 
 		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
 
 		if (loreCopy != null) {
 			for (int i = 0; i < loreCopy.size(); i++) {
 				String string = loreCopy.get(i);
-				string = Formatters.applyPlaceholders(string, replacements);
+				string = Formatter.applyPlaceholders(string, replacements);
 				loreCopy.set(i, string);
 			}
 		}

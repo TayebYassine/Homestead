@@ -6,11 +6,11 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.sessions.playerinput.PlayerInputSession;
+import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBannedPlayer;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
@@ -179,7 +179,7 @@ public class RegionBannedPlayersMenu {
 
 			replacements.put("{region}", region.getName());
 			replacements.put("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName());
-			replacements.put("{player-bannedat}", Formatters.getDate(bannedPlayer.getBannedAt()));
+			replacements.put("{player-bannedat}", Formatter.getDate(bannedPlayer.getBannedAt()));
 			replacements.put("{player-banreason}", bannedPlayer.getReason());
 
 			items.add(MenuUtils.getButton(27, replacements, bannedPlayer.getBukkitOfflinePlayer()));

@@ -9,7 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
-public class UpdateChecker {
+public final class UpdateChecker {
 	private UpdateChecker() {
 	}
 
@@ -18,7 +18,7 @@ public class UpdateChecker {
 	 * @param plugin The instance of the plugin.
 	 * @return <code>true</code> if there is an update, otherwise <code>false</code>.
 	 */
-	public static boolean check(Homestead plugin) {
+	public static boolean fetch(Homestead plugin) {
 		try {
 			Logger.warning("Looking for updates on GitHub...");
 
@@ -31,10 +31,7 @@ public class UpdateChecker {
 				String response = reader.readLine();
 
 				if (!Homestead.getVersion().equalsIgnoreCase(response)) {
-					Logger.warning("There is an available update for Homestead.");
-					Logger.warning("Installed: " + Homestead.getVersion() + ", Updated: " + response);
-					Logger.warning(
-							"Download: https://www.spigotmc.org/resources/121873/, https://modrinth.com/plugin/homestead-plugin");
+					Logger.warning(Logger.PredefinedMessages.UPDATE_FOUND.getMessage());
 
 					return true;
 				} else {
@@ -44,10 +41,7 @@ public class UpdateChecker {
 				}
 			}
 		} catch (Exception e) {
-			Logger.warning(
-					"Failed to fetch for updates, maybe GitHub is down or you are not connected to the internet.");
-			Logger.warning(
-					"You can manually look for updates on SpigotMC or Modrinth: https://www.spigotmc.org/resources/121873/, https://modrinth.com/plugin/homestead-plugin");
+			Logger.error(Logger.PredefinedMessages.UPDATE_FETCH_FAILURE.getMessage());
 
 			return false;
 		}

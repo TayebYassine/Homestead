@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.sessions.autoclaim;
+package tfagaming.projects.minecraft.homestead.sessions;
 
 import org.bukkit.entity.Player;
 

@@ -17,7 +17,7 @@ public class CheckUpdatesSubCmd extends SubCommandBuilder {
 		Messages.send(sender, 98);
 
 		Homestead.getInstance().runAsyncTask(() -> {
-			if (UpdateChecker.check(Homestead.getInstance())) {
+			if (UpdateChecker.fetch(Homestead.getInstance())) {
 				Messages.send(sender, 97);
 			} else {
 				Messages.send(sender, 96);

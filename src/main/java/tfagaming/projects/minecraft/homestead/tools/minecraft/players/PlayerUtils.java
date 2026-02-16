@@ -22,7 +22,7 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatters;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -44,21 +44,21 @@ public class PlayerUtils {
 			case "title":
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.enter.title");
 
-				player.sendTitle(ColorTranslator.translate(Formatters.applyPlaceholders(titleData.get(0), replacements)),
-						ColorTranslator.translate(Formatters.applyPlaceholders(titleData.get(1), replacements)), 10, 70,
+				player.sendTitle(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(0), replacements)),
+						ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), replacements)), 10, 70,
 						20);
 
 				break;
 			case "actionbar":
 				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
 						new TextComponent(ColorTranslator
-								.translate(Formatters.applyPlaceholders(
+								.translate(Formatter.applyPlaceholders(
 										Homestead.config.getString("enter-exit-region-message.messages.enter.actionbar"),
 										replacements))));
 
 				break;
 			default:
-				player.sendMessage(ColorTranslator.translate(Formatters.applyPlaceholders(
+				player.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(
 						Homestead.config.getString("enter-exit-region-message.messages.enter.chat"),
 						replacements)));
 				break;
@@ -70,21 +70,21 @@ public class PlayerUtils {
 			case "title":
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.exit.title");
 
-				player.sendTitle(ColorTranslator.translate(Formatters.applyPlaceholders(titleData.get(0), replacements)),
-						ColorTranslator.translate(Formatters.applyPlaceholders(titleData.get(1), replacements)), 10, 70,
+				player.sendTitle(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(0), replacements)),
+						ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), replacements)), 10, 70,
 						20);
 
 				break;
 			case "actionbar":
 				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
 						new TextComponent(ColorTranslator
-								.translate(Formatters.applyPlaceholders(
+								.translate(Formatter.applyPlaceholders(
 										Homestead.config.getString("enter-exit-region-message.messages.exit.actionbar"),
 										replacements))));
 
 				break;
 			default:
-				player.sendMessage(ColorTranslator.translate(Formatters.applyPlaceholders(
+				player.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(
 						Homestead.config.getString("enter-exit-region-message.messages.exit.chat"),
 						replacements)));
 				break;
@@ -118,8 +118,8 @@ public class PlayerUtils {
 	 * 3) Otherwise, the region's global player flags are used.
 	 *
 	 * @param regionId the region UUID
-	 * @param player   the player to check
-	 * @param flag     the PlayerFlags bit to check
+	 * @param player   the player to fetch
+	 * @param flag     the PlayerFlags bit to fetch
 	 * @return true if the action is allowed; false otherwise
 	 */
 	public static boolean hasPermissionFlag(UUID regionId, Player player, long flag, boolean notify) {
