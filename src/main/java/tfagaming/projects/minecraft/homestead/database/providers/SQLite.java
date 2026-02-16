@@ -17,7 +17,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SQLite {
+public final class SQLite {
 	private static final String JDBC_URL = "jdbc:sqlite:";
 	private final Connection connection;
 

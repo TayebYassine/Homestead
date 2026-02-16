@@ -19,35 +19,30 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class YAML {
+public final class YAML {
 	private final File regionsFolder;
 	private final File warsFolder;
 	private final File subAreasFolder;
 	private final File levelsFolder;
 
 	public YAML(File dataFolder) throws IOException {
-		this.regionsFolder = new File(dataFolder, "regions");
-		if (!regionsFolder.exists() && !regionsFolder.mkdirs()) {
-			throw new IOException("Unable to create regions directory");
-		}
-
-		this.warsFolder = new File(dataFolder, "wars");
-		if (!warsFolder.exists() && !warsFolder.mkdirs()) {
-			throw new IOException("Unable to create wars directory");
-		}
-
-		this.subAreasFolder = new File(dataFolder, "subareas");
-		if (!subAreasFolder.exists() && !subAreasFolder.mkdirs()) {
-			throw new IOException("Unable to create subareas directory");
-		}
-
-		this.levelsFolder = new File(dataFolder, "levels");
-		if (!levelsFolder.exists() && !levelsFolder.mkdirs()) {
-			throw new IOException("Unable to create levels directory");
-		}
+		this.regionsFolder = prepareDataFolder(dataFolder, "regions");
+		this.warsFolder = prepareDataFolder(dataFolder, "wars");
+	    this.subAreasFolder = prepareDataFolder(dataFolder, "subareas");
+		this.levelsFolder = prepareDataFolder(dataFolder, "levels");
 
 		Logger.info("New database connection established, paths: ");
 		Logger.info(String.join("\n", List.of(regionsFolder.getAbsolutePath(), warsFolder.getAbsolutePath(), subAreasFolder.getAbsolutePath(), levelsFolder.getAbsolutePath())));
+	}
+
+	private File prepareDataFolder(File dataFolder, String dirName) throws IOException {
+		File dir = new File(dataFolder, dirName);
+
+		if (!dir.exists() && !dir.mkdir()) {
+			throw new IOException("Unable to create '" + dirName + "' directory, path: " + dir.getAbsolutePath());
+		}
+
+		return dir;
 	}
 
 	// Importing

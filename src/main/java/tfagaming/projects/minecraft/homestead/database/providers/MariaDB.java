@@ -17,7 +17,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MariaDB {
+public final class MariaDB {
 	private static final String JDBC_URL = "jdbc:mariadb://";
 	private final String TABLE_PREFIX;
 	private final Connection connection;

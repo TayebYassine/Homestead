@@ -17,7 +17,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MySQL {
+public final class MySQL {
 	private static final String JDBC_URL = "jdbc:mysql://";
 	private final String TABLE_PREFIX;
 	private final Connection connection;

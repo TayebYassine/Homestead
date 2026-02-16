@@ -65,6 +65,11 @@ public class LanguageLoader {
 		return getString(path, "NULL @ " + path);
 	}
 
+	public Object getRaw(String path) {
+		if (language == null) return null;
+		return language.get(path);
+	}
+
 	public List<String> getStringList(String path) {
 		if (language == null) return Collections.emptyList();
 

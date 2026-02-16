@@ -6,6 +6,8 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 
+import java.util.List;
+
 public final class Messages {
 	public static void send(Player player, String... message) {
 		sendFormatted(player, String.join(" ", message), null);
@@ -16,7 +18,7 @@ public final class Messages {
 	}
 
 	public static void send(Player player, int path) {
-		sendFormatted(player, Homestead.language.getString(String.valueOf(path)), null);
+		sendFormatted(player, path, null);
 	}
 
 	public static void send(Player player, String message, Placeholder placeholder) {
@@ -24,7 +26,7 @@ public final class Messages {
 	}
 
 	public static void send(Player player, int path, Placeholder placeholder) {
-		sendFormatted(player, Homestead.language.getString(String.valueOf(path)), placeholder);
+		sendFormatted(player, path, placeholder);
 	}
 
 	public static void send(CommandSender sender, String... message) {
@@ -36,7 +38,7 @@ public final class Messages {
 	}
 
 	public static void send(CommandSender sender, int path) {
-		sendFormatted(sender, Homestead.language.getString(String.valueOf(path)), null);
+		sendFormatted(sender, path, null);
 	}
 
 	public static void send(CommandSender sender, String message, Placeholder placeholder) {
@@ -44,7 +46,19 @@ public final class Messages {
 	}
 
 	public static void send(CommandSender sender, int path, Placeholder placeholder) {
-		sendFormatted(sender, Homestead.language.getString(String.valueOf(path)), placeholder);
+		sendFormatted(sender, path, placeholder);
+	}
+
+	private static void sendFormatted(Object receiver, int path, Placeholder placeholder) {
+		Object object = Homestead.language.getRaw(String.valueOf(path));
+
+		if (object instanceof String string) {
+			sendFormatted(receiver, string, placeholder);
+		} else if (object instanceof List<?> list) {
+			for (Object e : list) {
+				sendFormatted(receiver, String.valueOf(e), placeholder);
+			}
+		}
 	}
 
 	private static void sendFormatted(Object receiver, String message, Placeholder placeholder) {

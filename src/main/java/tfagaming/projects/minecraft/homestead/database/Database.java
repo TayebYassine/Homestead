@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class Database {
+public final class Database {
 	private final Provider provider;
 	private PostgreSQL postgreSQL;
 	private MariaDB mariaDB;

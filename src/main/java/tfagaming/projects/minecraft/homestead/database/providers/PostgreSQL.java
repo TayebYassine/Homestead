@@ -17,7 +17,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class PostgreSQL {
+public final class PostgreSQL {
 	private static final String JDBC_URL = "jdbc:postgresql://";
 	private final String TABLE_PREFIX;
 	private final Connection connection;
