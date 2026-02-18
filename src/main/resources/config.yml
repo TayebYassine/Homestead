@@ -104,6 +104,11 @@ database:
   #   Pros: Advanced features, excellent reliability
   #   Cons: Requires PostgreSQL server setup
   #
+  # - mongodb
+  #   Good for: Large servers (100+ daily players)
+  #   Pros: Mostly perfect
+  #   Cons: Requires a subscription or
+  #
   # - yaml
   #   Good for: Very small/friend servers (< 20 players)
   #   Pros: Human-readable files, easy to edit manually
@@ -142,6 +147,13 @@ database:
     password: "PASSWORD"        # Database password
     database: "homestead_data"  # Database name
     table_prefix: ""            # Table name prefix (optional)
+
+  # MongoDB Connection Settings
+  # Only used if provider is set to "mongodb"
+  mongodb:
+    uri: "mongodb://localhost:27017"       # or a full Atlas SRV URI, e.g. mongodb+srv://...
+    database: "homestead"
+    collection_prefix: "hs_"
 
   # SQLite Configuration
   # Only used if provider is set to "sqlite"
