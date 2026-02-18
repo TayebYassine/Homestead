@@ -26,6 +26,7 @@ titles:
   24: "Sub-Area Members"
   25: "Sub-Area Flags (&3{playername}&r)"
   26: "Levels and Rank: &2{region}"
+  27: "Player Information"
 
 buttons:
   0:

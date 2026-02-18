@@ -134,7 +134,7 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 
 		List<String> suggestions = subCommand.onTabComplete(sender, subArgs);
 
-		return AutoCompleteFilter.filter(suggestions, args);
+		return AutoCompleteFilter.filter(suggestions, subArgs);
 	}
 
 	public String getName() {

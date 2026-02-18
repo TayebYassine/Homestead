@@ -19,7 +19,9 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
+		Player player = asPlayer(sender);
+		
+		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}
@@ -29,7 +31,7 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 2) {
+		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()
 					.add("{usage}", getUsage())
 			);

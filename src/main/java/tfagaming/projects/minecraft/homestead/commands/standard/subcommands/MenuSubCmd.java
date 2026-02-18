@@ -16,7 +16,9 @@ public class MenuSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
+		Player player = asPlayer(sender);
+		
+		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}

@@ -20,15 +20,15 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
+		Player player = asPlayer(sender);
+		
+		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}
 
 		if (args.length < 1) {
-			new PlayerInfoMenu(player, player, () -> {
-				player.closeInventory();
-			});
+			new PlayerInfoMenu(player, player, player::closeInventory);
 		} else {
 			String playerName = args[0];
 
@@ -41,9 +41,7 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 				return true;
 			}
 
-			new PlayerInfoMenu(player, target, () -> {
-				player.closeInventory();
-			});
+			new PlayerInfoMenu(player, target, player::closeInventory);
 		}
 
 		return true;

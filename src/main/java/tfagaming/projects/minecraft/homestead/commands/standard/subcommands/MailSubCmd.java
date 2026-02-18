@@ -21,7 +21,9 @@ public class MailSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
+		Player player = asPlayer(sender);
+		
+		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}
@@ -60,7 +62,7 @@ public class MailSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		List<String> messageList = Arrays.asList(args).subList(2, args.length);
+		List<String> messageList = Arrays.asList(args).subList(1, args.length);
 		String message = String.join(" ", messageList);
 
 		RegionsManager.addNewLog(region.getUniqueId(), player.getName(), message);

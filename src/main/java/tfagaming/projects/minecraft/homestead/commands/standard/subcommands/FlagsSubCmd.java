@@ -29,7 +29,9 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
+		Player player = asPlayer(sender);
+		
+		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}
@@ -105,7 +107,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 3) {
+				if (args.length > 4) {
 					String flagStateInput = args[3];
 
 					switch (flagStateInput.toLowerCase()) {
@@ -156,15 +158,8 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length == 1) {
+				if (args.length == 2) {
 					new GlobalPlayerFlagsMenu(player, region);
-					return true;
-				}
-
-				if (args.length < 3) {
-					Messages.send(player, 0, new Placeholder()
-							.add("{usage}", getUsage())
-					);
 					return true;
 				}
 
@@ -187,7 +182,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 2) {
+				if (args.length > 3) {
 					String flagStateInput = args[2];
 
 					switch (flagStateInput.toLowerCase()) {
@@ -237,15 +232,8 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length == 1) {
+				if (args.length == 2) {
 					new WorldFlagsMenu(player, region);
-					return true;
-				}
-
-				if (args.length < 3) {
-					Messages.send(player, 0, new Placeholder()
-							.add("{usage}", getUsage())
-					);
 					return true;
 				}
 
@@ -268,7 +256,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 2) {
+				if (args.length > 3) {
 					String flagStateInput = args[2];
 
 					switch (flagStateInput.toLowerCase()) {

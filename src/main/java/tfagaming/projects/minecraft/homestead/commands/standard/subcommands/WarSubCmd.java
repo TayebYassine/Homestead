@@ -30,7 +30,9 @@ public class WarSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
+		Player player = asPlayer(sender);
+
+		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}
@@ -245,9 +247,8 @@ public class WarSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 2 && args[0].equalsIgnoreCase("declare"))
-			suggestions
-					.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+		if (args.length == 1 && args[0].equalsIgnoreCase("declare"))
+			suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
 
 		return suggestions;
 	}

@@ -39,7 +39,9 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
+		Player player = asPlayer(sender);
+		
+		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}
@@ -245,7 +247,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 3) {
+				if (args.length > 4) {
 					String flagStateInput = args[3];
 
 					switch (flagStateInput.toLowerCase()) {
@@ -395,7 +397,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 						boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-						if (args.length > 5) {
+						if (args.length > 6) {
 							String flagStateInput = args[5];
 
 							switch (flagStateInput.toLowerCase()) {

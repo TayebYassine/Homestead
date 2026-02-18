@@ -24,6 +24,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class SetRegionSubCmd extends SubCommandBuilder {
 	public SetRegionSubCmd() {
@@ -33,7 +34,9 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
+		Player player = asPlayer(sender);
+		
+		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}
@@ -198,7 +201,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				Chunk chunk = location.getChunk();
 
-				if (ChunksManager.getRegionOwnsTheChunk(chunk) == null || !ChunksManager.getRegionOwnsTheChunk(chunk).getUniqueId().equals(region.getUniqueId())) {
+				if (ChunksManager.getRegionOwnsTheChunk(chunk) == null || !Objects.requireNonNull(ChunksManager.getRegionOwnsTheChunk(chunk)).getUniqueId().equals(region.getUniqueId())) {
 					Messages.send(player, 142);
 					return true;
 				}

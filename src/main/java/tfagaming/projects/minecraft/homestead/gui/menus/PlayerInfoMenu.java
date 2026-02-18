@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class PlayerInfoMenu {
 	public PlayerInfoMenu(Player player, OfflinePlayer target, Runnable backButton) {
-		Menu gui = new Menu(MenuUtils.getTitle(4), 9 * 3);
+		Menu gui = new Menu(MenuUtils.getTitle(27), 9 * 3);
 
 		HashMap<String, String> replacements = new HashMap<>();
 		replacements.put("{regions-count}", String.valueOf(RegionsManager.getRegionsOwnedByPlayer(target).size()
