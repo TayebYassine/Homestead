@@ -11,7 +11,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
-import tfagaming.projects.minecraft.homestead.commands.MojangBrigadier;
+import tfagaming.projects.minecraft.homestead.commands.brigadier.BrigadierCommands;
 import tfagaming.projects.minecraft.homestead.commands.operator.ForceUnclaimCommand;
 import tfagaming.projects.minecraft.homestead.commands.operator.HomesteadAdminCommand;
 import tfagaming.projects.minecraft.homestead.commands.standard.*;
@@ -307,7 +307,7 @@ public class Homestead extends JavaPlugin {
 		try {
 			if (CommodoreProvider.isSupported()) {
 				Commodore commodore = CommodoreProvider.getCommodore(this);
-				new MojangBrigadier(this, commodore);
+				new BrigadierCommands(this, commodore);
 			} else {
 				Logger.warning("Mojang Brigadier is not supported on this server software.");
 			}
