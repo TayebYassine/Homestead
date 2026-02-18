@@ -20,6 +20,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -282,7 +283,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 						.add("{region}", region.getName())
 						.add("{flag}", flagInput)
 						.add("{subarea}", subArea.getName())
-						.add("{state}", currentState ? "Deny" : "Allow")
+						.add("{state}", Formatter.getFlagState(!currentState))
 				);
 
 				return true;
@@ -431,7 +432,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 						Messages.send(player, 169, new Placeholder()
 								.add("{region}", region.getName())
 								.add("{flag}", flagInput)
-								.add("{state}", currentState ? "Deny" : "Allow")
+								.add("{state}", Formatter.getFlagState(!currentState))
 								.add("{subarea}", subArea.getName())
 								.add("{player}", target.getName())
 						);

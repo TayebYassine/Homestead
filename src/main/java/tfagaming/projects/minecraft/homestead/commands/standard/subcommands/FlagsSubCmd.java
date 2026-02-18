@@ -14,6 +14,7 @@ import tfagaming.projects.minecraft.homestead.gui.menus.WorldFlagsMenu;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -36,7 +37,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 2) {
+		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()
 					.add("{usage}", getUsage())
 			);
@@ -142,7 +143,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 						.add("{region}", region.getName())
 						.add("{player}", target.getName())
 						.add("{flag}", flagInput)
-						.add("{state}", currentState ? "Deny" : "Allow")
+						.add("{state}", Formatter.getFlagState(!currentState))
 				);
 
 				break;
@@ -158,7 +159,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length == 2) {
+				if (args.length == 1) {
 					new GlobalPlayerFlagsMenu(player, region);
 					return true;
 				}
@@ -216,7 +217,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				Messages.send(player, 44, new Placeholder()
 						.add("{region}", region.getName())
 						.add("{flag}", flagInput)
-						.add("{state}", currentState ? "Deny" : "Allow")
+						.add("{state}", Formatter.getFlagState(!currentState))
 				);
 
 				break;
@@ -232,7 +233,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length == 2) {
+				if (args.length == 1) {
 					new WorldFlagsMenu(player, region);
 					return true;
 				}
@@ -290,7 +291,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				Messages.send(player, 49, new Placeholder()
 						.add("{region}", region.getName())
 						.add("{flag}", flagInput)
-						.add("{state}", currentState ? "Deny" : "Allow")
+						.add("{state}", Formatter.getFlagState(!currentState))
 				);
 
 				break;

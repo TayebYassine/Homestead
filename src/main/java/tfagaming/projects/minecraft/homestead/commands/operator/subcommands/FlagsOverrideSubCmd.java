@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -95,7 +96,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 			Messages.send(sender, 43, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{flag}", flagInput)
-					.add("{state}", currentState ? "Deny" : "Allow")
+					.add("{state}", Formatter.getFlagState(!currentState))
 					.add("{player}", target.getName())
 			);
 		}
@@ -135,7 +136,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 			Messages.send(sender, 44, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{flag}", flagInput)
-					.add("{state}", currentState ? "Deny" : "Allow")
+					.add("{state}", Formatter.getFlagState(!currentState))
 			);
 		}
 	}
@@ -174,7 +175,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 			Messages.send(sender, 49, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{flag}", flagInput)
-					.add("{state}", currentState ? "Deny" : "Allow")
+					.add("{state}", Formatter.getFlagState(!currentState))
 			);
 		}
 	}
