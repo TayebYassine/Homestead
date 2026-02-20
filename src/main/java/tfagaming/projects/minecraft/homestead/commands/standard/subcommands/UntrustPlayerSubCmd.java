@@ -102,7 +102,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 0) {
+		if (args.length == 1) {
 			Region region = TargetRegionSession.getRegion(player);
 
 			if (region != null) {

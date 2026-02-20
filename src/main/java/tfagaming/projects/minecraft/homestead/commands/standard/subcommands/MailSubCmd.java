@@ -81,7 +81,7 @@ public class MailSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 0) {
+		if (args.length == 1) {
 			suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
 		}
 

@@ -109,7 +109,7 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 0) {
+		if (args.length == 1) {
 			suggestions.add("all");
 		}
 

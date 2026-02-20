@@ -115,7 +115,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 0) {
+		if (args.length == 1) {
 			suggestions.addAll(Homestead.getInstance().getOfflinePlayersSync().stream().map(OfflinePlayer::getName).toList());
 		}
 
