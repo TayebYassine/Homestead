@@ -198,8 +198,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 			suggestions.addAll(List.of("member", "global", "world"));
 		} else if (args.length == 2 && args[0].equalsIgnoreCase("member")) {
 			if (player != null) {
-				Region region = TargetRegionSession.getRegion(player);
-				if (region != null) {
+				for (Region region : RegionsManager.getAll()) {
 					for (SerializableMember member : region.getMembers()) {
 						OfflinePlayer bukkitMember = member.getBukkitOfflinePlayer();
 						if (bukkitMember != null) {

@@ -50,8 +50,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class Homestead extends JavaPlugin {
-	private final static String VERSION = "5.0.0.2";
-	private final static boolean SNAPSHOT = false;
+	private final static String VERSION = "5.0.1.0-26w08a";
+	private final static boolean SNAPSHOT = true;
 	public static Database database;
 	public static RegionsCache regionsCache;
 	public static WarsCache warsCache;

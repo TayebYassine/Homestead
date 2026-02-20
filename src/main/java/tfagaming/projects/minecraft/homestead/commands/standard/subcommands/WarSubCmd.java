@@ -174,13 +174,6 @@ public class WarSubCmd extends SubCommandBuilder {
 			}
 
 			case "surrender": {
-				if (args.length < 2) {
-					Messages.send(player, 0, new Placeholder()
-							.add("{usage}", getUsage())
-					);
-					return true;
-				}
-
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
