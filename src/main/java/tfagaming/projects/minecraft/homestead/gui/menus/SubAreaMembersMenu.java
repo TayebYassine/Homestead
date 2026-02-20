@@ -139,9 +139,7 @@ public class SubAreaMembersMenu {
 	public List<ItemStack> getItems(Player player, Region region, SubArea subArea) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (int i = 0; i < members.size(); i++) {
-			SerializableMember member = members.get(i);
-
+		for (SerializableMember member : members) {
 			HashMap<String, String> replacements = new HashMap<>();
 
 			replacements.put("{region}", region.getName());

@@ -65,7 +65,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length < 4) {
+				if (args.length < 3) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
@@ -108,7 +108,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 4) {
+				if (args.length > 3) {
 					String flagStateInput = args[3];
 
 					switch (flagStateInput.toLowerCase()) {
@@ -171,8 +171,6 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
-
 				if (Homestead.config.isFlagDisabled(flagInput)) {
 					Messages.send(player, 42);
 					return true;
@@ -183,7 +181,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 3) {
+				if (args.length > 2) {
 					String flagStateInput = args[2];
 
 					switch (flagStateInput.toLowerCase()) {
@@ -245,8 +243,6 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				List<String> disabledFlags = Homestead.config.getStringList("disabled-flags");
-
 				if (Homestead.config.isFlagDisabled(flagInput)) {
 					Messages.send(player, 42);
 					return true;
@@ -257,7 +253,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 3) {
+				if (args.length > 2) {
 					String flagStateInput = args[2];
 
 					switch (flagStateInput.toLowerCase()) {

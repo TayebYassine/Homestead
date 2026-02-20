@@ -14,6 +14,7 @@ import java.util.List;
 public class RegionCommand extends CommandBuilder {
 	public RegionCommand() {
 		super("region", "rg", "hs", "homestead");
+		setUsage("/region [sub-command]");
 
 		registerSubCommand(new CreateRegionSubCmd());
 		registerSubCommand(new DeleteRegionSubCmd());

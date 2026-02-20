@@ -50,9 +50,7 @@ public class SubAreasMenu {
 	public List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (int i = 0; i < subAreas.size(); i++) {
-			SubArea subArea = subAreas.get(i);
-
+		for (SubArea subArea : subAreas) {
 			HashMap<String, String> replacements = new HashMap<>();
 
 			replacements.put("{region}", region.getName());

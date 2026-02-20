@@ -181,15 +181,15 @@ public class RegionMembersMenu {
 	public List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (int i = 0; i < members.size(); i++) {
-			SerializableMember member = members.get(i);
+		for (SerializableMember member : members) {
+			boolean taxesEnabled = Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("taxes.enabled");
 
 			HashMap<String, String> replacements = new HashMap<>();
 
 			replacements.put("{region}", region.getName());
 			replacements.put("{playername}", member.getBukkitOfflinePlayer().getName());
 			replacements.put("{member-joinedat}", Formatter.getDate(member.getJoinedAt()));
-			replacements.put("{taxes-dueon}", Formatter.getRemainingTime(member.getTaxesAt()));
+			replacements.put("{taxes-dueon}", taxesEnabled && region.getTaxesAmount() > 0 ? Formatter.getRemainingTime(member.getTaxesAt()) : Formatter.getNever());
 			replacements.put("{tax-amount}", Formatter.getBalance(region.getTaxesAmount()));
 
 			items.add(MenuUtils.getButton(24, replacements, member.getBukkitOfflinePlayer()));

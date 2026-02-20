@@ -45,6 +45,8 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 			);
 		}
 
+		Messages.send(sender, 202);
+
 		return true;
 	}
 

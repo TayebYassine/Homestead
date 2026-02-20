@@ -1,5 +1,7 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.plugins;
 
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -143,8 +145,8 @@ public class MapColor {
 		return colors;
 	}
 
-	public static String convertToColoredStringWithColorName(int color) {
-		return "&#" + String.format("%06X", color & 0x00FFFFFF) + fromInt(color);
+	public static String translate(int color) {
+		return ColorTranslator.translate("&#" + String.format("%06X", color & 0x00FFFFFF) + fromInt(color));
 	}
 
 	public static String fromInt(int color) {

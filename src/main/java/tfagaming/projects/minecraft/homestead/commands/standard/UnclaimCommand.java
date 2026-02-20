@@ -21,6 +21,7 @@ import java.util.List;
 public class UnclaimCommand extends CommandBuilder {
 	public UnclaimCommand() {
 		super("unclaim");
+		setUsage("/unclaim");
 	}
 
 	@Override

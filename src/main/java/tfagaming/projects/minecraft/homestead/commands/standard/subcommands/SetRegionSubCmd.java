@@ -59,7 +59,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				List<String> regionDisplayNameList = Arrays.asList(args).subList(2, args.length);
+				List<String> regionDisplayNameList = Arrays.asList(args).subList(1, args.length);
 				String regionDisplayName = String.join(" ", regionDisplayNameList);
 
 				Region region = TargetRegionSession.getRegion(player);
@@ -178,8 +178,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				region.setMapColor(color);
 
 				Messages.send(player, 19, new Placeholder()
-						.add("{oldcolor}", MapColor.convertToColoredStringWithColorName(oldColor))
-						.add("{newcolor}", MapColor.convertToColoredStringWithColorName(region.getMapColor()))
+						.add("{oldcolor}", MapColor.translate(oldColor))
+						.add("{newcolor}", MapColor.translate(region.getMapColor()))
 				);
 
 				break;

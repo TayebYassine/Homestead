@@ -25,6 +25,7 @@ import java.util.List;
 public class ClaimCommand extends CommandBuilder {
 	public ClaimCommand() {
 		super("claim");
+		setUsage("/claim");
 	}
 
 	@Override

@@ -225,7 +225,7 @@ public class RegionsMenu {
 			replacements.put("{region-displayname}", region.getDisplayName());
 			replacements.put("{region-owner}", region.getOwner().getName());
 			replacements.put("{region-bank}", Formatter.getBalance(region.getBank()));
-			replacements.put("{region-createdat}", Formatter.getBalance(region.getCreatedAt()));
+			replacements.put("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
 
 			Region targetRegion = TargetRegionSession.getRegion(player);
 			if (targetRegion != null && targetRegion.getUniqueId().equals(region.getUniqueId())) {

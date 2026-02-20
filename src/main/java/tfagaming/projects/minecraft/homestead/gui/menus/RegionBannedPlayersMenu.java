@@ -172,9 +172,7 @@ public class RegionBannedPlayersMenu {
 	public List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (int i = 0; i < bannedPlayers.size(); i++) {
-			SerializableBannedPlayer bannedPlayer = bannedPlayers.get(i);
-
+		for (SerializableBannedPlayer bannedPlayer : bannedPlayers) {
 			HashMap<String, String> replacements = new HashMap<>();
 
 			replacements.put("{region}", region.getName());

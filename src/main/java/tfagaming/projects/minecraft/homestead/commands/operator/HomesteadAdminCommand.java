@@ -12,6 +12,7 @@ import java.util.List;
 public class HomesteadAdminCommand extends CommandBuilder {
 	public HomesteadAdminCommand() {
 		super("homesteadadmin", "hsadmin");
+		setUsage("/hsadmin [sub-command]");
 
 		registerSubCommand(new ExportSubCmd());
 		registerSubCommand(new PluginSubCmd());

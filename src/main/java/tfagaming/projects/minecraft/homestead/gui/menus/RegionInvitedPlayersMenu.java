@@ -167,9 +167,7 @@ public class RegionInvitedPlayersMenu {
 	public List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (int i = 0; i < invitedPlayers.size(); i++) {
-			OfflinePlayer invitedPlayer = invitedPlayers.get(i);
-
+		for (OfflinePlayer invitedPlayer : invitedPlayers) {
 			HashMap<String, String> replacements = new HashMap<>();
 
 			replacements.put("{playername}", invitedPlayer.getName());

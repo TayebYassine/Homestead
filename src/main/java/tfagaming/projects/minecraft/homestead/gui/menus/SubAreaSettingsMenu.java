@@ -123,7 +123,7 @@ public class SubAreaSettingsMenu {
 			replacements.put("{rent-enabled}", Formatter.getToggle(isRentEnabled));
 			replacements.put("{rent-renter}", Formatter.getNone());
 			replacements.put("{rent-price}", Formatter.getNone());
-			replacements.put("{rent-until}", Formatter.getNone());
+			replacements.put("{rent-until}", Formatter.getNever());
 		}
 
 		ItemStack rentButton = MenuUtils.getButton(71, replacements);

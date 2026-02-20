@@ -37,7 +37,7 @@ public class RegionMenu {
 		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
 		replacements.put("{region-members}", String.valueOf(region.getMembers().size()));
 		replacements.put("{upkeep-enabled}", Formatter.getToggle(isUpkeepEnabled));
-		replacements.put("{upkeep-date}", isUpkeepEnabled ? Formatter.getRemainingTime(region.getUpkeepAt()) : Formatter.getNone());
+		replacements.put("{upkeep-date}", isUpkeepEnabled ? Formatter.getRemainingTime(region.getUpkeepAt()) : Formatter.getNever());
 		replacements.put("{upkeep-amount}",
 				Formatter.getBalance(UpkeepUtils.getAmountToPay(region)));
 		replacements.put("{region-global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
@@ -149,7 +149,7 @@ public class RegionMenu {
 			replacements.put("{rent-enabled}", Formatter.getToggle(isRentEnabled));
 			replacements.put("{rent-renter}", Formatter.getNone());
 			replacements.put("{rent-price}", Formatter.getNone());
-			replacements.put("{rent-until}", Formatter.getNone());
+			replacements.put("{rent-until}", Formatter.getNever());
 		}
 
 		ItemStack rentButton = MenuUtils.getButton(12, replacements);

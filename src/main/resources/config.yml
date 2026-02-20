@@ -105,9 +105,9 @@ database:
   #   Cons: Requires PostgreSQL server setup
   #
   # - mongodb
-  #   Good for: Large servers (100+ daily players)
+  #   Good for: Large to medium servers (100+ daily players)
   #   Pros: Mostly perfect
-  #   Cons: Requires a subscription or
+  #   Cons: Requires a subscription for different tiers (free is available)
   #
   # - yaml
   #   Good for: Very small/friend servers (< 20 players)

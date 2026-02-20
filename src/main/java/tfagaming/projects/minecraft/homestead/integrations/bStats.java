@@ -78,6 +78,9 @@ public class bStats {
 						case MySQL:
 							map.put("MySQL", 1);
 							break;
+						case MongoDB:
+							map.put("MongoDB", 1);
+							break;
 						case SQLite:
 							map.put("SQLite", 1);
 							break;

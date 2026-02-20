@@ -232,6 +232,10 @@ public final class Formatter {
 		return ColorTranslator.translate(Homestead.language.getString("default.none"));
 	}
 
+	public static String getNever() {
+		return ColorTranslator.translate(Homestead.language.getString("default.never"));
+	}
+
 	public static String getBoolean(boolean value) {
 		return ColorTranslator.translate(Homestead.language.getString(value ? "default.isTrue" : "default.isFalse"));
 	}
