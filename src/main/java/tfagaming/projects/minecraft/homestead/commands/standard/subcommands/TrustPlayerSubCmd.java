@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
@@ -126,8 +127,10 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 				Messages.send(target.getPlayer(), 139, placeholder);
 			}
 
-			// TODO Fix this
-			// RegionsManager.addNewLog(region.getUniqueId(), 2, replacements);
+			RegionsManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
+					.add("{executor}", player.getName())
+					.add("{playername}", target.getName())
+			);
 		}
 
 		return true;

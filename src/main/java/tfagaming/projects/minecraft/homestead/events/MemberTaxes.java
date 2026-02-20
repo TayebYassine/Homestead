@@ -69,11 +69,9 @@ public final class MemberTaxes {
 							);
 						}
 
-						Map<String, String> replacements = new HashMap<String, String>();
-						replacements.put("{playername}", member.getBukkitOfflinePlayer().getName());
-
-						// TODO Fix this
-						// RegionsManager.addNewLog(region.getUniqueId(), 5, replacements);
+						RegionsManager.addNewLog(region.getUniqueId(), 5, new Placeholder()
+								.add("{playername}", targetPlayer.getName())
+						);
 					}
 				}
 			}

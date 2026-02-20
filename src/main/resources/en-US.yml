@@ -252,12 +252,13 @@ prefix: "&8[&6Homestead&8]&r"
 202: "{__prefix__} &7Done."
 
 logs:
-  0: "&7Updated name from &2{oldname} &7to &2{newname}&7."
-  1: "&7Updated location to {location}."
-  2: "&7Added new member: &3{playername}"
-  3: "&7Removed a member: &3{player}"
-  4: "&3{playername} has left the region."
-  5: "&3{playername} has been kicked, they're unable to pay taxes."
+  0: "By {executor}, updated region name to {newname}."
+  1: "By {executor}, updated location to {location}."
+  2: "By {executor}, trusted a new member {playername}."
+  3: "By {executor}, removed a member {playername}."
+  4: "{playername} has left the region."
+  5: "{playername} has been kicked, they're unable to pay taxes."
+  6: "By {executor}, updated displayname to {newdisplayname}."
 
 flags-info:
   # PLAYER FLAGS
@@ -598,7 +599,13 @@ flags-info:
     type: OAK_SIGN
   manage-logs:
     description:
-      - "&7Allow the player to view the logs?"
+      - "&7Allow the player to manage the logs?"
+      - " "
+      - "&c&lCaution:"
+      - "&cPrevent all players from deleting the logs! Allowing"
+      - "&cone or more players to manage the logs/mails will"
+      - "&cdo changes to the region and removing the audit logs"
+      - "&csaved!"
     type: BOOKSHELF
   kick-players:
     description:

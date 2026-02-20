@@ -11,6 +11,7 @@ import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -240,8 +241,9 @@ public class RegionMenu {
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-				// TODO Fix this
-				// RegionsManager.addNewLog(region.getUniqueId(), 4, replacements);
+				RegionsManager.addNewLog(region.getUniqueId(), 4, new Placeholder()
+						.add("{playername}", player.getName())
+				);
 
 				new RegionsMenu(player);
 			});

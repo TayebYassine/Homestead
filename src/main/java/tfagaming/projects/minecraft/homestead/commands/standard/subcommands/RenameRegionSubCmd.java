@@ -72,8 +72,10 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 				.add("{newname}", regionName)
 		);
 
-		// TODO Fix this
-		// RegionsManager.addNewLog(region.getUniqueId(), 0, replacements);
+		RegionsManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
+				.add("{executor}", player.getName())
+				.add("{newname}", regionName)
+		);
 
 		return true;
 	}

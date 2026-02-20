@@ -93,6 +93,11 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{newdisplayname}", region.getDisplayName())
 				);
 
+				RegionsManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
+						.add("{executor}", player.getName())
+						.add("{newdisplayname}", region.getDisplayName())
+				);
+
 				break;
 			}
 			case "description": {
@@ -213,8 +218,10 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{location}", Formatter.getLocation(location))
 				);
 
-				// TODO Fix this
-				// RegionsManager.addNewLog(region.getUniqueId(), 1, replacements);
+				RegionsManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
+						.add("{executor}", player.getName())
+						.add("{location}", Formatter.getLocation(location))
+				);
 
 				break;
 			}

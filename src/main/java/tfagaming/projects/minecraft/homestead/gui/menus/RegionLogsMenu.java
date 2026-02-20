@@ -127,7 +127,7 @@ public class RegionLogsMenu {
 			replacements.put("{index}", String.valueOf(i + 1));
 			replacements.put("{log-sentat}", Formatter.getDate(log.getSentAt()));
 			replacements.put("{log-author}", log.getAuthor());
-			replacements.put("{log-message}", log.getAuthor().equals(Homestead.language.getString("default.author")) ? log.getMessage() : wrapMessage(log.getMessage()));
+			replacements.put("{log-message}", wrapMessage(log.getMessage()));
 
 			items.add(MenuUtils.getButton(log.isRead() ? 40 : 39, replacements));
 		}

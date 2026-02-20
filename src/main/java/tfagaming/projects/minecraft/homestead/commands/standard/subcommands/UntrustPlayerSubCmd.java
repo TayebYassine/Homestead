@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -80,8 +81,10 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 					.add("{player}", target.getName())
 			);
 
-			// TODO Fix this
-			// RegionsManager.addNewLog(region.getUniqueId(), 3, replacements);
+			RegionsManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
+					.add("{executor}", player.getName())
+					.add("{playername}", target.getName())
+			);
 		} else {
 			Messages.send(player, 39, new Placeholder()
 					.add("{region}", region.getName())

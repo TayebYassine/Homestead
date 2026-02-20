@@ -17,6 +17,7 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
 import java.util.*;
@@ -168,11 +169,6 @@ public final class RegionsManager {
 		region.addLog(new SerializableLog(author, message));
 	}
 
-	/**
-	 * Appends a translated log entry using the plugin's language file.
-	 * @param id The region UUID
-	 * @param messagePath The message path from the language file
-	 */
 	public static void addNewLog(UUID id, int messagePath) {
 		Region region = findRegion(id);
 
@@ -185,13 +181,7 @@ public final class RegionsManager {
 		region.addLog(new SerializableLog(Homestead.language.getString("default.author"), message));
 	}
 
-	/**
-	 * Appends a translated and token-replaced log entry.
-	 * @param id The region UUID
-	 * @param messagePath The message path from the language file
-	 * @param replacements Replacements for variables
-	 */
-	public static void addNewLog(UUID id, int messagePath, Map<String, String> replacements) {
+	public static void addNewLog(UUID id, int messagePath, Placeholder placeholder) {
 		Region region = findRegion(id);
 
 		if (region == null) {
@@ -201,7 +191,7 @@ public final class RegionsManager {
 		String message = Homestead.language.getString("logs." + messagePath);
 
 		region.addLog(new SerializableLog(Homestead.language.getString("default.author"),
-				Formatter.applyPlaceholders(message, replacements)));
+				Formatter.applyPlaceholders(message, placeholder)));
 	}
 
 	public static void mergeRegions(Region from, Region to) {

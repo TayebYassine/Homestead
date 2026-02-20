@@ -87,14 +87,16 @@ public class MenuUtils {
 	public static ItemStack getFlagButton(String flag, boolean value) {
 		HashMap<String, String> replacements = new HashMap<>();
 
-		Object description = Homestead.language.getString("flags-info." + flag + ".description");
+		Object description = Homestead.language.getRaw("flags-info." + flag + ".description");
 
 		replacements.put("{flag}", flag);
 
 		if (description instanceof String) {
 			replacements.put("{flag-description}", description.toString());
 		} else if (description instanceof List<?> list) {
-			replacements.put("{flag-description}", String.join("\n", (CharSequence) list));
+			List<String> strList = list.stream().map(String::valueOf).toList();
+
+			replacements.put("{flag-description}", String.join("\n", strList));
 		}
 
 		replacements.put("{state}", Formatter.getFlagState(value));

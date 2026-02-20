@@ -51,8 +51,10 @@ public class MiscellaneousSettingsMenu {
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-				// TODO Fix this
-				// RegionsManager.addNewLog(region.getUniqueId(), 0, replacements);
+				RegionsManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
+						.add("{executor}", player.getName())
+						.add("{newname}", input)
+				);
 
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
 			}, (message) -> {
@@ -85,6 +87,11 @@ public class MiscellaneousSettingsMenu {
 				region.setDisplayName(input);
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+				RegionsManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
+						.add("{executor}", player.getName())
+						.add("{newdisplayname}", region.getDisplayName())
+				);
 
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
 			}, (message) -> {
@@ -151,8 +158,10 @@ public class MiscellaneousSettingsMenu {
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-			// TODO Fix this
-			// RegionsManager.addNewLog(region.getUniqueId(), 1, replacements);
+			RegionsManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
+					.add("{executor}", player.getName())
+					.add("{location}", Formatter.getLocation(location))
+			);
 		});
 
 		ItemStack transferOwnershipRegionButton = MenuUtils.getButton(38, replacements);
