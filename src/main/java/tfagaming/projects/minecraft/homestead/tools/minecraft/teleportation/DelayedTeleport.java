@@ -8,15 +8,17 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DelayedTeleport {
-	public static ConcurrentHashMap<UUID, BukkitTask> tasks = new ConcurrentHashMap<>();
-	public static ConcurrentHashMap<UUID, Location> initialLocations = new ConcurrentHashMap<>();
+	public static Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
+	public static Map<UUID, Location> initialLocations = new ConcurrentHashMap<>();
 
 	public DelayedTeleport(Player player, Location location) {
 		UUID playerId = player.getUniqueId();
@@ -46,7 +48,7 @@ public class DelayedTeleport {
 
 		initialLocations.put(playerId, player.getLocation().clone());
 
-		BukkitTask task = Homestead.getInstance().runSyncTaskLater(() -> {
+		TaskHandle task = Homestead.getInstance().runSyncTaskLater(() -> {
 			tasks.remove(playerId);
 			initialLocations.remove(playerId);
 
@@ -57,7 +59,7 @@ public class DelayedTeleport {
 	}
 
 	public static void cancelTeleport(UUID playerId) {
-		BukkitTask task = tasks.get(playerId);
+		TaskHandle task = tasks.get(playerId);
 		if (task != null) {
 			task.cancel();
 			tasks.remove(playerId);

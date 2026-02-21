@@ -41,6 +41,7 @@ import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
 
@@ -48,6 +49,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Homestead extends JavaPlugin {
 	private final static String VERSION = "5.0.1.0-26w08a";
@@ -63,7 +65,7 @@ public class Homestead extends JavaPlugin {
 	public static Vault vault;
 	private static Homestead INSTANCE;
 	private static long STARTED_AT;
-	private static BukkitTask moveCheckTask;
+	private static TaskHandle moveCheckTask;
 
 	public static String getVersion() {
 		return VERSION;
@@ -322,10 +324,14 @@ public class Homestead extends JavaPlugin {
 	 * @param callable The task to run.
 	 * @param interval The interval, in seconds.
 	 */
-	public BukkitTask runAsyncTimerTask(Runnable callable, int interval) {
+	public TaskHandle runAsyncTimerTask(Runnable callable, int interval) {
+		if (isFolia()) {
+			return new TaskHandle(Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> callable.run(), 0, interval, TimeUnit.SECONDS));
+		}
+
 		long intervalTicks = interval * 20L;
 
-		return Bukkit.getScheduler().runTaskTimerAsynchronously(this, callable, 0L, intervalTicks);
+		return new TaskHandle(Bukkit.getScheduler().runTaskTimerAsynchronously(this, callable, 0L, intervalTicks));
 	}
 
 	/**
@@ -334,8 +340,13 @@ public class Homestead extends JavaPlugin {
 	 * @param callable The task to run.
 	 * @param ticks    The interval, in ticks.
 	 */
-	public BukkitTask runSyncTimerTask(Runnable callable, long ticks) {
-		return Bukkit.getScheduler().runTaskTimer(this, callable, 0L, ticks);
+	public TaskHandle runSyncTimerTask(Runnable callable, long ticks) {
+		if (isFolia()) {
+			// Folia requires initial delay >= 1; global region scheduler uses ticks
+			return new TaskHandle(Bukkit.getGlobalRegionScheduler().runAtFixedRate(this, task -> callable.run(), 1L, ticks));
+		}
+
+		return new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, callable, 0L, ticks));
 	}
 
 	/**
@@ -344,10 +355,15 @@ public class Homestead extends JavaPlugin {
 	 * @param callable The task to run.
 	 * @param delay    The delay, in seconds.
 	 */
-	public BukkitTask runSyncTaskLater(Runnable callable, int delay) {
+	public TaskHandle runSyncTaskLater(Runnable callable, int delay) {
+		if (isFolia()) {
+			long delayTicks = delay * 20L;
+			return new TaskHandle(Bukkit.getGlobalRegionScheduler().runDelayed(this, task -> callable.run(), delayTicks));
+		}
+
 		long delayTicks = delay * 20L;
 
-		return Bukkit.getScheduler().runTaskLater(this, callable, delayTicks);
+		return new TaskHandle(Bukkit.getScheduler().runTaskLater(this, callable, delayTicks));
 	}
 
 	/**
@@ -356,11 +372,15 @@ public class Homestead extends JavaPlugin {
 	 * @param callable The task to run.
 	 * @param interval The interval, in seconds.
 	 */
-	public void runAsyncTimerTask(Runnable callable, int delay, int interval) {
+	public TaskHandle runAsyncTimerTask(Runnable callable, int delay, int interval) {
+		if (isFolia()) {
+			return new TaskHandle(Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> callable.run(), delay, interval, TimeUnit.SECONDS));
+		}
+
 		long delayTicks = delay * 20L;
 		long intervalTicks = interval * 20L;
 
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this, callable, delayTicks, intervalTicks);
+		return new TaskHandle(Bukkit.getScheduler().runTaskTimerAsynchronously(this, callable, delayTicks, intervalTicks));
 	}
 
 	/**
@@ -369,10 +389,14 @@ public class Homestead extends JavaPlugin {
 	 * @param callable The task to run.
 	 * @param delay    The delay, in seconds.
 	 */
-	public BukkitTask runAsyncTaskLater(Runnable callable, int delay) {
+	public TaskHandle runAsyncTaskLater(Runnable callable, int delay) {
+		if (isFolia()) {
+			return new TaskHandle(Bukkit.getAsyncScheduler().runDelayed(this, task -> callable.run(), delay, TimeUnit.SECONDS));
+		}
+
 		long delayTicks = delay * 20L;
 
-		return Bukkit.getScheduler().runTaskLaterAsynchronously(this, callable, delayTicks);
+		return new TaskHandle(Bukkit.getScheduler().runTaskLaterAsynchronously(this, callable, delayTicks));
 	}
 
 	/**
@@ -380,8 +404,12 @@ public class Homestead extends JavaPlugin {
 	 *
 	 * @param callable The task to run.
 	 */
-	public void runAsyncTask(Runnable callable) {
-		Bukkit.getScheduler().runTaskAsynchronously(this, callable);
+	public TaskHandle runAsyncTask(Runnable callable) {
+		if (isFolia()) {
+			return new TaskHandle(Bukkit.getAsyncScheduler().runNow(this, task -> callable.run()));
+		}
+
+		return new TaskHandle(Bukkit.getScheduler().runTaskAsynchronously(this, callable));
 	}
 
 	/**
@@ -389,8 +417,12 @@ public class Homestead extends JavaPlugin {
 	 *
 	 * @param callable The task to run.
 	 */
-	public void runSyncTask(Runnable callable) {
-		Bukkit.getScheduler().runTask(this, callable);
+	public TaskHandle runSyncTask(Runnable callable) {
+		if (isFolia()) {
+			return new TaskHandle(Bukkit.getGlobalRegionScheduler().run(this, task -> callable.run()));
+		}
+
+		return new TaskHandle(Bukkit.getScheduler().runTask(this, callable));
 	}
 
 	/**
@@ -488,10 +520,19 @@ public class Homestead extends JavaPlugin {
 		}
 	}
 
-	public boolean isExternalPluginEnabled(String pluginName) {
+	public static boolean isExternalPluginEnabled(String pluginName) {
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginName);
 
 		return plugin != null && plugin.isEnabled();
+	}
+
+	public static boolean isFolia() {
+		try {
+			Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 
 	/**

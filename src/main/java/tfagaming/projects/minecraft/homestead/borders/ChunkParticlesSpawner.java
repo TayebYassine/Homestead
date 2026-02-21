@@ -12,11 +12,13 @@ import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles particle spawning around claimed region chunks for a specific player.
@@ -30,7 +32,7 @@ public class ChunkParticlesSpawner {
 	/**
 	 * Keeps track of active particle tasks per player.
 	 */
-	private static final Map<UUID, BukkitTask> tasks = new HashMap<>();
+	private static final Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
 
 	/**
 	 * The player who triggered the particle effect.
@@ -51,7 +53,7 @@ public class ChunkParticlesSpawner {
 		if (isEnabled) {
 			// Cancel any previously running particle task for this player
 			if (tasks.containsKey(player.getUniqueId())) {
-				BukkitTask taskFromMap = tasks.get(player.getUniqueId());
+				TaskHandle taskFromMap = tasks.get(player.getUniqueId());
 				cancelTask(taskFromMap, player);
 			}
 
@@ -66,7 +68,7 @@ public class ChunkParticlesSpawner {
 	 * @param task   the Bukkit task to cancel
 	 * @param player the player associated with the task
 	 */
-	public static void cancelTask(BukkitTask task, Player player) {
+	public static void cancelTask(TaskHandle task, Player player) {
 		if (task != null) {
 			tasks.remove(player.getUniqueId());
 			task.cancel();
@@ -89,7 +91,7 @@ public class ChunkParticlesSpawner {
 	 * @param player the player whose task should be cancelled
 	 */
 	public static void cancelTask(Player player) {
-		BukkitTask task = tasks.get(player.getUniqueId());
+		TaskHandle task = tasks.get(player.getUniqueId());
 		if (task != null) {
 			tasks.remove(player.getUniqueId());
 			task.cancel();
@@ -198,7 +200,7 @@ public class ChunkParticlesSpawner {
 	public void startRepeatingEffect() {
 		Homestead instance = Homestead.getInstance();
 
-		BukkitTask task = instance.runAsyncTimerTask(this::spawnParticles, 1);
+		TaskHandle task = instance.runAsyncTimerTask(this::spawnParticles, 1);
 
 		tasks.put(player.getUniqueId(), task);
 

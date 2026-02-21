@@ -22,9 +22,9 @@ public class Logger {
 		UPDATE_FOUND(new String[]{
 			"There is an available update for Homestead.",
 			"Download links:",
-			" - https://www.spigotmc.org/resources/121873/",
-			" - https://modrinth.com/plugin/homestead-plugin",
-			" - https://hangar.papermc.io/TayebYassine/Homestead"
+			"https://www.spigotmc.org/resources/121873/, ",
+			"https://modrinth.com/plugin/homestead-plugin, ",
+			"https://hangar.papermc.io/TayebYassine/Homestead"
 		}),
 		UPDATE_FETCH_FAILURE(new String[]{
 				"Failed to fetch for updates, maybe GitHub is down or you are not connected to the internet.",

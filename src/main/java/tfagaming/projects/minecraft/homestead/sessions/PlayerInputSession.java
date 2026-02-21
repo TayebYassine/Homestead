@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 
 import java.util.Map;
 import java.util.UUID;
@@ -24,7 +25,6 @@ import java.util.function.Consumer;
 public final class PlayerInputSession implements Listener {
 
 	private static final Map<UUID, PlayerInputSession> SESSIONS = new ConcurrentHashMap<>();
-	private static final Map<UUID, BukkitTask> TIMERS = new ConcurrentHashMap<>();
 
 	private final Homestead plugin;
 	private final Player player;
@@ -32,8 +32,8 @@ public final class PlayerInputSession implements Listener {
 	private final Function<String, Boolean> validator;
 	private final Consumer<Player> onCancel;
 	private final String prompt;
-	private final BukkitTask repeatTask;
-	private final BukkitTask timeoutTask;
+	private final TaskHandle repeatTask;
+	private final TaskHandle timeoutTask;
 
 	public PlayerInputSession(Homestead plugin,
 							  Player player,

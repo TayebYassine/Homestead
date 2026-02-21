@@ -9,13 +9,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class SelectedAreaParticlesSpawner {
-	private static final Map<UUID, BukkitTask> tasks = new HashMap<>();
+	private static final Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
 
 	private final Player player;
 	private final SerializableBlock firstBlock;
@@ -30,7 +33,7 @@ public class SelectedAreaParticlesSpawner {
 
 		if (isEnabled) {
 			if (tasks.containsKey(player.getUniqueId())) {
-				BukkitTask taskFromMap = tasks.get(player.getUniqueId());
+				TaskHandle taskFromMap = tasks.get(player.getUniqueId());
 
 				cancelTask(taskFromMap, player);
 			}
@@ -48,7 +51,7 @@ public class SelectedAreaParticlesSpawner {
 
 		if (isEnabled) {
 			if (tasks.containsKey(player.getUniqueId())) {
-				BukkitTask taskFromMap = tasks.get(player.getUniqueId());
+				TaskHandle taskFromMap = tasks.get(player.getUniqueId());
 
 				cancelTask(taskFromMap, player);
 			}
@@ -57,7 +60,7 @@ public class SelectedAreaParticlesSpawner {
 		}
 	}
 
-	public static void cancelTask(BukkitTask task, Player player) {
+	public static void cancelTask(TaskHandle task, Player player) {
 		if (task != null) {
 			tasks.remove(player.getUniqueId());
 
@@ -67,7 +70,7 @@ public class SelectedAreaParticlesSpawner {
 	}
 
 	public static void cancelTask(Player player) {
-		BukkitTask task = tasks.get(player.getUniqueId());
+		TaskHandle task = tasks.get(player.getUniqueId());
 
 		if (task != null) {
 			tasks.remove(player.getUniqueId());
@@ -120,7 +123,7 @@ public class SelectedAreaParticlesSpawner {
 	public void startRepeatingEffect(long intervalTicks) {
 		Homestead instance = Homestead.getInstance();
 
-		BukkitTask task = instance.runAsyncTimerTask(this::spawnParticles, 1);
+		TaskHandle task = instance.runAsyncTimerTask(this::spawnParticles, 1);
 
 		tasks.put(player.getUniqueId(), task);
 

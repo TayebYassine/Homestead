@@ -11,22 +11,23 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class SelectionToolListener implements Listener {
-	private static final HashSet<UUID> cooldowns = new HashSet<>();
-	private static final HashMap<UUID, Selection> sessions = new HashMap<>();
-	private static final HashMap<UUID, BukkitTask> tasks = new HashMap<>();
+	private static final Set<UUID> cooldowns = ConcurrentHashMap.newKeySet();
+	private static final Map<UUID, Selection> sessions = new ConcurrentHashMap<>();
+	private static final Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
 
 	public static void cancelPlayerSession(Player player) {
 		if (sessions.containsKey(player.getUniqueId())) {
@@ -38,23 +39,19 @@ public final class SelectionToolListener implements Listener {
 		cancelTask(player);
 	}
 
-	public static void cancelTask(BukkitTask task, Player player) {
+	public static void cancelTask(TaskHandle task, Player player) {
 		if (task != null) {
 			tasks.remove(player.getUniqueId());
-
 			task.cancel();
-			task = null;
 		}
 	}
 
 	public static void cancelTask(Player player) {
-		BukkitTask task = tasks.get(player.getUniqueId());
+		TaskHandle task = tasks.get(player.getUniqueId());
 
 		if (task != null) {
 			tasks.remove(player.getUniqueId());
-
 			task.cancel();
-			task = null;
 		}
 	}
 
@@ -170,7 +167,7 @@ public final class SelectionToolListener implements Listener {
 
 		cancelTask(player);
 
-		BukkitTask task = Homestead.getInstance().runAsyncTimerTask(() -> {
+		TaskHandle task = Homestead.getInstance().runAsyncTimerTask(() -> {
 			player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
 					new TextComponent(ColorTranslator
 							.translate(message)));
