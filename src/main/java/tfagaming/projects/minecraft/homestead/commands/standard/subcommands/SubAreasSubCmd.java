@@ -59,7 +59,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 3) {
+		if (args.length < 2) {
 			Messages.send(player, 0, new Placeholder()
 					.add("{usage}", getUsage())
 			);
@@ -148,7 +148,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length < 4) {
+				if (args.length < 3) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
@@ -220,7 +220,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length < 4) {
+				if (args.length < 3) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
@@ -248,7 +248,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-				if (args.length > 4) {
+				if (args.length > 3) {
 					String flagStateInput = args[3];
 
 					switch (flagStateInput.toLowerCase()) {
@@ -294,7 +294,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (args.length < 5) {
+				if (args.length < 4) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
@@ -372,7 +372,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					}
 
 					case "flags": {
-						if (args.length < 6) {
+						if (args.length < 5) {
 							Messages.send(player, 0, new Placeholder()
 									.add("{usage}", getUsage())
 							);
@@ -398,7 +398,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 						boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
-						if (args.length > 6) {
+						if (args.length > 5) {
 							String flagStateInput = args[5];
 
 							switch (flagStateInput.toLowerCase()) {
