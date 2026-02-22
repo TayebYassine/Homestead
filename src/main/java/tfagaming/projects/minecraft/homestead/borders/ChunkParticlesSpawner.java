@@ -200,7 +200,22 @@ public class ChunkParticlesSpawner {
 	public void startRepeatingEffect() {
 		Homestead instance = Homestead.getInstance();
 
-		TaskHandle task = instance.runAsyncTimerTask(this::spawnParticles, 1);
+		final TaskHandle task;
+
+		if (Homestead.isFolia()) {
+			var foliaTask = player.getScheduler().runAtFixedRate(
+					instance,
+					t -> spawnParticles(),
+					() -> cancelTask(player),
+					1L,
+					20L
+			);
+			task = foliaTask != null ? new TaskHandle(foliaTask) : null;
+		} else {
+			task = instance.runSyncTimerTask(this::spawnParticles, 20);
+		}
+
+		if (task == null) return;
 
 		tasks.put(player.getUniqueId(), task);
 

@@ -123,11 +123,26 @@ public class SelectedAreaParticlesSpawner {
 	public void startRepeatingEffect(long intervalTicks) {
 		Homestead instance = Homestead.getInstance();
 
-		TaskHandle task = instance.runAsyncTimerTask(this::spawnParticles, 1);
+		final TaskHandle task;
+
+		if (Homestead.isFolia()) {
+			var foliaTask = player.getScheduler().runAtFixedRate(
+					instance,
+					t -> spawnParticles(),
+					() -> cancelTask(player),
+					1L,
+					intervalTicks
+			);
+			task = foliaTask != null ? new TaskHandle(foliaTask) : null;
+		} else {
+			task = instance.runSyncTimerTask(this::spawnParticles, intervalTicks);
+		}
+
+		if (task == null) return;
 
 		tasks.put(player.getUniqueId(), task);
 
-		// Automatically cancel task  60 seconds
+		// Automatically cancel task after 60 seconds
 		instance.runAsyncTaskLater(() -> {
 			cancelTask(task, player);
 		}, 60);

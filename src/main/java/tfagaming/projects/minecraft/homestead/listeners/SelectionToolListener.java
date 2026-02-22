@@ -167,11 +167,11 @@ public final class SelectionToolListener implements Listener {
 
 		cancelTask(player);
 
-		TaskHandle task = Homestead.getInstance().runAsyncTimerTask(() -> {
+		TaskHandle task = Homestead.getInstance().runSyncTimerTask(() -> {
 			player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
 					new TextComponent(ColorTranslator
 							.translate(message)));
-		}, 1);
+		}, 20);
 
 		tasks.put(player.getUniqueId(), task);
 	}
