@@ -4,19 +4,42 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import tfagaming.projects.minecraft.homestead.Homestead;
 
-/**
- * Wraps the classic Vault API (net.milkbowl.vault).
- * Used on Bukkit, Spigot, Paper, Purpur, and any non-Folia server.
- */
 public class LegacyVaultProvider implements EconomyProvider, PermissionsProvider {
+	private final Homestead plugin;
+	private Economy economy;
+	private Permission permissions;
 
-	private final Economy economy;
-	private final Permission permissions;
+	public LegacyVaultProvider(Homestead plugin) {
+		this.plugin = plugin;
+	}
 
-	public LegacyVaultProvider(Economy economy, Permission permissions) {
-		this.economy = economy;
-		this.permissions = permissions;
+	public boolean setupEconomy() {
+		RegisteredServiceProvider<Economy> rsp = this.plugin.getServer().getServicesManager()
+				.getRegistration(Economy.class);
+
+		if (rsp == null) {
+			return false;
+		}
+
+		economy = rsp.getProvider();
+
+		return economy != null;
+	}
+
+	public boolean setupPermissions() {
+		RegisteredServiceProvider<Permission> rsp = this.plugin.getServer().getServicesManager()
+				.getRegistration(Permission.class);
+
+		if (rsp == null) {
+			return false;
+		}
+
+		permissions = rsp.getProvider();
+
+		return permissions != null;
 	}
 
 	@Override
@@ -75,11 +98,11 @@ public class LegacyVaultProvider implements EconomyProvider, PermissionsProvider
 		return permissions.playerInGroup(null, player, group);
 	}
 
-	public Economy getRawEconomy() {
-		return economy;
+	public EconomyProvider getEconomy() {
+		return this;
 	}
 
-	public Permission getRawPermissions() {
-		return permissions;
+	public PermissionsProvider getPermissions() {
+		return this;
 	}
 }

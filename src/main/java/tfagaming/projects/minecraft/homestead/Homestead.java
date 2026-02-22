@@ -2,6 +2,9 @@ package tfagaming.projects.minecraft.homestead;
 
 import me.lucko.commodore.Commodore;
 import me.lucko.commodore.CommodoreProvider;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+import org.apache.commons.logging.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -176,10 +179,15 @@ public class Homestead extends JavaPlugin {
 
 		if (!IntegrationsUtils.isVaultInstalled()) {
 			Logger.error("Unable to start the plugin; \"Vault\" is required. Shutting down plugin instance...");
+
+			if (isFolia()) {
+				Logger.error("FOLIA DETECTED! USE VaultUnlocked INSTEAD OF Vault! THE ORIGINAL VERSION DOESN'T SUPPORT FOLIA!");
+			}
+
 			endInstance();
 			return;
 		} else {
-			Logger.warning("Loading service providers with Vault...");
+			Logger.warning("Loading service providers with Vault... (Using " + (!isFolia() ? "Legacy Vault" : "VaultUnlocked") + ")");
 		}
 
 		Homestead.vault = new Vault(this);
@@ -202,7 +210,7 @@ public class Homestead extends JavaPlugin {
 				Logger.warning("The plugin is using static permissions; operator and non-operator.");
 			}
 		} else {
-			Logger.info("Loaded service provider: Permissions [" + Homestead.vault.getPermissions().getName() + "]");
+			Logger.info("Loaded service provider: Permissions [" + Homestead.vault.getPermissions().getPermissionsName() + "]");
 		}
 
 		if (Homestead.config.getBoolean("clean-startup")) {

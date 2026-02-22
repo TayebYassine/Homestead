@@ -21,7 +21,7 @@ public final class PlayerBank {
 			return;
 		}
 
-		Homestead.vault.getEconomy().depositPlayer(player, amount);
+		Homestead.vault.getEconomy().deposit(player, amount);
 	}
 
 	public static void withdraw(OfflinePlayer player, double amount) {
@@ -29,6 +29,6 @@ public final class PlayerBank {
 			return;
 		}
 
-		Homestead.vault.getEconomy().withdrawPlayer(player, amount);
+		Homestead.vault.getEconomy().withdraw(player, amount);
 	}
 }

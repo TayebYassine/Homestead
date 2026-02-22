@@ -1,83 +1,67 @@
 package tfagaming.projects.minecraft.homestead.integrations;
 
-import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.integrations.vault.EconomyProvider;
+import tfagaming.projects.minecraft.homestead.integrations.vault.LegacyVaultProvider;
+import tfagaming.projects.minecraft.homestead.integrations.vault.PermissionsProvider;
+import tfagaming.projects.minecraft.homestead.integrations.vault.VaultUnlockedProvider;
 
 /**
  * The ancient Vault plugin, doesn't support Folia.
  */
 public class Vault {
 	private final Homestead plugin;
-	public Chat chat;
-	public Economy economy;
-	public Permission permissions;
+
+	private VaultUnlockedProvider vaultUnlockedProvider;
+	private LegacyVaultProvider legacyVaultProvider;
 
 	public Vault(Homestead plugin) {
 		this.plugin = plugin;
-	}
 
-	public boolean setupChat() {
-		RegisteredServiceProvider<Chat> rsp = this.plugin.getServer().getServicesManager().getRegistration(Chat.class);
-
-		if (rsp == null) {
-			return false;
+		if (Homestead.isFolia()) {
+			this.vaultUnlockedProvider = new VaultUnlockedProvider(plugin);
+		} else {
+			this.legacyVaultProvider = new LegacyVaultProvider(plugin);
 		}
-
-		chat = rsp.getProvider();
-
-		return chat != null;
 	}
 
 	public boolean setupEconomy() {
-		RegisteredServiceProvider<Economy> rsp = this.plugin.getServer().getServicesManager()
-				.getRegistration(Economy.class);
-
-		if (rsp == null) {
-			return false;
+		if (Homestead.isFolia()) {
+			return vaultUnlockedProvider.setupEconomy();
+		} else {
+			return legacyVaultProvider.setupEconomy();
 		}
-
-		economy = rsp.getProvider();
-
-		return economy != null;
 	}
 
 	public boolean setupPermissions() {
-		RegisteredServiceProvider<Permission> rsp = this.plugin.getServer().getServicesManager()
-				.getRegistration(Permission.class);
-
-		if (rsp == null) {
-			return false;
+		if (Homestead.isFolia()) {
+			return vaultUnlockedProvider.setupPermissions();
+		} else {
+			return legacyVaultProvider.setupPermissions();
 		}
-
-		permissions = rsp.getProvider();
-
-		return permissions != null;
 	}
 
-	public Chat getChat() {
-		return chat;
+	public EconomyProvider getEconomy() {
+		if (Homestead.isFolia()) {
+			return vaultUnlockedProvider.getEconomy();
+		} else {
+			return legacyVaultProvider.getEconomy();
+		}
 	}
 
-	public Economy getEconomy() {
-		return economy;
-	}
-
-	public Permission getPermissions() {
-		return permissions;
-	}
-
-	public boolean isChatReady() {
-		return chat != null;
+	public PermissionsProvider getPermissions() {
+		if (Homestead.isFolia()) {
+			return vaultUnlockedProvider.getPermissions();
+		} else {
+			return legacyVaultProvider.getPermissions();
+		}
 	}
 
 	public boolean isEconomyReady() {
-		return economy != null;
+		return getEconomy() != null;
 	}
 
 	public boolean isPermissionsReady() {
-		return permissions != null;
+		return getPermissions() != null;
 	}
 }

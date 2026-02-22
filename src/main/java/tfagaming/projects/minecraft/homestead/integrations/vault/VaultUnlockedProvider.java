@@ -2,28 +2,44 @@ package tfagaming.projects.minecraft.homestead.integrations.vault;
 
 import net.milkbowl.vault2.economy.Economy;
 import net.milkbowl.vault2.economy.EconomyResponse;
-import net.milkbowl.vault2.helper.context.Context;
-import net.milkbowl.vault2.permission.PermissionUnlocked;
+import net.milkbowl.vault2.permission.Permission;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import tfagaming.projects.minecraft.homestead.Homestead;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
-/**
- * Wraps the VaultUnlocked API (net.milkbowl.vault2).
- * Used on Folia servers.
- */
 public class VaultUnlockedProvider implements EconomyProvider, PermissionsProvider {
+	private final Homestead plugin;
+	private Economy economy;
+	private Permission permissions;
 
-	private final Economy economy;
-	private final PermissionUnlocked permissions;
-	private final String pluginName;
+	public VaultUnlockedProvider(Homestead plugin) {
+		this.plugin = plugin;
+	}
 
-	public VaultUnlockedProvider(Economy economy, PermissionUnlocked permissions, Plugin plugin) {
-		this.economy = economy;
-		this.permissions = permissions;
-		this.pluginName = plugin.getName();
+	public boolean setupEconomy() {
+		RegisteredServiceProvider<Economy> rsp = this.plugin.getServer().getServicesManager().getRegistration(Economy.class);
+
+		if (rsp == null) {
+			return false;
+		}
+
+		economy = rsp.getProvider();
+
+		return economy != null;
+	}
+
+	public boolean setupPermissions() {
+		RegisteredServiceProvider<Permission> rsp = this.plugin.getServer().getServicesManager().getRegistration(Permission.class);
+
+		if (rsp == null) {
+			return false;
+		}
+
+		permissions = rsp.getProvider();
+
+		return permissions != null;
 	}
 
 	@Override
@@ -33,24 +49,23 @@ public class VaultUnlockedProvider implements EconomyProvider, PermissionsProvid
 
 	@Override
 	public double getBalance(OfflinePlayer player) {
-		BigDecimal balance = economy.getBalance(pluginName, player.getUniqueId());
-		return balance.doubleValue();
+		return economy.getBalance(plugin.getName(), player.getUniqueId()).doubleValue();
 	}
 
 	@Override
 	public boolean has(OfflinePlayer player, double amount) {
-		return economy.has(pluginName, player.getUniqueId(), BigDecimal.valueOf(amount));
+		return economy.has(plugin.getName(), player.getUniqueId(), BigDecimal.valueOf(amount));
 	}
 
 	@Override
 	public boolean withdraw(OfflinePlayer player, double amount) {
-		EconomyResponse response = economy.withdraw(pluginName, player.getUniqueId(), BigDecimal.valueOf(amount));
+		EconomyResponse response = economy.withdraw(plugin.getName(), player.getUniqueId(), BigDecimal.valueOf(amount));
 		return response.transactionSuccess();
 	}
 
 	@Override
 	public boolean deposit(OfflinePlayer player, double amount) {
-		EconomyResponse response = economy.deposit(pluginName, player.getUniqueId(), BigDecimal.valueOf(amount));
+		EconomyResponse response = economy.deposit(plugin.getName(), player.getUniqueId(), BigDecimal.valueOf(amount));
 		return response.transactionSuccess();
 	}
 
@@ -62,32 +77,32 @@ public class VaultUnlockedProvider implements EconomyProvider, PermissionsProvid
 	@Override
 	public boolean has(OfflinePlayer player, String permission) {
 		if (permissions == null) return false;
-		return permissions.has(null, player, permission);
+		return permissions.playerHas((String) null, player, permission);
 	}
 
 	@Override
 	public String getPrimaryGroup(OfflinePlayer player) {
 		if (permissions == null) return null;
-		return permissions.getGroups(null, player)[0];
+		return permissions.getPrimaryGroup(null, player);
 	}
 
 	@Override
 	public String[] getGroups(OfflinePlayer player) {
 		if (permissions == null) return new String[0];
-		return permissions.getGroups(null, player);
+		return permissions.getPlayerGroups(null, player);
 	}
 
 	@Override
 	public boolean inGroup(OfflinePlayer player, String group) {
 		if (permissions == null) return false;
-		return permissions.inGroup(null, player, group);
+		return permissions.playerInGroup(null, player, group);
 	}
 
-	public Economy getRawEconomy() {
-		return economy;
+	public EconomyProvider getEconomy() {
+		return this;
 	}
 
-	public PermissionUnlocked getRawPermissions() {
-		return permissions;
+	public PermissionsProvider getPermissions() {
+		return this;
 	}
 }

@@ -296,21 +296,9 @@ public class PlayerUtils {
 
 		try {
 			if (player.isOnline()) {
-				return Homestead.vault.getPermissions().getPrimaryGroup((Player) player);
+				return Homestead.vault.getPermissions().getPrimaryGroup(player);
 			} else {
-				Location location = player.getLocation();
-
-				if (location == null) {
-					return null;
-				}
-
-				World world = location.getWorld();
-
-				if (world == null) {
-					return null;
-				}
-
-				return Homestead.vault.getPermissions().getPrimaryGroup(world.getName(), player);
+				return null;
 			}
 		} catch (Exception e) {
 			Logger.error(
