@@ -1,12 +1,14 @@
 package tfagaming.projects.minecraft.homestead.integrations;
 
-
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import tfagaming.projects.minecraft.homestead.Homestead;
 
+/**
+ * The ancient Vault plugin, doesn't support Folia.
+ */
 public class Vault {
 	private final Homestead plugin;
 	public Chat chat;
