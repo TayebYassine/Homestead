@@ -43,9 +43,10 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class RegionProtectionListener implements Listener {
-	public static final Map<UUID, Location> lastLocations = new HashMap<>();
+	public static final Map<UUID, Location> lastLocations = new ConcurrentHashMap<>();
 
 	// Blocks protection
 
@@ -93,6 +94,15 @@ public final class RegionProtectionListener implements Listener {
 		} catch (Exception ignored) {
 
 		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onEntityMoveEvent(io.papermc.paper.event.entity.EntityMoveEvent event) {
+		if (!Homestead.isFolia()) {
+			return;
+		}
+
+		onEntityMove(event.getEntity());
 	}
 
 	private static boolean canBeBrokenByProjectile(Block block) {

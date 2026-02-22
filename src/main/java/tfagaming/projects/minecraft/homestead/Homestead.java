@@ -281,13 +281,15 @@ public class Homestead extends JavaPlugin {
 		registerExternalPlugins();
 
 		// Do NOT touch this one
-		moveCheckTask = runSyncTimerTask(() -> {
-			for (World world : Bukkit.getWorlds()) {
-				for (Entity entity : world.getEntities()) {
-					RegionProtectionListener.onEntityMove(entity);
+		if (!isFolia()) {
+			moveCheckTask = runSyncTimerTask(() -> {
+				for (World world : Bukkit.getWorlds()) {
+					for (Entity entity : world.getEntities()) {
+						RegionProtectionListener.onEntityMove(entity);
+					}
 				}
-			}
-		}, 5L);
+			}, 5);
+		}
 	}
 
 	private void registerCommands() {
