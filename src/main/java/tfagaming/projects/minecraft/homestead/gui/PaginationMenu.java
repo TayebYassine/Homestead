@@ -158,7 +158,7 @@ public class PaginationMenu implements Listener {
 
 			InventoryManager.register(player, this);
 
-			plugin.runAsyncTaskLater(() -> {
+			plugin.runSyncTaskLater(() -> {
 				pageChanged = false;
 			}, 1);
 		}
@@ -267,7 +267,7 @@ public class PaginationMenu implements Listener {
 		}
 
 		if (slot == size - 9) {
-			plugin.runSyncTask(() -> {
+			plugin.runPlayerTask(player, () -> {
 				goBackCallback.accept(player, event);
 
 				destroy();

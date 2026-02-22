@@ -49,22 +49,38 @@ public class VaultUnlockedProvider implements EconomyProvider, PermissionsProvid
 
 	@Override
 	public double getBalance(OfflinePlayer player) {
+		if (economy == null) {
+			return 0.0;
+		}
+
 		return economy.getBalance(plugin.getName(), player.getUniqueId()).doubleValue();
 	}
 
 	@Override
 	public boolean has(OfflinePlayer player, double amount) {
+		if (economy == null) {
+			return false;
+		}
+
 		return economy.has(plugin.getName(), player.getUniqueId(), BigDecimal.valueOf(amount));
 	}
 
 	@Override
 	public boolean withdraw(OfflinePlayer player, double amount) {
+		if (economy == null) {
+			return false;
+		}
+
 		EconomyResponse response = economy.withdraw(plugin.getName(), player.getUniqueId(), BigDecimal.valueOf(amount));
 		return response.transactionSuccess();
 	}
 
 	@Override
 	public boolean deposit(OfflinePlayer player, double amount) {
+		if (economy == null) {
+			return false;
+		}
+
 		EconomyResponse response = economy.deposit(plugin.getName(), player.getUniqueId(), BigDecimal.valueOf(amount));
 		return response.transactionSuccess();
 	}

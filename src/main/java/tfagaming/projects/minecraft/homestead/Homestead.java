@@ -328,6 +328,22 @@ public class Homestead extends JavaPlugin {
 	}
 
 	/**
+	 * Run a task on the region thread that owns the given player.
+	 * Use this instead of runSyncTask() whenever the task involves world/chunk/location
+	 * access triggered by a player action (e.g. inventory clicks).
+	 *
+	 * @param player   The player whose region thread to run on.
+	 * @param callable The task to run.
+	 */
+	public TaskHandle runPlayerTask(Player player, Runnable callable) {
+		if (isFolia()) {
+			return new TaskHandle(player.getScheduler().run(this, task -> callable.run(), null));
+		}
+
+		return new TaskHandle(Bukkit.getScheduler().runTask(this, callable));
+	}
+
+	/**
 	 * Run a repeating task asynchronously with interval in seconds.
 	 *
 	 * @param callable The task to run.

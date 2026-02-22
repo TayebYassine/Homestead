@@ -49,22 +49,34 @@ public class LegacyVaultProvider implements EconomyProvider, PermissionsProvider
 
 	@Override
 	public double getBalance(OfflinePlayer player) {
+		if (economy == null) {
+			return 0.0;
+		}
 		return economy.getBalance(player);
 	}
 
 	@Override
 	public boolean has(OfflinePlayer player, double amount) {
+		if (economy == null) {
+			return false;
+		}
 		return economy.has(player, amount);
 	}
 
 	@Override
 	public boolean withdraw(OfflinePlayer player, double amount) {
+		if (economy == null) {
+			return false;
+		}
 		EconomyResponse response = economy.withdrawPlayer(player, amount);
 		return response.transactionSuccess();
 	}
 
 	@Override
 	public boolean deposit(OfflinePlayer player, double amount) {
+		if (economy == null) {
+			return false;
+		}
 		EconomyResponse response = economy.depositPlayer(player, amount);
 		return response.transactionSuccess();
 	}

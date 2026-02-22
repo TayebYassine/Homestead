@@ -76,7 +76,7 @@ public class Menu implements Listener {
 			int slot = event.getRawSlot();
 
 			if (callbacks.containsKey(slot)) {
-				plugin.runSyncTask(() -> {
+				plugin.runPlayerTask(player, () -> {
 					callbacks.get(slot).accept(player, event);
 				});
 			}
