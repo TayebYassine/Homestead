@@ -73,7 +73,11 @@ public class DelayedTeleport {
 			return;
 		}
 
-		player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+		if (Homestead.isFolia()) {
+			player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+		} else {
+			player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+		}
 
 		PlayerSound.play(player, PlayerSound.PredefinedSound.TELEPORT);
 
