@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.gui.menus.TopBankRegionsMenu;
+import tfagaming.projects.minecraft.homestead.gui.menus.TopRegionsMenu;
 
 public class TopRegionsSubCmd extends SubCommandBuilder {
 	public TopRegionsSubCmd() {
@@ -20,7 +20,7 @@ public class TopRegionsSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		new TopBankRegionsMenu(player);
+		new TopRegionsMenu(player, true);
 
 		return true;
 	}

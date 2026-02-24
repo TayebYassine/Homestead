@@ -209,6 +209,10 @@ public class Region {
 		return FlagsCalculator.isFlagSet(playerFlags, flag);
 	}
 
+	public boolean isPublic() {
+		return isPlayerFlagSet(PlayerFlags.PASSTHROUGH) && isPlayerFlagSet(PlayerFlags.TELEPORT_SPAWN);
+	}
+
 	public long getWorldFlags() {
 		return worldFlags;
 	}

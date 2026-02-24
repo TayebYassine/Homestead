@@ -86,6 +86,10 @@ public final class Formatter {
 	}
 
 	public static String getRating(int rate) {
+		if (rate == 0) {
+			return getNone();
+		}
+
 		String star = Homestead.language.getString("default.star");
 
 		return ColorTranslator.translate(getStarColor(rate) + star.repeat(rate));

@@ -155,19 +155,15 @@ buttons:
       - "&#EF5350&n➥ Left-click to leave this region."
     type: OAK_DOOR
   15:
-    name: "&#42A5F5&lInformation"
+    name: "&#42A5F5&lRank Information"
     lore:
-      - "&7• Owner: &3{region-owner}"
-      - "&7• Bank: &c{region-bank}"
-      - "&7• Created At: &6{region-createdat}"
-      - "&7• Chunks: &6{region-chunks}"
-      - "&7• Members: &6{region-members}"
+      - "&7The owner of the region is &3{region-owner}"
       - ""
-      - "&7• Global Rank: &d#{region-global-rank}"
-      - "&7• Rank By Bank: &a#{region-rank-bank}"
-      - "&7• Rank By Chunks: &a#{region-rank-chunks}"
-      - "&7• Rank By Members: &a#{region-rank-members}"
-      - "&7• Rank By Rating: &a#{region-rank-rating}"
+      - "&7• Global: &d#{region-global-rank}"
+      - "&7• By Bank: &a#{region-rank-bank}"
+      - "&7• By Chunks: &a#{region-rank-chunks}"
+      - "&7• By Members: &a#{region-rank-members}"
+      - "&7• By Rating: &a#{region-rank-rating}"
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
   16:
     name: "&#FFD54F&lWeather & Time"
@@ -500,12 +496,9 @@ buttons:
   55:
     name: "&#CE93D8&l#{rank} &r&2{region} &8(&2{region-displayname}&8)"
     lore:
-      - "&7• Owner: &3{region-owner}"
-      - "&7• Created At: &6{region-createdat}"
-      - "&7• Bank: &c{region-bank}"
-      - "&7• Rating: &r{region-rating}"
-      - "&7• Members: &6{region-members}"
-      - "&7• Chunks: &6{region-chunks}"
+      - "&7The owner of the region is &3{region-owner}"
+      - ""
+      - "&7This region is on the rank &d#{rank}&7!"
       - ""
       - "&#CE93D8&n➥ Left-click to show detailed information."
     type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
@@ -751,6 +744,9 @@ buttons:
       - ""
       - "&#1DCAE0&n➥ Left-click to view the levels."
     type: NETHER_STAR
+  81:
+    name: "&#BA68C8&lPublic? &r{is-public-regions}"
+    type: COMPARATOR
 
 button-types:
   world:
