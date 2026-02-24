@@ -8,8 +8,6 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
-import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
-import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -215,7 +213,7 @@ public final class RegionsManager {
 		}
 
 		for (SerializableMember member : members) {
-			to.addMember(member.getBukkitOfflinePlayer());
+			to.addMember(member.bukkit());
 		}
 
 		deleteRegion(from.getUniqueId());
@@ -430,21 +428,21 @@ public final class RegionsManager {
 
 		for (Region region : getAll()) {
 			for (SerializableMember member : region.getMembers()) {
-				if (member.getBukkitOfflinePlayer() == null) {
+				if (member.bukkit() == null) {
 					region.removeMember(member);
 					updated++;
 				}
 			}
 
 			for (SerializableBannedPlayer bannedPlayer : region.getBannedPlayers()) {
-				if (bannedPlayer.getBukkitOfflinePlayer() == null) {
+				if (bannedPlayer.bukkit() == null) {
 					region.unbanPlayer(bannedPlayer.getPlayerId());
 					updated++;
 				}
 			}
 
 			for (SerializableRate rate : region.getRates()) {
-				OfflinePlayer rater = rate.getBukkitOfflinePlayer();
+				OfflinePlayer rater = rate.bukkit();
 
 				if (rater == null) {
 					region.removePlayerRate(rate.getPlayerId());

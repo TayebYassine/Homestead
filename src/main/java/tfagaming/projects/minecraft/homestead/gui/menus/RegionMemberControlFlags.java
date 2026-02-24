@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -13,10 +14,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class RegionMemberControlFlags {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
@@ -29,8 +27,10 @@ public class RegionMemberControlFlags {
 			items.add(MenuUtils.getFlagButton(flagString, value));
 		}
 
+		OfflinePlayer memberBukkit = member.bukkit();
+
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(7).replace("{playername}", member.getBukkitOfflinePlayer().getName()),
+				MenuUtils.getTitle(7).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
 				9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(),

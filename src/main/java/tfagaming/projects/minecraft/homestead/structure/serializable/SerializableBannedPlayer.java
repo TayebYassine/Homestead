@@ -66,7 +66,7 @@ public class SerializableBannedPlayer {
 		return (playerId + "," + bannedAt + "," + reason);
 	}
 
-	public OfflinePlayer getBukkitOfflinePlayer() {
+	public OfflinePlayer bukkit() {
 		return Homestead.getInstance().getOfflinePlayerSync(playerId);
 	}
 }

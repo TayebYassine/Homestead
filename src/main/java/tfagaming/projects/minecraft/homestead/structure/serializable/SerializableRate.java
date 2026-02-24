@@ -65,7 +65,7 @@ public class SerializableRate {
 		return (playerId + "," + rate + "," + ratedAt);
 	}
 
-	public OfflinePlayer getBukkitOfflinePlayer() {
+	public OfflinePlayer bukkit() {
 		return Homestead.getInstance().getOfflinePlayerSync(playerId);
 	}
 }

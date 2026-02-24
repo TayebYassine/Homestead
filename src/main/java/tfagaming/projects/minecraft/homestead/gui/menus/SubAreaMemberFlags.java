@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -24,8 +25,10 @@ public class SubAreaMemberFlags {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
 	public SubAreaMemberFlags(Player player, Region region, SubArea subArea, SerializableMember member) {
+		OfflinePlayer memberBukkit = member.bukkit();
+
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(25).replace("{playername}", Objects.requireNonNull(member.getBukkitOfflinePlayer().getName())),
+				MenuUtils.getTitle(25).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
 				9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(),

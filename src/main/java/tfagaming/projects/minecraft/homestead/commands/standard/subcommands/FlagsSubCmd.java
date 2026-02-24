@@ -317,7 +317,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 			if (region != null) {
 				for (SerializableMember member : region.getMembers()) {
-					OfflinePlayer m = member.getBukkitOfflinePlayer();
+					OfflinePlayer m = member.bukkit();
 
 					if (m != null) {
 						suggestions.add(m.getName());

@@ -92,7 +92,7 @@ public class SerializableMember {
 		return (playerId + "," + flags + "," + regionControlFlags + "," + joinedAt + "," + taxesAt);
 	}
 
-	public OfflinePlayer getBukkitOfflinePlayer() {
+	public OfflinePlayer bukkit() {
 		return Homestead.getInstance().getOfflinePlayerSync(playerId);
 	}
 }

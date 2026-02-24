@@ -210,9 +210,9 @@ public final class Formatter {
 
 		return ColorTranslator.translate(members.stream()
 				.map((member) -> format.replace("{playername}",
-								member.getBukkitOfflinePlayer() == null
+								member.bukkit() == null
 										? "Unknown"
-										: Objects.requireNonNull(member.getBukkitOfflinePlayer().getName())
+										: Objects.requireNonNull(member.bukkit().getName())
 						)
 				)
 				.collect(Collectors.joining(Homestead.config.getString("formatters.region-members-joining"))));

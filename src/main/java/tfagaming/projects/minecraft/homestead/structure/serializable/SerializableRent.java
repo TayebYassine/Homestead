@@ -64,7 +64,7 @@ public class SerializableRent {
 		return (playerId + "," + price + "," + startAt + "," + untilAt);
 	}
 
-	public OfflinePlayer getBukkitOfflinePlayer() {
+	public OfflinePlayer bukkit() {
 		return Homestead.getInstance().getOfflinePlayerSync(playerId);
 	}
 }

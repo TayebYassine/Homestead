@@ -12,9 +12,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public final class MemberTaxes {
 	private MemberTaxes() {
 	}
@@ -39,7 +36,7 @@ public final class MemberTaxes {
 				}
 
 				if (System.currentTimeMillis() >= member.getTaxesAt()) {
-					OfflinePlayer targetPlayer = member.getBukkitOfflinePlayer();
+					OfflinePlayer targetPlayer = member.bukkit();
 
 					if (PlayerBank.get(targetPlayer) >= amountToPay) {
 						PlayerBank.withdraw(targetPlayer, amountToPay);

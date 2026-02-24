@@ -39,7 +39,7 @@ public class RegionBannedPlayers {
 
 					if (!context.getEvent().isLeftClick()) return;
 
-					if (!region.isPlayerBanned(bannedPlayer.getBukkitOfflinePlayer())) return;
+					if (!region.isPlayerBanned(bannedPlayer.bukkit())) return;
 
 					if (!player.hasPermission("homestead.region.players.unban")) {
 						Messages.send(player, 8);
@@ -51,7 +51,7 @@ public class RegionBannedPlayers {
 						return;
 					}
 
-					region.unbanPlayer(bannedPlayer.getBukkitOfflinePlayer());
+					region.unbanPlayer(bannedPlayer.bukkit());
 					PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 					bannedPlayers = region.getBannedPlayers();
@@ -133,13 +133,15 @@ public class RegionBannedPlayers {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (SerializableBannedPlayer bannedPlayer : bannedPlayers) {
+			OfflinePlayer bannedPlayerBukkit = bannedPlayer.bukkit();
+
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
-					.add("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName())
+					.add("{playername}", bannedPlayerBukkit == null ? "?" : bannedPlayerBukkit.getName())
 					.add("{player-bannedat}", Formatter.getDate(bannedPlayer.getBannedAt()))
 					.add("{player-banreason}", bannedPlayer.getReason());
 
-			items.add(MenuUtils.getButton(27, placeholder, bannedPlayer.getBukkitOfflinePlayer()));
+			items.add(MenuUtils.getButton(27, placeholder, bannedPlayer.bukkit()));
 		}
 
 		return items;

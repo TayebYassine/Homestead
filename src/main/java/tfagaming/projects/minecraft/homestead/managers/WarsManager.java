@@ -63,8 +63,8 @@ public final class WarsManager {
 
 		Set<OfflinePlayer> players = new HashSet<>();
 
-		first.getMembers().forEach(m -> players.add(m.getBukkitOfflinePlayer()));
-		second.getMembers().forEach(m -> players.add(m.getBukkitOfflinePlayer()));
+		first.getMembers().forEach(m -> players.add(m.bukkit()));
+		second.getMembers().forEach(m -> players.add(m.bukkit()));
 
 		players.add(first.getOwner());
 		players.add(second.getOwner());

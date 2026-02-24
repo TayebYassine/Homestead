@@ -26,7 +26,7 @@ public final class RegionRent {
 			if (rent != null && System.currentTimeMillis() > rent.getUntilAt()) {
 				region.setRent(null);
 
-				OfflinePlayer leaser = rent.getBukkitOfflinePlayer();
+				OfflinePlayer leaser = rent.bukkit();
 
 				if (leaser != null && leaser.isOnline()) {
 					Player player = (Player) leaser;
@@ -44,7 +44,7 @@ public final class RegionRent {
 			if (rent != null && System.currentTimeMillis() > rent.getUntilAt()) {
 				subArea.setRent(null);
 
-				OfflinePlayer leaser = rent.getBukkitOfflinePlayer();
+				OfflinePlayer leaser = rent.bukkit();
 
 				if (leaser != null && leaser.isOnline()) {
 					Player player = (Player) leaser;

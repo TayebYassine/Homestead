@@ -40,7 +40,7 @@ public class RegionMembersMenu {
 					SerializableMember member = members.get(context.getIndex());
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
-						new PlayerInfo(player, member.getBukkitOfflinePlayer(), () -> new RegionMembersMenu(player, region));
+						new PlayerInfo(player, member.bukkit(), () -> new RegionMembersMenu(player, region));
 
 					} else if (context.getEvent().isRightClick()) {
 						if (!player.hasPermission("homestead.region.flags.members")) {
@@ -50,7 +50,7 @@ public class RegionMembersMenu {
 						new RegionMemberControlFlags(player, region, member);
 
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-						if (!region.isPlayerMember(member.getBukkitOfflinePlayer())) return;
+						if (!region.isPlayerMember(member.bukkit())) return;
 
 						if (!player.hasPermission("homestead.region.players.untrust")) {
 							Messages.send(player, 8);
@@ -61,11 +61,11 @@ public class RegionMembersMenu {
 							return;
 						}
 
-						region.removeMember(member.getBukkitOfflinePlayer());
+						region.removeMember(member.bukkit());
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 						RegionsManager.addNewLog(region.getUniqueId(), 3, new Placeholder()
 								.add("{executor}", player.getName())
-								.add("{playername}", member.getBukkitOfflinePlayer().getName()));
+								.add("{playername}", member.bukkit() == null ? "?" : member.bukkit().getName()));
 
 						members = region.getMembers();
 						context.getInstance().setItems(getItems(player, region));
@@ -153,16 +153,18 @@ public class RegionMembersMenu {
 		boolean taxesEnabled = Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("taxes.enabled");
 
 		for (SerializableMember member : members) {
+			OfflinePlayer memberBukkit = member.bukkit();
+
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
-					.add("{playername}", member.getBukkitOfflinePlayer().getName())
+					.add("{playername}", memberBukkit == null ? "?" : memberBukkit.getName())
 					.add("{member-joinedat}", Formatter.getDate(member.getJoinedAt()))
 					.add("{taxes-dueon}", taxesEnabled && region.getTaxesAmount() > 0
 							? Formatter.getRemainingTime(member.getTaxesAt())
 							: Formatter.getNever())
 					.add("{tax-amount}", Formatter.getBalance(region.getTaxesAmount()));
 
-			items.add(MenuUtils.getButton(24, placeholder, member.getBukkitOfflinePlayer()));
+			items.add(MenuUtils.getButton(24, placeholder, member.bukkit()));
 		}
 
 		return items;

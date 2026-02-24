@@ -9,7 +9,6 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -200,7 +199,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 			if (player != null) {
 				for (Region region : RegionsManager.getAll()) {
 					for (SerializableMember member : region.getMembers()) {
-						OfflinePlayer bukkitMember = member.getBukkitOfflinePlayer();
+						OfflinePlayer bukkitMember = member.bukkit();
 						if (bukkitMember != null) {
 							suggestions.add(bukkitMember.getName());
 						}

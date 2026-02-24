@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -14,10 +15,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class RegionMemberFlags {
 	/** Index 0 is the bulk-toggle item; all flag buttons start at index 1. */
@@ -26,8 +24,10 @@ public class RegionMemberFlags {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
 	public RegionMemberFlags(Player player, Region region, SerializableMember member) {
+		OfflinePlayer memberBukkit = member.bukkit();
+
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(6).replace("{playername}", member.getBukkitOfflinePlayer().getName()),
+				MenuUtils.getTitle(6).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
 				9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(),

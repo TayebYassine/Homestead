@@ -480,7 +480,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 			if (region != null) {
 				for (SerializableMember member : region.getMembers()) {
-					OfflinePlayer bukkitMember = member.getBukkitOfflinePlayer();
+					OfflinePlayer bukkitMember = member.bukkit();
 
 					if (bukkitMember != null) {
 						suggestions.add(bukkitMember.getName());

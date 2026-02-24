@@ -95,7 +95,7 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 
 			if (region != null) {
 				for (SerializableBannedPlayer each : region.getBannedPlayers()) {
-					OfflinePlayer p = each.getBukkitOfflinePlayer();
+					OfflinePlayer p = each.bukkit();
 
 					if (p != null) {
 						suggestions.add(p.getName());

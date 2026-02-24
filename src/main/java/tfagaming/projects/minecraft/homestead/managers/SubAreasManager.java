@@ -145,7 +145,7 @@ public final class SubAreasManager {
 			}
 
 			for (SerializableMember member : subArea.getMembers()) {
-				if (member.getBukkitOfflinePlayer() == null) {
+				if (member.bukkit() == null) {
 					subArea.removeMember(member);
 					updated++;
 				}

@@ -37,12 +37,12 @@ public class SubAreaMembers {
 					SerializableMember member = members.get(context.getIndex());
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
-						new PlayerInfo(player, member.getBukkitOfflinePlayer(), () ->
+						new PlayerInfo(player, member.bukkit(), () ->
 								new SubAreaMembers(player, region, subArea));
 
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-						if (!region.isPlayerMember(member.getBukkitOfflinePlayer())
-								|| !subArea.isPlayerMember(member.getBukkitOfflinePlayer())) {
+						if (!region.isPlayerMember(member.bukkit())
+								|| !subArea.isPlayerMember(member.bukkit())) {
 							return;
 						}
 
@@ -55,7 +55,7 @@ public class SubAreaMembers {
 							return;
 						}
 
-						subArea.removeMember(member.getBukkitOfflinePlayer());
+						subArea.removeMember(member.bukkit());
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 						members = subArea.getMembers();
@@ -121,11 +121,13 @@ public class SubAreaMembers {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (SerializableMember member : members) {
+			OfflinePlayer memberBukkit = member.bukkit();
+
 			items.add(MenuUtils.getButton(69, new Placeholder()
 							.add("{region}", region.getName())
 							.add("{subarea}", subArea.getName())
-							.add("{playername}", member.getBukkitOfflinePlayer().getName()),
-					member.getBukkitOfflinePlayer()));
+							.add("{playername}", memberBukkit == null ? "?" : memberBukkit.getName()),
+					member.bukkit()));
 		}
 
 		return items;
