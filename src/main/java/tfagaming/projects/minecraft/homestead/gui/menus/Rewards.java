@@ -1,44 +1,33 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
-
-import java.util.HashMap;
 
 public class Rewards {
 	public Rewards(Player player, Region region, Runnable backButton) {
 		Menu gui = new Menu(MenuUtils.getTitle(23).replace("{region}", region.getName()), 9 * 3);
 
-		HashMap<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{members}", String.valueOf(region.getMembers().size()));
+		gui.addItem(12, MenuUtils.getButton(66, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{members}", region.getMembers().size())
+				.add("{chunks}", tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getChunksByEachMember(region))
+				.add("{subareas}", tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getSubAreasByEachMember(region))
+		), null);
 
-		replacements.put("{chunks}", String.valueOf(tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getChunksByEachMember(region)));
-		replacements.put("{subareas}", String.valueOf(tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getSubAreasByEachMember(region)));
-		ItemStack membersRewardButton = MenuUtils.getButton(66, replacements);
-
-		gui.addItem(12, membersRewardButton, (_player, event) -> {
-			// Do nothing
-		});
-
-		replacements.put("{player-playtime}", Formatter.getPlayerPlaytime(player));
-		replacements.put("{chunks}", String.valueOf(tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getChunksByPlayTime(player)));
-		replacements.put("{subareas}", String.valueOf(tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getSubAreasByPlayTime(player)));
-		ItemStack playtimeRewardButton = MenuUtils.getButton(67, replacements);
-
-		gui.addItem(14, playtimeRewardButton, (_player, event) -> {
-			// Do nothing
-		});
+		gui.addItem(14, MenuUtils.getButton(67, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{members}", region.getMembers().size())
+				.add("{player-playtime}", Formatter.getPlayerPlaytime(player))
+				.add("{chunks}", tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getChunksByPlayTime(player))
+				.add("{subareas}", tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getSubAreasByPlayTime(player))
+		), null);
 
 		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+			if (!event.isLeftClick()) return;
 			backButton.run();
 		});
 

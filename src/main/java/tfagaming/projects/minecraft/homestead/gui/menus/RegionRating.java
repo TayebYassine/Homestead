@@ -1,119 +1,49 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
-import java.util.HashMap;
-
 public class RegionRating {
+	/** Slot and button-ID arrays for the 5 rating options (rating 1–5). */
+	private static final int[] RATING_SLOTS = {11, 12, 13, 14, 15};
+	private static final int[] RATING_BUTTON_IDS = {48, 49, 50, 51, 52};
+
 	public RegionRating(Player player, Region region, Runnable backButton) {
 		Menu gui = new Menu(MenuUtils.getTitle(17).replace("{region}", region.getName()), 9 * 3);
 
-		HashMap<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{player-rate}",
-				region.isPlayerRated(player) ? Formatter.getRating(region.getPlayerRate(player).getRate())
+		Placeholder placeholder = new Placeholder()
+				.add("{region}", region.getName())
+				.add("{player-rate}", region.isPlayerRated(player)
+						? Formatter.getRating(region.getPlayerRate(player).getRate())
 						: Formatter.getNone());
 
-		ItemStack rateNumber1 = MenuUtils.getButton(48, replacements);
+		for (int i = 0; i < RATING_SLOTS.length; i++) {
+			final int rating = i + 1;
 
-		gui.addItem(11, rateNumber1, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
+			gui.addItem(RATING_SLOTS[i], MenuUtils.getButton(RATING_BUTTON_IDS[i], placeholder), (_player, event) -> {
+				if (!event.isLeftClick()) return;
 
-			region.addPlayerRate(player, 1);
+				region.addPlayerRate(player, rating);
+				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+				Messages.send(player, 134);
+				new RegionRating(player, region, backButton);
+			});
+		}
 
-			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-			Messages.send(player, 134);
-
-			new RegionRating(player, region, backButton);
-		});
-
-		ItemStack rateNumber2 = MenuUtils.getButton(49, replacements);
-
-		gui.addItem(12, rateNumber2, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
-			region.addPlayerRate(player, 2);
-
-			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-			Messages.send(player, 134);
-
-			new RegionRating(player, region, backButton);
-		});
-
-		ItemStack rateNumber3 = MenuUtils.getButton(50, replacements);
-
-		gui.addItem(13, rateNumber3, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
-			region.addPlayerRate(player, 3);
-
-			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-			Messages.send(player, 134);
-
-			new RegionRating(player, region, backButton);
-		});
-
-		ItemStack rateNumber4 = MenuUtils.getButton(51, replacements);
-
-		gui.addItem(14, rateNumber4, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
-			region.addPlayerRate(player, 4);
-
-			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-			Messages.send(player, 134);
-
-			new RegionRating(player, region, backButton);
-		});
-
-		ItemStack rateNumber5 = MenuUtils.getButton(52, replacements);
-
-		gui.addItem(15, rateNumber5, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
-			region.addPlayerRate(player, 5);
-
-			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-			Messages.send(player, 134);
-
-			new RegionRating(player, region, backButton);
-		});
-
-		ItemStack ratedBefore = region.isPlayerRated(player)
-				? MenuUtils.getButton(54, replacements)
-				: MenuUtils.getButton(53);
-
-		gui.addItem(22, ratedBefore, (_player, event) -> {
-			// Do nothing
-		});
+		gui.addItem(22, region.isPlayerRated(player)
+						? MenuUtils.getButton(54, placeholder)
+						: MenuUtils.getButton(53),
+				(_player, event) -> {
+				});
 
 		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+			if (!event.isLeftClick()) return;
 			backButton.run();
 		});
 

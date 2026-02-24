@@ -7,57 +7,51 @@ import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class RegionsWithWelcomeSigns {
-	List<Region> regions;
+	private final List<Region> regions;
 
 	public RegionsWithWelcomeSigns(Player player) {
-		regions = new ArrayList<>();
-		regions.addAll(RegionsManager.getRegionsWithWelcomeSigns());
+		regions = ListUtils.removeDuplications(
+				new ArrayList<>(RegionsManager.getRegionsWithWelcomeSigns()));
 
-		regions = ListUtils.removeDuplications(regions);
-
-		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(0), 9 * 5,
+		PaginationMenu gui = new PaginationMenu(
+				MenuUtils.getTitle(0), 9 * 5,
 				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(), getItems(player), (_player, event) -> {
-			_player.closeInventory();
-		}, (_player, context) -> {
-			if (context.getIndex() >= regions.size()) {
-				return;
-			}
+				MenuUtils.getPreviousPageButton(),
+				getItems(player),
+				(_player, event) -> _player.closeInventory(),
+				(_player, context) -> {
+					if (context.getIndex() >= regions.size()) return;
 
-			Region region = regions.get(context.getIndex());
+					Region region = regions.get(context.getIndex());
 
-			if (context.getEvent().isLeftClick()) {
-				player.closeInventory();
-
-				new DelayedTeleport(player, region.getWelcomeSign().getBukkitLocation());
-			}
-		});
+					if (context.getEvent().isLeftClick()) {
+						player.closeInventory();
+						new DelayedTeleport(player, region.getWelcomeSign().getBukkitLocation());
+					}
+				});
 
 		gui.open(player, MenuUtils.getEmptySlot());
 	}
 
-	public List<ItemStack> getItems(Player player) {
+	private List<ItemStack> getItems(Player player) {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (Region region : regions) {
-			HashMap<String, String> replacements = new HashMap<>();
-
-			replacements.put("{region}", region.getName());
-			replacements.put("{region-displayname}", region.getDisplayName());
-			replacements.put("{region-owner}", region.getOwner().getName());
-			replacements.put("{region-bank}", Formatter.getBalance(region.getBank()));
-			replacements.put("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
-			replacements.put("{region-rating}", Formatter.getRating(RegionsManager.getAverageRating(region)));
-
-			items.add(MenuUtils.getButton(47, replacements));
+			items.add(MenuUtils.getButton(47, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{region-displayname}", region.getDisplayName())
+					.add("{region-owner}", region.getOwner().getName())
+					.add("{region-bank}", Formatter.getBalance(region.getBank()))
+					.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
+					.add("{region-rating}", Formatter.getRating(RegionsManager.getAverageRating(region)))));
 		}
 
 		return items;

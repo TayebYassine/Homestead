@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
@@ -18,126 +19,88 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-/**
- * GUI menu that lists all claimed chunks of a region.
- * <p>
- * Allows teleporting to or unclaiming specific chunks directly from the menu.
- * </p>
- */
 public class RegionClaimedChunks {
 	private List<SerializableChunk> chunks;
 
-	/**
-	 * Opens the menu that lists all claimed chunks of the region.
-	 * <p>
-	 * Left-clicking unclaims a chunk (if allowed).
-	 * Right-clicking teleports the player to that chunk.
-	 * Updates automatically after unclaiming.
-	 * </p>
-	 *
-	 * @param player The player opening the menu.
-	 * @param region The target region.
-	 */
 	public RegionClaimedChunks(Player player, Region region) {
 		this.chunks = region.getChunks();
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(11),
-				9 * 5,
+				MenuUtils.getTitle(11), 9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(),
 				getItems(player, region),
 				(_player, event) -> new RegionMenu(player, region),
 				(_player, context) -> {
-
 					if (context.getIndex() >= chunks.size()) return;
 
 					SerializableChunk chunk = chunks.get(context.getIndex());
 
-					// Right-click → teleport
 					if (context.getEvent().isRightClick()) {
 						new DelayedTeleport(player, chunk.getBukkitLocation());
 						return;
 					}
 
-					// Left-click → unclaim
-					if (context.getEvent().isLeftClick()) {
-						if (ChunksManager.isChunkClaimed(chunk.getBukkitChunk())
-								&& ChunksManager.getRegionOwnsTheChunk(chunk.getBukkitChunk())
-								.getUniqueId().equals(region.getUniqueId())) {
+					if (!context.getEvent().isLeftClick()) return;
 
-							if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-									RegionControlFlags.UNCLAIM_CHUNKS)) {
-								return;
-							}
-
-							int before = region.getChunks().size();
-							ChunksManager.unclaimChunk(region.getUniqueId(), chunk.getBukkitChunk());
-							int after = region.getChunks().size();
-
-							if (after < before) {
-								double chunkPrice = Homestead.config.getDouble("chunk-price");
-
-								if (chunkPrice > 0) {
-									PlayerBank.deposit(region.getOwner(), chunkPrice);
-								}
-							}
-
-							ChunkBorder.show(player);
-
-							/** Update pagination items to reflect changes. */
-							PaginationMenu instance = context.getInstance();
-							chunks = region.getChunks();
-							instance.setItems(getItems(player, region));
-						}
+					if (!ChunksManager.isChunkClaimed(chunk.getBukkitChunk())
+							|| !ChunksManager.getRegionOwnsTheChunk(chunk.getBukkitChunk())
+							.getUniqueId().equals(region.getUniqueId())) {
+						return;
 					}
+
+					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+							RegionControlFlags.UNCLAIM_CHUNKS)) {
+						return;
+					}
+
+					int before = region.getChunks().size();
+					ChunksManager.unclaimChunk(region.getUniqueId(), chunk.getBukkitChunk());
+
+					if (region.getChunks().size() < before) {
+						double chunkPrice = Homestead.config.getDouble("chunk-price");
+						if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
+					}
+
+					ChunkBorder.show(player);
+
+					chunks = region.getChunks();
+					context.getInstance().setItems(getItems(player, region));
 				});
 
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("{max-chunks}", String.valueOf(Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION)));
-
-		gui.addActionButton(1, MenuUtils.getButton(73, replacements), (_a, _b) -> {
-
+		gui.addActionButton(1, MenuUtils.getButton(73, new Placeholder()
+				.add("{max-chunks}", Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION))
+		), (_a, _b) -> {
 		});
 
 		gui.open(player, MenuUtils.getEmptySlot());
 	}
 
-	/**
-	 * Builds the item list for the GUI pagination menu.
-	 *
-	 * @param player The player viewing the menu.
-	 * @param region The region whose chunks are displayed.
-	 * @return The list of formatted item buttons.
-	 */
-	public List<ItemStack> getItems(Player player, Region region) {
+	private List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (int i = 0; i < chunks.size(); i++) {
 			SerializableChunk chunk = chunks.get(i);
 
-			HashMap<String, String> replacements = new HashMap<>();
-			replacements.put("{region}", region.getName());
-			replacements.put("{index}", String.valueOf(i + 1));
-			replacements.put("{chunk-claimedat}", Formatter.getDate(chunk.getClaimedAt()));
-			replacements.put("{chunk-location}", Formatter.getLocation(chunk.getBukkitLocation()));
+			Placeholder placeholder = new Placeholder()
+					.add("{region}", region.getName())
+					.add("{index}", i + 1)
+					.add("{chunk-claimedat}", Formatter.getDate(chunk.getClaimedAt()))
+					.add("{chunk-location}", Formatter.getLocation(chunk.getBukkitLocation()));
 
 			ButtonData data = MenuUtils.getButtonData(33);
 
 			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD")) {
-				switch (chunk.getBukkitLocation().getWorld().getEnvironment()) {
-					case NORMAL -> data.originalType = Homestead.menusConfig.get("button-types.world.overworld");
-					case NETHER -> data.originalType = Homestead.menusConfig.get("button-types.world.nether");
-					case THE_END -> data.originalType = Homestead.menusConfig.get("button-types.world.the_end");
-					default -> data.originalType = Homestead.menusConfig.get("button-types.world.overworld");
-				}
+				data.originalType = switch (chunk.getBukkitLocation().getWorld().getEnvironment()) {
+					case NETHER -> Homestead.menusConfig.get("button-types.world.nether");
+					case THE_END -> Homestead.menusConfig.get("button-types.world.the_end");
+					default -> Homestead.menusConfig.get("button-types.world.overworld");
+				};
 			}
 
-			items.add(MenuUtils.getButton(data, replacements));
+			items.add(MenuUtils.getButton(data, placeholder));
 		}
 
 		return items;

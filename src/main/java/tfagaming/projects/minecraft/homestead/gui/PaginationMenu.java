@@ -4,6 +4,7 @@ package tfagaming.projects.minecraft.homestead.gui;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -201,9 +202,9 @@ public class PaginationMenu implements Listener {
 
 		int[] validSlots = {size - 6, size - 5, size - 4};
 
-		for (int i = 0; i < validSlots.length; i++) {
-			if (bottomRowActionItems.containsKey(validSlots[i])) {
-				inventory.setItem(validSlots[i], bottomRowActionItems.get(validSlots[i]));
+		for (int validSlot : validSlots) {
+			if (bottomRowActionItems.containsKey(validSlot)) {
+				inventory.setItem(validSlot, bottomRowActionItems.get(validSlot));
 			}
 		}
 
@@ -224,7 +225,7 @@ public class PaginationMenu implements Listener {
 		return inventory;
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (!(event.getWhoClicked() instanceof Player player)) {
 			return;
@@ -283,7 +284,7 @@ public class PaginationMenu implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryClose(InventoryCloseEvent event) {
 		if (pageChanged) {
 			pageChanged = false;

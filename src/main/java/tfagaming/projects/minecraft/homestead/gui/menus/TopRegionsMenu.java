@@ -17,8 +17,9 @@ import java.util.Map;
 
 public class TopRegionsMenu {
 	private final SortMode sortMode;
-	private boolean isPublicRegionsOnly;
+	private final boolean isPublicRegionsOnly;
 	private List<Region> regions;
+
 	public TopRegionsMenu(Player player, boolean isPublic) {
 		this(player, isPublic, SortMode.BANK);
 	}

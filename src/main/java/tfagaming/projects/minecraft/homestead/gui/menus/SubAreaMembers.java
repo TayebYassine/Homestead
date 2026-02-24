@@ -17,66 +17,62 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSoun
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class SubAreaMembers {
-	List<SerializableMember> members;
+	private List<SerializableMember> members;
 
 	public SubAreaMembers(Player player, Region region, SubArea subArea) {
 		members = subArea.getMembers();
 
-		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(24), 9 * 4,
+		PaginationMenu gui = new PaginationMenu(
+				MenuUtils.getTitle(24), 9 * 4,
 				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(), getItems(player, region, subArea), (_player, event) -> {
-			new SubAreaMenu(player, region, subArea);
-		}, (_player, context) -> {
-			if (context.getIndex() >= members.size()) {
-				return;
-			}
+				MenuUtils.getPreviousPageButton(),
+				getItems(player, region, subArea),
+				(_player, event) -> new SubAreaMenu(player, region, subArea),
+				(_player, context) -> {
+					if (context.getIndex() >= members.size()) return;
 
-			SerializableMember member = members.get(context.getIndex());
+					SerializableMember member = members.get(context.getIndex());
 
-			if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
-				new PlayerInfo(player, member.getBukkitOfflinePlayer(), () -> {
-					new SubAreaMembers(player, region, subArea);
+					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
+						new PlayerInfo(player, member.getBukkitOfflinePlayer(), () ->
+								new SubAreaMembers(player, region, subArea));
+
+					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
+						if (!region.isPlayerMember(member.getBukkitOfflinePlayer())
+								|| !subArea.isPlayerMember(member.getBukkitOfflinePlayer())) {
+							return;
+						}
+
+						if (!player.hasPermission("homestead.region.subareas.players")) {
+							Messages.send(player, 8);
+							return;
+						}
+						if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+								RegionControlFlags.MANAGE_SUBAREAS)) {
+							return;
+						}
+
+						subArea.removeMember(member.getBukkitOfflinePlayer());
+						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+						members = subArea.getMembers();
+						context.getInstance().setItems(getItems(player, region, subArea));
+
+					} else if (context.getEvent().isLeftClick()) {
+						if (!player.hasPermission("homestead.region.subareas.players")) {
+							Messages.send(player, 8);
+							return;
+						}
+
+						new SubAreaMemberFlags(player, region, subArea, member);
+					}
 				});
-			} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-				if (region.isPlayerMember(member.getBukkitOfflinePlayer()) && subArea.isPlayerMember(member.getBukkitOfflinePlayer())) {
-					if (!player.hasPermission("homestead.region.subareas.players")) {
-						Messages.send(player, 8);
-						return;
-					}
-
-					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-							RegionControlFlags.MANAGE_SUBAREAS)) {
-						return;
-					}
-
-					subArea.removeMember(member.getBukkitOfflinePlayer());
-
-					PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-					PaginationMenu instance = context.getInstance();
-
-					members = subArea.getMembers();
-
-					instance.setItems(getItems(player, region, subArea));
-				}
-			} else if (context.getEvent().isLeftClick()) {
-				if (!player.hasPermission("homestead.region.subareas.players")) {
-					Messages.send(player, 8);
-					return;
-				}
-
-				new SubAreaMemberFlags(player, region, subArea, member);
-			}
-		});
 
 		gui.addActionButton(1, MenuUtils.getButton(68), (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
+			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.subareas.players")) {
 				Messages.send(player, 8);
@@ -89,64 +85,47 @@ public class SubAreaMembers {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
 				subArea.addMember(targetPlayer);
-
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-				Homestead.getInstance().runSyncTask(() -> {
-					new SubAreaMembers(player, region, subArea);
-				});
+				Homestead.getInstance().runSyncTask(() -> new SubAreaMembers(player, region, subArea));
 			}, (message) -> {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 				if (target == null) {
-					Messages.send(player, 29, new Placeholder()
-							.add("{playername}", message)
-					);
+					Messages.send(player, 29, new Placeholder().add("{playername}", message));
 					return false;
 				}
-
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.MANAGE_SUBAREAS)) {
 					return false;
 				}
-
 				if (region.isOwner(target)) {
 					Messages.send(player, 30);
 					return false;
 				}
-
 				if (!region.isPlayerMember(target)) {
 					Messages.send(player, 171);
 					return false;
 				}
-
 				if (subArea.isPlayerMember(target)) {
 					Messages.send(player, 174);
 					return false;
 				}
-
 				return true;
-			}, (__player) -> {
-				Homestead.getInstance().runSyncTask(() -> {
-					new SubAreaMembers(player, region, subArea);
-				});
-			}, 75);
+			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new SubAreaMembers(player, region, subArea)), 75);
 		});
 
 		gui.open(player, MenuUtils.getEmptySlot());
 	}
 
-	public List<ItemStack> getItems(Player player, Region region, SubArea subArea) {
+	private List<ItemStack> getItems(Player player, Region region, SubArea subArea) {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (SerializableMember member : members) {
-			HashMap<String, String> replacements = new HashMap<>();
-
-			replacements.put("{region}", region.getName());
-			replacements.put("{subarea}", subArea.getName());
-			replacements.put("{playername}", member.getBukkitOfflinePlayer().getName());
-
-			items.add(MenuUtils.getButton(69, replacements, member.getBukkitOfflinePlayer()));
+			items.add(MenuUtils.getButton(69, new Placeholder()
+							.add("{region}", region.getName())
+							.add("{subarea}", subArea.getName())
+							.add("{playername}", member.getBukkitOfflinePlayer().getName()),
+					member.getBukkitOfflinePlayer()));
 		}
 
 		return items;

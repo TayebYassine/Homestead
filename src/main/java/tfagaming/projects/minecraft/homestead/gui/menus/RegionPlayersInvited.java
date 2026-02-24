@@ -18,43 +18,36 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSoun
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class RegionPlayersInvited {
-	List<OfflinePlayer> invitedPlayers;
+	private List<OfflinePlayer> invitedPlayers;
 
 	public RegionPlayersInvited(Player player, Region region) {
 		invitedPlayers = region.getInvitedPlayers();
 
-		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(10), 9 * 4,
+		PaginationMenu gui = new PaginationMenu(
+				MenuUtils.getTitle(10), 9 * 4,
 				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(), getItems(player, region), (_player, event) -> {
-			new RegionPlayersManagement(player, region);
-		}, (_player, context) -> {
-			if (context.getIndex() >= invitedPlayers.size()) {
-				return;
-			}
+				MenuUtils.getPreviousPageButton(),
+				getItems(player, region),
+				(_player, event) -> new RegionPlayersManagement(player, region),
+				(_player, context) -> {
+					if (context.getIndex() >= invitedPlayers.size()) return;
 
-			OfflinePlayer invitedPlayer = invitedPlayers.get(context.getIndex());
+					OfflinePlayer invitedPlayer = invitedPlayers.get(context.getIndex());
 
-			if (context.getEvent().isLeftClick()) {
-				if (region.isPlayerInvited(invitedPlayer)) {
+					if (!context.getEvent().isLeftClick()) return;
+
+					if (!region.isPlayerInvited(invitedPlayer)) return;
+
 					region.removePlayerInvite(invitedPlayer);
-
-					PaginationMenu instance = context.getInstance();
-
 					invitedPlayers = region.getInvitedPlayers();
-
-					instance.setItems(getItems(player, region));
-				}
-			}
-		});
+					context.getInstance().setItems(getItems(player, region));
+				});
 
 		gui.addActionButton(0, MenuUtils.getButton(29), (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
+			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.players.trust")) {
 				Messages.send(player, 8);
@@ -68,7 +61,6 @@ public class RegionPlayersInvited {
 
 				if (Homestead.config.isInstantTrustSystemEnabled()) {
 					region.removePlayerInvite(targetPlayer);
-
 					region.addMember(targetPlayer);
 				} else {
 					region.addPlayerInvite(targetPlayer);
@@ -76,77 +68,52 @@ public class RegionPlayersInvited {
 
 				RegionsManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
 						.add("{executor}", player.getName())
-						.add("{playername}", targetPlayer.getName())
-				);
-
+						.add("{playername}", targetPlayer.getName()));
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-				Homestead.getInstance().runSyncTask(() -> {
-					new RegionPlayersInvited(player, region);
-				});
+				Homestead.getInstance().runSyncTask(() -> new RegionPlayersInvited(player, region));
 			}, (message) -> {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 				if (target == null) {
-					Messages.send(player, 29, new Placeholder()
-							.add("{playername}", message)
-					);
+					Messages.send(player, 29, new Placeholder().add("{playername}", message));
 					return false;
 				}
-
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.TRUST_PLAYERS)) {
 					return false;
 				}
-
 				if (region.isPlayerBanned(target)) {
 					Messages.send(player, 74);
 					return false;
 				}
-
 				if (region.isPlayerMember(target)) {
-					Messages.send(player, 48, new Placeholder()
-							.add("{playername}", target.getName())
-					);
+					Messages.send(player, 48, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}
-
 				if (region.isPlayerInvited(target)) {
-					Messages.send(player, 35, new Placeholder()
-							.add("{playername}", target.getName())
-					);
+					Messages.send(player, 35, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}
-
 				if (region.isOwner(target)) {
 					Messages.send(player, 30);
 					return false;
 				}
 
 				SerializableRent rent = region.getRent();
-
 				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
 					Messages.send(player, 196);
 					return false;
 				}
-
 				if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
 					Messages.send(player, 116);
 					return false;
 				}
-
 				return true;
-			}, (__player) -> {
-				Homestead.getInstance().runSyncTask(() -> {
-					new RegionPlayersInvited(player, region);
-				});
-			}, 75);
+			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new RegionPlayersInvited(player, region)), 75);
 		});
 
 		gui.addActionButton(2, MenuUtils.getButton(31), (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
+			if (!event.isLeftClick()) return;
 
 			if (region.getInvitedPlayers().isEmpty()) {
 				Messages.send(player, 76);
@@ -154,28 +121,20 @@ public class RegionPlayersInvited {
 			}
 
 			region.setInvitedPlayers(new ArrayList<>());
-
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
 			Messages.send(player, 95);
-
-			Homestead.getInstance().runSyncTask(() -> {
-				new RegionPlayersInvited(player, region);
-			});
+			Homestead.getInstance().runSyncTask(() -> new RegionPlayersInvited(player, region));
 		});
 
 		gui.open(player, MenuUtils.getEmptySlot());
 	}
 
-	public List<ItemStack> getItems(Player player, Region region) {
+	private List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (OfflinePlayer invitedPlayer : invitedPlayers) {
-			HashMap<String, String> replacements = new HashMap<>();
-
-			replacements.put("{playername}", invitedPlayer.getName());
-
-			items.add(MenuUtils.getButton(30, replacements));
+			items.add(MenuUtils.getButton(30, new Placeholder()
+					.add("{playername}", invitedPlayer.getName())));
 		}
 
 		return items;

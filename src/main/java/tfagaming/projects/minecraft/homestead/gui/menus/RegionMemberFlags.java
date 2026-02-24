@@ -20,19 +20,18 @@ import java.util.List;
 import java.util.UUID;
 
 public class RegionMemberFlags {
-	// index 0 = Bulk item; alle anderen Items sind die eigentlichen Flags (+1 Index-Offset)
+	/** Index 0 is the bulk-toggle item; all flag buttons start at index 1. */
 	private static final int BULK_INDEX = 0;
+
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
 	public RegionMemberFlags(Player player, Region region, SerializableMember member) {
-		List<ItemStack> items = buildItemsList(member);
-
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtils.getTitle(6).replace("{playername}", member.getBukkitOfflinePlayer().getName()),
 				9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(),
-				items,
+				buildItemsList(member),
 				(_player, event) -> new RegionMembersMenu(player, region),
 				(_player, context) -> {
 					if (cooldowns.contains(player.getUniqueId())) return;
@@ -41,7 +40,6 @@ public class RegionMemberFlags {
 							RegionControlFlags.SET_MEMBER_FLAGS)) {
 						return;
 					}
-
 					if (player.getUniqueId().equals(member.getPlayerId())) {
 						Messages.send(player, 159);
 						return;
@@ -49,22 +47,20 @@ public class RegionMemberFlags {
 
 					int index = context.getIndex();
 
-					// === Bulk toggle item ===
 					if (index == BULK_INDEX) {
 						boolean enableAll = context.getEvent().isLeftClick();
 						boolean disableAll = context.getEvent().isRightClick();
-
 						if (!enableAll && !disableAll) return;
 
-						long current = member.getFlags();
-						long newFlags = current;
-
+						long newFlags = member.getFlags();
 						int changed = 0;
-						for (String flagString : PlayerFlags.getFlags()) {
-							if (Homestead.config.isFlagDisabled(flagString)) continue; // locked -> skip
-							long flag = PlayerFlags.valueOf(flagString);
 
+						for (String flagString : PlayerFlags.getFlags()) {
+							if (Homestead.config.isFlagDisabled(flagString)) continue;
+
+							long flag = PlayerFlags.valueOf(flagString);
 							boolean isSet = FlagsCalculator.isFlagSet(newFlags, flag);
+
 							if (enableAll && !isSet) {
 								newFlags = FlagsCalculator.addFlag(newFlags, flag);
 								changed++;
@@ -74,26 +70,21 @@ public class RegionMemberFlags {
 							}
 						}
 
-						if (changed > 0) {
-							region.setMemberFlags(member, newFlags);
-
-							PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
-
-							// UI neu aufbauen
-							PaginationMenu instance = context.getInstance();
-							instance.setItems(buildItemsList(member));
-
-							cooldowns.add(player.getUniqueId());
-							Homestead.getInstance().runAsyncTaskLater(() ->
-									cooldowns.remove(player.getUniqueId()), 1);
-						} else {
+						if (changed == 0) {
 							Messages.send(player, 162);
+							return;
 						}
+
+						region.setMemberFlags(member, newFlags);
+						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
+						context.getInstance().setItems(buildItemsList(member));
+
+						cooldowns.add(player.getUniqueId());
+						Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
 						return;
 					}
 
-					// === Einzelnes Flag toggeln ===
-					int flagListIndex = index - 1; // wegen Bulk-Item
+					int flagListIndex = index - 1;
 					if (flagListIndex < 0 || flagListIndex >= PlayerFlags.getFlags().size()) return;
 
 					String flagString = PlayerFlags.getFlags().get(flagListIndex);
@@ -103,32 +94,22 @@ public class RegionMemberFlags {
 						return;
 					}
 
+					if (!context.getEvent().isLeftClick()) return;
+
+					long flags = member.getFlags();
 					long flag = PlayerFlags.valueOf(flagString);
+					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
-					if (context.getEvent().isLeftClick()) {
-						PaginationMenu instance = context.getInstance();
+					region.setMemberFlags(member, isSet
+							? FlagsCalculator.removeFlag(flags, flag)
+							: FlagsCalculator.addFlag(flags, flag));
 
-						long flags = member.getFlags();
+					PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-						boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
-						long newFlags;
+					cooldowns.add(player.getUniqueId());
+					context.getInstance().replaceSlot(index, MenuUtils.getFlagButton(flagString, !isSet));
 
-						if (isSet) {
-							newFlags = FlagsCalculator.removeFlag(flags, flag);
-						} else {
-							newFlags = FlagsCalculator.addFlag(flags, flag);
-						}
-
-						region.setMemberFlags(member, newFlags);
-
-						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
-
-						cooldowns.add(player.getUniqueId());
-
-						instance.replaceSlot(index, MenuUtils.getFlagButton(flagString, !isSet));
-
-						Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
-					}
+					Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
 				});
 
 		gui.open(player, MenuUtils.getEmptySlot());
@@ -136,16 +117,13 @@ public class RegionMemberFlags {
 
 	private List<ItemStack> buildItemsList(SerializableMember member) {
 		List<ItemStack> items = new ArrayList<>();
+		items.add(MenuUtils.getButton(65)); // bulk-toggle item
 
-		ItemStack bulk = MenuUtils.getButton(65);
-
-		items.add(bulk);
-
-		// Einzelne Flag-Buttons
 		for (String flagString : PlayerFlags.getFlags()) {
 			boolean value = FlagsCalculator.isFlagSet(member.getFlags(), PlayerFlags.valueOf(flagString));
 			items.add(MenuUtils.getFlagButton(flagString, value));
 		}
+
 		return items;
 	}
 }

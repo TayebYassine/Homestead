@@ -2,54 +2,34 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
-
-import java.util.HashMap;
 
 public class PlayerInfo {
 	public PlayerInfo(Player player, OfflinePlayer target, Runnable backButton) {
 		Menu gui = new Menu(MenuUtils.getTitle(27), 9 * 3);
 
-		HashMap<String, String> replacements = new HashMap<>();
-		replacements.put("{regions-count}", String.valueOf(RegionsManager.getRegionsOwnedByPlayer(target).size()
-				+ RegionsManager.getRegionsHasPlayerAsMember(target).size()));
-		replacements.put("{playername}", target.getName());
-		replacements.put("{player-status}", Formatter.getPlayerStatus(target));
-		replacements.put("{player-balance}", Formatter.getBalance(PlayerBank.get(target)));
-		replacements.put("{player-ping}",
-				String.valueOf(target.isOnline() ? ((Player) target).getPing() : 0));
-		replacements.put("{player-joinedat}", Formatter.getDate(target.getFirstPlayed()));
-		replacements.put("{player-owned-regions}", Formatter.getPlayerOwnedRegions(target));
-		replacements.put("{player-trusted-regions}", Formatter.getPlayerTrustedRegions(target));
+		Placeholder placeholder = new Placeholder()
+				.add("{regions-count}", RegionsManager.getRegionsOwnedByPlayer(target).size()
+						+ RegionsManager.getRegionsHasPlayerAsMember(target).size())
+				.add("{playername}", target.getName())
+				.add("{player-status}", Formatter.getPlayerStatus(target))
+				.add("{player-balance}", Formatter.getBalance(PlayerBank.get(target)))
+				.add("{player-ping}", target.isOnline() ? ((Player) target).getPing() : 0)
+				.add("{player-joinedat}", Formatter.getDate(target.getFirstPlayed()))
+				.add("{player-owned-regions}", Formatter.getPlayerOwnedRegions(target))
+				.add("{player-trusted-regions}", Formatter.getPlayerTrustedRegions(target));
 
-		ItemStack playerInServerInfoButton = MenuUtils.getButton(21, replacements, target);
-
-		gui.addItem(11, playerInServerInfoButton, (_player, event) -> {
-			// Do nothing
-		});
-
-		ItemStack ownedRegionsButton = MenuUtils.getButton(22, replacements);
-
-		gui.addItem(13, ownedRegionsButton, (_player, event) -> {
-			// Do nothing
-		});
-
-		ItemStack trustedRegionsButton = MenuUtils.getButton(23, replacements);
-
-		gui.addItem(15, trustedRegionsButton, (_player, event) -> {
-			// Do nothing
-		});
+		gui.addItem(11, MenuUtils.getButton(21, placeholder, target), null);
+		gui.addItem(13, MenuUtils.getButton(22, placeholder), null);
+		gui.addItem(15, MenuUtils.getButton(23, placeholder), null);
 
 		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+			if (!event.isLeftClick()) return;
 			backButton.run();
 		});
 

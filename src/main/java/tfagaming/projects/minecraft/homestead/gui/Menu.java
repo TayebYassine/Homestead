@@ -4,6 +4,7 @@ package tfagaming.projects.minecraft.homestead.gui;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
@@ -38,7 +39,10 @@ public class Menu implements Listener {
 		}
 
 		inventory.setItem(slot, itemStack);
-		callbacks.put(slot, callback);
+
+		if (callback != null) {
+			callbacks.put(slot, callback);
+		}
 	}
 
 	public void open(Player player) {
@@ -63,7 +67,7 @@ public class Menu implements Listener {
 		HandlerList.unregisterAll(this);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (!(event.getWhoClicked() instanceof Player player)) {
 			return;
@@ -83,7 +87,7 @@ public class Menu implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryClose(InventoryCloseEvent event) {
 		Player player = (Player) event.getPlayer();
 

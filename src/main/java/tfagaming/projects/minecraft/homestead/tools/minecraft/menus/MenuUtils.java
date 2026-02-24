@@ -5,6 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtils;
 
 import java.util.ArrayList;
@@ -30,6 +31,10 @@ public class MenuUtils {
 			type = "BARRIER";
 
 		return new ButtonData(name, lore, type);
+	}
+
+	public static ItemStack getButton(ButtonData data, Placeholder placeholder) {
+		return getButton(data, placeholder.build());
 	}
 
 	public static ItemStack getButton(ButtonData data, Map<String, String> replacements) {
@@ -60,6 +65,10 @@ public class MenuUtils {
 		} else {
 			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType());
 		}
+	}
+
+	public static ItemStack getButton(int path, Placeholder placeholder, OfflinePlayer... playerHead) {
+		return getButton(path, placeholder.build(), playerHead);
 	}
 
 	public static ItemStack getButton(int path, Map<String, String> replacements, OfflinePlayer... playerHead) {

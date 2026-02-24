@@ -26,59 +26,45 @@ public class SubAreaFlagsMenu {
 
 		for (String flagString : PlayerFlags.getFlags()) {
 			boolean value = FlagsCalculator.isFlagSet(subArea.getFlags(), PlayerFlags.valueOf(flagString));
-
 			items.add(MenuUtils.getFlagButton(flagString, value));
 		}
 
-		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(16), 9 * 5,
+		PaginationMenu gui = new PaginationMenu(
+				MenuUtils.getTitle(16), 9 * 5,
 				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(), items, (_player, event) -> {
-			new SubAreaMenu(player, region, subArea);
-		}, (_player, context) -> {
-			if (cooldowns.contains(player.getUniqueId())) {
-				return;
-			}
+				MenuUtils.getPreviousPageButton(),
+				items,
+				(_player, event) -> new SubAreaMenu(player, region, subArea),
+				(_player, context) -> {
+					if (cooldowns.contains(player.getUniqueId())) return;
 
-			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					RegionControlFlags.MANAGE_SUBAREAS)) {
-				return;
-			}
+					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+							RegionControlFlags.MANAGE_SUBAREAS)) {
+						return;
+					}
 
-			String flagString = PlayerFlags.getFlags().get(context.getIndex());
+					String flagString = PlayerFlags.getFlags().get(context.getIndex());
 
-			if (Homestead.config.isFlagDisabled(flagString)) {
-				Messages.send(player, 42);
-				return;
-			}
+					if (Homestead.config.isFlagDisabled(flagString)) {
+						Messages.send(player, 42);
+						return;
+					}
 
-			long flag = PlayerFlags.valueOf(flagString);
+					if (!context.getEvent().isLeftClick()) return;
 
-			if (context.getEvent().isLeftClick()) {
-				PaginationMenu instance = context.getInstance();
+					long flags = subArea.getFlags();
+					long flag = PlayerFlags.valueOf(flagString);
+					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
-				long flags = subArea.getFlags();
+					subArea.setFlags(isSet
+							? FlagsCalculator.removeFlag(flags, flag)
+							: FlagsCalculator.addFlag(flags, flag));
 
-				boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
-				long newFlags;
+					cooldowns.add(player.getUniqueId());
+					context.getInstance().replaceSlot(context.getIndex(), MenuUtils.getFlagButton(flagString, !isSet));
 
-				if (isSet) {
-					newFlags = FlagsCalculator.removeFlag(flags, flag);
-				} else {
-					newFlags = FlagsCalculator.addFlag(flags, flag);
-				}
-
-				subArea.setFlags(newFlags);
-
-				cooldowns.add(player.getUniqueId());
-
-				instance.replaceSlot(context.getIndex(),
-						MenuUtils.getFlagButton(flagString, !isSet));
-
-				Homestead.getInstance().runAsyncTaskLater(() -> {
-					cooldowns.remove(player.getUniqueId());
-				}, 1);
-			}
-		});
+					Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
+				});
 
 		gui.open(player, MenuUtils.getEmptySlot());
 	}

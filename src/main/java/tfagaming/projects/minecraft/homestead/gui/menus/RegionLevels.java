@@ -9,13 +9,12 @@ import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RegionLevels {
 	private static final int MAX_LEVEL = 50;
@@ -23,17 +22,13 @@ public class RegionLevels {
 	public RegionLevels(Player player, Region region, Runnable backButton) {
 		Level lvl = LevelsManager.getLevelByRegion(region.getUniqueId());
 
-		List<ItemStack> levelButtons = buildLevelButtons(region);
-
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtils.getTitle(26).replace("{region}", region.getName()),
 				9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(),
-				levelButtons,
-				(p, e) -> {
-					backButton.run();
-				},
+				buildLevelButtons(region),
+				(p, e) -> backButton.run(),
 				(p, c) -> {
 				}
 		);
@@ -42,73 +37,66 @@ public class RegionLevels {
 
 		gui.addOpenHandler(inv -> {
 			ItemStack empty = MenuUtils.getEmptySlot();
-
 			for (int i = 18; i < 27; i++) inv.setItem(i, empty);
 
 			int current = lvl == null ? 0 : lvl.getLevel();
 			long xp = lvl == null ? 0 : lvl.getExperience();
 			long needed = Level.getXpForLevel(current);
 			double pct = needed == 0 ? 0 : (double) xp / needed;
+
 			int blue = (int) Math.round(9 * pct);
 			int gray = 9 - blue;
 
-			Map<String, String> replacements = new HashMap<>();
+			Placeholder placeholder = new Placeholder()
+					.add("{level}", current)
+					.add("{next-lvl}", current + 1)
+					.add("{xp}", NumberUtils.convertToBalance(xp))
+					.add("{next-lvl-xp}", NumberUtils.convertToBalance(needed));
 
-			replacements.put("{level}", String.valueOf(current));
-			replacements.put("{next-lvl}", String.valueOf(current + 1));
-			replacements.put("{xp}", NumberUtils.convertToBalance(xp));
-			replacements.put("{next-lvl-xp}", NumberUtils.convertToBalance(needed));
+			ItemStack bluePane = MenuUtils.getButton(75, placeholder);
+			ItemStack grayPane = MenuUtils.getButton(76, placeholder);
 
-			ItemStack bluePane = MenuUtils.getButton(75, replacements);
-			ItemStack grayPane = MenuUtils.getButton(76, replacements);
-
-			int start = 27;
-			for (int i = 0; i < blue; i++) inv.setItem(start + i, bluePane);
-			for (int i = 0; i < gray; i++) inv.setItem(start + blue + i, grayPane);
+			for (int i = 0; i < blue; i++) inv.setItem(27 + i, bluePane);
+			for (int i = 0; i < gray; i++) inv.setItem(27 + blue + i, grayPane);
 		});
 
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("{level}", String.valueOf(lvl == null ? 0 : lvl.getLevel()));
-		replacements.put("{xp}", NumberUtils.convertToBalance(lvl == null ? 0 : lvl.getExperience()));
-		replacements.put("{reward-chunks}", String.valueOf(LevelRewards.getChunksByLevel(region)));
-		replacements.put("{reward-members}", String.valueOf(LevelRewards.getMembersByLevel(region)));
-		replacements.put("{reward-subareas}", String.valueOf(LevelRewards.getSubAreasByLevel(region)));
-		replacements.put("{reward-upkeep}", String.valueOf(LevelRewards.getUpkeepReductionByLevel(region)));
-
-		gui.addActionButton(1, MenuUtils.getButton(74, replacements), (_a, _c) -> {
-
+		gui.addActionButton(1, MenuUtils.getButton(74, new Placeholder()
+				.add("{level}", lvl == null ? 0 : lvl.getLevel())
+				.add("{xp}", NumberUtils.convertToBalance(lvl == null ? 0 : lvl.getExperience()))
+				.add("{reward-chunks}", LevelRewards.getChunksByLevel(region))
+				.add("{reward-members}", LevelRewards.getMembersByLevel(region))
+				.add("{reward-subareas}", LevelRewards.getSubAreasByLevel(region))
+				.add("{reward-upkeep}", LevelRewards.getUpkeepReductionByLevel(region))
+		), (_a, _c) -> {
 		});
 
 		gui.open(player, MenuUtils.getEmptySlot());
 	}
 
 	private List<ItemStack> buildLevelButtons(Region region) {
-		List<ItemStack> list = new ArrayList<>();
 		Level lvl = LevelsManager.getLevelByRegion(region.getUniqueId());
 		int unlocked = lvl == null ? 0 : lvl.getLevel();
+		long currentXp = lvl == null ? 0 : lvl.getExperience();
+
+		List<ItemStack> list = new ArrayList<>();
 
 		for (int l = 0; l <= MAX_LEVEL; l++) {
-			boolean isUnlocked = l <= unlocked;
+			Placeholder placeholder = new Placeholder()
+					.add("{level}", l)
+					.add("{xp}", NumberUtils.convertToBalance(Level.getXpForLevel(l)))
+					.add("{current-xp}", NumberUtils.convertToBalance(currentXp))
+					.add("{level-rewards}", getLevelRewardInfo(l));
 
-			Map<String, String> replacements = new HashMap<>();
-			replacements.put("{level}", String.valueOf(l));
-			replacements.put("{xp}", NumberUtils.convertToBalance(Level.getXpForLevel(l)));
-			replacements.put("{current-xp}", NumberUtils.convertToBalance(lvl == null ? 0 : lvl.getExperience()));
-			replacements.put("{level-rewards}", getLevelRewardInfo(l));
-
-			ItemStack icon = MenuUtils.getButton(isUnlocked ? 77 : 78, replacements);
-
-			list.add(icon);
+			list.add(MenuUtils.getButton(l <= unlocked ? 77 : 78, placeholder));
 		}
+
 		return list;
 	}
 
 	private String getLevelRewardInfo(int lvl) {
 		List<String> rewards = Homestead.menusConfig.get("button-levels." + lvl);
 
-		if (rewards == null || rewards.isEmpty()) {
-			return Formatter.getNone();
-		}
+		if (rewards == null || rewards.isEmpty()) return Formatter.getNone();
 
 		return String.join("\n", rewards);
 	}

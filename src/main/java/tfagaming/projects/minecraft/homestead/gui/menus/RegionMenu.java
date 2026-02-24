@@ -1,7 +1,6 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
@@ -20,8 +19,6 @@ import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
 import tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType;
 
-import java.util.HashMap;
-
 public class RegionMenu {
 	public RegionMenu(Player player, Region region) {
 		Menu gui = new Menu(MenuUtils.getTitle(1).replace("{region}", region.getName()), 9 * 4);
@@ -29,181 +26,110 @@ public class RegionMenu {
 		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
 		boolean isUpkeepEnabled = isEconomyEnabled && Homestead.config.getBoolean("upkeep.enabled");
 		boolean isRentEnabled = isEconomyEnabled && Homestead.config.getBoolean("renting.enabled");
+		boolean isSubAreasEnabled = Homestead.config.getBoolean("sub-areas.enabled");
 
-		HashMap<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{region-owner}", region.getOwner().getName());
-		replacements.put("{region-bank}", Formatter.getBalance(region.getBank()));
-		replacements.put("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
-		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
-		replacements.put("{region-members}", String.valueOf(region.getMembers().size()));
-		replacements.put("{upkeep-enabled}", Formatter.getToggle(isUpkeepEnabled));
-		replacements.put("{upkeep-date}", isUpkeepEnabled ? Formatter.getRemainingTime(region.getUpkeepAt()) : Formatter.getNever());
-		replacements.put("{upkeep-amount}",
-				Formatter.getBalance(UpkeepUtils.getAmountToPay(region)));
-		replacements.put("{region-global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
-		replacements.put("{region-rank-bank}",
-				String.valueOf(RegionsManager.getRank(RegionSorting.BANK, region.getUniqueId())));
-		replacements.put("{region-rank-chunks}",
-				String.valueOf(RegionsManager.getRank(RegionSorting.CHUNKS_COUNT, region.getUniqueId())));
-		replacements.put("{region-rank-members}",
-				String.valueOf(RegionsManager.getRank(RegionSorting.MEMBERS_COUNT, region.getUniqueId())));
-		replacements.put("{region-rank-rating}",
-				String.valueOf(RegionsManager.getRank(RegionSorting.RATING, region.getUniqueId())));
-		replacements.put("{region-logs}", String.valueOf(region.getLogs().size()));
-		replacements.put("{region-logs-unread}", String
-				.valueOf(region.getLogs().stream().filter((log) -> !log.isRead()).toList().size()));
-		replacements.put("{region-weather}", WeatherType.from(region.getWeather()));
-		replacements.put("{region-time}", TimeType.from(region.getTime()));
+		SerializableRent rent = region.getRent();
 
-		ItemStack membersButton = MenuUtils.getButton(6, replacements);
+		Placeholder placeholder = new Placeholder()
+				.add("{region}", region.getName())
+				.add("{region-owner}", region.getOwner().getName())
+				.add("{region-bank}", Formatter.getBalance(region.getBank()))
+				.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
+				.add("{region-chunks}", region.getChunks().size())
+				.add("{region-members}", region.getMembers().size())
+				.add("{upkeep-enabled}", Formatter.getToggle(isUpkeepEnabled))
+				.add("{upkeep-date}", isUpkeepEnabled ? Formatter.getRemainingTime(region.getUpkeepAt()) : Formatter.getNever())
+				.add("{upkeep-amount}", Formatter.getBalance(UpkeepUtils.getAmountToPay(region)))
+				.add("{region-global-rank}", RegionsManager.getGlobalRank(region.getUniqueId()))
+				.add("{region-rank-bank}", RegionsManager.getRank(RegionSorting.BANK, region.getUniqueId()))
+				.add("{region-rank-chunks}", RegionsManager.getRank(RegionSorting.CHUNKS_COUNT, region.getUniqueId()))
+				.add("{region-rank-members}", RegionsManager.getRank(RegionSorting.MEMBERS_COUNT, region.getUniqueId()))
+				.add("{region-rank-rating}", RegionsManager.getRank(RegionSorting.RATING, region.getUniqueId()))
+				.add("{region-logs}", region.getLogs().size())
+				.add("{region-logs-unread}", region.getLogs().stream().filter(log -> !log.isRead()).count())
+				.add("{region-weather}", WeatherType.from(region.getWeather()))
+				.add("{region-time}", TimeType.from(region.getTime()))
+				.add("{subareas-enabled}", Formatter.getToggle(isSubAreasEnabled))
+				.add("{region-subareas}", SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).size())
+				// Rent placeholders
+				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
+				.add("{rent-renter}", rent != null ? rent.getPlayer().getName() : Formatter.getNone())
+				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
+				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 
-		gui.addItem(10, membersButton, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+		gui.addItem(10, MenuUtils.getButton(6, placeholder), (_player, event) -> {
+			if (!event.isLeftClick()) return;
 			new RegionPlayersManagement(player, region);
 		});
 
-		ItemStack claimlistButton = MenuUtils.getButton(7, replacements);
-
-		gui.addItem(11, claimlistButton, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+		gui.addItem(11, MenuUtils.getButton(7, placeholder), (_player, event) -> {
+			if (!event.isLeftClick()) return;
 			new RegionClaimedChunks(player, region);
 		});
 
-		ItemStack flagsButton = MenuUtils.getButton(8, replacements);
-
-		gui.addItem(12, flagsButton, (_player, event) -> {
+		gui.addItem(12, MenuUtils.getButton(8, placeholder), (_player, event) -> {
 			if (event.isLeftClick()) {
 				if (!player.hasPermission("homestead.region.flags.global")) {
 					Messages.send(player, 8);
 					return;
 				}
-
 				new GlobalPlayerFlags(player, region);
 			} else if (event.isRightClick()) {
 				if (!player.hasPermission("homestead.region.flags.world")) {
 					Messages.send(player, 8);
 					return;
 				}
-
 				new RegionWorldFlags(player, region);
 			}
-
-			// new RegionFlagsMenu(player, region, isOperator);
 		});
 
-		ItemStack miscellaneousButton = MenuUtils.getButton(9, replacements);
-
-		gui.addItem(13, miscellaneousButton, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+		gui.addItem(13, MenuUtils.getButton(9, placeholder), (_player, event) -> {
+			if (!event.isLeftClick()) return;
 			new MiscellaneousSettings(player, region);
 		});
 
-		boolean isSubAreasEnabled = Homestead.config.getBoolean("sub-areas.enabled");
-
-		replacements.put("{subareas-enabled}", Formatter.getToggle(isSubAreasEnabled));
-		replacements.put("{region-subareas}", String.valueOf(SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).size()));
-
-		ItemStack subareasButton = MenuUtils.getButton(10, replacements);
-
-		gui.addItem(14, subareasButton, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+		gui.addItem(14, MenuUtils.getButton(10, placeholder), (_player, event) -> {
+			if (!event.isLeftClick()) return;
 			new SubAreasMenu(player, region);
 		});
 
-		ItemStack rewardsButton = MenuUtils.getButton(79, replacements);
-
-		gui.addItem(20, rewardsButton, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+		gui.addItem(20, MenuUtils.getButton(79, placeholder), (_player, event) -> {
+			if (!event.isLeftClick()) return;
 			new Rewards(player, region, () -> new RegionMenu(player, region));
 		});
 
-		ItemStack upkeepButton = MenuUtils.getButton(11, replacements);
+		gui.addItem(21, MenuUtils.getButton(11, placeholder), null);
 
-		gui.addItem(21, upkeepButton, (_player, event) -> {
-			// Do nothing
-		});
+		gui.addItem(22, MenuUtils.getButton(12, placeholder), (_player, event) -> {
+			if (!event.isLeftClick()) return;
 
-		SerializableRent rent = region.getRent();
-
-		if (rent != null) {
-			replacements.put("{rent-enabled}", Formatter.getToggle(isRentEnabled));
-			replacements.put("{rent-renter}", rent.getPlayer().getName());
-			replacements.put("{rent-price}", Formatter.getBalance(rent.getPrice()));
-			replacements.put("{rent-until}", Formatter.getRemainingTime(rent.getUntilAt()));
-		} else {
-			replacements.put("{rent-enabled}", Formatter.getToggle(isRentEnabled));
-			replacements.put("{rent-renter}", Formatter.getNone());
-			replacements.put("{rent-price}", Formatter.getNone());
-			replacements.put("{rent-until}", Formatter.getNever());
-		}
-
-		ItemStack rentButton = MenuUtils.getButton(12, replacements);
-
-		gui.addItem(22, rentButton, (_player, event) -> {
-			if (event.isLeftClick()) {
-				boolean isOwnerOrOperator = PlayerUtils.isOperator(player) || region.isOwner(player);
-				if (!isOwnerOrOperator) {
-					Messages.send(player, 159);
-					return;
-				}
-
-				if (region.getRent() == null) {
-					Messages.send(player, 128);
-				} else {
-					region.setRent(null);
-
-					Messages.send(player, 127);
-
-					new RegionMenu(player, region);
-				}
-			}
-		});
-
-		ItemStack levelsButton = MenuUtils.getButton(80, replacements);
-
-		gui.addItem(23, levelsButton, (_player, event) -> {
-			if (!event.isLeftClick()) {
+			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+				Messages.send(player, 159);
 				return;
 			}
 
+			if (region.getRent() == null) {
+				Messages.send(player, 128);
+			} else {
+				region.setRent(null);
+				Messages.send(player, 127);
+				new RegionMenu(player, region);
+			}
+		});
+
+		gui.addItem(23, MenuUtils.getButton(80, placeholder), (_player, event) -> {
+			if (!event.isLeftClick()) return;
 			new RegionLevels(player, region, () -> new RegionMenu(player, region));
 		});
 
-		ItemStack informationButton = MenuUtils.getButton(15, replacements);
+		gui.addItem(24, MenuUtils.getButton(15, placeholder), null);
 
-		gui.addItem(24, informationButton, (_player, event) -> {
-			// Do nothing
-		});
-
-		ItemStack logsButton = MenuUtils.getButton(13, replacements);
-
-		gui.addItem(15, logsButton, (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+		gui.addItem(15, MenuUtils.getButton(13, placeholder), (_player, event) -> {
+			if (!event.isLeftClick()) return;
 			new RegionLogs(player, region);
 		});
 
-		ItemStack weatherAndTimeButton = MenuUtils.getButton(16, replacements);
-
-		gui.addItem(16, weatherAndTimeButton, (_player, event) -> {
+		gui.addItem(16, MenuUtils.getButton(16, placeholder), (_player, event) -> {
 			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					RegionControlFlags.SET_WEATHER_AND_TIME)) {
 				return;
@@ -216,35 +142,22 @@ public class RegionMenu {
 			}
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
-
 			new RegionMenu(player, region);
-
 		});
 
 		gui.addItem(27, MenuUtils.getBackButton(), (_player, event) -> {
-			if (!event.isLeftClick()) {
-				return;
-			}
-
+			if (!event.isLeftClick()) return;
 			new RegionsMenu(player);
 		});
 
 		if (region.isPlayerMember(player)) {
-			ItemStack leaveButton = MenuUtils.getButton(14, replacements);
-
-			gui.addItem(35, leaveButton, (_player, event) -> {
-				if (!event.isLeftClick()) {
-					return;
-				}
+			gui.addItem(35, MenuUtils.getButton(14, placeholder), (_player, event) -> {
+				if (!event.isLeftClick()) return;
 
 				region.removeMember(player);
-
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
 				RegionsManager.addNewLog(region.getUniqueId(), 4, new Placeholder()
-						.add("{playername}", player.getName())
-				);
-
+						.add("{playername}", player.getName()));
 				new RegionsMenu(player);
 			});
 		}
