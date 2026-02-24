@@ -26,13 +26,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MiscellaneousSettingsMenu {
+public class MiscellaneousSettings {
 
 	private static final Map<UUID, UUID> DELETE_CONFIRM_REGION = new ConcurrentHashMap<>();
 	private static final Map<UUID, Long> DELETE_CONFIRM_TIME = new ConcurrentHashMap<>();
 	private static final long DELETE_CONFIRM_WINDOW_MS = 6000L;
 
-	public MiscellaneousSettingsMenu(Player player, Region region) {
+	public MiscellaneousSettings(Player player, Region region) {
 		Menu gui = new Menu(MenuUtils.getTitle(12), 9 * 3);
 
 		HashMap<String, String> replacements = new HashMap<>();
@@ -56,7 +56,7 @@ public class MiscellaneousSettingsMenu {
 						.add("{newname}", input)
 				);
 
-				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
+				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
 					return false;
@@ -74,7 +74,7 @@ public class MiscellaneousSettingsMenu {
 					return false;
 				}
 				return true;
-			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region)), 78);
+			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 78);
 		});
 
 		ItemStack setDisplaynameRegionButton = MenuUtils.getButton(35, replacements);
@@ -93,7 +93,7 @@ public class MiscellaneousSettingsMenu {
 						.add("{newdisplayname}", region.getDisplayName())
 				);
 
-				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
+				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
 					return false;
@@ -107,7 +107,7 @@ public class MiscellaneousSettingsMenu {
 					return false;
 				}
 				return true;
-			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region)), 79);
+			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 79);
 		});
 
 		ItemStack setDescriptionRegionButton = MenuUtils.getButton(36, replacements);
@@ -121,7 +121,7 @@ public class MiscellaneousSettingsMenu {
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region));
+				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_DESCRIPTION))
 					return false;
@@ -135,7 +135,7 @@ public class MiscellaneousSettingsMenu {
 					return false;
 				}
 				return true;
-			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region)), 80);
+			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 80);
 		});
 
 		ItemStack setLocationRegionButton = MenuUtils.getButton(37, replacements);
@@ -205,7 +205,7 @@ public class MiscellaneousSettingsMenu {
 					return false;
 				}
 				return true;
-			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettingsMenu(player, region)), 81);
+			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 81);
 		});
 
 		ItemStack deleteRegionButton = MenuUtils.getButton(64, replacements);

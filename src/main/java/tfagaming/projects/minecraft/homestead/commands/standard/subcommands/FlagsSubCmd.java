@@ -9,8 +9,8 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
-import tfagaming.projects.minecraft.homestead.gui.menus.GlobalPlayerFlagsMenu;
-import tfagaming.projects.minecraft.homestead.gui.menus.WorldFlagsMenu;
+import tfagaming.projects.minecraft.homestead.gui.menus.GlobalPlayerFlags;
+import tfagaming.projects.minecraft.homestead.gui.menus.RegionWorldFlags;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -160,7 +160,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				}
 
 				if (args.length == 1) {
-					new GlobalPlayerFlagsMenu(player, region);
+					new GlobalPlayerFlags(player, region);
 					return true;
 				}
 
@@ -232,7 +232,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				}
 
 				if (args.length == 1) {
-					new WorldFlagsMenu(player, region);
+					new RegionWorldFlags(player, region);
 					return true;
 				}
 

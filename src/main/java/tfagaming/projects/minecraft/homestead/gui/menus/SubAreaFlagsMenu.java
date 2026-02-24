@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -34,7 +33,7 @@ public class SubAreaFlagsMenu {
 		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(16), 9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(), items, (_player, event) -> {
-			new SubAreaSettingsMenu(player, region, subArea);
+			new SubAreaMenu(player, region, subArea);
 		}, (_player, context) -> {
 			if (cooldowns.contains(player.getUniqueId())) {
 				return;

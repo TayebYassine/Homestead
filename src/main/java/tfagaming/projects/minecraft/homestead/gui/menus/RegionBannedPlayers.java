@@ -6,13 +6,13 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBannedPlayer;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -21,42 +21,54 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class RegionInvitedPlayersMenu {
-	List<OfflinePlayer> invitedPlayers;
+public class RegionBannedPlayers {
+	List<SerializableBannedPlayer> bannedPlayers;
 
-	public RegionInvitedPlayersMenu(Player player, Region region) {
-		invitedPlayers = region.getInvitedPlayers();
+	public RegionBannedPlayers(Player player, Region region) {
+		bannedPlayers = region.getBannedPlayers();
 
-		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(10), 9 * 4,
+		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(9), 9 * 4,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(), getItems(player, region), (_player, event) -> {
-			new ManagePlayersMenu(player, region);
+			new RegionPlayersManagement(player, region);
 		}, (_player, context) -> {
-			if (context.getIndex() >= invitedPlayers.size()) {
+			if (context.getIndex() >= bannedPlayers.size()) {
 				return;
 			}
 
-			OfflinePlayer invitedPlayer = invitedPlayers.get(context.getIndex());
+			SerializableBannedPlayer bannedPlayer = bannedPlayers.get(context.getIndex());
 
 			if (context.getEvent().isLeftClick()) {
-				if (region.isPlayerInvited(invitedPlayer)) {
-					region.removePlayerInvite(invitedPlayer);
+				if (region.isPlayerBanned(bannedPlayer.getBukkitOfflinePlayer())) {
+					if (!player.hasPermission("homestead.region.players.unban")) {
+						Messages.send(player, 8);
+						return;
+					}
+
+					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+							RegionControlFlags.UNBAN_PLAYERS)) {
+						return;
+					}
+
+					region.unbanPlayer(bannedPlayer.getBukkitOfflinePlayer());
+
+					PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 					PaginationMenu instance = context.getInstance();
 
-					invitedPlayers = region.getInvitedPlayers();
+					bannedPlayers = region.getBannedPlayers();
 
 					instance.setItems(getItems(player, region));
 				}
 			}
 		});
 
-		gui.addActionButton(0, MenuUtils.getButton(29), (_player, event) -> {
+		gui.addActionButton(0, MenuUtils.getButton(28), (_player, event) -> {
 			if (!event.isLeftClick()) {
 				return;
 			}
 
-			if (!player.hasPermission("homestead.region.players.trust")) {
+			if (!player.hasPermission("homestead.region.players.ban")) {
 				Messages.send(player, 8);
 				return;
 			}
@@ -66,23 +78,20 @@ public class RegionInvitedPlayersMenu {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
-				if (Homestead.config.isInstantTrustSystemEnabled()) {
-					region.removePlayerInvite(targetPlayer);
+				region.banPlayer(targetPlayer);
 
-					region.addMember(targetPlayer);
-				} else {
-					region.addPlayerInvite(targetPlayer);
+				if (region.isPlayerMember(targetPlayer)) {
+					region.removeMember(targetPlayer);
 				}
 
-				RegionsManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
-						.add("{executor}", player.getName())
-						.add("{playername}", targetPlayer.getName())
-				);
+				if (region.isPlayerInvited(targetPlayer)) {
+					region.removePlayerInvite(targetPlayer);
+				}
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> {
-					new RegionInvitedPlayersMenu(player, region);
+					new RegionBannedPlayers(player, region);
 				});
 			}, (message) -> {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
@@ -95,24 +104,12 @@ public class RegionInvitedPlayersMenu {
 				}
 
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-						RegionControlFlags.TRUST_PLAYERS)) {
+						RegionControlFlags.BAN_PLAYERS)) {
 					return false;
 				}
 
 				if (region.isPlayerBanned(target)) {
-					Messages.send(player, 74);
-					return false;
-				}
-
-				if (region.isPlayerMember(target)) {
-					Messages.send(player, 48, new Placeholder()
-							.add("{playername}", target.getName())
-					);
-					return false;
-				}
-
-				if (region.isPlayerInvited(target)) {
-					Messages.send(player, 35, new Placeholder()
+					Messages.send(player, 32, new Placeholder()
 							.add("{playername}", target.getName())
 					);
 					return false;
@@ -127,40 +124,45 @@ public class RegionInvitedPlayersMenu {
 
 				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
 					Messages.send(player, 196);
-					return false;
-				}
-
-				if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-					Messages.send(player, 116);
-					return false;
+					return true;
 				}
 
 				return true;
 			}, (__player) -> {
 				Homestead.getInstance().runSyncTask(() -> {
-					new RegionInvitedPlayersMenu(player, region);
+					new RegionBannedPlayers(player, region);
 				});
-			}, 75);
+			}, 73);
 		});
 
-		gui.addActionButton(2, MenuUtils.getButton(31), (_player, event) -> {
+		gui.addActionButton(2, MenuUtils.getButton(32), (_player, event) -> {
 			if (!event.isLeftClick()) {
 				return;
 			}
 
-			if (region.getInvitedPlayers().isEmpty()) {
-				Messages.send(player, 76);
+			if (!player.hasPermission("homestead.region.players.unban")) {
+				Messages.send(player, 8);
 				return;
 			}
 
-			region.setInvitedPlayers(new ArrayList<>());
+			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+					RegionControlFlags.UNBAN_PLAYERS)) {
+				return;
+			}
+
+			if (region.getBannedPlayers().isEmpty()) {
+				Messages.send(player, 77);
+				return;
+			}
+
+			region.setBannedPlayers(new ArrayList<>());
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-			Messages.send(player, 95);
+			Messages.send(player, 94);
 
 			Homestead.getInstance().runSyncTask(() -> {
-				new RegionInvitedPlayersMenu(player, region);
+				new RegionBannedPlayers(player, region);
 			});
 		});
 
@@ -170,12 +172,15 @@ public class RegionInvitedPlayersMenu {
 	public List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (OfflinePlayer invitedPlayer : invitedPlayers) {
+		for (SerializableBannedPlayer bannedPlayer : bannedPlayers) {
 			HashMap<String, String> replacements = new HashMap<>();
 
-			replacements.put("{playername}", invitedPlayer.getName());
+			replacements.put("{region}", region.getName());
+			replacements.put("{playername}", bannedPlayer.getBukkitOfflinePlayer().getName());
+			replacements.put("{player-bannedat}", Formatter.getDate(bannedPlayer.getBannedAt()));
+			replacements.put("{player-banreason}", bannedPlayer.getReason());
 
-			items.add(MenuUtils.getButton(30, replacements));
+			items.add(MenuUtils.getButton(27, replacements, bannedPlayer.getBukkitOfflinePlayer()));
 		}
 
 		return items;

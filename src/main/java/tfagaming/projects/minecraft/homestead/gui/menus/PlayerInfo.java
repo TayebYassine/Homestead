@@ -11,8 +11,8 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank
 
 import java.util.HashMap;
 
-public class PlayerInfoMenu {
-	public PlayerInfoMenu(Player player, OfflinePlayer target, Runnable backButton) {
+public class PlayerInfo {
+	public PlayerInfo(Player player, OfflinePlayer target, Runnable backButton) {
 		Menu gui = new Menu(MenuUtils.getTitle(27), 9 * 3);
 
 		HashMap<String, String> replacements = new HashMap<>();

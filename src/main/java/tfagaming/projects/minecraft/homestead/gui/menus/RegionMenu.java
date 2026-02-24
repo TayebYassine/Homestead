@@ -63,7 +63,7 @@ public class RegionMenu {
 				return;
 			}
 
-			new ManagePlayersMenu(player, region);
+			new RegionPlayersManagement(player, region);
 		});
 
 		ItemStack claimlistButton = MenuUtils.getButton(7, replacements);
@@ -73,7 +73,7 @@ public class RegionMenu {
 				return;
 			}
 
-			new RegionClaimedChunksMenu(player, region);
+			new RegionClaimedChunks(player, region);
 		});
 
 		ItemStack flagsButton = MenuUtils.getButton(8, replacements);
@@ -85,14 +85,14 @@ public class RegionMenu {
 					return;
 				}
 
-				new GlobalPlayerFlagsMenu(player, region);
+				new GlobalPlayerFlags(player, region);
 			} else if (event.isRightClick()) {
 				if (!player.hasPermission("homestead.region.flags.world")) {
 					Messages.send(player, 8);
 					return;
 				}
 
-				new WorldFlagsMenu(player, region);
+				new RegionWorldFlags(player, region);
 			}
 
 			// new RegionFlagsMenu(player, region, isOperator);
@@ -105,7 +105,7 @@ public class RegionMenu {
 				return;
 			}
 
-			new MiscellaneousSettingsMenu(player, region);
+			new MiscellaneousSettings(player, region);
 		});
 
 		boolean isSubAreasEnabled = Homestead.config.getBoolean("sub-areas.enabled");
@@ -130,7 +130,7 @@ public class RegionMenu {
 				return;
 			}
 
-			new RewardsMenu(player, region, () -> new RegionMenu(player, region));
+			new Rewards(player, region, () -> new RegionMenu(player, region));
 		});
 
 		ItemStack upkeepButton = MenuUtils.getButton(11, replacements);
@@ -182,7 +182,7 @@ public class RegionMenu {
 				return;
 			}
 
-			new RegionLevelMenu(player, region, () -> new RegionMenu(player, region));
+			new RegionLevels(player, region, () -> new RegionMenu(player, region));
 		});
 
 		ItemStack informationButton = MenuUtils.getButton(15, replacements);
@@ -198,7 +198,7 @@ public class RegionMenu {
 				return;
 			}
 
-			new RegionLogsMenu(player, region);
+			new RegionLogs(player, region);
 		});
 
 		ItemStack weatherAndTimeButton = MenuUtils.getButton(16, replacements);

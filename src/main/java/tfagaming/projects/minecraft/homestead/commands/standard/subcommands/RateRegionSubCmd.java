@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.gui.menus.RegionRatingMenu;
+import tfagaming.projects.minecraft.homestead.gui.menus.RegionRating;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -43,7 +43,7 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		new RegionRatingMenu(player, region, player::closeInventory);
+		new RegionRating(player, region, player::closeInventory);
 
 		return true;
 	}

@@ -28,7 +28,7 @@ import java.util.Map;
  * Allows teleporting to or unclaiming specific chunks directly from the menu.
  * </p>
  */
-public class RegionClaimedChunksMenu {
+public class RegionClaimedChunks {
 	private List<SerializableChunk> chunks;
 
 	/**
@@ -42,7 +42,7 @@ public class RegionClaimedChunksMenu {
 	 * @param player The player opening the menu.
 	 * @param region The target region.
 	 */
-	public RegionClaimedChunksMenu(Player player, Region region) {
+	public RegionClaimedChunks(Player player, Region region) {
 		this.chunks = region.getChunks();
 
 		PaginationMenu gui = new PaginationMenu(

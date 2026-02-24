@@ -1,14 +1,13 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -19,46 +18,45 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-public class MemberRgControlFlagsMenu {
+public class RegionWorldFlags {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
-	public MemberRgControlFlagsMenu(Player player, Region region, SerializableMember member) {
+	public RegionWorldFlags(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (String flagString : RegionControlFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), RegionControlFlags.valueOf(flagString));
+		for (String flagString : WorldFlags.getFlags()) {
+			boolean value = FlagsCalculator.isFlagSet(region.getWorldFlags(), WorldFlags.valueOf(flagString));
 
 			items.add(MenuUtils.getFlagButton(flagString, value));
 		}
 
-		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(7).replace("{playername}", member.getBukkitOfflinePlayer().getName()), 9 * 5,
+		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(3), 9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(), items, (_player, event) -> {
-			new RegionMembersMenu(player, region);
+			new RegionMenu(player, region);
 		}, (_player, context) -> {
 			if (cooldowns.contains(player.getUniqueId())) {
 				return;
 			}
 
-			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
-				Messages.send(player, 159);
+			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+					RegionControlFlags.SET_WORLD_FLAGS)) {
 				return;
 			}
 
-			String flagString = RegionControlFlags.getFlags().get(context.getIndex());
+			String flagString = WorldFlags.getFlags().get(context.getIndex());
 
 			if (Homestead.config.isFlagDisabled(flagString)) {
 				Messages.send(player, 42);
 				return;
 			}
 
-			long flag = RegionControlFlags.valueOf(flagString);
+			long flag = WorldFlags.valueOf(flagString);
 
 			if (context.getEvent().isLeftClick()) {
 				PaginationMenu instance = context.getInstance();
 
-				long flags = member.getRegionControlFlags();
+				long flags = region.getWorldFlags();
 
 				boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 				long newFlags;
@@ -69,7 +67,7 @@ public class MemberRgControlFlagsMenu {
 					newFlags = FlagsCalculator.addFlag(flags, flag);
 				}
 
-				region.setMemberRegionControlFlags(member, newFlags);
+				region.setWorldFlags(newFlags);
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 

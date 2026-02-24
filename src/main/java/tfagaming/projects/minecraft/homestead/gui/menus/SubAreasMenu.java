@@ -33,7 +33,7 @@ public class SubAreasMenu {
 			SubArea subArea = subAreas.get(context.getIndex());
 
 			if (context.getEvent().isLeftClick()) {
-				new SubAreaSettingsMenu(player, region, subArea);
+				new SubAreaMenu(player, region, subArea);
 			}
 		});
 

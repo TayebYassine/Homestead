@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.gui.menus.RegionLevelMenu;
+import tfagaming.projects.minecraft.homestead.gui.menus.RegionLevels;
 import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -41,7 +41,7 @@ public class LevelsSubCmd extends SubCommandBuilder {
 
 		LevelsManager.getOrCreateLevel(region.getUniqueId());
 
-		new RegionLevelMenu(player, region, player::closeInventory);
+		new RegionLevels(player, region, player::closeInventory);
 
 		return true;
 	}

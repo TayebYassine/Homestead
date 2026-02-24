@@ -11,8 +11,8 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSoun
 
 import java.util.HashMap;
 
-public class RegionRatingMenu {
-	public RegionRatingMenu(Player player, Region region, Runnable backButton) {
+public class RegionRating {
+	public RegionRating(Player player, Region region, Runnable backButton) {
 		Menu gui = new Menu(MenuUtils.getTitle(17).replace("{region}", region.getName()), 9 * 3);
 
 		HashMap<String, String> replacements = new HashMap<>();
@@ -34,7 +34,7 @@ public class RegionRatingMenu {
 
 			Messages.send(player, 134);
 
-			new RegionRatingMenu(player, region, backButton);
+			new RegionRating(player, region, backButton);
 		});
 
 		ItemStack rateNumber2 = MenuUtils.getButton(49, replacements);
@@ -50,7 +50,7 @@ public class RegionRatingMenu {
 
 			Messages.send(player, 134);
 
-			new RegionRatingMenu(player, region, backButton);
+			new RegionRating(player, region, backButton);
 		});
 
 		ItemStack rateNumber3 = MenuUtils.getButton(50, replacements);
@@ -66,7 +66,7 @@ public class RegionRatingMenu {
 
 			Messages.send(player, 134);
 
-			new RegionRatingMenu(player, region, backButton);
+			new RegionRating(player, region, backButton);
 		});
 
 		ItemStack rateNumber4 = MenuUtils.getButton(51, replacements);
@@ -82,7 +82,7 @@ public class RegionRatingMenu {
 
 			Messages.send(player, 134);
 
-			new RegionRatingMenu(player, region, backButton);
+			new RegionRating(player, region, backButton);
 		});
 
 		ItemStack rateNumber5 = MenuUtils.getButton(52, replacements);
@@ -98,7 +98,7 @@ public class RegionRatingMenu {
 
 			Messages.send(player, 134);
 
-			new RegionRatingMenu(player, region, backButton);
+			new RegionRating(player, region, backButton);
 		});
 
 		ItemStack ratedBefore = region.isPlayerRated(player)

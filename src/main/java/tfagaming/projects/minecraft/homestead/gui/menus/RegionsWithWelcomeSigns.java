@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class RegionsWithWelcomeSignsMenu {
+public class RegionsWithWelcomeSigns {
 	List<Region> regions;
 
-	public RegionsWithWelcomeSignsMenu(Player player) {
+	public RegionsWithWelcomeSigns(Player player) {
 		regions = new ArrayList<>();
 		regions.addAll(RegionsManager.getRegionsWithWelcomeSigns());
 

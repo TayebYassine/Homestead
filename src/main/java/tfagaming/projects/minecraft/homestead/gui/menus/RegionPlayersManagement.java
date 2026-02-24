@@ -8,8 +8,8 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
 import java.util.HashMap;
 
-public class ManagePlayersMenu {
-	public ManagePlayersMenu(Player player, Region region) {
+public class RegionPlayersManagement {
+	public RegionPlayersManagement(Player player, Region region) {
 		Menu gui = new Menu(MenuUtils.getTitle(4), 9 * 3);
 
 		HashMap<String, String> replacements = new HashMap<>();
@@ -34,7 +34,7 @@ public class ManagePlayersMenu {
 				return;
 			}
 
-			new RegionBannedPlayersMenu(player, region);
+			new RegionBannedPlayers(player, region);
 		});
 
 		ItemStack invitedPlayersButton = MenuUtils.getButton(20, replacements);
@@ -44,7 +44,7 @@ public class ManagePlayersMenu {
 				return;
 			}
 
-			new RegionInvitedPlayersMenu(player, region);
+			new RegionPlayersInvited(player, region);
 		});
 
 		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {

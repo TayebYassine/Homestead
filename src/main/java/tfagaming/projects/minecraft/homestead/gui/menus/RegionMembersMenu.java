@@ -32,7 +32,7 @@ public class RegionMembersMenu {
 		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(5), 9 * 4,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(), getItems(player, region), (_player, event) -> {
-			new ManagePlayersMenu(player, region);
+			new RegionPlayersManagement(player, region);
 		}, (_player, context) -> {
 			if (context.getIndex() >= members.size()) {
 				return;
@@ -41,7 +41,7 @@ public class RegionMembersMenu {
 			SerializableMember member = members.get(context.getIndex());
 
 			if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
-				new PlayerInfoMenu(player, member.getBukkitOfflinePlayer(), () -> {
+				new PlayerInfo(player, member.getBukkitOfflinePlayer(), () -> {
 					new RegionMembersMenu(player, region);
 				});
 			} else if (context.getEvent().isRightClick()) {
@@ -50,7 +50,7 @@ public class RegionMembersMenu {
 					return;
 				}
 
-				new MemberRgControlFlagsMenu(player, region, member);
+				new RegionMemberControlFlags(player, region, member);
 			} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
 				if (region.isPlayerMember(member.getBukkitOfflinePlayer())) {
 					if (!player.hasPermission("homestead.region.players.untrust")) {
@@ -84,7 +84,7 @@ public class RegionMembersMenu {
 					return;
 				}
 
-				new MemberPlayerFlagsMenu(player, region, member);
+				new RegionMemberFlags(player, region, member);
 			}
 		});
 

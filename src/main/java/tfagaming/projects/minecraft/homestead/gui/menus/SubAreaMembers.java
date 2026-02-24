@@ -20,16 +20,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class SubAreaMembersMenu {
+public class SubAreaMembers {
 	List<SerializableMember> members;
 
-	public SubAreaMembersMenu(Player player, Region region, SubArea subArea) {
+	public SubAreaMembers(Player player, Region region, SubArea subArea) {
 		members = subArea.getMembers();
 
 		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(24), 9 * 4,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(), getItems(player, region, subArea), (_player, event) -> {
-			new SubAreaSettingsMenu(player, region, subArea);
+			new SubAreaMenu(player, region, subArea);
 		}, (_player, context) -> {
 			if (context.getIndex() >= members.size()) {
 				return;
@@ -38,8 +38,8 @@ public class SubAreaMembersMenu {
 			SerializableMember member = members.get(context.getIndex());
 
 			if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
-				new PlayerInfoMenu(player, member.getBukkitOfflinePlayer(), () -> {
-					new SubAreaMembersMenu(player, region, subArea);
+				new PlayerInfo(player, member.getBukkitOfflinePlayer(), () -> {
+					new SubAreaMembers(player, region, subArea);
 				});
 			} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
 				if (region.isPlayerMember(member.getBukkitOfflinePlayer()) && subArea.isPlayerMember(member.getBukkitOfflinePlayer())) {
@@ -69,7 +69,7 @@ public class SubAreaMembersMenu {
 					return;
 				}
 
-				new SubAreaMemberPlayerFlagsMenu(player, region, subArea, member);
+				new SubAreaMemberFlags(player, region, subArea, member);
 			}
 		});
 
@@ -93,7 +93,7 @@ public class SubAreaMembersMenu {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> {
-					new SubAreaMembersMenu(player, region, subArea);
+					new SubAreaMembers(player, region, subArea);
 				});
 			}, (message) -> {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
@@ -128,7 +128,7 @@ public class SubAreaMembersMenu {
 				return true;
 			}, (__player) -> {
 				Homestead.getInstance().runSyncTask(() -> {
-					new SubAreaMembersMenu(player, region, subArea);
+					new SubAreaMembers(player, region, subArea);
 				});
 			}, 75);
 		});

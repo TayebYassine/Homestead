@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
-import tfagaming.projects.minecraft.homestead.gui.menus.RegionsWithWelcomeSignsMenu;
+import tfagaming.projects.minecraft.homestead.gui.menus.RegionsWithWelcomeSigns;
 import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
@@ -35,7 +35,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 
 		if (Homestead.config.isWelcomeSignEnabled()) {
 			if (args.length < 1) {
-				new RegionsWithWelcomeSignsMenu(player);
+				new RegionsWithWelcomeSigns(player);
 
 				return true;
 			}

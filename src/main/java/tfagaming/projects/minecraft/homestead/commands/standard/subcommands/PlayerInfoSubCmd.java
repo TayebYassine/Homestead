@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.gui.menus.PlayerInfoMenu;
+import tfagaming.projects.minecraft.homestead.gui.menus.PlayerInfo;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -28,7 +28,7 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 		}
 
 		if (args.length < 1) {
-			new PlayerInfoMenu(player, player, player::closeInventory);
+			new PlayerInfo(player, player, player::closeInventory);
 		} else {
 			String playerName = args[0];
 
@@ -41,7 +41,7 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 				return true;
 			}
 
-			new PlayerInfoMenu(player, target, player::closeInventory);
+			new PlayerInfo(player, target, player::closeInventory);
 		}
 
 		return true;

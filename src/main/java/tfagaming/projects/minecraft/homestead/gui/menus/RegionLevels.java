@@ -17,10 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RegionLevelMenu {
+public class RegionLevels {
 	private static final int MAX_LEVEL = 50;
 
-	public RegionLevelMenu(Player player, Region region, Runnable backButton) {
+	public RegionLevels(Player player, Region region, Runnable backButton) {
 		Level lvl = LevelsManager.getLevelByRegion(region.getUniqueId());
 
 		List<ItemStack> levelButtons = buildLevelButtons(region);

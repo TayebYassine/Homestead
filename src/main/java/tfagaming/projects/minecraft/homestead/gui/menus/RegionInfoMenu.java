@@ -51,7 +51,7 @@ public class RegionInfoMenu {
 				return;
 			}
 
-			new RegionRatingMenu(player, region, () -> {
+			new RegionRating(player, region, () -> {
 				new RegionInfoMenu(player, region, backButton);
 			});
 		});

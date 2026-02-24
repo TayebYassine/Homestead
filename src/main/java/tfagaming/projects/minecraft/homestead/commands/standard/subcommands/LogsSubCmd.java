@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.gui.menus.RegionLogsMenu;
+import tfagaming.projects.minecraft.homestead.gui.menus.RegionLogs;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -30,7 +30,7 @@ public class LogsSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		new RegionLogsMenu(player, region);
+		new RegionLogs(player, region);
 
 		return true;
 	}

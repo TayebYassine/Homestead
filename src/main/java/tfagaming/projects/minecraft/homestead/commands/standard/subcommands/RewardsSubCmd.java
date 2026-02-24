@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.gui.menus.RewardsMenu;
+import tfagaming.projects.minecraft.homestead.gui.menus.Rewards;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -36,7 +36,7 @@ public class RewardsSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		new RewardsMenu(player, region, player::closeInventory);
+		new Rewards(player, region, player::closeInventory);
 
 		return true;
 	}

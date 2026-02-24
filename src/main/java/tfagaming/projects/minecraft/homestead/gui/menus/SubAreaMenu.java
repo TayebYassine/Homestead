@@ -19,8 +19,8 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 import java.util.HashMap;
 
-public class SubAreaSettingsMenu {
-	public SubAreaSettingsMenu(Player player, Region region, SubArea subArea) {
+public class SubAreaMenu {
+	public SubAreaMenu(Player player, Region region, SubArea subArea) {
 		Menu gui = new Menu(MenuUtils.getTitle(15).replace("{subarea}", subArea.getName()), 9 * 3);
 
 		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
@@ -49,7 +49,7 @@ public class SubAreaSettingsMenu {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				Homestead.getInstance().runSyncTask(() -> {
-					new SubAreaSettingsMenu(player, region, subArea);
+					new SubAreaMenu(player, region, subArea);
 				});
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
@@ -75,7 +75,7 @@ public class SubAreaSettingsMenu {
 				return true;
 			}, (__player) -> {
 				Homestead.getInstance().runSyncTask(() -> {
-					new SubAreaSettingsMenu(player, region, subArea);
+					new SubAreaMenu(player, region, subArea);
 				});
 			}, 88);
 		});
@@ -109,7 +109,7 @@ public class SubAreaSettingsMenu {
 				return;
 			}
 
-			new SubAreaMembersMenu(player, region, subArea);
+			new SubAreaMembers(player, region, subArea);
 		});
 
 		SerializableRent rent = subArea.getRent();
@@ -143,7 +143,7 @@ public class SubAreaSettingsMenu {
 
 					Messages.send(player, 127);
 
-					new SubAreaSettingsMenu(player, region, subArea);
+					new SubAreaMenu(player, region, subArea);
 				}
 			}
 		});

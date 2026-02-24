@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -9,42 +8,34 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class MemberPlayerFlagsMenu {
-	// index 0 = Bulk item; alle anderen Items sind die eigentlichen Flags (+1 Index-Offset)
+public class SubAreaMemberFlags {
 	private static final int BULK_INDEX = 0;
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
-	public MemberPlayerFlagsMenu(Player player, Region region, SerializableMember member) {
+	public SubAreaMemberFlags(Player player, Region region, SubArea subArea, SerializableMember member) {
 		List<ItemStack> items = buildItemsList(member);
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(6).replace("{playername}", member.getBukkitOfflinePlayer().getName()),
+				MenuUtils.getTitle(25).replace("{playername}", Objects.requireNonNull(member.getBukkitOfflinePlayer().getName())),
 				9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(),
 				items,
-				(_player, event) -> new RegionMembersMenu(player, region),
+				(_player, event) -> new SubAreaMembers(player, region, subArea),
 				(_player, context) -> {
 					if (cooldowns.contains(player.getUniqueId())) return;
 
 					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-							RegionControlFlags.SET_MEMBER_FLAGS)) {
-						return;
-					}
-
-					if (player.getUniqueId().equals(member.getPlayerId())) {
-						Messages.send(player, 159);
+							RegionControlFlags.MANAGE_SUBAREAS)) {
 						return;
 					}
 
@@ -76,11 +67,10 @@ public class MemberPlayerFlagsMenu {
 						}
 
 						if (changed > 0) {
-							region.setMemberFlags(member, newFlags);
+							subArea.setMemberFlags(member, newFlags);
 
 							PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-							// UI neu aufbauen
 							PaginationMenu instance = context.getInstance();
 							instance.setItems(buildItemsList(member));
 
@@ -93,8 +83,7 @@ public class MemberPlayerFlagsMenu {
 						return;
 					}
 
-					// === Einzelnes Flag toggeln ===
-					int flagListIndex = index - 1; // wegen Bulk-Item
+					int flagListIndex = index - 1;
 					if (flagListIndex < 0 || flagListIndex >= PlayerFlags.getFlags().size()) return;
 
 					String flagString = PlayerFlags.getFlags().get(flagListIndex);
@@ -120,7 +109,7 @@ public class MemberPlayerFlagsMenu {
 							newFlags = FlagsCalculator.addFlag(flags, flag);
 						}
 
-						region.setMemberFlags(member, newFlags);
+						subArea.setMemberFlags(member, newFlags);
 
 						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
@@ -142,7 +131,6 @@ public class MemberPlayerFlagsMenu {
 
 		items.add(bulk);
 
-		// Einzelne Flag-Buttons
 		for (String flagString : PlayerFlags.getFlags()) {
 			boolean value = FlagsCalculator.isFlagSet(member.getFlags(), PlayerFlags.valueOf(flagString));
 			items.add(MenuUtils.getFlagButton(flagString, value));

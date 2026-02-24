@@ -17,10 +17,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class RegionLogsMenu {
+public class RegionLogs {
 	List<SerializableLog> logs;
 
-	public RegionLogsMenu(Player player, Region region) {
+	public RegionLogs(Player player, Region region) {
 		logs = region.getLogs();
 
 		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(13), 9 * 5,
@@ -81,7 +81,7 @@ public class RegionLogsMenu {
 			Messages.send(player, 92);
 
 			Homestead.getInstance().runSyncTask(() -> {
-				new RegionLogsMenu(player, region);
+				new RegionLogs(player, region);
 			});
 		});
 
@@ -108,7 +108,7 @@ public class RegionLogsMenu {
 			Messages.send(player, 93);
 
 			Homestead.getInstance().runSyncTask(() -> {
-				new RegionLogsMenu(player, region);
+				new RegionLogs(player, region);
 			});
 		});
 

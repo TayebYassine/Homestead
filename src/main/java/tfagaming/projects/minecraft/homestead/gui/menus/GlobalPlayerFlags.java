@@ -1,12 +1,11 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
+import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
-import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -19,19 +18,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-public class WorldFlagsMenu {
+public class GlobalPlayerFlags {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
-	public WorldFlagsMenu(Player player, Region region) {
+	public GlobalPlayerFlags(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (String flagString : WorldFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(region.getWorldFlags(), WorldFlags.valueOf(flagString));
+		for (String flagString : PlayerFlags.getFlags()) {
+			boolean value = FlagsCalculator.isFlagSet(region.getPlayerFlags(), PlayerFlags.valueOf(flagString));
 
 			items.add(MenuUtils.getFlagButton(flagString, value));
 		}
 
-		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(3), 9 * 5,
+		PaginationMenu gui = new PaginationMenu(MenuUtils.getTitle(2), 9 * 5,
 				MenuUtils.getNextPageButton(),
 				MenuUtils.getPreviousPageButton(), items, (_player, event) -> {
 			new RegionMenu(player, region);
@@ -41,23 +40,23 @@ public class WorldFlagsMenu {
 			}
 
 			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					RegionControlFlags.SET_WORLD_FLAGS)) {
+					RegionControlFlags.SET_GLOBAL_FLAGS)) {
 				return;
 			}
 
-			String flagString = WorldFlags.getFlags().get(context.getIndex());
+			String flagString = PlayerFlags.getFlags().get(context.getIndex());
 
 			if (Homestead.config.isFlagDisabled(flagString)) {
 				Messages.send(player, 42);
 				return;
 			}
 
-			long flag = WorldFlags.valueOf(flagString);
+			long flag = PlayerFlags.valueOf(flagString);
 
 			if (context.getEvent().isLeftClick()) {
 				PaginationMenu instance = context.getInstance();
 
-				long flags = region.getWorldFlags();
+				long flags = region.getPlayerFlags();
 
 				boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 				long newFlags;
@@ -68,14 +67,13 @@ public class WorldFlagsMenu {
 					newFlags = FlagsCalculator.addFlag(flags, flag);
 				}
 
-				region.setWorldFlags(newFlags);
+				region.setPlayerFlags(newFlags);
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
 				cooldowns.add(player.getUniqueId());
 
-				instance.replaceSlot(context.getIndex(),
-						MenuUtils.getFlagButton(flagString, !isSet));
+				instance.replaceSlot(context.getIndex(), MenuUtils.getFlagButton(flagString, !isSet));
 
 				Homestead.getInstance().runAsyncTaskLater(() -> {
 					cooldowns.remove(player.getUniqueId());

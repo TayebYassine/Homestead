@@ -304,10 +304,7 @@ public final class RegionsManager {
 		List<Region> regions = new ArrayList<Region>();
 
 		for (Region region : getAll()) {
-			long flags = region.getPlayerFlags();
-
-			if (FlagsCalculator.isFlagSet(flags, PlayerFlags.PASSTHROUGH)
-					&& FlagsCalculator.isFlagSet(flags, PlayerFlags.TELEPORT_SPAWN)) {
+			if (region.isPublic()) {
 				regions.add(region);
 			}
 		}
