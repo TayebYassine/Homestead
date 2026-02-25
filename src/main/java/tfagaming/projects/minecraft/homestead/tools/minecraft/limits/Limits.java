@@ -2,8 +2,8 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.limits;
 
 import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
@@ -94,7 +94,7 @@ public class Limits {
 			return false;
 		}
 
-		int current = RegionsManager.getRegionsOwnedByPlayer(player).size();
+		int current = RegionManager.getRegionsOwnedByPlayer(player).size();
 		int max = getPlayerLimit(player, LimitType.REGIONS);
 
 		return current >= max;
@@ -125,7 +125,7 @@ public class Limits {
 			return false;
 		}
 
-		int current = SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).size();
+		int current = SubAreaManager.getSubAreasOfRegion(region.getUniqueId()).size();
 		int max = getRegionLimit(region, LimitType.SUBAREAS_PER_REGION);
 		return current >= max;
 	}

@@ -4,7 +4,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -28,7 +28,7 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 		}
 
 		String regionName = args[0];
-		Region region = RegionsManager.findRegion(regionName);
+		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
 			Messages.send(sender, 9);
@@ -78,7 +78,7 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 
 		if (args.length == 1) {
 			suggestions.addAll(
-					RegionsManager.getAll().stream()
+					RegionManager.getAll().stream()
 							.map(Region::getName)
 							.toList()
 			);

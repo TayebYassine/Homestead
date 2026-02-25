@@ -3,11 +3,12 @@ package tfagaming.projects.minecraft.homestead.integrations.maps;
 import org.bukkit.Location;
 import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import xyz.jpenilla.squaremap.api.*;
@@ -42,20 +43,21 @@ public class SquaremapAPI {
 	}
 
 	public void addChunkMarker(Region region, SerializableChunk chunk) {
-		HashMap<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{region-owner}", region.getOwner().getName());
-		replacements.put("{region-members}", ColorTranslator.preserve(Formatter.getMembersOfRegion(region)));
-		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
-		replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
-		replacements.put("{region-description}", region.getDescription());
-		replacements.put("{region-size}", String.valueOf(region.getChunks().size() * 256));
+		Placeholder placeholder = new Placeholder()
+				.add("{region}", region.getName())
+				.add("{region-owner}", region.getOwner().getName())
+				.add("{region-members}",
+						ColorTranslator.preserve(Formatter.getMembersOfRegion(region)))
+				.add("{region-chunks}", region.getChunks().size())
+				.add("{global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
+				.add("{region-description}", region.getDescription())
+				.add("{region-size}", region.getChunks().size() * 256);
 
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
 		String hoverText = Formatter
 				.applyPlaceholders(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
-						: Homestead.config.getString("dynamic-maps.chunks.description"), replacements);
+						: Homestead.config.getString("dynamic-maps.chunks.description"), placeholder);
 
 		int chunkColor = region.getMapColor() == 0
 				? (isOperator ? Homestead.config.getInt("dynamic-maps.chunks.operator-color")
@@ -94,7 +96,7 @@ public class SquaremapAPI {
 			final SimpleLayerProvider targetLayerFinal = targetLayer;
 
 			if (region.getLocation() != null
-					&& region.getLocation().getBukkitLocation().getChunk().equals(chunk.getBukkitChunk())) {
+					&& region.getLocation().bukkit().getChunk().equals(chunk.getBukkitChunk())) {
 				Homestead.getInstance().runAsyncTask(() -> {
 					addRegionIcon(targetLayerFinal, region, hoverText);
 				});
@@ -115,7 +117,7 @@ public class SquaremapAPI {
 			try {
 				Key iconKey = Key.of("region_icon_" + region.getName().toLowerCase().replaceAll(" ", "_"));
 
-				Location regionLocation = region.getLocation().getBukkitLocation();
+				Location regionLocation = region.getLocation().bukkit();
 
 				Point iconPoint = Point.of(regionLocation.getX(), regionLocation.getZ());
 
@@ -124,9 +126,7 @@ public class SquaremapAPI {
 				}
 
 				if (!api.iconRegistry().hasEntry(iconKey)) {
-					if (bufferedIcon != null) {
-						api.iconRegistry().register(iconKey, bufferedIcon);
-					}
+					api.iconRegistry().register(iconKey, bufferedIcon);
 				}
 
 				Icon icon = Marker.icon(iconPoint, iconKey,
@@ -138,8 +138,8 @@ public class SquaremapAPI {
 				icon.markerOptions(iconOptions);
 
 				targetLayer.addMarker(iconKey, icon);
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception ignored) {
+
 			}
 		}
 	}
@@ -239,28 +239,28 @@ public class SquaremapAPI {
 		boolean result;
 		switch (direction) {
 			case NORTH: {
-				Region chunksRegion = ChunksManager
+				Region chunksRegion = ChunkManager
 						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z - 1).getBukkitChunk());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;
 			}
 			case EAST: {
-				Region chunksRegion = ChunksManager
+				Region chunksRegion = ChunkManager
 						.getRegionOwnsTheChunk(new SerializableChunk(world, x + 1, z).getBukkitChunk());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;
 			}
 			case SOUTH: {
-				Region chunksRegion = ChunksManager
+				Region chunksRegion = ChunkManager
 						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z + 1).getBukkitChunk());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;
 			}
 			case WEST: {
-				Region chunksRegion = ChunksManager
+				Region chunksRegion = ChunkManager
 						.getRegionOwnsTheChunk(new SerializableChunk(world, x - 1, z).getBukkitChunk());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
@@ -276,7 +276,7 @@ public class SquaremapAPI {
 	public void update() {
 		clearAllMarkers();
 
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			for (SerializableChunk chunk : region.getChunks()) {
 				addChunkMarker(region, chunk);
 			}

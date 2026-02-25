@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLog;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -101,7 +102,7 @@ public class RegionLogs {
 					.add("{index}", i + 1)
 					.add("{log-sentat}", Formatter.getDate(log.getSentAt()))
 					.add("{log-author}", log.getAuthor())
-					.add("{log-message}", wrapMessage(log.getMessage()));
+					.add("{log-message}", ColorTranslator.preserve(wrapMessage(log.getMessage())));
 
 			items.add(MenuUtils.getButton(log.isRead() ? 40 : 39, placeholder));
 		}

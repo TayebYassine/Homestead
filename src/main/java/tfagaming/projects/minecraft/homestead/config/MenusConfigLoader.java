@@ -27,11 +27,8 @@ public class MenusConfigLoader {
 				assert stream != null;
 				FileUtils.copyInputStreamToFile(stream, configFile);
 			} catch (IOException e) {
-				Logger.error(
-						"Unable to copy the default menus configuration file (menus.yml), closing plugin's instance...");
-				plugin.endInstance();
-
-				e.printStackTrace();
+				Logger.error(e);
+				Homestead.getInstance().endInstance();
 			}
 		}
 

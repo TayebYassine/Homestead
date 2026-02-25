@@ -1,6 +1,9 @@
 package tfagaming.projects.minecraft.homestead.database.providers;
 
-import com.mongodb.client.*;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import org.bson.Document;
@@ -21,11 +24,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public final class MongoDB {
+	private static final ReplaceOptions UPSERT = new ReplaceOptions().upsert(true);
 	private final MongoClient mongoClient;
 	private final MongoDatabase mongoDatabase;
 	private final String COLLECTION_PREFIX;
-
-	private static final ReplaceOptions UPSERT = new ReplaceOptions().upsert(true);
 
 	public MongoDB(String uri, String database, String collectionPrefix) {
 		COLLECTION_PREFIX = collectionPrefix.replaceAll("[^A-Za-z0-9_]", "");
@@ -34,6 +36,11 @@ public final class MongoDB {
 		this.mongoDatabase = mongoClient.getDatabase(database);
 
 		Logger.info("New MongoDB connection established. Database: " + database);
+	}
+
+	private static String str(Document doc, String key) {
+		Object v = doc.get(key);
+		return v != null ? v.toString() : null;
 	}
 
 	private MongoCollection<Document> regions() {
@@ -50,11 +57,6 @@ public final class MongoDB {
 
 	private MongoCollection<Document> levels() {
 		return mongoDatabase.getCollection(COLLECTION_PREFIX + "levels");
-	}
-
-	private static String str(Document doc, String key) {
-		Object v = doc.get(key);
-		return v != null ? v.toString() : null;
 	}
 
 	public void importRegions() {

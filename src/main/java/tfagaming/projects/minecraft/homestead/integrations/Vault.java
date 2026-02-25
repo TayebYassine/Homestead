@@ -10,13 +10,11 @@ import tfagaming.projects.minecraft.homestead.integrations.vault.VaultUnlockedPr
  * The ancient Vault plugin, doesn't support Folia.
  */
 public class Vault {
-	private final Homestead plugin;
 
 	private VaultUnlockedProvider vaultUnlockedProvider;
 	private LegacyVaultProvider legacyVaultProvider;
 
 	public Vault(Homestead plugin) {
-		this.plugin = plugin;
 
 		if (Homestead.isFolia()) {
 			this.vaultUnlockedProvider = new VaultUnlockedProvider(plugin);

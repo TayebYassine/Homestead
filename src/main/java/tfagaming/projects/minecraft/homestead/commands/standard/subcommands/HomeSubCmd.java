@@ -20,7 +20,7 @@ public class HomeSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -50,7 +50,7 @@ public class HomeSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		new DelayedTeleport(player, region.getLocation().getBukkitLocation());
+		new DelayedTeleport(player, region.getLocation().bukkit());
 
 		return true;
 	}

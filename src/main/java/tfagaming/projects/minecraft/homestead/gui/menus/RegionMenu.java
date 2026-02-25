@@ -4,9 +4,9 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager.RegionSorting;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorting;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -40,17 +40,17 @@ public class RegionMenu {
 				.add("{upkeep-enabled}", Formatter.getToggle(isUpkeepEnabled))
 				.add("{upkeep-date}", isUpkeepEnabled ? Formatter.getRemainingTime(region.getUpkeepAt()) : Formatter.getNever())
 				.add("{upkeep-amount}", Formatter.getBalance(UpkeepUtils.getAmountToPay(region)))
-				.add("{region-global-rank}", RegionsManager.getGlobalRank(region.getUniqueId()))
-				.add("{region-rank-bank}", RegionsManager.getRank(RegionSorting.BANK, region.getUniqueId()))
-				.add("{region-rank-chunks}", RegionsManager.getRank(RegionSorting.CHUNKS_COUNT, region.getUniqueId()))
-				.add("{region-rank-members}", RegionsManager.getRank(RegionSorting.MEMBERS_COUNT, region.getUniqueId()))
-				.add("{region-rank-rating}", RegionsManager.getRank(RegionSorting.RATING, region.getUniqueId()))
+				.add("{region-global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
+				.add("{region-rank-bank}", RegionManager.getRank(RegionSorting.BANK, region.getUniqueId()))
+				.add("{region-rank-chunks}", RegionManager.getRank(RegionSorting.CHUNKS_COUNT, region.getUniqueId()))
+				.add("{region-rank-members}", RegionManager.getRank(RegionSorting.MEMBERS_COUNT, region.getUniqueId()))
+				.add("{region-rank-rating}", RegionManager.getRank(RegionSorting.RATING, region.getUniqueId()))
 				.add("{region-logs}", region.getLogs().size())
 				.add("{region-logs-unread}", region.getLogs().stream().filter(log -> !log.isRead()).count())
 				.add("{region-weather}", WeatherType.from(region.getWeather()))
 				.add("{region-time}", TimeType.from(region.getTime()))
 				.add("{subareas-enabled}", Formatter.getToggle(isSubAreasEnabled))
-				.add("{region-subareas}", SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).size())
+				.add("{region-subareas}", SubAreaManager.getSubAreasOfRegion(region.getUniqueId()).size())
 				// Rent placeholders
 				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
 				.add("{rent-renter}", rent != null ? rent.getPlayer().getName() : Formatter.getNone())
@@ -156,7 +156,7 @@ public class RegionMenu {
 
 				region.removeMember(player);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				RegionsManager.addNewLog(region.getUniqueId(), 4, new Placeholder()
+				RegionManager.addNewLog(region.getUniqueId(), 4, new Placeholder()
 						.add("{playername}", player.getName()));
 				new RegionsMenu(player);
 			});

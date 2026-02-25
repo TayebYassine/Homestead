@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
@@ -61,7 +61,7 @@ public class SubAreaMenu {
 					Messages.send(player, 11);
 					return false;
 				}
-				if (SubAreasManager.isNameUsed(region.getUniqueId(), message)) {
+				if (SubAreaManager.isNameUsed(region.getUniqueId(), message)) {
 					Messages.send(player, 58);
 					return false;
 				}
@@ -120,7 +120,7 @@ public class SubAreaMenu {
 				return;
 			}
 
-			SubAreasManager.deleteSubArea(subArea.getUniqueId());
+			SubAreaManager.deleteSubArea(subArea.getUniqueId());
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 			new SubAreasMenu(player, region);
 		});

@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
@@ -66,7 +66,7 @@ public class RegionPlayersInvited {
 					region.addPlayerInvite(targetPlayer);
 				}
 
-				RegionsManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
+				RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{playername}", targetPlayer.getName()));
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);

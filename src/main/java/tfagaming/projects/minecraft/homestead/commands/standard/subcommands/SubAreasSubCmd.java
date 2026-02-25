@@ -13,8 +13,8 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.SubAreasMenu;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener.Selection;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
@@ -41,7 +41,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -89,9 +89,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				Block secondCorner = session.getSecondPosition();
 
 				for (Chunk chunk : ChunkUtils.getChunksInArea(firstCorner, secondCorner)) {
-					Region chunkRegion = ChunksManager.getRegionOwnsTheChunk(chunk);
-
-					if (chunkRegion == null || !chunkRegion.getUniqueId().equals(region.getUniqueId())) {
+					if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
 						Messages.send(player, 55);
 						return true;
 					}
@@ -110,7 +108,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (SubAreasManager.isNameUsed(region.getUniqueId(), name)) {
+				if (SubAreaManager.isNameUsed(region.getUniqueId(), name)) {
 					Messages.send(player, 58);
 					return true;
 				}
@@ -131,7 +129,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				SubAreasManager.createSubArea(region.getUniqueId(), name, firstCorner.getWorld(), firstCorner, secondCorner, region.getPlayerFlags());
+				SubAreaManager.createSubArea(region.getUniqueId(), name, firstCorner.getWorld(), firstCorner, secondCorner, region.getPlayerFlags());
 
 				SelectionToolListener.cancelPlayerSession(player);
 
@@ -158,7 +156,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				String name = args[1];
 				String newName = args[2];
 
-				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
+				SubArea subArea = SubAreaManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
 					Messages.send(player, 60);
@@ -175,7 +173,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (SubAreasManager.isNameUsed(region.getUniqueId(), newName)) {
+				if (SubAreaManager.isNameUsed(region.getUniqueId(), newName)) {
 					Messages.send(player, 58);
 					return true;
 				}
@@ -199,14 +197,14 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				String name = args[1];
 
-				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
+				SubArea subArea = SubAreaManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
 					Messages.send(player, 60);
 					return true;
 				}
 
-				SubAreasManager.deleteSubArea(subArea.getUniqueId());
+				SubAreaManager.deleteSubArea(subArea.getUniqueId());
 
 				Messages.send(player, 62, new Placeholder()
 						.add("{subarea}", subArea.getName())
@@ -229,7 +227,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				String name = args[1];
 
-				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
+				SubArea subArea = SubAreaManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
 					Messages.send(player, 60);
@@ -303,7 +301,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				String name = args[1];
 
-				SubArea subArea = SubAreasManager.findSubArea(region.getUniqueId(), name);
+				SubArea subArea = SubAreaManager.findSubArea(region.getUniqueId(), name);
 
 				if (subArea == null) {
 					Messages.send(player, 60);
@@ -472,7 +470,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 			Region region = TargetRegionSession.getRegion(player);
 
 			if (region != null) {
-				suggestions.addAll(SubAreasManager.getSubAreasOfRegion(region.getUniqueId()).stream()
+				suggestions.addAll(SubAreaManager.getSubAreasOfRegion(region.getUniqueId()).stream()
 						.map(SubArea::getName).toList());
 			}
 		} else if (args.length == 3 && args[0].equals("players")) {

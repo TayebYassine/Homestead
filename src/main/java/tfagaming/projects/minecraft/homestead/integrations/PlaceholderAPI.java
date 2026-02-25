@@ -4,8 +4,8 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -48,7 +48,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
-		Region currentRegion = ChunksManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
+		Region currentRegion = ChunkManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
 
 		return switch (params.toLowerCase()) {
 			case "region_bank" -> {
@@ -115,18 +115,18 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 				yield Formatter.getDate(region.getUpkeepAt());
 			}
 			case "war_name" -> {
-				if (region == null || !WarsManager.isRegionInWar(region.getUniqueId())) {
+				if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
 					yield Homestead.config.getString("placeholderapi.default.war_name");
 				}
 
-				yield WarsManager.findWarByRegionId(region.getUniqueId()).getName();
+				yield WarManager.findWarByRegionId(region.getUniqueId()).getName();
 			}
 			case "war_prize" -> {
-				if (region == null || !WarsManager.isRegionInWar(region.getUniqueId())) {
+				if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
 					yield Homestead.config.getString("placeholderapi.default.war_prize");
 				}
 
-				yield Formatter.getBalance(WarsManager.findWarByRegionId(region.getUniqueId()).getPrize());
+				yield Formatter.getBalance(WarManager.findWarByRegionId(region.getUniqueId()).getPrize());
 			}
 			default -> null;
 		};

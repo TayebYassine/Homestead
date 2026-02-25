@@ -5,9 +5,9 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
-import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -60,9 +60,9 @@ public class ExportSubCmd extends SubCommandBuilder {
 			instance.exportLevels();
 
 			Messages.send(sender, 86, new Placeholder()
-					.add("{regions}", RegionsManager.getAll().size())
-					.add("{wars}", WarsManager.getAll().size())
-					.add("{subareas}", SubAreasManager.getAll().size())
+					.add("{regions}", RegionManager.getAll().size())
+					.add("{wars}", WarManager.getAll().size())
+					.add("{subareas}", SubAreaManager.getAll().size())
 					.add("{current-provider}", currentProvider)
 					.add("{selected-provider}", provider)
 			);

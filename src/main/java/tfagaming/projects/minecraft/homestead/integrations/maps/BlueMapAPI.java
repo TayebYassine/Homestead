@@ -12,10 +12,11 @@ import de.bluecolored.bluemap.api.math.Shape;
 import org.bukkit.Location;
 import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -96,23 +97,24 @@ public class BlueMapAPI {
 
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{region-owner}", region.getOwner().getName());
-		replacements.put("{region-members}", ColorTranslator.preserve(Formatter.getMembersOfRegion(region)));
-		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
-		replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
-		replacements.put("{region-description}", region.getDescription());
-		replacements.put("{region-size}", String.valueOf(region.getChunks().size() * 256));
+		Placeholder placeholder = new Placeholder()
+				.add("{region}", region.getName())
+				.add("{region-owner}", region.getOwner().getName())
+				.add("{region-members}",
+						ColorTranslator.preserve(Formatter.getMembersOfRegion(region)))
+				.add("{region-chunks}", region.getChunks().size())
+				.add("{global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
+				.add("{region-description}", region.getDescription())
+				.add("{region-size}", region.getChunks().size() * 256);
 
 		String hoverTextRaw = Formatter.applyPlaceholders(
 				isOperator
 						? Homestead.config.getString("dynamic-maps.chunks.operator-description")
 						: Homestead.config.getString("dynamic-maps.chunks.description"),
-				replacements
+				placeholder
 		);
 
-		String plainLabel = region.getName() + " (#" + RegionsManager.getGlobalRank(region.getUniqueId()) + ")";
+		String plainLabel = region.getName() + " (#" + RegionManager.getGlobalRank(region.getUniqueId()) + ")";
 		plainLabel = ColorTranslator.preserve(plainLabel)
 				.replaceAll("<[^>]*>", "")
 				.replaceAll("&lt;[^&]*&gt;", "")
@@ -194,7 +196,7 @@ public class BlueMapAPI {
 	public void addRegionSpawnLocation(World world, MarkerSet markerSet, Region region, String hoverText) {
 		if (markerSet == null || region == null || region.getLocation() == null) return;
 
-		Location loc = region.getLocation().getBukkitLocation();
+		Location loc = region.getLocation().bukkit();
 		if (loc == null || loc.getWorld() == null || !loc.getWorld().equals(world)) return;
 
 		POIMarker marker = POIMarker.builder()
@@ -213,7 +215,7 @@ public class BlueMapAPI {
 	 */
 	public void update() {
 		clearAllMarkers();
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			addRegionMarker(region);
 		}
 	}

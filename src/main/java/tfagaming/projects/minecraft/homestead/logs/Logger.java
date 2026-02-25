@@ -10,42 +10,6 @@ public class Logger {
 	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Homestead");
 	private static LogsFile logs;
 
-	public enum PredefinedMessages {
-		WORLDGUARD_PLUGIN_NOT_FOUND(new String[]{
-				"Unable to find the plugin 'WorldGuard' or execute API methods for its class.",
-				"Please install the plugin, or disable any feature that requires the API of that extension."
-		}),
-		ECONOMY_INTEGRATION_DISABLED(new String[]{
-				"Unable to find an economy integration or execute API methods for its class.",
-				"Please install a plugin that includes Economy API, or disable any feature that requires the API of that extension."
-		}),
-		UPDATE_FOUND(new String[]{
-			"There is an available update for Homestead.",
-			"Download links:",
-			"https://www.spigotmc.org/resources/121873/, ",
-			"https://modrinth.com/plugin/homestead-plugin, ",
-			"https://hangar.papermc.io/TayebYassine/Homestead"
-		}),
-		UPDATE_FETCH_FAILURE(new String[]{
-				"Failed to fetch for updates, maybe GitHub is down or you are not connected to the internet.",
-				"You can manually look for updates on SpigotMC, Modrinth, or Hangar!"
-		});
-
-		private final String[] message;
-
-		PredefinedMessages(String[] message) {
-			this.message = message;
-		}
-
-		PredefinedMessages(String message) {
-			this.message = new String[]{message};
-		}
-
-		public String[] getMessage() {
-			return message;
-		}
-	}
-
 	public Logger() {
 		Logger.logs = new LogsFile();
 
@@ -110,6 +74,42 @@ public class Logger {
 		if (Homestead.isSnapshot()) {
 			Logger.warning("This Homestead version is a snapshot! Bugs and exploits may be present in this JAR file.");
 			Logger.warning("If you're not a developer or a contributor of Homestead, we recommend you use this JAR file for development, not for production!");
+		}
+	}
+
+	public enum PredefinedMessages {
+		WORLDGUARD_PLUGIN_NOT_FOUND(new String[]{
+				"Unable to find the plugin 'WorldGuard' or execute API methods for its class.",
+				"Please install the plugin, or disable any feature that requires the API of that extension."
+		}),
+		ECONOMY_INTEGRATION_DISABLED(new String[]{
+				"Unable to find an economy integration or execute API methods for its class.",
+				"Please install a plugin that includes Economy API, or disable any feature that requires the API of that extension."
+		}),
+		UPDATE_FOUND(new String[]{
+				"There is an available update for Homestead.",
+				"Download links:",
+				"https://www.spigotmc.org/resources/121873/, ",
+				"https://modrinth.com/plugin/homestead-plugin, ",
+				"https://hangar.papermc.io/TayebYassine/Homestead"
+		}),
+		UPDATE_FETCH_FAILURE(new String[]{
+				"Failed to fetch for updates, maybe GitHub is down or you are not connected to the internet.",
+				"You can manually look for updates on SpigotMC, Modrinth, or Hangar!"
+		});
+
+		private final String[] message;
+
+		PredefinedMessages(String[] message) {
+			this.message = message;
+		}
+
+		PredefinedMessages(String message) {
+			this.message = new String[]{message};
+		}
+
+		public String[] getMessage() {
+			return message;
 		}
 	}
 

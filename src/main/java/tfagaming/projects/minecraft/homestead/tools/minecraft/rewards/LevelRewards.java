@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.rewards;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
+import tfagaming.projects.minecraft.homestead.managers.LevelManager;
 import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
@@ -65,7 +65,7 @@ public class LevelRewards {
 			return 0;
 		}
 
-		Level level = LevelsManager.getLevelByRegion(region.getUniqueId());
+		Level level = LevelManager.getLevelByRegion(region.getUniqueId());
 		if (level == null) {
 			return 0;
 		}

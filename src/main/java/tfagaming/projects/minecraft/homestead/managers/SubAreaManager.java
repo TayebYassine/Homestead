@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public final class SubAreasManager {
-	private SubAreasManager() {
+public final class SubAreaManager {
+	private SubAreaManager() {
 	}
 
 	/**
@@ -133,13 +133,13 @@ public final class SubAreasManager {
 			World world = subArea.getWorld();
 
 			if (world == null) {
-				SubAreasManager.deleteSubArea(subArea.getUniqueId());
+				SubAreaManager.deleteSubArea(subArea.getUniqueId());
 				updated++;
 				continue;
 			}
 
-			if (RegionsManager.findRegion(subArea.getRegionId()) == null) {
-				SubAreasManager.deleteSubArea(subArea.getUniqueId());
+			if (RegionManager.findRegion(subArea.getRegionId()) == null) {
+				SubAreaManager.deleteSubArea(subArea.getUniqueId());
 				updated++;
 				continue;
 			}

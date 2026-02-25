@@ -6,8 +6,8 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -38,7 +38,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 		}
 
 		String regionName = args[0];
-		Region region = RegionsManager.findRegion(regionName);
+		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
 			Messages.send(player, 9);
@@ -123,7 +123,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 				}
 
 				Chunk chunk = world.getChunkAt(cx, cz);
-				Region regionOwnsChunk = ChunksManager.getRegionOwnsTheChunk(chunk);
+				Region regionOwnsChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (regionOwnsChunk != null && regionOwnsChunk.getUniqueId().equals(region.getUniqueId())) {
 					toUnclaim.add(chunk);
@@ -138,7 +138,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 
 		int success = 0;
 		for (Chunk chunk : toUnclaim) {
-			ChunksManager.Error err = ChunksManager.forceUnclaimChunk(region.getUniqueId(), chunk);
+			ChunkManager.Error err = ChunkManager.forceUnclaimChunk(region.getUniqueId(), chunk);
 			if (err == null) success++;
 		}
 
@@ -160,7 +160,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 
 		if (args.length == 1) {
 			suggestions.addAll(
-					RegionsManager.getAll().stream()
+					RegionManager.getAll().stream()
 							.map(Region::getName)
 							.toList()
 			);

@@ -7,8 +7,8 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -39,7 +39,7 @@ public class ClaimCommand extends CommandBuilder {
 
 		Chunk chunk = player.getLocation().getChunk();
 
-		if (ChunksManager.isChunkInDisabledWorld(chunk)) {
+		if (ChunkManager.isChunkInDisabledWorld(chunk)) {
 			Messages.send(player, 20);
 			return true;
 		}
@@ -75,7 +75,7 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		Region regionOwnsThisChunk = ChunksManager.getRegionOwnsTheChunk(chunk);
+		Region regionOwnsThisChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 		if (regionOwnsThisChunk != null) {
 			Messages.send(player, 21, new Placeholder()
@@ -89,7 +89,7 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		ChunksManager.Error error = ChunksManager.claimChunk(region.getUniqueId(), chunk);
+		ChunkManager.Error error = ChunkManager.claimChunk(region.getUniqueId(), chunk);
 
 		if (error == null) {
 			PlayerBank.withdraw(region.getOwner(), chunkPrice);
@@ -117,7 +117,7 @@ public class ClaimCommand extends CommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			if (!RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
+			if (!RegionManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 				TargetRegionSession.randomizeRegion(player);
 				region = TargetRegionSession.getRegion(player);
 			} else {
@@ -131,7 +131,7 @@ public class ClaimCommand extends CommandBuilder {
 					return null;
 				}
 
-				region = RegionsManager.createRegion(player.getName(), player, true);
+				region = RegionManager.createRegion(player.getName(), player, true);
 				TargetRegionSession.newSession(player, region);
 			}
 		}

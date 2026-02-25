@@ -3,8 +3,8 @@ package tfagaming.projects.minecraft.homestead.events;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
@@ -20,7 +20,7 @@ public final class RegionRent {
 	 * @param instance Homestead's instance
 	 */
 	public static void trigger(Homestead instance) {
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			final SerializableRent rent = region.getRent();
 
 			if (rent != null && System.currentTimeMillis() > rent.getUntilAt()) {
@@ -38,7 +38,7 @@ public final class RegionRent {
 			}
 		}
 
-		for (SubArea subArea : SubAreasManager.getAll()) {
+		for (SubArea subArea : SubAreaManager.getAll()) {
 			final SerializableRent rent = subArea.getRent();
 
 			if (rent != null && System.currentTimeMillis() > rent.getUntilAt()) {

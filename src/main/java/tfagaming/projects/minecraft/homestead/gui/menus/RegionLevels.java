@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
+import tfagaming.projects.minecraft.homestead.managers.LevelManager;
 import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -20,7 +20,7 @@ public class RegionLevels {
 	private static final int MAX_LEVEL = 50;
 
 	public RegionLevels(Player player, Region region, Runnable backButton) {
-		Level lvl = LevelsManager.getLevelByRegion(region.getUniqueId());
+		Level lvl = LevelManager.getLevelByRegion(region.getUniqueId());
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtils.getTitle(26).replace("{region}", region.getName()),
@@ -74,7 +74,7 @@ public class RegionLevels {
 	}
 
 	private List<ItemStack> buildLevelButtons(Region region) {
-		Level lvl = LevelsManager.getLevelByRegion(region.getUniqueId());
+		Level lvl = LevelManager.getLevelByRegion(region.getUniqueId());
 		int unlocked = lvl == null ? 0 : lvl.getLevel();
 		long currentXp = lvl == null ? 0 : lvl.getExperience();
 

@@ -14,11 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -77,8 +75,6 @@ public final class SelectionToolListener implements Listener {
 
 			Selection selection = sessions.get(playerId);
 
-			Map<String, String> replacements = new HashMap<>();
-
 			if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 				event.setCancelled(true);
 
@@ -100,8 +96,6 @@ public final class SelectionToolListener implements Listener {
 				Homestead.getInstance().runAsyncTaskLater(() -> {
 					cooldowns.remove(player.getUniqueId());
 				}, 1);
-
-				replacements.put("{location}", Formatter.getLocation(firstPosition.getLocation()));
 
 				sendActionBarMessage(player, "firstCorner");
 
@@ -132,8 +126,6 @@ public final class SelectionToolListener implements Listener {
 				Homestead.getInstance().runAsyncTaskLater(() -> {
 					cooldowns.remove(player.getUniqueId());
 				}, 1);
-
-				replacements.put("{location}", Formatter.getLocation(secondPosition.getLocation()));
 
 				sendActionBarMessage(player, "secondCorner");
 

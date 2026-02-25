@@ -4,14 +4,23 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public final class PlayerSound {
+	public static void play(Player player, PredefinedSound sound) {
+		player.playSound(player.getLocation(), sound.getSound(), sound.getVolume(), sound.getPitch());
+	}
+
+	public static void play(Player player, Sound sound) {
+		player.playSound(player.getLocation(), sound, 1.0f, 1.0f);
+	}
+
 	public enum PredefinedSound {
 		SUCCESS(Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.2f),
 		DENIED(Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f),
 		CLICK(Sound.BLOCK_LEVER_CLICK, 1.0f, 1.0f),
 		TELEPORT(Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
 
-		private Sound sound;
-		private float volume, pitch;
+		private final Sound sound;
+		private final float volume;
+		private final float pitch;
 
 		PredefinedSound(Sound sound, float volume, float pitch) {
 			this.sound = sound;
@@ -30,13 +39,5 @@ public final class PlayerSound {
 		public float getPitch() {
 			return pitch;
 		}
-	}
-
-	public static void play(Player player, PredefinedSound sound) {
-		player.playSound(player.getLocation(), sound.getSound(), sound.getVolume(), sound.getPitch());
-	}
-
-	public static void play(Player player, Sound sound) {
-		player.playSound(player.getLocation(), sound, 1.0f, 1.0f);
 	}
 }

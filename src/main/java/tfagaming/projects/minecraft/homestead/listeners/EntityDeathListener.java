@@ -10,7 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
+import tfagaming.projects.minecraft.homestead.managers.LevelManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
@@ -64,7 +64,7 @@ public final class EntityDeathListener implements Listener {
 			return;
 		}
 
-		long amount = LevelsManager.addRandomXp(region.getUniqueId(), xpRange[0], xpRange[1]);
+		long amount = LevelManager.addRandomXp(region.getUniqueId(), xpRange[0], xpRange[1]);
 
 		Messages.send(killer, 198, new Placeholder()
 				.add("{region}", region.getName())

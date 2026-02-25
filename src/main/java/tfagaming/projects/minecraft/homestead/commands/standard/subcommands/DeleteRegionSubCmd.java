@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -25,7 +25,7 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -64,7 +64,7 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 
 		final double bankAmount = region.getBank();
 
-		RegionsManager.deleteRegion(region.getUniqueId(), player);
+		RegionManager.deleteRegion(region.getUniqueId(), player);
 
 		if (Homestead.vault.isEconomyReady()) {
 			PlayerBank.deposit(region.getOwner(), bankAmount);

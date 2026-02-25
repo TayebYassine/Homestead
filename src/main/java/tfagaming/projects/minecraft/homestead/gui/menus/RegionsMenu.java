@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -75,7 +75,7 @@ public class RegionsMenu {
 							return;
 						}
 
-						new DelayedTeleport(_player, region.getLocation().getBukkitLocation());
+						new DelayedTeleport(_player, region.getLocation().bukkit());
 						return;
 					}
 
@@ -113,11 +113,11 @@ public class RegionsMenu {
 	}
 
 	private List<Region> computeRegionList(Player player) {
-		if (isShowAllEnabled(player)) return new ArrayList<>(RegionsManager.getAll());
+		if (isShowAllEnabled(player)) return new ArrayList<>(RegionManager.getAll());
 
 		List<Region> list = new ArrayList<>();
-		list.addAll(RegionsManager.getRegionsOwnedByPlayer(player));
-		list.addAll(RegionsManager.getRegionsHasPlayerAsMember(player));
+		list.addAll(RegionManager.getRegionsOwnedByPlayer(player));
+		list.addAll(RegionManager.getRegionsHasPlayerAsMember(player));
 		return ListUtils.removeDuplications(list);
 	}
 

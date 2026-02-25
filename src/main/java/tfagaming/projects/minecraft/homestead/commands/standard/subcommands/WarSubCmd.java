@@ -9,8 +9,8 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
@@ -20,7 +20,9 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class WarSubCmd extends SubCommandBuilder {
 	public WarSubCmd() {
@@ -68,7 +70,7 @@ public class WarSubCmd extends SubCommandBuilder {
 			case "declare": {
 				Region region = TargetRegionSession.getRegion(player);
 
-				if (region != null && WarsManager.isRegionInWar(region.getUniqueId())) {
+				if (region != null && WarManager.isRegionInWar(region.getUniqueId())) {
 					Messages.send(player, 151);
 					return true;
 				}
@@ -86,7 +88,7 @@ public class WarSubCmd extends SubCommandBuilder {
 				}
 
 				String targetRegionName = args[1];
-				Region targetRegion = RegionsManager.findRegion(targetRegionName);
+				Region targetRegion = RegionManager.findRegion(targetRegionName);
 
 				if (targetRegion == null) {
 					Messages.send(player, 9);
@@ -108,7 +110,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (WarsManager.isRegionInWar(targetRegion.getUniqueId())) {
+				if (WarManager.isRegionInWar(targetRegion.getUniqueId())) {
 					Messages.send(player, 150);
 					return true;
 				}
@@ -146,17 +148,17 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				War war = WarsManager.declareWar(name, prize, List.of(region, targetRegion));
+				War war = WarManager.declareWar(name, prize, List.of(region, targetRegion));
 
 				List<String> listString = Homestead.language.getStringList("147");
 
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{war-name}", war.getName());
-				replacements.put("{regionplayer}", region.getName());
-				replacements.put("{regiontarget}", targetRegion.getName());
-				replacements.put("{prize}", Formatter.getBalance(prize));
+				Placeholder placeholder = new Placeholder()
+						.add("{war-name}", war.getName())
+						.add("{regionplayer}", region.getName())
+						.add("{regiontarget}", targetRegion.getName())
+						.add("{prize}", Formatter.getBalance(prize));
 
-				List<OfflinePlayer> players = WarsManager.getMembersOfWar(war.getUniqueId());
+				List<OfflinePlayer> players = WarManager.getMembersOfWar(war.getUniqueId());
 
 				for (OfflinePlayer p : players) {
 					if (p.isOnline()) {
@@ -165,7 +167,7 @@ public class WarSubCmd extends SubCommandBuilder {
 						player1.playSound(player1.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
 
 						for (String string : listString) {
-							player1.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(string, replacements)));
+							player1.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(string, placeholder)));
 						}
 					}
 				}
@@ -181,12 +183,12 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!WarsManager.isRegionInWar(region.getUniqueId())) {
+				if (!WarManager.isRegionInWar(region.getUniqueId())) {
 					Messages.send(player, 152);
 					return true;
 				}
 
-				War war = WarsManager.surrenderRegionFromFirstWarFound(region.getUniqueId());
+				War war = WarManager.surrenderRegionFromFirstWarFound(region.getUniqueId());
 
 				if (war != null && war.getRegions().size() == 1) {
 					Region winner = war.getRegions().getFirst();
@@ -200,7 +202,7 @@ public class WarSubCmd extends SubCommandBuilder {
 						Messages.send((Player) winner.getOwner(), 155);
 					}
 
-					WarsManager.endWar(war.getUniqueId());
+					WarManager.endWar(war.getUniqueId());
 				}
 
 				Messages.send(player, 153);
@@ -216,9 +218,9 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				War war = WarsManager.findWarByRegionId(region.getUniqueId());
+				War war = WarManager.findWarByRegionId(region.getUniqueId());
 
-				if (!WarsManager.isRegionInWar(region.getUniqueId()) || war == null) {
+				if (!WarManager.isRegionInWar(region.getUniqueId()) || war == null) {
 					Messages.send(player, 152);
 					return true;
 				}
@@ -241,7 +243,7 @@ public class WarSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("declare"))
-			suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
 
 		return suggestions;
 	}

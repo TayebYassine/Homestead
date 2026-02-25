@@ -2,14 +2,13 @@ package tfagaming.projects.minecraft.homestead.tools.java;
 
 import org.bukkit.*;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +21,7 @@ public final class Formatter {
 		return applyPlaceholders(string, replacements);
 	}
 
-	public static String applyPlaceholders(String string, Map<String, String> replacements) {
+	private static String applyPlaceholders(String string, Map<String, String> replacements) {
 		if (string == null) {
 			return "NULL";
 		}
@@ -73,12 +72,11 @@ public final class Formatter {
 		String formatted = simpleDateFormat.format(date);
 		String dateWithAgo = Homestead.config.getString("formatters.date");
 
-		Map<String, String> replacements = new HashMap<String, String>();
+		Placeholder placeholder = new Placeholder()
+				.add("{date}", formatted)
+				.add("{time-ago}", getAgo(date));
 
-		replacements.put("{date}", formatted);
-		replacements.put("{time-ago}", getAgo(date));
-
-		return applyPlaceholders(dateWithAgo, replacements);
+		return applyPlaceholders(dateWithAgo, placeholder);
 	}
 
 	public static String getRating(double rate) {
@@ -172,7 +170,7 @@ public final class Formatter {
 	}
 
 	public static String getPlayerOwnedRegions(OfflinePlayer player) {
-		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
+		List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
 		if (regions.isEmpty()) {
 			return getNone();
@@ -186,7 +184,7 @@ public final class Formatter {
 	}
 
 	public static String getPlayerTrustedRegions(OfflinePlayer player) {
-		List<Region> regions = RegionsManager.getRegionsHasPlayerAsMember(player);
+		List<Region> regions = RegionManager.getRegionsHasPlayerAsMember(player);
 
 		if (regions.isEmpty()) {
 			return getNone();

@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionRating;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -21,7 +21,7 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -36,7 +36,7 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 
 		String regionName = args[0];
 
-		Region region = RegionsManager.findRegion(regionName);
+		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
 			Messages.send(player, 9);
@@ -56,7 +56,7 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1) {
-			suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
 		}
 
 		return suggestions;

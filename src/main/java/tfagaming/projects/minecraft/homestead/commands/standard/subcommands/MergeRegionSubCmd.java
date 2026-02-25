@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.MergeRegionSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -23,7 +23,7 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -45,7 +45,7 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 
 		String regionName = args[0];
 
-		Region targetRegion = RegionsManager.findRegion(regionName);
+		Region targetRegion = RegionManager.findRegion(regionName);
 
 		if (targetRegion == null) {
 			Messages.send(player, 9);
@@ -100,7 +100,7 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1) {
-			suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
 		}
 
 		return suggestions;

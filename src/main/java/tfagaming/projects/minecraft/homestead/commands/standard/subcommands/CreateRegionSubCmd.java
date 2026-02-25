@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -20,7 +20,7 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -45,7 +45,7 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (RegionsManager.isNameUsed(regionName)) {
+		if (RegionManager.isNameUsed(regionName)) {
 			Messages.send(player, 2);
 			return true;
 		}
@@ -55,7 +55,7 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		Region region = RegionsManager.createRegion(regionName, player);
+		Region region = RegionManager.createRegion(regionName, player);
 
 		Messages.send(player, 3, new Placeholder()
 				.add("{name}", region.getName())

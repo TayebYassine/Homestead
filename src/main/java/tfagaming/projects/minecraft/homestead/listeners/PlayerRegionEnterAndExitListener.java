@@ -13,9 +13,9 @@ import org.bukkit.potion.PotionEffectType;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -42,10 +42,10 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 
 		boolean isFeatureEnabled = Homestead.config.getBoolean("enter-exit-region-message.enabled");
 
-		if (ChunksManager.isChunkClaimed(chunk)) {
+		if (ChunkManager.isChunkClaimed(chunk)) {
 			// Player enters a region
 
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 			assert region != null;
 
 			if (sessions.containsKey(player.getUniqueId())
@@ -54,7 +54,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			}
 
 			if (!PlayerUtils.isOperator(player) && region.isPlayerBanned(player)) {
-				Chunk nearbyChunk = ChunksManager.findNearbyUnclaimedChunk(player);
+				Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
 					PlayerUtils.teleportPlayerToChunk(player, nearbyChunk);
@@ -69,8 +69,8 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			}
 
 			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)
-					&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true) && !WarsManager.isRegionInWar(region.getOwnerId())) {
-				Chunk nearbyChunk = ChunksManager.findNearbyUnclaimedChunk(player);
+					&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true) && !WarManager.isRegionInWar(region.getOwnerId())) {
+				Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
 					PlayerUtils.teleportPlayerToChunk(player, nearbyChunk);
@@ -80,12 +80,12 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			}
 
 			if (isFeatureEnabled) {
-				Map<String, String> replacements = new HashMap<String, String>();
-				replacements.put("{region-displayname}", region.getDisplayName());
-				replacements.put("{region-owner}", region.getOwner().getName());
-				replacements.put("{region-description}", region.getDescription().replace("%player%", player.getName()));
+				Placeholder placeholder = new Placeholder()
+						.add("{region-displayname}", region.getDisplayName())
+						.add("{region-owner}", region.getOwner().getName())
+						.add("{region-description}", region.getDescription().replace("%player%", player.getName()));
 
-				PlayerUtils.sendMessageRegionEnter(player, replacements);
+				PlayerUtils.sendMessageRegionEnter(player, placeholder);
 			}
 
 			sessions.put(player.getUniqueId(), region.getUniqueId());
@@ -129,18 +129,18 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				return;
 			}
 
-			Region region = RegionsManager.findRegion(sessions.get(player.getUniqueId()));
+			Region region = RegionManager.findRegion(sessions.get(player.getUniqueId()));
 
 			if (isFeatureEnabled) {
-				Map<String, String> replacements = new HashMap<String, String>();
+				Placeholder placeholder = new Placeholder();
 
 				if (region != null) {
-					replacements.put("{region-displayname}", region.getDisplayName());
-					replacements.put("{region-owner}", region.getOwner().getName());
-					replacements.put("{region-description}", region.getDescription());
+					placeholder.add("{region-displayname}", region.getDisplayName());
+					placeholder.add("{region-owner}", region.getOwner().getName());
+					placeholder.add("{region-description}", region.getDescription());
 				}
 
-				PlayerUtils.sendMessageRegionExit(player, replacements);
+				PlayerUtils.sendMessageRegionExit(player, placeholder);
 			}
 
 			sessions.remove(player.getUniqueId());

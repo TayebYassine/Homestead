@@ -4,7 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class ChunkUtils {
 
 					Chunk currentChunk = world.getChunkAt(startX + x, startZ + z);
 
-					if (!ChunksManager.isChunkClaimed(currentChunk)) {
+					if (!ChunkManager.isChunkClaimed(currentChunk)) {
 						return currentChunk;
 					}
 				}

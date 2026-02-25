@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.ButtonData;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
@@ -45,9 +46,7 @@ public class RegionClaimedChunks {
 
 					if (!context.getEvent().isLeftClick()) return;
 
-					if (!ChunksManager.isChunkClaimed(chunk.getBukkitChunk())
-							|| !ChunksManager.getRegionOwnsTheChunk(chunk.getBukkitChunk())
-							.getUniqueId().equals(region.getUniqueId())) {
+					if (!ChunkManager.isChunkClaimed(chunk.getBukkitChunk()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.getBukkitChunk())) {
 						return;
 					}
 
@@ -57,12 +56,14 @@ public class RegionClaimedChunks {
 					}
 
 					int before = region.getChunks().size();
-					ChunksManager.unclaimChunk(region.getUniqueId(), chunk.getBukkitChunk());
+					ChunkManager.unclaimChunk(region.getUniqueId(), chunk.getBukkitChunk());
 
 					if (region.getChunks().size() < before) {
 						double chunkPrice = Homestead.config.getDouble("chunk-price");
 						if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
 					}
+
+					PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 					ChunkBorder.show(player);
 
@@ -72,8 +73,7 @@ public class RegionClaimedChunks {
 
 		gui.addActionButton(1, MenuUtils.getButton(73, new Placeholder()
 				.add("{max-chunks}", Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION))
-		), (_a, _b) -> {
-		});
+		), null);
 
 		gui.open(player, MenuUtils.getEmptySlot());
 	}

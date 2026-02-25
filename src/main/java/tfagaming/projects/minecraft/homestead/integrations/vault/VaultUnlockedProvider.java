@@ -93,7 +93,7 @@ public class VaultUnlockedProvider implements EconomyProvider, PermissionsProvid
 	@Override
 	public boolean has(OfflinePlayer player, String permission) {
 		if (permissions == null) return false;
-		return permissions.playerHas((String) null, player, permission);
+		return permissions.playerHas(null, player, permission);
 	}
 
 	@Override

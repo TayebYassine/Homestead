@@ -19,8 +19,8 @@ import java.util.*;
  * Includes adjacency enforcement, anti-split protection, and data handling.<br>
  * This is a utility class that helps manage chunks more easily. Updating and setting data to regions is generally done to the {@link Region} object.
  */
-public final class ChunksManager {
-	private ChunksManager() {
+public final class ChunkManager {
+	private ChunkManager() {
 	}
 
 	/**
@@ -30,7 +30,7 @@ public final class ChunksManager {
 	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
 	 */
 	public static Error claimChunk(UUID id, Chunk chunk) {
-		Region region = RegionsManager.findRegion(id);
+		Region region = RegionManager.findRegion(id);
 
 		if (region == null) {
 			return Error.REGION_NOT_FOUND;
@@ -73,7 +73,7 @@ public final class ChunksManager {
 	}
 
 	private static Error unclaimChunkInternal(UUID id, Chunk chunk, boolean force) {
-		Region region = RegionsManager.findRegion(id);
+		Region region = RegionManager.findRegion(id);
 
 		if (region == null) {
 			return Error.REGION_NOT_FOUND;
@@ -91,7 +91,7 @@ public final class ChunksManager {
 			);
 		}
 
-		if (region.getLocation() != null && ChunkUtils.areEqual(region.getLocation().getBukkitLocation().getChunk(), chunk)) {
+		if (region.getLocation() != null && ChunkUtils.areEqual(region.getLocation().bukkit().getChunk(), chunk)) {
 			region.setLocationToNull();
 		}
 
@@ -108,7 +108,7 @@ public final class ChunksManager {
 	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
 	 */
 	public static Error removeChunk(UUID id, Chunk chunk) {
-		Region region = RegionsManager.findRegion(id);
+		Region region = RegionManager.findRegion(id);
 
 		if (region == null) {
 			return Error.REGION_NOT_FOUND;
@@ -116,10 +116,10 @@ public final class ChunksManager {
 
 		region.removeChunk(chunk);
 
-		for (SubArea subArea : SubAreasManager.getSubAreasOfRegion(id)) {
+		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(id)) {
 			for (Chunk subAreaChunk : ChunkUtils.getChunksInArea(subArea.getFirstPoint(), subArea.getSecondPoint())) {
 				if (ChunkUtils.areEqual(subAreaChunk, chunk)) {
-					SubAreasManager.deleteSubArea(subArea.getUniqueId());
+					SubAreaManager.deleteSubArea(subArea.getUniqueId());
 					break;
 				}
 			}
@@ -230,7 +230,7 @@ public final class ChunksManager {
 	 */
 	public static boolean isChunkClaimed(Chunk chunk) {
 		String key = SerializableChunk.convertToString(chunk, true);
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			for (SerializableChunk serialized : region.getChunks()) {
 				if (serialized == null) continue;
 				if (serialized.toString(true).equals(key)) return true;
@@ -245,13 +245,25 @@ public final class ChunksManager {
 	 */
 	public static Region getRegionOwnsTheChunk(Chunk chunk) {
 		String key = SerializableChunk.convertToString(chunk, true);
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			for (SerializableChunk serialized : region.getChunks()) {
 				if (serialized == null) continue;
 				if (serialized.toString(true).equals(key)) return region;
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns true if the region owns a given chunk, otherwise false.
+	 * @param chunk The chunk
+	 */
+	public static boolean isChunkClaimedByRegion(Region region, Chunk chunk) {
+		for (SerializableChunk each : region.getChunks()) {
+			if (SerializableChunk.equals(each, chunk)) return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -270,8 +282,7 @@ public final class ChunksManager {
 			if (!world.isChunkLoaded(nx, nz)) continue;
 
 			Chunk neighbor = world.getChunkAt(nx, nz);
-			Region neighborRegion = getRegionOwnsTheChunk(neighbor);
-			if (neighborRegion != null && neighborRegion.getUniqueId().equals(region.getUniqueId())) {
+			if (ChunkManager.isChunkClaimedByRegion(region, chunk)) {
 				return true;
 			}
 		}
@@ -402,7 +413,7 @@ public final class ChunksManager {
 	 * @param id The region UUID
 	 */
 	public static void removeRandomChunk(UUID id) {
-		Region region = RegionsManager.findRegion(id);
+		Region region = RegionManager.findRegion(id);
 		if (region == null) return;
 
 		List<SerializableChunk> chunks = region.getChunks();
@@ -420,7 +431,7 @@ public final class ChunksManager {
 		Set<String> worlds = new HashSet<>();
 		for (World w : Bukkit.getWorlds()) worlds.add(w.getName());
 
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			if (region == null || region.getChunks() == null || region.getChunks().isEmpty()) continue;
 
 			Iterator<SerializableChunk> it = region.getChunks().iterator();

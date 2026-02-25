@@ -3,9 +3,7 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.commands;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public final class AutoCompleteFilter {
 	public static List<String> filter(List<String> suggestions, String[] args) {

@@ -28,7 +28,7 @@ public final class YAML {
 	public YAML(File dataFolder) throws IOException {
 		this.regionsFolder = prepareDataFolder(dataFolder, "regions");
 		this.warsFolder = prepareDataFolder(dataFolder, "wars");
-	    this.subAreasFolder = prepareDataFolder(dataFolder, "subareas");
+		this.subAreasFolder = prepareDataFolder(dataFolder, "subareas");
 		this.levelsFolder = prepareDataFolder(dataFolder, "levels");
 
 		Logger.info("New database connection established, paths: ");

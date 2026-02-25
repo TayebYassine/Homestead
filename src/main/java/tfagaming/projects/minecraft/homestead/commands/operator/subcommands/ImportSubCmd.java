@@ -20,8 +20,8 @@ import org.bukkit.command.CommandSender;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -73,13 +73,13 @@ public class ImportSubCmd extends SubCommandBuilder {
 				continue;
 			}
 
-			Region region = RegionsManager.createRegion(owner.getName(),
+			Region region = RegionManager.createRegion(owner.getName(),
 					Bukkit.getOfflinePlayer(claim.getOwnerID()),
 					true);
 
 			for (Chunk chunk : claim.getChunks()) {
-				if (!ChunksManager.isChunkClaimed(chunk)) {
-					ChunksManager.claimChunk(region.getUniqueId(), chunk);
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					ChunkManager.claimChunk(region.getUniqueId(), chunk);
 				}
 			}
 
@@ -121,15 +121,15 @@ public class ImportSubCmd extends SubCommandBuilder {
 			OfflinePlayer owner = Bukkit.getOfflinePlayer(chunk.getOwner());
 
 			Region region;
-			if (RegionsManager.getRegionsOwnedByPlayer(owner).isEmpty()) {
-				region = RegionsManager.createRegion(owner.getName(), owner, true);
+			if (RegionManager.getRegionsOwnedByPlayer(owner).isEmpty()) {
+				region = RegionManager.createRegion(owner.getName(), owner, true);
 				imported++;
 			} else {
-				region = RegionsManager.getRegionsOwnedByPlayer(owner).getFirst();
+				region = RegionManager.getRegionsOwnedByPlayer(owner).getFirst();
 			}
 
-			if (!ChunksManager.isChunkClaimed(chunk.getChunk())) {
-				ChunksManager.claimChunk(region.getUniqueId(), chunk.getChunk());
+			if (!ChunkManager.isChunkClaimed(chunk.getChunk())) {
+				ChunkManager.claimChunk(region.getUniqueId(), chunk.getChunk());
 			}
 
 			for (UUID friendUuid : chunk.getFriends()) {
@@ -145,7 +145,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 				}
 			}
 
-			if (RegionsManager.getRegionsOwnedByPlayer(owner).size() == 1) {
+			if (RegionManager.getRegionsOwnedByPlayer(owner).size() == 1) {
 				Logger.info(String.format("Imported region: Name=%s, ID=%s, Owner=%s (%s)",
 						region.getName(), region.getUniqueId(), owner.getName(), owner.getUniqueId()));
 			}
@@ -177,14 +177,14 @@ public class ImportSubCmd extends SubCommandBuilder {
 				continue;
 			}
 
-			Region region = RegionsManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
+			Region region = RegionManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
 
 			for (ChunkPos chunkPos : chunkPositions) {
-				Chunk chunk = ChunksManager.getFromLocation(Bukkit.getWorld(chunkPos.world()), chunkPos.x(),
+				Chunk chunk = ChunkManager.getFromLocation(Bukkit.getWorld(chunkPos.world()), chunkPos.x(),
 						chunkPos.z());
 
-				if (!ChunksManager.isChunkClaimed(chunk)) {
-					ChunksManager.claimChunk(region.getUniqueId(), chunk);
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					ChunkManager.claimChunk(region.getUniqueId(), chunk);
 				}
 			}
 
@@ -215,14 +215,14 @@ public class ImportSubCmd extends SubCommandBuilder {
 				continue;
 			}
 
-			Region region = RegionsManager.createRegion(owner.getName(), owner, true);
+			Region region = RegionManager.createRegion(owner.getName(), owner, true);
 
 			for (World world : Bukkit.getWorlds()) {
 				for (ChunkCoordinate chunkCoord : Objects.requireNonNull(land.getChunks(world))) {
-					Chunk chunk = ChunksManager.getFromLocation(world, chunkCoord.getX(), chunkCoord.getZ());
+					Chunk chunk = ChunkManager.getFromLocation(world, chunkCoord.getX(), chunkCoord.getZ());
 
-					if (!ChunksManager.isChunkClaimed(chunk)) {
-						ChunksManager.claimChunk(region.getUniqueId(), chunk);
+					if (!ChunkManager.isChunkClaimed(chunk)) {
+						ChunkManager.claimChunk(region.getUniqueId(), chunk);
 					}
 				}
 			}
@@ -265,7 +265,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 				continue;
 			}
 
-			Region region = RegionsManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
+			Region region = RegionManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
 
 			for (World world : Bukkit.getWorlds()) {
 				net.william278.huskclaims.position.World hcWorld = api.getWorld(world.getName());
@@ -276,10 +276,10 @@ public class ImportSubCmd extends SubCommandBuilder {
 						net.william278.huskclaims.claim.Region region1 = claim.getRegion();
 
 						region1.getChunks().forEach(claimChunk -> {
-							Chunk chunk = ChunksManager.getFromLocation(world, claimChunk[0], claimChunk[1]);
+							Chunk chunk = ChunkManager.getFromLocation(world, claimChunk[0], claimChunk[1]);
 
-							if (!ChunksManager.isChunkClaimed(chunk)) {
-								ChunksManager.claimChunk(region.getUniqueId(), chunk);
+							if (!ChunkManager.isChunkClaimed(chunk)) {
+								ChunkManager.claimChunk(region.getUniqueId(), chunk);
 							}
 						});
 					});

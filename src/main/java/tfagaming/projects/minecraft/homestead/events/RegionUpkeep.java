@@ -2,8 +2,8 @@ package tfagaming.projects.minecraft.homestead.events;
 
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -19,7 +19,7 @@ public final class RegionUpkeep {
 	 * @param instance Homestead's instance
 	 */
 	public static void trigger(Homestead instance) {
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			if (System.currentTimeMillis() > region.getUpkeepAt()) {
 				double amountToPay = UpkeepUtils.getAmountToPay(region);
 
@@ -28,7 +28,7 @@ public final class RegionUpkeep {
 
 					if (chunksToRemove > 0) {
 						for (int i = 0; i < chunksToRemove; i++) {
-							ChunksManager.removeRandomChunk(region.getUniqueId());
+							ChunkManager.removeRandomChunk(region.getUniqueId());
 						}
 					}
 
@@ -36,9 +36,9 @@ public final class RegionUpkeep {
 						Player regionOwner = (Player) region.getOwner();
 
 						Placeholder placeholder = new Placeholder()
-							.add("{amount}", Formatter.getBalance(amountToPay))
-							.add("{region}", region.getName())
-							.add("{chunks}", String.valueOf(chunksToRemove));
+								.add("{amount}", Formatter.getBalance(amountToPay))
+								.add("{region}", region.getName())
+								.add("{chunks}", String.valueOf(chunksToRemove));
 
 						Messages.send(regionOwner, 111, placeholder);
 						Messages.send(regionOwner, 112, placeholder);
@@ -52,9 +52,9 @@ public final class RegionUpkeep {
 						Player regionOwner = (Player) region.getOwner();
 
 						Placeholder placeholder = new Placeholder()
-							.add("{amount}", Formatter.getBalance(amountToPay))
-							.add("{region}", region.getName())
-							.add("{bank}", Formatter.getBalance(region.getBank()));
+								.add("{amount}", Formatter.getBalance(amountToPay))
+								.add("{region}", region.getName())
+								.add("{bank}", Formatter.getBalance(region.getBank()));
 
 						Messages.send(regionOwner, 109, placeholder);
 						Messages.send(regionOwner, 110, placeholder);

@@ -4,9 +4,9 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.integrations.bstats.Metrics;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
-import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class bStats {
 			metrics.addCustomChart(new Metrics.SingleLineChart("regions", new Callable<Integer>() {
 				@Override
 				public Integer call() throws Exception {
-					return RegionsManager.getAll().size();
+					return RegionManager.getAll().size();
 				}
 			}));
 
@@ -30,7 +30,7 @@ public class bStats {
 			metrics.addCustomChart(new Metrics.SingleLineChart("subareas", new Callable<Integer>() {
 				@Override
 				public Integer call() throws Exception {
-					return SubAreasManager.getAll().size();
+					return SubAreaManager.getAll().size();
 				}
 			}));
 
@@ -40,7 +40,7 @@ public class bStats {
 				public Integer call() throws Exception {
 					int players = 0;
 
-					for (Region region : RegionsManager.getAll()) {
+					for (Region region : RegionManager.getAll()) {
 						players += region.getMembers().size();
 					}
 
@@ -54,7 +54,7 @@ public class bStats {
 				public Integer call() throws Exception {
 					int chunks = 0;
 
-					for (Region region : RegionsManager.getAll()) {
+					for (Region region : RegionManager.getAll()) {
 						chunks += region.getChunks().size();
 					}
 
@@ -114,7 +114,7 @@ public class bStats {
 			metrics.addCustomChart(new Metrics.SingleLineChart("wars", new Callable<Integer>() {
 				@Override
 				public Integer call() throws Exception {
-					return WarsManager.getAll().size();
+					return WarManager.getAll().size();
 				}
 			}));
 

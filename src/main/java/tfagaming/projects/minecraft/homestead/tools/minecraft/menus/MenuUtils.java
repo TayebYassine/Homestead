@@ -9,9 +9,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MenuUtils {
 	public static String getTitle(int path) {
@@ -34,16 +32,12 @@ public class MenuUtils {
 	}
 
 	public static ItemStack getButton(ButtonData data, Placeholder placeholder) {
-		return getButton(data, placeholder.build());
-	}
-
-	public static ItemStack getButton(ButtonData data, Map<String, String> replacements) {
 		if (data.getOriginalType().startsWith("PLAYERHEAD-")) {
 			String texture = data.getOriginalType().split("-")[1];
 
-			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, replacements);
+			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
 		} else {
-			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType(), replacements);
+			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType(), placeholder);
 		}
 	}
 
@@ -68,10 +62,6 @@ public class MenuUtils {
 	}
 
 	public static ItemStack getButton(int path, Placeholder placeholder, OfflinePlayer... playerHead) {
-		return getButton(path, placeholder.build(), playerHead);
-	}
-
-	public static ItemStack getButton(int path, Map<String, String> replacements, OfflinePlayer... playerHead) {
 		ButtonData data = getButtonData(path);
 
 		if (data.getOriginalType().startsWith("PLAYERHEAD-")) {
@@ -79,37 +69,37 @@ public class MenuUtils {
 
 			if (texture.equalsIgnoreCase("this")) {
 				if (playerHead.length == 0) {
-					return ItemUtils.getItem(data.getName(), data.getLore(), Material.BARRIER, replacements);
+					return ItemUtils.getItem(data.getName(), data.getLore(), Material.BARRIER, placeholder);
 				} else {
 					return ItemUtils.getPlayerHead(data.getName(), data.getLore(), playerHead[0].getUniqueId(),
-							replacements);
+							placeholder);
 				}
 			} else {
-				return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, replacements);
+				return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
 			}
 		} else {
-			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType(), replacements);
+			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType(), placeholder);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public static ItemStack getFlagButton(String flag, boolean value) {
-		HashMap<String, String> replacements = new HashMap<>();
+		Placeholder placeholder = new Placeholder();
 
 		Object description = Homestead.language.getRaw("flags-info." + flag + ".description");
 
-		replacements.put("{flag}", flag);
+		placeholder.add("{flag}", flag);
 
 		if (description instanceof String) {
-			replacements.put("{flag-description}", description.toString());
+			placeholder.add("{flag-description}", description.toString());
 		} else if (description instanceof List<?> list) {
 			List<String> strList = list.stream().map(String::valueOf).toList();
 
-			replacements.put("{flag-description}", String.join("\n", strList));
+			placeholder.add("{flag-description}", String.join("\n", strList));
 		}
 
-		replacements.put("{state}", Formatter.getFlagState(value));
-		replacements.put("{flag-allowed}",
+		placeholder.add("{state}", Formatter.getFlagState(value));
+		placeholder.add("{flag-allowed}",
 				Formatter.getBoolean(!Homestead.config.isFlagDisabled(flag)));
 
 		ButtonData data = getButtonData(17);
@@ -118,10 +108,10 @@ public class MenuUtils {
 		if (type != null && type.startsWith("PLAYERHEAD-")) {
 			String texture = type.split("-")[1];
 
-			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, replacements);
+			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
 		} else {
 			return ItemUtils.getItem(data.getName(), data.getLore(),
-					Material.getMaterial(type == null ? "BARRIER" : type), replacements);
+					Material.getMaterial(type == null ? "BARRIER" : type), placeholder);
 		}
 	}
 

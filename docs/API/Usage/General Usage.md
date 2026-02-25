@@ -16,13 +16,13 @@ import tfagaming.projects.minecraft.homestead.structure.*;
 // The region name
 String name = "ExampleRegion";
 
-// The owner of the region
-Player player = Bukkit.getPlayer("TFA_Gaming");
+		// The owner of the region
+		Player player = Bukkit.getPlayer("TFA_Gaming");
 
-// Verify if another region has the same name ('true' is recommended)
-boolean verifyName = true;
+		// Verify if another region has the same name ('true' is recommended)
+		boolean verifyName = true;
 
-Region region = RegionsManager.createRegion(name, player, verifyName);
+		Region region = RegionManager.createRegion(name, player, verifyName);
 ```
 
 ### Fetching a region:
@@ -56,13 +56,15 @@ import tfagaming.projects.minecraft.homestead.structure.*;
 // Optional, but if not provided in parameters, the event will not be triggered
 Player player = Bukkit.getPlayer("TFA_Gaming");
 
-// Finding a region by name
-Region region = RegionsManager.findRegion("ExampleRegion");
+		// Finding a region by name
+		Region region = RegionManager.findRegion("ExampleRegion");
 
 // If the region exist (not null)
-if (region != null){
-    RegionsManager.deleteRegion(region.getUniqueId(), player);
-}
+if(region !=null){
+		RegionsManager.
+
+		deleteRegion(region.getUniqueId(),player);
+		}
 ```
 
 ### Claiming a Chunk:
@@ -76,19 +78,23 @@ import tfagaming.projects.minecraft.homestead.structure.*;
 // The player who will claim the chunk (optional)
 Player player = Bukkit.getPlayer("TFA_Gaming");
 
-// The chunk to claim
-Chunk chunk = ...;
+		// The chunk to claim
+		Chunk chunk = ...;
 
-// The region which will have the chunk added
-Region region = ...; // Make sure not null
+		// The region which will have the chunk added
+		Region region = ...; // Make sure not null
 
-boolean successful = ChunksManager.claimChunk(region.getUniqueId(), chunk, player);
+		boolean successful = ChunkManager.claimChunk(region.getUniqueId(), chunk, player);
 
 // If Homestead claimed the chunk
-if (successful) {
-    System.out.println("Chunk claimed successfully!");    
-} else {
-    System.err.println("Cannot claim the chunk!");
+if(successful){
+		System.out.
+
+		println("Chunk claimed successfully!");    
+}else{
+		System.err.
+
+		println("Cannot claim the chunk!");
 }
 ```
 
@@ -103,19 +109,23 @@ import tfagaming.projects.minecraft.homestead.structure.*;
 // The player who will unclaim the chunk (optional)
 Player player = Bukkit.getPlayer("TFA_Gaming");
 
-// The chunk to unclaim
-Chunk chunk = ...;
+		// The chunk to unclaim
+		Chunk chunk = ...;
 
-// The region which will have the chunk removed
-Region region = ...; // Make sure not null
+		// The region which will have the chunk removed
+		Region region = ...; // Make sure not null
 
-boolean successful = ChunksManager.unclaimChunk(region.getUniqueId(), chunk, player);
+		boolean successful = ChunkManager.unclaimChunk(region.getUniqueId(), chunk, player);
 
 // If Homestead unclaimed the chunk
-if (successful) {
-    System.out.println("Chunk unclaimed successfully!");    
-} else {
-    System.err.println("Cannot unclaim the chunk!");
+if(successful){
+		System.out.
+
+		println("Chunk unclaimed successfully!");    
+}else{
+		System.err.
+
+		println("Cannot unclaim the chunk!");
 }
 ```
 

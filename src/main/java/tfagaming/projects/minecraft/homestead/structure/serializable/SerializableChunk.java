@@ -90,6 +90,18 @@ public class SerializableChunk {
 		return chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ();
 	}
 
+	public static boolean equals(Chunk chunk1, Chunk chunk2) {
+		return convertToString(chunk1, true).equals(convertToString(chunk2, true));
+	}
+
+	public static boolean equals(SerializableChunk chunk1, Chunk chunk2) {
+		return chunk1.toString(true).equals(convertToString(chunk2, true));
+	}
+
+	public static boolean equals(SerializableChunk chunk1, SerializableChunk chunk2) {
+		return chunk1.toString(true).equals(chunk2.toString(true));
+	}
+
 	public String getWorldName() {
 		return worldName;
 	}

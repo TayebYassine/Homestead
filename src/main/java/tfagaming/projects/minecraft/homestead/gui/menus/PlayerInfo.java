@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
@@ -14,8 +14,8 @@ public class PlayerInfo {
 		Menu gui = new Menu(MenuUtils.getTitle(27), 9 * 3);
 
 		Placeholder placeholder = new Placeholder()
-				.add("{regions-count}", RegionsManager.getRegionsOwnedByPlayer(target).size()
-						+ RegionsManager.getRegionsHasPlayerAsMember(target).size())
+				.add("{regions-count}", RegionManager.getRegionsOwnedByPlayer(target).size()
+						+ RegionManager.getRegionsHasPlayerAsMember(target).size())
 				.add("{playername}", target.getName())
 				.add("{player-status}", Formatter.getPlayerStatus(target))
 				.add("{player-balance}", Formatter.getBalance(PlayerBank.get(target)))

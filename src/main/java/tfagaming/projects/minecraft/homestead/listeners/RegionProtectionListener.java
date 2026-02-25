@@ -36,8 +36,8 @@ import org.bukkit.projectiles.ProjectileSource;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -71,10 +71,10 @@ public final class RegionProtectionListener implements Listener {
 				return;
 			}
 
-			if (ChunksManager.isChunkClaimed(toChunk)) {
+			if (ChunkManager.isChunkClaimed(toChunk)) {
 				if (entity instanceof CopperGolem) {
-					Region fromRegion = ChunksManager.getRegionOwnsTheChunk(fromChunk);
-					Region toRegion = ChunksManager.getRegionOwnsTheChunk(toChunk);
+					Region fromRegion = ChunkManager.getRegionOwnsTheChunk(fromChunk);
+					Region toRegion = ChunkManager.getRegionOwnsTheChunk(toChunk);
 
 					if (toRegion == null) {
 						return;
@@ -96,6 +96,10 @@ public final class RegionProtectionListener implements Listener {
 		}
 	}
 
+	private static boolean canBeBrokenByProjectile(Block block) {
+		return !block.isPreferredTool(new ItemStack(Material.AIR));
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityMoveEvent(io.papermc.paper.event.entity.EntityMoveEvent event) {
 		if (!Homestead.isFolia()) {
@@ -103,10 +107,6 @@ public final class RegionProtectionListener implements Listener {
 		}
 
 		onEntityMove(event.getEntity());
-	}
-
-	private static boolean canBeBrokenByProjectile(Block block) {
-		return !block.isPreferredTool(new ItemStack(Material.AIR));
 	}
 
 	// Block place
@@ -596,8 +596,8 @@ public final class RegionProtectionListener implements Listener {
 		Location location = block.getLocation();
 		Chunk chunk = location.getChunk();
 
-		if (player == null && ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (player == null && ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
 				event.setCancelled(true);
@@ -628,8 +628,8 @@ public final class RegionProtectionListener implements Listener {
 				Location location = entity.getLocation();
 				Chunk chunk = location.getChunk();
 
-				if (ChunksManager.isChunkClaimed(chunk)) {
-					Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+				if (ChunkManager.isChunkClaimed(chunk)) {
+					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 					if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSIONS_DAMAGE)) {
 						event.setCancelled(true);
@@ -663,16 +663,16 @@ public final class RegionProtectionListener implements Listener {
 				event.setCancelled(true);
 			});
 		} else if (projectile instanceof WitherSkull) {
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
 					event.getEntity().remove();
 					event.setCancelled(true);
 				}
 			}
-		} else if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		} else if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
 				event.setCancelled(true);
@@ -706,8 +706,8 @@ public final class RegionProtectionListener implements Listener {
 				});
 			}
 		} else if (Explosives.isExplosive(entity)) {
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSIONS_DAMAGE)) {
 					event.setCancelled(true);
@@ -785,8 +785,8 @@ public final class RegionProtectionListener implements Listener {
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.THROW_POTIONS, null, () -> {
 				event.setCancelled(true);
 			});
-		} else if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		} else if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
 				event.setCancelled(true);
@@ -805,8 +805,8 @@ public final class RegionProtectionListener implements Listener {
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.THROW_POTIONS, null, () -> {
 				event.setCancelled(true);
 			});
-		} else if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		} else if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
 				event.setCancelled(true);
@@ -1043,8 +1043,8 @@ public final class RegionProtectionListener implements Listener {
 		if (entity instanceof WindCharge) {
 			Chunk chunk = event.getLocation().getChunk();
 
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.WINDCHARGE_BURST)) {
 					entity.remove();
@@ -1055,7 +1055,7 @@ public final class RegionProtectionListener implements Listener {
 			boolean updated = event.blockList().removeIf((block) -> {
 				Chunk chunk = block.getChunk();
 
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				return region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE);
 			});
@@ -1066,8 +1066,8 @@ public final class RegionProtectionListener implements Listener {
 		} else if (Explosives.isExplosive(entity)) {
 			Chunk chunk = event.getLocation().getChunk();
 
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSIONS_DAMAGE)) {
 					event.setCancelled(true);
@@ -1080,7 +1080,7 @@ public final class RegionProtectionListener implements Listener {
 				for (Block block : event.blockList()) {
 					Chunk blockChunk = block.getChunk();
 
-					if (!ChunksManager.isChunkClaimed(blockChunk)) {
+					if (!ChunkManager.isChunkClaimed(blockChunk)) {
 						if (belowSeaOnly && entity instanceof TNTPrimed) {
 							if (block.getY() <= block.getWorld().getSeaLevel()) {
 								allowed.add(block);
@@ -1105,8 +1105,8 @@ public final class RegionProtectionListener implements Listener {
 			Location location = block.getLocation();
 			Chunk chunk = location.getChunk();
 
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSIONS_DAMAGE)) {
 					event.setCancelled(true);
@@ -1118,7 +1118,7 @@ public final class RegionProtectionListener implements Listener {
 					Location blockLocation = b.getLocation();
 					Chunk blockChunk = blockLocation.getChunk();
 
-					if (!ChunksManager.isChunkClaimed(blockChunk)) {
+					if (!ChunkManager.isChunkClaimed(blockChunk)) {
 						allowedBlocks.add(b);
 					}
 				}
@@ -1139,32 +1139,32 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (newState.getType() == Material.FIRE) {
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
 					event.setCancelled(true);
 				}
 			}
 		} else if (source.getType() == Material.GRASS_BLOCK || source.getType() == Material.MYCELIUM) {
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.GRASS_GROWTH)) {
 					event.setCancelled(true);
 				}
 			}
 		} else if (event.getSource().getType() == Material.SCULK_CATALYST) {
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.SCULK_SPREAD)) {
 					event.setCancelled(true);
 				}
 			}
 		} else {
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
 					event.setCancelled(true);
@@ -1178,8 +1178,8 @@ public final class RegionProtectionListener implements Listener {
 		Location location = block.getLocation();
 		Chunk chunk = location.getChunk();
 
-		if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
 				event.setCancelled(true);
@@ -1193,8 +1193,8 @@ public final class RegionProtectionListener implements Listener {
 		Location location = block.getLocation();
 		Chunk chunk = location.getChunk();
 
-		if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.LEAVES_DECAY)) {
 				event.setCancelled(true);
@@ -1208,8 +1208,8 @@ public final class RegionProtectionListener implements Listener {
 		Location location = block.getLocation();
 		Chunk chunk = location.getChunk();
 
-		if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
 				event.setCancelled(true);
@@ -1223,8 +1223,8 @@ public final class RegionProtectionListener implements Listener {
 		Chunk toChunk = event.getToBlock().getChunk();
 
 		if (!fromChunk.equals(toChunk)) {
-			if (ChunksManager.isChunkClaimed(toChunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(toChunk);
+			if (ChunkManager.isChunkClaimed(toChunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(toChunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.LIQUID_FLOW)) {
 					event.setCancelled(true);
@@ -1279,16 +1279,16 @@ public final class RegionProtectionListener implements Listener {
 				block = (Block) var5.next();
 				chunk = block.getLocation().getChunk();
 
-				if (!chunk.equals(pistonChunk) && ChunksManager.isChunkClaimed(chunk)) {
-					Region pistonChunkRegion = ChunksManager.getRegionOwnsTheChunk(pistonChunk);
+				if (!chunk.equals(pistonChunk) && ChunkManager.isChunkClaimed(chunk)) {
+					Region pistonChunkRegion = ChunkManager.getRegionOwnsTheChunk(pistonChunk);
 					UUID pistonChunkOwner = pistonChunkRegion == null ? null : pistonChunkRegion.getOwnerId();
-					UUID targetChunkOwner = Objects.requireNonNull(ChunksManager.getRegionOwnsTheChunk(chunk)).getOwnerId();
+					UUID targetChunkOwner = Objects.requireNonNull(ChunkManager.getRegionOwnsTheChunk(chunk)).getOwnerId();
 
 					if (pistonChunkRegion != null && pistonChunkOwner != null && pistonChunkOwner.equals(targetChunkOwner)) {
 						return true;
 					}
 
-					Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 					if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
 						return false;
@@ -1304,16 +1304,16 @@ public final class RegionProtectionListener implements Listener {
 				block = (Block) var5.next();
 				chunk = block.getRelative(direction).getLocation().getChunk();
 
-				if (!chunk.equals(pistonChunk) && ChunksManager.isChunkClaimed(chunk)) {
-					Region pistonChunkRegion = ChunksManager.getRegionOwnsTheChunk(pistonChunk);
+				if (!chunk.equals(pistonChunk) && ChunkManager.isChunkClaimed(chunk)) {
+					Region pistonChunkRegion = ChunkManager.getRegionOwnsTheChunk(pistonChunk);
 					UUID pistonChunkOwner = pistonChunkRegion == null ? null : pistonChunkRegion.getOwnerId();
-					UUID targetChunkOwner = Objects.requireNonNull(ChunksManager.getRegionOwnsTheChunk(chunk)).getOwnerId();
+					UUID targetChunkOwner = Objects.requireNonNull(ChunkManager.getRegionOwnsTheChunk(chunk)).getOwnerId();
 
 					if (pistonChunkRegion != null && pistonChunkOwner != null && pistonChunkOwner.equals(targetChunkOwner)) {
 						return true;
 					}
 
-					Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 					if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
 						return false;
@@ -1332,16 +1332,16 @@ public final class RegionProtectionListener implements Listener {
 		Chunk targetChunk = block.getRelative(((Directional) blockdata).getFacing()).getLocation().getChunk();
 
 		if (!block.getLocation().getChunk().equals(targetChunk)) {
-			if (ChunksManager.isChunkClaimed(targetChunk)) {
-				Region dispenserChunkRegion = ChunksManager.getRegionOwnsTheChunk(block.getLocation().getChunk());
+			if (ChunkManager.isChunkClaimed(targetChunk)) {
+				Region dispenserChunkRegion = ChunkManager.getRegionOwnsTheChunk(block.getLocation().getChunk());
 				UUID dispenserChunkOwner = dispenserChunkRegion == null ? null : dispenserChunkRegion.getOwnerId();
-				UUID targetChunkOwner = Objects.requireNonNull(ChunksManager.getRegionOwnsTheChunk(targetChunk)).getOwnerId();
+				UUID targetChunkOwner = Objects.requireNonNull(ChunkManager.getRegionOwnsTheChunk(targetChunk)).getOwnerId();
 
 				if (dispenserChunkRegion != null && dispenserChunkOwner != null && dispenserChunkOwner.equals(targetChunkOwner)) {
 					return;
 				}
 
-				Region region = ChunksManager.getRegionOwnsTheChunk(targetChunk);
+				Region region = ChunkManager.getRegionOwnsTheChunk(targetChunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
 					event.setCancelled(true);
@@ -1362,16 +1362,16 @@ public final class RegionProtectionListener implements Listener {
 		}
 
 		if (entity instanceof Wither || entity instanceof WitherSkull) {
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
 					event.setCancelled(true);
 				}
 			}
 		} else if (!(entity instanceof Player || entity instanceof FallingBlock)) {
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_GRIEF)) {
 					event.setCancelled(true);
@@ -1393,8 +1393,8 @@ public final class RegionProtectionListener implements Listener {
 			return;
 		}
 
-		if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (entity instanceof Monster || entity instanceof IronGolem) {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.HOSTILE_ENTITIES_SPAWN)) {
@@ -1414,8 +1414,8 @@ public final class RegionProtectionListener implements Listener {
 		Entity damager = event.getDamager();
 		Chunk chunk = entity.getLocation().getChunk();
 
-		if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (!(damager instanceof Player)) {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_DAMAGE_ENTITIES)) {
@@ -1430,8 +1430,8 @@ public final class RegionProtectionListener implements Listener {
 		Entity entity = event.getEntity();
 		Chunk chunk = entity.getLocation().getChunk();
 
-		if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (!(entity instanceof Player)) {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_GRIEF)) {
@@ -1464,8 +1464,8 @@ public final class RegionProtectionListener implements Listener {
 		Material blockType = event.getBlock().getType();
 		Chunk chunk = event.getBlock().getLocation().getChunk();
 
-		if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (blockType == Material.SNOW) {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.SNOW_MELTING)) {
@@ -1496,9 +1496,9 @@ public final class RegionProtectionListener implements Listener {
 			return;
 		}
 
-		if (ChunksManager.isChunkClaimed(toChunk)) {
-			Region fromRegion = ChunksManager.getRegionOwnsTheChunk(fromChunk);
-			Region toRegion = ChunksManager.getRegionOwnsTheChunk(toChunk);
+		if (ChunkManager.isChunkClaimed(toChunk)) {
+			Region fromRegion = ChunkManager.getRegionOwnsTheChunk(fromChunk);
+			Region toRegion = ChunkManager.getRegionOwnsTheChunk(toChunk);
 
 			if (fromRegion == null) {
 				if (toRegion != null && !toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_MINECARTS)) {
@@ -1520,8 +1520,8 @@ public final class RegionProtectionListener implements Listener {
 			Block block = event.getBlock();
 			Chunk chunk = block.getChunk();
 
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
 					event.setCancelled(true);
@@ -1538,8 +1538,8 @@ public final class RegionProtectionListener implements Listener {
 			Block block = event.getBlock();
 			Chunk chunk = block.getChunk();
 
-			if (ChunksManager.isChunkClaimed(chunk)) {
-				Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.SNOWMAN_TRAILS)) {
 					event.setCancelled(true);
@@ -1552,8 +1552,8 @@ public final class RegionProtectionListener implements Listener {
 	public void onTreeGrow(StructureGrowEvent event) {
 		Chunk chunk = event.getLocation().getChunk();
 
-		if (ChunksManager.isChunkClaimed(chunk)) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
 				event.setCancelled(true);
@@ -1622,21 +1622,21 @@ public final class RegionProtectionListener implements Listener {
 											Chunk chunk,
 											Location location,
 											long flag) {
-			if (Homestead.config.getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk))
+			if (Homestead.config.getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk))
 				return true;
 
 			if (player != null && PlayerUtils.isOperator(player)) return true;
 
-			if (!ChunksManager.isChunkClaimed(chunk)) return true;
+			if (!ChunkManager.isChunkClaimed(chunk)) return true;
 
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 			if (region == null) return true;
 
 			assert player != null;
 			if (region.isOwner(player) && !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag))
 				return true;
 
-			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(location);
+			SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(location);
 
 			return subArea != null
 					? PlayerUtils.hasPermissionFlag(region.getUniqueId(), subArea.getUniqueId(), player, flag, true)
@@ -1649,7 +1649,7 @@ public final class RegionProtectionListener implements Listener {
 										 long flag,
 										 Runnable onTrue,
 										 Runnable onFalse) {
-			if (Homestead.config.getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunksManager.isChunkInDisabledWorld(chunk)) {
+			if (Homestead.config.getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk)) {
 				if (onTrue != null) onTrue.run();
 				return;
 			}

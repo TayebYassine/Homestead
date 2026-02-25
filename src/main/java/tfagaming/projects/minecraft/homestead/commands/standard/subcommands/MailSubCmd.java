@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLog;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -22,7 +22,7 @@ public class MailSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -42,7 +42,7 @@ public class MailSubCmd extends SubCommandBuilder {
 
 		String regionName = args[0];
 
-		Region region = RegionsManager.findRegion(regionName);
+		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
 			Messages.send(player, 9);
@@ -65,7 +65,7 @@ public class MailSubCmd extends SubCommandBuilder {
 		List<String> messageList = Arrays.asList(args).subList(1, args.length);
 		String message = String.join(" ", messageList);
 
-		RegionsManager.addNewLog(region.getUniqueId(), player.getName(), message);
+		RegionManager.addNewLog(region.getUniqueId(), player.getName(), message);
 
 		Messages.send(player, 166, new Placeholder()
 				.add("{region-owner}", region.getOwner().getName())
@@ -82,7 +82,7 @@ public class MailSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1) {
-			suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
 		}
 
 		return suggestions;

@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.events;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -21,7 +21,7 @@ public final class MemberTaxes {
 	 * @param instance Homestead's instance
 	 */
 	public static void trigger(Homestead instance) {
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			double amountToPay = region.getTaxesAmount();
 
 			if (amountToPay == 0) {
@@ -48,9 +48,9 @@ public final class MemberTaxes {
 							Player targetPlayerOnline = (Player) targetPlayer;
 
 							Placeholder placeholder = new Placeholder()
-								.add("{amount}", Formatter.getBalance(amountToPay))
-								.add("{region}", region.getName())
-								.add("{balance}", Formatter.getBalance(PlayerBank.get(targetPlayer)));
+									.add("{amount}", Formatter.getBalance(amountToPay))
+									.add("{region}", region.getName())
+									.add("{balance}", Formatter.getBalance(PlayerBank.get(targetPlayer)));
 
 							Messages.send(targetPlayerOnline, 106, placeholder);
 							Messages.send(targetPlayerOnline, 107, placeholder);
@@ -66,7 +66,7 @@ public final class MemberTaxes {
 							);
 						}
 
-						RegionsManager.addNewLog(region.getUniqueId(), 5, new Placeholder()
+						RegionManager.addNewLog(region.getUniqueId(), 5, new Placeholder()
 								.add("{playername}", targetPlayer.getName())
 						);
 					}

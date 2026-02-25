@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -18,7 +18,7 @@ public class SubAreasMenu {
 	private final List<SubArea> subAreas;
 
 	public SubAreasMenu(Player player, Region region) {
-		subAreas = SubAreasManager.getSubAreasOfRegion(region.getUniqueId());
+		subAreas = SubAreaManager.getSubAreasOfRegion(region.getUniqueId());
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtils.getTitle(14), 9 * 4,
@@ -38,8 +38,7 @@ public class SubAreasMenu {
 
 		gui.addActionButton(1, MenuUtils.getButton(72, new Placeholder()
 				.add("{max-subareas}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))
-		), (_a, _b) -> {
-		});
+		), null);
 
 		gui.open(player, MenuUtils.getEmptySlot());
 	}

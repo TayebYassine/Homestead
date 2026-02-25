@@ -5,14 +5,13 @@ import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.MarkerSet;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.integrations.maps.listeners.DynmapListener;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-
-import java.util.HashMap;
 
 public class DynmapAPI {
 	public static MarkerSet markerSet;
@@ -79,20 +78,19 @@ public class DynmapAPI {
 		areaMarker.setLineStyle(1, (double) chunkTransparencyInfill / 100, chunkColor);
 		areaMarker.setFillStyle((double) chunkTransparencyOutline / 100, chunkColor);
 
-		HashMap<String, String> replacements = new HashMap<>();
-
-		replacements.put("{region}", region.getName());
-		replacements.put("{region-owner}", region.getOwner().getName());
-		replacements.put("{region-members}",
-				ColorTranslator.preserve(Formatter.getMembersOfRegion(region)));
-		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
-		replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
-		replacements.put("{region-description}", region.getDescription());
-		replacements.put("{region-size}", String.valueOf(region.getChunks().size() * 256));
+		Placeholder placeholder = new Placeholder()
+				.add("{region}", region.getName())
+				.add("{region-owner}", region.getOwner().getName())
+				.add("{region-members}",
+						ColorTranslator.preserve(Formatter.getMembersOfRegion(region)))
+				.add("{region-chunks}", region.getChunks().size())
+				.add("{global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
+				.add("{region-description}", region.getDescription())
+				.add("{region-size}", region.getChunks().size() * 256);
 
 		String description = Formatter
 				.applyPlaceholders(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
-						: Homestead.config.getString("dynamic-maps.chunks.description"), replacements);
+						: Homestead.config.getString("dynamic-maps.chunks.description"), placeholder);
 
 		areaMarker.setDescription(description);
 	}
@@ -100,7 +98,7 @@ public class DynmapAPI {
 	public void update() {
 		clearAllMarkers();
 
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			for (SerializableChunk chunk : region.getChunks()) {
 				addChunkMarker(region, chunk);
 			}

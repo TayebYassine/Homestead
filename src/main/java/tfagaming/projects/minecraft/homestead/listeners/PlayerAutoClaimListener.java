@@ -9,8 +9,8 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -90,7 +90,7 @@ public final class PlayerAutoClaimListener implements Listener {
 		}
 		lastClaimAttempt.put(player, now);
 
-		if (ChunksManager.isChunkInDisabledWorld(chunk)) {
+		if (ChunkManager.isChunkInDisabledWorld(chunk)) {
 			Messages.send(player, 20);
 			return;
 		}
@@ -103,7 +103,7 @@ public final class PlayerAutoClaimListener implements Listener {
 
 		Region region = TargetRegionSession.getRegion(player);
 		if (region == null) {
-			if (!RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
+			if (!RegionManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 				TargetRegionSession.randomizeRegion(player);
 				region = TargetRegionSession.getRegion(player);
 			} else {
@@ -117,7 +117,7 @@ public final class PlayerAutoClaimListener implements Listener {
 					return;
 				}
 
-				region = RegionsManager.createRegion(player.getName(), player, true);
+				region = RegionManager.createRegion(player.getName(), player, true);
 				TargetRegionSession.newSession(player, region);
 			}
 		}
@@ -127,7 +127,7 @@ public final class PlayerAutoClaimListener implements Listener {
 			return;
 		}
 
-		Region owner = ChunksManager.getRegionOwnsTheChunk(chunk);
+		Region owner = ChunkManager.getRegionOwnsTheChunk(chunk);
 		if (owner != null) {
 			Messages.send(player, 21, new Placeholder()
 					.add("{region}", owner.getName())
@@ -142,7 +142,7 @@ public final class PlayerAutoClaimListener implements Listener {
 
 		int before = region.getChunks().size();
 
-		ChunksManager.Error error = ChunksManager.claimChunk(region.getUniqueId(), chunk);
+		ChunkManager.Error error = ChunkManager.claimChunk(region.getUniqueId(), chunk);
 
 		int after = region.getChunks().size();
 

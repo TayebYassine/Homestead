@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionsWithWelcomeSigns;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -27,7 +27,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -60,7 +60,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 
 			int index = Integer.parseInt(indexInput);
 
-			List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(target);
+			List<Region> regions = RegionManager.getRegionsOwnedByPlayer(target);
 			List<Region> filteredRegions = new ArrayList<>();
 
 			for (Region region : regions) {
@@ -79,7 +79,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 				return true;
 			}
 
-			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().getBukkitLocation());
+			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().bukkit());
 		} else {
 			if (args.length < 1) {
 				Messages.send(player, 0, new Placeholder()
@@ -90,7 +90,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 
 			String regionName = args[0];
 
-			Region region = RegionsManager.findRegion(regionName);
+			Region region = RegionManager.findRegion(regionName);
 
 			if (region == null) {
 				Messages.send(player, 9);
@@ -114,7 +114,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 				return true;
 			}
 
-			new DelayedTeleport(player, region.getLocation().getBukkitLocation());
+			new DelayedTeleport(player, region.getLocation().bukkit());
 		}
 
 		return true;
@@ -129,18 +129,18 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 
 		if (args.length == 1) {
 			if (Homestead.config.isWelcomeSignEnabled()) {
-				suggestions.addAll(RegionsManager.getPlayersWithRegionsHasWelcomeSigns().stream().map(OfflinePlayer::getName).toList());
+				suggestions.addAll(RegionManager.getPlayersWithRegionsHasWelcomeSigns().stream().map(OfflinePlayer::getName).toList());
 			} else {
 				if (PlayerUtils.isOperator(player)) {
 					suggestions.addAll(
-							RegionsManager.getAll().stream().map(Region::getName).toList());
+							RegionManager.getAll().stream().map(Region::getName).toList());
 				} else {
 					suggestions.addAll(
-							RegionsManager.getPublicRegions().stream().map(Region::getName).toList());
+							RegionManager.getPublicRegions().stream().map(Region::getName).toList());
 				}
 			}
 		} else if (args.length == 2 && Homestead.config.isWelcomeSignEnabled()) {
-			for (int i = 0; i < RegionsManager.getPlayersWithRegionsHasWelcomeSigns().size(); i++) {
+			for (int i = 0; i < RegionManager.getPlayersWithRegionsHasWelcomeSigns().size(); i++) {
 				suggestions.add(String.valueOf(i));
 			}
 		}

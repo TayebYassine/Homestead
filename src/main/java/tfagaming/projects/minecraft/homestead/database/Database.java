@@ -81,109 +81,226 @@ public final class Database {
 
 	public void importRegions() {
 		switch (provider) {
-			case PostgreSQL: postgreSQL.importRegions(); break;
-			case MariaDB: mariaDB.importRegions(); break;
-			case MySQL: mySQL.importRegions(); break;
-			case SQLite: sqLite.importRegions(); break;
-			case YAML: yaml.importRegions(); break;
-			case MongoDB: mongoDB.importRegions(); break;
-			default: break;
+			case PostgreSQL:
+				postgreSQL.importRegions();
+				break;
+			case MariaDB:
+				mariaDB.importRegions();
+				break;
+			case MySQL:
+				mySQL.importRegions();
+				break;
+			case SQLite:
+				sqLite.importRegions();
+				break;
+			case YAML:
+				yaml.importRegions();
+				break;
+			case MongoDB:
+				mongoDB.importRegions();
+				break;
+			default:
+				break;
 		}
 	}
 
 	public void importWars() {
 		switch (provider) {
-			case PostgreSQL: postgreSQL.importWars(); break;
-			case MariaDB: mariaDB.importWars(); break;
-			case MySQL: mySQL.importWars(); break;
-			case SQLite: sqLite.importWars(); break;
-			case YAML: yaml.importWars(); break;
-			case MongoDB: mongoDB.importWars(); break;
-			default: break;
+			case PostgreSQL:
+				postgreSQL.importWars();
+				break;
+			case MariaDB:
+				mariaDB.importWars();
+				break;
+			case MySQL:
+				mySQL.importWars();
+				break;
+			case SQLite:
+				sqLite.importWars();
+				break;
+			case YAML:
+				yaml.importWars();
+				break;
+			case MongoDB:
+				mongoDB.importWars();
+				break;
+			default:
+				break;
 		}
 	}
 
 	public void importSubAreas() {
 		switch (provider) {
-			case PostgreSQL: postgreSQL.importSubAreas(); break;
-			case MariaDB: mariaDB.importSubAreas(); break;
-			case MySQL: mySQL.importSubAreas(); break;
-			case SQLite: sqLite.importSubAreas(); break;
-			case YAML: yaml.importSubAreas(); break;
-			case MongoDB: mongoDB.importSubAreas(); break;
-			default: break;
+			case PostgreSQL:
+				postgreSQL.importSubAreas();
+				break;
+			case MariaDB:
+				mariaDB.importSubAreas();
+				break;
+			case MySQL:
+				mySQL.importSubAreas();
+				break;
+			case SQLite:
+				sqLite.importSubAreas();
+				break;
+			case YAML:
+				yaml.importSubAreas();
+				break;
+			case MongoDB:
+				mongoDB.importSubAreas();
+				break;
+			default:
+				break;
 		}
 	}
 
 	public void importLevels() {
 		switch (provider) {
-			case PostgreSQL: postgreSQL.importLevels(); break;
-			case MariaDB: mariaDB.importLevels(); break;
-			case MySQL: mySQL.importLevels(); break;
-			case SQLite: sqLite.importLevels(); break;
-			case YAML: yaml.importLevels(); break;
-			case MongoDB: mongoDB.importLevels(); break;
-			default: break;
+			case PostgreSQL:
+				postgreSQL.importLevels();
+				break;
+			case MariaDB:
+				mariaDB.importLevels();
+				break;
+			case MySQL:
+				mySQL.importLevels();
+				break;
+			case SQLite:
+				sqLite.importLevels();
+				break;
+			case YAML:
+				yaml.importLevels();
+				break;
+			case MongoDB:
+				mongoDB.importLevels();
+				break;
+			default:
+				break;
 		}
 	}
 
 	public void exportRegions() {
 		switch (provider) {
-			case PostgreSQL: postgreSQL.exportRegions(); break;
-			case MariaDB: mariaDB.exportRegions(); break;
-			case MySQL: mySQL.exportRegions(); break;
-			case SQLite: sqLite.exportRegions(); break;
-			case YAML: yaml.exportRegions(); break;
-			case MongoDB: mongoDB.exportRegions(); break;
-			default: break;
+			case PostgreSQL:
+				postgreSQL.exportRegions();
+				break;
+			case MariaDB:
+				mariaDB.exportRegions();
+				break;
+			case MySQL:
+				mySQL.exportRegions();
+				break;
+			case SQLite:
+				sqLite.exportRegions();
+				break;
+			case YAML:
+				yaml.exportRegions();
+				break;
+			case MongoDB:
+				mongoDB.exportRegions();
+				break;
+			default:
+				break;
 		}
 	}
 
 	public void exportWars() {
 		switch (provider) {
-			case PostgreSQL: postgreSQL.exportWars(); break;
-			case MariaDB: mariaDB.exportWars(); break;
-			case MySQL: mySQL.exportWars(); break;
-			case SQLite: sqLite.exportWars(); break;
-			case YAML: yaml.exportWars(); break;
-			case MongoDB: mongoDB.exportWars(); break;
-			default: break;
+			case PostgreSQL:
+				postgreSQL.exportWars();
+				break;
+			case MariaDB:
+				mariaDB.exportWars();
+				break;
+			case MySQL:
+				mySQL.exportWars();
+				break;
+			case SQLite:
+				sqLite.exportWars();
+				break;
+			case YAML:
+				yaml.exportWars();
+				break;
+			case MongoDB:
+				mongoDB.exportWars();
+				break;
+			default:
+				break;
 		}
 	}
 
 	public void exportSubAreas() {
 		switch (provider) {
-			case PostgreSQL: postgreSQL.exportSubAreas(); break;
-			case MariaDB: mariaDB.exportSubAreas(); break;
-			case MySQL: mySQL.exportSubAreas(); break;
-			case SQLite: sqLite.exportSubAreas(); break;
-			case YAML: yaml.exportSubAreas(); break;
-			case MongoDB: mongoDB.exportSubAreas(); break;
-			default: break;
+			case PostgreSQL:
+				postgreSQL.exportSubAreas();
+				break;
+			case MariaDB:
+				mariaDB.exportSubAreas();
+				break;
+			case MySQL:
+				mySQL.exportSubAreas();
+				break;
+			case SQLite:
+				sqLite.exportSubAreas();
+				break;
+			case YAML:
+				yaml.exportSubAreas();
+				break;
+			case MongoDB:
+				mongoDB.exportSubAreas();
+				break;
+			default:
+				break;
 		}
 	}
 
 	public void exportLevels() {
 		switch (provider) {
-			case PostgreSQL: postgreSQL.exportLevels(); break;
-			case MariaDB: mariaDB.exportLevels(); break;
-			case MySQL: mySQL.exportLevels(); break;
-			case SQLite: sqLite.exportLevels(); break;
-			case YAML: yaml.exportLevels(); break;
-			case MongoDB: mongoDB.exportLevels(); break;
-			default: break;
+			case PostgreSQL:
+				postgreSQL.exportLevels();
+				break;
+			case MariaDB:
+				mariaDB.exportLevels();
+				break;
+			case MySQL:
+				mySQL.exportLevels();
+				break;
+			case SQLite:
+				sqLite.exportLevels();
+				break;
+			case YAML:
+				yaml.exportLevels();
+				break;
+			case MongoDB:
+				mongoDB.exportLevels();
+				break;
+			default:
+				break;
 		}
 	}
 
 	public void closeConnection() {
 		switch (provider) {
-			case PostgreSQL: postgreSQL.closeConnection(); break;
-			case MariaDB: mariaDB.closeConnection(); break;
-			case MySQL: mySQL.closeConnection(); break;
-			case SQLite: sqLite.closeConnection(); break;
-			case YAML: yaml.closeConnection(); break;
-			case MongoDB: mongoDB.closeConnection(); break;
-			default: break;
+			case PostgreSQL:
+				postgreSQL.closeConnection();
+				break;
+			case MariaDB:
+				mariaDB.closeConnection();
+				break;
+			case MySQL:
+				mySQL.closeConnection();
+				break;
+			case SQLite:
+				sqLite.closeConnection();
+				break;
+			case YAML:
+				yaml.closeConnection();
+				break;
+			case MongoDB:
+				mongoDB.closeConnection();
+				break;
+			default:
+				break;
 		}
 	}
 

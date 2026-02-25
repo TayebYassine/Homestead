@@ -1,7 +1,7 @@
 package tfagaming.projects.minecraft.homestead.structure;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +93,7 @@ public class War {
 		ArrayList<Region> regions = new ArrayList<>();
 
 		for (UUID uuid : this.regions) {
-			Region region = RegionsManager.findRegion(uuid);
+			Region region = RegionManager.findRegion(uuid);
 
 			if (region != null) {
 				regions.add(region);

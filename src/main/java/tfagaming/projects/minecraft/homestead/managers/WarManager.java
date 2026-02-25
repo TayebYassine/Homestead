@@ -8,8 +8,8 @@ import tfagaming.projects.minecraft.homestead.structure.War;
 
 import java.util.*;
 
-public final class WarsManager {
-	private WarsManager() {
+public final class WarManager {
+	private WarManager() {
 	}
 
 	public static War declareWar(String name, double prize, List<Region> regions) {
@@ -107,7 +107,7 @@ public final class WarsManager {
 
 		for (War war : Homestead.warsCache.getAll()) {
 			if (war.getRegions().size() < 2) {
-				WarsManager.endWar(war.getUniqueId());
+				WarManager.endWar(war.getUniqueId());
 				updated++;
 			}
 		}

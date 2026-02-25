@@ -3,20 +3,18 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TopRegionsMenu {
-	private final SortMode sortMode;
 	private final boolean isPublicRegionsOnly;
 	private List<Region> regions;
 
@@ -26,9 +24,8 @@ public class TopRegionsMenu {
 
 	public TopRegionsMenu(Player player, boolean isPublic, SortMode sortMode) {
 		this.isPublicRegionsOnly = isPublic;
-		this.sortMode = sortMode;
 
-		regions = new ArrayList<>(RegionsManager.sortRegions(sortMode.sorting));
+		regions = new ArrayList<>(RegionManager.sortRegions(sortMode.sorting));
 		regions = ListUtils.removeDuplications(regions);
 
 		PaginationMenu gui = new PaginationMenu(
@@ -60,10 +57,9 @@ public class TopRegionsMenu {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 		});
 
-		Map<String, String> replacements = new HashMap<>();
-		replacements.put("{is-public-regions}", Formatter.getToggle(this.isPublicRegionsOnly));
-
-		gui.addActionButton(2, MenuUtils.getButton(81, replacements), (_player, event) -> {
+		gui.addActionButton(2, MenuUtils.getButton(81, new Placeholder()
+				.add("{is-public-regions}", Formatter.getToggle(this.isPublicRegionsOnly))
+		), (_player, event) -> {
 			if (event.isLeftClick()) {
 				new TopRegionsMenu(player, !this.isPublicRegionsOnly, sortMode);
 			}
@@ -80,35 +76,35 @@ public class TopRegionsMenu {
 
 			if (this.isPublicRegionsOnly && !region.isPublic()) continue;
 
-			HashMap<String, String> replacements = new HashMap<>();
-			replacements.put("{rank}", String.valueOf(i + 1));
-			replacements.put("{region}", region.getName());
-			replacements.put("{region-displayname}", region.getDisplayName());
-			replacements.put("{region-owner}", region.getOwner().getName());
-			replacements.put("{region-bank}", Formatter.getBalance(region.getBank()));
-			replacements.put("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
-			replacements.put("{region-rating}", Formatter.getRating(RegionsManager.getAverageRating(region)));
-			replacements.put("{region-members}", String.valueOf(region.getMembers().size()));
-			replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
+			Placeholder placeholder = new Placeholder()
+					.add("{rank}", String.valueOf(i + 1))
+					.add("{region}", region.getName())
+					.add("{region-displayname}", region.getDisplayName())
+					.add("{region-owner}", region.getOwner().getName())
+					.add("{region-bank}", Formatter.getBalance(region.getBank()))
+					.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
+					.add("{region-rating}", Formatter.getRating(RegionManager.getAverageRating(region)))
+					.add("{region-members}", String.valueOf(region.getMembers().size()))
+					.add("{region-chunks}", String.valueOf(region.getChunks().size()));
 
-			items.add(MenuUtils.getButton(55, replacements));
+			items.add(MenuUtils.getButton(55, placeholder));
 		}
 
 		return items;
 	}
 
 	public enum SortMode {
-		BANK(18, 56, RegionsManager.RegionSorting.BANK),
-		CHUNKS(19, 57, RegionsManager.RegionSorting.CHUNKS_COUNT),
-		MEMBERS(20, 58, RegionsManager.RegionSorting.MEMBERS_COUNT),
-		OLDEST(21, 59, RegionsManager.RegionSorting.CREATION_DATE),
-		RATING(22, 60, RegionsManager.RegionSorting.RATING);
+		BANK(18, 56, RegionManager.RegionSorting.BANK),
+		CHUNKS(19, 57, RegionManager.RegionSorting.CHUNKS_COUNT),
+		MEMBERS(20, 58, RegionManager.RegionSorting.MEMBERS_COUNT),
+		OLDEST(21, 59, RegionManager.RegionSorting.CREATION_DATE),
+		RATING(22, 60, RegionManager.RegionSorting.RATING);
 
 		final int titleId;
 		final int buttonId;
-		final RegionsManager.RegionSorting sorting;
+		final RegionManager.RegionSorting sorting;
 
-		SortMode(int titleId, int buttonId, RegionsManager.RegionSorting sorting) {
+		SortMode(int titleId, int buttonId, RegionManager.RegionSorting sorting) {
 			this.titleId = titleId;
 			this.buttonId = buttonId;
 			this.sorting = sorting;

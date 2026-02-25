@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -76,7 +76,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 
 		long flag = PlayerFlags.valueOf(flagInput);
 
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			if (!region.isPlayerMember(target)) {
 				continue;
 			}
@@ -120,7 +120,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 
 		long flag = PlayerFlags.valueOf(flagInput);
 
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			long flags = region.getPlayerFlags();
 			boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
@@ -159,7 +159,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 
 		long flag = WorldFlags.valueOf(flagInput);
 
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			long flags = region.getWorldFlags();
 			boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
@@ -197,7 +197,7 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 			suggestions.addAll(List.of("member", "global", "world"));
 		} else if (args.length == 2 && args[0].equalsIgnoreCase("member")) {
 			if (player != null) {
-				for (Region region : RegionsManager.getAll()) {
+				for (Region region : RegionManager.getAll()) {
 					for (SerializableMember member : region.getMembers()) {
 						OfflinePlayer bukkitMember = member.bukkit();
 						if (bukkitMember != null) {

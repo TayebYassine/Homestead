@@ -13,11 +13,12 @@ import net.pl3x.map.core.util.Colors;
 import org.bukkit.Location;
 import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -25,6 +26,7 @@ import java.awt.image.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Pl3xMapAPI {
 	private static final Map<World, SimpleLayer> layers = new HashMap<>();
@@ -32,7 +34,7 @@ public class Pl3xMapAPI {
 	public Pl3xMapAPI(Homestead plugin) {
 		try {
 			update();
-		} catch (NoClassDefFoundError e) {
+		} catch (NoClassDefFoundError ignored) {
 
 		}
 	}
@@ -48,21 +50,21 @@ public class Pl3xMapAPI {
 	}
 
 	public void addChunkMarker(Region region, SerializableChunk chunk) {
-		HashMap<String, String> replacements = new HashMap<>();
-		replacements.put("{region}", region.getName());
-		replacements.put("{region-owner}", region.getOwner().getName());
-		replacements.put("{region-members}",
-				ColorTranslator.preserve(Formatter.getMembersOfRegion(region)));
-		replacements.put("{region-chunks}", String.valueOf(region.getChunks().size()));
-		replacements.put("{global-rank}", String.valueOf(RegionsManager.getGlobalRank(region.getUniqueId())));
-		replacements.put("{region-description}", region.getDescription());
-		replacements.put("{region-size}", String.valueOf(region.getChunks().size() * 256));
+		Placeholder placeholder = new Placeholder()
+				.add("{region}", region.getName())
+				.add("{region-owner}", region.getOwner().getName())
+				.add("{region-members}",
+						ColorTranslator.preserve(Formatter.getMembersOfRegion(region)))
+				.add("{region-chunks}", region.getChunks().size())
+				.add("{global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
+				.add("{region-description}", region.getDescription())
+				.add("{region-size}", region.getChunks().size() * 256);
 
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
 		String hoverText = Formatter
 				.applyPlaceholders(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
-						: Homestead.config.getString("dynamic-maps.chunks.description"), replacements);
+						: Homestead.config.getString("dynamic-maps.chunks.description"), placeholder);
 
 		int chunkColor = region.getMapColor() == 0
 				? (isOperator ? Homestead.config.getInt("dynamic-maps.chunks.operator-color")
@@ -89,10 +91,12 @@ public class Pl3xMapAPI {
 			}
 		}
 
-		addChunkMarkerWithOptions(layer, chunk, hoverText, chunkColor,
-				!isChunkClaimed(region, chunk, GeoDirection.NORTH),
-				!isChunkClaimed(region, chunk, GeoDirection.EAST), !isChunkClaimed(region, chunk, GeoDirection.SOUTH),
-				!isChunkClaimed(region, chunk, GeoDirection.WEST));
+		if (layer != null) {
+			addChunkMarkerWithOptions(layer, chunk, hoverText, chunkColor,
+					!isChunkClaimed(region, chunk, GeoDirection.NORTH),
+					!isChunkClaimed(region, chunk, GeoDirection.EAST), !isChunkClaimed(region, chunk, GeoDirection.SOUTH),
+					!isChunkClaimed(region, chunk, GeoDirection.WEST));
+		}
 
 		boolean isEnabled = Homestead.config.getBoolean("dynamic-maps.icons.enabled");
 
@@ -100,7 +104,7 @@ public class Pl3xMapAPI {
 			final SimpleLayer finalLayer = layer;
 
 			if (region.getLocation() != null
-					&& region.getLocation().getBukkitLocation().getChunk().equals(chunk.getBukkitChunk())) {
+					&& region.getLocation().bukkit().getChunk().equals(chunk.getBukkitChunk())) {
 				Homestead.getInstance().runAsyncTask(() -> {
 					addRegionIcon(finalLayer, region, hoverText);
 				});
@@ -197,28 +201,28 @@ public class Pl3xMapAPI {
 		boolean result;
 		switch (direction) {
 			case NORTH: {
-				Region chunksRegion = ChunksManager
+				Region chunksRegion = ChunkManager
 						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z - 1).getBukkitChunk());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;
 			}
 			case EAST: {
-				Region chunksRegion = ChunksManager
+				Region chunksRegion = ChunkManager
 						.getRegionOwnsTheChunk(new SerializableChunk(world, x + 1, z).getBukkitChunk());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;
 			}
 			case SOUTH: {
-				Region chunksRegion = ChunksManager
+				Region chunksRegion = ChunkManager
 						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z + 1).getBukkitChunk());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;
 			}
 			case WEST: {
-				Region chunksRegion = ChunksManager
+				Region chunksRegion = ChunkManager
 						.getRegionOwnsTheChunk(new SerializableChunk(world, x - 1, z).getBukkitChunk());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
@@ -242,14 +246,14 @@ public class Pl3xMapAPI {
 
 		try {
 			String iconId = "region_icon_" + region.getName().toLowerCase().replaceAll(" ", "_");
-			Location regionLocation = region.getLocation().getBukkitLocation();
+			Location regionLocation = region.getLocation().bukkit();
 			Point iconPoint = Point.of(regionLocation.getX(), regionLocation.getZ());
 
 			if (bufferedIcon != null) {
 				IconImage iconImage = new IconImage(iconId, bufferedIcon, "png");
 
 				if (Pl3xMap.api().getIconRegistry().has(iconId)
-						&& !Pl3xMap.api().getIconRegistry().get(iconId).getImage().equals(iconImage.getImage())) {
+						&& !Objects.requireNonNull(Pl3xMap.api().getIconRegistry().get(iconId)).getImage().equals(iconImage.getImage())) {
 					Pl3xMap.api().getIconRegistry().unregister(iconId);
 				}
 
@@ -269,15 +273,15 @@ public class Pl3xMapAPI {
 
 				layer.addMarker(iconMarker);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ignored) {
+
 		}
 	}
 
 	public void update() {
 		clearAllMarkers();
 
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			for (SerializableChunk chunk : region.getChunks()) {
 				addChunkMarker(region, chunk);
 			}

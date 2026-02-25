@@ -4,7 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -35,19 +35,19 @@ public class ForceUnclaimCommand extends CommandBuilder {
 
 		Chunk chunk = player.getLocation().getChunk();
 
-		if (ChunksManager.isChunkInDisabledWorld(chunk)) {
+		if (ChunkManager.isChunkInDisabledWorld(chunk)) {
 			Messages.send(player, 20);
 			return true;
 		}
 
-		Region owningRegion = ChunksManager.getRegionOwnsTheChunk(chunk);
+		Region owningRegion = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 		if (owningRegion == null) {
 			Messages.send(player, 25);
 			return true;
 		}
 
-		ChunksManager.Error error = ChunksManager.forceUnclaimChunk(owningRegion.getUniqueId(), chunk);
+		ChunkManager.Error error = ChunkManager.forceUnclaimChunk(owningRegion.getUniqueId(), chunk);
 
 		if (error == null) {
 			Messages.send(player, 24, new Placeholder()

@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
@@ -19,7 +19,7 @@ public class RegionsWithWelcomeSigns {
 
 	public RegionsWithWelcomeSigns(Player player) {
 		regions = ListUtils.removeDuplications(
-				new ArrayList<>(RegionsManager.getRegionsWithWelcomeSigns()));
+				new ArrayList<>(RegionManager.getRegionsWithWelcomeSigns()));
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtils.getTitle(0), 9 * 5,
@@ -34,7 +34,7 @@ public class RegionsWithWelcomeSigns {
 
 					if (context.getEvent().isLeftClick()) {
 						player.closeInventory();
-						new DelayedTeleport(player, region.getWelcomeSign().getBukkitLocation());
+						new DelayedTeleport(player, region.getWelcomeSign().bukkit());
 					}
 				});
 
@@ -51,7 +51,7 @@ public class RegionsWithWelcomeSigns {
 					.add("{region-owner}", region.getOwner().getName())
 					.add("{region-bank}", Formatter.getBalance(region.getBank()))
 					.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
-					.add("{region-rating}", Formatter.getRating(RegionsManager.getAverageRating(region)))));
+					.add("{region-rating}", Formatter.getRating(RegionManager.getAverageRating(region)))));
 		}
 
 		return items;

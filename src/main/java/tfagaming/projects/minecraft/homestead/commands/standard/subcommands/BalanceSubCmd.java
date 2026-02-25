@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -24,7 +24,7 @@ public class BalanceSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -48,7 +48,7 @@ public class BalanceSubCmd extends SubCommandBuilder {
 		if (args.length >= 1) {
 			String regionName = args[0];
 
-			region = RegionsManager.findRegion(regionName);
+			region = RegionManager.findRegion(regionName);
 
 			if (region == null) {
 				Messages.send(player, 9);
@@ -79,7 +79,7 @@ public class BalanceSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1) {
-			suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
 		}
 
 		return suggestions;

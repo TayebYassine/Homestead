@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.sessions;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public final class TargetRegionSession {
 	}
 
 	public static void newSession(Player player) {
-		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
+		List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
 		if (!regions.isEmpty()) {
 			sessions.putIfAbsent(player.getUniqueId(), regions.getFirst());
@@ -35,7 +35,7 @@ public final class TargetRegionSession {
 	public static Region getRegion(OfflinePlayer player) {
 		Region region = sessions.get(player.getUniqueId());
 
-		if (region == null && Homestead.config.getBoolean("autoset-target-region") && player.isOnline() && !RegionsManager.getRegionsOwnedByPlayer(player).isEmpty()) {
+		if (region == null && Homestead.config.getBoolean("autoset-target-region") && player.isOnline() && !RegionManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 			randomizeRegion((Player) player);
 
 			return getRegion(player);
@@ -49,14 +49,14 @@ public final class TargetRegionSession {
 	}
 
 	public static void setRegion(OfflinePlayer player, String regionName) {
-		Region region = RegionsManager.findRegion(regionName);
+		Region region = RegionManager.findRegion(regionName);
 
 		sessions.put(player.getUniqueId(), region);
 	}
 
 	public static void randomizeRegion(
 			Player player) {
-		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(player);
+		List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
 		if (regions.isEmpty()) {
 			sessions.put(player.getUniqueId(), null);

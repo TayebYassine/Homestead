@@ -2,9 +2,6 @@ package tfagaming.projects.minecraft.homestead;
 
 import me.lucko.commodore.Commodore;
 import me.lucko.commodore.CommodoreProvider;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-import org.apache.commons.logging.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -16,7 +13,9 @@ import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.commands.brigadier.BrigadierCommands;
 import tfagaming.projects.minecraft.homestead.commands.operator.ForceUnclaimCommand;
 import tfagaming.projects.minecraft.homestead.commands.operator.HomesteadAdminCommand;
-import tfagaming.projects.minecraft.homestead.commands.standard.*;
+import tfagaming.projects.minecraft.homestead.commands.standard.ClaimCommand;
+import tfagaming.projects.minecraft.homestead.commands.standard.RegionCommand;
+import tfagaming.projects.minecraft.homestead.commands.standard.UnclaimCommand;
 import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
 import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
 import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
@@ -35,10 +34,10 @@ import tfagaming.projects.minecraft.homestead.integrations.bStats;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
-import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.managers.LevelManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
@@ -79,6 +78,21 @@ public class Homestead extends JavaPlugin {
 
 	public static Homestead getInstance() {
 		return INSTANCE;
+	}
+
+	public static boolean isExternalPluginEnabled(String pluginName) {
+		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginName);
+
+		return plugin != null && plugin.isEnabled();
+	}
+
+	public static boolean isFolia() {
+		try {
+			Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 
 	public void onEnable() {
@@ -214,10 +228,10 @@ public class Homestead extends JavaPlugin {
 		}
 
 		if (Homestead.config.getBoolean("clean-startup")) {
-			RegionsManager.cleanStartup();
-			WarsManager.cleanStartup();
-			SubAreasManager.cleanStartup();
-			LevelsManager.cleanStartup();
+			RegionManager.cleanStartup();
+			WarManager.cleanStartup();
+			SubAreaManager.cleanStartup();
+			LevelManager.cleanStartup();
 		}
 
 		registerCommands();
@@ -542,21 +556,6 @@ public class Homestead extends JavaPlugin {
 			if (!placeholderRegistered) {
 				Logger.error("Failed to register hooks.");
 			}
-		}
-	}
-
-	public static boolean isExternalPluginEnabled(String pluginName) {
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginName);
-
-		return plugin != null && plugin.isEnabled();
-	}
-
-	public static boolean isFolia() {
-		try {
-			Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
 		}
 	}
 

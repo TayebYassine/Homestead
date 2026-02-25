@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-public final class LevelsManager {
+public final class LevelManager {
 	private static final Random random = new Random();
 
-	private LevelsManager() {
+	private LevelManager() {
 	}
 
 	/**
@@ -229,8 +229,8 @@ public final class LevelsManager {
 		int updated = 0;
 
 		for (Level level : Homestead.levelsCache.getAll()) {
-			if (RegionsManager.findRegion(level.getRegionId()) == null) {
-				LevelsManager.deleteLevel(level.getUniqueId());
+			if (RegionManager.findRegion(level.getRegionId()) == null) {
+				LevelManager.deleteLevel(level.getUniqueId());
 				updated++;
 			}
 		}

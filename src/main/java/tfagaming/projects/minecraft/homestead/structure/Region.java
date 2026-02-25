@@ -6,7 +6,7 @@ import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
 
@@ -406,7 +406,7 @@ public class Region {
 			if (member.getPlayerId().equals(player.getUniqueId())) {
 				members.remove(i);
 
-				for (SubArea subArea : SubAreasManager.getSubAreasOfRegion(id)) {
+				for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(id)) {
 					subArea.removeMember(member);
 				}
 
@@ -424,7 +424,7 @@ public class Region {
 			if (member.getPlayerId().equals(player.getPlayerId())) {
 				members.remove(i);
 
-				for (SubArea subArea : SubAreasManager.getSubAreasOfRegion(id)) {
+				for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(id)) {
 					subArea.removeMember(member);
 				}
 

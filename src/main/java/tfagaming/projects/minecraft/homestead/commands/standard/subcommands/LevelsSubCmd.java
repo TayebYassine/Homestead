@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionLevels;
-import tfagaming.projects.minecraft.homestead.managers.LevelsManager;
+import tfagaming.projects.minecraft.homestead.managers.LevelManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -19,7 +19,7 @@ public class LevelsSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -39,7 +39,7 @@ public class LevelsSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		LevelsManager.getOrCreateLevel(region.getUniqueId());
+		LevelManager.getOrCreateLevel(region.getUniqueId());
 
 		new RegionLevels(player, region, player::closeInventory);
 

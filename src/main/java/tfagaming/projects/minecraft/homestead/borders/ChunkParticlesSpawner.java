@@ -6,15 +6,13 @@ import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -102,7 +100,7 @@ public class ChunkParticlesSpawner {
 	 * Iterates through all regions and spawns border borders visible to this player.
 	 */
 	public void spawnParticles() {
-		for (Region region : RegionsManager.getAll()) {
+		for (Region region : RegionManager.getAll()) {
 			spawnParticlesForRegion(region);
 		}
 	}
@@ -136,7 +134,7 @@ public class ChunkParticlesSpawner {
 			}
 
 			// Get updated region reference
-			region = RegionsManager.findRegion(region.getUniqueId());
+			region = RegionManager.findRegion(region.getUniqueId());
 
 			// Determine particle color based on player relation
 			DustOptions dustOptions;
@@ -178,7 +176,7 @@ public class ChunkParticlesSpawner {
 		}
 
 		Chunk neighbor = world.getChunkAt(chunkX, chunkZ);
-		Region neighborRegion = ChunksManager.getRegionOwnsTheChunk(neighbor);
+		Region neighborRegion = ChunkManager.getRegionOwnsTheChunk(neighbor);
 
 		// If there is no neighboring region or it belongs to a different region, draw the border
 		if (neighborRegion == null || !neighborRegion.getUniqueId().equals(region.getUniqueId())) {

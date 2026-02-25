@@ -89,7 +89,7 @@ public class LegacyVaultProvider implements EconomyProvider, PermissionsProvider
 	@Override
 	public boolean has(OfflinePlayer player, String permission) {
 		if (permissions == null || player.getName() == null) return false;
-		return permissions.playerHas((String) null, player, permission);
+		return permissions.playerHas(null, player, permission);
 	}
 
 	@Override

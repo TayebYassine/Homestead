@@ -5,7 +5,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -13,10 +12,10 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
-import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.War;
@@ -29,7 +28,10 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits.LimitMethod;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class PlayerUtils {
 	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
@@ -39,13 +41,13 @@ public class PlayerUtils {
 			PlayerFlags.PASSTHROUGH
 	);
 
-	public static void sendMessageRegionEnter(Player player, Map<String, String> replacements) {
+	public static void sendMessageRegionEnter(Player player, Placeholder placeholder) {
 		switch (Homestead.config.getString("enter-exit-region-message.type").toLowerCase()) {
 			case "title":
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.enter.title");
 
-				player.sendTitle(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(0), replacements)),
-						ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), replacements)), 10, 70,
+				player.sendTitle(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(0), placeholder)),
+						ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), placeholder)), 10, 70,
 						20);
 
 				break;
@@ -54,25 +56,27 @@ public class PlayerUtils {
 						new TextComponent(ColorTranslator
 								.translate(Formatter.applyPlaceholders(
 										Homestead.config.getString("enter-exit-region-message.messages.enter.actionbar"),
-										replacements))));
+										placeholder))));
 
 				break;
 			default:
 				player.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(
 						Homestead.config.getString("enter-exit-region-message.messages.enter.chat"),
-						replacements)));
+						placeholder)));
 				break;
 		}
 	}
 
-	public static void sendMessageRegionExit(Player player, Map<String, String> replacements) {
+	public static void sendMessageRegionExit(Player player, Placeholder placeholder) {
 		switch (Homestead.config.getString("enter-exit-region-message.type").toLowerCase()) {
 			case "title":
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.exit.title");
 
-				player.sendTitle(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(0), replacements)),
-						ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), replacements)), 10, 70,
-						20);
+				if (titleData.size() == 2) {
+					player.sendTitle(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.getFirst(), placeholder)),
+							ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), placeholder)), 10, 70,
+							20);
+				}
 
 				break;
 			case "actionbar":
@@ -80,19 +84,19 @@ public class PlayerUtils {
 						new TextComponent(ColorTranslator
 								.translate(Formatter.applyPlaceholders(
 										Homestead.config.getString("enter-exit-region-message.messages.exit.actionbar"),
-										replacements))));
+										placeholder))));
 
 				break;
 			default:
 				player.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(
 						Homestead.config.getString("enter-exit-region-message.messages.exit.chat"),
-						replacements)));
+						placeholder)));
 				break;
 		}
 	}
 
 	public static void teleportPlayerToChunk(Player player, Chunk chunk) {
-		Location location = ChunksManager.getLocation(player, chunk);
+		Location location = ChunkManager.getLocation(player, chunk);
 
 		player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 	}
@@ -123,19 +127,19 @@ public class PlayerUtils {
 	 * @return true if the action is allowed; false otherwise
 	 */
 	public static boolean hasPermissionFlag(UUID regionId, Player player, long flag, boolean notify) {
-		Region region = RegionsManager.findRegion(regionId);
+		Region region = RegionManager.findRegion(regionId);
 		if (region == null) return true;
 
 		boolean response;
 
 		SerializableRent rent = region.getRent();
-		War war = WarsManager.findWarByRegionId(regionId);
+		War war = WarManager.findWarByRegionId(regionId);
 
 		if (rent != null && rent.getPlayerId() != null
 				&& rent.getPlayerId().equals(player.getUniqueId()) && !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag)) {
 			response = true;
 		} else if (war != null
-				&& WarsManager.getMembersOfWar(war.getUniqueId()).stream().map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId())
+				&& WarManager.getMembersOfWar(war.getUniqueId()).stream().map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId())
 				&& List.of(PlayerFlags.PVP,
 				PlayerFlags.DOORS,
 				PlayerFlags.TRAP_DOORS,
@@ -168,7 +172,7 @@ public class PlayerUtils {
 											long flag,
 											boolean notify) {
 
-		Region region = RegionsManager.findRegion(regionId);
+		Region region = RegionManager.findRegion(regionId);
 		if (region == null) {
 			return true;
 		}
@@ -186,7 +190,7 @@ public class PlayerUtils {
 											   UUID subAreaId,
 											   Player player,
 											   long flag) {
-		SubArea subArea = subAreaId != null ? SubAreasManager.findSubArea(subAreaId) : null;
+		SubArea subArea = subAreaId != null ? SubAreaManager.findSubArea(subAreaId) : null;
 
 		if (subArea != null) {
 			SerializableRent subRent = subArea.getRent();
@@ -206,10 +210,10 @@ public class PlayerUtils {
 			return FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
 		}
 
-		War war = WarsManager.findWarByRegionId(region.getUniqueId());
+		War war = WarManager.findWarByRegionId(region.getUniqueId());
 
 		if (war != null) {
-			List<UUID> warMembers = WarsManager.getMembersOfWar(war.getUniqueId())
+			List<UUID> warMembers = WarManager.getMembersOfWar(war.getUniqueId())
 					.stream()
 					.map(OfflinePlayer::getUniqueId)
 					.toList();
@@ -255,7 +259,7 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasControlRegionPermissionFlag(UUID regionId, Player player, long flag) {
-		Region region = RegionsManager.findRegion(regionId);
+		Region region = RegionManager.findRegion(regionId);
 
 		if (region != null) {
 			if (PlayerUtils.isOperator(player) || region.isOwner(player)) {

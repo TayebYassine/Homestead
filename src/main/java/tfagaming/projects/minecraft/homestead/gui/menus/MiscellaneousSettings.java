@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -46,7 +46,7 @@ public class MiscellaneousSettings {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				region.setName(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				RegionsManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
+				RegionManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{newname}", input));
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
@@ -61,7 +61,7 @@ public class MiscellaneousSettings {
 					Messages.send(player, 11);
 					return false;
 				}
-				if (RegionsManager.isNameUsed(message)) {
+				if (RegionManager.isNameUsed(message)) {
 					Messages.send(player, 2);
 					return false;
 				}
@@ -77,7 +77,7 @@ public class MiscellaneousSettings {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				region.setDisplayName(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				RegionsManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
+				RegionManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{newdisplayname}", region.getDisplayName()));
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
@@ -129,15 +129,15 @@ public class MiscellaneousSettings {
 			Location location = player.getLocation();
 			Chunk chunk = location.getChunk();
 
-			if (ChunksManager.getRegionOwnsTheChunk(chunk) == null
-					|| !ChunksManager.getRegionOwnsTheChunk(chunk).getUniqueId().equals(region.getUniqueId())) {
+			if (ChunkManager.getRegionOwnsTheChunk(chunk) == null
+					|| !ChunkManager.getRegionOwnsTheChunk(chunk).getUniqueId().equals(region.getUniqueId())) {
 				Messages.send(player, 142);
 				return;
 			}
 
 			region.setLocation(location);
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-			RegionsManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
+			RegionManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
 					.add("{executor}", player.getName())
 					.add("{location}", Formatter.getLocation(location)));
 		});
@@ -196,7 +196,7 @@ public class MiscellaneousSettings {
 				DELETE_CONFIRM_TIME.remove(pid);
 
 				double amountToGive = region.getBank();
-				RegionsManager.deleteRegion(region.getUniqueId(), player);
+				RegionManager.deleteRegion(region.getUniqueId(), player);
 				PlayerBank.deposit(region.getOwner(), amountToGive);
 
 				Messages.send(player, 6, new Placeholder()

@@ -107,7 +107,7 @@ public class SerializableLocation {
 		return (worldName + "," + x + "," + y + "," + z + "," + yaw + "," + pitch);
 	}
 
-	public Location getBukkitLocation() {
+	public Location bukkit() {
 		World world = Bukkit.getWorld(worldName);
 
 		if (world == null) {

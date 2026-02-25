@@ -4,7 +4,7 @@ import java.util.*;
 
 public final class RegionControlFlags {
 
-	public static final long TRUST_PLAYERS = 1L << 0;
+	public static final long TRUST_PLAYERS = 1L;
 	public static final long UNTRUST_PLAYERS = 1L << 1;
 	public static final long BAN_PLAYERS = 1L << 2;
 	public static final long UNBAN_PLAYERS = 1L << 3;

@@ -15,10 +15,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreasManager;
-import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLocation;
@@ -119,8 +119,8 @@ public final class CustomSignsListener implements Listener {
 	public void onSignBreak(BlockBreakEvent event) {
 		Chunk chunk = event.getBlock().getChunk();
 
-		if (ChunksManager.isChunkClaimed(chunk) && event.getBlock() != null && event.getBlock().getType().toString().toLowerCase().contains("sign")) {
-			Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		if (ChunkManager.isChunkClaimed(chunk) && event.getBlock() != null && event.getBlock().getType().toString().toLowerCase().contains("sign")) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region == null) {
 				return;
@@ -275,7 +275,7 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private Region validateRegion(Player player, Chunk chunk) {
-		Region region = ChunksManager.getRegionOwnsTheChunk(chunk);
+		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 		if (region == null || !region.isOwner(player)) {
 			Messages.send(player, 119);
@@ -356,7 +356,7 @@ public final class CustomSignsListener implements Listener {
 			String durationStr = ChatColor.stripColor(lines[3].trim());
 			long durationMs = parseFormattedDuration(durationStr);
 
-			Region region = RegionsManager.findRegion(regionName);
+			Region region = RegionManager.findRegion(regionName);
 
 			if (region == null) {
 				Messages.send(player, 9);
@@ -380,11 +380,11 @@ public final class CustomSignsListener implements Listener {
 
 			SerializableRent rent = new SerializableRent(player, price, rentEnd);
 
-			SubArea subArea = SubAreasManager.findSubAreaHasLocationInside(sign.getLocation());
+			SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(sign.getLocation());
 
 			Placeholder placeholder = new Placeholder()
-				.add("{region}", region.getName())
-				.add("{rent-end}", Formatter.getRemainingTime(rentEnd));
+					.add("{region}", region.getName())
+					.add("{rent-end}", Formatter.getRemainingTime(rentEnd));
 
 			if (subArea != null) {
 				subArea.setRent(rent);
@@ -411,14 +411,14 @@ public final class CustomSignsListener implements Listener {
 			String priceStr = ChatColor.stripColor(lines[2].trim());
 			double price = parseFormattedPrice(priceStr);
 
-			Region region = RegionsManager.findRegion(regionName);
+			Region region = RegionManager.findRegion(regionName);
 
 			if (region == null) {
 				Messages.send(player, 9);
 				return;
 			}
 
-			if (WarsManager.isRegionInWar(region.getUniqueId())) {
+			if (WarManager.isRegionInWar(region.getUniqueId())) {
 				Messages.send(player, 156);
 				return;
 			}

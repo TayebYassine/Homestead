@@ -9,8 +9,8 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.ChunksManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -24,7 +24,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class SetRegionSubCmd extends SubCommandBuilder {
 	public SetRegionSubCmd() {
@@ -35,7 +34,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-		
+
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
@@ -93,7 +92,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{newdisplayname}", region.getDisplayName())
 				);
 
-				RegionsManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
+				RegionManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{newdisplayname}", region.getDisplayName())
 				);
@@ -206,7 +205,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				Chunk chunk = location.getChunk();
 
-				if (ChunksManager.getRegionOwnsTheChunk(chunk) == null || !Objects.requireNonNull(ChunksManager.getRegionOwnsTheChunk(chunk)).getUniqueId().equals(region.getUniqueId())) {
+				if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
 					Messages.send(player, 142);
 					return true;
 				}
@@ -218,7 +217,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{location}", Formatter.getLocation(location))
 				);
 
-				RegionsManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
+				RegionManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{location}", Formatter.getLocation(location))
 				);
@@ -351,7 +350,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				String regionName = args[1];
 
-				Region region = RegionsManager.findRegion(regionName);
+				Region region = RegionManager.findRegion(regionName);
 
 				if (region == null) {
 					Messages.send(player, 9);
@@ -401,12 +400,12 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					List.of("displayname", "target", "description", "mapcolor", "spawn", "icon", "tax"));
 		else if (args.length == 2 && args[0].equalsIgnoreCase("target")) {
 			if (PlayerUtils.isOperator(player)) {
-				suggestions.addAll(RegionsManager.getAll().stream().map(Region::getName).toList());
+				suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
 			} else {
 				suggestions.addAll(
-						RegionsManager.getRegionsOwnedByPlayer(player).stream().map(Region::getName).toList());
+						RegionManager.getRegionsOwnedByPlayer(player).stream().map(Region::getName).toList());
 				suggestions.addAll(
-						RegionsManager.getRegionsHasPlayerAsMember(player).stream().map(Region::getName).toList());
+						RegionManager.getRegionsHasPlayerAsMember(player).stream().map(Region::getName).toList());
 			}
 		} else if (args.length == 2 && args[0].equalsIgnoreCase("mapcolor"))
 			suggestions.addAll(MapColor.getAll());

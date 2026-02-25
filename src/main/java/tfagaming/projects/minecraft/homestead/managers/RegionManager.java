@@ -18,15 +18,18 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
  * Handles creating, deleting, and updating regions.<br>
  * This is a utility class that helps manage regions more easily. Updating and setting data to regions is generally done to the {@link Region} object.
  */
-public final class RegionsManager {
-	private RegionsManager() {
+public final class RegionManager {
+	private RegionManager() {
 	}
 
 	/**
@@ -65,7 +68,7 @@ public final class RegionsManager {
 			String newName = name;
 			int counter = 1;
 
-			while (RegionsManager.isNameUsed(newName)) {
+			while (RegionManager.isNameUsed(newName)) {
 				newName = name + counter;
 				counter++;
 			}
@@ -133,8 +136,8 @@ public final class RegionsManager {
 			return;
 		}
 
-		for (SubArea subArea : SubAreasManager.getSubAreasOfRegion(id)) {
-			SubAreasManager.deleteSubArea(subArea.getUniqueId());
+		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(id)) {
+			SubAreaManager.deleteSubArea(subArea.getUniqueId());
 		}
 
 		if (Homestead.config.regenerateChunksWithWorldEdit()) {
@@ -199,7 +202,7 @@ public final class RegionsManager {
 
 		final double bank = from.getBank();
 		final List<SerializableChunk> chunks = from.getChunks();
-		final List<SubArea> subAreas = SubAreasManager.getSubAreasOfRegion(from.getUniqueId());
+		final List<SubArea> subAreas = SubAreaManager.getSubAreasOfRegion(from.getUniqueId());
 		final List<SerializableMember> members = from.getMembers();
 
 		to.addBalanceToBank(bank);
@@ -474,7 +477,7 @@ public final class RegionsManager {
 			}
 
 			if (region.getOwner() == null) {
-				RegionsManager.deleteRegion(region.getUniqueId());
+				RegionManager.deleteRegion(region.getUniqueId());
 				updated++;
 			}
 		}

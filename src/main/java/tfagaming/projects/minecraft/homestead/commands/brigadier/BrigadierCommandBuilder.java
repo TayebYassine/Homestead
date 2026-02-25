@@ -50,7 +50,6 @@ public final class BrigadierCommandBuilder {
 
 	public static class SubCommandBuilder {
 		private final BrigadierCommandBuilder parent;
-		private final String name;
 		private final LiteralArgumentBuilder<Object> builder;
 		private final List<ArgumentNode> arguments = new ArrayList<>();
 		private final List<SubCommandBuilder> nestedSubs = new ArrayList<>();
@@ -58,7 +57,6 @@ public final class BrigadierCommandBuilder {
 
 		private SubCommandBuilder(BrigadierCommandBuilder parent, String name) {
 			this.parent = parent;
-			this.name = name;
 			this.builder = LiteralArgumentBuilder.literal(name);
 		}
 

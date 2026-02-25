@@ -4,8 +4,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import tfagaming.projects.minecraft.homestead.managers.RegionsManager;
-import tfagaming.projects.minecraft.homestead.managers.WarsManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -17,11 +17,11 @@ public final class PlayerDeathListener implements Listener {
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		Player victim = event.getEntity();
 
-		List<Region> regions = RegionsManager.getRegionsOwnedByPlayer(victim);
+		List<Region> regions = RegionManager.getRegionsOwnedByPlayer(victim);
 
 		for (Region region : regions) {
-			if (WarsManager.isRegionInWar(region.getUniqueId())) {
-				War war = WarsManager.surrenderRegionFromFirstWarFound(region.getUniqueId());
+			if (WarManager.isRegionInWar(region.getUniqueId())) {
+				War war = WarManager.surrenderRegionFromFirstWarFound(region.getUniqueId());
 
 				if (war != null && war.getRegions().size() == 1) {
 					Region winner = war.getRegions().getFirst();
@@ -35,7 +35,7 @@ public final class PlayerDeathListener implements Listener {
 						Messages.send((Player) winner.getOwner(), 155);
 					}
 
-					WarsManager.endWar(war.getUniqueId());
+					WarManager.endWar(war.getUniqueId());
 				}
 
 				Messages.send(victim, 163);

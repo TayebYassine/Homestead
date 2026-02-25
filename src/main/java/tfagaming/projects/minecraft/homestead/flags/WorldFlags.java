@@ -4,7 +4,7 @@ import java.util.*;
 
 public final class WorldFlags {
 
-	public static final long PASSIVE_ENTITIES_SPAWN = 1L << 0;
+	public static final long PASSIVE_ENTITIES_SPAWN = 1L;
 	public static final long HOSTILE_ENTITIES_SPAWN = 1L << 1;
 	public static final long ENTITIES_GRIEF = 1L << 2;
 	public static final long ENTITIES_DAMAGE_ENTITIES = 1L << 3;
