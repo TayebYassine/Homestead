@@ -1,7 +1,8 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -84,8 +85,7 @@ public final class SelectionToolListener implements Listener {
 
 				Block firstPosition = event.getClickedBlock();
 
-				if (selection.getSecondPosition() != null && !firstPosition.getWorld().getName()
-						.equals(selection.getSecondPosition().getWorld().getName())) {
+				if (selection.getSecondPosition() != null && !sameWorld(selection.getSecondPosition(), firstPosition)) {
 					return;
 				}
 
@@ -114,8 +114,7 @@ public final class SelectionToolListener implements Listener {
 
 				Block secondPosition = event.getClickedBlock();
 
-				if (selection.getFirstPosition() != null && !secondPosition.getWorld().getName()
-						.equals(selection.getFirstPosition().getWorld().getName())) {
+				if (selection.getFirstPosition() != null && !sameWorld(selection.getFirstPosition(), secondPosition)) {
 					return;
 				}
 
@@ -160,9 +159,7 @@ public final class SelectionToolListener implements Listener {
 		cancelTask(player);
 
 		TaskHandle task = Homestead.getInstance().runSyncTimerTask(() -> {
-			player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-					new TextComponent(ColorTranslator
-							.translate(message)));
+			player.sendActionBar(toComponent(ColorTranslator.translate(message)));
 		}, 20);
 
 		tasks.put(player.getUniqueId(), task);
@@ -172,6 +169,16 @@ public final class SelectionToolListener implements Listener {
 		String itemString = Homestead.config.getString("selection-tool.item");
 
 		return Material.getMaterial(itemString);
+	}
+
+	private boolean sameWorld(Block loc1, Block loc2) {
+		if (loc1.getWorld() == null || loc2.getWorld() == null) return false;
+
+		return loc1.getWorld().getUID().equals(loc2.getWorld().getUID());
+	}
+
+	private TextComponent toComponent(String legacyText) {
+		return LegacyComponentSerializer.legacySection().deserialize(legacyText);
 	}
 
 	public static class Selection {

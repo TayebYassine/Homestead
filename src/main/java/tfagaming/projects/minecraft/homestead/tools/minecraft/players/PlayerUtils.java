@@ -1,7 +1,9 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.players;
 
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -28,6 +30,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits.LimitMethod;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,28 +44,40 @@ public class PlayerUtils {
 			PlayerFlags.PASSTHROUGH
 	);
 
+	private static TextComponent toComponent(String legacyText) {
+		return LegacyComponentSerializer.legacySection().deserialize(legacyText);
+	}
+
 	public static void sendMessageRegionEnter(Player player, Placeholder placeholder) {
 		switch (Homestead.config.getString("enter-exit-region-message.type").toLowerCase()) {
 			case "title":
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.enter.title");
 
-				player.sendTitle(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(0), placeholder)),
-						ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), placeholder)), 10, 70,
-						20);
+				if (titleData.size() == 2) {
+					player.showTitle(Title.title(
+							toComponent(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.getFirst(), placeholder))),
+							toComponent(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), placeholder))),
+							Title.Times.times(
+									Duration.ofMillis(10 * 50L),
+									Duration.ofMillis(70 * 50L),
+									Duration.ofMillis(20 * 50L)
+							)
+					));
+				}
 
 				break;
 			case "actionbar":
-				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-						new TextComponent(ColorTranslator
-								.translate(Formatter.applyPlaceholders(
-										Homestead.config.getString("enter-exit-region-message.messages.enter.actionbar"),
-										placeholder))));
+				player.sendActionBar(toComponent(ColorTranslator.translate(
+						Formatter.applyPlaceholders(
+								Homestead.config.getString("enter-exit-region-message.messages.enter.actionbar"),
+								placeholder))));
 
 				break;
 			default:
-				player.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(
-						Homestead.config.getString("enter-exit-region-message.messages.enter.chat"),
-						placeholder)));
+				player.sendMessage(toComponent(ColorTranslator.translate(
+						Formatter.applyPlaceholders(
+								Homestead.config.getString("enter-exit-region-message.messages.enter.chat"),
+								placeholder))));
 				break;
 		}
 	}
@@ -73,24 +88,30 @@ public class PlayerUtils {
 				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.exit.title");
 
 				if (titleData.size() == 2) {
-					player.sendTitle(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.getFirst(), placeholder)),
-							ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), placeholder)), 10, 70,
-							20);
+					player.showTitle(Title.title(
+							toComponent(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.getFirst(), placeholder))),
+							toComponent(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), placeholder))),
+							Title.Times.times(
+									Duration.ofMillis(10 * 50L),
+									Duration.ofMillis(70 * 50L),
+									Duration.ofMillis(20 * 50L)
+							)
+					));
 				}
 
 				break;
 			case "actionbar":
-				player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-						new TextComponent(ColorTranslator
-								.translate(Formatter.applyPlaceholders(
-										Homestead.config.getString("enter-exit-region-message.messages.exit.actionbar"),
-										placeholder))));
+				player.sendActionBar(toComponent(ColorTranslator.translate(
+						Formatter.applyPlaceholders(
+								Homestead.config.getString("enter-exit-region-message.messages.exit.actionbar"),
+								placeholder))));
 
 				break;
 			default:
-				player.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(
-						Homestead.config.getString("enter-exit-region-message.messages.exit.chat"),
-						placeholder)));
+				player.sendMessage(toComponent(ColorTranslator.translate(
+						Formatter.applyPlaceholders(
+								Homestead.config.getString("enter-exit-region-message.messages.exit.chat"),
+								placeholder))));
 				break;
 		}
 	}
