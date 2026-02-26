@@ -45,6 +45,19 @@ public final class YAML {
 		return dir;
 	}
 
+	/**
+	 * Resolves a Bukkit World from a stored value that may be either a UUID string
+	 * (new format) or a plain world name (legacy format, pre-migration).
+	 */
+	private static World resolveWorld(String value) {
+		if (value == null || value.isBlank()) return null;
+		try {
+			return Bukkit.getWorld(UUID.fromString(value.trim()));
+		} catch (IllegalArgumentException ignored) {
+			return Bukkit.getWorld(value.trim());
+		}
+	}
+
 	// Importing
 	public void importRegions() {
 		File[] regionFiles = regionsFolder
@@ -212,7 +225,7 @@ public final class YAML {
 				UUID regionId = UUID.fromString(Objects.requireNonNull(cfg.getString("regionId")));
 				String name = cfg.getString("name");
 
-				World world = Bukkit.getWorld(Objects.requireNonNull(cfg.getString("worldName")));
+				World world = resolveWorld(Objects.requireNonNull(cfg.getString("worldName")));
 				if (world == null) continue;
 
 				Block point1 = SubArea.parseBlockLocation(world, Objects.requireNonNull(cfg.getString("point1")));
@@ -230,7 +243,7 @@ public final class YAML {
 
 				long createdAt = cfg.getLong("createdAt");
 
-				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
+				SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
 						point1, point2, members, flags, rent, createdAt);
 
 				Homestead.subAreasCache.putOrUpdate(subArea);
@@ -458,7 +471,7 @@ public final class YAML {
 				cfg.set("id", id.toString());
 				cfg.set("regionId", sub.regionId.toString());
 				cfg.set("name", sub.name);
-				cfg.set("worldName", sub.worldName);
+				cfg.set("worldName", sub.worldId.toString());
 				cfg.set("point1", SubArea.toStringBlockLocation(sub.getWorld(), sub.point1));
 				cfg.set("point2", SubArea.toStringBlockLocation(sub.getWorld(), sub.point2));
 				cfg.set("members", sub.members.stream()

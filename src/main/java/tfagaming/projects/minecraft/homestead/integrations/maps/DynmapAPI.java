@@ -42,7 +42,7 @@ public class DynmapAPI {
 		double[] x = {chunk.getX() * 16, (chunk.getX() + 1) * 16};
 		double[] z = {chunk.getZ() * 16, (chunk.getZ() + 1) * 16};
 
-		String markerId = "claimed_" + chunk.getWorldName() + "_" + chunk.getX() + "_" + chunk.getZ();
+		String markerId = "claimed_" + chunk.getWorld().getName() + "_" + chunk.getX() + "_" + chunk.getZ();
 
 		AreaMarker existingMarker = markerSet.findAreaMarker(markerId);
 
@@ -56,7 +56,7 @@ public class DynmapAPI {
 				markerId,
 				markerLabel,
 				false,
-				chunk.getWorldName(),
+				chunk.getWorld().getName(),
 				x,
 				z,
 				false);

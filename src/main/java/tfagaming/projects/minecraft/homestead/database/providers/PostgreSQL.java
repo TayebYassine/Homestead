@@ -109,6 +109,15 @@ public final class PostgreSQL {
 		}
 	}
 
+	private static World resolveWorld(String value) {
+		if (value == null || value.isBlank()) return null;
+		try {
+			return Bukkit.getWorld(UUID.fromString(value.trim()));
+		} catch (IllegalArgumentException ignored) {
+			return Bukkit.getWorld(value.trim());
+		}
+	}
+
 	// Importing
 	public void importRegions() {
 		String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
@@ -253,7 +262,7 @@ public final class PostgreSQL {
 				UUID regionId = (UUID) rs.getObject("region_id");
 				String name = rs.getString("name");
 
-				World world = Bukkit.getWorld(rs.getString("world_name"));
+				World world = resolveWorld(rs.getString("world_name"));
 
 				if (world == null) {
 					continue;
@@ -273,7 +282,7 @@ public final class PostgreSQL {
 
 				long createdAt = rs.getLong("created_at");
 
-				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
+				SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
 						point1, point2, members, flags, rent, createdAt);
 
 				Homestead.subAreasCache.putOrUpdate(subArea);
@@ -552,7 +561,7 @@ public final class PostgreSQL {
 				upsertStmt.setObject(1, subAreaId);
 				upsertStmt.setObject(2, subArea.regionId);
 				upsertStmt.setString(3, subArea.name);
-				upsertStmt.setString(4, subArea.worldName);
+				upsertStmt.setString(4, subArea.worldId.toString());
 				upsertStmt.setString(5, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point1));
 				upsertStmt.setString(6, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point2));
 				upsertStmt.setArray(7, connection.createArrayOf("text", membersArray));

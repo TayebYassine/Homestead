@@ -59,6 +59,19 @@ public final class MongoDB {
 		return mongoDatabase.getCollection(COLLECTION_PREFIX + "levels");
 	}
 
+	/**
+	 * Resolves a Bukkit World from a stored value that may be either a UUID string
+	 * (new format) or a plain world name (legacy format, pre-migration).
+	 */
+	private static World resolveWorld(String value) {
+		if (value == null || value.isBlank()) return null;
+		try {
+			return Bukkit.getWorld(UUID.fromString(value.trim()));
+		} catch (IllegalArgumentException ignored) {
+			return Bukkit.getWorld(value.trim());
+		}
+	}
+
 	public void importRegions() {
 		Homestead.regionsCache.clear();
 
@@ -198,7 +211,7 @@ public final class MongoDB {
 				UUID regionId = UUID.fromString(doc.getString("regionId"));
 				String name = doc.getString("name");
 
-				World world = Bukkit.getWorld(doc.getString("worldName"));
+				World world = resolveWorld(doc.getString("worldName"));
 				if (world == null) continue;
 
 				Block point1 = SubArea.parseBlockLocation(world, doc.getString("point1"));
@@ -214,7 +227,7 @@ public final class MongoDB {
 				SerializableRent rent = rentRaw != null ? SerializableRent.fromString(rentRaw) : null;
 				long createdAt = doc.getLong("createdAt");
 
-				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
+				SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
 						point1, point2, members, flags, rent, createdAt);
 
 				Homestead.subAreasCache.putOrUpdate(subArea);
@@ -357,7 +370,7 @@ public final class MongoDB {
 			Document doc = new Document("id", id)
 					.append("regionId", subArea.regionId.toString())
 					.append("name", subArea.name)
-					.append("worldName", subArea.worldName)
+					.append("worldName", subArea.worldId.toString())
 					.append("point1", SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point1))
 					.append("point2", SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point2))
 					.append("members", membersStr)

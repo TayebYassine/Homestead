@@ -40,13 +40,13 @@ public class RegionClaimedChunks {
 					SerializableChunk chunk = chunks.get(context.getIndex());
 
 					if (context.getEvent().isRightClick()) {
-						new DelayedTeleport(player, chunk.getBukkitLocation());
+						new DelayedTeleport(player, chunk.bukkitLocation());
 						return;
 					}
 
 					if (!context.getEvent().isLeftClick()) return;
 
-					if (!ChunkManager.isChunkClaimed(chunk.getBukkitChunk()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.getBukkitChunk())) {
+					if (!ChunkManager.isChunkClaimed(chunk.bukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.bukkit())) {
 						return;
 					}
 
@@ -56,7 +56,7 @@ public class RegionClaimedChunks {
 					}
 
 					int before = region.getChunks().size();
-					ChunkManager.unclaimChunk(region.getUniqueId(), chunk.getBukkitChunk());
+					ChunkManager.unclaimChunk(region.getUniqueId(), chunk.bukkit());
 
 					if (region.getChunks().size() < before) {
 						double chunkPrice = Homestead.config.getDouble("chunk-price");
@@ -88,12 +88,12 @@ public class RegionClaimedChunks {
 					.add("{region}", region.getName())
 					.add("{index}", i + 1)
 					.add("{chunk-claimedat}", Formatter.getDate(chunk.getClaimedAt()))
-					.add("{chunk-location}", Formatter.getLocation(chunk.getBukkitLocation()));
+					.add("{chunk-location}", Formatter.getLocation(chunk.bukkitLocation()));
 
 			ButtonData data = MenuUtils.getButtonData(33);
 
 			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD")) {
-				data.originalType = switch (chunk.getBukkitLocation().getWorld().getEnvironment()) {
+				data.originalType = switch (chunk.bukkitLocation().getWorld().getEnvironment()) {
 					case NETHER -> Homestead.menusConfig.get("button-types.world.nether");
 					case THE_END -> Homestead.menusConfig.get("button-types.world.the_end");
 					default -> Homestead.menusConfig.get("button-types.world.overworld");

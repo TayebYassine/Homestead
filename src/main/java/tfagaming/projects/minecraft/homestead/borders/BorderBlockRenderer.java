@@ -23,7 +23,7 @@ public final class BorderBlockRenderer {
 
 		World world = player.getWorld();
 		for (SerializableChunk sc : region.getChunks()) {
-			if (!world.getName().equals(sc.getWorldName())) continue;
+			if (!world.getUID().equals(sc.getWorldId())) continue;
 
 			int cx = sc.getX();
 			int cz = sc.getZ();
@@ -78,7 +78,7 @@ public final class BorderBlockRenderer {
 	}
 
 	private static boolean isChunkInRegion(Region region, World world, int cx, int cz) {
-		return region.getChunks().contains(new SerializableChunk(world.getName(), cx, cz));
+		return region.getChunks().contains(new SerializableChunk(world.getUID(), cx, cz));
 	}
 
 	private static void addBorderColumn(Set<FakeBorderRegistry.FakeBorderBlock> batch,

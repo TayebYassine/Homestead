@@ -19,7 +19,7 @@ public class SubArea {
 	public UUID id;
 	public UUID regionId;
 	public String name;
-	public String worldName;
+	public UUID worldId;
 	public int[] point1;
 	public int[] point2;
 	public List<SerializableMember> members = new ArrayList<>();
@@ -31,14 +31,14 @@ public class SubArea {
 		this.id = UUID.randomUUID();
 		this.regionId = regionId;
 		this.name = name;
-		this.worldName = world.getName();
+		this.worldId = world.getUID();
 		this.point1 = getBlockLocation(point1);
 		this.point2 = getBlockLocation(point2);
 		this.flags = flags;
 		this.createdAt = System.currentTimeMillis();
 	}
 
-	public SubArea(UUID id, UUID regionId, String name, String worldName, Block point1, Block point2,
+	public SubArea(UUID id, UUID regionId, String name, UUID worldId, Block point1, Block point2,
 				   List<SerializableMember> members,
 				   long flags,
 				   SerializableRent rent,
@@ -46,7 +46,7 @@ public class SubArea {
 		this.id = id;
 		this.regionId = regionId;
 		this.name = name;
-		this.worldName = worldName;
+		this.worldId = worldId;
 		this.point1 = getBlockLocation(point1);
 		this.point2 = getBlockLocation(point2);
 		this.members = members;
@@ -167,8 +167,12 @@ public class SubArea {
 		this.name = name;
 	}
 
+	public UUID getWorldId() {
+		return worldId;
+	}
+
 	public World getWorld() {
-		return Bukkit.getWorld(worldName);
+		return Bukkit.getWorld(worldId);
 	}
 
 	public Block getFirstPoint() {

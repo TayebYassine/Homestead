@@ -104,7 +104,7 @@ public class Pl3xMapAPI {
 			final SimpleLayer finalLayer = layer;
 
 			if (region.getLocation() != null
-					&& region.getLocation().bukkit().getChunk().equals(chunk.getBukkitChunk())) {
+					&& region.getLocation().bukkit().getChunk().equals(chunk.bukkit())) {
 				Homestead.getInstance().runAsyncTask(() -> {
 					addRegionIcon(finalLayer, region, hoverText);
 				});
@@ -202,28 +202,28 @@ public class Pl3xMapAPI {
 		switch (direction) {
 			case NORTH: {
 				Region chunksRegion = ChunkManager
-						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z - 1).getBukkitChunk());
+						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z - 1).bukkit());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;
 			}
 			case EAST: {
 				Region chunksRegion = ChunkManager
-						.getRegionOwnsTheChunk(new SerializableChunk(world, x + 1, z).getBukkitChunk());
+						.getRegionOwnsTheChunk(new SerializableChunk(world, x + 1, z).bukkit());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;
 			}
 			case SOUTH: {
 				Region chunksRegion = ChunkManager
-						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z + 1).getBukkitChunk());
+						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z + 1).bukkit());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;
 			}
 			case WEST: {
 				Region chunksRegion = ChunkManager
-						.getRegionOwnsTheChunk(new SerializableChunk(world, x - 1, z).getBukkitChunk());
+						.getRegionOwnsTheChunk(new SerializableChunk(world, x - 1, z).bukkit());
 
 				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
 				break;

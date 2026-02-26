@@ -123,18 +123,26 @@ public class ChunkParticlesSpawner {
 
 			int chunkX = chunk.getX();
 			int chunkZ = chunk.getZ();
-			String chunkWorldName = chunk.getWorldName();
+			UUID chunkWorldId = chunk.getWorldId();
 
 			int minX = chunkX * 16;
 			int minZ = chunkZ * 16;
 
 			// Skip chunks in different worlds
-			if (!world.getName().equals(chunkWorldName)) {
+			if (!world.getUID().equals(chunkWorldId)) {
+				continue;
+			}
+
+			if (region == null) {
 				continue;
 			}
 
 			// Get updated region reference
 			region = RegionManager.findRegion(region.getUniqueId());
+
+			if (region == null) {
+				continue;
+			}
 
 			// Determine particle color based on player relation
 			DustOptions dustOptions;

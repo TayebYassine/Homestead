@@ -237,8 +237,8 @@ public class BlueMapAPI {
 				World w = sc.getWorld();
 				if (w != null) return w;
 
-				if (sc.getWorldName() != null) {
-					World byName = org.bukkit.Bukkit.getWorld(sc.getWorldName());
+				if (sc.getWorldId() != null) {
+					World byName = org.bukkit.Bukkit.getWorld(sc.getWorldId());
 					if (byName != null) return byName;
 				}
 			}

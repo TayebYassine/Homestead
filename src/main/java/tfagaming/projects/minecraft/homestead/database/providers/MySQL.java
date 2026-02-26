@@ -105,6 +105,15 @@ public final class MySQL {
 		}
 	}
 
+	private static World resolveWorld(String value) {
+		if (value == null || value.isBlank()) return null;
+		try {
+			return Bukkit.getWorld(UUID.fromString(value.trim()));
+		} catch (IllegalArgumentException ignored) {
+			return Bukkit.getWorld(value.trim());
+		}
+	}
+
 	// Importing
 	public void importRegions() {
 		String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
@@ -257,7 +266,7 @@ public final class MySQL {
 				UUID regionId = UUID.fromString(rs.getString("regionId"));
 				String name = rs.getString("name");
 
-				World world = Bukkit.getWorld(rs.getString("worldName"));
+				World world = resolveWorld(rs.getString("worldName"));
 
 				if (world == null) {
 					continue;
@@ -280,7 +289,7 @@ public final class MySQL {
 
 				long createdAt = rs.getLong("createdAt");
 
-				SubArea subArea = new SubArea(id, regionId, name, world.getName(),
+				SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
 						point1, point2, members, flags, rent, createdAt);
 
 				Homestead.subAreasCache.putOrUpdate(subArea);
@@ -539,7 +548,7 @@ public final class MySQL {
 				upsertStmt.setString(1, subAreaId.toString());
 				upsertStmt.setString(2, subArea.regionId.toString());
 				upsertStmt.setString(3, subArea.name);
-				upsertStmt.setString(4, subArea.worldName);
+				upsertStmt.setString(4, subArea.worldId.toString());
 				upsertStmt.setString(5, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point1));
 				upsertStmt.setString(6, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point2));
 				upsertStmt.setString(7, membersStr);

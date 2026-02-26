@@ -140,8 +140,7 @@ public final class ChunkManager {
 
 		List<SerializableChunk> normalized = new ArrayList<>();
 		for (SerializableChunk c : region.getChunks()) {
-			if (c == null || c.getWorldName() == null || c.getWorldName().isBlank()) continue;
-			c.setWorldName(c.getWorldName().trim());
+			if (c == null || c.getWorldId() == null) continue;
 			normalized.add(c);
 		}
 
@@ -151,11 +150,11 @@ public final class ChunkManager {
 		}
 
 		List<SerializableChunk> chunks = new ArrayList<>(byKey.values());
-		chunks.removeIf(c -> ChunkUtils.areEqual(c.getBukkitChunk(), chunkToRemove));
+		chunks.removeIf(c -> ChunkUtils.areEqual(c.bukkit(), chunkToRemove));
 
 		if (chunks.isEmpty()) return false;
 
-		String worldName = chunks.getFirst().getWorldName();
+		UUID worldId = chunks.getFirst().getWorldId();
 		Set<SerializableChunk> visited = new HashSet<>();
 		Queue<SerializableChunk> queue = new LinkedList<>();
 
@@ -167,7 +166,7 @@ public final class ChunkManager {
 
 			for (SerializableChunk neighbor : chunks) {
 				if (neighbor == null) continue;
-				if (!neighbor.getWorldName().equals(worldName)) continue;
+				if (!neighbor.getWorldId().equals(worldId)) continue;
 				if (visited.contains(neighbor)) continue;
 
 				if (areAdjacent(current, neighbor)) {
@@ -186,7 +185,7 @@ public final class ChunkManager {
 	 * @param b The second chunk
 	 */
 	private static boolean areAdjacent(SerializableChunk a, SerializableChunk b) {
-		if (!a.getWorldName().equals(b.getWorldName())) return false;
+		if (!a.getWorldId().equals(b.getWorldId())) return false;
 		int dx = Math.abs(a.getX() - b.getX());
 		int dz = Math.abs(a.getZ() - b.getZ());
 		return (dx == 1 && dz == 0) || (dx == 0 && dz == 1);
@@ -428,8 +427,8 @@ public final class ChunkManager {
 	 */
 	public static int deleteInvalidChunks() {
 		int count = 0;
-		Set<String> worlds = new HashSet<>();
-		for (World w : Bukkit.getWorlds()) worlds.add(w.getName());
+		Set<UUID> worlds = new HashSet<>();
+		for (World w : Bukkit.getWorlds()) worlds.add(w.getUID());
 
 		for (Region region : RegionManager.getAll()) {
 			if (region == null || region.getChunks() == null || region.getChunks().isEmpty()) continue;
@@ -437,7 +436,7 @@ public final class ChunkManager {
 			Iterator<SerializableChunk> it = region.getChunks().iterator();
 			while (it.hasNext()) {
 				SerializableChunk sc = it.next();
-				if (sc == null || sc.getWorldName() == null || !worlds.contains(sc.getWorldName().trim())) {
+				if (sc == null || sc.getWorldId() == null || !worlds.contains(sc.getWorldId())) {
 					it.remove();
 					count++;
 				}

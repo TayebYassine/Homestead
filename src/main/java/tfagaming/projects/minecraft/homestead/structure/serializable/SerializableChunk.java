@@ -3,6 +3,8 @@ package tfagaming.projects.minecraft.homestead.structure.serializable;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 
+import java.util.UUID;
+
 /**
  * Represents a serializable Minecraft chunk with claim metadata.
  * <p>
@@ -11,47 +13,48 @@ import org.bukkit.block.Block;
  */
 public class SerializableChunk {
 	private final long claimedAt;
-	private String worldName;
+	private UUID worldId;
 	private int x;
 	private int z;
 
 	public SerializableChunk(Chunk chunk) {
-		this.worldName = chunk.getWorld() != null ? chunk.getWorld().getName() : null;
+		this.worldId = chunk.getWorld().getUID();
 		this.x = chunk.getX();
 		this.z = chunk.getZ();
 		this.claimedAt = System.currentTimeMillis();
 	}
 
-	public SerializableChunk(String worldName, int x, int z) {
-		this.worldName = worldName;
-		this.x = x;
-		this.z = z;
-		this.claimedAt = System.currentTimeMillis();
-	}
-
 	public SerializableChunk(World world, int x, int z) {
-		this.worldName = world != null ? world.getName() : null;
+		this.worldId = world.getUID();
 		this.x = x;
 		this.z = z;
 		this.claimedAt = System.currentTimeMillis();
 	}
 
-	public SerializableChunk(String worldName, int x, int z, long claimedAt) {
-		this.worldName = worldName;
+	public SerializableChunk(UUID worldId, int x, int z) {
+		this.worldId = worldId;
+		this.x = x;
+		this.z = z;
+		this.claimedAt = System.currentTimeMillis();
+	}
+
+	public SerializableChunk(UUID worldId, int x, int z, long claimedAt) {
+		this.worldId = worldId;
 		this.x = x;
 		this.z = z;
 		this.claimedAt = claimedAt;
 	}
 
-	/**
-	 * Parses a chunk string into a SerializableChunk.
-	 * <p>
-	 * Backward-compatible with older database formats (handles missing or invalid claimedAt values).
-	 * </p>
-	 *
-	 * @param string The serialized chunk string (e.g. "world,-52,-310,1759002383683").
-	 * @return A valid SerializableChunk instance, or null if invalid.
-	 */
+	private static UUID resolveWorldId(String token) {
+		if (token == null || token.isBlank()) return null;
+		try {
+			return UUID.fromString(token.trim());
+		} catch (IllegalArgumentException ignored) {
+			World w = Bukkit.getWorld(token.trim());
+			return w != null ? w.getUID() : null;
+		}
+	}
+
 	public static SerializableChunk fromString(String string) {
 		if (string == null || string.isEmpty()) return null;
 
@@ -61,13 +64,13 @@ public class SerializableChunk {
 			// Must have at least world, x, z
 			if (split.length < 3) return null;
 
-			String world = split[0].trim();
+			UUID worldId = resolveWorldId(split[0].trim());
+			if (worldId == null) return null;
 			int x = Integer.parseInt(split[1].trim());
 			int z = Integer.parseInt(split[2].trim());
 
 			long claimedAt = System.currentTimeMillis();
 
-			// Some old DB entries may lack or have invalid claimedAt
 			if (split.length >= 4 && !split[3].trim().isEmpty()) {
 				try {
 					claimedAt = Long.parseLong(split[3].trim());
@@ -76,18 +79,18 @@ public class SerializableChunk {
 				}
 			}
 
-			return new SerializableChunk(world, x, z, claimedAt);
+			return new SerializableChunk(worldId, x, z, claimedAt);
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
 	public static String convertToString(Chunk chunk) {
-		return chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ() + "," + System.currentTimeMillis();
+		return chunk.getWorld().getUID() + "," + chunk.getX() + "," + chunk.getZ() + "," + System.currentTimeMillis();
 	}
 
 	public static String convertToString(Chunk chunk, boolean withoutClaimTime) {
-		return chunk.getWorld().getName() + "," + chunk.getX() + "," + chunk.getZ();
+		return chunk.getWorld().getUID() + "," + chunk.getX() + "," + chunk.getZ();
 	}
 
 	public static boolean equals(Chunk chunk1, Chunk chunk2) {
@@ -102,16 +105,16 @@ public class SerializableChunk {
 		return chunk1.toString(true).equals(chunk2.toString(true));
 	}
 
-	public String getWorldName() {
-		return worldName;
+	public UUID getWorldId() {
+		return worldId;
 	}
 
-	public void setWorldName(String worldName) {
-		this.worldName = worldName;
+	public void setWorldId(UUID worldId) {
+		this.worldId = worldId;
 	}
 
 	public World getWorld() {
-		return worldName == null ? null : Bukkit.getWorld(worldName);
+		return worldId == null ? null : Bukkit.getWorld(worldId);
 	}
 
 	public int getX() {
@@ -136,15 +139,15 @@ public class SerializableChunk {
 
 	@Override
 	public String toString() {
-		return worldName + "," + x + "," + z + "," + claimedAt;
+		return worldId + "," + x + "," + z + "," + claimedAt;
 	}
 
 	public String toString(boolean withoutClaimTime) {
-		return worldName + "," + x + "," + z;
+		return worldId + "," + x + "," + z;
 	}
 
-	public Location getBukkitLocation() {
-		World world = Bukkit.getWorld(worldName);
+	public Location bukkitLocation() {
+		World world = Bukkit.getWorld(worldId);
 		if (world == null) return null;
 
 		Location location = new Location(world, x * 16 + 8, 64, z * 16 + 8);
@@ -159,8 +162,8 @@ public class SerializableChunk {
 		return location;
 	}
 
-	public Chunk getBukkitChunk() {
-		Location loc = getBukkitLocation();
+	public Chunk bukkit() {
+		Location loc = bukkitLocation();
 		return (loc != null) ? loc.getChunk() : null;
 	}
 
@@ -188,11 +191,11 @@ public class SerializableChunk {
 		if (this == obj) return true;
 		if (!(obj instanceof SerializableChunk other)) return false;
 		return this.x == other.x && this.z == other.z &&
-				this.worldName.equalsIgnoreCase(other.worldName);
+				this.worldId.equals(other.worldId);
 	}
 
 	@Override
 	public int hashCode() {
-		return java.util.Objects.hash(worldName.toLowerCase(), x, z);
+		return java.util.Objects.hash(worldId, x, z);
 	}
 }
