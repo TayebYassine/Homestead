@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -51,6 +52,16 @@ public class DelayedTeleport {
 			tasks.remove(playerId);
 			initialLocations.remove(playerId);
 
+			double price = Homestead.config.getDouble("delayed-teleport.price");
+			if (price > 0 && PlayerBank.get(player) < price) {
+				Messages.send(player, 203, new Placeholder()
+						.add("{price}", Formatter.getBalance(price))
+				);
+				return;
+			}
+
+			if (price > 0) PlayerBank.withdraw(player, price);
+			
 			teleportPlayer(player, location);
 		}, delay);
 

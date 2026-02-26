@@ -250,6 +250,7 @@ prefix: "&8[&6Homestead&8]&r"
 200: "{__prefix__} &3{player} &cdoesn't have {price}, you cannot claim this chunk!"
 201: "{__prefix__} &cI told you not to move, teleportation canceled!"
 202: "{__prefix__} &7Done."
+203: "{__prefix__} &cYou don't have {price} to teleport!"
 
 logs:
   0: "By {executor}, updated region name to {newname}."

@@ -70,7 +70,9 @@ public class UnclaimCommand extends CommandBuilder {
 
 		if (error == null) {
 			double chunkPrice = Homestead.config.getDouble("chunk-price");
-			PlayerBank.deposit(region.getOwner(), chunkPrice);
+			if (chunkPrice > 0) {
+				PlayerBank.deposit(region.getOwner(), chunkPrice);
+			}
 
 			Messages.send(player, 24, new Placeholder()
 					.add("{region}", region.getName())

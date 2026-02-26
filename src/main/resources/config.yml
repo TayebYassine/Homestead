@@ -1284,6 +1284,11 @@ delayed-teleport:
   # - 0 seconds: Instant (not recommended for survival)
   delay: 3
 
+  # Price of teleportation
+  # How much does the player need to pay to visit regions or chunks?
+  # Note: Operators are unaffected with this
+  price: 0.0
+
   # Cancel on Movement
   # Should teleport cancel if player moves during countdown?
   #
