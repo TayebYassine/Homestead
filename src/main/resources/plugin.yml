@@ -6,7 +6,7 @@ author: TayebYassine
 api-version: 1.21.9
 folia-supported: true
 depend: [Vault]
-softdepend: [BlueMap, squaremap, dynmap, Pl3xMap]
+softdepend: [VaultUnlocked, Essentials, EssentialsX, CMI, TheNewEconomy, Polyconomy, iConomyUnlocked, BlueMap, squaremap, dynmap, Pl3xMap]
 commands:
   claim:
     description: 'Claim a chunk using Homestead'
