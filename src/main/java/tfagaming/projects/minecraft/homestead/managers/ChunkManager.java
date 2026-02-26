@@ -282,7 +282,7 @@ public final class ChunkManager {
 			if (!world.isChunkLoaded(nx, nz)) continue;
 
 			Chunk neighbor = world.getChunkAt(nx, nz);
-			if (ChunkManager.isChunkClaimedByRegion(region, chunk)) {
+			if (ChunkManager.isChunkClaimedByRegion(region, neighbor)) {
 				return true;
 			}
 		}
