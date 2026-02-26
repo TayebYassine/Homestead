@@ -1,6 +1,9 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -29,20 +32,30 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public final class CustomSignsListener implements Listener {
+
+	// Converts a legacy-color-coded string (from ColorTranslator) into an Adventure Component
+	private static Component toComponent(String legacyText) {
+		return LegacyComponentSerializer.legacySection().deserialize(legacyText);
+	}
+
+	// Extracts the plain text content of a Component (strips all formatting)
+	private static String plainText(Component component) {
+		return PlainTextComponentSerializer.plainText().serialize(component);
+	}
+
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
 		Player player = event.getPlayer();
-		String[] lines = event.getLines();
+		List<Component> lines = event.lines();
 
-		if (lines.length < 1)
+		if (lines.isEmpty())
 			return;
 
-		String firstLine = lines[0].trim();
+		String firstLine = plainText(lines.get(0)).trim();
 
 		boolean breakBlock;
 
@@ -72,42 +85,33 @@ public final class CustomSignsListener implements Listener {
 		}
 
 		Player player = event.getPlayer();
-
 		Block clickedBlock = event.getClickedBlock();
 
 		if (!(clickedBlock.getState() instanceof Sign sign)) {
 			return;
 		}
 
-		String[] lines = sign.getSide(Side.FRONT).getLines();
+		List<Component> lines = sign.getSide(Side.FRONT).lines();
 
-		if (lines.length == 0)
+		if (lines.isEmpty())
 			return;
 
-		String firstLine = lines[0].trim();
-
-		String strippedFirstLine = ChatColor.stripColor(firstLine);
+		String strippedFirstLine = plainText(lines.get(0)).trim();
 
 		switch (strippedFirstLine.toLowerCase()) {
 			case "[welcome]": {
 				event.setCancelled(true);
-
 				Messages.send(player, 123);
-
 				break;
 			}
 			case "[rent]": {
 				event.setCancelled(true);
-
-				handleRentSignInteraction(player, lines, event.getClickedBlock());
-
+				handleRentSignInteraction(player, lines, clickedBlock);
 				break;
 			}
 			case "[sell]": {
 				event.setCancelled(true);
-
-				handleSellSignInteraction(player, lines, event.getClickedBlock());
-
+				handleSellSignInteraction(player, lines, clickedBlock);
 				break;
 			}
 			default:
@@ -119,7 +123,9 @@ public final class CustomSignsListener implements Listener {
 	public void onSignBreak(BlockBreakEvent event) {
 		Chunk chunk = event.getBlock().getChunk();
 
-		if (ChunkManager.isChunkClaimed(chunk) && event.getBlock() != null && event.getBlock().getType().toString().toLowerCase().contains("sign")) {
+		if (ChunkManager.isChunkClaimed(chunk) && event.getBlock() != null
+				&& event.getBlock().getType().toString().toLowerCase().contains("sign")) {
+
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region == null) {
@@ -129,26 +135,21 @@ public final class CustomSignsListener implements Listener {
 			BlockState state = event.getBlock().getState();
 			Sign sign = (Sign) state;
 
-			String[] lines = sign.getSide(Side.FRONT).getLines();
-			List<String> cleanLines = new ArrayList<>();
+			List<Component> lines = sign.getSide(Side.FRONT).lines();
 
-			for (String line : lines) {
-				cleanLines.add(ChatColor.stripColor(line));
-			}
-
-			if (lines.length > 0 && ChatColor.stripColor(lines[0]).equalsIgnoreCase("[Welcome]")) {
+			if (!lines.isEmpty() && plainText(lines.get(0)).equalsIgnoreCase("[Welcome]")) {
 				region.setWelcomeSign(null);
 			}
 		}
 	}
 
-	private boolean handleWelcomeSign(SignChangeEvent event, Player player, String[] lines) {
+	private boolean handleWelcomeSign(SignChangeEvent event, Player player, List<Component> lines) {
 		if (!Homestead.config.isWelcomeSignEnabled()) {
 			Messages.send(player, 105);
 			return true;
 		}
 
-		if (lines.length < 4) {
+		if (lines.size() < 4) {
 			Messages.send(player, 120);
 			return true;
 		}
@@ -159,22 +160,22 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		if (!lines[2].trim().isEmpty() || !lines[3].trim().isEmpty()) {
+		if (!plainText(lines.get(2)).trim().isEmpty() || !plainText(lines.get(3)).trim().isEmpty()) {
 			Messages.send(player, 121);
 			return true;
 		}
 
-		event.setLine(0, ChatColor.GREEN + "[Welcome]");
-		event.setLine(1, ChatColor.DARK_GREEN + region.getName());
-		event.setLine(2, "");
-		event.setLine(3, "");
+		event.line(0, Component.text("[Welcome]", NamedTextColor.GREEN));
+		event.line(1, Component.text(region.getName(), NamedTextColor.DARK_GREEN));
+		event.line(2, Component.empty());
+		event.line(3, Component.empty());
 
 		region.setWelcomeSign(new SerializableLocation(event.getBlock().getLocation()));
 
 		return false;
 	}
 
-	private boolean handleRentSign(SignChangeEvent event, Player player, String[] lines) {
+	private boolean handleRentSign(SignChangeEvent event, Player player, List<Component> lines) {
 		boolean isEnabled = Homestead.config.getBoolean("renting.enabled");
 
 		if (!isEnabled) {
@@ -182,7 +183,7 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		if (lines.length < 4) {
+		if (lines.size() < 4) {
 			Messages.send(player, 120);
 			return true;
 		}
@@ -193,7 +194,7 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		String priceStr = lines[2].trim();
+		String priceStr = plainText(lines.get(2)).trim();
 
 		if (!NumberUtils.isValidDouble(priceStr)) {
 			Messages.send(player, 122);
@@ -210,7 +211,7 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		String durationStr = lines[3].trim();
+		String durationStr = plainText(lines.get(3)).trim();
 		long durationMs = parseDurationToMillis(durationStr);
 
 		if (durationMs <= 0 || durationMs > 6048000000L) {
@@ -218,15 +219,15 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		event.setLine(0, ChatColor.GREEN + "[Rent]");
-		event.setLine(1, ChatColor.DARK_GREEN + region.getName());
-		event.setLine(2, ChatColor.RED + Formatter.getBalance(price));
-		event.setLine(3, ChatColor.GOLD + formatMillisToReadable(durationMs));
+		event.line(0, Component.text("[Rent]", NamedTextColor.GREEN));
+		event.line(1, Component.text(region.getName(), NamedTextColor.DARK_GREEN));
+		event.line(2, Component.text(Formatter.getBalance(price), NamedTextColor.RED));
+		event.line(3, Component.text(formatMillisToReadable(durationMs), NamedTextColor.GOLD));
 
 		return false;
 	}
 
-	private boolean handleSellSign(SignChangeEvent event, Player player, String[] lines) {
+	private boolean handleSellSign(SignChangeEvent event, Player player, List<Component> lines) {
 		boolean isEnabled = Homestead.config.getBoolean("selling.enabled");
 
 		if (!isEnabled) {
@@ -234,7 +235,7 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		if (lines.length < 4) {
+		if (lines.size() < 4) {
 			Messages.send(player, 120);
 			return true;
 		}
@@ -245,7 +246,8 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		String priceStr = lines[2].trim();
+		String priceStr = plainText(lines.get(2)).trim();
+
 		if (!NumberUtils.isValidDouble(priceStr)) {
 			Messages.send(player, 122);
 			return true;
@@ -261,15 +263,15 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		if (!lines[3].trim().isEmpty()) {
+		if (!plainText(lines.get(3)).trim().isEmpty()) {
 			Messages.send(player, 121);
 			return true;
 		}
 
-		event.setLine(0, ChatColor.GREEN + "[Sell]");
-		event.setLine(1, ChatColor.DARK_GREEN + region.getName());
-		event.setLine(2, ChatColor.RED + Formatter.getBalance(price));
-		event.setLine(3, "");
+		event.line(0, Component.text("[Sell]", NamedTextColor.GREEN));
+		event.line(1, Component.text(region.getName(), NamedTextColor.DARK_GREEN));
+		event.line(2, Component.text(Formatter.getBalance(price), NamedTextColor.RED));
+		event.line(3, Component.empty());
 
 		return false;
 	}
@@ -297,7 +299,6 @@ public final class CustomSignsListener implements Listener {
 			}
 
 			long num = Long.parseLong(numStr);
-
 			char unit = duration.replaceAll("[0-9]", "").toLowerCase().charAt(0);
 
 			return switch (unit) {
@@ -320,41 +321,28 @@ public final class CustomSignsListener implements Listener {
 
 		long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60;
 		long minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60;
-		long hours = TimeUnit.MILLISECONDS.toHours(millis) % 24;
-		long days = TimeUnit.MILLISECONDS.toDays(millis) % 7;
-		long weeks = TimeUnit.MILLISECONDS.toDays(millis) / 7;
+		long hours   = TimeUnit.MILLISECONDS.toHours(millis) % 24;
+		long days    = TimeUnit.MILLISECONDS.toDays(millis) % 7;
+		long weeks   = TimeUnit.MILLISECONDS.toDays(millis) / 7;
 
 		StringBuilder sb = new StringBuilder();
 
-		if (weeks > 0) {
-			sb.append(weeks).append(weeks == 1 ? " Week " : " Weeks ");
-		}
-		if (days > 0) {
-			sb.append(days).append(days == 1 ? " Day " : " Days ");
-		}
-		if (hours > 0) {
-			sb.append(hours).append(hours == 1 ? " Hour " : " Hours ");
-		}
-		if (minutes > 0) {
-			sb.append(minutes).append(minutes == 1 ? " Minute " : " Minutes ");
-		}
-		if (seconds > 0) {
-			sb.append(seconds).append(seconds == 1 ? " Second" : " Seconds");
-		}
+		if (weeks > 0)   sb.append(weeks).append(weeks == 1   ? " Week "   : " Weeks ");
+		if (days > 0)    sb.append(days).append(days == 1     ? " Day "    : " Days ");
+		if (hours > 0)   sb.append(hours).append(hours == 1   ? " Hour "   : " Hours ");
+		if (minutes > 0) sb.append(minutes).append(minutes == 1 ? " Minute " : " Minutes ");
+		if (seconds > 0) sb.append(seconds).append(seconds == 1 ? " Second"  : " Seconds");
 
 		return sb.toString().trim();
 	}
 
-	private void handleRentSignInteraction(Player player, String[] lines, Block sign) {
+	private void handleRentSignInteraction(Player player, List<Component> lines, Block sign) {
 		try {
-			String regionName = ChatColor.stripColor(lines[1].trim());
-
-			// Parse price (line 2)
-			String priceStr = ChatColor.stripColor(lines[2].trim());
-			double price = parseFormattedPrice(priceStr);
-
-			String durationStr = ChatColor.stripColor(lines[3].trim());
-			long durationMs = parseFormattedDuration(durationStr);
+			String regionName = plainText(lines.get(1)).trim();
+			String priceStr   = plainText(lines.get(2)).trim();
+			double price      = parseFormattedPrice(priceStr);
+			String durationStr = plainText(lines.get(3)).trim();
+			long durationMs   = parseFormattedDuration(durationStr);
 
 			Region region = RegionManager.findRegion(regionName);
 
@@ -388,28 +376,24 @@ public final class CustomSignsListener implements Listener {
 
 			if (subArea != null) {
 				subArea.setRent(rent);
-
 				placeholder.add("{subarea}", subArea.getName());
-
 				Messages.send(player, 194, placeholder);
 			} else {
 				region.setRent(rent);
-
 				Messages.send(player, 126, placeholder);
 			}
 
 			sign.breakNaturally();
 		} catch (NumberFormatException e) {
-			player.sendMessage(ChatColor.RED + "Error: This rent sign has invalid formatting!");
+			player.sendMessage(Component.text("Error: This rent sign has invalid formatting!", NamedTextColor.RED));
 		}
 	}
 
-	private void handleSellSignInteraction(Player player, String[] lines, Block sign) {
+	private void handleSellSignInteraction(Player player, List<Component> lines, Block sign) {
 		try {
-			String regionName = ChatColor.stripColor(lines[1].trim());
-
-			String priceStr = ChatColor.stripColor(lines[2].trim());
-			double price = parseFormattedPrice(priceStr);
+			String regionName = plainText(lines.get(1)).trim();
+			String priceStr   = plainText(lines.get(2)).trim();
+			double price      = parseFormattedPrice(priceStr);
 
 			Region region = RegionManager.findRegion(regionName);
 
@@ -437,7 +421,6 @@ public final class CustomSignsListener implements Listener {
 			PlayerBank.deposit(region.getOwner(), price);
 
 			region.setOwner(player);
-
 			sign.breakNaturally();
 
 			if (region.isPlayerMember(player)) {
@@ -449,34 +432,24 @@ public final class CustomSignsListener implements Listener {
 					.add("{price}", Formatter.getBalance(price))
 			);
 		} catch (NumberFormatException e) {
-			player.sendMessage(ChatColor.RED + "Error: This sell sign has invalid formatting!");
+			player.sendMessage(Component.text("Error: This sell sign has invalid formatting!", NamedTextColor.RED));
 		}
 	}
 
 	// From DeepSeek (Thanks bro)
 	private double parseFormattedPrice(String input) throws NumberFormatException {
-		// Remove all currency symbols and whitespace
 		String cleanInput = input.replaceAll("[^0-9.,]", "").trim();
 
-		// Handle cases where comma is used as decimal separator (e.g., "1,00")
 		if (cleanInput.matches(".*,\\d{2}$")) {
-			// Replace comma with dot for decimal parsing
 			cleanInput = cleanInput.replace(".", "").replace(",", ".");
-		}
-		// Handle cases where dot is used as decimal separator (e.g., "1.00")
-		else if (cleanInput.matches(".*\\.\\d{2}$")) {
-			// Remove thousand separators if they exist (e.g., "1.000,00" -> "1000.00")
+		} else if (cleanInput.matches(".*\\.\\d{2}$")) {
 			cleanInput = cleanInput.replace(",", "");
-		}
-		// Handle ambiguous cases (e.g., "1,000" could be 1.000 or 1000)
-		else {
-			// If there's only one comma or dot, assume it's a thousand separator
+		} else {
 			if (cleanInput.chars().filter(c -> c == ',' || c == '.').count() == 1) {
 				cleanInput = cleanInput.replace(",", "").replace(".", "");
 			}
 		}
 
-		// Handle k/m/b suffixes
 		if (input.toLowerCase().contains("k")) {
 			return Double.parseDouble(cleanInput) * 1000;
 		} else if (input.toLowerCase().contains("m")) {
