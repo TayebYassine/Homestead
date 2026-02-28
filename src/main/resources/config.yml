@@ -157,7 +157,7 @@ database:
 
   # SQLite Configuration
   # Only used if provider is set to "sqlite"
-  # File will be created automatically in plugins/Homestead/ folder
+  # File will be created automatically in the server's directory
   # No additional setup required - works out of the box
   sqlite: "homestead_data.db"
 
