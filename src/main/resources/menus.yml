@@ -1,3 +1,6 @@
+# Configuration file for all menus
+
+# Menu titles
 titles:
   0: "Regions"
   1: "Region: &2{region}"
@@ -28,6 +31,13 @@ titles:
   26: "Levels and Rank: &2{region}"
   27: "Player Information"
 
+# Menu buttons
+# Each button has its own unique index, which you cannot change or add/remove buttons.
+# Button details:
+# - Name: The button name/title
+# - Lore: The button description, must be a string list
+# - Type: The button type, must be a valid Minecraft Item name (Diamong → DIAMOND) in UPPER CASE! (or player heads, read documentation)
+# You can use hexadecimal color codes (&#FF00FF...) or default Minecraft color codes (&6, &b...).
 buttons:
   0:
     name: "&c&lBack"
@@ -748,6 +758,7 @@ buttons:
     name: "&#BA68C8&lPublic? &r{is-public-regions}"
     type: COMPARATOR
 
+# Do NOT modify these
 button-types:
   world:
     overworld: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
