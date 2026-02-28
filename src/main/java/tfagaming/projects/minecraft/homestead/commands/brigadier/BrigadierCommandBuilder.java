@@ -10,6 +10,7 @@ import me.lucko.commodore.Commodore;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
+import tfagaming.projects.minecraft.homestead.Homestead;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ public final class BrigadierCommandBuilder {
 
 	public static class SubCommandBuilder {
 		private final BrigadierCommandBuilder parent;
+		private final String name;
 		private final LiteralArgumentBuilder<Object> builder;
 		private final List<ArgumentNode> arguments = new ArrayList<>();
 		private final List<SubCommandBuilder> nestedSubs = new ArrayList<>();
@@ -57,6 +59,7 @@ public final class BrigadierCommandBuilder {
 
 		private SubCommandBuilder(BrigadierCommandBuilder parent, String name) {
 			this.parent = parent;
+			this.name = name;
 			this.builder = LiteralArgumentBuilder.literal(name);
 		}
 
@@ -102,7 +105,13 @@ public final class BrigadierCommandBuilder {
 				for (int i = arguments.size() - 1; i >= 0; i--) {
 					ArgumentNode arg = arguments.get(i);
 					RequiredArgumentBuilder<Object, ?> argBuilder =
-							RequiredArgumentBuilder.argument(arg.name, arg.type);
+							(RequiredArgumentBuilder<Object, ?>) RequiredArgumentBuilder.argument(arg.name, arg.type);
+
+					if (current == null && !nestedSubs.isEmpty()) {
+						for (SubCommandBuilder nested : nestedSubs) {
+							argBuilder.then(nested.build());
+						}
+					}
 
 					if (current != null) {
 						argBuilder.then(current);
@@ -114,10 +123,10 @@ public final class BrigadierCommandBuilder {
 				if (current != null) {
 					builder.then(current);
 				}
-			}
-
-			for (SubCommandBuilder nested : nestedSubs) {
-				builder.then(nested.build());
+			} else {
+				for (SubCommandBuilder nested : nestedSubs) {
+					builder.then(nested.build());
+				}
 			}
 
 			return builder;

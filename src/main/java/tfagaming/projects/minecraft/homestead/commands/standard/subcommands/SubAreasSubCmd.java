@@ -489,6 +489,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 			suggestions.addAll(PlayerFlags.getFlags());
 		else if ((args.length == 4 && args[0].equals("flags") || (args.length == 6 && args[0].equals("players") && args[3].equals("flags"))))
 			suggestions.addAll(List.of("allow", "deny"));
+		else if (args.length == 4 && args[0].equals("players"))
+			suggestions.addAll(List.of("add", "remove", "flags"));
 
 		return suggestions;
 	}
