@@ -1,10 +1,7 @@
 package tfagaming.projects.minecraft.homestead.borders;
 
-import org.bukkit.Chunk;
-import org.bukkit.Color;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.Particle.DustOptions;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
@@ -21,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Handles particle spawning around claimed region chunks for a specific player.
  * <p>
- * This class ensures that no server lag occurs by avoiding synchronous chunk loading.
+ * This class ensures that no server lag occurs by avoiding asynchronous chunk loading.
  * Only already loaded chunks are used for particle effects.
  * </p>
  */
@@ -123,6 +120,11 @@ public class ChunkParticlesSpawner {
 
 			int chunkX = chunk.getX();
 			int chunkZ = chunk.getZ();
+
+			if (!world.isChunkLoaded(chunkX, chunkZ)) {
+				continue;
+			}
+
 			UUID chunkWorldId = chunk.getWorldId();
 
 			int minX = chunkX * 16;
@@ -218,7 +220,7 @@ public class ChunkParticlesSpawner {
 			);
 			task = foliaTask != null ? new TaskHandle(foliaTask) : null;
 		} else {
-			task = instance.runSyncTimerTask(this::spawnParticles, 20);
+			task = new TaskHandle(Bukkit.getScheduler().runTaskTimerAsynchronously(Homestead.getInstance(), this::spawnParticles, 0L, 20L));
 		}
 
 		if (task == null) return;

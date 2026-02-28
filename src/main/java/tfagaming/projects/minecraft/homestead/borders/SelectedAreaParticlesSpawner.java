@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.borders;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -132,7 +133,7 @@ public class SelectedAreaParticlesSpawner {
 			);
 			task = foliaTask != null ? new TaskHandle(foliaTask) : null;
 		} else {
-			task = instance.runSyncTimerTask(this::spawnParticles, intervalTicks);
+			task = new TaskHandle(Bukkit.getScheduler().runTaskTimerAsynchronously(Homestead.getInstance(), this::spawnParticles, 0L, 20L));
 		}
 
 		if (task == null) return;
