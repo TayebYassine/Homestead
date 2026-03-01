@@ -101,7 +101,7 @@ public final class WarManager {
 	}
 
 	public static void cleanStartup() {
-		Logger.warning("Cleaning up wars data...");
+		Logger.debug("Cleaning up wars data...");
 
 		int updated = 0;
 
@@ -113,9 +113,9 @@ public final class WarManager {
 		}
 
 		if (updated == 0) {
-			Logger.info("No data corruption was found!");
+			Logger.debug("No data corruption was found!");
 		} else {
-			Logger.info(updated + " updates have been applied to wars data.");
+			Logger.debug(updated + " updates have been applied to wars data.");
 		}
 	}
 }

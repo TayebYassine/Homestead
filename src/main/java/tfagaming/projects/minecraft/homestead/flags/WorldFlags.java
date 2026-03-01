@@ -24,7 +24,7 @@ public final class WorldFlags {
 	public static final long ICE_MELTING = 1L << 17;
 	public static final long SNOWMAN_TRAILS = 1L << 18;
 	public static final long WINDCHARGE_BURST = 1L << 19;
-	public static final long WILDERNESS_COPPER_GOLEMS = 1L << 20;
+	public static final long COPPER_GOLEMS_INTERACTION = 1L << 20;
 	public static final long WARS = 1L << 21;
 
 	public static final Map<String, Long> MAPPED_FLAGS = new LinkedHashMap<>();
@@ -50,7 +50,7 @@ public final class WorldFlags {
 		MAPPED_FLAGS.put("ice-melting", ICE_MELTING);
 		MAPPED_FLAGS.put("snowman-trails", SNOWMAN_TRAILS);
 		MAPPED_FLAGS.put("windcharge-burst", WINDCHARGE_BURST);
-		MAPPED_FLAGS.put("wilderness-copper-golems", WILDERNESS_COPPER_GOLEMS);
+		MAPPED_FLAGS.put("copper-golems-interaction", COPPER_GOLEMS_INTERACTION);
 		MAPPED_FLAGS.put("wars", WARS);
 	}
 

@@ -295,14 +295,22 @@ public class Homestead extends JavaPlugin {
 		registerExternalPlugins();
 
 		// Do NOT touch this one
-		if (!isFolia()) {
-			moveCheckTask = runSyncTimerTask(() -> {
-				for (World world : Bukkit.getWorlds()) {
-					for (Entity entity : world.getEntities()) {
-						RegionProtectionListener.onEntityMove(entity);
+		if (ItemTransportingEntityValidateTargetListener.isClassFound()) {
+			Logger.debug("Event [ItemTransportingEntityValidateTargetListener] found, using PaperMC built-in event for Copper Golems interaction");
+
+			getServer().getPluginManager().registerEvents(new ItemTransportingEntityValidateTargetListener(), this);
+		} else {
+			Logger.debug("Event [ItemTransportingEntityValidateTargetListener] not found, using alternative method with Entities Moving listener");
+
+			if (!isFolia()) {
+				moveCheckTask = runAsyncTimerTask(() -> {
+					for (World world : Bukkit.getWorlds()) {
+						for (Entity entity : world.getEntities()) {
+							RegionProtectionListener.onEntityMove(entity);
+						}
 					}
-				}
-			}, 5);
+				}, 5);
+			}
 		}
 	}
 

@@ -527,10 +527,10 @@ flags-info:
     description:
       - "&7Allow windcharges to burst?"
     type: WIND_CHARGE
-  wilderness-copper-golems:
+  copper-golems-interaction:
     description:
-      - "&7Allow copper golems outside regions to"
-      - "&7enter to the region?"
+      - "&7Allow copper golems to interact with"
+      - "&7copper chests inside the region?"
     type: CHISELED_COPPER
   wars:
     description:

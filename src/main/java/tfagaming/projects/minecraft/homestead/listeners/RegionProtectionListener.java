@@ -81,11 +81,11 @@ public final class RegionProtectionListener implements Listener {
 					}
 
 					if (fromRegion == null) {
-						if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_COPPER_GOLEMS)) {
+						if (!toRegion.isWorldFlagSet(WorldFlags.COPPER_GOLEMS_INTERACTION)) {
 							entity.remove();
 						}
 					} else if (!fromRegion.getUniqueId().equals(toRegion.getUniqueId())) {
-						if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_COPPER_GOLEMS)) {
+						if (!toRegion.isWorldFlagSet(WorldFlags.COPPER_GOLEMS_INTERACTION)) {
 							entity.remove();
 						}
 					}

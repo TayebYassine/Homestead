@@ -425,7 +425,7 @@ public final class RegionManager {
 	 * Returns the number of corrective actions performed.
 	 */
 	public static void cleanStartup() {
-		Logger.warning("Cleaning up regions data...");
+		Logger.debug("Cleaning up regions data...");
 
 		int updated = 0;
 
@@ -483,9 +483,9 @@ public final class RegionManager {
 		}
 
 		if (updated == 0) {
-			Logger.info("No data corruption was found!");
+			Logger.debug("No data corruption was found!");
 		} else {
-			Logger.info(updated + " updates have been applied to regions data.");
+			Logger.debug(updated + " updates have been applied to regions data.");
 		}
 	}
 

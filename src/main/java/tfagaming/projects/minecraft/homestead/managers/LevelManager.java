@@ -224,7 +224,7 @@ public final class LevelManager {
 	}
 
 	public static void cleanStartup() {
-		Logger.warning("Cleaning up levels data...");
+		Logger.debug("Cleaning up levels data...");
 
 		int updated = 0;
 
@@ -236,9 +236,9 @@ public final class LevelManager {
 		}
 
 		if (updated == 0) {
-			Logger.info("No data corruption was found!");
+			Logger.debug("No data corruption was found!");
 		} else {
-			Logger.info(updated + " updates have been applied to levels data.");
+			Logger.debug(updated + " updates have been applied to levels data.");
 		}
 	}
 }

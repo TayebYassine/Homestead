@@ -1403,7 +1403,7 @@ default-players-flags:
   sleep: false                   # Use beds to sleep
   trigger-raid: false            # Start raids by entering with Bad Omen effect
   elytra: true                   # Fly with elytra
-  spawn-entities: true           # Use spawn eggs
+  spawn-entities: false          # Use spawn eggs
 
 # World/Environment Flags
 # Controls environmental effects and mob behavior inside regions
@@ -1433,5 +1433,5 @@ default-world-flags:
   ice-melting: true                 # Allow ice to melt
   snowman-trails: true              # Allow snow golems to leave snow trails
   windcharge-burst: false           # Allow wind charges to burst in region
-  wilderness-copper-golems: false   # Allow copper golems from outside to enter region
+  copper-golems-interaction: false   # Allow copper golems from outside to enter region
   wars: false                       # Allow this region to be targeted for war declarations

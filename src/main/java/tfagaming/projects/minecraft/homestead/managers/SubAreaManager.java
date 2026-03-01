@@ -125,7 +125,7 @@ public final class SubAreaManager {
 	}
 
 	public static void cleanStartup() {
-		Logger.warning("Cleaning up sub-areas data...");
+		Logger.debug("Cleaning up sub-areas data...");
 
 		int updated = 0;
 
@@ -153,9 +153,9 @@ public final class SubAreaManager {
 		}
 
 		if (updated == 0) {
-			Logger.info("No data corruption was found!");
+			Logger.debug("No data corruption was found!");
 		} else {
-			Logger.info(updated + " updates have been applied to sub-areas data.");
+			Logger.debug(updated + " updates have been applied to sub-areas data.");
 		}
 	}
 }
