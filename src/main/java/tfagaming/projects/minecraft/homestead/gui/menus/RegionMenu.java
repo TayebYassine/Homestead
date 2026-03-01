@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -36,7 +37,9 @@ public class RegionMenu {
 				.add("{region-bank}", Formatter.getBalance(region.getBank()))
 				.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
 				.add("{region-chunks}", region.getChunks().size())
+				.add("{region-chunks-max}", Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION))
 				.add("{region-members}", region.getMembers().size())
+				.add("{region-members-max}", Limits.getRegionLimit(region, Limits.LimitType.MEMBERS_PER_REGION))
 				.add("{upkeep-enabled}", Formatter.getToggle(isUpkeepEnabled))
 				.add("{upkeep-date}", isUpkeepEnabled ? Formatter.getRemainingTime(region.getUpkeepAt()) : Formatter.getNever())
 				.add("{upkeep-amount}", Formatter.getBalance(UpkeepUtils.getAmountToPay(region)))
@@ -51,6 +54,7 @@ public class RegionMenu {
 				.add("{region-time}", TimeType.from(region.getTime()))
 				.add("{subareas-enabled}", Formatter.getToggle(isSubAreasEnabled))
 				.add("{region-subareas}", SubAreaManager.getSubAreasOfRegion(region.getUniqueId()).size())
+				.add("{region-subareas-max}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))
 				// Rent placeholders
 				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
 				.add("{rent-renter}", rent != null ? rent.getPlayer().getName() : Formatter.getNone())

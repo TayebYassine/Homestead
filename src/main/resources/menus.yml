@@ -100,7 +100,7 @@ buttons:
     lore:
       - "&7View the list of claimed chunks."
       - ""
-      - "&7This region has &6{region-chunks} &7claimed chunks."
+      - "&7This region has &6{region-chunks}&7/&6{region-chunks-max} &7claimed chunks."
       - ""
       - "&#64B5F6&n➥ Left-click to view chunks."
     type: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
@@ -128,7 +128,7 @@ buttons:
     lore:
       - "&7Manage sub-areas inside the region."
       - ""
-      - "&7This region has &6{region-subareas} &7sub-areas."
+      - "&7This region has &6{region-subareas}&7/&6{region-subareas-max} &7sub-areas."
       - ""
       - "&#FFB74D&n➥ Left-click to manage sub-areas."
     type: OAK_FENCE
@@ -197,7 +197,7 @@ buttons:
     lore:
       - "&7Untrust or set flags for trusted players."
       - ""
-      - "&7There are &6{region-members} &7trusted players"
+      - "&7There are &6{region-members}&7/&6{region-members-max} &7trusted players"
       - "&7in this region."
       - ""
       - "&#4DB6AC&n➥ Left-click to view the members."

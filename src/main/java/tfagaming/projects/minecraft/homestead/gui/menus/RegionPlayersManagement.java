@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
 public class RegionPlayersManagement {
@@ -12,6 +13,7 @@ public class RegionPlayersManagement {
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region-members}", region.getMembers().size())
+				.add("{region-members-max}", Limits.getRegionLimit(region, Limits.LimitType.MEMBERS_PER_REGION))
 				.add("{region-banned-players}", region.getBannedPlayers().size())
 				.add("{region-invited-players}", region.getInvitedPlayers().size());
 
