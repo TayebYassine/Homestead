@@ -102,6 +102,10 @@ public final class RegionProtectionListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityMoveEvent(io.papermc.paper.event.entity.EntityMoveEvent event) {
+		if (ItemTransportingEntityValidateTargetListener.isClassFound()) {
+			return;
+		}
+
 		if (!Homestead.isFolia()) {
 			return;
 		}
