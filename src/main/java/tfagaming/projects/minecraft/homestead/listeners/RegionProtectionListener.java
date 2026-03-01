@@ -106,7 +106,7 @@ public final class RegionProtectionListener implements Listener {
 			return;
 		}
 
-		if (!Homestead.isFolia()) {
+		if (Homestead.isFolia()) {
 			return;
 		}
 
