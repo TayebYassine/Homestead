@@ -85,6 +85,10 @@ public final class BrigadierCommands {
 				.stringArg("confirm")
 				.end()
 
+				.literalSub("leave")
+				.stringArg("confirm")
+				.end()
+
 				.literalSub("deposit")
 				.intArg("amount", 0, 1000000000)
 				.end()

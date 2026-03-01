@@ -53,6 +53,7 @@ public class RegionCommand extends CommandBuilder {
 		registerSubCommand(new MergeRegionSubCmd());
 		registerSubCommand(new MergeAcceptRegionSubCmd());
 		registerSubCommand(new LevelsSubCmd());
+		registerSubCommand(new LeaveRegionSubCmd());
 	}
 
 	@Override

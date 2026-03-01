@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorting;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -159,6 +160,9 @@ public class RegionMenu {
 				if (!event.isLeftClick()) return;
 
 				region.removeMember(player);
+
+				TargetRegionSession.randomizeRegion(player);
+
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				RegionManager.addNewLog(region.getUniqueId(), 4, new Placeholder()
 						.add("{playername}", player.getName()));
