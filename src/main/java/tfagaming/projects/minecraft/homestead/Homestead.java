@@ -27,10 +27,7 @@ import tfagaming.projects.minecraft.homestead.database.cache.WarsCache;
 import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
 import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
-import tfagaming.projects.minecraft.homestead.integrations.DynamicMaps;
-import tfagaming.projects.minecraft.homestead.integrations.PlaceholderAPI;
-import tfagaming.projects.minecraft.homestead.integrations.Vault;
-import tfagaming.projects.minecraft.homestead.integrations.bStats;
+import tfagaming.projects.minecraft.homestead.integrations.*;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
@@ -241,7 +238,15 @@ public class Homestead extends JavaPlugin {
 		if (Homestead.config.getBoolean("metrics")) {
 			new bStats(this);
 
-			Logger.info("bStats metrics is enabled, anonymous data is being sent every 30 minutes.");
+			Logger.info("bStats metrics is enabled, anonymous data is being sent to the servers.");
+
+			try {
+				new FastStats(this);
+
+				Logger.info("FastStats metrics is enabled, anonymous data is being sent to the servers.");
+			} catch (Exception e) {
+				Logger.error(e);
+			}
 		}
 
 		if (Homestead.config.isDebugEnabled()) {

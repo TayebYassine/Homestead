@@ -39,7 +39,7 @@
 # Values: true = Enable debug logging, false = Quiet mode
 debug: false
 
-# Anonymous Usage Statistics (bStats)
+# Anonymous Usage Statistics (bStats and FastStats)
 # Help us improve Homestead by sharing anonymous server statistics:
 # - Number of servers using Homestead
 # - Total regions managed across all servers
@@ -47,7 +47,7 @@ debug: false
 # - Feature usage statistics
 #
 # NO personal data, IP addresses, or server names are collected.
-# View public stats: https://bstats.org/plugin/bukkit/Homestead
+# View public stats: https://bstats.org/plugin/bukkit/Homestead, https://faststats.dev/project/homestead/minecraft-plugin-1
 #
 # Benefits of keeping this enabled:
 # - Developers know which features are popular

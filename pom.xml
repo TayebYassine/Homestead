@@ -68,6 +68,11 @@
 			<id>william278.net</id>
 			<url>https://repo.william278.net/releases</url>
 		</repository>
+		<repository>
+			<id>thenextlvl-releases</id>
+			<name>TheNextLvl</name>
+			<url>https://repo.thenextlvl.net/releases</url>
+		</repository>
 	</repositories>
 
 	<dependencyManagement>
@@ -255,6 +260,12 @@
 			<version>1.5.10</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>dev.faststats.metrics</groupId>
+			<artifactId>bukkit</artifactId>
+			<version>0.16.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -345,6 +356,10 @@
 								<relocation>
 									<pattern>me.lucko.commodore</pattern>
 									<shadedPattern>tfagaming.projects.minecraft.homestead.libs.commodore</shadedPattern>
+								</relocation>
+								<relocation>
+									<pattern>dev.faststats</pattern>
+									<shadedPattern>tfagaming.projects.minecraft.homestead.libs.faststats</shadedPattern>
 								</relocation>
 							</relocations>
 						</configuration>

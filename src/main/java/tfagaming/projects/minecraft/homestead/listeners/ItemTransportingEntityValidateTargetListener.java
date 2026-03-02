@@ -12,7 +12,7 @@ import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
-public class ItemTransportingEntityValidateTargetListener implements Listener {
+public final class ItemTransportingEntityValidateTargetListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onItemTransportValidate(ItemTransportingEntityValidateTargetEvent event) {
 		Entity entity = event.getEntity();
