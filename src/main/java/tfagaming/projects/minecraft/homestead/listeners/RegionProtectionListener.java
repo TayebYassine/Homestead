@@ -709,11 +709,17 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				});
 			}
-		} else if (Explosives.isExplosive(entity)) {
+		} else if (Explosives.isExplosive(damager)) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-
 				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSIONS_DAMAGE)) {
+					event.setCancelled(true);
+				}
+			}
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_DAMAGE_ENTITIES)) {
 					event.setCancelled(true);
 				}
 			}
