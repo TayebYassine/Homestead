@@ -242,7 +242,7 @@ public class PaginationMenu implements Listener {
 		event.setCancelled(true);
 		int slot = event.getRawSlot();
 
-		if (bottomRowActions.containsKey(slot)) {
+		if (bottomRowActions.containsKey(slot) && bottomRowActions.get(slot) != null) {
 			bottomRowActions.get(slot).accept(player, event);
 			return;
 		}
@@ -269,7 +269,7 @@ public class PaginationMenu implements Listener {
 
 		if (slot == size - 9) {
 			plugin.runPlayerTask(player, () -> {
-				goBackCallback.accept(player, event);
+				if (goBackCallback != null) goBackCallback.accept(player, event);
 
 				destroy();
 			});
@@ -279,7 +279,7 @@ public class PaginationMenu implements Listener {
 			int itemIndex = currentPage * buttonsPerPage + (slot - 9);
 
 			if (itemIndex < items.size()) {
-				clickCallback.accept(player, new ClickContext(event, itemIndex, items, this));
+				if (clickCallback != null) clickCallback.accept(player, new ClickContext(event, itemIndex, items, this));
 			}
 		}
 	}
