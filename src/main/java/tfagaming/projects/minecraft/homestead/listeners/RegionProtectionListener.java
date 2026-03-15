@@ -100,19 +100,6 @@ public final class RegionProtectionListener implements Listener {
 		return !block.isPreferredTool(new ItemStack(Material.AIR));
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onEntityMoveEvent(io.papermc.paper.event.entity.EntityMoveEvent event) {
-		if (ItemTransportingEntityValidateTargetListener.isClassFound()) {
-			return;
-		}
-
-		if (Homestead.isFolia()) {
-			return;
-		}
-
-		onEntityMove(event.getEntity());
-	}
-
 	// Block place
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
