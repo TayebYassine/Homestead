@@ -1,14 +1,10 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,44 +26,42 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public final class CustomSignsListener implements Listener {
 
-	// Converts a legacy-color-coded string (from ColorTranslator) into an Adventure Component
-	private static Component toComponent(String legacyText) {
-		return LegacyComponentSerializer.legacySection().deserialize(legacyText);
+	private static String getEventLine(SignChangeEvent event, int index) {
+		return event.getLine(index) != null ? event.getLine(index) : "";
 	}
 
-	// Extracts the plain text content of a Component (strips all formatting)
-	private static String plainText(Component component) {
-		return PlainTextComponentSerializer.plainText().serialize(component);
+	private static String getSignLine(Sign sign, int index) {
+		return ChatColor.stripColor(sign.getLine(index) != null ? sign.getLine(index) : "");
+	}
+
+	private static void setEventLine(SignChangeEvent event, int index, String legacyText) {
+		PlatformBridge.get().setSignLine(event, index, legacyText);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
 		Player player = event.getPlayer();
-		List<Component> lines = event.lines();
 
-		if (lines.isEmpty())
-			return;
-
-		String firstLine = plainText(lines.get(0)).trim();
+		String firstLine = getEventLine(event, 0).trim();
 
 		boolean breakBlock;
 
 		switch (firstLine.toLowerCase()) {
 			case "[welcome]":
-				breakBlock = handleWelcomeSign(event, player, lines);
+				breakBlock = handleWelcomeSign(event, player);
 				break;
 			case "[rent]":
-				breakBlock = handleRentSign(event, player, lines);
+				breakBlock = handleRentSign(event, player);
 				break;
 			case "[sell]":
-				breakBlock = handleSellSign(event, player, lines);
+				breakBlock = handleSellSign(event, player);
 				break;
 			default:
 				return;
@@ -80,25 +74,16 @@ public final class CustomSignsListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onPlayerRightClickSign(PlayerInteractEvent event) {
-		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-			return;
-		}
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
 		Player player = event.getPlayer();
 		Block clickedBlock = event.getClickedBlock();
 
-		if (!(clickedBlock.getState() instanceof Sign sign)) {
-			return;
-		}
+		if (!(clickedBlock.getState() instanceof Sign sign)) return;
 
-		List<Component> lines = sign.getSide(Side.FRONT).lines();
+		String firstLine = getSignLine(sign, 0).trim();
 
-		if (lines.isEmpty())
-			return;
-
-		String strippedFirstLine = plainText(lines.get(0)).trim();
-
-		switch (strippedFirstLine.toLowerCase()) {
+		switch (firstLine.toLowerCase()) {
 			case "[welcome]": {
 				event.setCancelled(true);
 				Messages.send(player, 123);
@@ -106,12 +91,12 @@ public final class CustomSignsListener implements Listener {
 			}
 			case "[rent]": {
 				event.setCancelled(true);
-				handleRentSignInteraction(player, lines, clickedBlock);
+				handleRentSignInteraction(player, sign, clickedBlock);
 				break;
 			}
 			case "[sell]": {
 				event.setCancelled(true);
-				handleSellSignInteraction(player, lines, clickedBlock);
+				handleSellSignInteraction(player, sign, clickedBlock);
 				break;
 			}
 			default:
@@ -127,74 +112,50 @@ public final class CustomSignsListener implements Listener {
 				&& event.getBlock().getType().toString().toLowerCase().contains("sign")) {
 
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-
-			if (region == null) {
-				return;
-			}
+			if (region == null) return;
 
 			BlockState state = event.getBlock().getState();
 			Sign sign = (Sign) state;
 
-			List<Component> lines = sign.getSide(Side.FRONT).lines();
-
-			if (!lines.isEmpty() && plainText(lines.get(0)).equalsIgnoreCase("[Welcome]")) {
+			if (getSignLine(sign, 0).equalsIgnoreCase("[Welcome]")) {
 				region.setWelcomeSign(null);
 			}
 		}
 	}
 
-	private boolean handleWelcomeSign(SignChangeEvent event, Player player, List<Component> lines) {
+	private boolean handleWelcomeSign(SignChangeEvent event, Player player) {
 		if (!Homestead.config.isWelcomeSignEnabled()) {
 			Messages.send(player, 105);
 			return true;
 		}
 
-		if (lines.size() < 4) {
-			Messages.send(player, 120);
-			return true;
-		}
-
 		Region region = validateRegion(player, event.getBlock().getChunk());
+		if (region == null) return true;
 
-		if (region == null) {
-			return true;
-		}
-
-		if (!plainText(lines.get(2)).trim().isEmpty() || !plainText(lines.get(3)).trim().isEmpty()) {
+		if (!getEventLine(event, 2).trim().isEmpty() || !getEventLine(event, 3).trim().isEmpty()) {
 			Messages.send(player, 121);
 			return true;
 		}
 
-		event.line(0, Component.text("[Welcome]", NamedTextColor.GREEN));
-		event.line(1, Component.text(region.getName(), NamedTextColor.DARK_GREEN));
-		event.line(2, Component.empty());
-		event.line(3, Component.empty());
+		setEventLine(event, 0, ChatColor.GREEN + "[Welcome]");
+		setEventLine(event, 1, ChatColor.DARK_GREEN + region.getName());
+		setEventLine(event, 2, "");
+		setEventLine(event, 3, "");
 
 		region.setWelcomeSign(new SerializableLocation(event.getBlock().getLocation()));
-
 		return false;
 	}
 
-	private boolean handleRentSign(SignChangeEvent event, Player player, List<Component> lines) {
-		boolean isEnabled = Homestead.config.getBoolean("renting.enabled");
-
-		if (!isEnabled) {
+	private boolean handleRentSign(SignChangeEvent event, Player player) {
+		if (!Homestead.config.getBoolean("renting.enabled")) {
 			Messages.send(player, 105);
 			return true;
 		}
 
-		if (lines.size() < 4) {
-			Messages.send(player, 120);
-			return true;
-		}
-
 		Region region = validateRegion(player, event.getBlock().getChunk());
+		if (region == null) return true;
 
-		if (region == null) {
-			return true;
-		}
-
-		String priceStr = plainText(lines.get(2)).trim();
+		String priceStr = getEventLine(event, 2).trim();
 
 		if (!NumberUtils.isValidDouble(priceStr)) {
 			Messages.send(player, 122);
@@ -202,7 +163,6 @@ public final class CustomSignsListener implements Listener {
 		}
 
 		double price = Double.parseDouble(priceStr);
-
 		double minRent = Homestead.config.getDouble("renting.min-rent");
 		double maxRent = Homestead.config.getDouble("renting.max-rent");
 
@@ -211,7 +171,7 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		String durationStr = plainText(lines.get(3)).trim();
+		String durationStr = getEventLine(event, 3).trim();
 		long durationMs = parseDurationToMillis(durationStr);
 
 		if (durationMs <= 0 || durationMs > 6048000000L) {
@@ -219,34 +179,24 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		event.line(0, Component.text("[Rent]", NamedTextColor.GREEN));
-		event.line(1, Component.text(region.getName(), NamedTextColor.DARK_GREEN));
-		event.line(2, Component.text(Formatter.getBalance(price), NamedTextColor.RED));
-		event.line(3, Component.text(formatMillisToReadable(durationMs), NamedTextColor.GOLD));
+		setEventLine(event, 0, ChatColor.GREEN + "[Rent]");
+		setEventLine(event, 1, ChatColor.DARK_GREEN + region.getName());
+		setEventLine(event, 2, ChatColor.RED + Formatter.getBalance(price));
+		setEventLine(event, 3, ChatColor.GOLD + formatMillisToReadable(durationMs));
 
 		return false;
 	}
 
-	private boolean handleSellSign(SignChangeEvent event, Player player, List<Component> lines) {
-		boolean isEnabled = Homestead.config.getBoolean("selling.enabled");
-
-		if (!isEnabled) {
+	private boolean handleSellSign(SignChangeEvent event, Player player) {
+		if (!Homestead.config.getBoolean("selling.enabled")) {
 			Messages.send(player, 105);
 			return true;
 		}
 
-		if (lines.size() < 4) {
-			Messages.send(player, 120);
-			return true;
-		}
-
 		Region region = validateRegion(player, event.getBlock().getChunk());
+		if (region == null) return true;
 
-		if (region == null) {
-			return true;
-		}
-
-		String priceStr = plainText(lines.get(2)).trim();
+		String priceStr = getEventLine(event, 2).trim();
 
 		if (!NumberUtils.isValidDouble(priceStr)) {
 			Messages.send(player, 122);
@@ -254,7 +204,6 @@ public final class CustomSignsListener implements Listener {
 		}
 
 		double price = Double.parseDouble(priceStr);
-
 		double minSell = Homestead.config.getDouble("selling.min-sell");
 		double maxSell = Homestead.config.getDouble("selling.max-sell");
 
@@ -263,86 +212,26 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		if (!plainText(lines.get(3)).trim().isEmpty()) {
+		if (!getEventLine(event, 3).trim().isEmpty()) {
 			Messages.send(player, 121);
 			return true;
 		}
 
-		event.line(0, Component.text("[Sell]", NamedTextColor.GREEN));
-		event.line(1, Component.text(region.getName(), NamedTextColor.DARK_GREEN));
-		event.line(2, Component.text(Formatter.getBalance(price), NamedTextColor.RED));
-		event.line(3, Component.empty());
+		setEventLine(event, 0, ChatColor.GREEN + "[Sell]");
+		setEventLine(event, 1, ChatColor.DARK_GREEN + region.getName());
+		setEventLine(event, 2, ChatColor.RED + Formatter.getBalance(price));
+		setEventLine(event, 3, "");
 
 		return false;
 	}
 
-	private Region validateRegion(Player player, Chunk chunk) {
-		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-
-		if (region == null || !region.isOwner(player)) {
-			Messages.send(player, 119);
-			return null;
-		}
-
-		return region;
-	}
-
-	private long parseDurationToMillis(String duration) {
-		if (duration == null || duration.isEmpty()) {
-			return 0;
-		}
-
+	private void handleRentSignInteraction(Player player, Sign sign, Block signBlock) {
 		try {
-			String numStr = duration.replaceAll("[^0-9]", "");
-			if (numStr.isEmpty()) {
-				return 0;
-			}
-
-			long num = Long.parseLong(numStr);
-			char unit = duration.replaceAll("[0-9]", "").toLowerCase().charAt(0);
-
-			return switch (unit) {
-				case 's' -> num * 1000;
-				case 'm' -> num * 60 * 1000;
-				case 'h' -> num * 60 * 60 * 1000;
-				case 'd' -> num * 24 * 60 * 60 * 1000;
-				case 'w' -> num * 7 * 24 * 60 * 60 * 1000;
-				default -> 0;
-			};
-		} catch (Exception e) {
-			return 0;
-		}
-	}
-
-	private String formatMillisToReadable(long millis) {
-		if (millis < 1000) {
-			return millis + "ms";
-		}
-
-		long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60;
-		long minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60;
-		long hours   = TimeUnit.MILLISECONDS.toHours(millis) % 24;
-		long days    = TimeUnit.MILLISECONDS.toDays(millis) % 7;
-		long weeks   = TimeUnit.MILLISECONDS.toDays(millis) / 7;
-
-		StringBuilder sb = new StringBuilder();
-
-		if (weeks > 0)   sb.append(weeks).append(weeks == 1   ? " Week "   : " Weeks ");
-		if (days > 0)    sb.append(days).append(days == 1     ? " Day "    : " Days ");
-		if (hours > 0)   sb.append(hours).append(hours == 1   ? " Hour "   : " Hours ");
-		if (minutes > 0) sb.append(minutes).append(minutes == 1 ? " Minute " : " Minutes ");
-		if (seconds > 0) sb.append(seconds).append(seconds == 1 ? " Second"  : " Seconds");
-
-		return sb.toString().trim();
-	}
-
-	private void handleRentSignInteraction(Player player, List<Component> lines, Block sign) {
-		try {
-			String regionName = plainText(lines.get(1)).trim();
-			String priceStr   = plainText(lines.get(2)).trim();
-			double price      = parseFormattedPrice(priceStr);
-			String durationStr = plainText(lines.get(3)).trim();
-			long durationMs   = parseFormattedDuration(durationStr);
+			String regionName  = getSignLine(sign, 1);
+			String priceStr    = getSignLine(sign, 2);
+			double price       = parseFormattedPrice(priceStr);
+			String durationStr = getSignLine(sign, 3);
+			long durationMs    = parseFormattedDuration(durationStr);
 
 			Region region = RegionManager.findRegion(regionName);
 
@@ -368,7 +257,7 @@ public final class CustomSignsListener implements Listener {
 
 			SerializableRent rent = new SerializableRent(player, price, rentEnd);
 
-			SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(sign.getLocation());
+			SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(signBlock.getLocation());
 
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
@@ -383,16 +272,16 @@ public final class CustomSignsListener implements Listener {
 				Messages.send(player, 126, placeholder);
 			}
 
-			sign.breakNaturally();
+			signBlock.breakNaturally();
 		} catch (NumberFormatException e) {
-			player.sendMessage(Component.text("Error: This rent sign has invalid formatting!", NamedTextColor.RED));
+			player.sendMessage(ChatColor.RED + "Error: This rent sign has invalid formatting!");
 		}
 	}
 
-	private void handleSellSignInteraction(Player player, List<Component> lines, Block sign) {
+	private void handleSellSignInteraction(Player player, Sign sign, Block signBlock) {
 		try {
-			String regionName = plainText(lines.get(1)).trim();
-			String priceStr   = plainText(lines.get(2)).trim();
+			String regionName = getSignLine(sign, 1);
+			String priceStr   = getSignLine(sign, 2);
 			double price      = parseFormattedPrice(priceStr);
 
 			Region region = RegionManager.findRegion(regionName);
@@ -421,7 +310,7 @@ public final class CustomSignsListener implements Listener {
 			PlayerBank.deposit(region.getOwner(), price);
 
 			region.setOwner(player);
-			sign.breakNaturally();
+			signBlock.breakNaturally();
 
 			if (region.isPlayerMember(player)) {
 				region.removeMember(player);
@@ -432,8 +321,60 @@ public final class CustomSignsListener implements Listener {
 					.add("{price}", Formatter.getBalance(price))
 			);
 		} catch (NumberFormatException e) {
-			player.sendMessage(Component.text("Error: This sell sign has invalid formatting!", NamedTextColor.RED));
+			player.sendMessage(ChatColor.RED + "Error: This sell sign has invalid formatting!");
 		}
+	}
+
+	private Region validateRegion(Player player, Chunk chunk) {
+		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+		if (region == null || !region.isOwner(player)) {
+			Messages.send(player, 119);
+			return null;
+		}
+
+		return region;
+	}
+
+	private long parseDurationToMillis(String duration) {
+		if (duration == null || duration.isEmpty()) return 0;
+
+		try {
+			String numStr = duration.replaceAll("[^0-9]", "");
+			if (numStr.isEmpty()) return 0;
+
+			long num = Long.parseLong(numStr);
+			char unit = duration.replaceAll("[0-9]", "").toLowerCase().charAt(0);
+
+			return switch (unit) {
+				case 's' -> num * 1000;
+				case 'm' -> num * 60 * 1000;
+				case 'h' -> num * 60 * 60 * 1000;
+				case 'd' -> num * 24 * 60 * 60 * 1000;
+				case 'w' -> num * 7 * 24 * 60 * 60 * 1000;
+				default  -> 0;
+			};
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	private String formatMillisToReadable(long millis) {
+		if (millis < 1000) return millis + "ms";
+
+		long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60;
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60;
+		long hours   = TimeUnit.MILLISECONDS.toHours(millis) % 24;
+		long days    = TimeUnit.MILLISECONDS.toDays(millis) % 7;
+		long weeks   = TimeUnit.MILLISECONDS.toDays(millis) / 7;
+
+		StringBuilder sb = new StringBuilder();
+		if (weeks   > 0) sb.append(weeks).append(weeks   == 1 ? " Week "   : " Weeks ");
+		if (days    > 0) sb.append(days).append(days     == 1 ? " Day "    : " Days ");
+		if (hours   > 0) sb.append(hours).append(hours   == 1 ? " Hour "   : " Hours ");
+		if (minutes > 0) sb.append(minutes).append(minutes == 1 ? " Minute " : " Minutes ");
+		if (seconds > 0) sb.append(seconds).append(seconds == 1 ? " Second"  : " Seconds");
+		return sb.toString().trim();
 	}
 
 	// From DeepSeek (Thanks bro)

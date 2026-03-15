@@ -329,16 +329,56 @@ public class Homestead extends JavaPlugin {
 	}
 
 	private void registerEvents() {
-		getServer().getPluginManager().registerEvents(new PlayerRegionEnterAndExitListener(), this);
-		getServer().getPluginManager().registerEvents(new RegionProtectionListener(), this);
-		getServer().getPluginManager().registerEvents(new SelectionToolListener(), this);
-		getServer().getPluginManager().registerEvents(new CommandsCooldownListener(), this);
-		getServer().getPluginManager().registerEvents(new CustomSignsListener(), this);
-		getServer().getPluginManager().registerEvents(new PlayerAutoClaimListener(), this);
-		getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
-		getServer().getPluginManager().registerEvents(new BorderBreakListener(), this);
-		getServer().getPluginManager().registerEvents(new EntityDeathListener(), this);
-		getServer().getPluginManager().registerEvents(new DelayedTeleportListener(), this);
+		try {
+			getServer().getPluginManager().registerEvents(new PlayerRegionEnterAndExitListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new RegionProtectionListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new SelectionToolListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new CommandsCooldownListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new CustomSignsListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new PlayerAutoClaimListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new BorderBreakListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new EntityDeathListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
+		try {
+			getServer().getPluginManager().registerEvents(new DelayedTeleportListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
 	}
 
 	private void registerBrigadier() {

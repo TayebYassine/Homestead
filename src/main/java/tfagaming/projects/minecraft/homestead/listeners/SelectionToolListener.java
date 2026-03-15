@@ -1,8 +1,5 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -17,6 +14,7 @@ import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawn
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class SelectionToolListener implements Listener {
+
 	private static final Set<UUID> cooldowns = ConcurrentHashMap.newKeySet();
 	private static final Map<UUID, Selection> sessions = new ConcurrentHashMap<>();
 	private static final Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
@@ -31,10 +30,8 @@ public final class SelectionToolListener implements Listener {
 	public static void cancelPlayerSession(Player player) {
 		if (sessions.containsKey(player.getUniqueId())) {
 			sessions.remove(player.getUniqueId());
-
 			SelectedAreaParticlesSpawner.cancelTask(player);
 		}
-
 		cancelTask(player);
 	}
 
@@ -47,7 +44,6 @@ public final class SelectionToolListener implements Listener {
 
 	public static void cancelTask(Player player) {
 		TaskHandle task = tasks.get(player.getUniqueId());
-
 		if (task != null) {
 			tasks.remove(player.getUniqueId());
 			task.cancel();
@@ -56,11 +52,9 @@ public final class SelectionToolListener implements Listener {
 
 	public static Selection getPlayerSession(Player player) {
 		Selection selection = sessions.get(player.getUniqueId());
-
 		if (selection == null || selection.getSecondPosition() == null || selection.getFirstPosition() == null) {
 			return null;
 		}
-
 		return selection;
 	}
 
@@ -71,17 +65,13 @@ public final class SelectionToolListener implements Listener {
 
 		if (item != null && item.getType() == getSelectionToolType()) {
 			UUID playerId = player.getUniqueId();
-
 			sessions.putIfAbsent(playerId, new Selection());
-
 			Selection selection = sessions.get(playerId);
 
 			if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 				event.setCancelled(true);
 
-				if (cooldowns.contains(player.getUniqueId())) {
-					return;
-				}
+				if (cooldowns.contains(player.getUniqueId())) return;
 
 				Block firstPosition = event.getClickedBlock();
 
@@ -90,27 +80,21 @@ public final class SelectionToolListener implements Listener {
 				}
 
 				selection.setFirstPosition(firstPosition);
-
 				cooldowns.add(player.getUniqueId());
-
-				Homestead.getInstance().runAsyncTaskLater(() -> {
-					cooldowns.remove(player.getUniqueId());
-				}, 1);
+				Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
 
 				sendActionBarMessage(player, "firstCorner");
 
 				if (selection.getSecondPosition() != null && selection.getFirstPosition() != null) {
 					sendActionBarMessage(player, "selectionDone");
-
 					new SelectedAreaParticlesSpawner(player, new SerializableBlock(selection.getFirstPosition()),
 							new SerializableBlock(selection.getSecondPosition()));
 				}
+
 			} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				event.setCancelled(true);
 
-				if (cooldowns.contains(player.getUniqueId())) {
-					return;
-				}
+				if (cooldowns.contains(player.getUniqueId())) return;
 
 				Block secondPosition = event.getClickedBlock();
 
@@ -119,18 +103,13 @@ public final class SelectionToolListener implements Listener {
 				}
 
 				selection.setSecondPosition(secondPosition);
-
 				cooldowns.add(player.getUniqueId());
-
-				Homestead.getInstance().runAsyncTaskLater(() -> {
-					cooldowns.remove(player.getUniqueId());
-				}, 1);
+				Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
 
 				sendActionBarMessage(player, "secondCorner");
 
 				if (selection.getSecondPosition() != null && selection.getFirstPosition() != null) {
 					sendActionBarMessage(player, "selectionDone");
-
 					new SelectedAreaParticlesSpawner(player, new SerializableBlock(selection.getFirstPosition()),
 							new SerializableBlock(selection.getSecondPosition()));
 				}
@@ -148,37 +127,30 @@ public final class SelectionToolListener implements Listener {
 			cancelPlayerSession(player);
 		} else {
 			sessions.putIfAbsent(playerId, new Selection());
-
 			sendActionBarMessage(player, "none");
 		}
 	}
 
 	private void sendActionBarMessage(Player player, String path) {
-		String message = Homestead.config.getString("selection-tool.messages." + path);
+		String translated = ColorTranslator.translate(
+				Homestead.config.getString("selection-tool.messages." + path));
 
 		cancelTask(player);
 
-		TaskHandle task = Homestead.getInstance().runSyncTimerTask(() -> {
-			player.sendActionBar(toComponent(ColorTranslator.translate(message)));
-		}, 20);
+		TaskHandle task = Homestead.getInstance().runSyncTimerTask(
+				() -> PlatformBridge.get().sendActionBar(player, translated), 20);
 
 		tasks.put(player.getUniqueId(), task);
 	}
 
 	private Material getSelectionToolType() {
 		String itemString = Homestead.config.getString("selection-tool.item");
-
 		return Material.getMaterial(itemString);
 	}
 
 	private boolean sameWorld(Block loc1, Block loc2) {
 		if (loc1.getWorld() == null || loc2.getWorld() == null) return false;
-
 		return loc1.getWorld().getUID().equals(loc2.getWorld().getUID());
-	}
-
-	private TextComponent toComponent(String legacyText) {
-		return LegacyComponentSerializer.legacySection().deserialize(legacyText);
 	}
 
 	public static class Selection {

@@ -1,9 +1,5 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.players;
 
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.title.Title;
-import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -29,14 +25,15 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslat
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits.LimitMethod;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 
-import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 public class PlayerUtils {
+
 	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
 	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
 	private static final Set<Long> RENT_BLACKLIST = Set.of(
@@ -44,88 +41,96 @@ public class PlayerUtils {
 			PlayerFlags.PASSTHROUGH
 	);
 
-	private static TextComponent toComponent(String legacyText) {
-		return LegacyComponentSerializer.legacySection().deserialize(legacyText);
-	}
-
 	public static void sendMessageRegionEnter(Player player, Placeholder placeholder) {
-		switch (Homestead.config.getString("enter-exit-region-message.type").toLowerCase()) {
-			case "title":
-				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.enter.title");
+		String type = Homestead.config.getString("enter-exit-region-message.type").toLowerCase();
+
+		switch (type) {
+			case "title": {
+				List<String> titleData = Homestead.config.getStringList(
+						"enter-exit-region-message.messages.enter.title");
 
 				if (titleData.size() == 2) {
-					player.showTitle(Title.title(
-							toComponent(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.getFirst(), placeholder))),
-							toComponent(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), placeholder))),
-							Title.Times.times(
-									Duration.ofMillis(10 * 50L),
-									Duration.ofMillis(70 * 50L),
-									Duration.ofMillis(20 * 50L)
-							)
-					));
+					String t1 = ColorTranslator.translate(
+							Formatter.applyPlaceholders(titleData.getFirst(), placeholder));
+					String t2 = ColorTranslator.translate(
+							Formatter.applyPlaceholders(titleData.get(1), placeholder));
+
+					PlatformBridge.get().showTitle(player, t1, t2, 10, 70, 20);
 				}
-
 				break;
-			case "actionbar":
-				player.sendActionBar(toComponent(ColorTranslator.translate(
+			}
+			case "actionbar": {
+				String text = ColorTranslator.translate(
 						Formatter.applyPlaceholders(
-								Homestead.config.getString("enter-exit-region-message.messages.enter.actionbar"),
-								placeholder))));
+								Homestead.config.getString(
+										"enter-exit-region-message.messages.enter.actionbar"),
+								placeholder));
 
+				PlatformBridge.get().sendActionBar(player, text);
 				break;
-			default:
-				player.sendMessage(toComponent(ColorTranslator.translate(
+			}
+			default: {
+				String text = ColorTranslator.translate(
 						Formatter.applyPlaceholders(
-								Homestead.config.getString("enter-exit-region-message.messages.enter.chat"),
-								placeholder))));
+								Homestead.config.getString(
+										"enter-exit-region-message.messages.enter.chat"),
+								placeholder));
+
+				PlatformBridge.get().sendMessage(player, text);
 				break;
+			}
 		}
 	}
 
 	public static void sendMessageRegionExit(Player player, Placeholder placeholder) {
-		switch (Homestead.config.getString("enter-exit-region-message.type").toLowerCase()) {
-			case "title":
-				List<String> titleData = Homestead.config.getStringList("enter-exit-region-message.messages.exit.title");
+		String type = Homestead.config.getString("enter-exit-region-message.type").toLowerCase();
+
+		switch (type) {
+			case "title": {
+				List<String> titleData = Homestead.config.getStringList(
+						"enter-exit-region-message.messages.exit.title");
 
 				if (titleData.size() == 2) {
-					player.showTitle(Title.title(
-							toComponent(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.getFirst(), placeholder))),
-							toComponent(ColorTranslator.translate(Formatter.applyPlaceholders(titleData.get(1), placeholder))),
-							Title.Times.times(
-									Duration.ofMillis(10 * 50L),
-									Duration.ofMillis(70 * 50L),
-									Duration.ofMillis(20 * 50L)
-							)
-					));
+					String t1 = ColorTranslator.translate(
+							Formatter.applyPlaceholders(titleData.getFirst(), placeholder));
+					String t2 = ColorTranslator.translate(
+							Formatter.applyPlaceholders(titleData.get(1), placeholder));
+
+					PlatformBridge.get().showTitle(player, t1, t2, 10, 70, 20);
 				}
-
 				break;
-			case "actionbar":
-				player.sendActionBar(toComponent(ColorTranslator.translate(
+			}
+			case "actionbar": {
+				String text = ColorTranslator.translate(
 						Formatter.applyPlaceholders(
-								Homestead.config.getString("enter-exit-region-message.messages.exit.actionbar"),
-								placeholder))));
+								Homestead.config.getString(
+										"enter-exit-region-message.messages.exit.actionbar"),
+								placeholder));
 
+				PlatformBridge.get().sendActionBar(player, text);
 				break;
-			default:
-				player.sendMessage(toComponent(ColorTranslator.translate(
+			}
+			default: {
+				String text = ColorTranslator.translate(
 						Formatter.applyPlaceholders(
-								Homestead.config.getString("enter-exit-region-message.messages.exit.chat"),
-								placeholder))));
+								Homestead.config.getString(
+										"enter-exit-region-message.messages.exit.chat"),
+								placeholder));
+
+				PlatformBridge.get().sendMessage(player, text);
 				break;
+			}
 		}
 	}
 
 	public static void teleportPlayerToChunk(Player player, Chunk chunk) {
 		Location location = ChunkManager.getLocation(player, chunk);
-
 		player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
 	}
 
 	public static boolean isOperator(Player player) {
-		if (player.isOp()) {
-			return true;
-		} else return player.hasPermission("homestead.operator");
+		if (player.isOp()) return true;
+		return player.hasPermission("homestead.operator");
 	}
 
 	public static boolean isOperator(OfflinePlayer player) {
@@ -157,17 +162,14 @@ public class PlayerUtils {
 		War war = WarManager.findWarByRegionId(regionId);
 
 		if (rent != null && rent.getPlayerId() != null
-				&& rent.getPlayerId().equals(player.getUniqueId()) && !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag)) {
+				&& rent.getPlayerId().equals(player.getUniqueId())
+				&& !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag)) {
 			response = true;
 		} else if (war != null
-				&& WarManager.getMembersOfWar(war.getUniqueId()).stream().map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId())
-				&& List.of(PlayerFlags.PVP,
-				PlayerFlags.DOORS,
-				PlayerFlags.TRAP_DOORS,
-				PlayerFlags.PASSTHROUGH,
-				PlayerFlags.FENCE_GATES,
-				PlayerFlags.ELYTRA
-		).contains(flag)) {
+				&& WarManager.getMembersOfWar(war.getUniqueId()).stream()
+				.map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId())
+				&& List.of(PlayerFlags.PVP, PlayerFlags.DOORS, PlayerFlags.TRAP_DOORS,
+				PlayerFlags.PASSTHROUGH, PlayerFlags.FENCE_GATES, PlayerFlags.ELYTRA).contains(flag)) {
 			response = true;
 		} else if (region.isPlayerMember(player)) {
 			SerializableMember member = region.getMember(player);
@@ -186,17 +188,10 @@ public class PlayerUtils {
 		return response;
 	}
 
-
-	public static boolean hasPermissionFlag(UUID regionId,
-											UUID subAreaId,
-											Player player,
-											long flag,
-											boolean notify) {
-
+	public static boolean hasPermissionFlag(UUID regionId, UUID subAreaId,
+											Player player, long flag, boolean notify) {
 		Region region = RegionManager.findRegion(regionId);
-		if (region == null) {
-			return true;
-		}
+		if (region == null) return true;
 
 		boolean allowed = calculatePermission(region, subAreaId, player, flag);
 
@@ -207,16 +202,13 @@ public class PlayerUtils {
 		return allowed;
 	}
 
-	private static boolean calculatePermission(Region region,
-											   UUID subAreaId,
-											   Player player,
-											   long flag) {
+	private static boolean calculatePermission(Region region, UUID subAreaId,
+											   Player player, long flag) {
 		SubArea subArea = subAreaId != null ? SubAreaManager.findSubArea(subAreaId) : null;
 
 		if (subArea != null) {
 			SerializableRent subRent = subArea.getRent();
-			if (subRent != null
-					&& subRent.getPlayerId() != null
+			if (subRent != null && subRent.getPlayerId() != null
 					&& subRent.getPlayerId().equals(player.getUniqueId())
 					&& !RENT_BLACKLIST.contains(flag)) {
 				return true;
@@ -224,7 +216,6 @@ public class PlayerUtils {
 
 			if (subArea.isPlayerMember(player)) {
 				SerializableMember member = subArea.getMember(player);
-
 				return FlagsCalculator.isFlagSet(member.getFlags(), flag);
 			}
 
@@ -235,27 +226,19 @@ public class PlayerUtils {
 
 		if (war != null) {
 			List<UUID> warMembers = WarManager.getMembersOfWar(war.getUniqueId())
-					.stream()
-					.map(OfflinePlayer::getUniqueId)
-					.toList();
+					.stream().map(OfflinePlayer::getUniqueId).toList();
 
 			if (warMembers.contains(player.getUniqueId())) {
-				Set<Long> warFlags = Set.of(
-						PlayerFlags.PVP,
-						PlayerFlags.DOORS,
-						PlayerFlags.TRAP_DOORS,
-						PlayerFlags.PASSTHROUGH,
-						PlayerFlags.FENCE_GATES,
-						PlayerFlags.ELYTRA
-				);
+				Set<Long> warFlags = Set.of(PlayerFlags.PVP, PlayerFlags.DOORS,
+						PlayerFlags.TRAP_DOORS, PlayerFlags.PASSTHROUGH,
+						PlayerFlags.FENCE_GATES, PlayerFlags.ELYTRA);
 				if (warFlags.contains(flag)) return true;
 			}
 		}
 
 		SerializableRent regionRent = region.getRent();
 
-		if (regionRent != null
-				&& regionRent.getPlayerId() != null
+		if (regionRent != null && regionRent.getPlayerId() != null
 				&& regionRent.getPlayerId().equals(player.getUniqueId())
 				&& !RENT_BLACKLIST.contains(flag)) {
 			return true;
@@ -276,22 +259,20 @@ public class PlayerUtils {
 		);
 
 		COOLDOWN.add(player.getUniqueId());
-		Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()), MESSAGE_COOLDOWN_SECONDS);
+		Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()),
+				MESSAGE_COOLDOWN_SECONDS);
 	}
 
 	public static boolean hasControlRegionPermissionFlag(UUID regionId, Player player, long flag) {
 		Region region = RegionManager.findRegion(regionId);
 
 		if (region != null) {
-			if (PlayerUtils.isOperator(player) || region.isOwner(player)) {
-				return true;
-			}
+			if (PlayerUtils.isOperator(player) || region.isOwner(player)) return true;
 
 			boolean response = true;
 
 			if (region.isPlayerMember(player)) {
 				SerializableMember member = region.getMember(player);
-
 				response = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), flag);
 			}
 
@@ -302,10 +283,7 @@ public class PlayerUtils {
 				);
 
 				COOLDOWN.add(player.getUniqueId());
-
-				Homestead.getInstance().runAsyncTaskLater(() -> {
-					COOLDOWN.remove(player.getUniqueId());
-				}, 3);
+				Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()), 3);
 			}
 
 			return response;
@@ -315,9 +293,7 @@ public class PlayerUtils {
 	}
 
 	public static String getPlayerGroup(OfflinePlayer player) {
-		if (Limits.getLimitsMethod() != LimitMethod.GROUPS) {
-			return null;
-		}
+		if (Limits.getLimitsMethod() != LimitMethod.GROUPS) return null;
 
 		try {
 			if (player.isOnline()) {
@@ -326,12 +302,9 @@ public class PlayerUtils {
 				return null;
 			}
 		} catch (Exception e) {
-			Logger.error(
-					"Unable to find a service provider for permissions and groups, using the default group \"default\".");
-			Logger.error(
-					"Please install a plugin that supports permissions and groups. We recommend installing the LuckPerms plugin.");
-			Logger.error(
-					"To ignore this warning, change the limits method to \"static\" in this setting: limits.method");
+			Logger.error("Unable to find a service provider for permissions and groups, using the default group \"default\".");
+			Logger.error("Please install a plugin that supports permissions and groups. We recommend installing the LuckPerms plugin.");
+			Logger.error("To ignore this warning, change the limits method to \"static\" in this setting: limits.method");
 		}
 
 		return null;
