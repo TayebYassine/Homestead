@@ -308,7 +308,7 @@ public class Homestead extends JavaPlugin {
 			Logger.debug("Event [ItemTransportingEntityValidateTargetListener] not found, using alternative method with Entities Moving listener");
 
 			if (!isFolia()) {
-				moveCheckTask = new TaskHandle(Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+				moveCheckTask = new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, () -> {
 					for (World world : Bukkit.getWorlds()) {
 						for (Entity entity : world.getEntities()) {
 							RegionProtectionListener.onEntityMove(entity);
