@@ -280,7 +280,7 @@ public final class SQLite {
 
 				List<SerializableMember> members = !rs.getString("members").isEmpty()
 						? Arrays.stream(rs.getString("members").split("§"))
-						.map(SerializableMember::fromString).toList()
+						.map(SerializableMember::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
 				long flags = rs.getLong("flags");
 
