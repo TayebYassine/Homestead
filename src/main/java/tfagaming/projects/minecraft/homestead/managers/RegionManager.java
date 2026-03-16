@@ -276,7 +276,7 @@ public final class RegionManager {
 		List<Region> regions = new ArrayList<Region>();
 
 		for (Region region : getAll()) {
-			if (region.getOwner().getUniqueId().equals(player.getUniqueId())) {
+			if (region.isOwner(player)) {
 				regions.add(region);
 			}
 		}
