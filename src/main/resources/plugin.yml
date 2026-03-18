@@ -1,6 +1,6 @@
 name: Homestead
 main: tfagaming.projects.minecraft.homestead.Homestead
-version: 5.0.1.3
+version: 5.0.1.4
 description: 'A chunk-based land claiming plugin'
 author: TayebYassine
 api-version: 1.21.9
