@@ -127,29 +127,38 @@ public final class SubAreaManager {
 	public static void cleanStartup() {
 		Logger.debug("Cleaning up sub-areas data...");
 
+		List<SubArea> subAreasToDelete = new ArrayList<>();
 		int updated = 0;
 
 		for (SubArea subArea : Homestead.subAreasCache.getAll()) {
 			World world = subArea.getWorld();
 
 			if (world == null) {
-				SubAreaManager.deleteSubArea(subArea.getUniqueId());
-				updated++;
+				subAreasToDelete.add(subArea);
 				continue;
 			}
 
 			if (RegionManager.findRegion(subArea.getRegionId()) == null) {
-				SubAreaManager.deleteSubArea(subArea.getUniqueId());
-				updated++;
+				subAreasToDelete.add(subArea);
 				continue;
 			}
 
+			List<SerializableMember> membersToRemove = new ArrayList<>();
 			for (SerializableMember member : subArea.getMembers()) {
 				if (member.bukkit() == null) {
-					subArea.removeMember(member);
-					updated++;
+					membersToRemove.add(member);
 				}
 			}
+
+			for (SerializableMember member : membersToRemove) {
+				subArea.removeMember(member);
+				updated++;
+			}
+		}
+
+		for (SubArea subArea : subAreasToDelete) {
+			SubAreaManager.deleteSubArea(subArea.getUniqueId());
+			updated++;
 		}
 
 		if (updated == 0) {

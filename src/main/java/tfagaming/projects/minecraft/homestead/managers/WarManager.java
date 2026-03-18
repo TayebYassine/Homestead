@@ -103,13 +103,18 @@ public final class WarManager {
 	public static void cleanStartup() {
 		Logger.debug("Cleaning up wars data...");
 
+		List<War> warsToEnd = new ArrayList<>();
 		int updated = 0;
 
 		for (War war : Homestead.warsCache.getAll()) {
 			if (war.getRegions().size() < 2) {
-				WarManager.endWar(war.getUniqueId());
-				updated++;
+				warsToEnd.add(war);
 			}
+		}
+
+		for (War war : warsToEnd) {
+			WarManager.endWar(war.getUniqueId());
+			updated++;
 		}
 
 		if (updated == 0) {

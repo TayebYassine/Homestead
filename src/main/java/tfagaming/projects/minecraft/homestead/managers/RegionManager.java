@@ -427,39 +427,63 @@ public final class RegionManager {
 	public static void cleanStartup() {
 		Logger.debug("Cleaning up regions data...");
 
+		List<Region> regionsToDelete = new ArrayList<>();
 		int updated = 0;
 
 		for (Region region : getAll()) {
+			// Members
+			List<SerializableMember> membersToRemove = new ArrayList<>();
 			for (SerializableMember member : region.getMembers()) {
 				if (member.bukkit() == null) {
-					region.removeMember(member);
-					updated++;
+					membersToRemove.add(member);
 				}
 			}
 
+			for (SerializableMember member : membersToRemove) {
+				region.removeMember(member);
+				updated++;
+			}
+
+			// Banned players
+			List<SerializableBannedPlayer> bannedToRemove = new ArrayList<>();
 			for (SerializableBannedPlayer bannedPlayer : region.getBannedPlayers()) {
 				if (bannedPlayer.bukkit() == null) {
-					region.unbanPlayer(bannedPlayer.getPlayerId());
-					updated++;
+					bannedToRemove.add(bannedPlayer);
 				}
 			}
 
+			for (SerializableBannedPlayer bannedPlayer : bannedToRemove) {
+				region.unbanPlayer(bannedPlayer.getPlayerId());
+				updated++;
+			}
+
+			// Rates
+			List<SerializableRate> ratesToRemove = new ArrayList<>();
 			for (SerializableRate rate : region.getRates()) {
 				OfflinePlayer rater = rate.bukkit();
-
 				if (rater == null) {
-					region.removePlayerRate(rate.getPlayerId());
-					updated++;
+					ratesToRemove.add(rate);
 				}
 			}
 
+			for (SerializableRate rate : ratesToRemove) {
+				region.removePlayerRate(rate.getPlayerId());
+				updated++;
+			}
+
+			// Chunks
+			List<SerializableChunk> chunksToRemove = new ArrayList<>();
 			for (SerializableChunk chunk : region.getChunks()) {
 				World world = chunk.getWorld();
 
 				if (world == null) {
-					region.removeChunk(chunk);
-					updated++;
+					chunksToRemove.add(chunk);
 				}
+			}
+
+			for (SerializableChunk chunk : chunksToRemove) {
+				region.removeChunk(chunk);
+				updated++;
 			}
 
 			SerializableLocation spawnLoc = region.getLocation();
@@ -477,9 +501,13 @@ public final class RegionManager {
 			}
 
 			if (region.getOwner() == null) {
-				RegionManager.deleteRegion(region.getUniqueId());
-				updated++;
+				regionsToDelete.add(region);
 			}
+		}
+
+		for (Region region : regionsToDelete) {
+			RegionManager.deleteRegion(region.getUniqueId());
+			updated++;
 		}
 
 		if (updated == 0) {

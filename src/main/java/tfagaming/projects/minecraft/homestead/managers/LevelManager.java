@@ -226,13 +226,18 @@ public final class LevelManager {
 	public static void cleanStartup() {
 		Logger.debug("Cleaning up levels data...");
 
+		List<Level> levelsToDelete = new ArrayList<>();
 		int updated = 0;
 
 		for (Level level : Homestead.levelsCache.getAll()) {
 			if (RegionManager.findRegion(level.getRegionId()) == null) {
-				LevelManager.deleteLevel(level.getUniqueId());
-				updated++;
+				levelsToDelete.add(level);
 			}
+		}
+
+		for (Level level : levelsToDelete) {
+			LevelManager.deleteLevel(level.getUniqueId());
+			updated++;
 		}
 
 		if (updated == 0) {
