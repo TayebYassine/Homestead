@@ -26,10 +26,16 @@ public class Logger {
 		logs.save("[WARN] " + String.join(" ", message));
 	}
 
-	public static void debug(String... message) {
+	public static void debug(Object... message) {
 		if (Homestead.config.isDebugEnabled()) {
-			logger.warning("DEBUG » " + String.join(" ", message));
-			logs.save("[DEBUG] " + String.join(" ", message));
+			StringBuilder messageStr = new StringBuilder();
+
+			for (Object each : message) {
+				messageStr.append(each).append(" ");
+			}
+
+			logger.warning("DEBUG » " + messageStr);
+			logs.save("[DEBUG] " + messageStr);
 		}
 	}
 

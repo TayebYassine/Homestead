@@ -225,7 +225,7 @@ public class PaginationMenu implements Listener {
 		return inventory;
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 		if (!(event.getWhoClicked() instanceof Player player)) {
 			return;
@@ -235,7 +235,8 @@ public class PaginationMenu implements Listener {
 			return;
 		}
 
-		if (!event.getView().getTitle().startsWith(Formatter.formatPaginationMenuTitle(title, currentPage + 1, getTotalPages()))) {
+		Inventory topInventory = event.getView().getTopInventory();
+		if (topInventory.getSize() != size) {
 			return;
 		}
 
@@ -273,6 +274,8 @@ public class PaginationMenu implements Listener {
 
 				destroy();
 			});
+
+			return;
 		}
 
 		if (slot >= 9 && slot < size - 9) {
