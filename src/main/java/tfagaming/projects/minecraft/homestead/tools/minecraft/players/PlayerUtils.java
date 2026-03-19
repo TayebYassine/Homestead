@@ -21,7 +21,6 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits.LimitMethod;
@@ -50,31 +49,27 @@ public class PlayerUtils {
 						"enter-exit-region-message.messages.enter.title");
 
 				if (titleData.size() == 2) {
-					String t1 = ColorTranslator.translate(
-							Formatter.applyPlaceholders(titleData.getFirst(), placeholder));
-					String t2 = ColorTranslator.translate(
-							Formatter.applyPlaceholders(titleData.get(1), placeholder));
+					String t1 = Formatter.applyPlaceholders(titleData.getFirst(), placeholder);
+					String t2 = Formatter.applyPlaceholders(titleData.get(1), placeholder);
 
 					PlatformBridge.get().showTitle(player, t1, t2, 10, 70, 20);
 				}
 				break;
 			}
 			case "actionbar": {
-				String text = ColorTranslator.translate(
-						Formatter.applyPlaceholders(
+				String text = Formatter.applyPlaceholders(
 								Homestead.config.getString(
 										"enter-exit-region-message.messages.enter.actionbar"),
-								placeholder));
+								placeholder);
 
 				PlatformBridge.get().sendActionBar(player, text);
 				break;
 			}
 			default: {
-				String text = ColorTranslator.translate(
-						Formatter.applyPlaceholders(
+				String text = Formatter.applyPlaceholders(
 								Homestead.config.getString(
 										"enter-exit-region-message.messages.enter.chat"),
-								placeholder));
+								placeholder);
 
 				PlatformBridge.get().sendMessage(player, text);
 				break;
@@ -91,31 +86,27 @@ public class PlayerUtils {
 						"enter-exit-region-message.messages.exit.title");
 
 				if (titleData.size() == 2) {
-					String t1 = ColorTranslator.translate(
-							Formatter.applyPlaceholders(titleData.getFirst(), placeholder));
-					String t2 = ColorTranslator.translate(
-							Formatter.applyPlaceholders(titleData.get(1), placeholder));
+					String t1 = Formatter.applyPlaceholders(titleData.getFirst(), placeholder);
+					String t2 = Formatter.applyPlaceholders(titleData.get(1), placeholder);
 
 					PlatformBridge.get().showTitle(player, t1, t2, 10, 70, 20);
 				}
 				break;
 			}
 			case "actionbar": {
-				String text = ColorTranslator.translate(
-						Formatter.applyPlaceholders(
+				String text = Formatter.applyPlaceholders(
 								Homestead.config.getString(
 										"enter-exit-region-message.messages.exit.actionbar"),
-								placeholder));
+								placeholder);
 
 				PlatformBridge.get().sendActionBar(player, text);
 				break;
 			}
 			default: {
-				String text = ColorTranslator.translate(
-						Formatter.applyPlaceholders(
+				String text = Formatter.applyPlaceholders(
 								Homestead.config.getString(
 										"enter-exit-region-message.messages.exit.chat"),
-								placeholder));
+								placeholder);
 
 				PlatformBridge.get().sendMessage(player, text);
 				break;

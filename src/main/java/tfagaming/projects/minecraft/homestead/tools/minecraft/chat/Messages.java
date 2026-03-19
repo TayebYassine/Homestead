@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 
 import java.util.List;
 
@@ -71,9 +72,9 @@ public final class Messages {
 		message = Formatter.applyPlaceholders(message, placeholder);
 
 		if (receiver instanceof Player player) {
-			player.sendMessage(ColorTranslator.translate(message));
+			PlatformBridge.get().sendMessage(player, message);
 		} else if (receiver instanceof CommandSender sender) {
-			sender.sendMessage(ColorTranslator.preserve(message));
+			sender.sendMessage(ColorTranslator.stripForConsole(message));
 		}
 	}
 }

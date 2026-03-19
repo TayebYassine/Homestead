@@ -1,3 +1,10 @@
+# WARNING:
+# MiniMessage is NOT supported on Spigot.
+# If you are using Spigot, please remove any XML-like tags, for example, "<click:…>", "<hover:…>", "<red>"… etc.
+
+# NOTE:
+# Legacy color formats and MiniMessage formats are supported for PaperMC and its forks (Folia, Purpur...).
+
 default:
   description: "Owned by {owner}"
   reason: "No reason was provided"
@@ -25,7 +32,7 @@ prefix: "&8[&6Homestead&8]&r"
 0: "{__prefix__} &7Insufficient arguments, usage: &e{usage}"
 1: "{__prefix__} &cThe region name must be alphanumerical, other characters are prohibited."
 2: "{__prefix__} &cThe region name was taken, please choose another name."
-3: "{__prefix__} &7Successfully created a new region: &2{name}"
+3: "{__prefix__} &7Successfully created a new region: &2{name}\n&a➡ &7Customize your region: <hover:show_text:'<gray>Run /hs menu'><click:run_command:'/hs menu'><aqua>Click here!</click></hover>\n&a➡ &7Invite your friends! <hover:show_text:'<gray>Invite a player via /hs trust [player]'><click:suggest_command:'/hs trust'><aqua>Click here!</click></hover>"
 4: "{__prefix__} &7You did not set a region as the targeted region. Please use: &e/hs set target [region]"
 5: "{__prefix__} &cYou must confirm to complete the action."
 6: "{__prefix__} &7The region &2{region} &7has been deleted, and you have got &c{region-bank}&7."
@@ -178,7 +185,7 @@ prefix: "&8[&6Homestead&8]&r"
 136: "{__prefix__} &7Auto-claim session has successfully ended."
 137: "{__prefix__} &cInvalid region index."
 138: "{__prefix__} &7The player &3{playername} &7accepted your invite to the region &2{region}."
-139: "{__prefix__} &3{ownername} &7has invited you to their region &2{region}&7. Type '&a/hs accept &2{region}' &7to join."
+139: "{__prefix__} &3{ownername} &7has invited you to their region &2{region}&7.\n<click:run_command:'/hs accept {region}'>&aAccept</click> &7| <click:run_command:'/hs deny {region}'>&cDeny</click>"
 140: "{__prefix__} &cYou can only claim chunks that are adjacent to your existing region."
 141: "{__prefix__} &cYou cannot unclaim this chunk because it would split your region."
 142: "{__prefix__} &cYou cannot set the location outside the region."

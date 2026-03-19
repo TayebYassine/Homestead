@@ -1,22 +1,24 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.platform;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.time.Duration;
-
 final class AdventurePlatformBridge implements IPlatformBridge {
 
-	private static Component deserialize(String legacyText) {
-		return LegacyComponentSerializer.legacySection().deserialize(legacyText);
+	private static final MiniMessage MM = MiniMessage.miniMessage();
+
+	private static Component deserialize(String text) {
+		return MM.deserialize(ColorTranslator.legacyToMiniMessage(text));
 	}
 
 	@Override
-	public void sendActionBar(Player player, String legacyText) {
-		player.sendActionBar(deserialize(legacyText));
+	public void sendActionBar(Player player, String text) {
+		player.sendActionBar(deserialize(text));
 	}
 
 	@Override
@@ -34,12 +36,12 @@ final class AdventurePlatformBridge implements IPlatformBridge {
 	}
 
 	@Override
-	public void sendMessage(Player player, String legacyText) {
-		player.sendMessage(deserialize(legacyText));
+	public void sendMessage(Player player, String text) {
+		player.sendMessage(deserialize(text));
 	}
 
 	@Override
-	public void setSignLine(SignChangeEvent event, int index, String legacyText) {
-		event.line(index, deserialize(legacyText));
+	public void setSignLine(SignChangeEvent event, int index, String text) {
+		event.line(index, deserialize(text));
 	}
 }
