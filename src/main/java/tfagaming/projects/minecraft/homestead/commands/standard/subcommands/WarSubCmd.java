@@ -167,7 +167,7 @@ public class WarSubCmd extends SubCommandBuilder {
 						player1.playSound(player1.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
 
 						for (String string : listString) {
-							player1.sendMessage(ColorTranslator.translate(Formatter.applyPlaceholders(string, placeholder)));
+							Messages.send(player1, Formatter.applyPlaceholders(string, placeholder));
 						}
 					}
 				}

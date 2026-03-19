@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
 import java.util.HashMap;
@@ -177,7 +178,7 @@ public class PaginationMenu implements Listener {
 
 	private Inventory createPage(int page) {
 		Inventory inventory = Bukkit.createInventory(null, size,
-				Formatter.formatPaginationMenuTitle(title, page + 1, getTotalPages()));
+				ColorTranslator.translate(Formatter.formatPaginationMenuTitle(title, page + 1, getTotalPages())));
 
 		int buttonsPerPage = (itemsPerPage > 0) ? itemsPerPage : contentSize;
 		boolean hasNext = (page + 1) * buttonsPerPage < items.size();

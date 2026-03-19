@@ -36,26 +36,26 @@ public final class Formatter {
 	public static String getLocation(Location location) {
 		World world = location.getWorld();
 
-		return ColorTranslator.translate(applyPlaceholders(
+		return applyPlaceholders(
 				Homestead.config.getString("formatters.location"),
 				new Placeholder()
 						.add("{world}", world == null ? "UnknownWorld" : world.getName())
 						.add("{x}", NumberUtils.truncate(location.getX()))
 						.add("{y}", NumberUtils.truncate(location.getY()))
 						.add("{z}", NumberUtils.truncate(location.getZ()))
-		));
+		);
 	}
 
 	public static String getLocationChunk(Chunk chunk) {
 		World world = chunk.getWorld();
 
-		return ColorTranslator.translate(applyPlaceholders(
+		return applyPlaceholders(
 				Homestead.config.getString("formatters.chunk"),
 				new Placeholder()
 						.add("{world}", world.getName())
 						.add("{x}", NumberUtils.truncate(chunk.getX()))
 						.add("{z}", NumberUtils.truncate(chunk.getZ()))
-		));
+		);
 	}
 
 	public static String getBalance(double amount) {
@@ -90,7 +90,7 @@ public final class Formatter {
 
 		String star = Homestead.language.getString("default.star");
 
-		return ColorTranslator.translate(getStarColor(rate) + star.repeat(rate));
+		return getStarColor(rate) + star.repeat(rate);
 	}
 
 	private static String getStarColor(int rate) {
@@ -112,14 +112,14 @@ public final class Formatter {
 		long minutes = remaining / 60;
 		long seconds = remaining % 60;
 
-		return ColorTranslator.translate(applyPlaceholders(
+		return applyPlaceholders(
 				Homestead.config.getString("formatters.duration"),
 				new Placeholder()
 						.add("{d}", days)
 						.add("{h}", hours)
 						.add("{m}", minutes)
 						.add("{s}", seconds)
-		));
+		);
 	}
 
 	public static String getPlayerPlaytime(OfflinePlayer player) {
@@ -135,14 +135,14 @@ public final class Formatter {
 		long minutes = remainingSeconds / 60;
 		long seconds = remainingSeconds % 60;
 
-		return ColorTranslator.translate(applyPlaceholders(
+		return applyPlaceholders(
 				Homestead.config.getString("formatters.duration"),
 				new Placeholder()
 						.add("{d}", days)
 						.add("{h}", hours)
 						.add("{m}", minutes)
 						.add("{s}", seconds)
-		));
+		);
 	}
 
 	private static long getPlayerMinutes(OfflinePlayer player) {
@@ -150,23 +150,23 @@ public final class Formatter {
 	}
 
 	public static String formatPaginationMenuTitle(String title, int currentPage, int totalPages) {
-		return ColorTranslator.translate(applyPlaceholders(
+		return applyPlaceholders(
 				Homestead.config.getString("formatters.gui-pagination-title"),
 				new Placeholder()
 						.add("{title}", title)
 						.add("{current-page}", currentPage)
 						.add("{total-pages}", totalPages)
-		));
+		);
 	}
 
 	public static String formatPrivateChat(String regionName, String sender, String message) {
-		return ColorTranslator.translate(applyPlaceholders(
+		return applyPlaceholders(
 				Homestead.config.getString("formatters.private-chat"),
 				new Placeholder()
 						.add("{region}", regionName)
 						.add("{sender}", sender)
 						.add("{message}", message)
-		));
+		);
 	}
 
 	public static String getPlayerOwnedRegions(OfflinePlayer player) {
@@ -178,9 +178,9 @@ public final class Formatter {
 
 		String format = Homestead.config.getString("formatters.player-regions");
 
-		return ColorTranslator.translate(regions.stream()
+		return regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
-				.collect(Collectors.joining(Homestead.config.getString("formatters.player-regions-joining"))));
+				.collect(Collectors.joining(Homestead.config.getString("formatters.player-regions-joining")));
 	}
 
 	public static String getPlayerTrustedRegions(OfflinePlayer player) {
@@ -192,9 +192,9 @@ public final class Formatter {
 
 		String format = Homestead.config.getString("formatters.player-regions");
 
-		return ColorTranslator.translate(regions.stream()
+		return regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
-				.collect(Collectors.joining(Homestead.config.getString("formatters.player-regions-joining"))));
+				.collect(Collectors.joining(Homestead.config.getString("formatters.player-regions-joining")));
 	}
 
 	public static String getMembersOfRegion(Region region) {
@@ -206,14 +206,14 @@ public final class Formatter {
 
 		String format = Homestead.config.getString("formatters.region-members");
 
-		return ColorTranslator.translate(members.stream()
+		return members.stream()
 				.map((member) -> format.replace("{playername}",
 								member.bukkit() == null
 										? "Unknown"
 										: Objects.requireNonNull(member.bukkit().getName())
 						)
 				)
-				.collect(Collectors.joining(Homestead.config.getString("formatters.region-members-joining"))));
+				.collect(Collectors.joining(Homestead.config.getString("formatters.region-members-joining")));
 	}
 
 	public static String getRegionsOfWar(War war) {
@@ -225,30 +225,29 @@ public final class Formatter {
 
 		String format = Homestead.config.getString("formatters.war-regions");
 
-		return ColorTranslator.translate(regions.stream()
+		return regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
-				.collect(Collectors.joining(Homestead.config.getString("formatters.war-regions-joining"))));
+				.collect(Collectors.joining(Homestead.config.getString("formatters.war-regions-joining")));
 	}
 
 	public static String getNone() {
-		return ColorTranslator.translate(Homestead.language.getString("default.none"));
+		return Homestead.language.getString("default.none");
 	}
 
 	public static String getNever() {
-		return ColorTranslator.translate(Homestead.language.getString("default.never"));
+		return Homestead.language.getString("default.never");
 	}
 
 	public static String getBoolean(boolean value) {
-		return ColorTranslator.translate(Homestead.language.getString(value ? "default.isTrue" : "default.isFalse"));
+		return Homestead.language.getString(value ? "default.isTrue" : "default.isFalse");
 	}
 
 	public static String getToggle(boolean value) {
-		return ColorTranslator
-				.translate(Homestead.language.getString(value ? "default.isEnabled" : "default.isDisabled"));
+		return Homestead.language.getString(value ? "default.isEnabled" : "default.isDisabled");
 	}
 
 	public static String getFlagState(boolean value) {
-		return ColorTranslator.translate(Homestead.language.getString(value ? "default.flagSet" : "default.flagUnset"));
+		return Homestead.language.getString(value ? "default.flagSet" : "default.flagUnset");
 	}
 
 	public static String getPlayerStatus(OfflinePlayer player) {

@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 
 import java.util.Map;
 import java.util.UUID;
@@ -48,7 +49,7 @@ public final class PlayerInputSession implements Listener {
 		this.onCancel = onCancel;
 
 		String key = String.valueOf(messagePath);
-		this.prompt = ColorTranslator.translate(Homestead.language.getString(key));
+		this.prompt = Homestead.language.getString(key);
 
 		PlayerInputSession old = SESSIONS.put(player.getUniqueId(), this);
 		if (old != null) old.internalDestroy();
@@ -56,8 +57,7 @@ public final class PlayerInputSession implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 
 		repeatTask = plugin.runAsyncTimerTask(() -> {
-			player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-					new TextComponent(prompt));
+			PlatformBridge.get().sendActionBar(player, prompt);
 		}, 1);
 
 		timeoutTask = plugin.runAsyncTaskLater(this::internalDestroy, 60);

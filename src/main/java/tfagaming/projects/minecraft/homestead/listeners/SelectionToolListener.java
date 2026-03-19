@@ -132,13 +132,10 @@ public final class SelectionToolListener implements Listener {
 	}
 
 	private void sendActionBarMessage(Player player, String path) {
-		String translated = ColorTranslator.translate(
-				Homestead.config.getString("selection-tool.messages." + path));
-
 		cancelTask(player);
 
 		TaskHandle task = Homestead.getInstance().runSyncTimerTask(
-				() -> PlatformBridge.get().sendActionBar(player, translated), 20);
+				() -> PlatformBridge.get().sendActionBar(player, Homestead.config.getString("selection-tool.messages." + path)), 20);
 
 		tasks.put(player.getUniqueId(), task);
 	}
