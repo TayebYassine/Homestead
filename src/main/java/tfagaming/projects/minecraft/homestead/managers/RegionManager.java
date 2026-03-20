@@ -482,7 +482,7 @@ public final class RegionManager {
 			}
 
 			for (SerializableChunk chunk : chunksToRemove) {
-				region.removeChunk(chunk);
+				ChunkManager.removeChunk(region.getUniqueId(), chunk.bukkit());
 				updated++;
 			}
 

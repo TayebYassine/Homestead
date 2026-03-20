@@ -11,6 +11,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.PersistentChunkTicket;
 
 import java.util.*;
 
@@ -115,6 +116,8 @@ public final class ChunkManager {
 		}
 
 		region.removeChunk(chunk);
+
+		PersistentChunkTicket.removePersistent(Homestead.getInstance(), chunk);
 
 		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(id)) {
 			for (Chunk subAreaChunk : ChunkUtils.getChunksInArea(subArea.getFirstPoint(), subArea.getSecondPoint())) {
@@ -228,7 +231,7 @@ public final class ChunkManager {
 	 * @param chunk The chunk
 	 */
 	public static boolean isChunkClaimed(Chunk chunk) {
-		String key = SerializableChunk.convertToString(chunk, true);
+		String key = SerializableChunk.convertToString(chunk);
 		for (Region region : RegionManager.getAll()) {
 			for (SerializableChunk serialized : region.getChunks()) {
 				if (serialized == null) continue;
@@ -243,7 +246,7 @@ public final class ChunkManager {
 	 * @param chunk The chunk
 	 */
 	public static Region getRegionOwnsTheChunk(Chunk chunk) {
-		String key = SerializableChunk.convertToString(chunk, true);
+		String key = SerializableChunk.convertToString(chunk);
 		for (Region region : RegionManager.getAll()) {
 			for (SerializableChunk serialized : region.getChunks()) {
 				if (serialized == null) continue;
@@ -419,7 +422,8 @@ public final class ChunkManager {
 		if (chunks == null || chunks.isEmpty()) return;
 
 		int index = new Random().nextInt(chunks.size());
-		region.removeChunk(chunks.get(index));
+
+		forceUnclaimChunk(id, chunks.get(index).bukkit());
 	}
 
 	/**

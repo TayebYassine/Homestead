@@ -300,6 +300,21 @@ public class Region {
 		}
 	}
 
+	public void setChunkForceLoaded(SerializableChunk chunk, boolean isForceLoaded) {
+		for (int i = 0; i < chunks.size(); i++) {
+			SerializableChunk data = chunks.get(i);
+
+			if (SerializableChunk.equals(chunk, data)) {
+				data.setForceLoaded(isForceLoaded);
+				chunks.set(i, data);
+
+				updateCache();
+
+				break;
+			}
+		}
+	}
+
 	// Members
 	public List<SerializableMember> getMembers() {
 		return members;

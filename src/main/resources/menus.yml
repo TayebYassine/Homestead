@@ -334,7 +334,9 @@ buttons:
       - ""
       - "&7• Claimed At: &6{chunk-claimedat}"
       - "&7• Location: &6{chunk-location}"
+      - "&7• Always Loaded? {chunk-is-loaded}"
       - ""
+      - "&#42A5F5&n➥ Shift + Left-click to always load this chunk."
       - "&#42A5F5&n➥ Left-click to unclaim this chunk."
       - "&#42A5F5&n➥ Right-click to teleport to the chunk."
     type: CUSTOM::GETBYWORLD

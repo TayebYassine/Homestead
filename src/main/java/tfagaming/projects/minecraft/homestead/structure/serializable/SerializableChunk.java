@@ -16,12 +16,14 @@ public class SerializableChunk {
 	private UUID worldId;
 	private int x;
 	private int z;
+	private boolean isForceLoaded;
 
 	public SerializableChunk(Chunk chunk) {
 		this.worldId = chunk.getWorld().getUID();
 		this.x = chunk.getX();
 		this.z = chunk.getZ();
 		this.claimedAt = System.currentTimeMillis();
+		this.isForceLoaded = false;
 	}
 
 	public SerializableChunk(World world, int x, int z) {
@@ -29,6 +31,7 @@ public class SerializableChunk {
 		this.x = x;
 		this.z = z;
 		this.claimedAt = System.currentTimeMillis();
+		this.isForceLoaded = false;
 	}
 
 	public SerializableChunk(UUID worldId, int x, int z) {
@@ -36,13 +39,15 @@ public class SerializableChunk {
 		this.x = x;
 		this.z = z;
 		this.claimedAt = System.currentTimeMillis();
+		this.isForceLoaded = false;
 	}
 
-	public SerializableChunk(UUID worldId, int x, int z, long claimedAt) {
+	public SerializableChunk(UUID worldId, int x, int z, long claimedAt, boolean isForceLoaded) {
 		this.worldId = worldId;
 		this.x = x;
 		this.z = z;
 		this.claimedAt = claimedAt;
+		this.isForceLoaded = isForceLoaded;
 	}
 
 	private static UUID resolveWorldId(String token) {
@@ -79,26 +84,28 @@ public class SerializableChunk {
 				}
 			}
 
-			return new SerializableChunk(worldId, x, z, claimedAt);
+			boolean isForceLoaded = false;
+
+			if (split.length >= 5 && !split[4].trim().isEmpty()) {
+				isForceLoaded = Boolean.parseBoolean(split[4].trim());
+			}
+
+			return new SerializableChunk(worldId, x, z, claimedAt, isForceLoaded);
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
 	public static String convertToString(Chunk chunk) {
-		return chunk.getWorld().getUID() + "," + chunk.getX() + "," + chunk.getZ() + "," + System.currentTimeMillis();
-	}
-
-	public static String convertToString(Chunk chunk, boolean withoutClaimTime) {
 		return chunk.getWorld().getUID() + "," + chunk.getX() + "," + chunk.getZ();
 	}
 
 	public static boolean equals(Chunk chunk1, Chunk chunk2) {
-		return convertToString(chunk1, true).equals(convertToString(chunk2, true));
+		return convertToString(chunk1).equals(convertToString(chunk2));
 	}
 
 	public static boolean equals(SerializableChunk chunk1, Chunk chunk2) {
-		return chunk1.toString(true).equals(convertToString(chunk2, true));
+		return chunk1.toString(true).equals(convertToString(chunk2));
 	}
 
 	public static boolean equals(SerializableChunk chunk1, SerializableChunk chunk2) {
@@ -137,12 +144,16 @@ public class SerializableChunk {
 		return claimedAt;
 	}
 
+	public void setForceLoaded(boolean isForceLoaded) { this.isForceLoaded = isForceLoaded; }
+
+	public boolean isForceLoaded() { return isForceLoaded; }
+
 	@Override
 	public String toString() {
-		return worldId + "," + x + "," + z + "," + claimedAt;
+		return worldId + "," + x + "," + z + "," + claimedAt + "," + isForceLoaded;
 	}
 
-	public String toString(boolean withoutClaimTime) {
+	public String toString(boolean noDetails) {
 		return worldId + "," + x + "," + z;
 	}
 

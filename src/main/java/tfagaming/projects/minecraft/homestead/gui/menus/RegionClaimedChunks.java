@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -11,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.PersistentChunkTicket;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.ButtonData;
@@ -41,34 +43,47 @@ public class RegionClaimedChunks {
 
 					if (context.getEvent().isRightClick()) {
 						new DelayedTeleport(player, chunk.bukkitLocation());
-						return;
+					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
+						Chunk bukkitChunk = chunk.bukkit();
+						final boolean newState = !chunk.isForceLoaded();
+
+						region.setChunkForceLoaded(chunk, newState);
+
+						if (newState) {
+							PersistentChunkTicket.addPersistent(Homestead.getInstance(), bukkitChunk);
+						} else {
+							PersistentChunkTicket.removePersistent(Homestead.getInstance(), bukkitChunk);
+						}
+
+						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
+
+						chunks = region.getChunks();
+						context.getInstance().setItems(getItems(player, region));
+					} else {
+						if (!ChunkManager.isChunkClaimed(chunk.bukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.bukkit())) {
+							return;
+						}
+
+						if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+								RegionControlFlags.UNCLAIM_CHUNKS)) {
+							return;
+						}
+
+						int before = region.getChunks().size();
+						ChunkManager.unclaimChunk(region.getUniqueId(), chunk.bukkit());
+
+						if (region.getChunks().size() < before) {
+							double chunkPrice = Homestead.config.getDouble("chunk-price");
+							if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
+						}
+
+						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+						ChunkBorder.show(player);
+
+						chunks = region.getChunks();
+						context.getInstance().setItems(getItems(player, region));
 					}
-
-					if (!context.getEvent().isLeftClick()) return;
-
-					if (!ChunkManager.isChunkClaimed(chunk.bukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.bukkit())) {
-						return;
-					}
-
-					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-							RegionControlFlags.UNCLAIM_CHUNKS)) {
-						return;
-					}
-
-					int before = region.getChunks().size();
-					ChunkManager.unclaimChunk(region.getUniqueId(), chunk.bukkit());
-
-					if (region.getChunks().size() < before) {
-						double chunkPrice = Homestead.config.getDouble("chunk-price");
-						if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
-					}
-
-					PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-					ChunkBorder.show(player);
-
-					chunks = region.getChunks();
-					context.getInstance().setItems(getItems(player, region));
 				});
 
 		gui.addActionButton(1, MenuUtils.getButton(73, new Placeholder()
@@ -88,7 +103,8 @@ public class RegionClaimedChunks {
 					.add("{region}", region.getName())
 					.add("{index}", i + 1)
 					.add("{chunk-claimedat}", Formatter.getDate(chunk.getClaimedAt()))
-					.add("{chunk-location}", Formatter.getLocation(chunk.bukkitLocation()));
+					.add("{chunk-location}", Formatter.getLocation(chunk.bukkitLocation()))
+					.add("{chunk-is-loaded}", Formatter.getBoolean(chunk.isForceLoaded()));
 
 			ButtonData data = MenuUtils.getButtonData(33);
 
