@@ -13,6 +13,15 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
 public final class ItemTransportingEntityValidateTargetListener implements Listener {
+	public static boolean isClassFound() {
+		try {
+			Class.forName("io.papermc.paper.event.entity.ItemTransportingEntityValidateTargetEvent");
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onItemTransportValidate(ItemTransportingEntityValidateTargetEvent event) {
 		Entity entity = event.getEntity();
@@ -29,15 +38,6 @@ public final class ItemTransportingEntityValidateTargetListener implements Liste
 					event.setAllowed(false);
 				}
 			}
-		}
-	}
-
-	public static boolean isClassFound() {
-		try {
-			Class.forName("io.papermc.paper.event.entity.ItemTransportingEntityValidateTargetEvent");
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
 		}
 	}
 }

@@ -48,7 +48,8 @@ public final class ChunkManager {
 		region.addChunk(chunk);
 
 		ChunkClaimEvent event = new ChunkClaimEvent(region, chunk);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
+		Location chunkLoc = new Location(chunk.getWorld(), chunk.getX() * 16 + 8, 64, chunk.getZ() * 16 + 8);
+		Homestead.getInstance().runLocationTask(chunkLoc, () -> Bukkit.getPluginManager().callEvent(event));
 
 		return null;
 	}
@@ -97,7 +98,8 @@ public final class ChunkManager {
 		}
 
 		ChunkUnclaimEvent event = new ChunkUnclaimEvent(region, chunk);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
+		Location chunkLoc = new Location(chunk.getWorld(), chunk.getX() * 16 + 8, 64, chunk.getZ() * 16 + 8);
+		Homestead.getInstance().runLocationTask(chunkLoc, () -> Bukkit.getPluginManager().callEvent(event));
 
 		return null;
 	}
@@ -359,10 +361,24 @@ public final class ChunkManager {
 	 * @param chunk The chunk
 	 */
 	public static Location getLocation(Player player, Chunk chunk) {
-		Location loc = new Location(chunk.getWorld(), chunk.getX() * 16 + 8, 64, chunk.getZ() * 16 + 8);
-		loc.setY(loc.getWorld() == null ? 64 : loc.getWorld().getHighestBlockYAt(loc) + 2);
-		loc.setPitch(player.getLocation().getPitch());
-		loc.setYaw(player.getLocation().getYaw());
+		World world = chunk.getWorld();
+		if (world == null) return null;
+
+		int x = chunk.getX() * 16 + 8;
+		int z = chunk.getZ() * 16 + 8;
+
+		Location loc;
+		if (world.getEnvironment() == World.Environment.NETHER) {
+			loc = findSafeNetherLocation(world, x, z);
+		} else {
+			int highest = world.getHighestBlockYAt(x, z);
+			loc = new Location(world, x, highest + 2, z);
+		}
+
+		if (loc != null) {
+			loc.setPitch(player.getLocation().getPitch());
+			loc.setYaw(player.getLocation().getYaw());
+		}
 		return loc;
 	}
 

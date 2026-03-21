@@ -1,7 +1,9 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -166,6 +168,10 @@ public class RegionMenu {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				RegionManager.addNewLog(region.getUniqueId(), 4, new Placeholder()
 						.add("{playername}", player.getName()));
+
+				RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, player, RegionUntrustPlayerEvent.UntrustReason.LEFT);
+				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
 				new RegionsMenu(player);
 			});
 		}

@@ -6,15 +6,19 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
-public class RegionDeleteEvent extends Event {
+public class RegionUntrustPlayerEvent extends Event {
 	private static final HandlerList HANDLERS = new HandlerList();
 
 	private final Region region;
 	private final OfflinePlayer player;
+	private final OfflinePlayer target;
+	private final UntrustReason reason;
 
-	public RegionDeleteEvent(@NotNull Region region, @NotNull OfflinePlayer player) {
+	public RegionUntrustPlayerEvent(@NotNull Region region, @NotNull OfflinePlayer player, @NotNull OfflinePlayer target, @NotNull UntrustReason reason) {
 		this.region = region;
 		this.player = player;
+		this.target = target;
+		this.reason = reason;
 	}
 
 	public static HandlerList getHandlerList() {
@@ -29,8 +33,22 @@ public class RegionDeleteEvent extends Event {
 		return player;
 	}
 
+	public @NotNull OfflinePlayer getUntrustedPlayer() {
+		return target;
+	}
+
+	public @NotNull UntrustReason getReason() {
+		return reason;
+	}
+
 	@Override
 	public @NotNull HandlerList getHandlers() {
 		return HANDLERS;
+	}
+
+	public enum UntrustReason {
+		EXECUTION,
+		LEFT,
+		TAXES
 	}
 }

@@ -58,18 +58,18 @@ public class PlayerUtils {
 			}
 			case "actionbar": {
 				String text = Formatter.applyPlaceholders(
-								Homestead.config.getString(
-										"enter-exit-region-message.messages.enter.actionbar"),
-								placeholder);
+						Homestead.config.getString(
+								"enter-exit-region-message.messages.enter.actionbar"),
+						placeholder);
 
 				PlatformBridge.get().sendActionBar(player, text);
 				break;
 			}
 			default: {
 				String text = Formatter.applyPlaceholders(
-								Homestead.config.getString(
-										"enter-exit-region-message.messages.enter.chat"),
-								placeholder);
+						Homestead.config.getString(
+								"enter-exit-region-message.messages.enter.chat"),
+						placeholder);
 
 				PlatformBridge.get().sendMessage(player, text);
 				break;
@@ -95,18 +95,18 @@ public class PlayerUtils {
 			}
 			case "actionbar": {
 				String text = Formatter.applyPlaceholders(
-								Homestead.config.getString(
-										"enter-exit-region-message.messages.exit.actionbar"),
-								placeholder);
+						Homestead.config.getString(
+								"enter-exit-region-message.messages.exit.actionbar"),
+						placeholder);
 
 				PlatformBridge.get().sendActionBar(player, text);
 				break;
 			}
 			default: {
 				String text = Formatter.applyPlaceholders(
-								Homestead.config.getString(
-										"enter-exit-region-message.messages.exit.chat"),
-								placeholder);
+						Homestead.config.getString(
+								"enter-exit-region-message.messages.exit.chat"),
+						placeholder);
 
 				PlatformBridge.get().sendMessage(player, text);
 				break;

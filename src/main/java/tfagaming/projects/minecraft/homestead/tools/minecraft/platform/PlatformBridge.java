@@ -18,7 +18,8 @@ public final class PlatformBridge {
 				: new LegacyPlatformBridge();
 	}
 
-	private PlatformBridge() {}
+	private PlatformBridge() {
+	}
 
 	public static IPlatformBridge get() {
 		return INSTANCE;

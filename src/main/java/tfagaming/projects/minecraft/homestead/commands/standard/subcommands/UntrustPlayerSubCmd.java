@@ -1,9 +1,11 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -85,6 +87,9 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 					.add("{executor}", player.getName())
 					.add("{playername}", target.getName())
 			);
+
+			RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, target, RegionUntrustPlayerEvent.UntrustReason.EXECUTION);
+			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 		} else {
 			Messages.send(player, 39, new Placeholder()
 					.add("{region}", region.getName())

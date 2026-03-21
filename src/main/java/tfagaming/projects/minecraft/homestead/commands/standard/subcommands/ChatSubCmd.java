@@ -1,9 +1,11 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionChatEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
@@ -74,6 +76,9 @@ public class ChatSubCmd extends SubCommandBuilder {
 		if (Homestead.config.getBoolean("log-private-chat")) {
 			Logger.info(String.format("[Chat] %s (UUID: %s) -> %s: %s", player.getName(), player.getUniqueId(), region.getName(), message));
 		}
+
+		RegionChatEvent _event = new RegionChatEvent(region, player, message);
+		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
 		return true;
 	}

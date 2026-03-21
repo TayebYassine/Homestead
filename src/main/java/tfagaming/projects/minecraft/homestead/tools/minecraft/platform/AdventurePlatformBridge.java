@@ -8,6 +8,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.time.Duration;
+
 final class AdventurePlatformBridge implements IPlatformBridge {
 
 	private static final MiniMessage MM = MiniMessage.miniMessage();
@@ -28,8 +29,8 @@ final class AdventurePlatformBridge implements IPlatformBridge {
 				deserialize(title),
 				deserialize(subtitle),
 				Title.Times.times(
-						Duration.ofMillis(fadeInTicks  * 50L),
-						Duration.ofMillis(stayTicks    * 50L),
+						Duration.ofMillis(fadeInTicks * 50L),
+						Duration.ofMillis(stayTicks * 50L),
 						Duration.ofMillis(fadeOutTicks * 50L)
 				)
 		));

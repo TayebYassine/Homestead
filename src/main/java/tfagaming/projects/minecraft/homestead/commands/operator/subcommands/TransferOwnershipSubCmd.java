@@ -1,8 +1,11 @@
 package tfagaming.projects.minecraft.homestead.commands.operator.subcommands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -68,6 +71,9 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 				.add("{region}", region.getName())
 				.add("{player}", target.getName())
 		);
+
+		RegionTransferOwnershipEvent _event = new RegionTransferOwnershipEvent(region, sender instanceof Player ? (Player) sender : target, target);
+		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
 		return true;
 	}

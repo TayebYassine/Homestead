@@ -1,9 +1,12 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -67,6 +70,9 @@ public class RegionMembersMenu {
 								.add("{executor}", player.getName())
 								.add("{playername}", member.bukkit() == null ? "?" : member.bukkit().getName()));
 
+						RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, member.bukkit(), RegionUntrustPlayerEvent.UntrustReason.EXECUTION);
+						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
 						members = region.getMembers();
 						context.getInstance().setItems(getItems(player, region));
 
@@ -95,6 +101,9 @@ public class RegionMembersMenu {
 				if (Homestead.config.isInstantTrustSystemEnabled()) {
 					region.removePlayerInvite(targetPlayer);
 					region.addMember(targetPlayer);
+
+					RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, targetPlayer);
+					Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 				} else {
 					region.addPlayerInvite(targetPlayer);
 					RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()

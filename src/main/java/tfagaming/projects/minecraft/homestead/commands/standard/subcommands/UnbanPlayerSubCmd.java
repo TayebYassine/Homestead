@@ -1,9 +1,11 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionUnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
@@ -79,6 +81,9 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 				.add("{region}", region.getName())
 				.add("{playername}", target.getName())
 		);
+
+		RegionUnbanPlayerEvent _event = new RegionUnbanPlayerEvent(region, player, target);
+		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
 		return true;
 	}

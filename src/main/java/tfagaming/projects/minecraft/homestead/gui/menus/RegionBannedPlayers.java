@@ -1,9 +1,12 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RegionUnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
@@ -54,6 +57,9 @@ public class RegionBannedPlayers {
 					region.unbanPlayer(bannedPlayer.bukkit());
 					PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
+					RegionUnbanPlayerEvent _event = new RegionUnbanPlayerEvent(region, player, bannedPlayer.bukkit());
+					Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
 					bannedPlayers = region.getBannedPlayers();
 					context.getInstance().setItems(getItems(player, region));
 				});
@@ -76,6 +82,10 @@ public class RegionBannedPlayers {
 				if (region.isPlayerInvited(targetPlayer)) region.removePlayerInvite(targetPlayer);
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+				RegionBanPlayerEvent _event = new RegionBanPlayerEvent(region, player, targetPlayer, null);
+				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
 				Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region));
 			}, (message) -> {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);

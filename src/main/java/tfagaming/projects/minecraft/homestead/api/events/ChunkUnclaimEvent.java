@@ -12,7 +12,7 @@ public class ChunkUnclaimEvent extends Event {
 	private final Region region;
 	private final Chunk chunk;
 
-	public ChunkUnclaimEvent(Region region, Chunk chunk) {
+	public ChunkUnclaimEvent(@NotNull Region region, @NotNull Chunk chunk) {
 		this.region = region;
 		this.chunk = chunk;
 	}
@@ -21,11 +21,11 @@ public class ChunkUnclaimEvent extends Event {
 		return HANDLERS;
 	}
 
-	public Chunk getChunk() {
+	public @NotNull Chunk getChunk() {
 		return chunk;
 	}
 
-	public Region getRegion() {
+	public @NotNull Region getRegion() {
 		return region;
 	}
 

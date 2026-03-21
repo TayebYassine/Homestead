@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead;
 import me.lucko.commodore.Commodore;
 import me.lucko.commodore.CommodoreProvider;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -266,9 +267,7 @@ public class Homestead extends JavaPlugin {
 
 		// Triggers
 		runAsyncTimerTask(() -> {
-			runAsyncTask(() -> {
-				DynamicMaps.trigger(this);
-			});
+			DynamicMaps.trigger(this);
 		}, Homestead.config.getInt("dynamic-maps.update-interval"));
 
 		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("taxes.enabled")) {
@@ -291,9 +290,7 @@ public class Homestead extends JavaPlugin {
 
 		// Check for updates every 24 hours
 		runAsyncTimerTask(() -> {
-			runAsyncTask(() -> {
-				UpdateChecker.fetch(this);
-			});
+			UpdateChecker.fetch(this);
 		}, 86400);
 
 		// Register external plugins
@@ -518,6 +515,21 @@ public class Homestead extends JavaPlugin {
 	}
 
 	/**
+	 * Run a task on the region thread that owns the given location.
+	 * Use this for any event or operation tied to a specific world location.
+	 *
+	 * @param location The location whose owning region thread to run on.
+	 * @param callable The task to run.
+	 */
+	public TaskHandle runLocationTask(Location location, Runnable callable) {
+		if (isFolia()) {
+			return new TaskHandle(Bukkit.getRegionScheduler().run(this, location, task -> callable.run()));
+		}
+
+		return new TaskHandle(Bukkit.getScheduler().runTask(this, callable));
+	}
+
+	/**
 	 * Get a list of offline players.
 	 */
 	public List<OfflinePlayer> getOfflinePlayersSync() {
@@ -586,6 +598,8 @@ public class Homestead extends JavaPlugin {
 
 		Homestead.regionsCache.clear();
 		Homestead.warsCache.clear();
+		Homestead.subAreasCache.clear();
+		Homestead.levelsCache.clear();
 		TargetRegionSession.sessions.clear();
 		AutoClaimSession.sessions.clear();
 

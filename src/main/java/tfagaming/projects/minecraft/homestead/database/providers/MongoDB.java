@@ -43,6 +43,19 @@ public final class MongoDB {
 		return v != null ? v.toString() : null;
 	}
 
+	/**
+	 * Resolves a Bukkit World from a stored value that may be either a UUID string
+	 * (new format) or a plain world name (legacy format, pre-migration).
+	 */
+	private static World resolveWorld(String value) {
+		if (value == null || value.isBlank()) return null;
+		try {
+			return Bukkit.getWorld(UUID.fromString(value.trim()));
+		} catch (IllegalArgumentException ignored) {
+			return Bukkit.getWorld(value.trim());
+		}
+	}
+
 	private MongoCollection<Document> regions() {
 		return mongoDatabase.getCollection(COLLECTION_PREFIX + "regions");
 	}
@@ -57,19 +70,6 @@ public final class MongoDB {
 
 	private MongoCollection<Document> levels() {
 		return mongoDatabase.getCollection(COLLECTION_PREFIX + "levels");
-	}
-
-	/**
-	 * Resolves a Bukkit World from a stored value that may be either a UUID string
-	 * (new format) or a plain world name (legacy format, pre-migration).
-	 */
-	private static World resolveWorld(String value) {
-		if (value == null || value.isBlank()) return null;
-		try {
-			return Bukkit.getWorld(UUID.fromString(value.trim()));
-		} catch (IllegalArgumentException ignored) {
-			return Bukkit.getWorld(value.trim());
-		}
 	}
 
 	public void importRegions() {

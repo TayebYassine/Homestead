@@ -144,9 +144,13 @@ public class SerializableChunk {
 		return claimedAt;
 	}
 
-	public void setForceLoaded(boolean isForceLoaded) { this.isForceLoaded = isForceLoaded; }
+	public boolean isForceLoaded() {
+		return isForceLoaded;
+	}
 
-	public boolean isForceLoaded() { return isForceLoaded; }
+	public void setForceLoaded(boolean isForceLoaded) {
+		this.isForceLoaded = isForceLoaded;
+	}
 
 	@Override
 	public String toString() {

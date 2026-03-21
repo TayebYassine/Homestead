@@ -31,6 +31,15 @@ public final class SQLite {
 		createTables();
 	}
 
+	private static World resolveWorld(String value) {
+		if (value == null || value.isBlank()) return null;
+		try {
+			return Bukkit.getWorld(UUID.fromString(value.trim()));
+		} catch (IllegalArgumentException ignored) {
+			return Bukkit.getWorld(value.trim());
+		}
+	}
+
 	private void createTables() throws SQLException {
 		String sql1 = "CREATE TABLE IF NOT EXISTS regions (" +
 				"id TEXT PRIMARY KEY, " +
@@ -97,15 +106,6 @@ public final class SQLite {
 			stmt.executeUpdate(sql2);
 			stmt.executeUpdate(sql3);
 			stmt.executeUpdate(sql4);
-		}
-	}
-
-	private static World resolveWorld(String value) {
-		if (value == null || value.isBlank()) return null;
-		try {
-			return Bukkit.getWorld(UUID.fromString(value.trim()));
-		} catch (IllegalArgumentException ignored) {
-			return Bukkit.getWorld(value.trim());
 		}
 	}
 

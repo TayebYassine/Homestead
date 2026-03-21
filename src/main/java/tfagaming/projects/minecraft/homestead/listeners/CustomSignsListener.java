@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -14,6 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
@@ -227,11 +229,11 @@ public final class CustomSignsListener implements Listener {
 
 	private void handleRentSignInteraction(Player player, Sign sign, Block signBlock) {
 		try {
-			String regionName  = getSignLine(sign, 1);
-			String priceStr    = getSignLine(sign, 2);
-			double price       = parseFormattedPrice(priceStr);
+			String regionName = getSignLine(sign, 1);
+			String priceStr = getSignLine(sign, 2);
+			double price = parseFormattedPrice(priceStr);
 			String durationStr = getSignLine(sign, 3);
-			long durationMs    = parseFormattedDuration(durationStr);
+			long durationMs = parseFormattedDuration(durationStr);
 
 			Region region = RegionManager.findRegion(regionName);
 
@@ -281,8 +283,8 @@ public final class CustomSignsListener implements Listener {
 	private void handleSellSignInteraction(Player player, Sign sign, Block signBlock) {
 		try {
 			String regionName = getSignLine(sign, 1);
-			String priceStr   = getSignLine(sign, 2);
-			double price      = parseFormattedPrice(priceStr);
+			String priceStr = getSignLine(sign, 2);
+			double price = parseFormattedPrice(priceStr);
 
 			Region region = RegionManager.findRegion(regionName);
 
@@ -320,6 +322,9 @@ public final class CustomSignsListener implements Listener {
 					.add("{region}", region.getName())
 					.add("{price}", Formatter.getBalance(price))
 			);
+
+			RegionTransferOwnershipEvent _event = new RegionTransferOwnershipEvent(region, player, player);
+			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 		} catch (NumberFormatException e) {
 			player.sendMessage(ChatColor.RED + "Error: This sell sign has invalid formatting!");
 		}
@@ -352,7 +357,7 @@ public final class CustomSignsListener implements Listener {
 				case 'h' -> num * 60 * 60 * 1000;
 				case 'd' -> num * 24 * 60 * 60 * 1000;
 				case 'w' -> num * 7 * 24 * 60 * 60 * 1000;
-				default  -> 0;
+				default -> 0;
 			};
 		} catch (Exception e) {
 			return 0;
@@ -364,16 +369,16 @@ public final class CustomSignsListener implements Listener {
 
 		long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60;
 		long minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60;
-		long hours   = TimeUnit.MILLISECONDS.toHours(millis) % 24;
-		long days    = TimeUnit.MILLISECONDS.toDays(millis) % 7;
-		long weeks   = TimeUnit.MILLISECONDS.toDays(millis) / 7;
+		long hours = TimeUnit.MILLISECONDS.toHours(millis) % 24;
+		long days = TimeUnit.MILLISECONDS.toDays(millis) % 7;
+		long weeks = TimeUnit.MILLISECONDS.toDays(millis) / 7;
 
 		StringBuilder sb = new StringBuilder();
-		if (weeks   > 0) sb.append(weeks).append(weeks   == 1 ? " Week "   : " Weeks ");
-		if (days    > 0) sb.append(days).append(days     == 1 ? " Day "    : " Days ");
-		if (hours   > 0) sb.append(hours).append(hours   == 1 ? " Hour "   : " Hours ");
+		if (weeks > 0) sb.append(weeks).append(weeks == 1 ? " Week " : " Weeks ");
+		if (days > 0) sb.append(days).append(days == 1 ? " Day " : " Days ");
+		if (hours > 0) sb.append(hours).append(hours == 1 ? " Hour " : " Hours ");
 		if (minutes > 0) sb.append(minutes).append(minutes == 1 ? " Minute " : " Minutes ");
-		if (seconds > 0) sb.append(seconds).append(seconds == 1 ? " Second"  : " Seconds");
+		if (seconds > 0) sb.append(seconds).append(seconds == 1 ? " Second" : " Seconds");
 		return sb.toString().trim();
 	}
 

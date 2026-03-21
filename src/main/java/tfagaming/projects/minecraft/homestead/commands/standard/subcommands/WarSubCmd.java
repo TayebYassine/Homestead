@@ -17,7 +17,6 @@ import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.ArrayList;

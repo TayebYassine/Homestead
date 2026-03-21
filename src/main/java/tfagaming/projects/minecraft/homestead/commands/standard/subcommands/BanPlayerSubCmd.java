@@ -1,9 +1,11 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
@@ -109,6 +111,9 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		if (region.isPlayerInvited(target)) {
 			region.removePlayerInvite(target);
 		}
+
+		RegionBanPlayerEvent _event = new RegionBanPlayerEvent(region, player, target, reason);
+		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
 		return true;
 	}

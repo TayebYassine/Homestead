@@ -1,10 +1,13 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionRenameEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
@@ -45,11 +48,16 @@ public class MiscellaneousSettings {
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
+				final String oldName = region.getName();
 				region.setName(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				RegionManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{newname}", input));
+
+				RegionRenameEvent _event = new RegionRenameEvent(region, player, oldName, input);
+				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
@@ -154,6 +162,10 @@ public class MiscellaneousSettings {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				if (region.isPlayerMember(targetPlayer)) region.removeMember(targetPlayer);
 				if (region.isPlayerInvited(targetPlayer)) region.removePlayerInvite(targetPlayer);
+
+				RegionTransferOwnershipEvent _event = new RegionTransferOwnershipEvent(region, player, targetPlayer);
+				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
 				Homestead.getInstance().runSyncTask(() -> new RegionsMenu(player));
 			}, (message) -> {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);

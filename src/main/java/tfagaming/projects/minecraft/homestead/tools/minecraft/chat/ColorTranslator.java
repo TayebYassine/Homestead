@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.chat;
 
 import org.bukkit.ChatColor;
+
 import java.util.Map;
 
 public final class ColorTranslator {

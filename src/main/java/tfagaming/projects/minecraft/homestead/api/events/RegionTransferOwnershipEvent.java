@@ -6,15 +6,17 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
-public class RegionDeleteEvent extends Event {
+public class RegionTransferOwnershipEvent extends Event {
 	private static final HandlerList HANDLERS = new HandlerList();
 
 	private final Region region;
 	private final OfflinePlayer player;
+	private final OfflinePlayer newOwner;
 
-	public RegionDeleteEvent(@NotNull Region region, @NotNull OfflinePlayer player) {
+	public RegionTransferOwnershipEvent(@NotNull Region region, @NotNull OfflinePlayer player, @NotNull OfflinePlayer newOwner) {
 		this.region = region;
 		this.player = player;
+		this.newOwner = newOwner;
 	}
 
 	public static HandlerList getHandlerList() {
@@ -27,6 +29,10 @@ public class RegionDeleteEvent extends Event {
 
 	public @NotNull OfflinePlayer getPlayer() {
 		return player;
+	}
+
+	public @NotNull OfflinePlayer getNewOwner() {
+		return newOwner;
 	}
 
 	@Override

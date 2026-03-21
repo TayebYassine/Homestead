@@ -10,7 +10,6 @@ import me.lucko.commodore.Commodore;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
-import tfagaming.projects.minecraft.homestead.Homestead;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +104,7 @@ public final class BrigadierCommandBuilder {
 				for (int i = arguments.size() - 1; i >= 0; i--) {
 					ArgumentNode arg = arguments.get(i);
 					RequiredArgumentBuilder<Object, ?> argBuilder =
-							(RequiredArgumentBuilder<Object, ?>) RequiredArgumentBuilder.argument(arg.name, arg.type);
+							RequiredArgumentBuilder.argument(arg.name, arg.type);
 
 					if (current == null && !nestedSubs.isEmpty()) {
 						for (SubCommandBuilder nested : nestedSubs) {

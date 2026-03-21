@@ -283,7 +283,8 @@ public class PaginationMenu implements Listener {
 			int itemIndex = currentPage * buttonsPerPage + (slot - 9);
 
 			if (itemIndex < items.size()) {
-				if (clickCallback != null) clickCallback.accept(player, new ClickContext(event, itemIndex, items, this));
+				if (clickCallback != null)
+					clickCallback.accept(player, new ClickContext(event, itemIndex, items, this));
 			}
 		}
 	}

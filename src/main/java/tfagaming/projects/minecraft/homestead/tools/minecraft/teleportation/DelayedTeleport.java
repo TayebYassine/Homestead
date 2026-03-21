@@ -61,7 +61,7 @@ public class DelayedTeleport {
 			}
 
 			if (price > 0) PlayerBank.withdraw(player, price);
-			
+
 			teleportPlayer(player, location);
 		}, delay);
 

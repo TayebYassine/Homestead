@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 

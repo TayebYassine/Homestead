@@ -1,8 +1,10 @@
 package tfagaming.projects.minecraft.homestead.events;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -69,6 +71,9 @@ public final class MemberTaxes {
 						RegionManager.addNewLog(region.getUniqueId(), 5, new Placeholder()
 								.add("{playername}", targetPlayer.getName())
 						);
+
+						RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, targetPlayer, targetPlayer, RegionUntrustPlayerEvent.UntrustReason.TAXES);
+						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 					}
 				}
 			}

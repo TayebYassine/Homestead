@@ -35,16 +35,6 @@ public final class YAML {
 		Logger.info(String.join("\n", List.of(regionsFolder.getAbsolutePath(), warsFolder.getAbsolutePath(), subAreasFolder.getAbsolutePath(), levelsFolder.getAbsolutePath())));
 	}
 
-	private File prepareDataFolder(File dataFolder, String dirName) throws IOException {
-		File dir = new File(dataFolder, dirName);
-
-		if (!dir.exists() && !dir.mkdir()) {
-			throw new IOException("Unable to create '" + dirName + "' directory, path: " + dir.getAbsolutePath());
-		}
-
-		return dir;
-	}
-
 	/**
 	 * Resolves a Bukkit World from a stored value that may be either a UUID string
 	 * (new format) or a plain world name (legacy format, pre-migration).
@@ -56,6 +46,16 @@ public final class YAML {
 		} catch (IllegalArgumentException ignored) {
 			return Bukkit.getWorld(value.trim());
 		}
+	}
+
+	private File prepareDataFolder(File dataFolder, String dirName) throws IOException {
+		File dir = new File(dataFolder, dirName);
+
+		if (!dir.exists() && !dir.mkdir()) {
+			throw new IOException("Unable to create '" + dirName + "' directory, path: " + dir.getAbsolutePath());
+		}
+
+		return dir;
 	}
 
 	// Importing

@@ -12,7 +12,7 @@ public class RegionCreateEvent extends Event {
 	private final Region region;
 	private final OfflinePlayer player;
 
-	public RegionCreateEvent(Region region, OfflinePlayer player) {
+	public RegionCreateEvent(@NotNull Region region, @NotNull OfflinePlayer player) {
 		this.region = region;
 		this.player = player;
 	}
@@ -21,11 +21,11 @@ public class RegionCreateEvent extends Event {
 		return HANDLERS;
 	}
 
-	public Region getRegion() {
+	public @NotNull Region getRegion() {
 		return region;
 	}
 
-	public OfflinePlayer getPlayer() {
+	public @NotNull OfflinePlayer getPlayer() {
 		return player;
 	}
 
