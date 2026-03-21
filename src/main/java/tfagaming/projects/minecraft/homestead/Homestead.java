@@ -31,10 +31,7 @@ import tfagaming.projects.minecraft.homestead.integrations.*;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.LevelManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
-import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
@@ -229,7 +226,10 @@ public class Homestead extends JavaPlugin {
 			WarManager.cleanStartup();
 			SubAreaManager.cleanStartup();
 			LevelManager.cleanStartup();
+			ChunkManager.deleteInvalidChunks();
 		}
+
+		ChunkManager.reregisterForceLoadedChunks();
 
 		registerCommands();
 		registerEvents();

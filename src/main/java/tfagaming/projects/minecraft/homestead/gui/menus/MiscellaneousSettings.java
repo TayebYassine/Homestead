@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -203,6 +204,8 @@ public class MiscellaneousSettings {
 						.add("{region}", region.getDisplayName())
 						.add("{region-bank}", Formatter.getBalance(amountToGive)));
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+				TargetRegionSession.randomizeRegion(player);
 
 				new RegionsMenu(_player);
 				return;

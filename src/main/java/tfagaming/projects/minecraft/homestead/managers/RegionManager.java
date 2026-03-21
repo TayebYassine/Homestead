@@ -83,13 +83,16 @@ public final class RegionManager {
 
 			Homestead.regionsCache.putOrUpdate(region);
 
+			RegionCreateEvent event = new RegionCreateEvent(region, player);
+			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
+
 			return region;
 		} else {
 			return createRegion(name, player);
 		}
 	}
 
-	/** Returns an immutable view of every loaded region. */
+	/** Returns a list of every loaded region, directly from dynamic cache. */
 	public static List<Region> getAll() {
 		return Homestead.regionsCache.getAll();
 	}
@@ -114,7 +117,7 @@ public final class RegionManager {
 	 */
 	public static Region findRegion(String name) {
 		for (Region region : getAll()) {
-			if (region.getName().equals(name)) {
+			if (region.getName().equalsIgnoreCase(name)) {
 				return region;
 			}
 		}
@@ -170,6 +173,11 @@ public final class RegionManager {
 		region.addLog(new SerializableLog(author, message));
 	}
 
+	/**
+	 * Appends a system log entry to the region using a language-file message path.
+	 * @param id The region UUID
+	 * @param messagePath The key under "logs." in the language file
+	 */
 	public static void addNewLog(UUID id, int messagePath) {
 		Region region = findRegion(id);
 
@@ -182,6 +190,12 @@ public final class RegionManager {
 		region.addLog(new SerializableLog(Homestead.language.getString("default.author"), message));
 	}
 
+	/**
+	 * Appends a system log entry with placeholder substitution applied to the message.
+	 * @param id The region UUID
+	 * @param messagePath The key under "logs." in the language file
+	 * @param placeholder Placeholder values to substitute into the message
+	 */
 	public static void addNewLog(UUID id, int messagePath, Placeholder placeholder) {
 		Region region = findRegion(id);
 
@@ -195,6 +209,12 @@ public final class RegionManager {
 				Formatter.applyPlaceholders(message, placeholder)));
 	}
 
+	/**
+	 * Merges all data from one region into another and deletes the source region.
+	 * Transfers bank balance, chunks, sub-areas, and members.
+	 * @param from The region to merge from (will be deleted)
+	 * @param to The region to merge into
+	 */
 	public static void mergeRegions(Region from, Region to) {
 		if (from.getUniqueId().equals(to.getUniqueId())) {
 			return;
@@ -374,9 +394,13 @@ public final class RegionManager {
 
 	/** Averages the region's ranks across four core metrics to give a global standing. */
 	public static int getGlobalRank(UUID id) {
-		return (getRank(RegionSorting.BANK, id) + getRank(RegionSorting.CHUNKS_COUNT, id)
+		double sum = getRank(RegionSorting.BANK, id)
+				+ getRank(RegionSorting.CHUNKS_COUNT, id)
 				+ getRank(RegionSorting.MEMBERS_COUNT, id)
-				+ getRank(RegionSorting.RATING, id)) / 4;
+				+ getRank(RegionSorting.RATING, id)
+				+ getRank(RegionSorting.CREATION_DATE, id);
+
+		return (int) Math.round(sum / 5.0);
 	}
 
 	/** Checks whether any region already carries the supplied name, ignoring case. */
@@ -395,7 +419,7 @@ public final class RegionManager {
 		Chunk location = player.getLocation().getChunk();
 
 		for (SerializableChunk chunk : region.getChunks()) {
-			if (chunk.getX() == location.getX() && chunk.getZ() == location.getZ()) {
+			if (chunk.getWorldId().equals(location.getWorld().getUID()) && chunk.getX() == location.getX() && chunk.getZ() == location.getZ()) {
 				return true;
 			}
 		}
@@ -482,7 +506,7 @@ public final class RegionManager {
 			}
 
 			for (SerializableChunk chunk : chunksToRemove) {
-				ChunkManager.removeChunk(region.getUniqueId(), chunk.bukkit());
+				region.removeChunk(chunk);
 				updated++;
 			}
 

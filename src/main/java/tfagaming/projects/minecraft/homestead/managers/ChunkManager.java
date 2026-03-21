@@ -440,12 +440,52 @@ public final class ChunkManager {
 			Iterator<SerializableChunk> it = region.getChunks().iterator();
 			while (it.hasNext()) {
 				SerializableChunk sc = it.next();
-				if (sc == null || sc.getWorldId() == null || !worlds.contains(sc.getWorldId())) {
+
+				if (sc == null) {
+					continue;
+				}
+
+				if (sc.getWorldId() == null || !worlds.contains(sc.getWorldId())) {
+					World world = Bukkit.getWorld(sc.getWorldId());
+
+					if (world != null) {
+						PersistentChunkTicket.removePersistent(Homestead.getInstance(), world, sc.getX(), sc.getZ());
+					}
+
 					it.remove();
 					count++;
 				}
 			}
 		}
+		return count;
+	}
+
+	public static void reregisterForceLoadedChunks() {
+		for (Region region : RegionManager.getAll()) {
+			for (SerializableChunk chunk : region.getChunks()) {
+				if (chunk.isForceLoaded()) {
+					World world = chunk.getWorld();
+					if (world != null) {
+						PersistentChunkTicket.addPersistent(Homestead.getInstance(), world, chunk.getX(), chunk.getZ());
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Clean up force loaded chunks that are not claimed by any region.
+	 */
+	public static int cleanupOrphanedForceLoadedChunks() {
+		int count = 0;
+
+		for (Chunk chunk : PersistentChunkTicket.getAllForceLoadedChunks()) {
+			if (!isChunkClaimed(chunk)) {
+				PersistentChunkTicket.removePersistent(Homestead.getInstance(), chunk);
+				count++;
+			}
+		}
+
 		return count;
 	}
 

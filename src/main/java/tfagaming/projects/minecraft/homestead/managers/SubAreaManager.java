@@ -85,10 +85,12 @@ public final class SubAreaManager {
 		return null;
 	}
 
+	/** Returns the sub-area containing the given block, or null if none. */
 	public static SubArea findSubAreaHasBlockInside(Block block) {
 		return findSubAreaHasLocationInside(block.getLocation());
 	}
 
+	/** Returns the sub-area containing the given location, or null if none. */
 	public static SubArea findSubAreaHasLocationInside(Location location) {
 		for (SubArea subArea : getAll()) {
 			if (subArea.isLocationInside(location)) {
