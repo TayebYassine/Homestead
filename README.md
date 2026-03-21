@@ -10,7 +10,7 @@ The plugin offers more than 75 flags, allowing players to set specific permissio
 
 - **Grief Prevention** — Define fully customizable regions that block unauthorized building, theft, and PvP.
 - **12+ API Integrations** — Native support for WorldGuard regions (spawn, arenas, events), PlaceholderAPI, and more.
-- **50+ Flags** — Fine-grained control over mob spawning, fire spread, crop trampling, redstone, and other interactions.
+- **75+ Flags** — Fine-grained control over mob spawning, fire spread, crop trampling, redstone, and other interactions.
 - **Sub-Areas** — Nest independent areas inside a parent region with their own permissions.
     - Create public market stalls inside private towns.
     - Lease hotel rooms, apartments, or shop plots.
@@ -109,7 +109,7 @@ How to include the API with Maven:
 <dependency>
   <groupId>tfagaming.projects.minecraft.homestead</groupId>
   <artifactId>homestead</artifactId>
-  <version>4.3.1</version>
+  <version>5.0.2.0</version>
   <classifier>api</classifier>
   <scope>provided</scope>
 </dependency>
@@ -123,7 +123,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("tfagaming.projects.minecraft.homestead:homestead:4.3.1:api")
+    compileOnly("tfagaming.projects.minecraft.homestead:homestead:5.0.2.0:api")
 }
 ```
 
