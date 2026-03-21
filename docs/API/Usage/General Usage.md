@@ -16,13 +16,11 @@ import tfagaming.projects.minecraft.homestead.structure.*;
 // The region name
 String name = "ExampleRegion";
 
-		// The owner of the region
-		Player player = Bukkit.getPlayer("TFA_Gaming");
+// The owner of the region
+Player player = Bukkit.getPlayer("TFA_Gaming");
 
-		// Verify if another region has the same name ('true' is recommended)
-		boolean verifyName = true;
-
-		Region region = RegionManager.createRegion(name, player, verifyName);
+// true = Verify if another region has the same name ('true' is recommended)
+Region region = RegionManager.createRegion(name, player, true);
 ```
 
 ### Fetching a region:
@@ -38,10 +36,10 @@ String name = "ExampleRegion";
 UUID regionId = UUID.fromString("31c0eb1d-6df9-407d-937f-de6101dd0134");
 
 // Find a region by name (case is NOT ignored)
-RegionsManager.findRegion(name);
+RegionManager.findRegion(name);
 
 // Find a region by UUID
-RegionsManager.findRegion(regionId);
+RegionManager.findRegion(regionId);
 ```
 
 ### Delete a Region:
@@ -53,48 +51,37 @@ import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.structure.*;
 
 // The player is the executor of the deletion
-// Optional, but if not provided in parameters, the event will not be triggered
 Player player = Bukkit.getPlayer("TFA_Gaming");
 
-		// Finding a region by name
-		Region region = RegionManager.findRegion("ExampleRegion");
+// Finding a region by name
+Region region = RegionManager.findRegion("ExampleRegion");
 
 // If the region exist (not null)
-if(region !=null){
-		RegionsManager.
-
-		deleteRegion(region.getUniqueId(),player);
-		}
+if (region != null) {
+    RegionManager.deleteRegion(region.getUniqueId(), player);
+}
 ```
 
 ### Claiming a Chunk:
 
 ```java
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.structure.*;
 
-// The player who will claim the chunk (optional)
-Player player = Bukkit.getPlayer("TFA_Gaming");
+// The chunk to claim
+Chunk chunk = ...;
 
-		// The chunk to claim
-		Chunk chunk = ...;
+// The region which will have the chunk added
+Region region = ...;
 
-		// The region which will have the chunk added
-		Region region = ...; // Make sure not null
-
-		boolean successful = ChunkManager.claimChunk(region.getUniqueId(), chunk, player);
+ChunkManager.Error error = ChunkManager.claimChunk(region.getUniqueId(), chunk);
 
 // If Homestead claimed the chunk
-if(successful){
-		System.out.
-
-		println("Chunk claimed successfully!");    
-}else{
-		System.err.
-
-		println("Cannot claim the chunk!");
+if (error == null) {
+    System.out.println("Chunk claimed successfully!");    
+} else {
+    System.err.println("Cannot claim the chunk!");
 }
 ```
 
@@ -102,30 +89,22 @@ if(successful){
 
 ```java
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.structure.*;
 
-// The player who will unclaim the chunk (optional)
-Player player = Bukkit.getPlayer("TFA_Gaming");
+// The chunk to unclaim
+Chunk chunk = ...;
 
-		// The chunk to unclaim
-		Chunk chunk = ...;
+// The region which will have the chunk removed
+Region region = ...;
 
-		// The region which will have the chunk removed
-		Region region = ...; // Make sure not null
-
-		boolean successful = ChunkManager.unclaimChunk(region.getUniqueId(), chunk, player);
+ChunkManager.Error error = ChunkManager.unclaimChunk(region.getUniqueId(), chunk);
 
 // If Homestead unclaimed the chunk
-if(successful){
-		System.out.
-
-		println("Chunk unclaimed successfully!");    
-}else{
-		System.err.
-
-		println("Cannot unclaim the chunk!");
+if (error == null) {
+    System.out.println("Chunk unclaimed successfully!");    
+} else {
+    System.err.println("Cannot unclaim the chunk!");
 }
 ```
 
@@ -197,3 +176,71 @@ if (FlagsCalculator.isFlagSet(flags, PlayerFlags.TELEPORT_SPAWN)) {
 region.setPlayerFlags(newFlags); // Update global player flags
 ```
 
+## Events
+
+Example usage of events, list of Homestead events: [Region Events](../Events/Region%20Events.md), [Chunk Events](../Events/Chunk%20Events.md)
+
+```java
+import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+import tfagaming.projects.minecraft.homestead.api.events.*;
+import tfagaming.projects.minecraft.homestead.structure.*;
+
+public class HomesteadCustomEvents implements Listener {
+	@EventHandler
+	public void onPlayerClaimsChunk(ChunkClaimEvent event) {
+		event.getRegion(); // The region
+		event.getChunk(); // The chunk
+	}
+
+	@EventHandler
+	public void onPlayerUnclaimEvent(ChunkUnclaimEvent event) {
+        ...
+	}
+
+	@EventHandler
+	public void onPlayerCreatesRegion(RegionCreateEvent event) {
+        ...
+	}
+
+	@EventHandler
+	public void onPlayerDeletesRegion(RegionDeleteEvent event) {
+        ...
+	}
+
+	@EventHandler
+	public void onPlayerBanPlayerFromRegion(RegionBanPlayerEvent event) {
+        ...
+	}
+
+	@EventHandler
+	public void onPlayerUntrustFromRegion(RegionUntrustPlayerEvent event) {
+		OfflinePlayer untrustedPlayer = event.getUntrustedPlayer();
+		RegionUntrustPlayerEvent.UntrustReason reason = event.getReason();
+		
+		switch (reason) {
+			case EXECUTION -> {
+				// A player (region owner for example) untrusted that player
+			}
+			case LEFT -> {
+				// The player left the region, manually
+			}
+			case TAXES -> {
+				// The player didn't pay taxes, left automatically
+			}
+		}
+	}
+}
+```
+
+Make sure to register the event in the main plugin's class!
+
+```java
+public void onEnable() {
+    // ...
+    Bukkit.getPluginManager().registerEvents(new HomesteadCustomEvents(), this);
+}
+```
