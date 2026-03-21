@@ -17,7 +17,7 @@ You can develop a third-party plugin to implement more features using the API!
     <dependency>
         <groupId>tfagaming.projects.minecraft.homestead</groupId>
         <artifactId>homestead</artifactId>
-        <version>4.3.1</version>
+        <version>5.0.2.0</version>
         <classifier>api</classifier>
         <scope>provided</scope>
     </dependency>
@@ -31,7 +31,7 @@ You can develop a third-party plugin to implement more features using the API!
     }
 
     dependencies {
-        compileOnly("tfagaming.projects.minecraft.homestead:homestead:4.3.1:api")
+        compileOnly("tfagaming.projects.minecraft.homestead:homestead:5.0.2.0:api")
     }
     ```
 

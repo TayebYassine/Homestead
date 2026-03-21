@@ -35,7 +35,7 @@ Region region;
 String name = "ExampleRegion";
 UUID regionId = UUID.fromString("31c0eb1d-6df9-407d-937f-de6101dd0134");
 
-// Find a region by name (case is NOT ignored)
+// Find a region by name (case is ignored)
 RegionManager.findRegion(name);
 
 // Find a region by UUID
