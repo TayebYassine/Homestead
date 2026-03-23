@@ -145,8 +145,8 @@ public class MapColor {
 		return colors;
 	}
 
-	public static String translate(int color) {
-		return ColorTranslator.translate("&#" + String.format("%06X", color & 0x00FFFFFF) + fromInt(color));
+	public static String toString(int color) {
+		return "&#" + String.format("%06X", color & 0x00FFFFFF) + fromInt(color);
 	}
 
 	public static String fromInt(int color) {

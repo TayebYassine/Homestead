@@ -182,8 +182,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				region.setMapColor(color);
 
 				Messages.send(player, 19, new Placeholder()
-						.add("{oldcolor}", MapColor.translate(oldColor))
-						.add("{newcolor}", MapColor.translate(region.getMapColor()))
+						.add("{oldcolor}", MapColor.toString(oldColor))
+						.add("{newcolor}", MapColor.toString(region.getMapColor()))
 				);
 
 				break;

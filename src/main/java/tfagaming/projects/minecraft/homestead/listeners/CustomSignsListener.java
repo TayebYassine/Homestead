@@ -276,7 +276,7 @@ public final class CustomSignsListener implements Listener {
 
 			signBlock.breakNaturally();
 		} catch (NumberFormatException e) {
-			player.sendMessage(ChatColor.RED + "Error: This rent sign has invalid formatting!");
+			Messages.send(player, 120);
 		}
 	}
 
@@ -326,7 +326,7 @@ public final class CustomSignsListener implements Listener {
 			RegionTransferOwnershipEvent _event = new RegionTransferOwnershipEvent(region, player, player);
 			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 		} catch (NumberFormatException e) {
-			player.sendMessage(ChatColor.RED + "Error: This sell sign has invalid formatting!");
+			Messages.send(player, 120);
 		}
 	}
 

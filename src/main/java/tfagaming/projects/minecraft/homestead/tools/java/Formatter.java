@@ -6,7 +6,6 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -251,10 +250,9 @@ public final class Formatter {
 	}
 
 	public static String getPlayerStatus(OfflinePlayer player) {
-		return ColorTranslator
-				.translate(Bukkit.getBannedPlayers().contains(player) ? Homestead.language.getString("default.banned")
+		return Bukkit.getBannedPlayers().contains(player) ? Homestead.language.getString("default.banned")
 						: (player.isOnline() ? Homestead.language.getString("default.online")
-						: Homestead.language.getString("default.offline")));
+						: Homestead.language.getString("default.offline"));
 	}
 
 	public static String getAgo(long time) {
