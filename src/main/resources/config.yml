@@ -722,21 +722,23 @@ limits:
   groups:
     # Default group (free players, no perks)
     default:
-      regions: 1              # Can create 1 region
-      chunks-per-region: 4    # Can claim 4 chunks (32x32 area)
-      members-per-region: 2   # Can trust 2 other players
-      subareas-per-region: 1  # Can create 1 sub-area
-      max-subarea-volume: 400 # Sub-area max 400 blocks³ (e.g., 10x10x4)
-      commands-cooldown: 2    # 2 second cooldown between commands
+      regions: 1                 # Can create 1 region
+      chunks-per-region: 4       # Can claim 4 chunks (32x32 area)
+      members-per-region: 2      # Can trust 2 other players
+      subareas-per-region: 1     # Can create 1 sub-area
+      max-subarea-volume: 400    # Sub-area max 400 blocks³ (e.g., 10x10x4)
+      max-force-loaded-chunks: 2 # Can set 2 force loaded chunks
+      commands-cooldown: 2       # 2 second cooldown between commands
 
     # VIP group (donors/supporters)
     vip:
-      regions: 2              # Can have 2 separate regions
-      chunks-per-region: 6    # Larger regions (48x32 area)
-      members-per-region: 8   # Can trust more friends
-      subareas-per-region: 3  # More sub-areas for organization
-      max-subarea-volume: 800 # Larger sub-areas
-      commands-cooldown: 1    # Faster command usage
+      regions: 2                 # Can have 2 separate regions
+      chunks-per-region: 6       # Larger regions (48x32 area)
+      members-per-region: 8      # Can trust more friends
+      subareas-per-region: 3     # More sub-areas for organization
+      max-subarea-volume: 800    # Larger sub-areas
+      max-force-loaded-chunks: 4 # Can set more force loaded chunks
+      commands-cooldown: 1       # Faster command usage
 
     # MVP group (premium donors)
     mvp:
@@ -745,6 +747,7 @@ limits:
       members-per-region: 16
       subareas-per-region: 6
       max-subarea-volume: 1600
+      max-force-loaded-chunks: 4
       commands-cooldown: 0
 
     # Admin group (staff)
@@ -754,6 +757,7 @@ limits:
       members-per-region: 50
       subareas-per-region: 20
       max-subarea-volume: 5000
+      max-force-loaded-chunks: 100
       commands-cooldown: 0
 
   # Static Limits (only used if method = 'static')
@@ -766,6 +770,7 @@ limits:
       members-per-region: 2
       subareas-per-region: 1
       max-subarea-volume: 400
+      max-force-loaded-chunks: 2
       commands-cooldown: 2
 
     # Limits for server operators
@@ -776,6 +781,7 @@ limits:
       members-per-region: 50
       subareas-per-region: 20
       max-subarea-volume: 5000
+      max-force-loaded-chunks: 100
       commands-cooldown: 0
 
 # Per-Player Custom Limits

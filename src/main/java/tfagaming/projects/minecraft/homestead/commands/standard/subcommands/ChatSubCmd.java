@@ -69,7 +69,7 @@ public class ChatSubCmd extends SubCommandBuilder {
 			OfflinePlayer regionPlayer = Homestead.getInstance().getOfflinePlayerSync(playerId);
 
 			if (regionPlayer != null && regionPlayer.isOnline()) {
-				Messages.send((Player) regionPlayer, Formatter.formatPrivateChat(region.getDisplayName(), player.getName(), message));
+				Messages.send((Player) regionPlayer, Formatter.formatPrivateChat(region.getName(), player.getName(), message));
 			}
 		}
 

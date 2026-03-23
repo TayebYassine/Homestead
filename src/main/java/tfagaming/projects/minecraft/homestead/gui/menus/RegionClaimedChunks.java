@@ -11,6 +11,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.PersistentChunkTicket;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
@@ -44,6 +45,19 @@ public class RegionClaimedChunks {
 					if (context.getEvent().isRightClick()) {
 						new DelayedTeleport(player, chunk.bukkitLocation());
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
+						if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+							Messages.send(player, 30);
+							return;
+						}
+
+						int totalForcedLoadedChunks = region.getChunks().stream().filter(SerializableChunk::isForceLoaded).toList().size();
+						int maxForceLoadedChunks = Limits.getRegionLimit(region, Limits.LimitType.MAX_FORCE_LOADED_CHUNKS);
+
+						if (totalForcedLoadedChunks >= maxForceLoadedChunks && !chunk.isForceLoaded()) {
+							Messages.send(player, 116);
+							return;
+						}
+
 						Chunk bukkitChunk = chunk.bukkit();
 						final boolean newState = !chunk.isForceLoaded();
 

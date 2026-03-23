@@ -13,7 +13,7 @@ public class Limits {
 
 	public static int getPlayerLimit(OfflinePlayer player, LimitType limit) {
 		return switch (limit) {
-			case REGIONS, MAX_SUBAREA_VOLUME, COMMANDS_COOLDOWN -> getBaseLimitValue(player, limit);
+			case REGIONS, MAX_SUBAREA_VOLUME, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN -> getBaseLimitValue(player, limit);
 			default -> 0;
 		};
 	}
@@ -39,7 +39,7 @@ public class Limits {
 					+ Rewards.getSubAreasByEachMember(region)
 					+ Rewards.getSubAreasByPlayTime(owner)
 					+ LevelRewards.getSubAreasByLevel(region);
-			case MAX_SUBAREA_VOLUME, COMMANDS_COOLDOWN -> getBaseLimitValue(owner, limit);
+			case MAX_SUBAREA_VOLUME, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN -> getBaseLimitValue(owner, limit);
 			default -> 0;
 		};
 	}
@@ -137,6 +137,7 @@ public class Limits {
 			case MEMBERS_PER_REGION -> "members-per-region";
 			case SUBAREAS_PER_REGION -> "subareas-per-region";
 			case MAX_SUBAREA_VOLUME -> "max-subarea-volume";
+			case MAX_FORCE_LOADED_CHUNKS -> "max-force-loaded-chunks";
 			case COMMANDS_COOLDOWN -> "commands-cooldown";
 		};
 	}
@@ -156,6 +157,7 @@ public class Limits {
 		MEMBERS_PER_REGION,
 		SUBAREAS_PER_REGION,
 		MAX_SUBAREA_VOLUME,
+		MAX_FORCE_LOADED_CHUNKS,
 		COMMANDS_COOLDOWN
 	}
 
