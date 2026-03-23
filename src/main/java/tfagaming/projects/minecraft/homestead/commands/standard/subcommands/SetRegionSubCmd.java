@@ -1,10 +1,13 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionDescriptionUpdateEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RegionDisplaynameUpdateEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.MiscellaneousSettings;
@@ -104,6 +107,9 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{newdisplayname}", region.getDisplayName())
 				);
 
+				RegionDisplaynameUpdateEvent _event = new RegionDisplaynameUpdateEvent(region, player, oldDisplayName, regionDisplayName);
+				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
 				break;
 			}
 			case "description": {
@@ -147,6 +153,9 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{olddescription}", oldDescription)
 						.add("{newdescription}", region.getDescription())
 				);
+
+				RegionDescriptionUpdateEvent _event = new RegionDescriptionUpdateEvent(region, player, oldDescription, description);
+				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
 				break;
 			}

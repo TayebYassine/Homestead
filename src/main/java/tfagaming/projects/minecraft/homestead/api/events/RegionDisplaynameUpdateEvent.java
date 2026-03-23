@@ -4,18 +4,21 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
-public class RegionDeleteEvent extends Event {
+public class RegionDisplaynameUpdateEvent extends Event {
 	private static final HandlerList HANDLERS = new HandlerList();
 
 	private final Region region;
 	private final OfflinePlayer player;
+	private final String oldDisplayname;
+	private final String newDisplayname;
 
-	public RegionDeleteEvent(@NotNull Region region, @Nullable OfflinePlayer player) {
+	public RegionDisplaynameUpdateEvent(@NotNull Region region, @NotNull OfflinePlayer player, @NotNull String oldDisplayname, @NotNull String newDisplayname) {
 		this.region = region;
 		this.player = player;
+		this.oldDisplayname = oldDisplayname;
+		this.newDisplayname = newDisplayname;
 	}
 
 	public static HandlerList getHandlerList() {
@@ -26,8 +29,16 @@ public class RegionDeleteEvent extends Event {
 		return region;
 	}
 
-	public @Nullable OfflinePlayer getPlayer() {
+	public @NotNull OfflinePlayer getPlayer() {
 		return player;
+	}
+
+	public @NotNull String getOldDisplayname() {
+		return oldDisplayname;
+	}
+
+	public @NotNull String getNewDisplayname() {
+		return newDisplayname;
 	}
 
 	@Override

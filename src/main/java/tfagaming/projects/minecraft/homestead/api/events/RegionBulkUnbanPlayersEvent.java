@@ -4,18 +4,21 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
-public class RegionDeleteEvent extends Event {
+import java.util.List;
+
+public class RegionBulkUnbanPlayersEvent extends Event {
 	private static final HandlerList HANDLERS = new HandlerList();
 
 	private final Region region;
 	private final OfflinePlayer player;
+	private final List<OfflinePlayer> targets;
 
-	public RegionDeleteEvent(@NotNull Region region, @Nullable OfflinePlayer player) {
+	public RegionBulkUnbanPlayersEvent(@NotNull Region region, @NotNull OfflinePlayer player, @NotNull List<OfflinePlayer> targets) {
 		this.region = region;
 		this.player = player;
+		this.targets = targets;
 	}
 
 	public static HandlerList getHandlerList() {
@@ -26,8 +29,12 @@ public class RegionDeleteEvent extends Event {
 		return region;
 	}
 
-	public @Nullable OfflinePlayer getPlayer() {
+	public @NotNull OfflinePlayer getPlayer() {
 		return player;
+	}
+
+	public @NotNull List<OfflinePlayer> getUnbannedPlayers() {
+		return targets;
 	}
 
 	@Override

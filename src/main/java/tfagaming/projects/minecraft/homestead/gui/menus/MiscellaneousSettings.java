@@ -6,6 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionDescriptionUpdateEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RegionDisplaynameUpdateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionRenameEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -84,11 +86,16 @@ public class MiscellaneousSettings {
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
+				final String oldDisplayname = region.getDisplayName();
 				region.setDisplayName(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				RegionManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{newdisplayname}", region.getDisplayName()));
+
+				RegionDisplaynameUpdateEvent _event = new RegionDisplaynameUpdateEvent(region, player, oldDisplayname, input);
+				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
@@ -111,8 +118,14 @@ public class MiscellaneousSettings {
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
+				final String oldDescription = region.getDescription();
+
 				region.setDescription(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+				RegionDescriptionUpdateEvent _event = new RegionDescriptionUpdateEvent(region, player, oldDescription, input);
+				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 			}, (message) -> {
 				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_DESCRIPTION))
