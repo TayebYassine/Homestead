@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.gui.menus.MiscellaneousSettings;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
@@ -41,9 +42,15 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 		}
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			Region region = TargetRegionSession.getRegion(player);
+
+			if (region == null) {
+				Messages.send(player, 4);
+				return true;
+			}
+
+			new MiscellaneousSettings(player, region);
+
 			return true;
 		}
 
