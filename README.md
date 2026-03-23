@@ -109,7 +109,7 @@ How to include the API with Maven:
 <dependency>
   <groupId>tfagaming.projects.minecraft.homestead</groupId>
   <artifactId>homestead</artifactId>
-  <version>5.0.2.0</version>
+  <version>5.0.2.1</version>
   <classifier>api</classifier>
   <scope>provided</scope>
 </dependency>
@@ -123,7 +123,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("tfagaming.projects.minecraft.homestead:homestead:5.0.2.0:api")
+    compileOnly("tfagaming.projects.minecraft.homestead:homestead:5.0.2.1:api")
 }
 ```
 
