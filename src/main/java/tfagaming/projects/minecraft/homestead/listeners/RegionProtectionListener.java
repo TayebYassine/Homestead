@@ -921,7 +921,7 @@ public final class RegionProtectionListener implements Listener {
 		Block block = location.getBlock();
 		Chunk chunk = location.getChunk();
 
-		if (block instanceof Fence) {
+		if (block.getBlockData() instanceof Fence) {
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
 				event.setCancelled(true);
 			});
@@ -936,7 +936,7 @@ public final class RegionProtectionListener implements Listener {
 		Block block = location.getBlock();
 		Chunk chunk = location.getChunk();
 
-		if (block instanceof Fence) {
+		if (block.getBlockData() instanceof Fence) {
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
 				event.setCancelled(true);
 			});
@@ -1049,7 +1049,7 @@ public final class RegionProtectionListener implements Listener {
 				}
 			}
 		} else if (entity instanceof Wither || entity instanceof WitherSkull) {
-			boolean updated = event.blockList().removeIf((block) -> {
+			event.blockList().removeIf((block) -> {
 				Chunk chunk = block.getChunk();
 
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
@@ -1057,9 +1057,9 @@ public final class RegionProtectionListener implements Listener {
 				return region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE);
 			});
 
-			if (updated) {
-				event.setCancelled(true);
-			}
+			//if (updated) {
+			//	event.setCancelled(true);
+			//}
 		} else if (Explosives.isExplosive(entity)) {
 			Chunk chunk = event.getLocation().getChunk();
 
@@ -1170,6 +1170,7 @@ public final class RegionProtectionListener implements Listener {
 		}
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockGrow(BlockGrowEvent event) {
 		Block block = event.getBlock();
 		Location location = block.getLocation();
@@ -1386,7 +1387,7 @@ public final class RegionProtectionListener implements Listener {
 
 		boolean ignoreSpawners = Homestead.config.getBoolean("flags-configuration.spawners");
 
-		if (ignoreSpawners && event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
+		if (ignoreSpawners && spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER) {
 			return;
 		}
 
@@ -1399,23 +1400,6 @@ public final class RegionProtectionListener implements Listener {
 				}
 			} else if (entity instanceof Mob) {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.PASSIVE_ENTITIES_SPAWN)) {
-					event.setCancelled(true);
-				}
-			}
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onEntityDamageByEntity2(EntityDamageByEntityEvent event) {
-		Entity entity = event.getEntity();
-		Entity damager = event.getDamager();
-		Chunk chunk = entity.getLocation().getChunk();
-
-		if (ChunkManager.isChunkClaimed(chunk)) {
-			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-
-			if (!(damager instanceof Player)) {
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_DAMAGE_ENTITIES)) {
 					event.setCancelled(true);
 				}
 			}
@@ -1504,24 +1488,6 @@ public final class RegionProtectionListener implements Listener {
 			} else if (toRegion != null && !fromRegion.getUniqueId().equals(toRegion.getUniqueId())) {
 				if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_MINECARTS)) {
 					event.getVehicle().remove();
-				}
-			}
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onWitherBlockChange(EntityChangeBlockEvent event) {
-		Entity entity = event.getEntity();
-
-		if (entity.getType() == EntityType.WITHER || entity.getType() == EntityType.WITHER_SKULL) {
-			Block block = event.getBlock();
-			Chunk chunk = block.getChunk();
-
-			if (ChunkManager.isChunkClaimed(chunk)) {
-				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-
-				if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
-					event.setCancelled(true);
 				}
 			}
 		}
