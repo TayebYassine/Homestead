@@ -73,6 +73,7 @@ metrics: true
 # If the specified file doesn't exist, en-US is used as fallback
 # See documentation for translation guide: docs/Configuration/Language.md
 language: "en-US"
+menus: "menus_en-US"
 
 # ============================================================================
 # DATABASE CONFIGURATION

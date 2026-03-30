@@ -17,9 +17,6 @@ import tfagaming.projects.minecraft.homestead.commands.operator.HomesteadAdminCo
 import tfagaming.projects.minecraft.homestead.commands.standard.ClaimCommand;
 import tfagaming.projects.minecraft.homestead.commands.standard.RegionCommand;
 import tfagaming.projects.minecraft.homestead.commands.standard.UnclaimCommand;
-import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
-import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
-import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
 import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.database.cache.LevelsCache;
 import tfagaming.projects.minecraft.homestead.database.cache.RegionsCache;
@@ -33,6 +30,9 @@ import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
@@ -55,9 +55,6 @@ public class Homestead extends JavaPlugin {
 	public static WarsCache warsCache;
 	public static SubAreasCache subAreasCache;
 	public static LevelsCache levelsCache;
-	public static ConfigLoader config;
-	public static LanguageLoader language;
-	public static MenusConfigLoader menusConfig;
 	public static Vault vault;
 	private static Homestead INSTANCE;
 	private static long STARTED_AT;
@@ -114,62 +111,17 @@ public class Homestead extends JavaPlugin {
 
 		saveDefaultConfig();
 
-		config = new ConfigLoader(this);
+		Resources.load(this);
 
-		language = new LanguageLoader(this, config.getString("language", "en-US"));
+		int cacheInterval = Resources.<ConfigFile>get(ResourceType.Config).getCacheInterval();
 
-		menusConfig = new MenusConfigLoader(this);
-
-		Set<String> skipKeys = new HashSet<>();
-
-		YAMLValidator configValidator = new YAMLValidator("config.yml", new File(getDataFolder(), "config.yml"),
-				skipKeys);
+		Homestead.regionsCache = new RegionsCache(cacheInterval);
+		Homestead.warsCache = new WarsCache(cacheInterval);
+		Homestead.subAreasCache = new SubAreasCache(cacheInterval);
+		Homestead.levelsCache = new LevelsCache(cacheInterval);
 
 		try {
-			if (!configValidator.validate()) {
-				configValidator.fix();
-
-				config = new ConfigLoader(this);
-			}
-		} catch (IOException e) {
-			endInstance(e);
-			return;
-		}
-
-		YAMLValidator languageValidator = new YAMLValidator("en-US.yml", language.getLanguageFile(config.getString("language", "en-US")));
-
-		try {
-			if (!languageValidator.validate()) {
-				languageValidator.fix();
-
-				language = new LanguageLoader(this, config.getString("language", "en-US"));
-			}
-		} catch (IOException e) {
-			endInstance(e);
-			return;
-		}
-
-		YAMLValidator menusConfigValidator = new YAMLValidator("menus.yml", new File(getDataFolder(), "menus.yml"),
-				skipKeys);
-
-		try {
-			if (!menusConfigValidator.validate()) {
-				menusConfigValidator.fix();
-
-				menusConfig = new MenusConfigLoader(this);
-			}
-		} catch (IOException e) {
-			endInstance(e);
-			return;
-		}
-
-		Homestead.regionsCache = new RegionsCache(config.getInt("cache-interval"));
-		Homestead.warsCache = new WarsCache(config.getInt("cache-interval"));
-		Homestead.subAreasCache = new SubAreasCache(config.getInt("cache-interval"));
-		Homestead.levelsCache = new LevelsCache(config.getInt("cache-interval"));
-
-		try {
-			Database.Provider provider = Database.parseProviderFromString(config.getString("database.provider"));
+			Database.Provider provider = Database.parseProviderFromString(Resources.<ConfigFile>get(ResourceType.Config).getDatabaseProvider());
 
 			if (provider == null) {
 				throw new IllegalStateException("Database provider not found.");
@@ -222,7 +174,7 @@ public class Homestead extends JavaPlugin {
 			Logger.info("Loaded service provider: Permissions [" + Homestead.vault.getPermissions().getPermissionsName() + "]");
 		}
 
-		if (Homestead.config.getBoolean("clean-startup")) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("clean-startup")) {
 			RegionManager.cleanStartup();
 			WarManager.cleanStartup();
 			SubAreaManager.cleanStartup();
@@ -236,7 +188,7 @@ public class Homestead extends JavaPlugin {
 		registerEvents();
 		registerBrigadier();
 
-		if (Homestead.config.getBoolean("metrics")) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("metrics")) {
 			new bStats(this);
 
 			Logger.info("bStats metrics is enabled, anonymous data is being sent to the servers.");
@@ -250,14 +202,14 @@ public class Homestead extends JavaPlugin {
 			}
 		}
 
-		if (Homestead.config.isDebugEnabled()) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).isDebugEnabled()) {
 			Logger.warning("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
 		}
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
 
 		// Download icons
-		if (Homestead.config.getBoolean("dynamic-maps.icons.enabled")) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
 			runAsyncTask(() -> {
 				Logger.warning("Downloading required web map render icons... This may take a while!");
 				RegionIconTools.downloadAllIcons();
@@ -268,21 +220,21 @@ public class Homestead extends JavaPlugin {
 		// Triggers
 		runAsyncTimerTask(() -> {
 			DynamicMaps.trigger(this);
-		}, Homestead.config.getInt("dynamic-maps.update-interval"));
+		}, Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.update-interval"));
 
-		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("taxes.enabled")) {
+		if (Homestead.vault.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("taxes.enabled")) {
 			runAsyncTimerTask(() -> {
 				MemberTaxes.trigger(this);
 			}, 10);
 		}
 
-		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("upkeep.enabled")) {
+		if (Homestead.vault.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("upkeep.enabled")) {
 			runAsyncTimerTask(() -> {
 				RegionUpkeep.trigger(this);
 			}, 10);
 		}
 
-		if (Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("renting.enabled")) {
+		if (Homestead.vault.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("renting.enabled")) {
 			runAsyncTimerTask(() -> {
 				RegionRent.trigger(this);
 			}, 10);

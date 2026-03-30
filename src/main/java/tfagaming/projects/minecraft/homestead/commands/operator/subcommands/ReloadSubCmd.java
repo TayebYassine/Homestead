@@ -3,9 +3,9 @@ package tfagaming.projects.minecraft.homestead.commands.operator.subcommands;
 import org.bukkit.command.CommandSender;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.config.ConfigLoader;
-import tfagaming.projects.minecraft.homestead.config.LanguageLoader;
-import tfagaming.projects.minecraft.homestead.config.MenusConfigLoader;
+import tfagaming.projects.minecraft.homestead.resources.ConfigLoader;
+import tfagaming.projects.minecraft.homestead.resources.LanguageLoader;
+import tfagaming.projects.minecraft.homestead.resources.MenusConfigLoader;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
@@ -46,7 +46,7 @@ public class ReloadSubCmd extends SubCommandBuilder {
 			}
 
 			YAMLValidator languageValidator = new YAMLValidator(
-					"en-US.yml",
+					"languages/en-US.yml",
 					Homestead.language.getLanguageFile(Homestead.config.getString("language", "en-US"))
 			);
 
@@ -56,8 +56,8 @@ public class ReloadSubCmd extends SubCommandBuilder {
 			}
 
 			YAMLValidator menusConfigValidator = new YAMLValidator(
-					"menus.yml",
-					new File(instance.getDataFolder(), "menus.yml"),
+					"menus/menus_en-US.yml",
+					new File(instance.getDataFolder(), "menus/menus_en-US.yml"),
 					skipKeys
 			);
 

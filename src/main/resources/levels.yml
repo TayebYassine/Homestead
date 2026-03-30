@@ -1,0 +1,51 @@
+levels:
+  enabled: true
+
+  on-kill-entity:
+    ENDER_DRAGON: [ 1000, 3000 ]
+    WARDEN:       [ 500,  1000 ]
+    WITHER:       [ 200,  500  ]
+    ZOMBIE:       [ 10,   20   ]
+    SKELETON:     [ 10,   20   ]
+    HUSK:         [ 10,   20   ]
+    PIG:          [ 10,   20   ]
+    SHEEP:        [ 10,   20   ]
+    COW:          [ 10,   20   ]
+
+  rewards:
+
+    5:
+      chunks: 1
+      members: 0
+      subareas: 0
+      upkeep-reduction: 5
+
+    10:
+      chunks: 2
+      members: 1
+      subareas: 0
+      upkeep-reduction: 5
+
+    15:
+      chunks: 4
+      members: 2
+      subareas: 1
+      upkeep-reduction: 10
+
+    20:
+      chunks: 4
+      members: 2
+      subareas: 1
+      upkeep-reduction: 15
+
+    30:
+      chunks: 4
+      members: 2
+      subareas: 1
+      upkeep-reduction: 30
+
+    50:
+      chunks: 8
+      members: 6
+      subareas: 4
+      upkeep-reduction: 50

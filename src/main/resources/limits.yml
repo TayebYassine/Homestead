@@ -1,0 +1,115 @@
+limits:
+
+  method: 'static'
+
+  groups:
+
+    default:
+      regions: 1
+      chunks-per-region: 4
+      members-per-region: 2
+      subareas-per-region: 1
+      max-subarea-volume: 400
+      max-force-loaded-chunks: 2
+      commands-cooldown: 2
+
+    vip:
+      regions: 2
+      chunks-per-region: 6
+      members-per-region: 8
+      subareas-per-region: 3
+      max-subarea-volume: 800
+      max-force-loaded-chunks: 4
+      commands-cooldown: 1
+
+    mvp:
+      regions: 3
+      chunks-per-region: 12
+      members-per-region: 16
+      subareas-per-region: 6
+      max-subarea-volume: 1600
+      max-force-loaded-chunks: 4
+      commands-cooldown: 0
+
+    admin:
+      regions: 10
+      chunks-per-region: 100
+      members-per-region: 50
+      subareas-per-region: 20
+      max-subarea-volume: 5000
+      max-force-loaded-chunks: 100
+      commands-cooldown: 0
+
+  static:
+
+    non-op:
+      regions: 1
+      chunks-per-region: 4
+      members-per-region: 2
+      subareas-per-region: 1
+      max-subarea-volume: 400
+      max-force-loaded-chunks: 2
+      commands-cooldown: 2
+
+    op:
+      regions: 10
+      chunks-per-region: 100
+      members-per-region: 50
+      subareas-per-region: 20
+      max-subarea-volume: 5000
+      max-force-loaded-chunks: 100
+      commands-cooldown: 0
+
+player-limits:
+  A_PLAYER_NAME_GOES_HERE_FOR_SPECIAL_LIMITS:
+    regions: 10
+    chunks-per-region: 100
+    members-per-region: 16
+    subareas-per-region: 10
+    max-subarea-volume: 1200
+    commands-cooldown: 0
+
+rewards:
+  enabled: true
+
+  for-each-member:
+    chunks: 2
+    subareas: 1
+
+  by-playtime:
+
+    - minutes: 30
+      hours: 0
+      days: 0
+      chunks: 1
+      subareas: 1
+
+    - minutes: 0
+      hours: 3
+      days: 0
+      chunks: 2
+      subareas: 2
+
+    - minutes: 0
+      hours: 12
+      days: 0
+      chunks: 4
+      subareas: 3
+
+    - minutes: 0
+      hours: 0
+      days: 1
+      chunks: 6
+      subareas: 4
+
+    - minutes: 0
+      hours: 0
+      days: 3
+      chunks: 8
+      subareas: 6
+
+    - minutes: 0
+      hours: 0
+      days: 7
+      chunks: 10
+      subareas: 8

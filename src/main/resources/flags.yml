@@ -1,0 +1,68 @@
+disabled-flags:
+  - "use-bells"
+  - "take-fall-damage"
+
+flags-configuration:
+  spawners: true
+
+default-players-flags:
+  break-blocks: false            # Break / destroy blocks
+  place-blocks: false            # Place blocks
+  containers: false              # Open chests, barrels, shulker boxes…
+  doors: false                   # Open / close doors
+  trap-doors: false              # Open / close trapdoors
+  fence-gates: false             # Open / close fence gates
+  use-anvil: false               # Use anvils
+  redstone: false                # Interact with redstone components
+  levers: false                  # Use levers
+  buttons: false                 # Press buttons
+  pressure-plates: false         # Trigger pressure plates
+  use-bells: false               # Ring bells
+  trigger-tripwire: false        # Activate tripwires
+  frost-walker: false            # Frost Walker boots (creates ice)
+  harvest-crops: false           # Harvest / break crops
+  block-trampling: false         # Trample farmland and turtle eggs
+  general-interaction: false     # General interaction catch-all
+  armor-stands: false            # Remove armour from armour stands
+  interact-entities: false       # Interact with entities (general)
+  item-frame-interaction: false  # Add / remove items from item frames
+  damage-passive-entities: false # Kill passive mobs (cows, sheep, pigs…)
+  damage-hostile-entities: false # Kill hostile mobs (zombies, skeletons…)
+  trade-villagers: false         # Trade with villagers
+  ignite: false                  # Start fires with flint and steel
+  vehicles: false                # Ride minecarts, horses, boats…
+  teleport-spawn: false          # Teleport to region spawn with /region home
+  passthrough: true              # Enter and move through the region
+  pvp: false                     # Fight other players
+  take-fall-damage: true         # Take fall damage
+  teleport: false                # Teleport with ender pearls or chorus fruit
+  throw-potions: false           # Throw splash / lingering potions
+  pickup-items: true             # Pick up dropped items
+  sleep: false                   # Use beds to sleep
+  trigger-raid: false            # Start raids (Bad Omen effect)
+  elytra: true                   # Fly with elytra
+  spawn-entities: false          # Use spawn eggs
+
+default-world-flags:
+  passive-entities-spawn: true      # Passive mobs (animals) spawn
+  hostile-entities-spawn: true      # Hostile mobs (monsters) spawn
+  entities-grief: false             # Entities (except creepers) damage blocks
+  entities-damage-entities: false   # Entities attack each other
+  leaves-decay: true                # Leaves decay naturally
+  fire-spread: false                # Fire spreads to other blocks
+  liquid-flow: false                # Water / lava flows in from outside
+  explosions-damage: false          # Explosions (except wither) damage blocks
+  wither-damage: false              # Wither damages blocks
+  wilderness-pistons: false         # Pistons outside push blocks into region
+  wilderness-dispensers: false      # Dispensers outside dispense into region
+  wilderness-minecarts: false       # Minecarts from outside enter region
+  plant-growth: true                # Crops / saplings grow
+  grass-growth: true                # Grass spreads
+  sculk-spread: true                # Sculk spreads from shriekers
+  player-glowing: true              # Players glow inside the region
+  snow-melting: true                # Snow melts
+  ice-melting: true                 # Ice melts
+  snowman-trails: true              # Snow golems leave snow trails
+  windcharge-burst: false           # Wind charges burst in region
+  copper-golems-interaction: false  # Copper golems from outside enter region
+  wars: false                       # Region can be targeted for war declarations
