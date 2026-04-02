@@ -30,6 +30,7 @@ public final class BrigadierCommands {
 				.literalSub("mergeaccept").end()
 				.literalSub("rewards").end()
 				.literalSub("top").end()
+				.literalSub("fly").end()
 
 				.literalSub("accept")
 				.stringArg("region")

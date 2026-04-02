@@ -10,7 +10,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
@@ -18,8 +17,8 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
-import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
+import tfagaming.projects.minecraft.homestead.sessions.ClaimFlySession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -159,6 +158,15 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 
 			if (player.hasPotionEffect(PotionEffectType.GLOWING)) {
 				player.removePotionEffect(PotionEffectType.GLOWING);
+			}
+
+			if (ClaimFlySession.hasSession(player)) {
+				ClaimFlySession.removeSession(player);
+
+				player.setAllowFlight(false);
+				player.setFlying(false);
+
+				Messages.send(player, 206);
 			}
 		}
 	}

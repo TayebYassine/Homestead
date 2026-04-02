@@ -133,6 +133,8 @@ permissions:
     default: true
   homestead.commands.region.flags:
     default: true
+  homestead.commands.region.fly:
+    default: true
   homestead.commands.region.help:
     default: true
   homestead.commands.region.home:
@@ -196,6 +198,7 @@ permissions:
       homestead.commands.region.deny: true
       homestead.commands.region.deposit: true
       homestead.commands.region.flags: true
+      homestead.commands.region.fly: true
       homestead.commands.region.help: true
       homestead.commands.region.home: true
       homestead.commands.region.kick: true
