@@ -25,6 +25,11 @@ public class FlySubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		if (!player.hasPermission("homestead.region.fly")) {
+			Messages.send(player, 8);
+			return true;
+		}
+
 		Chunk chunk = player.getLocation().getChunk();
 		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
