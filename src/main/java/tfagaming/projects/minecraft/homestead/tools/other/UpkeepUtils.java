@@ -1,20 +1,23 @@
 package tfagaming.projects.minecraft.homestead.tools.other;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 
 public class UpkeepUtils {
 	public static long getNewUpkeepAt() {
-		if (Homestead.config.getBoolean("upkeep.enabled")) {
-			return System.currentTimeMillis() + (Homestead.config.getInt("upkeep.upkeep-timer") * 1000L);
+		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
+			return System.currentTimeMillis() + (Resources.<RegionsFile>get(ResourceType.Regions).getInt("upkeep.upkeep-timer") * 1000L);
 		}
 
 		return 0;
 	}
 
 	public static double getAmountToPay(Region region) {
-		double amountPerChunk = Homestead.config.getDouble("upkeep.per-chunk");
+		double amountPerChunk = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("upkeep.per-chunk");
 
 		double price = amountPerChunk * region.getChunks().size();
 		int reduction = LevelRewards.getUpkeepReductionByLevel(region);
@@ -27,7 +30,7 @@ public class UpkeepUtils {
 			return 0;
 		}
 
-		double amountPerChunk = Homestead.config.getDouble("upkeep.per-chunk");
+		double amountPerChunk = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("upkeep.per-chunk");
 		double amountToPay = 0.0;
 		int chunksToRemove = 1;
 

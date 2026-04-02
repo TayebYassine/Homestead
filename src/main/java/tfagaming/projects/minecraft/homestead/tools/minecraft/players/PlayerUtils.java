@@ -14,6 +14,9 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.War;
@@ -41,11 +44,11 @@ public class PlayerUtils {
 	);
 
 	public static void sendMessageRegionEnter(Player player, Placeholder placeholder) {
-		String type = Homestead.config.getString("enter-exit-region-message.type").toLowerCase();
+		String type = Resources.<RegionsFile>get(ResourceType.Regions).getString("enter-exit-region-message.type").toLowerCase();
 
 		switch (type) {
 			case "title": {
-				List<String> titleData = Homestead.config.getStringList(
+				List<String> titleData = Resources.<RegionsFile>get(ResourceType.Regions).getStringList(
 						"enter-exit-region-message.messages.enter.title");
 
 				if (titleData.size() == 2) {
@@ -58,7 +61,7 @@ public class PlayerUtils {
 			}
 			case "actionbar": {
 				String text = Formatter.applyPlaceholders(
-						Homestead.config.getString(
+						Resources.<RegionsFile>get(ResourceType.Regions).getString(
 								"enter-exit-region-message.messages.enter.actionbar"),
 						placeholder);
 
@@ -67,7 +70,7 @@ public class PlayerUtils {
 			}
 			default: {
 				String text = Formatter.applyPlaceholders(
-						Homestead.config.getString(
+						Resources.<RegionsFile>get(ResourceType.Regions).getString(
 								"enter-exit-region-message.messages.enter.chat"),
 						placeholder);
 
@@ -78,11 +81,11 @@ public class PlayerUtils {
 	}
 
 	public static void sendMessageRegionExit(Player player, Placeholder placeholder) {
-		String type = Homestead.config.getString("enter-exit-region-message.type").toLowerCase();
+		String type = Resources.<RegionsFile>get(ResourceType.Regions).getString("enter-exit-region-message.type").toLowerCase();
 
 		switch (type) {
 			case "title": {
-				List<String> titleData = Homestead.config.getStringList(
+				List<String> titleData = Resources.<RegionsFile>get(ResourceType.Regions).getStringList(
 						"enter-exit-region-message.messages.exit.title");
 
 				if (titleData.size() == 2) {
@@ -95,7 +98,7 @@ public class PlayerUtils {
 			}
 			case "actionbar": {
 				String text = Formatter.applyPlaceholders(
-						Homestead.config.getString(
+						Resources.<RegionsFile>get(ResourceType.Regions).getString(
 								"enter-exit-region-message.messages.exit.actionbar"),
 						placeholder);
 
@@ -104,7 +107,7 @@ public class PlayerUtils {
 			}
 			default: {
 				String text = Formatter.applyPlaceholders(
-						Homestead.config.getString(
+						Resources.<RegionsFile>get(ResourceType.Regions).getString(
 								"enter-exit-region-message.messages.exit.chat"),
 						placeholder);
 

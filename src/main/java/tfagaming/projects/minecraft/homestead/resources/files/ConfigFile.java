@@ -18,7 +18,7 @@ public class ConfigFile extends ResourceFile {
 	}
 
 	public String getMenusSetting() {
-		return getString("menus", "menus_en-US");
+		return getString("menus", "en-US");
 	}
 
 	public String getPrefix() {
@@ -31,10 +31,6 @@ public class ConfigFile extends ResourceFile {
 
 	public boolean isMetricsEnabled() {
 		return getBoolean("metrics", true);
-	}
-
-	public boolean isAdjacentChunksRuleEnabled() {
-		return getBoolean("adjacent-chunks");
 	}
 
 	public boolean isAutoSetTargetRegionEnabled() {
@@ -111,10 +107,6 @@ public class ConfigFile extends ResourceFile {
 
 	public boolean operatorsIgnoreTeleportDelay() {
 		return getBoolean("delayed-teleport.ignore-operators", true);
-	}
-
-	public boolean isInstantTrustSystemEnabled() {
-		return getBoolean("special-feat.ignore-trust-acceptance-system");
 	}
 
 	public boolean isTntOnlyBelowSeaLevelEnabled() {

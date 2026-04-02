@@ -2,6 +2,9 @@ package tfagaming.projects.minecraft.homestead.structure;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +23,7 @@ public class War {
 		this.id = UUID.randomUUID();
 		this.name = name;
 		this.displayName = name;
-		this.description = "";
+		this.description = Resources.<LanguageFile>get(ResourceType.Language).getString("default.war-description");
 		this.prize = 0.0;
 		this.startedAt = System.currentTimeMillis();
 	}
@@ -29,7 +32,7 @@ public class War {
 		this.id = UUID.randomUUID();
 		this.name = name;
 		this.displayName = name;
-		this.description = "";
+		this.description = Resources.<LanguageFile>get(ResourceType.Language).getString("default.war-description");
 		this.prize = 0.0;
 		this.startedAt = System.currentTimeMillis();
 

@@ -4,6 +4,9 @@ import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LimitsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
@@ -57,7 +60,7 @@ public class Limits {
 	private static int getBaseLimitValue(OfflinePlayer player, LimitType limit) {
 		String limitKey = getLimitConfigKey(limit);
 
-		Object playerOverride = Homestead.config.getRaw(
+		Object playerOverride = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
 				"player-limits." + player.getName() + "." + limitKey
 		);
 		if (playerOverride != null) {
@@ -69,7 +72,7 @@ public class Limits {
 		switch (method) {
 			case STATIC:
 				String opKey = PlayerUtils.isOperator(player) ? "op" : "non-op";
-				Object staticValue = Homestead.config.getRaw(
+				Object staticValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
 						"limits.static." + opKey + "." + limitKey
 				);
 				return staticValue == null ? 0 : (int) staticValue;
@@ -79,7 +82,7 @@ public class Limits {
 				if (group == null) {
 					group = "default";
 				}
-				Object groupValue = Homestead.config.getRaw(
+				Object groupValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
 						"limits.groups." + group + "." + limitKey
 				);
 				return groupValue == null ? 0 : (int) groupValue;
@@ -143,7 +146,7 @@ public class Limits {
 	}
 
 	public static LimitMethod getLimitsMethod() {
-		String method = Homestead.config.getString("limits.method");
+		String method = Resources.<LimitsFile>get(ResourceType.Limits).getString("limits.method");
 		return switch (method) {
 			case "static" -> LimitMethod.STATIC;
 			case "groups" -> LimitMethod.GROUPS;

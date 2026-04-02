@@ -9,6 +9,10 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -45,7 +49,7 @@ public class ClaimCommand extends CommandBuilder {
 		}
 
 		boolean isWorldGuardProtectingRegionsEnabled =
-				Homestead.config.getBoolean("worldguard.protect-existing-regions");
+				Resources.<ConfigFile>get(ResourceType.Config).getBoolean("worldguard.protect-existing-regions");
 
 		if (isWorldGuardProtectingRegionsEnabled && WorldGuardAPI.isChunkInWorldGuardRegion(chunk)) {
 			Messages.send(player, 133);
@@ -65,7 +69,7 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		double chunkPrice = Homestead.config.getDouble("chunk-price");
+		double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
 
 		if (chunkPrice > 0 && PlayerBank.get(region.getOwner()) < chunkPrice) {
 			Messages.send(player, 200, new Placeholder()

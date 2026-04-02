@@ -38,6 +38,10 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -1070,7 +1074,7 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				}
 			} else {
-				boolean belowSeaOnly = Homestead.config.getBoolean("special-feat.tnt-explodes-only-below-sea-level");
+				boolean belowSeaOnly = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.tnt-explodes-only-below-sea-level");
 
 				List<Block> allowed = new ArrayList<>();
 
@@ -1385,7 +1389,7 @@ public final class RegionProtectionListener implements Listener {
 		Entity entity = event.getEntity();
 		CreatureSpawnEvent.SpawnReason spawnReason = event.getSpawnReason();
 
-		boolean ignoreSpawners = Homestead.config.getBoolean("flags-configuration.spawners");
+		boolean ignoreSpawners = Resources.<FlagsFile>get(ResourceType.Flags).doSpawnersIgnoreSpawnFlags();
 
 		if (ignoreSpawners && spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER) {
 			return;
@@ -1585,7 +1589,7 @@ public final class RegionProtectionListener implements Listener {
 											Chunk chunk,
 											Location location,
 											long flag) {
-			if (Homestead.config.getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk))
+			if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk))
 				return true;
 
 			if (player != null && PlayerUtils.isOperator(player)) return true;
@@ -1612,7 +1616,7 @@ public final class RegionProtectionListener implements Listener {
 										 long flag,
 										 Runnable onTrue,
 										 Runnable onFalse) {
-			if (Homestead.config.getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk)) {
+			if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk)) {
 				if (onTrue != null) onTrue.run();
 				return;
 			}

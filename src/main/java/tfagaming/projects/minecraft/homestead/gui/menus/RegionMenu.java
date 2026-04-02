@@ -9,6 +9,9 @@ import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorting;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
@@ -28,9 +31,9 @@ public class RegionMenu {
 		Menu gui = new Menu(MenuUtils.getTitle(1).replace("{region}", region.getName()), 9 * 4);
 
 		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
-		boolean isUpkeepEnabled = isEconomyEnabled && Homestead.config.getBoolean("upkeep.enabled");
-		boolean isRentEnabled = isEconomyEnabled && Homestead.config.getBoolean("renting.enabled");
-		boolean isSubAreasEnabled = Homestead.config.getBoolean("sub-areas.enabled");
+		boolean isUpkeepEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled");
+		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled");
+		boolean isSubAreasEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("sub-areas.enabled");
 
 		SerializableRent rent = region.getRent();
 

@@ -4,6 +4,12 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
+import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtils;
@@ -13,13 +19,13 @@ import java.util.List;
 
 public class MenuUtils {
 	public static String getTitle(int path) {
-		return Homestead.menusConfig.get("titles." + path);
+		return Resources.<MenusFile>get(ResourceType.Menus).getString("titles." + path);
 	}
 
 	public static ButtonData getButtonData(int path) {
-		String name = Homestead.menusConfig.get("buttons." + path + ".name");
-		List<String> lore = Homestead.menusConfig.get("buttons." + path + ".lore");
-		String type = Homestead.menusConfig.get("buttons." + path + ".type");
+		String name = Resources.<MenusFile>get(ResourceType.Menus).getString("buttons." + path + ".name");
+		List<String> lore = Resources.<MenusFile>get(ResourceType.Menus).getStringList("buttons." + path + ".lore");
+		String type = Resources.<MenusFile>get(ResourceType.Menus).getString("buttons." + path + ".type");
 
 		if (name == null)
 			name = "NO NAME";
@@ -86,7 +92,7 @@ public class MenuUtils {
 	public static ItemStack getFlagButton(String flag, boolean value) {
 		Placeholder placeholder = new Placeholder();
 
-		Object description = Homestead.language.getRaw("flags-info." + flag + ".description");
+		Object description = Resources.<LanguageFile>get(ResourceType.Language).getRaw("flags-info." + flag + ".description");
 
 		placeholder.add("{flag}", flag);
 
@@ -100,10 +106,10 @@ public class MenuUtils {
 
 		placeholder.add("{state}", Formatter.getFlagState(value));
 		placeholder.add("{flag-allowed}",
-				Formatter.getBoolean(!Homestead.config.isFlagDisabled(flag)));
+				Formatter.getBoolean(!Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flag)));
 
 		ButtonData data = getButtonData(17);
-		String type = Homestead.language.getString("flags-info." + flag + ".type");
+		String type = Resources.<LanguageFile>get(ResourceType.Language).getString("flags-info." + flag + ".type");
 
 		if (type != null && type.startsWith("PLAYERHEAD-")) {
 			String texture = type.split("-")[1];

@@ -6,6 +6,9 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionLevels;
 import tfagaming.projects.minecraft.homestead.managers.LevelManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LevelsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -25,7 +28,7 @@ public class LevelsSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		boolean levelsEnabled = Homestead.config.getBoolean("levels.enabled");
+		boolean levelsEnabled = Resources.<LevelsFile>get(ResourceType.Levels).getBoolean("levels.enabled");
 
 		if (!levelsEnabled) {
 			Messages.send(player, 197);

@@ -11,6 +11,10 @@ import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
@@ -43,7 +47,7 @@ public class WarSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		boolean isEnabled = Homestead.config.getBoolean("wars.enabled");
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("wars.enabled");
 
 		if (!isEnabled) {
 			Messages.send(player, 105);
@@ -124,8 +128,8 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				double prize = Double.parseDouble(prizeInput);
 
-				double minPrize = Homestead.config.getDouble("wars.min-prize");
-				double maxPrize = Homestead.config.getDouble("wars.max-prize");
+				double minPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.min-prize");
+				double maxPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.max-prize");
 
 				if (prize < minPrize || prize > maxPrize) {
 					Messages.send(player, 160);
@@ -149,7 +153,7 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				War war = WarManager.declareWar(name, prize, List.of(region, targetRegion));
 
-				List<String> listString = Homestead.language.getStringList("147");
+				List<String> listString = Resources.<LanguageFile>get(ResourceType.Language).getStringList("147");
 
 				Placeholder placeholder = new Placeholder()
 						.add("{war-name}", war.getName())

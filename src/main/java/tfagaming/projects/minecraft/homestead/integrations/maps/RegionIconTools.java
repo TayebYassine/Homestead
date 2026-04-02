@@ -2,6 +2,9 @@ package tfagaming.projects.minecraft.homestead.integrations.maps;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
@@ -17,7 +20,7 @@ public class RegionIconTools {
 	private static BufferedImage defaultIcon;
 
 	public static List<String> getAllIcons() {
-		return Homestead.config.getKeysUnderPath("dynamic-maps.icons.list");
+		return Resources.<ConfigFile>get(ResourceType.Config).getKeysUnderPath("dynamic-maps.icons.list");
 	}
 
 	public static boolean isValidIcon(String icon) {
@@ -39,14 +42,14 @@ public class RegionIconTools {
 
 		Logger.warning("Downloaded icons status: 0% (0 / " + totalIcons + ")");
 
-		defaultIcon = downloadIcon(Homestead.config.getString("dynamic-maps.icons.default"));
+		defaultIcon = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.default"));
 
 		for (String icon : getAllIcons()) {
 			if (icons.containsKey(icon)) {
 				continue;
 			}
 
-			String url = Homestead.config.getString("dynamic-maps.icons.list." + icon);
+			String url = Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.list." + icon);
 
 			if (url != null) {
 				BufferedImage downloaded = downloadIcon(url);

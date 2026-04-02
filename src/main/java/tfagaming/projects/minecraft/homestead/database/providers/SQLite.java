@@ -412,10 +412,8 @@ public final class SQLite {
 
 			deleteStmt.executeBatch();
 
-			if (Homestead.config.isDebugEnabled()) {
-				Logger.info("Exported " + cacheRegionIds.size() + " regions and deleted " + dbRegionIds.size()
+				Logger.debug("Exported " + cacheRegionIds.size() + " regions and deleted " + dbRegionIds.size()
 						+ " regions.");
-			}
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
@@ -472,10 +470,8 @@ public final class SQLite {
 
 			deleteStmt.executeBatch();
 
-			if (Homestead.config.isDebugEnabled()) {
-				Logger.info("Exported " + cacheWarIds.size() + " wars and deleted " + dbWarIds.size()
+				Logger.debug("Exported " + cacheWarIds.size() + " wars and deleted " + dbWarIds.size()
 						+ " wars.");
-			}
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
@@ -537,10 +533,8 @@ public final class SQLite {
 
 			deleteStmt.executeBatch();
 
-			if (Homestead.config.isDebugEnabled()) {
-				Logger.info("Exported " + cacheSubAreaIds.size() + " sub-areas and deleted " + dbSubAreaIds.size()
+				Logger.debug("Exported " + cacheSubAreaIds.size() + " sub-areas and deleted " + dbSubAreaIds.size()
 						+ " sub-areas.");
-			}
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
@@ -591,9 +585,7 @@ public final class SQLite {
 			}
 			delete.executeBatch();
 
-			if (Homestead.config.isDebugEnabled()) {
-				Logger.info("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
-			}
+				Logger.debug("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}

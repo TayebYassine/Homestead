@@ -8,6 +8,9 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionsWithWelcomeSigns;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -33,7 +36,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (Homestead.config.isWelcomeSignEnabled()) {
+		if (Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeSignEnabled()) {
 			if (args.length < 1) {
 				new RegionsWithWelcomeSigns(player);
 
@@ -128,7 +131,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1) {
-			if (Homestead.config.isWelcomeSignEnabled()) {
+			if (Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeSignEnabled()) {
 				suggestions.addAll(RegionManager.getPlayersWithRegionsHasWelcomeSigns().stream().map(OfflinePlayer::getName).toList());
 			} else {
 				if (PlayerUtils.isOperator(player)) {
@@ -139,7 +142,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 							RegionManager.getPublicRegions().stream().map(Region::getName).toList());
 				}
 			}
-		} else if (args.length == 2 && Homestead.config.isWelcomeSignEnabled()) {
+		} else if (args.length == 2 && Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeSignEnabled()) {
 			for (int i = 0; i < RegionManager.getPlayersWithRegionsHasWelcomeSigns().size(); i++) {
 				suggestions.add(String.valueOf(i));
 			}

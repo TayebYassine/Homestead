@@ -11,18 +11,6 @@ public class LimitsFile extends ResourceFile {
 		super(file);
 	}
 
-	public boolean isRewardsEnabled() {
-		return getBoolean("rewards.enabled");
-	}
-
-	public int getRewardChunksPerMember() {
-		return getInt("rewards.for-each-member.chunks", 0);
-	}
-
-	public int getRewardSubAreasPerMember() {
-		return getInt("rewards.for-each-member.subareas", 0);
-	}
-
 	public String getLimitsMethod() {
 		return getString("limits.method", "static");
 	}

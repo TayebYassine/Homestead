@@ -19,7 +19,7 @@ public final class Resources {
 
 	private static final String RESOURCE_CONFIG = "config.yml";
 	private static final String RESOURCE_LANG_DEFAULT = "languages/en-US.yml";
-	private static final String RESOURCE_MENUS_DEFAULT = "menus/menus_en-US.yml";
+	private static final String RESOURCE_MENUS_DEFAULT = "menus/en-US.yml";
 	private static final String RESOURCE_FLAGS = "flags.yml";
 	private static final String RESOURCE_LEVELS = "levels.yml";
 	private static final String RESOURCE_LIMITS = "limits.yml";
@@ -41,27 +41,19 @@ public final class Resources {
 		return (T) file;
 	}
 
-	public static void load(Homestead plugin) {
+	public static void load(Homestead plugin) throws IOException {
 		Logger.info("Loading resources...");
 
 		File configFile = new File(plugin.getDataFolder(), RESOURCE_CONFIG);
 
 		if (!configFile.exists()) {
-			Logger.error("config.yml is missing. Cannot start without it.");
-			plugin.endInstance();
-			return;
+			throw new FileNotFoundException("config.yml is missing. Cannot start without it.");
 		}
 
 		validateAndFix(plugin, RESOURCE_CONFIG, configFile, Collections.emptySet());
 
-		try {
-			REGISTRY.put(ResourceType.Config, new ConfigFile(configFile));
-			Logger.info("config.yml loaded.");
-		} catch (FileNotFoundException e) {
-			Logger.error("config.yml disappeared after validation check.");
-			plugin.endInstance();
-			return;
-		}
+		REGISTRY.put(ResourceType.Config, new ConfigFile(configFile));
+		Logger.info("config.yml loaded.");
 
 		ConfigFile config = get(ResourceType.Config);
 
@@ -73,31 +65,19 @@ public final class Resources {
 
 		validateAndFix(plugin, RESOURCE_LANG_DEFAULT, langFile, Collections.emptySet());
 
-		try {
-			REGISTRY.put(ResourceType.Language, new LanguageFile(langFile));
-			Logger.info("Language file '" + langFile.getName() + "' loaded.");
-		} catch (FileNotFoundException e) {
-			Logger.error("Language file '" + langFile.getAbsolutePath() + "' not found.");
-			plugin.endInstance();
-			return;
-		}
+		REGISTRY.put(ResourceType.Language, new LanguageFile(langFile));
+		Logger.info("Language file '" + langFile.getName() + "' loaded.");
 
 		File menusDir = new File(plugin.getDataFolder(), "menus/");
 		ensureDirectoryWithDefault(plugin, menusDir, RESOURCE_MENUS_DEFAULT);
 
 		String menusSetting = config.getMenusSetting();
-		File menusFile = resolveLocaleFile(menusDir, menusSetting, "menus_en-US.yml");
+		File menusFile = resolveLocaleFile(menusDir, menusSetting, "en-US.yml");
 
 		validateAndFix(plugin, RESOURCE_MENUS_DEFAULT, menusFile, Collections.emptySet());
 
-		try {
-			REGISTRY.put(ResourceType.Menus, new MenusFile(menusFile));
-			Logger.info("Menus file '" + menusFile.getName() + "' loaded.");
-		} catch (FileNotFoundException e) {
-			Logger.error("Menus file '" + menusFile.getAbsolutePath() + "' not found.");
-			plugin.endInstance();
-			return;
-		}
+		REGISTRY.put(ResourceType.Menus, new MenusFile(menusFile));
+		Logger.info("Menus file '" + menusFile.getName() + "' loaded.");
 
 		loadStandaloneResource(plugin, RESOURCE_FLAGS, ResourceType.Flags, FlagsFile::new, Collections.emptySet());
 		loadStandaloneResource(plugin, RESOURCE_LEVELS, ResourceType.Levels, LevelsFile::new, Collections.emptySet());
@@ -114,19 +94,14 @@ public final class Resources {
 			String resourceName,
 			ResourceType type,
 			ResourceFileFactory factory,
-			Set<String> filteredSubtrees) {
+			Set<String> filteredSubtrees) throws IOException {
 
 		File file = new File(plugin.getDataFolder(), resourceName);
 		ensureFile(plugin, file, resourceName);
 		validateAndFix(plugin, resourceName, file, filteredSubtrees);
 
-		try {
-			REGISTRY.put(type, factory.create(file));
-			Logger.info(resourceName + " loaded.");
-		} catch (FileNotFoundException e) {
-			Logger.error("Resource file '" + resourceName + "' not found after setup.");
-			plugin.endInstance();
-		}
+		REGISTRY.put(type, factory.create(file));
+		Logger.info(resourceName + " loaded.");
 	}
 
 	private static File resolveLocaleFile(File dir, String setting, String fallbackName) {
@@ -139,55 +114,41 @@ public final class Resources {
 		return file;
 	}
 
-	private static void ensureDirectoryWithDefault(Homestead plugin, File dir, String bundledDefault) {
+	private static void ensureDirectoryWithDefault(Homestead plugin, File dir, String bundledDefault) throws IOException {
 		if (dir.isDirectory()) return;
 
-		try {
-			if (!dir.mkdirs()) throw new IOException("mkdirs() returned false for " + dir);
+		if (!dir.mkdirs()) throw new IOException("mkdirs() returned false for " + dir);
 
-			File defaultFile = new File(dir, new File(bundledDefault).getName());
-			InputStream stream = plugin.getResource(bundledDefault);
-			if (stream != null) {
-				FileUtils.copyInputStreamToFile(stream, defaultFile);
-			}
-		} catch (IOException e) {
-			Logger.error("Failed to create directory '" + dir + "' or copy default: " + e.getMessage());
+		File defaultFile = new File(dir, new File(bundledDefault).getName());
+		InputStream stream = plugin.getResource(bundledDefault);
+		if (stream != null) {
+			FileUtils.copyInputStreamToFile(stream, defaultFile);
 		}
 	}
 
-	private static void ensureFile(Homestead plugin, File file, String resourceName) {
+	private static void ensureFile(Homestead plugin, File file, String resourceName) throws IOException {
 		if (file.exists()) return;
 
-		try {
-			InputStream stream = plugin.getResource(resourceName);
-			if (stream == null) {
-				Logger.warning("Bundled resource '" + resourceName + "' not found in JAR.");
-				return;
-			}
-			FileUtils.copyInputStreamToFile(stream, file);
-		} catch (IOException e) {
-			Logger.error("Failed to copy bundled resource '" + resourceName + "': " + e.getMessage());
+		InputStream stream = plugin.getResource(resourceName);
+		if (stream == null) {
+			Logger.warning("Bundled resource '" + resourceName + "' not found in JAR.");
+			return;
 		}
+		FileUtils.copyInputStreamToFile(stream, file);
 	}
 
 	private static void validateAndFix(
 			Homestead plugin,
 			String referenceResource,
 			File targetFile,
-			Set<String> filteredSubtrees) {
+			Set<String> filteredSubtrees) throws IOException {
 
-		try {
-			YAMLValidator validator = new YAMLValidator(referenceResource, targetFile, filteredSubtrees);
+		YAMLValidator validator = new YAMLValidator(referenceResource, targetFile, filteredSubtrees);
 
-			if (!validator.validate()) {
-				Logger.warning("'" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
-				validator.fix();
-				Logger.info("'" + targetFile.getName() + "' has been repaired.");
-			}
-		} catch (RuntimeException e) {
-			Logger.warning("Cannot validate '" + targetFile.getName() + "': " + e.getMessage());
-		} catch (IOException e) {
-			Logger.error("Failed to auto-fix '" + targetFile.getName() + "': " + e.getMessage());
+		if (!validator.validate()) {
+			Logger.warning("'" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
+			validator.fix();
+			Logger.info("'" + targetFile.getName() + "' has been repaired.");
 		}
 	}
 

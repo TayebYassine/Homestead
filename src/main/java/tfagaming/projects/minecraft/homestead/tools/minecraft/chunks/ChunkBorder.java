@@ -8,18 +8,21 @@ import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 
 public class ChunkBorder {
 	public static BorderType getMethod() {
-		boolean isEnabled = Homestead.config.getBoolean("borders.enabled");
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("borders.enabled");
 
 		if (!isEnabled) {
 			return null;
 		}
 
-		String type = Homestead.config.getString("borders.type");
+		String type = Resources.<RegionsFile>get(ResourceType.Regions).getString("borders.type");
 
 		return switch (type) {
 			case "particles" -> BorderType.PARTICLES;
@@ -29,7 +32,7 @@ public class ChunkBorder {
 	}
 
 	public static Material getBlockType() {
-		String blockType = Homestead.config.getString("borders.block-type");
+		String blockType = Resources.<RegionsFile>get(ResourceType.Regions).getString("borders.block-type");
 
 		return Material.getMaterial(blockType) == null ? Material.GOLD_BLOCK : Material.getMaterial(blockType);
 	}

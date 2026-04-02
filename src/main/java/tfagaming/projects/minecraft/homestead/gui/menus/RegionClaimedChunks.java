@@ -7,6 +7,10 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -87,7 +91,7 @@ public class RegionClaimedChunks {
 						ChunkManager.unclaimChunk(region.getUniqueId(), chunk.bukkit());
 
 						if (region.getChunks().size() < before) {
-							double chunkPrice = Homestead.config.getDouble("chunk-price");
+							double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
 							if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
 						}
 
@@ -124,9 +128,9 @@ public class RegionClaimedChunks {
 
 			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD")) {
 				data.originalType = switch (chunk.bukkitLocation().getWorld().getEnvironment()) {
-					case NETHER -> Homestead.menusConfig.get("button-types.world.nether");
-					case THE_END -> Homestead.menusConfig.get("button-types.world.the_end");
-					default -> Homestead.menusConfig.get("button-types.world.overworld");
+					case NETHER -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.nether");
+					case THE_END -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.the_end");
+					default -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.overworld");
 				};
 			}
 

@@ -20,7 +20,11 @@ public class FlagsFile extends ResourceFile {
 	}
 
 	public boolean doSpawnersIgnoreSpawnFlags() {
-		return getBoolean("flags-configuration.spawners", true);
+		return getBoolean("flags-configuration.exclude-spawners", true);
+	}
+
+	public boolean allowFlagsOnPlayerTrust() {
+		return getBoolean("flags-configuration.allow-all-flags-for-trusted-players", true);
 	}
 
 	public long getDefaultPlayerFlags() {

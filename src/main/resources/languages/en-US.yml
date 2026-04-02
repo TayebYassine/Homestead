@@ -6,7 +6,8 @@
 # Legacy color formats and MiniMessage formats are supported for PaperMC and its forks (Folia, Purpur...).
 
 default:
-  description: "Owned by {owner}"
+  region-description: "Owned by {owner}"
+  war-description: "No description"
   reason: "No reason was provided"
   none: "&cNone"
   never: "&cNever"
@@ -16,10 +17,10 @@ default:
   isDisabled: "&cDisabled"
   flagSet: "&aAllow"
   flagUnset: "&cDeny"
-  online: "&aonline"
-  offline: "&coffline"
-  banned: "&4banned"
-  author: Server
+  online: "&aOnline"
+  offline: "&cOffline"
+  banned: "&4Banned"
+  log-author: Server
   star: "★"
   star-color:
     1: "&c"

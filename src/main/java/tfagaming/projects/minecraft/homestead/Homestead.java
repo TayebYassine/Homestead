@@ -39,6 +39,7 @@ import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
 
 import java.io.File;
@@ -111,7 +112,12 @@ public class Homestead extends JavaPlugin {
 
 		saveDefaultConfig();
 
-		Resources.load(this);
+		try {
+			Resources.load(this);
+		} catch (Exception e) {
+			endInstance(e);
+			return;
+		}
 
 		int cacheInterval = Resources.<ConfigFile>get(ResourceType.Config).getCacheInterval();
 
@@ -202,9 +208,7 @@ public class Homestead extends JavaPlugin {
 			}
 		}
 
-		if (Resources.<ConfigFile>get(ResourceType.Config).isDebugEnabled()) {
-			Logger.warning("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
-		}
+			Logger.debug("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
 
@@ -482,6 +486,22 @@ public class Homestead extends JavaPlugin {
 	}
 
 	/**
+	 * Runs a repeating task on the region scheduler with given location.
+	 *
+	 * @param location The location to determine which region thread to use
+	 * @param callable The task to run
+	 * @param delay Ticks to wait before first execution
+	 * @param period Ticks between executions
+	 */
+	public TaskHandle runLocationTaskTimer(Location location, Runnable callable, long delay, long period) {
+		if (isFolia()) {
+			return new TaskHandle(Bukkit.getRegionScheduler().runAtFixedRate(this, location, task -> callable.run(), delay, period));
+		}
+
+		return new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, callable, delay, period));
+	}
+
+	/**
 	 * Get a list of offline players.
 	 */
 	public List<OfflinePlayer> getOfflinePlayersSync() {
@@ -554,6 +574,7 @@ public class Homestead extends JavaPlugin {
 		Homestead.levelsCache.clear();
 		TargetRegionSession.sessions.clear();
 		AutoClaimSession.sessions.clear();
+		DelayedTeleport.cleanup();
 
 		Logger.info("Cache cleaned.");
 

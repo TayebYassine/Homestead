@@ -2,6 +2,9 @@ package tfagaming.projects.minecraft.homestead.logs;
 
 import org.bukkit.Bukkit;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -27,7 +30,7 @@ public class Logger {
 	}
 
 	public static void debug(Object... message) {
-		if (Homestead.config.isDebugEnabled()) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).isDebugEnabled()) {
 			StringBuilder messageStr = new StringBuilder();
 
 			for (Object each : message) {

@@ -1,51 +1,94 @@
+# Region Leveling System
+# Reward players for killing mobs inside their region
+#
+# How it works:
+# 1. Player kills mob in their region
+# 2. Region gains XP based on mob type
+# 3. At certain levels, region unlocks rewards
+# 4. Rewards stack with other bonuses
 levels:
+  # Enable region leveling
+  # XP is earned by killing mobs inside your region
   enabled: true
 
+  # XP Gained by Killing Each Entity Type
+  # Format: ENTITY_NAME: [ min_xp, max_xp ]
+  # Actual XP given is random between min and max
+  #
+  # Balance considerations:
+  # - Common mobs (zombie, skeleton): Lower XP (10-20)
+  # - Uncommon mobs (piglin, enderman): Medium XP (50-100)
+  # - Rare mobs (wither, ender dragon): High XP (500-3000)
+  # - Passive mobs (pig, cow): Low XP (10-20)
+  #
+  # Prevents exploits by requiring kills IN your region (except for: Ender Dragon)
   on-kill-entity:
-    ENDER_DRAGON: [ 1000, 3000 ]
-    WARDEN:       [ 500,  1000 ]
-    WITHER:       [ 200,  500  ]
-    ZOMBIE:       [ 10,   20   ]
-    SKELETON:     [ 10,   20   ]
-    HUSK:         [ 10,   20   ]
-    PIG:          [ 10,   20   ]
-    SHEEP:        [ 10,   20   ]
-    COW:          [ 10,   20   ]
+    ENDER_DRAGON: [ 1000, 3000 ]  # Hardest boss
+    WARDEN: [ 500, 1000 ]         # Difficult mob
+    WITHER: [ 200, 500 ]          # Boss fight
+    WITHER_SKELETON: [ 50, 100 ]  # Common hostile
+    GHAST: [ 25, 50 ]             # Common hostile
+    ZOMBIE: [ 10, 20 ]            # Common hostile
+    SKELETON: [ 10, 20 ]          # Common hostile
+    HUSK: [ 10, 20 ]              # Desert zombie
+    PIG: [ 10, 20 ]               # Passive mob
+    SHEEP: [ 10, 20 ]             # Passive mob
+    COW: [ 10, 20 ]               # Passive mob
+    CHICKEN: [ 10, 20 ]           # Passive mob
 
+  # Level-Based Rewards
+  # When region reaches a level, owner gets these bonuses
+  #
+  # Format for each level:
+  # level_number:
+  #   chunks: Bonus chunks
+  #   members: Bonus member slots
+  #   subareas: Bonus sub-areas
+  #   upkeep-reduction: Percentage reduction (0-100)
+  #
+  # IMPORTANT: Keep levels in ASCENDING order
+  # Higher levels should have better/equal rewards than lower levels
+  #
+  # Upkeep reduction stacks: Level 5 (5%) + Level 10 (5%) = 10% total at level 10
   rewards:
-
+    # Level 5 rewards
     5:
-      chunks: 1
-      members: 0
-      subareas: 0
-      upkeep-reduction: 5
+      chunks: 1                 # +1 chunk
+      members: 0                # No member bonus yet
+      subareas: 0               # No subarea bonus yet
+      upkeep-reduction: 5       # 5% cheaper upkeep
 
+    # Level 10 rewards
     10:
-      chunks: 2
-      members: 1
-      subareas: 0
-      upkeep-reduction: 5
+      chunks: 2                 # +2 chunks total (not cumulative)
+      members: 1                # +1 member slot
+      subareas: 0               # Still no subarea bonus
+      upkeep-reduction: 5       # Stays at 5%
 
+    # Level 15 rewards
     15:
       chunks: 4
       members: 2
       subareas: 1
-      upkeep-reduction: 10
+      upkeep-reduction: 10      # 10%
 
+    # Level 20 rewards
     20:
-      chunks: 4
+      chunks: 4                 # Same as 15 (keeping consistent)
       members: 2
       subareas: 1
-      upkeep-reduction: 15
+      upkeep-reduction: 15      # 15%
 
+    # Level 30 rewards
     30:
       chunks: 4
       members: 2
       subareas: 1
-      upkeep-reduction: 30
+      upkeep-reduction: 30      # 30%
 
+    # Level 50 rewards (max)
     50:
-      chunks: 8
-      members: 6
-      subareas: 4
-      upkeep-reduction: 50
+      chunks: 8                 # Significant chunk boost
+      members: 6                # Large member increase
+      subareas: 4               # Many sub-areas
+      upkeep-reduction: 50      # 50% (half price)

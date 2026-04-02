@@ -7,6 +7,9 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -45,7 +48,7 @@ public class SubAreaFlagsMenu {
 
 					String flagString = PlayerFlags.getFlags().get(context.getIndex());
 
-					if (Homestead.config.isFlagDisabled(flagString)) {
+					if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 						Messages.send(player, 42);
 						return;
 					}

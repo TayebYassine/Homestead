@@ -7,6 +7,9 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -46,7 +49,7 @@ public class RegionMemberControlFlags {
 
 					String flagString = RegionControlFlags.getFlags().get(context.getIndex());
 
-					if (Homestead.config.isFlagDisabled(flagString)) {
+					if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 						Messages.send(player, 42);
 						return;
 					}

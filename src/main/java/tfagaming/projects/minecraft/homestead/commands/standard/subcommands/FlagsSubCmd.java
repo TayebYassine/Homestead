@@ -11,6 +11,9 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.GlobalPlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionWorldFlags;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -98,7 +101,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (Homestead.config.isFlagDisabled(flagInput)) {
+				if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagInput)) {
 					Messages.send(player, 42);
 					return true;
 				}
@@ -171,7 +174,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (Homestead.config.isFlagDisabled(flagInput)) {
+				if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagInput)) {
 					Messages.send(player, 42);
 					return true;
 				}
@@ -243,7 +246,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (Homestead.config.isFlagDisabled(flagInput)) {
+				if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagInput)) {
 					Messages.send(player, 42);
 					return true;
 				}

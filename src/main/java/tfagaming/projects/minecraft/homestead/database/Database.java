@@ -3,6 +3,9 @@ package tfagaming.projects.minecraft.homestead.database;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.database.providers.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -23,37 +26,37 @@ public final class Database {
 
 		switch (provider) {
 			case PostgreSQL:
-				postgreSQL = new PostgreSQL(Homestead.config.getString("database.postgresql.username"),
-						Homestead.config.getString("database.postgresql.password"),
-						Homestead.config.getString("database.postgresql.host"),
-						Homestead.config.getInt("database.postgresql.port"),
-						Homestead.config.getString("database.postgresql.database"),
-						Homestead.config.getString("database.postgresql.table_prefix"));
+				postgreSQL = new PostgreSQL(Resources.<ConfigFile>get(ResourceType.Config).getString("database.postgresql.username"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.postgresql.password"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.postgresql.host"),
+						Resources.<ConfigFile>get(ResourceType.Config).getInt("database.postgresql.port"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.postgresql.database"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.postgresql.table_prefix"));
 				break;
 			case MariaDB:
-				mariaDB = new MariaDB(Homestead.config.getString("database.mariadb.username"),
-						Homestead.config.getString("database.mariadb.password"),
-						Homestead.config.getString("database.mariadb.host"),
-						Homestead.config.getInt("database.mariadb.port"),
-						Homestead.config.getString("database.mariadb.database"),
-						Homestead.config.getString("database.mariadb.table_prefix"));
+				mariaDB = new MariaDB(Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.username"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.password"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.host"),
+						Resources.<ConfigFile>get(ResourceType.Config).getInt("database.mariadb.port"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.database"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.table_prefix"));
 				break;
 			case MySQL:
-				mySQL = new MySQL(Homestead.config.getString("database.mysql.username"),
-						Homestead.config.getString("database.mysql.password"),
-						Homestead.config.getString("database.mysql.host"),
-						Homestead.config.getInt("database.mysql.port"),
-						Homestead.config.getString("database.mysql.database"),
-						Homestead.config.getString("database.mysql.table_prefix"));
+				mySQL = new MySQL(Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.username"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.password"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.host"),
+						Resources.<ConfigFile>get(ResourceType.Config).getInt("database.mysql.port"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.database"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.table_prefix"));
 				break;
 			case MongoDB:
 				mongoDB = new MongoDB(
-						Homestead.config.getString("database.mongodb.uri"),
-						Homestead.config.getString("database.mongodb.database"),
-						Homestead.config.getString("database.mongodb.collection_prefix"));
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mongodb.uri"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mongodb.database"),
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mongodb.collection_prefix"));
 				break;
 			case SQLite:
-				sqLite = new SQLite(Homestead.config.getString("database.sqlite"));
+				sqLite = new SQLite(Resources.<ConfigFile>get(ResourceType.Config).getString("database.sqlite"));
 				break;
 			case YAML:
 				yaml = new YAML(Homestead.getInstance().getDataFolder());

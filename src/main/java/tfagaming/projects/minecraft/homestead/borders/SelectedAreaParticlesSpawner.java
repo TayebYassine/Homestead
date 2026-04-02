@@ -8,6 +8,9 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 
@@ -27,7 +30,7 @@ public class SelectedAreaParticlesSpawner {
 		this.firstBlock = new SerializableBlock(firstBlock);
 		this.secondBlock = new SerializableBlock(secondBlock);
 
-		boolean isEnabled = Homestead.config.getBoolean("borders.enabled");
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("borders.enabled");
 
 		if (isEnabled) {
 			if (tasks.containsKey(player.getUniqueId())) {
@@ -45,7 +48,7 @@ public class SelectedAreaParticlesSpawner {
 		this.firstBlock = firstBlock;
 		this.secondBlock = secondBlock;
 
-		boolean isEnabled = Homestead.config.getBoolean("borders.enabled");
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("borders.enabled");
 
 		if (isEnabled) {
 			if (tasks.containsKey(player.getUniqueId())) {

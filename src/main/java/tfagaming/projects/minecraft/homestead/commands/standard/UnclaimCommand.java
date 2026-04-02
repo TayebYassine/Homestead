@@ -7,6 +7,9 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -69,7 +72,7 @@ public class UnclaimCommand extends CommandBuilder {
 		ChunkManager.Error error = ChunkManager.unclaimChunk(region.getUniqueId(), chunk);
 
 		if (error == null) {
-			double chunkPrice = Homestead.config.getDouble("chunk-price");
+			double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
 			if (chunkPrice > 0) {
 				PlayerBank.deposit(region.getOwner(), chunkPrice);
 			}

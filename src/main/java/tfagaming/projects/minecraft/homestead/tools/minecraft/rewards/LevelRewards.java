@@ -4,6 +4,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.LevelManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LevelsFile;
 import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
@@ -36,11 +39,11 @@ public class LevelRewards {
 		result.put("subareas", 0);
 		result.put("upkeep-reduction", 0);
 
-		if (!Homestead.config.isLevelsEnabled()) {
+		if (!Resources.<LevelsFile>get(ResourceType.Levels).isEnabled()) {
 			return result;
 		}
 
-		ConfigurationSection rewards = Homestead.config.getConfig()
+		ConfigurationSection rewards = Resources.<LevelsFile>get(ResourceType.Levels).getConfig()
 				.getConfigurationSection("levels.rewards");
 
 		if (rewards == null) {
@@ -61,7 +64,7 @@ public class LevelRewards {
 	}
 
 	private static int getHighestLevelReward(Region region, String rewardKey) {
-		if (!Homestead.config.isLevelsEnabled()) {
+		if (!Resources.<LevelsFile>get(ResourceType.Levels).isEnabled()) {
 			return 0;
 		}
 
@@ -71,7 +74,7 @@ public class LevelRewards {
 		}
 
 		int currentLevel = level.getLevel();
-		ConfigurationSection rewards = Homestead.config.getConfig()
+		ConfigurationSection rewards = Resources.<LevelsFile>get(ResourceType.Levels).getConfig()
 				.getConfigurationSection("levels.rewards");
 
 		if (rewards == null) {
@@ -100,11 +103,11 @@ public class LevelRewards {
 	}
 
 	public static boolean hasEntityKillReward(EntityType entityType) {
-		if (!Homestead.config.isLevelsEnabled()) {
+		if (!Resources.<LevelsFile>get(ResourceType.Levels).isEnabled()) {
 			return false;
 		}
 
-		ConfigurationSection killRewards = Homestead.config.getConfig()
+		ConfigurationSection killRewards = Resources.<LevelsFile>get(ResourceType.Levels).getConfig()
 				.getConfigurationSection("levels.on-kill-entity");
 
 		if (killRewards == null) {
@@ -126,7 +129,7 @@ public class LevelRewards {
 			return null;
 		}
 
-		ConfigurationSection killRewards = Homestead.config.getConfig()
+		ConfigurationSection killRewards = Resources.<LevelsFile>get(ResourceType.Levels).getConfig()
 				.getConfigurationSection("levels.on-kill-entity");
 
 		if (killRewards == null) {

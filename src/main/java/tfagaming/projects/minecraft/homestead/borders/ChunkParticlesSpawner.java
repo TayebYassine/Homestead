@@ -6,6 +6,9 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
@@ -43,7 +46,7 @@ public class ChunkParticlesSpawner {
 	public ChunkParticlesSpawner(Player player) {
 		this.player = player;
 
-		boolean isEnabled = Homestead.config.getBoolean("borders.enabled");
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("borders.enabled");
 
 		if (isEnabled) {
 			// Cancel any previously running particle task for this player

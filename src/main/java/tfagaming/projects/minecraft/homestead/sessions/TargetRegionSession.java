@@ -4,6 +4,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
 import java.util.HashMap;
@@ -35,7 +38,7 @@ public final class TargetRegionSession {
 	public static Region getRegion(OfflinePlayer player) {
 		Region region = sessions.get(player.getUniqueId());
 
-		if (region == null && Homestead.config.getBoolean("autoset-target-region") && player.isOnline() && !RegionManager.getRegionsOwnedByPlayer(player).isEmpty()) {
+		if (region == null && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("autoset-target-region") && player.isOnline() && !RegionManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 			randomizeRegion((Player) player);
 
 			return getRegion(player);

@@ -5,6 +5,10 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.LevelManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
 import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -94,7 +98,7 @@ public class RegionLevels {
 	}
 
 	private String getLevelRewardInfo(int lvl) {
-		List<String> rewards = Homestead.menusConfig.get("button-levels." + lvl);
+		List<String> rewards = Resources.<MenusFile>get(ResourceType.Menus).getStringList("button-levels." + lvl);
 
 		if (rewards == null || rewards.isEmpty()) return Formatter.getNone();
 

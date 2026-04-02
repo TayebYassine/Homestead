@@ -10,6 +10,11 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
 import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
@@ -42,8 +47,8 @@ public final class RegionManager {
 	public static Region createRegion(String name, OfflinePlayer player) {
 		Region region = new Region(name, player);
 
-		if (Homestead.config.getBoolean("upkeep.enabled")) {
-			int delay = Homestead.config.getInt("upkeep.start-upkeep");
+		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
+			int delay = Resources.<RegionsFile>get(ResourceType.Regions).getInt("upkeep.start-upkeep");
 
 			region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
 		}
@@ -75,8 +80,8 @@ public final class RegionManager {
 
 			Region region = new Region(newName, player);
 
-			if (Homestead.config.getBoolean("upkeep.enabled")) {
-				int delay = Homestead.config.getInt("upkeep.start-upkeep");
+			if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
+				int delay = Resources.<RegionsFile>get(ResourceType.Regions).getInt("upkeep.start-upkeep");
 
 				region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
 			}
@@ -143,7 +148,7 @@ public final class RegionManager {
 			SubAreaManager.deleteSubArea(subArea.getUniqueId());
 		}
 
-		if (Homestead.config.regenerateChunksWithWorldEdit()) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithWorldEdit()) {
 			for (SerializableChunk chunk : region.getChunks()) {
 				Homestead.getInstance().runAsyncTask(() -> {
 					WorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
@@ -185,9 +190,9 @@ public final class RegionManager {
 			return;
 		}
 
-		String message = Homestead.language.getString("logs." + messagePath);
+		String message = Resources.<LanguageFile>get(ResourceType.Language).getString("logs." + messagePath);
 
-		region.addLog(new SerializableLog(Homestead.language.getString("default.author"), message));
+		region.addLog(new SerializableLog(Resources.<LanguageFile>get(ResourceType.Language).getString("default.log-author"), message));
 	}
 
 	/**
@@ -203,9 +208,9 @@ public final class RegionManager {
 			return;
 		}
 
-		String message = Homestead.language.getString("logs." + messagePath);
+		String message = Resources.<LanguageFile>get(ResourceType.Language).getString("logs." + messagePath);
 
-		region.addLog(new SerializableLog(Homestead.language.getString("default.author"),
+		region.addLog(new SerializableLog(Resources.<LanguageFile>get(ResourceType.Language).getString("default.log-author"),
 				Formatter.applyPlaceholders(message, placeholder)));
 	}
 

@@ -379,10 +379,8 @@ public final class YAML {
 			}
 		}
 
-		if (Homestead.config.isDebugEnabled()) {
-			Logger.info(
+			Logger.debug(
 					"Exported " + savedCount + " regions and deleted " + deletedCount + " regions.");
-		}
 	}
 
 	public void exportWars() {
@@ -441,10 +439,8 @@ public final class YAML {
 			}
 		}
 
-		if (Homestead.config.isDebugEnabled()) {
-			Logger.info(
+			Logger.debug(
 					"Exported " + savedCount + " wars and deleted " + deletedCount + " wars.");
-		}
 	}
 
 	public void exportSubAreas() {
@@ -496,9 +492,7 @@ public final class YAML {
 			if (toDelete.delete()) deleted++;
 		}
 
-		if (Homestead.config.isDebugEnabled()) {
-			Logger.info("Exported " + saved + " sub-areas and deleted " + deleted + " sub-areas.");
-		}
+			Logger.debug("Exported " + saved + " sub-areas and deleted " + deleted + " sub-areas.");
 	}
 
 	public void exportLevels() {
@@ -544,9 +538,7 @@ public final class YAML {
 			if (toDelete.delete()) deleted++;
 		}
 
-		if (Homestead.config.isDebugEnabled()) {
-			Logger.info("Exported " + saved + " levels and deleted " + deleted + " levels.");
-		}
+			Logger.debug("Exported " + saved + " levels and deleted " + deleted + " levels.");
 	}
 
 	public void closeConnection() {

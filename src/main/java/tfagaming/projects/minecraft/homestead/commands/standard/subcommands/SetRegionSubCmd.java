@@ -15,6 +15,10 @@ import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -253,7 +257,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				boolean isEnabled = Homestead.config.getBoolean("dynamic-maps.icons.enabled");
+				boolean isEnabled = Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled");
 
 				if (!isEnabled) {
 					Messages.send(player, 105);
@@ -310,7 +314,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				boolean isEnabled = Homestead.config.getBoolean("taxes.enabled");
+				boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled");
 
 				if (!isEnabled) {
 					Messages.send(player, 105);
@@ -335,8 +339,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				double taxAmount = Double.parseDouble(taxInput);
 
-				double minTax = Homestead.config.getDouble("taxes.min-tax");
-				double maxTax = Homestead.config.getDouble("taxes.max-tax");
+				double minTax = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("taxes.min-tax");
+				double maxTax = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("taxes.max-tax");
 
 				if (taxAmount <= minTax || taxAmount > maxTax) {
 					Messages.send(player, 104, new Placeholder()

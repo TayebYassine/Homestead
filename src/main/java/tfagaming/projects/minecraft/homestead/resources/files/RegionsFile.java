@@ -10,4 +10,28 @@ public class RegionsFile extends ResourceFile {
 	public RegionsFile(File file) throws FileNotFoundException {
 		super(file);
 	}
+
+	public boolean isInstantTrustSystemEnabled() {
+		return getBoolean("special-feat.ignore-trust-acceptance-system");
+	}
+
+	public boolean isWelcomeSignEnabled() {
+		return getBoolean("welcome-signs.enabled");
+	}
+
+	public boolean isAdjacentChunksRuleEnabled() {
+		return getBoolean("adjacent-chunks");
+	}
+
+	public boolean isRewardsEnabled() {
+		return getBoolean("rewards.enabled");
+	}
+
+	public int getRewardChunksPerMember() {
+		return getInt("rewards.for-each-member.chunks", 0);
+	}
+
+	public int getRewardSubAreasPerMember() {
+		return getInt("rewards.for-each-member.subareas", 0);
+	}
 }

@@ -93,9 +93,7 @@ public final class DynamicMaps {
 			bluemap.update();
 		}
 
-		if (Homestead.config.isDebugEnabled()) {
-			Logger.info("Updated dynamic map plugin markers.");
-		}
+		Logger.debug("Updated dynamic map plugin markers.");
 	}
 
 	public static boolean isDynmapInstalled() {

@@ -20,6 +20,9 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLocation;
@@ -126,7 +129,7 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private boolean handleWelcomeSign(SignChangeEvent event, Player player) {
-		if (!Homestead.config.isWelcomeSignEnabled()) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeSignEnabled()) {
 			Messages.send(player, 105);
 			return true;
 		}
@@ -149,7 +152,7 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private boolean handleRentSign(SignChangeEvent event, Player player) {
-		if (!Homestead.config.getBoolean("renting.enabled")) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled")) {
 			Messages.send(player, 105);
 			return true;
 		}
@@ -165,8 +168,8 @@ public final class CustomSignsListener implements Listener {
 		}
 
 		double price = Double.parseDouble(priceStr);
-		double minRent = Homestead.config.getDouble("renting.min-rent");
-		double maxRent = Homestead.config.getDouble("renting.max-rent");
+		double minRent = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("renting.min-rent");
+		double maxRent = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("renting.max-rent");
 
 		if (price < minRent || price > maxRent) {
 			Messages.send(player, 122);
@@ -190,7 +193,7 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private boolean handleSellSign(SignChangeEvent event, Player player) {
-		if (!Homestead.config.getBoolean("selling.enabled")) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("selling.enabled")) {
 			Messages.send(player, 105);
 			return true;
 		}
@@ -206,8 +209,8 @@ public final class CustomSignsListener implements Listener {
 		}
 
 		double price = Double.parseDouble(priceStr);
-		double minSell = Homestead.config.getDouble("selling.min-sell");
-		double maxSell = Homestead.config.getDouble("selling.max-sell");
+		double minSell = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("selling.min-sell");
+		double maxSell = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("selling.max-sell");
 
 		if (price < minSell || price > maxSell) {
 			Messages.send(player, 122);

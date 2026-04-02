@@ -1,1 +1,581 @@
-# :3
+# Startup Data Cleanup
+# Automatically fix corrupted data when server starts
+#
+# Removes/fixes:
+# - Regions in worlds that no longer exist
+# - Invalid player UUIDs
+# - Broken chunk coordinates
+# - Orphaned sub-areas
+# - Corrupted war data
+#
+# Recommended: Keep enabled unless it causes startup issues
+# Disable if: Your server has many worlds that load later, or uses dynamic world loading
+#
+# Values: true = Clean on startup, false = Skip cleanup
+clean-startup: true
+
+# Log Private Region Chat to Console
+# Save all region chat messages to server console/logs
+#
+# Region chat is the private communication channel between region members
+# Enable this to:
+# - Moderate player messages for rule violations
+# - Investigate reports of harassment
+# - Detect ban evasion discussions
+# - Monitor suspicious activity
+# - Keep records for appeals
+#
+# Privacy note: Players should be informed their region chat may be logged
+#
+# Values: true = Log all region chat, false = Private (not logged)
+log-private-chat: true
+
+# Adjacent Chunks Requirement
+# Force all claimed chunks in a region to be touching each other
+#
+# When enabled (true):
+# - Players can only claim chunks next to existing chunks (connected)
+# - Creates compact, organized regions
+# - Prevents scattered claims
+# - Easier to visualize on maps
+#
+# When disabled (false):
+# - Players can claim chunks anywhere, even far apart
+# - Useful for multi-location builds (overworld base + nether farm)
+# - More flexibility but messier world
+#
+# Recommendation: Enable (true) for cleaner, organized server
+# Disable (false) if you want maximum player freedom
+adjacent-chunks: true
+
+# Chunk Purchase Price
+# How much money players must pay to claim each chunk
+#
+# Set to 0.0 for free claiming (no economy required)
+# Set higher to create an economic sink and limit excessive claiming
+#
+# Examples:
+# - 0.0 = Free claiming (good for small servers)
+# - 100.0 = $100 per chunk (moderate cost)
+# - 1000.0 = $1000 per chunk (expensive, limits sprawl)
+#
+# Note: Requires economy plugin
+# Note: This is SEPARATE from upkeep (which is recurring)
+chunk-price: 0.0
+
+# Auto-Select Target Region
+# Automatically set the region a player as their target region (random)
+autoset-target-region: true
+
+# Disabled Worlds (Exact Names)
+# List of worlds where players CANNOT claim chunks
+#
+# World names must match EXACTLY (case-sensitive)
+#
+# Example world names:
+# - "world_the_end" (default end world)
+# - "world_nether" (if you don't want nether claims)
+# - "pvp_arena" (custom PvP world)
+# - "resource_world" (mining world that resets)
+#
+# Find world names: Look in your server folder - each folder is a world
+# Or use /worlds if you have a world management plugin
+disabled-worlds-exact:
+  - "world_the_end"
+  - "factions"
+  - "pvp_arena"
+
+# Disabled Worlds (Pattern Matching)
+# Disable claiming in worlds matching these patterns
+#
+# Uses wildcards (*) for flexible matching:
+# - "em_*" matches any world starting with "em_" (EliteMobs dungeons)
+# - "*_temp" matches any world ending with "_temp"
+# - "minigame_*_end" matches "minigame_skywars_end", "minigame_bedwars_end", etc.
+disabled-worlds-pattern:
+  - "em_*"
+  - "minigame_*_end"
+
+# Region Borders Visualization
+# Show region boundaries using particles or blocks
+borders:
+  # Enable border display for players
+  # When enabled, players can toggle borders with /region borders
+  enabled: true
+
+  # Border Display Type
+  # How borders are shown to players
+  #
+  # - particles: Floating particle effects along chunk edges
+  # - blocks: Client-side blocks appear at chunk edges
+  #
+  # Recommendation: Use "particles" for most servers
+  type: particles
+
+  # Block Type for Borders (only used if type is "blocks")
+  # What block appears when using block-based borders
+  # Can be any Minecraft block type (GLASS, GLOWSTONE, BARRIER, etc.)
+  # GRAY_GLAZED_TERRACOTTA is nice because it's distinctive
+  block-type: GRAY_GLAZED_TERRACOTTA
+
+# Enter/Exit Region Messages
+# Display messages when players enter or leave regions
+enter-exit-region-message:
+  # Enable enter/exit messages
+  # Shows region name and description when crossing boundaries
+  enabled: true
+
+  # Message Display Type
+  # Where the message appears on screen
+  #
+  # - title: Large text in center of screen (most visible)
+  # - actionbar: Small text above hotbar (less intrusive)
+  # - chat: Regular chat message (least intrusive)
+  type: 'title'
+
+  # Message Content for Each Display Type
+  # Customize what players see when entering/exiting
+  #
+  # Available variables:
+  # {region-displayname} - The region's name
+  # {region-description} - The region's description
+  # {region-owner} - Who owns the region
+  #
+  # Color codes: Use & for colors (&2 = green, &7 = gray, etc.)
+  messages:
+    # Messages shown when entering a region
+    enter:
+      title: [ "&2{region-displayname}", "&7{region-description}" ]
+      actionbar: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
+      chat: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
+
+    # Messages shown when leaving a region
+    exit:
+      title: [ "&3Wilderness", "&7Roam the wild!" ]
+      actionbar: "&7You left the territory of &2{region-displayname}&7."
+      chat: "&7You left the territory of &2{region-displayname}&7."
+
+# Sub-Area Selection Tool
+# Configure the tool used to create sub-areas within regions
+selection-tool:
+  # Item used for selecting sub-area corners
+  # Default: GOLDEN_HOE (easy to craft, distinctive)
+  #
+  # Can be changed to any Minecraft item:
+  # - WOODEN_AXE (WorldEdit-style)
+  # - STICK (simple and cheap)
+  # - BLAZE_ROD (more distinctive)
+  # - Any other item type
+  item: GOLDEN_HOE
+
+  # Title Messages During Selection
+  # Shown to players as they select corners
+  # Provides feedback on selection progress
+  messages:
+    none: "&7Please select two corners inside your region."
+    firstCorner: "&7First corner: &a✔ &7| Second corner: &c✘"
+    secondCorner: "&7First corner: &c✘ &7| Second corner: &a✔"
+    selectionDone: "&7Use &e/rg subareas create [name] &7to finish."
+
+# All economy features require:
+# - Vault plugin installed
+# - Economy plugin installed
+
+# Region Upkeep System
+# Require region owners to pay recurring maintenance fees based on claimed chunks
+#
+# How it works:
+# 1. Owner claims chunks
+# 2. After grace period, upkeep becomes due
+# 3. Payment auto-deducted from region bank
+# 4. If you can't pay, chunks are unclaimed (if enabled)
+# 5. Timer resets for next payment
+upkeep:
+  # Enable upkeep system
+  enabled: false
+
+  # Cost Per Chunk (per upkeep period)
+  # How much each claimed chunk costs to maintain
+  #
+  # Formula: Total Upkeep = Chunks Claimed × Per-Chunk Cost
+  #
+  # Examples:
+  # - 10 chunks × $100 = $1,000 upkeep
+  # - 20 chunks × $100 = $2,000 upkeep
+  per-chunk: 100.0
+
+  # Automatically Unclaim Unpaid Chunks
+  # What happens if a player can't afford upkeep
+  #
+  # When true:
+  # - Chunks are automatically unclaimed if payment fails
+  # - Usually last-claimed chunks are removed first
+  # - Player keeps chunks they can afford
+  #
+  # When false:
+  # - Chunks stay claimed even if payment fails
+  # - Region goes into "debt" status
+  # - May have grace period before forced unclaim
+  #
+  # Recommendation: true for automatic cleanup
+  unclaim-chunks: true
+
+  # Grace Period for New Regions (in seconds)
+  # How long before the FIRST upkeep payment is due
+  # Gives new players time to establish themselves and earn money
+  #
+  # Common values:
+  # - 604800 = 1 week (recommended)
+  # - 1209600 = 2 weeks (generous)
+  # - 2592000 = ~30 days (very generous)
+  # - 259200 = 3 days (competitive servers)
+  #
+  # Set higher for casual servers, lower for competitive ones
+  start-upkeep: 604800
+
+  # Upkeep Payment Frequency (in seconds)
+  # How often upkeep payments are required
+  #
+  # Common values:
+  # - 604800 = 1 week (recommended)
+  # - 1209600 = 2 weeks
+  # - 2592000 = ~30 days
+  # - 86400 = 1 day (very frequent, for testing)
+  #
+  # Shorter intervals = More active economy, more player engagement
+  # Longer intervals = Less micromanagement, more casual
+  upkeep-timer: 604800
+
+# Member Taxes System
+# Require trusted members to pay fees to stay in a region
+#
+# How it works:
+# 1. Owner sets tax amount with /region set tax [amount]
+# 2. Members must pay on schedule
+# 3. Payment auto-deducted from member's personal balance
+# 4. Money goes to region bank
+# 5. If member can't pay, they're auto-untrusted
+taxes:
+  # Enable member tax system
+  enabled: false
+
+  # Minimum Tax Amount
+  # Lowest tax owners can set
+  # Set to 0.0 to allow free membership
+  min-tax: 0.0
+
+  # Maximum Tax Amount
+  # Highest tax owners can set
+  # Prevents excessive fees
+  # Example: $10,000 = very high but not unlimited
+  max-tax: 10000.0
+
+  # Tax Payment Frequency (in seconds)
+  # How often members must pay
+  #
+  # Usually matches upkeep-timer so members can help pay upkeep
+  # Common value: 604800 = 1 week
+  tax-timer: 604800
+
+# Region Renting System
+# Allow owners to rent their regions to other players temporarily
+#
+# How it works:
+# 1. Owner creates rental sign
+# 2. Player clicks sign or uses command
+# 3. Renter pays fee, gets access for duration
+# 4. After time expires, access is removed
+# 5. Owner can cancel early via menu
+renting:
+  # Enable region renting
+  enabled: true
+
+  # Minimum Rental Price
+  # Lowest amount owners can charge per rental period
+  # Prevents underselling/exploits
+  min-rent: 500.0
+
+  # Maximum Rental Price
+  # Highest amount owners can charge
+  # Prevents inflation/excessive fees
+  max-rent: 10000000.0
+
+# Region Selling System
+# Allow owners to sell their regions permanently to other players
+#
+# How it works:
+# 1. Owner creates sale sign
+# 2. Buyer clicks sign or uses command
+# 3. Buyer pays, immediately becomes new owner
+# 4. Original owner loses all access
+# 5. Cannot be reversed (permanent)
+selling:
+  # Enable region selling
+  enabled: true
+
+  # Minimum Sale Price
+  # Lowest price owners can sell for
+  # Prevents giving away valuable regions
+  min-sell: 10.0
+
+  # Maximum Sale Price
+  # Highest price owners can sell for
+  # Prevents economy inflation
+  max-sell: 1000000000.0
+
+# Sub-Areas Feature
+# Allow creating smaller zones within regions with different permissions
+#
+# Use cases:
+# - Shop inside private base (public access to shop only)
+# - PvP arena in safe town
+# - Public farm in protected region
+# - Guest areas with limited permissions
+sub-areas:
+  # Enable sub-areas creation
+  # Requires selection tool (configured above)
+  enabled: true
+
+# Wars System
+# Enable region-vs-region PvP conflicts with economic stakes
+#
+# How it works:
+# 1. Owner declares war on another region with prize money
+# 2. Special combat rules activate
+# 3. If declarer dies (any death), they lose and pay prize
+# 4. If they kill enemy owner, they win and receive prize
+# 5. Either side can surrender to end war early
+#
+# Changes during war:
+# - PvP enabled in both regions
+# - Doors/gates accessible to enemies
+# - Passthrough allowed
+# - High-risk, high-reward gameplay
+wars:
+  # Enable wars feature
+  enabled: false
+
+  # Minimum War Prize
+  # Smallest prize that can be wagered
+  # Too low = pointless wars
+  min-prize: 1000.0
+
+  # Maximum War Prize
+  # Largest prize that can be wagered
+  # Prevents bankrupting players
+  max-prize: 1000000000.0
+
+# Welcome Signs Feature
+# Allow players to create clickable signs that teleport to regions
+#
+# How it works:
+# 1. Player places sign with specific format (check docs)
+# 2. Other players click sign
+# 3. They teleport to region's home point
+welcome-signs:
+  # Enable welcome signs
+  # Alternative to /region visit command
+  enabled: false
+
+# Reward System - Bonus chunks/members for member count
+# Give region owners extra claims for building a community
+rewards:
+  # Enable rewards system
+  # Requires economy plugin
+  enabled: true
+
+  # Reward per Trusted Member
+  # For each member in the region, owner gets bonus chunks/sub-areas
+  #
+  # Example: If you have 3 members and for-each-member.chunks is 2:
+  # - Base limit: 10 chunks
+  # - Bonus: 3 members × 2 chunks = +6 chunks
+  # - Total: 16 chunks available
+  #
+  # Set to 0 to disable that reward type
+  for-each-member:
+    chunks: 2     # Bonus chunks per member (0 = disabled)
+    subareas: 1   # Bonus sub-areas per member (0 = disabled)
+
+  # Reward by Playtime
+  # Give bonuses based on total time played on the server
+  #
+  # How it works:
+  # - Plugin tracks active playtime (AFK time doesn't count)
+  # - When player reaches a tier, they get those rewards
+  # - Only the HIGHEST tier applies (not cumulative)
+  #
+  # Example: Player has 10 hours playtime
+  # - Qualifies for 30min tier (1 chunk)
+  # - Qualifies for 3hr tier (2 chunks)
+  # - Gets 2 chunks total (from highest tier)
+  #
+  # Time format:
+  # - minutes: Number of minutes
+  # - hours: Number of hours
+  # - days: Number of days
+  # All three add together: 1d + 2h + 30m = 1 day, 2 hours, 30 minutes
+  #
+  # IMPORTANT: Keep values ASCENDING (higher time = more rewards)
+  by-playtime:
+    # 30 minutes played
+    - minutes: 30
+      hours: 0
+      days: 0
+      chunks: 1
+      subareas: 1
+
+    # 3 hours played
+    - minutes: 0
+      hours: 3
+      days: 0
+      chunks: 2
+      subareas: 2
+
+    # 12 hours played
+    - minutes: 0
+      hours: 12
+      days: 0
+      chunks: 4
+      subareas: 3
+
+    # 1 day (24 hours) played
+    - minutes: 0
+      hours: 0
+      days: 1
+      chunks: 6
+      subareas: 4
+
+    # 3 days played
+    - minutes: 0
+      hours: 0
+      days: 3
+      chunks: 8
+      subareas: 6
+
+    # 1 week (7 days) played
+    - minutes: 0
+      hours: 0
+      days: 7
+      chunks: 10
+      subareas: 8
+
+
+# Special Features
+# Unique gameplay tweaks and experimental features
+special-feat:
+  # TNT Explosion Restrictions
+  # Only allow TNT to explode below sea level (Y=63) in unclaimed areas
+  #
+  # When enabled (true):
+  # - TNT explodes normally below Y=63 in wilderness
+  # - TNT above Y=63 in wilderness doesn't explode
+  # - TNT in claimed regions follows region explosion flags
+  # - Useful for allowing underground mining while protecting surface
+  #
+  # When disabled (false):
+  # - TNT behaves normally everywhere
+  # - Region flags are only protection
+  #
+  # Perfect for:
+  # - Servers wanting mining with TNT
+  # - Protecting surface builds
+  # - Preventing surface griefing
+  tnt-explodes-only-below-sea-level: false
+
+  # Disabled World Protection Bypass
+  # Should region protection work in worlds where claiming is disabled?
+  #
+  # When true (recommended):
+  # - In disabled worlds, NO region protection applies
+  # - Anyone can build/break anywhere in disabled worlds
+  # - Useful for resource worlds, minigames, etc.
+  #
+  # When false:
+  # - Existing regions still protect even in disabled worlds
+  # - More protection but may cause confusion
+  #
+  # Recommendation: true (clean separation)
+  ignore-region-protection-if-action-in-disabled-world: true
+
+  # Trust Acceptance System Bypass
+  # Should trusted players join regions without accepting invites?
+  #
+  # When false (default):
+  # - Owner uses /region trust PlayerName
+  # - Player receives notification
+  # - Player must use /region accept to join
+  # - Gives players choice and control
+  #
+  # When true:
+  # - Owner uses /region trust PlayerName
+  # - Player is immediately trusted (no acceptance needed)
+  # - Faster but no player consent
+  #
+  # Use true for:
+  # - Small friend servers where coordination is easy
+  # - Faster trust management
+  #
+  # Use false for:
+  # - Public servers
+  # - Player consent important
+  # - Standard accept/deny workflow
+  ignore-trust-acceptance-system: false
+
+# Teleport Delay System
+# Add countdown before teleporting (prevents combat escape)
+delayed-teleport:
+  # Enable teleport delays
+  # Applies to: /region visit, /region home, welcome signs
+  enabled: true
+
+  # Delay Duration (in seconds)
+  # How long players must wait before teleporting
+  delay: 3
+
+  # Price of teleportation
+  # How much does the player need to pay to visit regions or chunks?
+  # Note: Operators are unaffected with this
+  price: 0.0
+
+  # Cancel on Movement
+  # Should teleport cancel if player moves during countdown?
+  #
+  # When true:
+  # - Player must stand still
+  # - Moving cancels teleport
+  # - Prevents teleporting while running from combat
+  #
+  # When false:
+  # - Player can move freely
+  # - Teleport happens regardless
+  # - Less strict but more convenient
+  cancel-on-move: true
+
+  # Operator Bypass
+  # Should server operators skip the delay and teleport instantly?
+  ignore-operators: true
+
+  # Boss Bar Countdown Display
+  # Visual countdown shown at top of screen during teleport delay
+  boss-bar:
+      # Enable boss bar countdown display
+    enabled: true
+
+    # Title of the boss bar
+    # Placeholders: {seconds} - remaining time, {location} - destination name
+    title: "&7Teleporting in &3{seconds}s&7..."
+
+    # Boss bar color
+    # Options: BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
+    color: "PURPLE"
+
+    # Boss bar style/overlay
+    # Options: SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+    # SOLID = smooth bar, SEGMENTED_X = bar divided into X segments
+    style: "SEGMENTED_10"
+
+    # Countdown mode
+    # DEPLETE = bar starts full and empties as time runs out
+    # FILL = bar starts empty and fills as time progresses
+    countdown-mode: "DEPLETE"

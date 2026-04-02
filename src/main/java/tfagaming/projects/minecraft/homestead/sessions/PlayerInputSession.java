@@ -10,6 +10,9 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 
@@ -46,7 +49,7 @@ public final class PlayerInputSession implements Listener {
 		this.onCancel = onCancel;
 
 		String key = String.valueOf(messagePath);
-		this.prompt = Homestead.language.getString(key);
+		this.prompt = Resources.<LanguageFile>get(ResourceType.Language).getString(key);
 
 		PlayerInputSession old = SESSIONS.put(player.getUniqueId(), this);
 		if (old != null) old.internalDestroy();
