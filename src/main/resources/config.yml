@@ -303,7 +303,7 @@ dynamic-maps:
   icons:
     # Enable custom icons feature
     # Players can select from the list below
-    enabled: true
+    enabled: false
 
     # Default icon (shown when player hasn't chosen one)
     # Must be a direct link to an image file

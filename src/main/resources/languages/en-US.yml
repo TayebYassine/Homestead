@@ -542,7 +542,7 @@ flags-info:
     description:
       - "&7Allow copper golems to interact with"
       - "&7copper chests inside the region?"
-    type: CHISELED_COPPER
+    type: COPPER_GOLEM_SPAWN_EGG
   wars:
     description:
       - "&7Allow any player to declare war"
