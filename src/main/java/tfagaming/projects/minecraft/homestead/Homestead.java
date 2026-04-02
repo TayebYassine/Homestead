@@ -332,6 +332,12 @@ public class Homestead extends JavaPlugin {
 		} catch (Exception e) {
 			Logger.error(e);
 		}
+
+		try {
+			getServer().getPluginManager().registerEvents(new PlayerEnterEndExitPortalListener(), this);
+		} catch (Exception e) {
+			Logger.error(e);
+		}
 	}
 
 	private void registerBrigadier() {

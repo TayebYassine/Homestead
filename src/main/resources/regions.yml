@@ -522,6 +522,18 @@ special-feat:
   # - Standard accept/deny workflow
   ignore-trust-acceptance-system: false
 
+  # Teleport players back to their region spawn point when they enter the End Exit Portal?
+  #
+  # When true:
+  # - Players immediately teleport back to their targeted region spawn
+  # - Take some rest in their bases
+  # - Better than spawning back to world spawn point
+  #
+  # When false:
+  # - Players will be teleported to the world spawn point
+  # - High risk for traps/spawn killing
+  teleport-players-back-to-region-spawn-when-entering-end-exit-portal: true
+
 # Teleport Delay System
 # Add countdown before teleporting (prevents combat escape)
 delayed-teleport:

@@ -15,6 +15,10 @@ public class RegionsFile extends ResourceFile {
 		return getBoolean("special-feat.ignore-trust-acceptance-system");
 	}
 
+	public boolean teleportPlayersBackToTegionSpawnWhenEnteringEndExitPortal() {
+		return getBoolean("special-feat.teleport-players-back-to-region-spawn-when-entering-end-exit-portal");
+	}
+
 	public boolean isWelcomeSignEnabled() {
 		return getBoolean("welcome-signs.enabled");
 	}
