@@ -94,6 +94,11 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
+				if (!PlayerUtils.isOperator(player) && !region.isOwner(player) && player.getUniqueId().equals(target.getUniqueId())) {
+					Messages.send(player, 159);
+					return true;
+				}
+
 				String flagInput = args[2];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {

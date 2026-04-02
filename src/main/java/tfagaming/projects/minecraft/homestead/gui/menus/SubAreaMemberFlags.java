@@ -45,6 +45,11 @@ public class SubAreaMemberFlags {
 						return;
 					}
 
+					if (player.getUniqueId().equals(member.getPlayerId())) {
+						Messages.send(player, 159);
+						return;
+					}
+
 					int index = context.getIndex();
 
 					if (index == BULK_INDEX) {
