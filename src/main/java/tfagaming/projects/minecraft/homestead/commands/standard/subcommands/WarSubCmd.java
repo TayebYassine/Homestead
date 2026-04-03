@@ -141,7 +141,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				List<String> nameList = Arrays.asList(args).subList(4, args.length);
+				List<String> nameList = Arrays.asList(args).subList(3, args.length);
 				String name = String.join(" ", nameList);
 
 				if (name.isEmpty()) name = "Unnamed War";
@@ -245,8 +245,9 @@ public class WarSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 1 && args[0].equalsIgnoreCase("declare"))
+		if (args.length == 1 && args[0].equalsIgnoreCase("declare")) {
 			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
+		}
 
 		return suggestions;
 	}

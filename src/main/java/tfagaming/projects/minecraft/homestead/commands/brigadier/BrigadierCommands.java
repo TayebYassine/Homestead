@@ -189,6 +189,7 @@ public final class BrigadierCommands {
 				.literalSub("declare")
 				.stringArg("region")
 				.intArg("prize", 0, 1000000000)
+				.greedyStringArg("name")
 				.endNested()
 				.literalSub("surrender")
 				.endNested()
