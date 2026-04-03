@@ -119,7 +119,16 @@ public class PlayerUtils {
 
 	public static void teleportPlayerToChunk(Player player, Chunk chunk) {
 		Location location = ChunkManager.getLocation(player, chunk);
-		player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+
+		if (location == null) {
+			return;
+		}
+
+		if (Homestead.isFolia()) {
+			player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+		} else {
+			player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+		}
 	}
 
 	public static boolean isOperator(Player player) {
