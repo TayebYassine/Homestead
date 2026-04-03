@@ -1,7 +1,6 @@
 package tfagaming.projects.minecraft.homestead.tools.java;
 
 import org.bukkit.*;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;

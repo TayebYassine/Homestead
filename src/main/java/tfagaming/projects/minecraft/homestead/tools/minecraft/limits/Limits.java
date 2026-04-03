@@ -1,7 +1,6 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.limits;
 
 import org.bukkit.OfflinePlayer;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;

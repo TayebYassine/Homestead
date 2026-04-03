@@ -2,11 +2,8 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.rewards;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
-import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
-import tfagaming.projects.minecraft.homestead.resources.files.LimitsFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 

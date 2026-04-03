@@ -2,7 +2,6 @@ package tfagaming.projects.minecraft.homestead.sessions;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;

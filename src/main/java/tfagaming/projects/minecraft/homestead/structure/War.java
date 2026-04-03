@@ -15,7 +15,7 @@ public class War {
 	public String name;
 	public String description;
 	public String displayName;
-	public ArrayList<UUID> regions = new ArrayList<>();
+	public final ArrayList<UUID> regions = new ArrayList<>();
 	public double prize;
 	public long startedAt;
 

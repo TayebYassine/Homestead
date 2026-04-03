@@ -9,7 +9,6 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
-import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;

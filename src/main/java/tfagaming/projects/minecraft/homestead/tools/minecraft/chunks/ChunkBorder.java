@@ -2,7 +2,6 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.chunks;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.BorderBlockRenderer;
 import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;

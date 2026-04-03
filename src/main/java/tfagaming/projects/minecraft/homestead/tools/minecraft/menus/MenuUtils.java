@@ -3,10 +3,8 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.menus;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
-import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
@@ -138,9 +136,9 @@ public class MenuUtils {
 	}
 
 	public static class ButtonData {
-		public String name;
-		public List<String> lore;
-		public Material type;
+		public final String name;
+		public final List<String> lore;
+		public final Material type;
 		public String originalType;
 
 		public ButtonData(String name, List<String> lore, String type) {

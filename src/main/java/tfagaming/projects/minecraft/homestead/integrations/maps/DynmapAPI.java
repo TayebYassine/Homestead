@@ -22,7 +22,7 @@ public class DynmapAPI {
 	public DynmapAPI(Homestead plugin) {
 		try {
 			DynmapCommonAPIListener.register(new DynmapListener());
-		} catch (NoClassDefFoundError e) {
+		} catch (NoClassDefFoundError ignored) {
 
 		}
 	}

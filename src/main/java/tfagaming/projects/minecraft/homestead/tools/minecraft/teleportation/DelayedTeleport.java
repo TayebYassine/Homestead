@@ -27,11 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DelayedTeleport {
-	public static Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
-	public static Map<UUID, Location> initialLocations = new ConcurrentHashMap<>();
-	public static Map<UUID, BossBar> activeBossBars = new ConcurrentHashMap<>();
+	public static final Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
+	public static final Map<UUID, Location> initialLocations = new ConcurrentHashMap<>();
+	public static final Map<UUID, BossBar> activeBossBars = new ConcurrentHashMap<>();
 	public static Map<UUID, BukkitRunnable> bossBarTasks = new ConcurrentHashMap<>();
-	public static Map<UUID, TaskHandle> bossBarTaskHandles = new ConcurrentHashMap<>();
+	public static final Map<UUID, TaskHandle> bossBarTaskHandles = new ConcurrentHashMap<>();
 
 	public DelayedTeleport(Player player, Location location) {
 		this(player, location, null);

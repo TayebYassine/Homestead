@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class SubArea {
-	public UUID id;
+	public final UUID id;
 	public UUID regionId;
 	public String name;
-	public UUID worldId;
-	public int[] point1;
-	public int[] point2;
+	public final UUID worldId;
+	public final int[] point1;
+	public final int[] point2;
 	public List<SerializableMember> members = new ArrayList<>();
 	public long flags;
 	public SerializableRent rent;
-	public long createdAt;
+	public final long createdAt;
 
 	public SubArea(UUID regionId, String name, World world, Block point1, Block point2, long flags) {
 		this.id = UUID.randomUUID();

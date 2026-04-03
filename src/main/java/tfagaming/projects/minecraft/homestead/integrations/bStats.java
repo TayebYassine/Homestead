@@ -21,7 +21,7 @@ public class bStats {
 			// Regions
 			metrics.addCustomChart(new Metrics.SingleLineChart("regions", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					return RegionManager.getAll().size();
 				}
 			}));
@@ -29,7 +29,7 @@ public class bStats {
 			// Sub-Areas
 			metrics.addCustomChart(new Metrics.SingleLineChart("subareas", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					return SubAreaManager.getAll().size();
 				}
 			}));
@@ -37,7 +37,7 @@ public class bStats {
 			// Trusted Players
 			metrics.addCustomChart(new Metrics.SingleLineChart("trusted_players", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					int players = 0;
 
 					for (Region region : RegionManager.getAll()) {
@@ -51,7 +51,7 @@ public class bStats {
 			// Chunks
 			metrics.addCustomChart(new Metrics.SingleLineChart("chunks", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					int chunks = 0;
 
 					for (Region region : RegionManager.getAll()) {
@@ -65,7 +65,7 @@ public class bStats {
 			// Database
 			metrics.addCustomChart(new Metrics.AdvancedPie("database_provider", new Callable<Map<String, Integer>>() {
 				@Override
-				public Map<String, Integer> call() throws Exception {
+				public Map<String, Integer> call() {
 					Map<String, Integer> map = new HashMap<>();
 
 					switch (Database.parseProviderFromString(Homestead.database.getSelectedProvider())) {
@@ -98,7 +98,7 @@ public class bStats {
 			// Dynamic Maps
 			metrics.addCustomChart(new Metrics.AdvancedPie("dynamic_maps", new Callable<Map<String, Integer>>() {
 				@Override
-				public Map<String, Integer> call() throws Exception {
+				public Map<String, Integer> call() {
 					Map<String, Integer> map = new HashMap<>();
 
 					map.put("Dynmap", DynamicMaps.dynmap == null ? 0 : 1);
@@ -113,7 +113,7 @@ public class bStats {
 			// Wars
 			metrics.addCustomChart(new Metrics.SingleLineChart("wars", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					return WarManager.getAll().size();
 				}
 			}));

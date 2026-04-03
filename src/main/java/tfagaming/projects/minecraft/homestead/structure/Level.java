@@ -6,15 +6,15 @@ import java.util.UUID;
 
 public class Level {
 	// MEE6 formula constants (configurable)
-	public static double BASE = 5;
-	public static double COEFFICIENT = 50;
-	public static double CONSTANT = 100;
-	public UUID id;
+	public static final double BASE = 5;
+	public static final double COEFFICIENT = 50;
+	public static final double CONSTANT = 100;
+	public final UUID id;
 	public UUID regionId;
 	public int level;
 	public long experience;
 	public long totalExperience;
-	public long createdAt;
+	public final long createdAt;
 
 	public Level(UUID regionId) {
 		this.id = UUID.randomUUID();

@@ -2,7 +2,6 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.chat;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;

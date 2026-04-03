@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.integrations.maps;
 
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -69,9 +68,7 @@ public class RegionIconTools {
 
 			connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-			BufferedImage bufferedImage = ImageIO.read(connection.getInputStream());
-
-			return bufferedImage;
+			return ImageIO.read(connection.getInputStream());
 		} catch (Exception e) {
 			Logger.warning("Failed to download the icon! URL: " + imageUrl);
 			return null;

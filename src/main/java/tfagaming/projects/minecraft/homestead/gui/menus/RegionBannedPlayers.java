@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionBulkUnbanPlayersEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionDisplaynameUpdateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
@@ -24,7 +23,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RegionBannedPlayers {
 	private List<SerializableBannedPlayer> bannedPlayers;

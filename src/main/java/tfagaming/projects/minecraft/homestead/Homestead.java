@@ -40,7 +40,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
-import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
 
 import java.io.File;
 import java.io.IOException;
