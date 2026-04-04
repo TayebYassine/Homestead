@@ -13,14 +13,12 @@ public class SharedStorage {
 	private final int size;
 	private final Map<Integer, ItemStack> items;
 	private final Object lock;
-	private final Map<Integer, Long> pendingTransactions;
 
 	public SharedStorage(UUID regionId, int size) {
 		this.regionId = regionId;
 		this.size = size;
 		this.items = new HashMap<>();
 		this.lock = new Object();
-		this.pendingTransactions = new HashMap<>();
 	}
 
 	public static SharedStorage deserialize(UUID regionId, String data) {
@@ -47,85 +45,6 @@ public class SharedStorage {
 		return new SharedStorage(regionId, 54);
 	}
 
-	public UUID getRegionId() {
-		return regionId;
-	}
-
-	public int getSize() {
-		return size;
-	}
-
-	public ItemStack getItem(int slot) {
-		synchronized (lock) {
-			ItemStack item = items.get(slot);
-			return item != null ? item.clone() : null;
-		}
-	}
-
-	public void setItem(int slot, ItemStack item) {
-		synchronized (lock) {
-			if (item == null || item.getType().isAir()) {
-				items.remove(slot);
-			} else {
-				items.put(slot, item.clone());
-			}
-		}
-	}
-
-	public boolean isSlotAvailable(int slot) {
-		synchronized (lock) {
-			Long lockTime = pendingTransactions.get(slot);
-			if (lockTime == null) return true;
-			if (System.currentTimeMillis() - lockTime > 30000) {
-				pendingTransactions.remove(slot);
-				return true;
-			}
-			return false;
-		}
-	}
-
-	public boolean lockSlot(int slot) {
-		synchronized (lock) {
-			if (!isSlotAvailable(slot)) return false;
-			pendingTransactions.put(slot, System.currentTimeMillis());
-			return true;
-		}
-	}
-
-	public void unlockSlot(int slot) {
-		synchronized (lock) {
-			pendingTransactions.remove(slot);
-		}
-	}
-
-	public ItemStack tryTakeItem(int slot) {
-		synchronized (lock) {
-			if (!lockSlot(slot)) return null;
-			try {
-				ItemStack item = items.remove(slot);
-				return item != null ? item.clone() : null;
-			} finally {
-				unlockSlot(slot);
-			}
-		}
-	}
-
-	public boolean tryPlaceItem(int slot, ItemStack item) {
-		synchronized (lock) {
-			if (!lockSlot(slot)) return false;
-			try {
-				if (item == null || item.getType().isAir()) {
-					items.remove(slot);
-				} else {
-					items.put(slot, item.clone());
-				}
-				return true;
-			} finally {
-				unlockSlot(slot);
-			}
-		}
-	}
-
 	public String serialize() {
 		synchronized (lock) {
 			try {
@@ -147,6 +66,21 @@ public class SharedStorage {
 		}
 	}
 
+	public UUID getRegionId() {
+		return regionId;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public ItemStack getItem(int slot) {
+		synchronized (lock) {
+			ItemStack item = items.get(slot);
+			return item != null ? item.clone() : null;
+		}
+	}
+
 	public Map<Integer, ItemStack> getAllItems() {
 		synchronized (lock) {
 			Map<Integer, ItemStack> copy = new HashMap<>();
@@ -154,6 +88,45 @@ public class SharedStorage {
 				copy.put(entry.getKey(), entry.getValue().clone());
 			}
 			return copy;
+		}
+	}
+
+	public void setItem(int slot, ItemStack item) {
+		synchronized (lock) {
+			if (item == null || item.getType().isAir()) {
+				items.remove(slot);
+			} else {
+				items.put(slot, item.clone());
+			}
+		}
+	}
+
+	public ItemStack takeItem(int slot) {
+		synchronized (lock) {
+			ItemStack item = items.remove(slot);
+			return item != null ? item.clone() : null;
+		}
+	}
+
+	public void placeItem(int slot, ItemStack item) {
+		synchronized (lock) {
+			if (item == null || item.getType().isAir()) {
+				items.remove(slot);
+			} else {
+				items.put(slot, item.clone());
+			}
+		}
+	}
+
+	public ItemStack swapItem(int slot, ItemStack newItem) {
+		synchronized (lock) {
+			ItemStack old = items.get(slot);
+			if (newItem == null || newItem.getType().isAir()) {
+				items.remove(slot);
+			} else {
+				items.put(slot, newItem.clone());
+			}
+			return old != null ? old.clone() : null;
 		}
 	}
 }

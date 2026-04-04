@@ -115,9 +115,9 @@ public class StorageManager {
 	public static void updateAllMenus(UUID regionId) {
 		Set<StorageMenu> menus = activeMenus.get(regionId);
 		if (menus == null || menus.isEmpty()) return;
-		SharedStorage storage = getStorage(regionId);
+		List<StorageMenu> snapshot = new ArrayList<>(menus);
 		plugin.runSyncTask(() -> {
-			for (StorageMenu menu : menus) {
+			for (StorageMenu menu : snapshot) {
 				if (menu.isValid()) menu.refreshDisplay();
 			}
 		});
@@ -126,10 +126,11 @@ public class StorageManager {
 	public static void updateSlot(UUID regionId, int slot) {
 		Set<StorageMenu> menus = activeMenus.get(regionId);
 		if (menus == null || menus.isEmpty()) return;
-		SharedStorage storage = getStorage(regionId);
-		ItemStack item = storage.getItem(slot);
+		List<StorageMenu> snapshot = new ArrayList<>(menus);
 		plugin.runSyncTask(() -> {
-			for (StorageMenu menu : menus) {
+			SharedStorage storage = getStorage(regionId);
+			ItemStack item = storage.getItem(slot);
+			for (StorageMenu menu : snapshot) {
 				if (menu.isValid()) menu.updateSlot(slot, item);
 			}
 		});

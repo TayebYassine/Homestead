@@ -28,7 +28,6 @@ public class RegionStorage {
 	public static boolean canAccess(Region region, Player player) {
 		if (region.isOwner(player.getUniqueId())) return true;
 		if (region.isPlayerMember(player)) {
-			// Add flag check: return region.getMember(player).hasFlag(CustomFlags.STORAGE);
 			return true;
 		}
 		return region.isPublic();
@@ -45,6 +44,13 @@ public class RegionStorage {
 		String title = MenuUtils.getTitle(28).replace("{region}", region.getName());
 
 		StorageMenu menu = new StorageMenu(player, region.getUniqueId(), title, storage.getSize());
+
+		menu.addItem(18, MenuUtils.getBackButton(), (_player, click) -> {
+			if (click.isLeftClick()) {
+				_player.closeInventory();
+			}
+		});
+
 		menu.open();
 	}
 
