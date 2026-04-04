@@ -42,7 +42,7 @@ public final class Resources {
 	}
 
 	public static void load(Homestead plugin) throws IOException {
-		Logger.info("Loading resources...");
+		Logger.warning("Loading resources...");
 
 		File configFile = new File(plugin.getDataFolder(), RESOURCE_CONFIG);
 

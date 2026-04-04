@@ -144,7 +144,7 @@ public class WarSubCmd extends SubCommandBuilder {
 				List<String> nameList = Arrays.asList(args).subList(3, args.length);
 				String name = String.join(" ", nameList);
 
-				if (name.isEmpty()) name = "Unnamed War";
+				if (name.isEmpty()) name = "War";
 
 				if (name.length() > 512) {
 					Messages.send(player, 145);

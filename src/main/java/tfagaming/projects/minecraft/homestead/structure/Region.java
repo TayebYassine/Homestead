@@ -61,7 +61,7 @@ public class Region {
 		this.description = Resources.<LanguageFile>get(ResourceType.Language).getString("default.region-description").replace("{owner}",
 				player.getName() == null ? "Unknown" : player.getName());
 		this.ownerId = player.getUniqueId();
-		this.location = new SerializableLocation(player.getLocation());
+		this.location = null;
 		this.createdAt = System.currentTimeMillis();
 		this.playerFlags = Resources.<FlagsFile>get(ResourceType.Flags).getDefaultPlayerFlags();
 		this.worldFlags = Resources.<FlagsFile>get(ResourceType.Flags).getDefaultWorldFlags();
