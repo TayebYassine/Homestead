@@ -39,10 +39,16 @@ public class RegionMemberFlags {
 				(_player, context) -> {
 					if (cooldowns.contains(player.getUniqueId())) return;
 
+					if (!player.hasPermission("homestead.region.flags.members")) {
+						Messages.send(player, 8);
+						return;
+					}
+
 					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 							RegionControlFlags.SET_MEMBER_FLAGS)) {
 						return;
 					}
+
 					if (player.getUniqueId().equals(member.getPlayerId())) {
 						Messages.send(player, 159);
 						return;

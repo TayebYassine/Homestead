@@ -79,16 +79,8 @@ public class RegionMenu {
 
 		gui.addItem(12, MenuUtils.getButton(8, placeholder), (_player, event) -> {
 			if (event.isLeftClick()) {
-				if (!player.hasPermission("homestead.region.flags.global")) {
-					Messages.send(player, 8);
-					return;
-				}
 				new GlobalPlayerFlags(player, region);
 			} else if (event.isRightClick()) {
-				if (!player.hasPermission("homestead.region.flags.world")) {
-					Messages.send(player, 8);
-					return;
-				}
 				new RegionWorldFlags(player, region);
 			}
 		});

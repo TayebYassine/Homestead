@@ -41,6 +41,11 @@ public class GlobalPlayerFlags {
 				(_player, context) -> {
 					if (cooldowns.contains(player.getUniqueId())) return;
 
+					if (!player.hasPermission("homestead.region.flags.global")) {
+						Messages.send(player, 8);
+						return;
+					}
+
 					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 							RegionControlFlags.SET_GLOBAL_FLAGS)) {
 						return;

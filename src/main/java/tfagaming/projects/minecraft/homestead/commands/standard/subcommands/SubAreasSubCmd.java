@@ -370,6 +370,11 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					}
 
 					case "flags": {
+						if (!player.hasPermission("homestead.region.subareas.players.flags")) {
+							Messages.send(player, 8);
+							return true;
+						}
+
 						if (args.length < 5) {
 							Messages.send(player, 0, new Placeholder()
 									.add("{usage}", getUsage())

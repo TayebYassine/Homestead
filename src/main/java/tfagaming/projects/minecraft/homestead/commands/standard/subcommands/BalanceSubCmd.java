@@ -30,11 +30,6 @@ public class BalanceSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!player.hasPermission("homestead.region.bank")) {
-			Messages.send(player, 8);
-			return true;
-		}
-
 		if (!Homestead.vault.isEconomyReady()) {
 			Messages.send(player, 69);
 

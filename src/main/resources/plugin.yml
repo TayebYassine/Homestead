@@ -77,6 +77,8 @@ permissions:
     default: true
   homestead.region.subareas.players:
     default: true
+  homestead.region.subareas.players.flags:
+    default: true
   homestead.region.bank:
     default: true
   homestead.region.fly:
@@ -107,6 +109,7 @@ permissions:
       homestead.region.subareas.rename: true
       homestead.region.subareas.flags: true
       homestead.region.subareas.players: true
+      homestead.region.subareas.players.flags: true
       homestead.region.bank: true
       homestead.region.fly: true
       homestead.region.dynamicmaps.icon: true

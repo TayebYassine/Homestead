@@ -47,6 +47,11 @@ public class RegionMemberControlFlags {
 						return;
 					}
 
+					if (!player.hasPermission("homestead.region.flags.members")) {
+						Messages.send(player, 8);
+						return;
+					}
+
 					String flagString = RegionControlFlags.getFlags().get(context.getIndex());
 
 					if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {

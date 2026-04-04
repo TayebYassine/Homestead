@@ -75,21 +75,11 @@ public class SubAreaMenu {
 		gui.addItem(12, MenuUtils.getButton(44, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
-			if (!player.hasPermission("homestead.region.subareas.flags")) {
-				Messages.send(player, 8);
-				return;
-			}
-
 			new SubAreaFlagsMenu(player, region, subArea);
 		});
 
 		gui.addItem(13, MenuUtils.getButton(70, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
-
-			if (!player.hasPermission("homestead.region.subareas.flags")) {
-				Messages.send(player, 8);
-				return;
-			}
 
 			new SubAreaMembers(player, region, subArea);
 		});

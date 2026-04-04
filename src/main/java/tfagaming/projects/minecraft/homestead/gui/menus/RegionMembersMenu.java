@@ -49,10 +49,6 @@ public class RegionMembersMenu {
 						new PlayerInfo(player, member.bukkit(), () -> new RegionMembersMenu(player, region));
 
 					} else if (context.getEvent().isRightClick()) {
-						if (!player.hasPermission("homestead.region.flags.members")) {
-							Messages.send(player, 8);
-							return;
-						}
 						new RegionMemberControlFlags(player, region, member);
 
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
@@ -80,10 +76,6 @@ public class RegionMembersMenu {
 						context.getInstance().setItems(getItems(player, region));
 
 					} else if (context.getEvent().isLeftClick()) {
-						if (!player.hasPermission("homestead.region.flags.members")) {
-							Messages.send(player, 8);
-							return;
-						}
 						new RegionMemberFlags(player, region, member);
 					}
 				});
