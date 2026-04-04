@@ -43,7 +43,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			return;
 		}
 
-		boolean isFeatureEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("enter-exit-region-message.enabled");
+		boolean isRegionInfoMessagesEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("enter-exit-region-message.enabled");
 
 		if (ChunkManager.isChunkClaimed(chunk)) {
 			// Player enters a region
@@ -54,6 +54,15 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			if (sessions.containsKey(player.getUniqueId())
 					&& sessions.get(player.getUniqueId()).equals(region.getUniqueId())) {
 				return;
+			} else {
+				if (!PlayerUtils.isOperator(player) && ClaimFlySession.hasSession(player)) {
+					ClaimFlySession.removeSession(player);
+
+					player.setAllowFlight(false);
+					player.setFlying(false);
+
+					Messages.send(player, 206);
+				}
 			}
 
 			if (!PlayerUtils.isOperator(player) && region.isPlayerBanned(player)) {
@@ -82,7 +91,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				return;
 			}
 
-			if (isFeatureEnabled) {
+			if (isRegionInfoMessagesEnabled) {
 				Placeholder placeholder = new Placeholder()
 						.add("{region-displayname}", region.getDisplayName())
 						.add("{region-owner}", region.getOwner().getName())
@@ -134,7 +143,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 
 			Region region = RegionManager.findRegion(sessions.get(player.getUniqueId()));
 
-			if (isFeatureEnabled) {
+			if (isRegionInfoMessagesEnabled) {
 				Placeholder placeholder = new Placeholder();
 
 				if (region != null) {
@@ -160,7 +169,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				player.removePotionEffect(PotionEffectType.GLOWING);
 			}
 
-			if (ClaimFlySession.hasSession(player)) {
+			if (!PlayerUtils.isOperator(player) && ClaimFlySession.hasSession(player)) {
 				ClaimFlySession.removeSession(player);
 
 				player.setAllowFlight(false);
