@@ -676,6 +676,16 @@ public class Region {
 		return logs;
 	}
 
+	public List<SerializableLog> getLogs(boolean sorted) {
+		if (sorted) {
+			return getLogs().stream()
+					.sorted(Comparator.comparingLong(SerializableLog::getSentAt).reversed())
+					.collect(Collectors.toList());
+		} else {
+			return getLogs();
+		}
+	}
+
 	public void setLogs(List<SerializableLog> logs) {
 		this.logs = logs;
 		updateCache();

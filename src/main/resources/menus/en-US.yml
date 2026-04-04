@@ -181,6 +181,9 @@ buttons:
       - "&7• Weather: &b{region-weather}"
       - "&7• Time: &b{region-time}"
       - ""
+      - "&7You must go outside of region borders and then"
+      - "re-enter to see the applied changes!"
+      - ""
       - "&#FFD54F&n➥ Left-click to change the weather."
       - "&#FFD54F&n➥ Right-click to change the time."
     type: PLAYERHEAD-65f37826161c792d7f6c920b2fa06b88e6845288ab02ad9b65d4bbf5ca2ce1e3
@@ -207,6 +210,7 @@ buttons:
     lore:
       - "&7Ban or unban players."
       - ""
+      - "&e&lNote:"
       - "&eYou cannot trust any banned player. You must"
       - "&eunban them to send an invite."
       - ""

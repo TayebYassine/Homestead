@@ -22,7 +22,7 @@ public class RegionLogs {
 	private List<SerializableLog> logs;
 
 	public RegionLogs(Player player, Region region) {
-		logs = region.getLogs();
+		logs = region.getLogs(true);
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtils.getTitle(13), 9 * 5,
@@ -42,7 +42,7 @@ public class RegionLogs {
 
 					if (context.getEvent().isLeftClick()) {
 						region.setLogAsRead(log.getId());
-						logs = region.getLogs();
+						logs = region.getLogs(true);
 						context.getInstance().setItems(getItems(player, region));
 
 					} else if (context.getEvent().isRightClick()) {
@@ -52,7 +52,7 @@ public class RegionLogs {
 						}
 
 						region.removeLog(log.getId());
-						logs = region.getLogs();
+						logs = region.getLogs(true);
 						context.getInstance().setItems(getItems(player, region));
 					}
 				});
