@@ -43,6 +43,7 @@ public class RegionLevels {
 
 			int current = lvl == null ? 0 : lvl.getLevel();
 			long xp = lvl == null ? 0 : lvl.getExperience();
+			double percentage = lvl == null ? 0.0 : lvl.getProgressPercentage();
 			long needed = Level.getXpForLevel(current);
 			double pct = needed == 0 ? 0 : (double) xp / needed;
 
@@ -53,7 +54,8 @@ public class RegionLevels {
 					.add("{level}", current)
 					.add("{next-lvl}", current + 1)
 					.add("{xp}", NumberUtils.convertToBalance(xp))
-					.add("{next-lvl-xp}", NumberUtils.convertToBalance(needed));
+					.add("{next-lvl-xp}", NumberUtils.convertToBalance(needed))
+					.add("{next-lvl-percentage}", NumberUtils.truncate(percentage));
 
 			ItemStack bluePane = MenuUtils.getButton(75, placeholder);
 			ItemStack grayPane = MenuUtils.getButton(76, placeholder);

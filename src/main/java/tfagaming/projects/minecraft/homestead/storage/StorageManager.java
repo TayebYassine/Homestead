@@ -81,7 +81,7 @@ public class StorageManager {
 		SharedStorage storage = storages.get(regionId);
 		if (storage != null) {
 			storageConfig.set("storages." + regionId.toString(), storage.serialize());
-			saveConfig();
+			plugin.runAsyncTask(StorageManager::saveConfig);
 		}
 	}
 
@@ -93,13 +93,11 @@ public class StorageManager {
 	}
 
 	private static void saveConfig() {
-		plugin.runAsyncTask(() -> {
-			try {
-				storageConfig.save(storageFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
+		try {
+			storageConfig.save(storageFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void registerMenu(UUID regionId, StorageMenu menu) {

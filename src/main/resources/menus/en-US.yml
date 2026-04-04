@@ -182,8 +182,8 @@ buttons:
       - "&7• Weather: &b{region-weather}"
       - "&7• Time: &b{region-time}"
       - ""
-      - "&7You must go outside of region borders and then"
-      - "re-enter to see the applied changes!"
+      - "&7You must go outside of region borders and"
+      - "&7then re-enter to see the applied changes!"
       - ""
       - "&#FFD54F&n➥ Left-click to change the weather."
       - "&#FFD54F&n➥ Right-click to change the time."
@@ -723,12 +723,14 @@ buttons:
   75:
     name: "&#391AE8&lProgress"
     lore:
-      - "&7Next Level: &6{next-lvl} &7- &6{xp}&7/&6{next-lvl-xp} XP"
+      - "&7Progress: &6{xp}&7/&6{next-lvl-xp} XP &7(&a{next-lvl-percentage}%&7)"
+      - "&7Next Level: &6{next-lvl}"
     type: BLUE_STAINED_GLASS_PANE
   76:
     name: "&#808080&lRemaining"
     lore:
-      - "&7Next Level: &6{next-lvl} &7- &6{xp}&7/&6{next-lvl-xp} XP"
+      - "&7Progress: &6{xp}&7/&6{next-lvl-xp} XP &7(&a{next-lvl-percentage}%&7)"
+      - "&7Next Level: &6{next-lvl}"
     type: LIGHT_GRAY_STAINED_GLASS_PANE
   77:
     name: "&#81C784&lLevel {level}"
@@ -763,6 +765,12 @@ buttons:
     type: NETHER_STAR
   81:
     name: "&#BA68C8&lPublic? &r{is-public-regions}"
+    lore:
+      - "&7If &aEnabled&7, only regions with allowed"
+      - "&7permissions for global players to visit it."
+      - ""
+      - "&7If &cDisabled&7, all regions will be listed"
+      - "&7here."
     type: COMPARATOR
 
 # Do NOT modify these

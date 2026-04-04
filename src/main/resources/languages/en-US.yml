@@ -263,6 +263,7 @@ prefix: "&8[&6Homestead&8]&r"
 205: "{__prefix__} &aFlight mode enabled. &7You can only fly within the region borders!"
 206: "{__prefix__} &7Flight mode disabled."
 207: "{__prefix__} &cYou cannot enable flight mode outside a region or in a region you are not trusted in!"
+208: "&aCongratulations, you have unlocked level &6{level}&a!"
 
 logs:
   0: "By {executor}, updated region name to {newname}."
