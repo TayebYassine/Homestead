@@ -55,6 +55,7 @@ public class RegionCommand extends CommandBuilder {
 		registerSubCommand(new LevelsSubCmd());
 		registerSubCommand(new LeaveRegionSubCmd());
 		registerSubCommand(new FlySubCmd());
+		registerSubCommand(new StorageSubCmd());
 	}
 
 	@Override

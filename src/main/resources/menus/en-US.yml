@@ -3,33 +3,34 @@
 # Menu titles
 titles:
   0: "Regions"
-  1: "Region: &2{region}"
-  2: "Player Flags (Global)"
+  1: "Region - &2{region}"
+  2: "Player Flags - &9Global"
   3: "World Flags"
   4: "Manage Players"
   5: "Trusted Players"
-  6: "Player Flags (&3{playername}&r)"
-  7: "Region Control (&3{playername}&r)"
-  8: "Region: &2{region}"
+  6: "Player Flags -&3{playername}&r"
+  7: "Region Control - &3{playername}&r"
+  8: "Region - &2{region}"
   9: "Banned Players"
   10: "Invited Players"
   11: "Chunk List"
   12: "Miscellaneous Settings"
   13: "Logs & Mails"
   14: "Sub-Areas"
-  15: "Sub-Area: &2{subarea}"
+  15: "Sub-Area - &2{subarea}"
   16: "Sub-Area Flags"
-  17: "Region Rating: &2{region}"
+  17: "Region Rating - &2{region}"
   18: "Top Regions" # by Bank Balance
   19: "Top Regions" # by Chunks
   20: "Top Regions" # by Members
   21: "Top Regions" # by Creation Date
   22: "Top Regions" # by Player Rating
-  23: "Rewards: &2{region}"
+  23: "Rewards - &2{region}"
   24: "Sub-Area Members"
-  25: "Sub-Area Flags (&3{playername}&r)"
-  26: "Levels and Rank: &2{region}"
+  25: "Sub-Area Flags - &3{playername}&r"
+  26: "Levels and Rank - &2{region}"
   27: "Player Information"
+  28: "Storage - &2{region}"
 
 # Menu buttons
 # Each button has its own unique index, which you cannot change or add/remove buttons.

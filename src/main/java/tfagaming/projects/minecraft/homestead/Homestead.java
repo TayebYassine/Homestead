@@ -35,6 +35,7 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.storage.StorageManager;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
@@ -155,6 +156,8 @@ public class Homestead extends JavaPlugin {
 		} else {
 			Logger.warning("Loading service providers with Vault... (Using " + (!isFolia() ? "Legacy Vault" : "VaultUnlocked") + ")");
 		}
+
+		StorageManager.init(this);
 
 		Homestead.vault = new Vault(this);
 
@@ -570,6 +573,10 @@ public class Homestead extends JavaPlugin {
 		if (moveCheckTask != null) {
 			moveCheckTask.cancel();
 		}
+
+		Logger.warning("Saving storage for each region...");
+
+		StorageManager.saveAll();
 
 		Logger.warning("Cleaning cache...");
 

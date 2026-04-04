@@ -31,6 +31,7 @@ public final class BrigadierCommands {
 				.literalSub("rewards").end()
 				.literalSub("top").end()
 				.literalSub("fly").end()
+				.literalSub("storage").end()
 
 				.literalSub("accept")
 				.stringArg("region")

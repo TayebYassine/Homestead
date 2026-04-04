@@ -23,6 +23,7 @@ public class Menu implements Listener {
 	private final Homestead plugin;
 	private final Inventory inventory;
 	private final Map<Integer, BiConsumer<Player, InventoryClickEvent>> callbacks;
+	private boolean passthrough = false;
 
 	public Menu(String title, int size) {
 		this.plugin = Homestead.getInstance();
@@ -30,6 +31,11 @@ public class Menu implements Listener {
 		this.callbacks = new HashMap<>();
 
 		Bukkit.getPluginManager().registerEvents(this, plugin);
+	}
+
+	public Menu setPassthrough(boolean passthrough) {
+		this.passthrough = passthrough;
+		return this;
 	}
 
 	public void addItem(int slot, ItemStack itemStack, BiConsumer<Player, InventoryClickEvent> callback) {
@@ -73,6 +79,8 @@ public class Menu implements Listener {
 		}
 
 		if (InventoryManager.getMenu(player) == this && event.getInventory().equals(this.inventory)) {
+			if (passthrough) return;
+
 			event.setCancelled(true);
 			if (event.getClick() == ClickType.MIDDLE) return;
 
