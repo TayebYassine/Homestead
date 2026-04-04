@@ -696,7 +696,7 @@ public class Region {
 			return;
 		}
 
-		if (logs.size() >= 150) {
+		if (logs.size() >= 100) {
 			removeOldestLog();
 		}
 

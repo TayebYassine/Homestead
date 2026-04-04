@@ -21,6 +21,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
 import java.util.ArrayList;
@@ -175,24 +176,9 @@ public final class RegionManager {
 			return;
 		}
 
+		message = ColorTranslator.preserve(message);
+
 		region.addLog(new SerializableLog(author, message));
-	}
-
-	/**
-	 * Appends a system log entry to the region using a language-file message path.
-	 * @param id The region UUID
-	 * @param messagePath The key under "logs." in the language file
-	 */
-	public static void addNewLog(UUID id, int messagePath) {
-		Region region = findRegion(id);
-
-		if (region == null) {
-			return;
-		}
-
-		String message = Resources.<LanguageFile>get(ResourceType.Language).getString("logs." + messagePath);
-
-		region.addLog(new SerializableLog(Resources.<LanguageFile>get(ResourceType.Language).getString("default.log-author"), message));
 	}
 
 	/**
@@ -210,8 +196,19 @@ public final class RegionManager {
 
 		String message = Resources.<LanguageFile>get(ResourceType.Language).getString("logs." + messagePath);
 
+		message = ColorTranslator.preserve(message);
+
 		region.addLog(new SerializableLog(Resources.<LanguageFile>get(ResourceType.Language).getString("default.log-author"),
 				Formatter.applyPlaceholders(message, placeholder)));
+	}
+
+	/**
+	 * Appends a system log entry to the region using a language-file message path.
+	 * @param id The region UUID
+	 * @param messagePath The key under "logs." in the language file
+	 */
+	public static void addNewLog(UUID id, int messagePath) {
+		addNewLog(id, messagePath, new Placeholder());
 	}
 
 	/**

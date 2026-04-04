@@ -102,7 +102,7 @@ public class RegionLogs {
 					.add("{index}", i + 1)
 					.add("{log-sentat}", Formatter.getDate(log.getSentAt()))
 					.add("{log-author}", log.getAuthor())
-					.add("{log-message}", ColorTranslator.preserve(wrapMessage(log.getMessage())));
+					.add("{log-message}", wrapMessage(log.getMessage()));
 
 			items.add(MenuUtils.getButton(log.isRead() ? 40 : 39, placeholder));
 		}
