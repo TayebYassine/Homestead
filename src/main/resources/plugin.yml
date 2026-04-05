@@ -175,6 +175,8 @@ permissions:
     default: true
   homestead.commands.region.subareas:
     default: true
+  homestead.commands.region.storage:
+    default: true
   homestead.commands.region.top:
     default: true
   homestead.commands.region.trust:
@@ -222,6 +224,7 @@ permissions:
       homestead.commands.region.rewards: true
       homestead.commands.region.set: true
       homestead.commands.region.subareas: true
+      homestead.commands.region.storage: true
       homestead.commands.region.top: true
       homestead.commands.region.trust: true
       homestead.commands.region.unban: true
