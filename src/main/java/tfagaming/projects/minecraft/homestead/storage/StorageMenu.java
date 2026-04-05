@@ -17,7 +17,6 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.gui.InventoryManager;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -92,8 +91,6 @@ public class StorageMenu implements Listener {
 		HandlerList.unregisterAll(this);
 		unregisterPassthrough();
 
-		returnCursorToPlayer();
-
 		if (player.getOpenInventory().getTopInventory().equals(inventory)) {
 			plugin.runSyncTask(player::closeInventory);
 		}
@@ -111,25 +108,30 @@ public class StorageMenu implements Listener {
 		if (!event.getWhoClicked().equals(player)) return;
 		if (!event.getInventory().equals(inventory)) return;
 
-		event.setCancelled(true);
-		if (event.getClick() == ClickType.MIDDLE || !valid) return;
+		if (event.getClick() == ClickType.MIDDLE || !valid) {
+			event.setCancelled(true);
+			return;
+		}
 
 		int slot = event.getRawSlot();
 
-		if (callbacks.containsKey(slot)) {
+		if (slot >= 0 && callbacks.containsKey(slot)) {
+			event.setCancelled(true);
 			plugin.runPlayerTask(player, () -> callbacks.get(slot).accept(player, event));
 			return;
 		}
 
-		if (slot < 0) return;
-
 		if (slot >= storage.getSize()) {
 			if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
+				event.setCancelled(true);
 				handleShiftClickFromInventory(event);
 				plugin.runPlayerTask(player, player::updateInventory);
 			}
 			return;
 		}
+
+		event.setCancelled(true);
+		if (slot < 0) return;
 
 		handleStorageClick(event, slot);
 		final ItemStack cursorSnapshot = this.cursorItem;
@@ -394,16 +396,6 @@ public class StorageMenu implements Listener {
 		}
 	}
 
-	private void returnCursorToPlayer() {
-		if (cursorItem != null && !cursorItem.getType().isAir() && player.isOnline()) {
-			Map<Integer, ItemStack> leftover = player.getInventory().addItem(cursorItem);
-			for (ItemStack item : leftover.values()) {
-				player.getWorld().dropItemNaturally(player.getLocation(), item);
-			}
-		}
-		cursorItem = null;
-	}
-
 	private void cleanup() {
 		if (!valid) return;
 		valid = false;
@@ -411,6 +403,5 @@ public class StorageMenu implements Listener {
 		StorageManager.unregisterMenu(regionId, this);
 		HandlerList.unregisterAll(this);
 		unregisterPassthrough();
-		returnCursorToPlayer();
 	}
 }
