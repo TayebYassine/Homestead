@@ -453,8 +453,8 @@ public final class MariaDB {
 			}
 			deleteStmt.executeBatch();
 
-				Logger.debug("Exported " + cacheRegionIds.size() + " regions and deleted " + dbRegionIds.size()
-						+ " regions from MariaDB.");
+			Logger.debug("Exported " + cacheRegionIds.size() + " regions and deleted " + dbRegionIds.size()
+					+ " regions from MariaDB.");
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
@@ -519,8 +519,8 @@ public final class MariaDB {
 			}
 			deleteStmt.executeBatch();
 
-				Logger.debug("Exported " + cacheWarIds.size() + " wars and deleted "
-						+ dbWarIds.size() + " wars from MariaDB.");
+			Logger.debug("Exported " + cacheWarIds.size() + " wars and deleted "
+					+ dbWarIds.size() + " wars from MariaDB.");
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
@@ -591,8 +591,8 @@ public final class MariaDB {
 			}
 			deleteStmt.executeBatch();
 
-				Logger.debug("Exported " + cacheSubAreaIds.size() + " sub-areas and deleted " +
-						dbSubAreaIds.size() + " sub-areas.");
+			Logger.debug("Exported " + cacheSubAreaIds.size() + " sub-areas and deleted " +
+					dbSubAreaIds.size() + " sub-areas.");
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
@@ -651,7 +651,7 @@ public final class MariaDB {
 			}
 			delete.executeBatch();
 
-				Logger.debug("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
+			Logger.debug("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}

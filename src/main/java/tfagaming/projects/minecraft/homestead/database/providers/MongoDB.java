@@ -313,7 +313,7 @@ public final class MongoDB {
 			regions().deleteOne(Filters.eq("id", deletedId));
 		}
 
-			Logger.debug("Exported " + cacheIds.size() + " regions and deleted " + dbIds.size() + " regions.");
+		Logger.debug("Exported " + cacheIds.size() + " regions and deleted " + dbIds.size() + " regions.");
 	}
 
 	public void exportWars() {
@@ -346,7 +346,7 @@ public final class MongoDB {
 			wars().deleteOne(Filters.eq("id", deletedId));
 		}
 
-			Logger.debug("Exported " + cacheIds.size() + " wars and deleted " + dbIds.size() + " wars.");
+		Logger.debug("Exported " + cacheIds.size() + " wars and deleted " + dbIds.size() + " wars.");
 	}
 
 	public void exportSubAreas() {
@@ -382,7 +382,7 @@ public final class MongoDB {
 			subareas().deleteOne(Filters.eq("id", deletedId));
 		}
 
-			Logger.debug("Exported " + cacheIds.size() + " sub-areas and deleted " + dbIds.size() + " sub-areas.");
+		Logger.debug("Exported " + cacheIds.size() + " sub-areas and deleted " + dbIds.size() + " sub-areas.");
 	}
 
 	public void exportLevels() {
@@ -412,7 +412,7 @@ public final class MongoDB {
 			levels().deleteOne(Filters.eq("id", deletedId));
 		}
 
-			Logger.debug("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
+		Logger.debug("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
 	}
 
 	public void closeConnection() {

@@ -379,8 +379,8 @@ public final class YAML {
 			}
 		}
 
-			Logger.debug(
-					"Exported " + savedCount + " regions and deleted " + deletedCount + " regions.");
+		Logger.debug(
+				"Exported " + savedCount + " regions and deleted " + deletedCount + " regions.");
 	}
 
 	public void exportWars() {
@@ -439,8 +439,8 @@ public final class YAML {
 			}
 		}
 
-			Logger.debug(
-					"Exported " + savedCount + " wars and deleted " + deletedCount + " wars.");
+		Logger.debug(
+				"Exported " + savedCount + " wars and deleted " + deletedCount + " wars.");
 	}
 
 	public void exportSubAreas() {
@@ -492,7 +492,7 @@ public final class YAML {
 			if (toDelete.delete()) deleted++;
 		}
 
-			Logger.debug("Exported " + saved + " sub-areas and deleted " + deleted + " sub-areas.");
+		Logger.debug("Exported " + saved + " sub-areas and deleted " + deleted + " sub-areas.");
 	}
 
 	public void exportLevels() {
@@ -538,7 +538,7 @@ public final class YAML {
 			if (toDelete.delete()) deleted++;
 		}
 
-			Logger.debug("Exported " + saved + " levels and deleted " + deleted + " levels.");
+		Logger.debug("Exported " + saved + " levels and deleted " + deleted + " levels.");
 	}
 
 	public void closeConnection() {

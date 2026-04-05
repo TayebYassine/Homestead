@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.storage.StorageManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
@@ -155,6 +156,12 @@ public final class RegionManager {
 				Homestead.getInstance().runAsyncTask(() -> {
 					WorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
 				});
+			}
+		}
+
+		for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+			if (TargetRegionSession.hasSession(onlinePlayer) && TargetRegionSession.getRegion(onlinePlayer).getUniqueId().equals(id)) {
+				TargetRegionSession.randomizeRegion(onlinePlayer);
 			}
 		}
 

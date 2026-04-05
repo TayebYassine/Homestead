@@ -432,8 +432,8 @@ public final class MySQL {
 
 			deleteStmt.executeBatch();
 
-				Logger.debug("Exported " + cacheRegionIds.size() + " regions and deleted " + dbRegionIds.size()
-						+ " regions.");
+			Logger.debug("Exported " + cacheRegionIds.size() + " regions and deleted " + dbRegionIds.size()
+					+ " regions.");
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
@@ -497,8 +497,8 @@ public final class MySQL {
 
 			deleteStmt.executeBatch();
 
-				Logger.debug("Exported " + cacheWarIds.size() + " wars and deleted " + dbWarIds.size()
-						+ " wars.");
+			Logger.debug("Exported " + cacheWarIds.size() + " wars and deleted " + dbWarIds.size()
+					+ " wars.");
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
@@ -563,8 +563,8 @@ public final class MySQL {
 			}
 			deleteStmt.executeBatch();
 
-				Logger.debug("Exported " + cacheSubAreaIds.size() + " sub-areas and deleted " +
-						dbSubAreaIds.size() + " sub-areas.");
+			Logger.debug("Exported " + cacheSubAreaIds.size() + " sub-areas and deleted " +
+					dbSubAreaIds.size() + " sub-areas.");
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
@@ -621,7 +621,7 @@ public final class MySQL {
 			}
 			delete.executeBatch();
 
-				Logger.debug("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
+			Logger.debug("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
 		} catch (SQLException e) {
 			Homestead.getInstance().endInstance(e);
 		}
