@@ -4,7 +4,7 @@ import org.apache.commons.io.FileUtils;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.resources.files.*;
-import tfagaming.projects.minecraft.homestead.tools.validator.YAMLValidator;
+import tfagaming.projects.minecraft.homestead.tools.validator.ResourceValidator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -143,7 +143,7 @@ public final class Resources {
 			File targetFile,
 			Set<String> filteredSubtrees) throws IOException {
 
-		YAMLValidator validator = new YAMLValidator(referenceResource, targetFile, filteredSubtrees);
+		ResourceValidator validator = new ResourceValidator(referenceResource, targetFile, filteredSubtrees);
 
 		if (!validator.validate()) {
 			Logger.warning("'" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");

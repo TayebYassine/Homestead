@@ -7,40 +7,26 @@ disabled-flags:
 # Flag-Specific Configuration
 # Special behavior tweaks for specific flags
 flags-configuration:
-  # Spawner Mob Spawn Behavior
-  # Should mobs from spawners ignore the spawn flags?
-  #
-  # Recommendation: true (spawners should always work)
+  # Should mobs from spawners ignore spawn flags? (recommended: true)
   exclude-spawners: true
 
-  # Allow all flags for players once they join a region?
+  # Allow all flags for trusted players (once they join a region)?
   allow-all-flags-for-trusted-players: true
-
 
 # ============================================================================
 # DEFAULT FLAG VALUES
 # ============================================================================
 # These are the DEFAULT values for all new regions
-# Players can change these for their own regions (unless flag is disabled above)
+# Players can change these (unless flag is disabled above)
+# true = allow, false = deny
 # ============================================================================
 
 # Global Player Flags (Non-Members)
-# Controls what players who are NOT trusted members can do
-#
-# These apply to:
-# - Non-members trying to interact in regions
-# - Random players passing through
-# - Visitors to public regions
-#
-# These do NOT apply to:
-# - Region owners (they have full access)
-# - Trusted members (they have full access unless member flags set)
-#
-# Format: true = allow action, false = deny action
+# Controls what non-members can do in regions
 default-players-flags:
   break-blocks: false            # Break/destroy blocks
   place-blocks: false            # Place blocks
-  containers: false              # Open chests, barrels, shulker boxes, etc.
+  containers: false              # Open chests, barrels, shulker boxes
   doors: false                   # Open/close doors
   trap-doors: false              # Open/close trapdoors
   fence-gates: false             # Open/close fence gates
@@ -51,57 +37,52 @@ default-players-flags:
   pressure-plates: false         # Trigger pressure plates
   use-bells: false               # Ring bells
   trigger-tripwire: false        # Activate tripwires
-  frost-walker: false            # Use frost walker boots (creates ice)
+  frost-walker: false            # Use frost walker boots
   harvest-crops: false           # Harvest/break crops
-  block-trampling: false         # Trample farmland and turtle eggs
+  block-trampling: false         # Trample farmland/turtle eggs
   general-interaction: false     # General interaction catch-all
   armor-stands: false            # Remove armor from armor stands
-  interact-entities: false       # Interact with entities (general)
+  interact-entities: false       # Interact with entities
   item-frame-interaction: false  # Add/remove items from item frames
-  damage-passive-entities: false # Kill passive mobs (cows, sheep, pigs, etc.)
-  damage-hostile-entities: false # Kill hostile mobs (zombies, skeletons, etc.)
+  damage-passive-entities: false # Kill passive mobs
+  damage-hostile-entities: false # Kill hostile mobs
   trade-villagers: false         # Trade with villagers
   ignite: false                  # Start fires with flint and steel
-  vehicles: false                # Ride minecarts, horses, boats, etc.
-  teleport-spawn: false          # Teleport to region spawn with /region home
-  passthrough: true              # Enter and move through the region (set false for private)
-  pvp: false                     # Fight other players (enable for PvP arenas)
-  take-fall-damage: true         # Take fall damage (set false for parkour areas)
-  teleport: false                # Teleport with ender pearls or chorus fruit
-  throw-potions: false           # Throw splash/lingering potions
+  vehicles: false                # Ride minecarts, horses, boats
+  teleport-spawn: false          # Teleport to region spawn
+  passthrough: true              # Enter/move through region (false = private)
+  pvp: false                     # PvP combat
+  take-fall-damage: true         # Fall damage (false for parkour)
+  teleport: false                # Ender pearls/chorus fruit
+  throw-potions: false           # Splash/lingering potions
   pickup-items: true             # Pick up dropped items
-  sleep: false                   # Use beds to sleep
-  trigger-raid: false            # Start raids by entering with Bad Omen effect
-  elytra: true                   # Fly with elytra
+  sleep: false                   # Use beds
+  trigger-raid: false            # Start raids with Bad Omen
+  elytra: true                   # Elytra flight
   spawn-entities: false          # Use spawn eggs
 
 # World/Environment Flags
-# Controls environmental effects and mob behavior inside regions
-#
-# These do NOT apply to wilderness (unclaimed areas)
-# Only affect claimed chunks
-#
-# Format: true = allow, false = prevent
+# Controls environmental effects and mob behavior
 default-world-flags:
-  passive-entities-spawn: true      # Allow passive mobs (animals) to spawn
-  hostile-entities-spawn: true      # Allow hostile mobs (monsters) to spawn
-  entities-grief: false             # Allow entities (except creepers) to damage blocks
-  entities-damage-entities: false   # Allow entities to attack each other
-  leaves-decay: true                # Allow leaves to decay naturally
-  fire-spread: false                # Allow fire to spread to other blocks
-  liquid-flow: false                # Allow water/lava to flow into region from outside
-  explosions-damage: false          # Allow explosions (except wither) to damage blocks
-  wither-damage: false              # Allow wither to damage blocks
-  wilderness-pistons: false         # Allow pistons OUTSIDE region to push blocks into region
-  wilderness-dispensers: false      # Allow dispensers OUTSIDE region to dispense into region
-  wilderness-minecarts: false       # Allow minecarts from outside to enter region
-  plant-growth: true                # Allow crops, saplings, etc. to grow
-  grass-growth: true                # Allow grass to spread
-  sculk-spread: true                # Allow sculk to spread from shriekers
-  player-glowing: true              # Give players glowing effect in region
-  snow-melting: true                # Allow snow to melt
-  ice-melting: true                 # Allow ice to melt
-  snowman-trails: true              # Allow snow golems to leave snow trails
-  windcharge-burst: false           # Allow wind charges to burst in region
-  copper-golems-interaction: false   # Allow copper golems from outside to enter region
-  wars: false                       # Allow this region to be targeted for war declarations
+  passive-entities-spawn: true      # Passive mobs (animals) spawn
+  hostile-entities-spawn: true      # Hostile mobs (monsters) spawn
+  entities-grief: false             # Entities damage blocks (except creepers)
+  entities-damage-entities: false   # Entities attack each other
+  leaves-decay: true                # Leaves decay naturally
+  fire-spread: false                # Fire spreads to other blocks
+  liquid-flow: false                # Water/lava flows into region from outside
+  explosions-damage: false          # Explosions damage blocks (except wither)
+  wither-damage: false              # Wither damage
+  wilderness-pistons: false         # Pistons outside push blocks into region
+  wilderness-dispensers: false      # Dispensers outside dispense into region
+  wilderness-minecarts: false       # Minecarts from outside enter region
+  plant-growth: true                # Crops, saplings grow
+  grass-growth: true                # Grass spreads
+  sculk-spread: true                # Sculk spreads from shriekers
+  player-glowing: true              # Players have glowing effect
+  snow-melting: true                # Snow melts
+  ice-melting: true                 # Ice melts
+  snowman-trails: true              # Snow golems leave snow trails
+  windcharge-burst: false           # Wind charges burst
+  copper-golems-interaction: false  # Copper golems from outside enter
+  wars: false                       # Region can be targeted for war

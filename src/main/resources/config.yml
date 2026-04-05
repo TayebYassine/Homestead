@@ -1,74 +1,33 @@
 # ============================================================================
 #                    HOMESTEAD CONFIGURATION FILE
 # ============================================================================
-#
 # Homestead - A free, open-source land claiming plugin for Minecraft
-# Developed with <3 by TayebYassine
-#
-# Official Documentation: https://tayebyassine.github.io/Homestead/
+# Documentation: https://tayebyassine.github.io/Homestead/
 # Discord Support: https://discord.gg/uh7gqDY6sz
 # Repository: https://github.com/TayebYassine/Homestead
 #
-# ============================================================================
-# IMPORTANT NOTES:
-# ============================================================================
-#
-# - Made a mistake? Delete this file and restart - a fresh one will generate
-# - Need help? Check the documentation or join our Discord server
-# - Found a bug? Report it on GitHub with full details
-# - All settings take effect after /hsadmin reload or server restart
-# - Some features require economy plugins (Vault + EssentialsX or similar)
-# - Some features require permissions plugins (LuckPerms recommended)
-#
+# IMPORTANT: Delete this file and restart to regenerate defaults
+# All settings take effect after /hsadmin reload or server restart
 # ============================================================================
 
 # Debug Mode - Show detailed console messages for troubleshooting
-# When enabled, you'll see extra information about:
-# - Dynamic map updates
-# - Cache saves to database
-# - Region operations
-# - Plugin events
-#
-# WARNING: On busy servers (50+ concurrent players), this can flood your
-# console and make logs.txt very large. Only enable when debugging issues.
-#
-# Values: true = Enable debug logging, false = Quiet mode
+# WARNING: Can flood console on busy servers. Only enable when debugging.
 debug: false
 
 # Anonymous Usage Statistics (bStats and FastStats)
-# Help us improve Homestead by sharing anonymous server statistics:
-# - Number of servers using Homestead
-# - Total regions managed across all servers
-# - Total chunks claimed
-# - Feature usage statistics
-#
-# NO personal data, IP addresses, or server names are collected.
-# View public stats: https://bstats.org/plugin/bukkit/Homestead, https://faststats.dev/project/homestead/minecraft-plugin-1
-#
-# Benefits of keeping this enabled:
-# - Developers know which features are popular
-# - Shows community size to potential users
-# - Helps justify continued development
-#
-# Values: true = Share anonymous stats, false = Keep data private
+# NO personal data collected. https://bstats.org/privacy-policy https://faststats.dev/privacy
 metrics: true
 
 # ============================================================================
-# LANGUAGE CONFIGURATION
+# LANGUAGE AND MENUS CONFIGURATION
 # ============================================================================
 
-# Language File Selection
-# Choose which language file to load from the languages/ and menus/ folder
-#
-# Default available: en-US (English - United States)
-# Custom languages: Create a copy of en-US.yml, translate it, and reference here
-#
-# Format: "filename" (without .yml extension)
-# Example: "es-ES" loads languages/es-ES.yml (Spanish)
-#
-# If the specified file doesn't exist, en-US is used as fallback
-# See documentation for translation guide: docs/Configuration/Language.md
+# Language file to load from languages/ folder
+# Fallback: en-US if file doesn't exist
 language: "en-US"
+
+# Menu file to load from menus/ folder
+# Fallback: en-US if file doesn't exist
 menus: "en-US"
 
 # ============================================================================
@@ -76,258 +35,95 @@ menus: "en-US"
 # ============================================================================
 
 database:
-  # Database Provider Selection
-  # Choose where to store all region data, claims, and player information
-  #
-  # Available providers:
-  #
-  # - sqlite (Default, recommended for most servers)
-  #   Good for: Small to medium servers (< 100 daily players)
-  #   Pros: No setup required, automatic, simple
-  #   Cons: Less performant with many players, single file
-  #
-  # - mysql
-  #   Good for: Large servers (100+ daily players)
-  #   Pros: Excellent performance, can run on separate machine, scalable
-  #   Cons: Requires MySQL server setup and configuration
-  #
-  # - mariadb
-  #   Good for: Large servers (100+ daily players)
-  #   Pros: MySQL alternative, same performance benefits
-  #   Cons: Requires MariaDB server setup
-  #
-  # - postgresql
-  #   Good for: Large servers (100+ daily players)
-  #   Pros: Advanced features, excellent reliability
-  #   Cons: Requires PostgreSQL server setup
-  #
-  # - mongodb
-  #   Good for: Large to medium servers (100+ daily players)
-  #   Pros: Mostly perfect
-  #   Cons: Requires a subscription for different tiers (free is available)
-  #
-  # - yaml
-  #   Good for: Very small/friend servers (< 20 players)
-  #   Pros: Human-readable files, easy to edit manually
-  #   Cons: Slowest option, not recommended for production
+  # Provider: sqlite (default), mysql, mariadb, postgresql, mongodb, yaml
+  # sqlite: Good for small-medium servers, no setup required
+  # mysql/mariadb/postgresql: Good for large servers (100+ players)
+  # mongodb: Good for large servers (requires subscription for tiers)
+  # yaml: Human-readable, slowest (not recommended for production)
   provider: "sqlite"
 
-  # PostgreSQL Connection Settings
-  # Only used if provider is set to "postgresql"
-  # Note: Default PostgreSQL port is 5432, not 3306
+  # PostgreSQL settings (only used if provider = "postgresql")
   postgresql:
-    host: "localhost"           # Database server address (IP or domain)
-    port: 3306                  # PostgreSQL port (default: 5432)
-    username: "USERNAME"        # Database user with full permissions
-    password: "PASSWORD"        # Database password (keep secure!)
-    database: "homestead_data"  # Database name (create this first)
-    table_prefix: ""            # Optional prefix for table names (e.g., "hs_")
+    host: "localhost"
+    port: 5432
+    username: "USERNAME"
+    password: "PASSWORD"
+    database: "homestead_data"
+    table_prefix: ""
 
-  # MariaDB Connection Settings
-  # Only used if provider is set to "mariadb"
-  # MariaDB is a MySQL fork with similar configuration
+  # MariaDB settings (only used if provider = "mariadb")
   mariadb:
-    host: "localhost"           # Database server address
-    port: 3306                  # MariaDB port (default: 3306)
-    username: "USERNAME"        # Database user
-    password: "PASSWORD"        # Database password
-    database: "homestead_data"  # Database name
-    table_prefix: ""            # Table name prefix (optional)
+    host: "localhost"
+    port: 3306
+    username: "USERNAME"
+    password: "PASSWORD"
+    database: "homestead_data"
+    table_prefix: ""
 
-  # MySQL Connection Settings
-  # Only used if provider is set to "mysql"
-  # Most popular choice for Minecraft servers
+  # MySQL settings (only used if provider = "mysql")
   mysql:
-    host: "localhost"           # Database server address
-    port: 3306                  # MySQL port (default: 3306)
-    username: "USERNAME"        # Database user
-    password: "PASSWORD"        # Database password
-    database: "homestead_data"  # Database name
-    table_prefix: ""            # Table name prefix (optional)
+    host: "localhost"
+    port: 3306
+    username: "USERNAME"
+    password: "PASSWORD"
+    database: "homestead_data"
+    table_prefix: ""
 
-  # MongoDB Connection Settings
-  # Only used if provider is set to "mongodb"
+  # MongoDB settings (only used if provider = "mongodb")
   mongodb:
-    uri: "mongodb://localhost:27017" # or a full Atlas SRV URI, e.g. mongodb+srv://...
+    uri: "mongodb://localhost:27017"  # Or Atlas SRV URI
     database: "homestead"
     collection_prefix: "hs_"
 
-  # SQLite Configuration
-  # Only used if provider is set to "sqlite"
-  # File will be created automatically in the server's directory
-  # No additional setup required - works out of the box
+  # SQLite filename (only used if provider = "sqlite")
   sqlite: "homestead_data.db"
 
-# Cache Flush Interval
-# How often (in seconds) cached data is written to the database
-#
-# What is caching?
-# Homestead keeps recent region data in memory for fast access, then periodically
-# saves changes to disk. This improves performance significantly.
-#
-# Recommendations by server size:
-# - Small servers (< 20 players): 30 seconds (default)
-# - Medium servers (20-50 players): 60 seconds
-# - Large servers (50-100 players): 120-180 seconds
-# - Very large servers (100+ players with SQLite): 300 seconds (5 minutes)
-#
-# Lower values = More frequent saves, slightly more CPU usage
-# Higher values = Less frequent saves, better performance, slight data loss risk on crash
-#
-# Note: Data is ALWAYS saved when:
-# - Server stops gracefully
-# - Player logs out
-# - Region is deleted
-# - /hsadmin reload is used
+# Cache Flush Interval (seconds)
+# How often cached data is written to database
+# Lower = frequent saves, more CPU usage | Higher = better performance, slight crash risk
+# Recommendations: <20 players: 30s | 20-50: 60s | 50-100: 120-180s | 100+: 300s
 cache-interval: 30
 
 # ============================================================================
 # PLUGIN INTEGRATIONS
 # ============================================================================
 
-# WorldGuard Integration
-# Prevent claiming inside WorldGuard-protected regions
-#
-# Requires: WorldGuard plugin installed
-#
-# When enabled:
-# - Players can't claim chunks inside WorldGuard regions
-# - Protects spawn, arenas, admin areas, event zones
-# - Existing Homestead regions inside WG areas are unaffected
-#
-# Perfect for:
-# - Protecting spawn from claims
-# - Reserving PvP arenas
-# - Admin/staff building areas
-# - Event locations
+# WorldGuard Integration - Prevent claiming inside WG-protected regions
 worldguard:
-  # Prevent claiming in WorldGuard regions
-  # Recommended: true (prevents conflicts and protects special areas)
   protect-existing-regions: true
 
-# WorldEdit Integration
-# Regenerate chunks when regions are deleted
-#
-# Requires: WorldEdit plugin installed
-#
-# WARNING: This feature is deprecated by WorldEdit developers
-# Use with extreme caution!
-#
-# When enabled:
-# - Deleting a region regenerates all claimed chunks
-# - Terrain restored to original world generation
-# - All builds, chests, entities in those chunks are DELETED
-# - Cannot be undone!
-#
-# Performance impact:
-# - Very heavy on server resources
-# - Can cause lag spikes or freezes
-# - Not recommended for servers with 30+ concurrent players
-# - Especially bad with large regions (10+ chunks)
-#
-# When to use:
-# - Small servers with good hardware
-# - Low player count
-# - You want automated cleanup
-# - Understand and accept the risks
-#
-# When NOT to use:
-# - Shared/budget hosting
-# - High player count
-# - Large regions common
-# - Any lag concerns
+# WorldEdit Integration - Regenerate chunks when regions are deleted
+# WARNING: Deprecated by WorldEdit. Heavy performance impact. Use with caution.
 worldedit:
-  # Enable chunk regeneration on region deletion
-  # DEPRECATED: Use at your own risk
-  # Recommendation: false (disabled)
   regenerate-chunks: false
 
-# PlaceholderAPI Integration
-# Display Homestead data in chat, tab lists, scoreboards, etc.
-#
-# Requires: PlaceholderAPI plugin installed
+# PlaceholderAPI Integration - Display Homestead data in chat/tab/scoreboards
 placeholderapi:
-  # Default values when player has no region or data unavailable
-  # These prevent ugly "null" or blank spaces in displays
   default:
-    region_bank: "None"              # No region = no bank
-    region_name: "None"              # No region owned
-    region_claimed_chunks: "0"       # No chunks claimed
-    region_max_chunks: "0"           # No claim limit (no region)
-    region_trusted_members: "0"      # No members
-    region_max_members: "0"          # No member limit
-    region_current: "&2Wilderness"   # Not in any region
-    upkeep_amount: "0,00"            # No upkeep owed
-    upkeep_at: "Never"               # No upkeep scheduled
-    war_name: "None"                 # No active war
-    war_prize: "0,00"                # No war prize
+    region_bank: "None"
+    region_name: "None"
+    region_claimed_chunks: "0"
+    region_max_chunks: "0"
+    region_trusted_members: "0"
+    region_max_members: "0"
+    region_current: "&2Wilderness"
+    upkeep_amount: "0,00"
+    upkeep_at: "Never"
+    war_name: "None"
+    war_prize: "0,00"
 
-# Dynamic Web Maps Integration
-# Show claimed regions on dynmap, Squaremap, BlueMap, or Pl3xMap
-#
-# Requires: One of these map plugins installed:
-# - dynmap (http://localhost:8123/)
-# - Squaremap (http://localhost:8080/)
-# - Pl3xMap (http://localhost:8080/)
-# - BlueMap (http://localhost:8100/)
-#
-# Features:
-# - Claimed chunks visible on web map
-# - Custom icons per region
-# - Custom colors per region
-# - Region information on click
-# - Auto-updates when claims change
+# Dynamic Web Maps Integration (dynmap, squaremap, BlueMap, Pl3xMap)
 dynamic-maps:
-  # Enable map integration
-  # Automatically detects which map plugin you have
   enabled: true
 
-  # Update Frequency (in seconds)
-  # How often the map refreshes to show new/changed claims
-  #
-  # Lower values (30-60):
-  # - More frequent updates
-  # - Shows changes faster
-  # - Slightly more CPU usage
-  #
-  # Higher values (120-300):
-  # - Less frequent updates
-  # - Better performance
-  # - Slight delay showing changes
-  #
-  # Recommendation: 60 for most servers
+  # Update frequency (seconds). Lower = faster updates, more CPU usage
   update-interval: 60
 
-  # Custom Region Icons
-  # Let players choose icons for their regions on the map
+  # Custom region icons (players select with /region set icon [name])
   icons:
-    # Enable custom icons feature
-    # Players can select from the list below
     enabled: false
-
-    # Default icon (shown when player hasn't chosen one)
-    # Must be a direct link to an image file
     default: https://imgur.com/TUQzlCK.png
-
-    # Icon size on map (in pixels)
-    # 16-32 is typical, too large can be overwhelming
     size: 20
-
-    # Available Icons
-    # Players can choose from these with /region set icon [name]
-    #
-    # Format: IconName: https://direct-url-to-image.png
-    #
-    # Tips:
-    # - Use Imgur or other reliable image hosts
-    # - Must be direct image links (ending in .png, .jpg, etc.)
-    # - Keep icon names simple and descriptive
-    # - 20-50 options is good variety without overwhelming
-    #
-    # Finding icons:
-    # - minecraft-heads.com (player head textures)
-    # - Imgur (upload custom icons)
-    # - Icon websites (flaticon, etc.)
     list:
       Hut: https://imgur.com/GFrfD0H.png
       Outpost: https://imgur.com/4EvpONv.png
@@ -341,72 +137,46 @@ dynamic-maps:
       Netherite: https://i.imgur.com/DTpAqCP.png
       Diamond: https://imgur.com/MQSe8Qs.png
 
-  # Chunk Display Settings
-  # Customize how claimed chunks appear on the map
+  # Chunk display settings
   chunks:
-    # Operator-Claimed Regions
-    # Special styling for regions owned by server operators
-    #
-    # Hex color format: 0xRRGGBB
-    # 0xFF0000 = Red, 0x00FF00 = Green, 0x0000FF = Blue
     operator-color: 0xFF0000
-
-    # HTML description shown when clicking operator region
-    # Supports HTML tags for formatting
-    # Available variables: {region}, {global-rank}, {region-description},
-    #                      {region-owner}, {region-members}, {region-chunks}, {region-size}
     operator-description: "<div style='font-size:16px;'><b>[Operator] {region} (#{global-rank})</b></div>{region-description}<br><br><b>Owner</b>: {region-owner}<br><b>Members</b>: {region-members}<br><b>Chunks</b>: {region-chunks}<br><b>Size</b>: {region-size} blocks"
-
-    # Regular Player Regions
-    # Default styling for all non-operator regions
     color: 0x00FF00
     description: "<div style='font-size:16px;'><b>{region} (#{global-rank})</b></div>{region-description}<br><br><b>Owner</b>: {region-owner}<br><b>Members</b>: {region-members}<br><b>Chunks</b>: {region-chunks}<br><b>Size</b>: {region-size} blocks"
-
-    # Fill Transparency (0-255)
-    # How see-through the claimed area is
-    # 0 = Completely transparent (invisible fill)
-    # 255 = Completely opaque (solid fill)
-    # 40 = Mostly transparent (recommended for readability)
     transparency-fill: 40
-
-    # Outline Transparency (0-255)
-    # How see-through the borderline is
-    # Higher values make borders more visible
-    # 125 = Semi-transparent (recommended)
     transparency-outline: 125
 
 # ============================================================================
 # MISCELLANEOUS SETTINGS
 # ============================================================================
 
-# Formatting Strings
-# Advanced: Customize how dates, money, locations, etc. are displayed
-#
+# Formatting Strings - Customize date, money, location displays
 # WARNING: Only edit if you know what you're doing!
-# Breaking these can cause display issues throughout the plugin
 formatters:
-  date-format: "dd/M/yyyy hh:mm a"                                          # Java SimpleDateFormat pattern
-  date: "{date} &7({time-ago} ago)"                                         # How dates display with relative time
-  duration: "{d} days, {h} hours, {m} minutes, {s} seconds"                 # Duration format
+  date-format: "dd/M/yyyy hh:mm a"
+  date: "{date} &7({time-ago} ago)"
+  duration: "{d} days, {h} hours, {m} minutes" # Removed "{s} seconds", you can add it
 
-  ago-days: "{v} days"                                                      # X days ago
-  ago-hours: "{v} hours"                                                    # X hours ago
-  ago-minutes: "{v} minutes"                                                # X minutes ago
-  ago-seconds: "{v} seconds"                                                # X seconds ago
+  ago-days: "{v} days"
+  ago-hours: "{v} hours"
+  ago-minutes: "{v} minutes"
+  ago-seconds: "{v} seconds"
 
-  balance: "${balance}"                                                     # Money format (add currency symbols here)
-  location: "&6{world} &7(X: &6{x} &7Y: &6{y} &7Z: &6{z}&7)"                # Full 3D location
-  chunk: "&6{world} &7(X: &6{x} &7Z: &6{z}&7)"                              # 2D chunk location
+  balance: "${balance}"
+  location: "&6{world} &7(X: &6{x} &7Y: &6{y} &7Z: &6{z}&7)"
+  chunk: "&6{world} &7(X: &6{x} &7Z: &6{z}&7)"
 
-  player-regions: "&7• &2{region}"                                          # How each region listed for player
-  player-regions-joining: "\n"                                              # Separator between region names (newline)
+  player-regions: "&7• &2{region}"
+  player-regions-joining: "
+"
 
-  region-members: "&7• &3{playername}"                                      # How each member is listed
-  region-members-joining: "\n"                                              # Separator between member names (newline)
+  region-members: "&7• &3{playername}"
+  region-members-joining: "
+"
 
-  gui-pagination-title: "&r{title} &r| &3{current-page}&r/&c{total-pages}"  # GUI page indicator
+  gui-pagination-title: "&r{title} &r| &3{current-page}&r/&c{total-pages}"
 
-  war-regions: "&2{region}"                                                 # Region name in war display
-  war-regions-joining: ", "                                                 # Separator between war regions (comma-space)
+  war-regions: "&2{region}"
+  war-regions-joining: ", "
 
-  private-chat: "&2{region} &7- &e{sender}&7: &r{message}"                  # Region chat message format
+  private-chat: "&2{region} &7- &e{sender}&7: &r{message}"
