@@ -45,7 +45,7 @@ public class RegionStorage {
 
 		StorageMenu menu = new StorageMenu(player, region.getUniqueId(), title, storage.getSize());
 
-		menu.addItem(18, MenuUtils.getBackButton(), (_player, click) -> {
+		menu.addItem(getStorageSize(region) - 9, MenuUtils.getBackButton(), (_player, click) -> {
 			if (click.isLeftClick()) {
 				_player.closeInventory();
 			}

@@ -4,6 +4,7 @@ import tfagaming.projects.minecraft.homestead.resources.ResourceFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public class RegionsFile extends ResourceFile {
 
@@ -37,5 +38,19 @@ public class RegionsFile extends ResourceFile {
 
 	public int getRewardSubAreasPerMember() {
 		return getInt("rewards.for-each-member.subareas", 0);
+	}
+
+	public boolean isRegionStorageEnabled() {
+		return getBoolean("storage.enabled");
+	}
+
+	public int getRegionStorageSize() {
+		int size = getInt("storage.size");
+
+		if (!List.of(9, 18, 27, 36, 45, 54).contains(size)) {
+			size = 27;
+		}
+
+		return size;
 	}
 }

@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.managers.LevelManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LevelsFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.storage.RegionStorage;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -29,6 +30,13 @@ public class StorageSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isRegionStorageEnabled();
+
+		if (!isEnabled) {
+			Messages.send(player, 105);
+			return true;
+		}
+
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
@@ -42,7 +50,7 @@ public class StorageSubCmd extends SubCommandBuilder {
 		}
 
 		if (!RegionStorage.hasStorage(region)) {
-			RegionStorage.createStorage(region, 27);
+			RegionStorage.createStorage(region, Resources.<RegionsFile>get(ResourceType.Regions).getRegionStorageSize());
 		}
 
 		RegionStorage.openStorage(region, player);
