@@ -18,7 +18,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionLogs {
+public final class RegionLogs {
 	private List<SerializableLog> logs;
 
 	public RegionLogs(Player player, Region region) {

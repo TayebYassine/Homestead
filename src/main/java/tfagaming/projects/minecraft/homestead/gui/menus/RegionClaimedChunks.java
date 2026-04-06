@@ -29,7 +29,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.Dela
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionClaimedChunks {
+public final class RegionClaimedChunks {
 	private List<SerializableChunk> chunks;
 
 	public RegionClaimedChunks(Player player, Region region) {

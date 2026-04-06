@@ -20,7 +20,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
-public class SubAreaMenu {
+public final class SubAreaMenu {
 	public SubAreaMenu(Player player, Region region, SubArea subArea) {
 		Menu gui = new Menu(MenuUtils.getTitle(15).replace("{subarea}", subArea.getName()), 9 * 3);
 

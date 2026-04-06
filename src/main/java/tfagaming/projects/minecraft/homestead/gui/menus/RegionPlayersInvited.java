@@ -25,7 +25,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionPlayersInvited {
+public final class RegionPlayersInvited {
 	private List<OfflinePlayer> invitedPlayers;
 
 	public RegionPlayersInvited(Player player, Region region) {

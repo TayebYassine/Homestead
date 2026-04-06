@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
-public class Rewards {
+public final class Rewards {
 	public Rewards(Player player, Region region, Runnable backButton) {
 		Menu gui = new Menu(MenuUtils.getTitle(23).replace("{region}", region.getName()), 9 * 3);
 

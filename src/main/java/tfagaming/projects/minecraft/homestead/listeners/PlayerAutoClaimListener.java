@@ -98,7 +98,7 @@ public final class PlayerAutoClaimListener implements Listener {
 		}
 
 		boolean wgEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("worldguard.protect-existing-regions");
-		if (wgEnabled && WorldGuardAPI.isChunkInWorldGuardRegion(chunk)) {
+		if (wgEnabled && WorldGuardAPI.isChunkInRegion(chunk)) {
 			Messages.send(player, 133);
 			return;
 		}

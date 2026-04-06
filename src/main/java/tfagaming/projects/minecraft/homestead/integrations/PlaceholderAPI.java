@@ -15,7 +15,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
-public class PlaceholderAPI extends PlaceholderExpansion {
+public final class PlaceholderAPI extends PlaceholderExpansion {
 	public PlaceholderAPI() {
 	}
 

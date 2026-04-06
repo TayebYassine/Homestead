@@ -14,7 +14,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.Dela
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionsWithWelcomeSigns {
+public final class RegionsWithWelcomeSigns {
 	private final List<Region> regions;
 
 	public RegionsWithWelcomeSigns(Player player) {

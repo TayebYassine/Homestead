@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-public class SubAreaFlagsMenu {
+public final class SubAreaFlagsMenu {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
 	public SubAreaFlagsMenu(Player player, Region region, SubArea subArea) {

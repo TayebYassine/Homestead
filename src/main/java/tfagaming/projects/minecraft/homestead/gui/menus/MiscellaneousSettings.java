@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MiscellaneousSettings {
+public final class MiscellaneousSettings {
 
 	private static final Map<UUID, UUID> DELETE_CONFIRM_REGION = new ConcurrentHashMap<>();
 	private static final Map<UUID, Long> DELETE_CONFIRM_TIME = new ConcurrentHashMap<>();

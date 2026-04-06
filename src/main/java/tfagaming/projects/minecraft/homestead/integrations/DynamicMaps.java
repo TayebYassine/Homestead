@@ -96,19 +96,19 @@ public final class DynamicMaps {
 		Logger.debug("Updated dynamic map plugin markers.");
 	}
 
-	public static boolean isDynmapInstalled() {
+	private static boolean isDynmapInstalled() {
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("dynmap");
 
 		return plugin != null && plugin.isEnabled();
 	}
 
-	public static boolean isPl3xMapInstalled() {
+	private static boolean isPl3xMapInstalled() {
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Pl3xMap");
 
 		return plugin != null && plugin.isEnabled();
 	}
 
-	public static boolean isSquaremapInstalled() {
+	private static boolean isSquaremapInstalled() {
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("squaremap");
 
 		return plugin != null && plugin.isEnabled();

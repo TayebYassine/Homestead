@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
-public class RegionRating {
+public final class RegionRating {
 	/** Slot and button-ID arrays for the 5 rating options (rating 1–5). */
 	private static final int[] RATING_SLOTS = {11, 12, 13, 14, 15};
 	private static final int[] RATING_BUTTON_IDS = {48, 49, 50, 51, 52};

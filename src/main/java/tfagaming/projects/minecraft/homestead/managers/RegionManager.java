@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
+import tfagaming.projects.minecraft.homestead.integrations.ChunkyAPI;
 import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -153,9 +154,7 @@ public final class RegionManager {
 
 		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithWorldEdit()) {
 			for (SerializableChunk chunk : region.getChunks()) {
-				Homestead.getInstance().runAsyncTask(() -> {
-					WorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
-				});
+				ChunkyAPI.regenerateChunk(chunk.getWorld(), chunk.bukkit());
 			}
 		}
 

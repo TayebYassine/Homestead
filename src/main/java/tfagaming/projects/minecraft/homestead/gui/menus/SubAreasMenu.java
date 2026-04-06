@@ -14,7 +14,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubAreasMenu {
+public final class SubAreasMenu {
 	private final List<SubArea> subAreas;
 
 	public SubAreasMenu(Player player, Region region) {

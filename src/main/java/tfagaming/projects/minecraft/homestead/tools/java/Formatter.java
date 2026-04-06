@@ -17,6 +17,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class Formatter {
+	/**
+	 * Apply placeholders to a string.
+	 * @param string The string
+	 * @param placeholder The placeholders
+	 */
 	public static String applyPlaceholders(String string, Placeholder placeholder) {
 		Map<String, String> replacements = placeholder.build();
 
@@ -35,6 +40,10 @@ public final class Formatter {
 		return string;
 	}
 
+	/**
+	 * Get beautiful and readable {@link Location} string.
+	 * @param location The location
+	 */
 	public static String getLocation(Location location) {
 		World world = location.getWorld();
 
@@ -48,6 +57,10 @@ public final class Formatter {
 		);
 	}
 
+	/**
+	 * Get beautiful and readable {@link Chunk} string.
+	 * @param chunk The chunk
+	 */
 	public static String getLocationChunk(Chunk chunk) {
 		World world = chunk.getWorld();
 
@@ -60,6 +73,10 @@ public final class Formatter {
 		);
 	}
 
+	/**
+	 * Get beautiful and readable balance string.
+	 * @param amount The amount
+	 */
 	public static String getBalance(double amount) {
 		String balance = NumberUtils.convertToBalance(amount);
 		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.balance");
@@ -67,6 +84,10 @@ public final class Formatter {
 		return format.replace("{balance}", balance);
 	}
 
+	/**
+	 * Get beautiful and readable date timestamp string.
+	 * @param date The date timestamp
+	 */
 	public static String getDate(long date) {
 		String pattern = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.date-format");
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -81,12 +102,20 @@ public final class Formatter {
 		return applyPlaceholders(dateWithAgo, placeholder);
 	}
 
+	/**
+	 * Get beautiful and readable rate string.
+	 * @param rate The average rating
+	 */
 	public static String getRating(double rate) {
 		return getRating(Math.round((float) rate));
 	}
 
+	/**
+	 * Get beautiful and readable rate string.
+	 * @param rate The rate, from 1 to 5.
+	 */
 	public static String getRating(int rate) {
-		if (rate == 0) {
+		if (rate == 0 || rate > 5) {
 			return getNone();
 		}
 
@@ -99,6 +128,10 @@ public final class Formatter {
 		return Resources.<LanguageFile>get(ResourceType.Language).getString("default.star-color." + rate);
 	}
 
+	/**
+	 * Get beautiful and readable remaining time string.
+	 * @param time The remaining time
+	 */
 	public static String getRemainingTime(long time) {
 		long currentTime = System.currentTimeMillis();
 
@@ -124,6 +157,10 @@ public final class Formatter {
 		);
 	}
 
+	/**
+	 * Get beautiful and readable {@link OfflinePlayer}'s playtime string.
+	 * @param player The player
+	 */
 	public static String getPlayerPlaytime(OfflinePlayer player) {
 		long totalMinutes = getPlayerMinutes(player);
 		long totalSeconds = totalMinutes * 60;
@@ -171,6 +208,10 @@ public final class Formatter {
 		);
 	}
 
+	/**
+	 * Get beautiful and readable list of regions that a player owns.
+	 * @param player The player
+	 */
 	public static String getPlayerOwnedRegions(OfflinePlayer player) {
 		List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
@@ -185,6 +226,10 @@ public final class Formatter {
 				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions-joining")));
 	}
 
+	/**
+	 * Get beautiful and readable list of region that a player is trusted in.
+	 * @param player The player
+	 */
 	public static String getPlayerTrustedRegions(OfflinePlayer player) {
 		List<Region> regions = RegionManager.getRegionsHasPlayerAsMember(player);
 
@@ -199,6 +244,10 @@ public final class Formatter {
 				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions-joining")));
 	}
 
+	/**
+	 * Get beautiful and readable list of members of a region.
+	 * @param region The region
+	 */
 	public static String getMembersOfRegion(Region region) {
 		List<SerializableMember> members = region.getMembers();
 
@@ -218,6 +267,10 @@ public final class Formatter {
 				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.region-members-joining")));
 	}
 
+	/**
+	 * Get beautiful and readable list of regions part of a war.
+	 * @param war The war
+	 */
 	public static String getRegionsOfWar(War war) {
 		List<Region> regions = war.getRegions();
 
@@ -252,12 +305,19 @@ public final class Formatter {
 		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "default.flagSet" : "default.flagUnset");
 	}
 
+	/**
+	 * Get the player status; <b>Online</b>, <b>Offline</b>, or server <b>Banned</b>.
+	 */
 	public static String getPlayerStatus(OfflinePlayer player) {
 		return Bukkit.getBannedPlayers().contains(player) ? Resources.<LanguageFile>get(ResourceType.Language).getString("default.banned")
 						: (player.isOnline() ? Resources.<LanguageFile>get(ResourceType.Language).getString("default.online")
 						: Resources.<LanguageFile>get(ResourceType.Language).getString("default.offline"));
 	}
 
+	/**
+	 * Get beautiful and readable duration "ago" string.
+	 * @param time The date timestamp
+	 */
 	public static String getAgo(long time) {
 		long currentTime = System.currentTimeMillis();
 

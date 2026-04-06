@@ -19,7 +19,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 import java.util.*;
 
-public class RegionMemberControlFlags {
+public final class RegionMemberControlFlags {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
 	public RegionMemberControlFlags(Player player, Region region, SerializableMember member) {

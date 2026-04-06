@@ -24,7 +24,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionBannedPlayers {
+public final class RegionBannedPlayers {
 	private List<SerializableBannedPlayer> bannedPlayers;
 
 	public RegionBannedPlayers(Player player, Region region) {

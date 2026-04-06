@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-public class GlobalPlayerFlags {
+public final class GlobalPlayerFlags {
 	private final HashSet<UUID> cooldowns = new HashSet<>();
 
 	public GlobalPlayerFlags(Player player, Region region) {

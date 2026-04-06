@@ -18,7 +18,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewar
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionLevels {
+public final class RegionLevels {
 	private static final int MAX_LEVEL = 50;
 
 	public RegionLevels(Player player, Region region, Runnable backButton) {

@@ -26,7 +26,7 @@ import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
 import tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType;
 
-public class RegionMenu {
+public final class RegionMenu {
 	public RegionMenu(Player player, Region region) {
 		Menu gui = new Menu(MenuUtils.getTitle(1).replace("{region}", region.getName()), 9 * 4);
 

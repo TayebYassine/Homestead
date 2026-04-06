@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RegionsMenu {
+public final class RegionsMenu {
 	private static final Set<UUID> ADMIN_SHOW_ALL = ConcurrentHashMap.newKeySet();
 
 	private List<Region> regions = new ArrayList<>();

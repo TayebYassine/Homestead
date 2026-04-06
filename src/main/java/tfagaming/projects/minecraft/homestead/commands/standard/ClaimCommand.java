@@ -50,7 +50,7 @@ public class ClaimCommand extends CommandBuilder {
 		boolean isWorldGuardProtectingRegionsEnabled =
 				Resources.<ConfigFile>get(ResourceType.Config).getBoolean("worldguard.protect-existing-regions");
 
-		if (isWorldGuardProtectingRegionsEnabled && WorldGuardAPI.isChunkInWorldGuardRegion(chunk)) {
+		if (isWorldGuardProtectingRegionsEnabled && WorldGuardAPI.isChunkInRegion(chunk)) {
 			Messages.send(player, 133);
 			return true;
 		}

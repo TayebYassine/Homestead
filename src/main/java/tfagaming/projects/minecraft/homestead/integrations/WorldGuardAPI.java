@@ -8,8 +8,8 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 
-public class WorldGuardAPI {
-	public static boolean isChunkInWorldGuardRegion(Chunk chunk) {
+public final class WorldGuardAPI {
+	public static boolean isChunkInRegion(Chunk chunk) {
 		try {
 			RegionContainer regionContainer = getInstance().getPlatform().getRegionContainer();
 

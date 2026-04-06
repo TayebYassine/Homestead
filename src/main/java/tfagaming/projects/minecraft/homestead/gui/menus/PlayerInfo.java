@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 
-public class PlayerInfo {
+public final class PlayerInfo {
 	public PlayerInfo(Player player, OfflinePlayer target, Runnable backButton) {
 		Menu gui = new Menu(MenuUtils.getTitle(27), 9 * 3);
 

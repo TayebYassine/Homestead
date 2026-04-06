@@ -28,7 +28,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionMembersMenu {
+public final class RegionMembersMenu {
 	private List<SerializableMember> members;
 
 	public RegionMembersMenu(Player player, Region region) {

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-public class bStats {
+public final class bStats {
 	public bStats(Homestead plugin) {
 		try {
 			Metrics metrics = new Metrics(plugin, 25286);

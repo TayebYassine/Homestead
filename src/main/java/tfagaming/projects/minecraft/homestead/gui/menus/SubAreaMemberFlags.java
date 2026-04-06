@@ -21,7 +21,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 import java.util.*;
 
-public class SubAreaMemberFlags {
+public final class SubAreaMemberFlags {
 	/** Index 0 is the bulk-toggle item; all flag buttons start at index 1. */
 	private static final int BULK_INDEX = 0;
 

@@ -14,7 +14,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSoun
 import java.util.ArrayList;
 import java.util.List;
 
-public class TopRegionsMenu {
+public final class TopRegionsMenu {
 	private final boolean isPublicRegionsOnly;
 	private List<Region> regions;
 

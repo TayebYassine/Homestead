@@ -19,7 +19,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubAreaMembers {
+public final class SubAreaMembers {
 	private List<SerializableMember> members;
 
 	public SubAreaMembers(Player player, Region region, SubArea subArea) {

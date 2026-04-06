@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
-public class RegionPlayersManagement {
+public final class RegionPlayersManagement {
 	public RegionPlayersManagement(Player player, Region region) {
 		Menu gui = new Menu(MenuUtils.getTitle(4), 9 * 3);
 
