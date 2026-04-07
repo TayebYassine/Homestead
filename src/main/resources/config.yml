@@ -92,9 +92,8 @@ cache-interval: 30
 worldguard:
   protect-existing-regions: true
 
-# WorldEdit Integration - Regenerate chunks when regions are deleted
-# WARNING: Deprecated by WorldEdit. Heavy performance impact. Use with caution.
-worldedit:
+# Chunky Integration - Regenerate chunks when regions are deleted or chunks are unclaimed
+chunky:
   regenerate-chunks: false
 
 # PlaceholderAPI Integration - Display Homestead data in chat/tab/scoreboards

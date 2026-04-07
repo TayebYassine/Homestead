@@ -9,7 +9,6 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
 import tfagaming.projects.minecraft.homestead.integrations.ChunkyAPI;
-import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -152,7 +151,7 @@ public final class RegionManager {
 			SubAreaManager.deleteSubArea(subArea.getUniqueId());
 		}
 
-		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithWorldEdit()) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithChunky()) {
 			for (SerializableChunk chunk : region.getChunks()) {
 				ChunkyAPI.regenerateChunk(chunk.getWorld(), chunk.bukkit());
 			}

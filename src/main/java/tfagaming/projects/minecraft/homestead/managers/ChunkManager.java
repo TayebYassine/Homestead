@@ -7,7 +7,6 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
 import tfagaming.projects.minecraft.homestead.integrations.ChunkyAPI;
-import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -92,7 +91,7 @@ public final class ChunkManager {
 
 		removeChunk(id, chunk);
 
-		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithWorldEdit()) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithChunky()) {
 			ChunkyAPI.regenerateChunk(chunk.getWorld(), chunk);
 		}
 
