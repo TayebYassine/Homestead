@@ -10,10 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class Resources {
 
@@ -82,9 +79,35 @@ public final class Resources {
 		loadStandaloneResource(plugin, RESOURCE_FLAGS, ResourceType.Flags, FlagsFile::new, Collections.emptySet());
 		loadStandaloneResource(plugin, RESOURCE_LEVELS, ResourceType.Levels, LevelsFile::new, Collections.emptySet());
 		loadStandaloneResource(plugin, RESOURCE_LIMITS, ResourceType.Limits, LimitsFile::new, Collections.emptySet());
+		loadStandaloneResource(plugin, RESOURCE_REGIONS, ResourceType.Regions, RegionsFile::new, Collections.emptySet());
 
-		loadStandaloneResource(plugin, RESOURCE_REGIONS, ResourceType.Regions, RegionsFile::new,
-				Collections.singleton("regions"));
+		try {
+			Logger.warning("--- ATTENTION TO ALL SERVER OPERATORS ---");
+			Logger.warning("-----------------------------");
+			Logger.warning("THIS IS NOT A BUG OR A VULNERABILITY; THIS IS A MESSAGE FROM THE DEVELOPERS OF HOMESTEAD.");
+			Logger.warning("------------------------------");
+			Logger.warning("All of your settings will be migrated from the ancient 'config.yml' to the new resource");
+			Logger.warning("files, including: 'regions.yml', 'flags.yml', 'levels.yml', and 'limits.yml'.");
+			Logger.warning("All configuration keys are now in their right place, well organized, and easier to change in the future.");
+			Logger.warning("-----------------------------");
+			Logger.warning("THIS NOTICE WILL BE REMOVED IN THE FUTURE.");
+			Logger.warning("-----------------------------");
+			Logger.warning("THIS IS NOT A BUG OR A VULNERABILITY; THIS IS A MESSAGE FROM THE DEVELOPERS OF HOMESTEAD.");
+			Logger.warning("-----------------------------");
+
+			new ConfigMigrator(
+					new File(plugin.getDataFolder(), "config.yml"),
+					List.of(
+							new File(plugin.getDataFolder(), "regions.yml"),
+							new File(plugin.getDataFolder(), "flags.yml"),
+							new File(plugin.getDataFolder(), "levels.yml"),
+							new File(plugin.getDataFolder(), "limits.yml")
+					)
+			).migrate();
+		} catch (IOException e) {
+			Logger.error("[Migrator] Something went terribly wrong, unable to migrate from old 'config.yml' to the new resource files!");
+			Logger.error(e);
+		}
 
 		Logger.info("All resources loaded successfully.");
 	}
