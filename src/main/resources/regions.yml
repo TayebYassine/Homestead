@@ -43,7 +43,18 @@ borders:
   # Display type: particles (recommended) or blocks
   type: particles
 
-  # Block type for block-based borders
+  # Dust colors, RGB format (type = 'particles')
+  # Format: [RED, GREEN, BLUE], from 0 to 255.
+  dust-colors:
+    owner: [0, 255, 0]
+    member: [255, 255, 0]
+    visitor: [255, 0, 0]
+    sub-area: [0, 179, 255]
+
+  # Dust size (type = 'particles')
+  dust-size: 3.0
+
+  # Block type for block-based borders (type = 'blocks')
   block-type: GRAY_GLAZED_TERRACOTTA
 
 # Enter/Exit Region Messages

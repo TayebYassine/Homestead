@@ -20,51 +20,36 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles particle spawning around claimed region chunks for a specific player.
- * <p>
- * This class ensures that no server lag occurs by avoiding asynchronous chunk loading.
- * Only already loaded chunks are used for particle effects.
- * </p>
  */
 public class ChunkParticlesSpawner {
 
-	/**
-	 * Keeps track of active particle tasks per player.
-	 */
 	private static final Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
-
-	/**
-	 * The player who triggered the particle effect.
-	 */
 	private final Player player;
 
 	/**
-	 * Creates a new ChunkParticlesSpawner for the given player.
-	 * Cancels any existing running task for the player and starts a new repeating effect.
+	 * Creates a new {@code ChunkParticlesSpawner} for the given player.
 	 *
-	 * @param player the player to show region borders for
+	 * @param player The player to show region borders for
 	 */
 	public ChunkParticlesSpawner(Player player) {
 		this.player = player;
 
-		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("borders.enabled");
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled();
 
-		if (isEnabled) {
-			// Cancel any previously running particle task for this player
-			if (tasks.containsKey(player.getUniqueId())) {
-				TaskHandle taskFromMap = tasks.get(player.getUniqueId());
-				cancelTask(taskFromMap, player);
-			}
+		if (!isEnabled) {
+			return;
+		}
 
-			// Start repeating particle effect every 15 ticks (0.75s)
+		if (!tasks.containsKey(player.getUniqueId())) {
 			startRepeatingEffect();
 		}
 	}
 
 	/**
-	 * Cancels the particle task for the given player and removes it from the map.
+	 * Cancels the given task and removes it from the tracking map.
 	 *
-	 * @param task   the Bukkit task to cancel
-	 * @param player the player associated with the task
+	 * @param task The task handle to cancel
+	 * @param player The player associated with the task
 	 */
 	public static void cancelTask(TaskHandle task, Player player) {
 		if (task != null) {
@@ -74,30 +59,30 @@ public class ChunkParticlesSpawner {
 	}
 
 	/**
-	 * Checks if a particle task is already running for the given player.
+	 * Cancels the active particle task for the given player, if any.
 	 *
-	 * @param player the player to fetch
-	 * @return true if a task is currently running for this player
+	 * @param player The player whose task should be cancelled
+	 */
+	public static void cancelTask(Player player) {
+		TaskHandle task = tasks.remove(player.getUniqueId());
+		if (task != null) {
+			task.cancel();
+		}
+	}
+
+	/**
+	 * Returns {@code true} if a particle task is currently running for the
+	 * given player, otherwise {@code false}.
+	 *
+	 * @param player The player to check
 	 */
 	public static boolean isTaskRunning(Player player) {
 		return tasks.containsKey(player.getUniqueId());
 	}
 
 	/**
-	 * Cancels the active particle task for the given player (if any).
-	 *
-	 * @param player the player whose task should be cancelled
-	 */
-	public static void cancelTask(Player player) {
-		TaskHandle task = tasks.get(player.getUniqueId());
-		if (task != null) {
-			tasks.remove(player.getUniqueId());
-			task.cancel();
-		}
-	}
-
-	/**
-	 * Iterates through all regions and spawns border borders visible to this player.
+	 * Re-fetches all regions from {@link RegionManager} and spawns border
+	 * particles for each one.
 	 */
 	public void spawnParticles() {
 		for (Region region : RegionManager.getAll()) {
@@ -106,20 +91,33 @@ public class ChunkParticlesSpawner {
 	}
 
 	/**
-	 * Spawns borders for a specific region around the chunk borders.
-	 * <p>
-	 * Chunks are only processed if they are already loaded in memory,
-	 * preventing any synchronous chunk loading that can cause server lag.
-	 * </p>
+	 * Spawns border particles around the chunk boundaries of the given region.
 	 *
-	 * @param region the region for which to display borders
+	 * @param region The region whose chunk borders should be visualised
 	 */
 	public void spawnParticlesForRegion(Region region) {
+		region = RegionManager.findRegion(region.getUniqueId());
+		if (region == null) {
+			return;
+		}
+
 		List<SerializableChunk> chunks = region.getChunks();
+		World world = player.getWorld();
+		double yOffset = player.getLocation().getY() + 1;
+
+		DustOptions dustOptions;
+		if (region.isOwner(player)) {
+			dustOptions = new DustOptions(Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.OWNER), Resources.<RegionsFile>get(ResourceType.Regions).getDustSize());
+		} else if (region.isPlayerMember(player)) {
+			dustOptions = new DustOptions(Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.MEMBER), Resources.<RegionsFile>get(ResourceType.Regions).getDustSize());
+		} else {
+			dustOptions = new DustOptions(Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.VISITOR), Resources.<RegionsFile>get(ResourceType.Regions).getDustSize());
+		}
 
 		for (SerializableChunk chunk : chunks) {
-			World world = player.getWorld();
-			double yOffset = player.getLocation().getY() + 1;
+			if (!world.getUID().equals(chunk.getWorldId())) {
+				continue;
+			}
 
 			int chunkX = chunk.getX();
 			int chunkZ = chunk.getZ();
@@ -128,62 +126,36 @@ public class ChunkParticlesSpawner {
 				continue;
 			}
 
-			UUID chunkWorldId = chunk.getWorldId();
-
 			int minX = chunkX * 16;
 			int minZ = chunkZ * 16;
 
-			// Skip chunks in different worlds
-			if (!world.getUID().equals(chunkWorldId)) {
-				continue;
-			}
-
-			if (region == null) {
-				continue;
-			}
-
-			// Get updated region reference
-			region = RegionManager.findRegion(region.getUniqueId());
-
-			if (region == null) {
-				continue;
-			}
-
-			// Determine particle color based on player relation
-			DustOptions dustOptions;
-			if (region.isOwner(player)) {
-				dustOptions = new DustOptions(Color.fromRGB(0, 255, 0), 2.0F); // green - owner
-			} else if (region.isPlayerMember(player)) {
-				dustOptions = new DustOptions(Color.fromRGB(255, 255, 0), 2.0F); // yellow - member
-			} else {
-				dustOptions = new DustOptions(Color.fromRGB(255, 0, 0), 2.0F); // red - others
-			}
-
-			// Check and render chunk borders safely (no sync loading)
-			checkAndSpawn(world, chunkX, chunkZ - 1, region, minX, minZ, yOffset, dustOptions, Direction.NORTH);
-			checkAndSpawn(world, chunkX, chunkZ + 1, region, minX, minZ + 16, yOffset, dustOptions, Direction.SOUTH);
-			checkAndSpawn(world, chunkX - 1, chunkZ, region, minX, minZ, yOffset, dustOptions, Direction.WEST);
-			checkAndSpawn(world, chunkX + 1, chunkZ, region, minX + 16, minZ, yOffset, dustOptions, Direction.EAST);
+			checkAndSpawn(world, region, chunkX, chunkZ - 1, minX, minZ,      yOffset, dustOptions, Direction.NORTH);
+			checkAndSpawn(world, region, chunkX, chunkZ + 1, minX, minZ + 16, yOffset, dustOptions, Direction.SOUTH);
+			checkAndSpawn(world, region, chunkX - 1, chunkZ, minX,      minZ, yOffset, dustOptions, Direction.WEST);
+			checkAndSpawn(world, region, chunkX + 1, chunkZ, minX + 16, minZ, yOffset, dustOptions, Direction.EAST);
 		}
 	}
 
 	/**
-	 * Checks if a neighboring chunk is loaded and spawns border borders if needed.
+	 * Checks whether the neighbouring chunk is loaded and, if the border
+	 * between it and the current region chunk is exposed, spawns particles
+	 * along that edge.
 	 *
-	 * @param world       the world instance
-	 * @param chunkX      X coordinate of the neighbor chunk
-	 * @param chunkZ      Z coordinate of the neighbor chunk
-	 * @param region      the current region
-	 * @param minX        minimum X coordinate in world space
-	 * @param minZ        minimum Z coordinate in world space
-	 * @param yOffset     Y level for particle display
-	 * @param dustOptions color and size of the dust particle
-	 * @param direction   which border direction to render
+	 * @param world The world instance
+	 * @param region The region owning the current chunk
+	 * @param chunkX X coordinate of the neighbour chunk
+	 * @param chunkZ Z coordinate of the neighbour chunk
+	 * @param minX Minimum world-space X of the border edge
+	 * @param minZ Minimum world-space Z of the border edge
+	 * @param yOffset Y level at which particles appear
+	 * @param dustOptions Colour and size of the dust particle
+	 * @param direction Which side of the current chunk is being tested
 	 */
-	private void checkAndSpawn(World world, int chunkX, int chunkZ, Region region,
-							   int minX, int minZ, double yOffset, DustOptions dustOptions, Direction direction) {
-
-		// Skip chunks that are not loaded to avoid blocking the main thread
+	private void checkAndSpawn(World world, Region region,
+							   int chunkX, int chunkZ,
+							   int minX, int minZ,
+							   double yOffset, DustOptions dustOptions,
+							   Direction direction) {
 		if (!world.isChunkLoaded(chunkX, chunkZ)) {
 			return;
 		}
@@ -191,26 +163,26 @@ public class ChunkParticlesSpawner {
 		Chunk neighbor = world.getChunkAt(chunkX, chunkZ);
 		Region neighborRegion = ChunkManager.getRegionOwnsTheChunk(neighbor);
 
-		// If there is no neighboring region or it belongs to a different region, draw the border
-		if (neighborRegion == null || !neighborRegion.getUniqueId().equals(region.getUniqueId())) {
-			if (direction == Direction.NORTH || direction == Direction.SOUTH) {
-				for (int x = minX; x < minX + 16; x++) {
-					player.spawnParticle(Particle.DUST, x, yOffset, minZ, 5, dustOptions);
-				}
-			} else {
-				for (int z = minZ; z < minZ + 16; z++) {
-					player.spawnParticle(Particle.DUST, minX, yOffset, z, 5, dustOptions);
-				}
+		if (neighborRegion != null && neighborRegion.getUniqueId().equals(region.getUniqueId())) {
+			return;
+		}
+
+		if (direction == Direction.NORTH || direction == Direction.SOUTH) {
+			for (int x = minX; x < minX + 16; x++) {
+				player.spawnParticle(Particle.DUST, x, yOffset, minZ, 1, dustOptions);
+			}
+		} else {
+			for (int z = minZ; z < minZ + 16; z++) {
+				player.spawnParticle(Particle.DUST, minX, yOffset, z, 1, dustOptions);
 			}
 		}
 	}
 
 	/**
-	 * Starts the repeating task that spawns the particle effects.
+	 * Starts the repeating task that drives particle spawning.
 	 */
 	public void startRepeatingEffect() {
 		Homestead instance = Homestead.getInstance();
-
 		final TaskHandle task;
 
 		if (Homestead.isFolia()) {
@@ -223,22 +195,20 @@ public class ChunkParticlesSpawner {
 			);
 			task = foliaTask != null ? new TaskHandle(foliaTask) : null;
 		} else {
-			task = new TaskHandle(Bukkit.getScheduler().runTaskTimerAsynchronously(Homestead.getInstance(), this::spawnParticles, 0L, 20L));
+			task = new TaskHandle(
+					Bukkit.getScheduler().runTaskTimer(instance, this::spawnParticles, 0L, 20L)
+			);
 		}
 
-		if (task == null) return;
+		if (task == null) {
+			return;
+		}
 
 		tasks.put(player.getUniqueId(), task);
 
-		// Automatically cancel task after 60 seconds
-		instance.runAsyncTaskLater(() -> {
-			cancelTask(task, player);
-		}, 60);
+		instance.runAsyncTaskLater(() -> cancelTask(task, player), 60 * 3);
 	}
 
-	/**
-	 * Enum representing the direction of a neighboring chunk border.
-	 */
 	private enum Direction {
 		NORTH, SOUTH, EAST, WEST
 	}

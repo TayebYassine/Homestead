@@ -159,9 +159,7 @@ public final class PlayerAutoClaimListener implements Listener {
 				region.setLocation(player.getLocation());
 			}
 
-			if (!ChunkParticlesSpawner.isTaskRunning(player)) {
-				ChunkBorder.show(player);
-			}
+			ChunkBorder.show(player);
 		} else {
 			switch (error) {
 				case REGION_NOT_FOUND -> Messages.send(player, 9);

@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.resources.files;
 
+import org.bukkit.Color;
 import tfagaming.projects.minecraft.homestead.resources.ResourceFile;
 
 import java.io.File;
@@ -26,6 +27,39 @@ public class RegionsFile extends ResourceFile {
 
 	public boolean isAdjacentChunksRuleEnabled() {
 		return getBoolean("adjacent-chunks");
+	}
+
+	public boolean isBordersEnabled() { return getBoolean("borders.enabled"); }
+
+	public Color getDustColor(DustColorType type) {
+		List<Integer> rgb = getIntegerList("borders.dust-colors." + type.getName());
+
+		if (rgb.size() == 3) {
+			return Color.fromRGB(rgb.getFirst(), rgb.get(1), rgb.get(2));
+		}
+
+		return Color.fromRGB(255, 255, 255);
+	}
+
+	public float getDustSize() {
+		return getFloat("borders.dust-size", 3.0F);
+	}
+
+	public enum DustColorType {
+		OWNER("owner"),
+		MEMBER("member"),
+		VISITOR("visitor"),
+		SUB_AREA("sub-area");
+
+		public final String name;
+
+		DustColorType(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
 	}
 
 	public boolean isRewardsEnabled() {

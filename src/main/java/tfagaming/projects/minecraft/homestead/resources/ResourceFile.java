@@ -36,6 +36,15 @@ public class ResourceFile {
 		return getInt(path, 0);
 	}
 
+	public float getFloat(String path, float defaultValue) {
+		if (config == null) return defaultValue;
+		return (float) config.getDouble(path, defaultValue);
+	}
+
+	public float getFloat(String path) {
+		return getFloat(path, 0.0F);
+	}
+
 	public long getLong(String path, long defaultValue) {
 		if (config == null) return defaultValue;
 		return config.getLong(path, defaultValue);

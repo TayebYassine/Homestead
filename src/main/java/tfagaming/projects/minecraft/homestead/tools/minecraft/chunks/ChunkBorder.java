@@ -15,7 +15,7 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 
 public class ChunkBorder {
 	public static BorderType getMethod() {
-		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("borders.enabled");
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled();
 
 		if (!isEnabled) {
 			return null;
@@ -50,8 +50,6 @@ public class ChunkBorder {
 			subArea = SubAreaManager.findSubAreaHasLocationInside(player.getLocation());
 		}
 
-		stop(player);
-
 		BorderType borderType = getMethod();
 
 		switch (borderType) {
@@ -70,6 +68,8 @@ public class ChunkBorder {
 			}
 
 			case BLOCKS: {
+				BorderBlockRenderer.removeAll(player);
+
 				if (region != null) {
 					if (subArea != null) {
 						new SelectedAreaParticlesSpawner(player, subArea.getFirstPoint(), subArea.getSecondPoint());
