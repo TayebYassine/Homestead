@@ -10,6 +10,11 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 
 public final class WorldGuardAPI {
 	public static boolean isChunkInRegion(Chunk chunk) {
+		if (!isAvailable()) {
+			Logger.warning(Logger.PredefinedMessages.WORLDGUARD_PLUGIN_NOT_FOUND.getMessage());
+			return false;
+		}
+
 		try {
 			RegionContainer regionContainer = getInstance().getPlatform().getRegionContainer();
 
@@ -39,11 +44,18 @@ public final class WorldGuardAPI {
 					}
 				}
 			}
+		} catch (Exception e) {
+			Logger.error(e);
+		}
 
-			return false;
-		} catch (NoClassDefFoundError e) {
-			Logger.warning(Logger.PredefinedMessages.WORLDGUARD_PLUGIN_NOT_FOUND.getMessage());
+		return false;
+	}
 
+	public static boolean isAvailable() {
+		try {
+			Class.forName("com.sk89q.worldguard.WorldGuard");
+			return true;
+		} catch (ClassNotFoundException e) {
 			return false;
 		}
 	}

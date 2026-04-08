@@ -92,8 +92,9 @@ cache-interval: 30
 worldguard:
   protect-existing-regions: true
 
-# Chunky Integration - Regenerate chunks when regions are deleted or chunks are unclaimed
-chunky:
+# FastAsyncWorldEdit (FAWE) Integration - Regenerate chunks when regions are deleted or chunks are unclaimed
+# NOTE: This is not supported for Folia!
+fastasyncworldedit:
   regenerate-chunks: false
 
 # PlaceholderAPI Integration - Display Homestead data in chat/tab/scoreboards

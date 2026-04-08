@@ -13,7 +13,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 public final class WorldEditAPI {
 	/**
 	 * Regenerate chunks with WorldEdit API.
-	 * @deprecated Use {@link ChunkyAPI} instead.
+	 * @deprecated Use {@link FastAsyncWorldEditAPI} instead.
 	 * @param world The chunk world
 	 * @param chunk The chunk
 	 */
@@ -23,7 +23,7 @@ public final class WorldEditAPI {
 
 	/**
 	 * Regenerate chunks with WorldEdit API.
-	 * @deprecated Use {@link ChunkyAPI} instead.
+	 * @deprecated Use {@link FastAsyncWorldEditAPI} instead.
 	 * @param world The chunk world
 	 * @param chunkX The chunk X
 	 * @param chunkZ The chunk Z

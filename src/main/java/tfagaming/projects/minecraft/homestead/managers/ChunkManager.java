@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
-import tfagaming.projects.minecraft.homestead.integrations.ChunkyAPI;
+import tfagaming.projects.minecraft.homestead.integrations.FastAsyncWorldEditAPI;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -91,8 +91,10 @@ public final class ChunkManager {
 
 		removeChunk(id, chunk);
 
-		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithChunky()) {
-			ChunkyAPI.regenerateChunk(chunk.getWorld(), chunk);
+		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithFAWE() && !Homestead.isFolia()) {
+			Homestead.getInstance().runAsyncTask(() -> {
+				FastAsyncWorldEditAPI.regenerateChunk(chunk.getWorld(), chunk);
+			});
 		}
 
 		if (region.getLocation() != null && ChunkUtils.areEqual(region.getLocation().bukkit().getChunk(), chunk)) {

@@ -29,8 +29,8 @@ public class ConfigFile extends ResourceFile {
 		return getBoolean("debug");
 	}
 
-	public boolean regenerateChunksWithChunky() {
-		return getBoolean("chunky.regenerate-chunks");
+	public boolean regenerateChunksWithFAWE() {
+		return getBoolean("fastasyncworldedit.regenerate-chunks");
 	}
 
 	public int getCacheInterval() {
