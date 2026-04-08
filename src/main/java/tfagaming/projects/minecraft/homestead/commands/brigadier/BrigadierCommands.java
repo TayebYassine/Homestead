@@ -203,6 +203,9 @@ public final class BrigadierCommands {
 
 	private void registerSimpleCommands() {
 		BrigadierCommandBuilder.create("claim")
+				.literalSub("radius")
+				.intArg("length", 1, 10)
+				.end()
 				.register(plugin, commodore);
 
 		BrigadierCommandBuilder.create("unclaim")
