@@ -681,21 +681,32 @@ public final class RegionProtectionListener implements Listener {
 		Location location = entity.getLocation();
 		Chunk chunk = location.getChunk();
 
-		if (damager instanceof Player player) {
+		Player shooterPlayer = null;
+
+		if (damager instanceof Projectile projectile) {
+			ProjectileSource source = projectile.getShooter();
+			if (source instanceof Player player) {
+				shooterPlayer = player;
+			}
+		}
+
+		Player effectiveDamager = (damager instanceof Player player) ? player : shooterPlayer;
+
+		if (effectiveDamager != null) {
 			if (entity instanceof ArmorStand) {
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof Player) {
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PVP, null, () -> {
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.PVP, null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof Monster || entity instanceof IronGolem) {
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_HOSTILE_ENTITIES, null, () -> {
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.DAMAGE_HOSTILE_ENTITIES, null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof Mob) {
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
 					event.setCancelled(true);
 				});
 			}
@@ -816,22 +827,22 @@ public final class RegionProtectionListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onProjectileHitEntity(ProjectileHitEvent event) {
-		Projectile entity = event.getEntity();
-		ProjectileSource shooter = entity.getShooter();
-
+		Projectile projectile = event.getEntity();
+		ProjectileSource shooter = projectile.getShooter();
 		Entity entityHit = event.getHitEntity();
 
-		if (shooter instanceof Player player && entity instanceof ThrownPotion) {
-			Location location = entity.getLocation();
-			Chunk chunk = location.getChunk();
+		if (entityHit == null) {
+			return;
+		}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.THROW_POTIONS, null, () -> {
-				event.setCancelled(true);
-			});
-		} else if (shooter instanceof Player player && entityHit instanceof LivingEntity) {
-			Location location = entityHit.getLocation();
-			Chunk chunk = location.getChunk();
+		if (projectile instanceof ThrownPotion) {
+			return;
+		}
 
+		Location location = entityHit.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (shooter instanceof Player player) {
 			if (entityHit instanceof Player) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PVP, null, () -> {
 					event.setCancelled(true);
@@ -844,6 +855,17 @@ public final class RegionProtectionListener implements Listener {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
 					event.setCancelled(true);
 				});
+			} else if (entityHit instanceof ArmorStand) {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				});
+			}
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_DAMAGE_ENTITIES)) {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
