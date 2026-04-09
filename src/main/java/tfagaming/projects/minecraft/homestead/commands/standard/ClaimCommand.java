@@ -1,11 +1,15 @@
 package tfagaming.projects.minecraft.homestead.commands.standard;
 
 import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
+import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
+import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener.Selection;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -18,6 +22,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
@@ -40,6 +45,77 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
+		Selection session = SelectionToolListener.getPlayerSession(player);
+
+		if (session != null) {
+			return claimWithSelection(player, session);
+		}
+
+		return claimWithRadius(player, args);
+	}
+
+	private boolean claimWithSelection(Player player, Selection session) {
+		Region region = getOrCreateRegion(player);
+		if (region == null) {
+			return true;
+		}
+
+		if (!PlayerUtils.hasControlRegionPermissionFlag(
+				region.getUniqueId(),
+				player,
+				RegionControlFlags.CLAIM_CHUNKS)) {
+			return true;
+		}
+
+		Block firstCorner = session.getFirstPosition();
+		Block secondCorner = session.getSecondPosition();
+
+		if (!firstCorner.getWorld().equals(secondCorner.getWorld())) {
+			Messages.send(player, 192);
+			return true;
+		}
+
+		World world = firstCorner.getWorld();
+
+		List<Chunk> chunksToClaim = new ArrayList<>();
+
+		for (Chunk chunk : ChunkUtils.getChunksInArea(firstCorner, secondCorner)) {
+			if (ChunkManager.isChunkInDisabledWorld(chunk)) {
+				Messages.send(player, 20);
+				return true;
+			}
+
+			if (Resources.<ConfigFile>get(ResourceType.Config).protectWorldGuardRegions() && WorldGuardAPI.isChunkInRegion(chunk)) {
+				Messages.send(player, 133);
+				return true;
+			}
+
+			Region regionOwnsThisChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
+			if (regionOwnsThisChunk != null) {
+				Messages.send(player, 21, new Placeholder()
+						.add("{region}", regionOwnsThisChunk.getName())
+				);
+				return true;
+			}
+
+			chunksToClaim.add(chunk);
+		}
+
+		if (chunksToClaim.isEmpty()) {
+			Messages.send(player, 186);
+			return true;
+		}
+
+		if (!validateAndClaim(player, region, chunksToClaim)) {
+			return true;
+		}
+
+		SelectionToolListener.cancelPlayerSession(player);
+
+		return true;
+	}
+
+	private boolean claimWithRadius(Player player, String[] args) {
 		int radius = 1;
 		if (args.length > 1 && args[0].equalsIgnoreCase("radius")) {
 			try {
@@ -97,6 +173,11 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
+		validateAndClaim(player, region, chunksToClaim);
+		return true;
+	}
+
+	private boolean validateAndClaim(Player player, Region region, List<Chunk> chunksToClaim) {
 		double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
 		double totalPrice = chunkPrice * chunksToClaim.size();
 
@@ -105,14 +186,14 @@ public class ClaimCommand extends CommandBuilder {
 					.add("{price}", Formatter.getBalance(totalPrice))
 					.add("{player}", region.getOwner().getName())
 			);
-			return true;
+			return false;
 		}
 
 		int currentChunks = region.getChunks().size();
 		int maxChunks = Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION);
 		if (currentChunks + chunksToClaim.size() > maxChunks) {
 			Messages.send(player, 116);
-			return true;
+			return false;
 		}
 
 		int claimedCount = 0;
@@ -127,6 +208,18 @@ public class ClaimCommand extends CommandBuilder {
 			}
 
 			claimedCount++;
+		}
+
+		if (lastError != null && claimedCount < chunksToClaim.size()) {
+			for (int i = 0; i < claimedCount; i++) {
+				ChunkManager.forceUnclaimChunk(region.getUniqueId(), chunksToClaim.get(i));
+			}
+
+			switch (lastError) {
+				case REGION_NOT_FOUND -> Messages.send(player, 9);
+				case CHUNK_NOT_ADJACENT_TO_REGION -> Messages.send(player, 140);
+			}
+			return false;
 		}
 
 		if (claimedCount > 0) {
@@ -151,13 +244,6 @@ public class ClaimCommand extends CommandBuilder {
 			}
 
 			ChunkBorder.show(player);
-		}
-
-		if (lastError != null && claimedCount < chunksToClaim.size()) {
-			switch (lastError) {
-				case REGION_NOT_FOUND -> Messages.send(player, 9);
-				case CHUNK_NOT_ADJACENT_TO_REGION -> Messages.send(player, 140);
-			}
 		}
 
 		return true;

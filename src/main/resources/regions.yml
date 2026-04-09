@@ -77,17 +77,17 @@ enter-exit-region-message:
       actionbar: "&7You left the territory of &2{region-displayname}&7."
       chat: "&7You left the territory of &2{region-displayname}&7."
 
-# Sub-Area Selection Tool
+# Selection Tool
 selection-tool:
-  # Item used to select sub-area corners
+  # Item used to select corners
   item: GOLDEN_HOE
 
   # Selection status messages
   messages:
-    none: "&7Please select two corners inside your region."
+    none: "&7Please select two corners/points inside or outside of the region."
     firstCorner: "&7First corner: &a✔ &7| Second corner: &c✘"
     secondCorner: "&7First corner: &c✘ &7| Second corner: &a✔"
-    selectionDone: "&7Use &e/rg subareas create [name] &7to finish."
+    selectionDone: "&aYou can create a new sub-area or claim new chunks!"
 
 # Region Upkeep System
 # Requires Vault + economy plugin
