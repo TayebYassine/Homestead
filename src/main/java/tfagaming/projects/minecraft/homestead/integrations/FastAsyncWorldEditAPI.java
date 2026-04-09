@@ -9,7 +9,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 
-public class FastAsyncWorldEditAPI {
+public final class FastAsyncWorldEditAPI {
 	/**
 	 * Regenerate chunks with FastAsyncWorldEdit API.
 	 * @param world The chunk world

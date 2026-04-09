@@ -45,9 +45,7 @@ public class Pl3xMapAPI {
 	public void clearAllMarkers() {
 		for (SimpleLayer layer : layers.values()) {
 			if (layer != null) {
-				layer.getMarkers().removeIf((__) -> {
-					return true;
-				});
+				layer.getMarkers().removeIf((__) -> true);
 			}
 		}
 	}

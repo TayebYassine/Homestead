@@ -42,6 +42,16 @@ public class PaginationMenu implements Listener {
 
 	private int currentPage;
 
+	/**
+	 * Pagination menu constructor.
+	 * @param title The menu title
+	 * @param size The size of the menu
+	 * @param nextPageItem Next page item stack
+	 * @param prevPageItem Previous page item stack
+	 * @param items The items that will be displayed in all pages, automatic splitting
+	 * @param goBackCallback Back button callback
+	 * @param clickCallback Action to perform once an item was clicked by a player
+	 */
 	public PaginationMenu(String title, int size, ItemStack nextPageItem, ItemStack prevPageItem, List<ItemStack> items,
 						  BiConsumer<Player, InventoryClickEvent> goBackCallback, BiConsumer<Player, ClickContext> clickCallback) {
 		if (size % 9 != 0 || size < 36) {
@@ -62,6 +72,12 @@ public class PaginationMenu implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
+	/**
+	 * Add an action button, outside the items list. These buttons will be displayed in the last row of the menu.
+	 * @param index The slot index
+	 * @param item The item stack
+	 * @param callback Action to perform once this action button was clicked by a player
+	 */
 	public void addActionButton(int index, ItemStack item, BiConsumer<Player, InventoryClickEvent> callback) {
 		int[] validSlots = {size - 6, size - 5, size - 4};
 
@@ -83,6 +99,10 @@ public class PaginationMenu implements Listener {
 		this.itemsPerPage = n;
 	}
 
+	/**
+	 * Open the menu for a player.
+	 * @param player The player
+	 */
 	public void open(Player player) {
 		this.player = player;
 
@@ -91,6 +111,11 @@ public class PaginationMenu implements Listener {
 		InventoryManager.register(player, this);
 	}
 
+	/**
+	 * Open the menu for a player and fill empty slots with an item stack.
+	 * @param player The player
+	 * @param filler The item stack filler
+	 */
 	public void open(Player player, ItemStack filler) {
 		this.player = player;
 
@@ -113,6 +138,11 @@ public class PaginationMenu implements Listener {
 		InventoryManager.register(player, this);
 	}
 
+	/**
+	 * Replace an item stack slot with a new item stack.
+	 * @param index The slot index
+	 * @param newItem The new item stack
+	 */
 	public void replaceSlot(int index, ItemStack newItem) {
 		if (index < 0 || index >= items.size()) {
 			return;
@@ -134,6 +164,10 @@ public class PaginationMenu implements Listener {
 		}
 	}
 
+	/**
+	 * Update all the items that will be displayed in pages.
+	 * @param newItems The new list of item stacks.
+	 */
 	public void setItems(List<ItemStack> newItems) {
 		boolean wasOpen = player != null && player.getOpenInventory() != null;
 		// String oldTitle = wasOpen ? player.getOpenInventory().getTitle() : null;
@@ -166,6 +200,9 @@ public class PaginationMenu implements Listener {
 		}
 	}
 
+	/**
+	 * Unregister the menu instance from the listener.
+	 */
 	public void destroy() {
 		HandlerList.unregisterAll(this);
 	}

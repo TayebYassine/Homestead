@@ -391,7 +391,7 @@ public class StorageMenu implements Listener {
 	private void unregisterPassthrough() {
 		InventoryManager.unregister(player);
 		if (passthroughMenu != null) {
-			passthroughMenu.unregister();
+			passthroughMenu.destroy();
 			passthroughMenu = null;
 		}
 	}
