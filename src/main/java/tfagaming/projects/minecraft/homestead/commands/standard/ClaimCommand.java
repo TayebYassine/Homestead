@@ -28,7 +28,7 @@ import java.util.List;
 public class ClaimCommand extends CommandBuilder {
 	public ClaimCommand() {
 		super("claim");
-		setUsage("/claim [radius]");
+		setUsage("/claim radius [radius]");
 	}
 
 	@Override
@@ -68,9 +68,7 @@ public class ClaimCommand extends CommandBuilder {
 					return true;
 				}
 
-				boolean isWorldGuardProtectingRegionsEnabled =
-						Resources.<ConfigFile>get(ResourceType.Config).getBoolean("worldguard.protect-existing-regions");
-				if (isWorldGuardProtectingRegionsEnabled && WorldGuardAPI.isChunkInRegion(chunk)) {
+				if (Resources.<ConfigFile>get(ResourceType.Config).protectWorldGuardRegions() && WorldGuardAPI.isChunkInRegion(chunk)) {
 					Messages.send(player, 133);
 					return true;
 				}

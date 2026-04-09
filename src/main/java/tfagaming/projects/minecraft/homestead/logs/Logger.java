@@ -29,6 +29,13 @@ public class Logger {
 		logs.save("[WARN] " + String.join(" ", message));
 	}
 
+	public static void debug(String... message) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).isDebugEnabled()) {
+			logger.warning("DEBUG » " + String.join(" ", message));
+			logs.save("[DEBUG] " + String.join(" ", message));
+		}
+	}
+
 	public static void debug(Object... message) {
 		if (Resources.<ConfigFile>get(ResourceType.Config).isDebugEnabled()) {
 			StringBuilder messageStr = new StringBuilder();

@@ -33,6 +33,10 @@ public class ConfigFile extends ResourceFile {
 		return getBoolean("fastasyncworldedit.regenerate-chunks");
 	}
 
+	public boolean protectWorldGuardRegions() {
+		return getBoolean("worldguard.protect-existing-regions");
+	}
+
 	public int getCacheInterval() {
 		return getInt("cache-interval", 30);
 	}

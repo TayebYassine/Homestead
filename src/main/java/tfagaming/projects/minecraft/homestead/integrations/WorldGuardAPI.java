@@ -11,7 +11,7 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 public final class WorldGuardAPI {
 	public static boolean isChunkInRegion(Chunk chunk) {
 		if (!isAvailable()) {
-			Logger.warning(Logger.PredefinedMessages.WORLDGUARD_PLUGIN_NOT_FOUND.getMessage());
+			Logger.debug(Logger.PredefinedMessages.WORLDGUARD_PLUGIN_NOT_FOUND.getMessage());
 			return false;
 		}
 

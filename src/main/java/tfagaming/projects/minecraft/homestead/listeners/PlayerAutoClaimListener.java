@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
@@ -97,8 +98,7 @@ public final class PlayerAutoClaimListener implements Listener {
 			return;
 		}
 
-		boolean wgEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("worldguard.protect-existing-regions");
-		if (wgEnabled && WorldGuardAPI.isChunkInRegion(chunk)) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).protectWorldGuardRegions() && WorldGuardAPI.isChunkInRegion(chunk)) {
 			Messages.send(player, 133);
 			return;
 		}
