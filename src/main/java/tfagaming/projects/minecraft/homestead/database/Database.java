@@ -87,8 +87,8 @@ public final class Database {
 	}
 
 	public void closeConnection() throws Exception {
-		this.instance = null;
 		this.instance.closeConnection();
+		this.instance = null;
 	}
 
 	public long getLatency() {
