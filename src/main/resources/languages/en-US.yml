@@ -267,6 +267,7 @@ prefix: "&8[&6Homestead&8]&r"
 209: "{__prefix__} &cThe radius provided is either too long or too short."
 210: "{__prefix__} &cYou have no permission to set the region's local weather."
 211: "{__prefix__} &cYou have no permission to set the region's local time."
+212: "{__prefix__} &cYou have no permission to teleport."
 
 logs:
   0: "By {executor}, updated region name to {newname}."

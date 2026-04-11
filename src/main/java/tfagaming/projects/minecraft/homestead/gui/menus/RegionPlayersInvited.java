@@ -72,6 +72,17 @@ public final class RegionPlayersInvited {
 					Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 				} else {
 					region.addPlayerInvite(targetPlayer);
+
+					Placeholder placeholder = new Placeholder()
+							.add("{region}", region.getName())
+							.add("{playername}", targetPlayer.getName())
+							.add("{ownername}", region.getOwner().getName());
+
+					Messages.send(player, 36, placeholder);
+
+					if (targetPlayer.isOnline()) {
+						Messages.send(targetPlayer.getPlayer(), 139, placeholder);
+					}
 				}
 
 				RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
