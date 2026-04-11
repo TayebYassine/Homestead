@@ -89,6 +89,10 @@ permissions:
     default: true
   homestead.region.war:
     default: true
+  homestead.region.weather:
+    default: true
+  homestead.region.time:
+    default: true
   homestead.region.*:
     default: true
     children:
@@ -115,6 +119,8 @@ permissions:
       homestead.region.dynamicmaps.icon: true
       homestead.region.dynamicmaps.color: true
       homestead.region.war: true
+      homestead.region.weather: true
+      homestead.region.time: true
   homestead.commands.region.accept:
     default: true
   homestead.commands.region.auto:
