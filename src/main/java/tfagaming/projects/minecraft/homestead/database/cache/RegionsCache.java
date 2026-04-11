@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.database.cache;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
 import java.util.ArrayList;
@@ -9,14 +10,17 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RegionsCache extends ConcurrentHashMap<UUID, Region> {
-	public RegionsCache(int interval) {
-		Homestead.getInstance().runAsyncTimerTask(() -> {
-			Homestead.database.exportRegions();
-		}, 10, interval);
+	public RegionsCache() {
 	}
 
 	public List<Region> getAll() {
 		return new ArrayList<>(this.values());
+	}
+
+	public void putAll(List<Region> regions) {
+		for (Region region : regions) {
+			putOrUpdate(region);
+		}
 	}
 
 	public void putOrUpdate(Region region) {

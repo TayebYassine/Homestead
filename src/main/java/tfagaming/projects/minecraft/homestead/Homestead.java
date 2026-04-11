@@ -18,6 +18,7 @@ import tfagaming.projects.minecraft.homestead.commands.standard.ClaimCommand;
 import tfagaming.projects.minecraft.homestead.commands.standard.RegionCommand;
 import tfagaming.projects.minecraft.homestead.commands.standard.UnclaimCommand;
 import tfagaming.projects.minecraft.homestead.database.Database;
+import tfagaming.projects.minecraft.homestead.database.Driver;
 import tfagaming.projects.minecraft.homestead.database.cache.LevelsCache;
 import tfagaming.projects.minecraft.homestead.database.cache.RegionsCache;
 import tfagaming.projects.minecraft.homestead.database.cache.SubAreasCache;
@@ -119,30 +120,30 @@ public class Homestead extends JavaPlugin {
 			return;
 		}
 
-		int cacheInterval = Resources.<ConfigFile>get(ResourceType.Config).getCacheInterval();
-
-		Homestead.regionsCache = new RegionsCache(cacheInterval);
-		Homestead.warsCache = new WarsCache(cacheInterval);
-		Homestead.subAreasCache = new SubAreasCache(cacheInterval);
-		Homestead.levelsCache = new LevelsCache(cacheInterval);
+		Homestead.regionsCache = new RegionsCache();
+		Homestead.warsCache = new WarsCache();
+		Homestead.subAreasCache = new SubAreasCache();
+		Homestead.levelsCache = new LevelsCache();
 
 		try {
-			Database.Provider provider = Database.parseProviderFromString(Resources.<ConfigFile>get(ResourceType.Config).getDatabaseProvider());
+			Driver provider = Driver.parse(Resources.<ConfigFile>get(ResourceType.Config).getDatabaseProvider());
 
 			if (provider == null) {
 				throw new IllegalStateException("Database provider not found.");
 			}
 
 			Homestead.database = new Database(provider);
-		} catch (ClassNotFoundException | SQLException | IOException e) {
+		} catch (Exception e) {
 			endInstance(e);
 			return;
 		}
 
-		database.importRegions();
-		database.importWars();
-		database.importSubAreas();
-		database.importLevels();
+		try {
+			database.importToCache();
+		} catch (Exception e) {
+			endInstance(e);
+			return;
+		}
 
 		if (!IntegrationsUtils.isVaultInstalled()) {
 			Logger.error("Unable to start the plugin; \"Vault\" is required. Shutting down plugin instance...");
@@ -213,6 +214,17 @@ public class Homestead extends JavaPlugin {
 			Logger.debug("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
+
+		// Cache interval
+		int cacheInterval = Resources.<ConfigFile>get(ResourceType.Config).getCacheInterval();
+
+		runAsyncTimerTask(() -> {
+			try {
+				Homestead.database.exportFromCache();
+			} catch (Exception e) {
+				endInstance(e);
+			}
+		}, 10, cacheInterval);
 
 		// Download icons
 		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
@@ -567,7 +579,11 @@ public class Homestead extends JavaPlugin {
 	public void onDisable() {
 		if (database != null) {
 			Logger.info("Closing database connection...");
-			database.closeConnection();
+
+			try {
+				database.closeConnection();
+			} catch (Exception ignored) {
+			}
 		}
 
 		if (moveCheckTask != null) {
@@ -621,6 +637,6 @@ public class Homestead extends JavaPlugin {
 	public void endInstance(Throwable e) {
 		Logger.error(e);
 
-		getServer().getPluginManager().disablePlugin(this);
+		endInstance();
 	}
 }

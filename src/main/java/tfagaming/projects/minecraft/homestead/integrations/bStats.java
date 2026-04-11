@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.integrations;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.database.Database;
+import tfagaming.projects.minecraft.homestead.database.Driver;
 import tfagaming.projects.minecraft.homestead.integrations.bstats.Metrics;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -68,27 +69,10 @@ public final class bStats {
 				public Map<String, Integer> call() {
 					Map<String, Integer> map = new HashMap<>();
 
-					switch (Database.parseProviderFromString(Homestead.database.getSelectedProvider())) {
-						case PostgreSQL:
-							map.put("PostgreSQL", 1);
-							break;
-						case MariaDB:
-							map.put("MariaDB", 1);
-							break;
-						case MySQL:
-							map.put("MySQL", 1);
-							break;
-						case MongoDB:
-							map.put("MongoDB", 1);
-							break;
-						case SQLite:
-							map.put("SQLite", 1);
-							break;
-						case YAML:
-							map.put("YAML", 1);
-							break;
-						default:
-							break;
+					Driver provider = Homestead.database.getProvider();
+
+					if (provider != null) {
+						map.put(provider.toString(), 1);
 					}
 
 					return map;

@@ -11,8 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
@@ -23,7 +21,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class MongoDB {
+public final class MongoDB implements Provider {
 	private static final ReplaceOptions UPSERT = new ReplaceOptions().upsert(true);
 	private final MongoClient mongoClient;
 	private final MongoDatabase mongoDatabase;
@@ -34,8 +32,6 @@ public final class MongoDB {
 
 		this.mongoClient = MongoClients.create(uri);
 		this.mongoDatabase = mongoClient.getDatabase(database);
-
-		Logger.info("New MongoDB connection established. Database: " + database);
 	}
 
 	private static String str(Document doc, String key) {
@@ -43,10 +39,6 @@ public final class MongoDB {
 		return v != null ? v.toString() : null;
 	}
 
-	/**
-	 * Resolves a Bukkit World from a stored value that may be either a UUID string
-	 * (new format) or a plain world name (legacy format, pre-migration).
-	 */
 	private static World resolveWorld(String value) {
 		if (value == null || value.isBlank()) return null;
 		try {
@@ -72,196 +64,190 @@ public final class MongoDB {
 		return mongoDatabase.getCollection(COLLECTION_PREFIX + "levels");
 	}
 
-	public void importRegions() {
-		Homestead.regionsCache.clear();
+	@Override
+	public List<Region> importRegions() throws Exception {
+		List<Region> regions = new ArrayList<>();
 
 		for (Document doc : regions().find()) {
-			try {
-				UUID id = UUID.fromString(doc.getString("id"));
-				String displayName = doc.getString("displayName");
-				String name = doc.getString("name");
-				String description = doc.getString("description");
-				OfflinePlayer owner = Homestead.getInstance()
-						.getOfflinePlayerSync(UUID.fromString(doc.getString("ownerId")));
+			UUID id = UUID.fromString(doc.getString("id"));
+			String displayName = doc.getString("displayName");
+			String name = doc.getString("name");
+			String description = doc.getString("description");
+			OfflinePlayer owner = tfagaming.projects.minecraft.homestead.Homestead.getInstance()
+					.getOfflinePlayerSync(UUID.fromString(doc.getString("ownerId")));
 
-				if (owner == null) continue;
+			if (owner == null) continue;
 
-				SerializableLocation location = SerializableLocation.fromString(str(doc, "location"));
-				long createdAt = doc.getLong("createdAt");
-				long playerFlags = doc.getLong("playerFlags");
-				long worldFlags = doc.getLong("worldFlags");
-				double bank = doc.getDouble("bank");
-				int mapColor = doc.getInteger("mapColor");
+			SerializableLocation location = SerializableLocation.fromString(str(doc, "location"));
+			long createdAt = doc.getLong("createdAt");
+			long playerFlags = doc.getLong("playerFlags");
+			long worldFlags = doc.getLong("worldFlags");
+			double bank = doc.getDouble("bank");
+			int mapColor = doc.getInteger("mapColor");
 
-				String chunksRaw = doc.getString("chunks");
-				List<SerializableChunk> chunks = (chunksRaw != null && !chunksRaw.isEmpty())
-						? Arrays.stream(chunksRaw.split("§")).map(SerializableChunk::fromString).collect(Collectors.toList())
-						: new ArrayList<>();
+			String chunksRaw = doc.getString("chunks");
+			List<SerializableChunk> chunks = (chunksRaw != null && !chunksRaw.isEmpty())
+					? Arrays.stream(chunksRaw.split("§")).map(SerializableChunk::fromString).collect(Collectors.toList())
+					: new ArrayList<>();
 
-				String membersRaw = doc.getString("members");
-				List<SerializableMember> members = (membersRaw != null && !membersRaw.isEmpty())
-						? Arrays.stream(membersRaw.split("§")).map(SerializableMember::fromString).collect(Collectors.toList())
-						: new ArrayList<>();
+			String membersRaw = doc.getString("members");
+			List<SerializableMember> members = (membersRaw != null && !membersRaw.isEmpty())
+					? Arrays.stream(membersRaw.split("§")).map(SerializableMember::fromString).collect(Collectors.toList())
+					: new ArrayList<>();
 
-				String ratesRaw = doc.getString("rates");
-				List<SerializableRate> rates = (ratesRaw != null && !ratesRaw.isEmpty())
-						? Arrays.stream(ratesRaw.split("§")).map(SerializableRate::fromString).collect(Collectors.toList())
-						: new ArrayList<>();
+			String ratesRaw = doc.getString("rates");
+			List<SerializableRate> rates = (ratesRaw != null && !ratesRaw.isEmpty())
+					? Arrays.stream(ratesRaw.split("§")).map(SerializableRate::fromString).collect(Collectors.toList())
+					: new ArrayList<>();
 
-				String invitedRaw = doc.getString("invitedPlayers");
-				List<OfflinePlayer> invitedPlayers = (invitedRaw != null && !invitedRaw.isEmpty())
-						? Arrays.stream(invitedRaw.split("§"))
-						.map(u -> Homestead.getInstance().getOfflinePlayerSync(UUID.fromString(u)))
-						.collect(Collectors.toList())
-						: new ArrayList<>();
+			String invitedRaw = doc.getString("invitedPlayers");
+			List<OfflinePlayer> invitedPlayers = (invitedRaw != null && !invitedRaw.isEmpty())
+					? Arrays.stream(invitedRaw.split("§"))
+					.map(u -> tfagaming.projects.minecraft.homestead.Homestead.getInstance().getOfflinePlayerSync(UUID.fromString(u)))
+					.collect(Collectors.toList())
+					: new ArrayList<>();
 
-				String bannedRaw = doc.getString("bannedPlayers");
-				List<SerializableBannedPlayer> bannedPlayers = (bannedRaw != null && !bannedRaw.isEmpty())
-						? Arrays.stream(bannedRaw.split("§")).map(SerializableBannedPlayer::fromString).collect(Collectors.toList())
-						: new ArrayList<>();
+			String bannedRaw = doc.getString("bannedPlayers");
+			List<SerializableBannedPlayer> bannedPlayers = (bannedRaw != null && !bannedRaw.isEmpty())
+					? Arrays.stream(bannedRaw.split("§")).map(SerializableBannedPlayer::fromString).collect(Collectors.toList())
+					: new ArrayList<>();
 
-				String logsRaw = doc.getString("logs");
-				List<SerializableLog> logs = (logsRaw != null && !logsRaw.isEmpty())
-						? Arrays.stream(logsRaw.split("µ")).map(SerializableLog::fromString).collect(Collectors.toList())
-						: new ArrayList<>();
+			String logsRaw = doc.getString("logs");
+			List<SerializableLog> logs = (logsRaw != null && !logsRaw.isEmpty())
+					? Arrays.stream(logsRaw.split("µ")).map(SerializableLog::fromString).collect(Collectors.toList())
+					: new ArrayList<>();
 
-				SerializableRent rent = SerializableRent.fromString(str(doc, "rent"));
-				long upkeepAt = doc.getLong("upkeepAt");
-				double taxesAmount = doc.getDouble("taxesAmount");
-				int weather = doc.getInteger("weather");
-				int time = doc.getInteger("time");
+			SerializableRent rent = SerializableRent.fromString(str(doc, "rent"));
+			long upkeepAt = doc.getLong("upkeepAt");
+			double taxesAmount = doc.getDouble("taxesAmount");
+			int weather = doc.getInteger("weather");
+			int time = doc.getInteger("time");
 
-				String welcomeSignRaw = str(doc, "welcomeSign");
-				SerializableLocation welcomeSign = welcomeSignRaw != null ? SerializableLocation.fromString(welcomeSignRaw) : null;
-				String icon = str(doc, "icon");
+			String welcomeSignRaw = str(doc, "welcomeSign");
+			SerializableLocation welcomeSign = welcomeSignRaw != null ? SerializableLocation.fromString(welcomeSignRaw) : null;
+			String icon = str(doc, "icon");
 
-				Region region = new Region(name, owner);
-				region.id = id;
-				region.displayName = displayName;
-				region.description = description;
-				region.location = location;
-				region.createdAt = createdAt;
-				region.playerFlags = playerFlags;
-				region.worldFlags = worldFlags;
-				region.bank = bank;
-				region.mapColor = mapColor;
-				region.setChunks(chunks);
-				region.setMembers(members);
-				region.setRates(rates);
-				region.setInvitedPlayers(ListUtils.removeNullElements(invitedPlayers));
-				region.setBannedPlayers(bannedPlayers);
-				region.setLogs(logs);
-				region.rent = rent;
-				region.upkeepAt = upkeepAt;
-				region.taxesAmount = taxesAmount;
-				region.weather = weather;
-				region.time = time;
-				region.welcomeSign = welcomeSign;
-				region.icon = icon;
+			Region region = new Region(name, owner);
 
-				Homestead.regionsCache.putOrUpdate(region);
-			} catch (Exception e) {
-				Logger.warning("Failed to import a region document: " + e.getMessage());
-			}
+			region.setAutoUpdate(false);
+
+			region.id = id;
+			region.displayName = displayName;
+			region.description = description;
+			region.location = location;
+			region.createdAt = createdAt;
+			region.playerFlags = playerFlags;
+			region.worldFlags = worldFlags;
+			region.bank = bank;
+			region.mapColor = mapColor;
+			region.setChunks(chunks);
+			region.setMembers(members);
+			region.setRates(rates);
+			region.setInvitedPlayers(ListUtils.removeNullElements(invitedPlayers));
+			region.setBannedPlayers(bannedPlayers);
+			region.setLogs(logs);
+			region.rent = rent;
+			region.upkeepAt = upkeepAt;
+			region.taxesAmount = taxesAmount;
+			region.weather = weather;
+			region.time = time;
+			region.welcomeSign = welcomeSign;
+			region.icon = icon;
+
+			region.setAutoUpdate(true);
+
+			regions.add(region);
 		}
 
-		Logger.info("Imported " + Homestead.regionsCache.size() + " regions.");
+		return regions;
 	}
 
-	public void importWars() {
-		Homestead.warsCache.clear();
+	@Override
+	public List<War> importWars() throws Exception {
+		List<War> wars = new ArrayList<>();
 
 		for (Document doc : wars().find()) {
-			try {
-				UUID id = UUID.fromString(doc.getString("id"));
-				String displayName = doc.getString("displayName");
-				String name = doc.getString("name");
-				String description = doc.getString("description");
+			UUID id = UUID.fromString(doc.getString("id"));
+			String displayName = doc.getString("displayName");
+			String name = doc.getString("name");
+			String description = doc.getString("description");
 
-				String regionsRaw = doc.getString("regions");
-				List<UUID> regionIds = (regionsRaw != null && !regionsRaw.isEmpty())
-						? Arrays.stream(regionsRaw.split("§")).map(UUID::fromString).collect(Collectors.toList())
-						: new ArrayList<>();
+			String regionsRaw = doc.getString("regions");
+			List<UUID> regionIds = (regionsRaw != null && !regionsRaw.isEmpty())
+					? Arrays.stream(regionsRaw.split("§")).map(UUID::fromString).collect(Collectors.toList())
+					: new ArrayList<>();
 
-				double prize = doc.getDouble("prize");
-				long startedAt = doc.getLong("startedAt");
+			double prize = doc.getDouble("prize");
+			long startedAt = doc.getLong("startedAt");
 
-				War war = new War(name, regionIds);
-				war.id = id;
-				war.displayName = displayName;
-				war.description = description;
-				war.prize = prize;
-				war.startedAt = startedAt;
+			War war = new War(name, regionIds);
+			war.id = id;
+			war.displayName = displayName;
+			war.description = description;
+			war.prize = prize;
+			war.startedAt = startedAt;
 
-				Homestead.warsCache.putOrUpdate(war);
-			} catch (Exception e) {
-				Logger.warning("Failed to import a war document: " + e.getMessage());
-			}
+			wars.add(war);
 		}
 
-		Logger.info("Imported " + Homestead.warsCache.size() + " wars.");
+		return wars;
 	}
 
-	public void importSubAreas() {
-		Homestead.subAreasCache.clear();
+	@Override
+	public List<SubArea> importSubAreas() throws Exception {
+		List<SubArea> subAreas = new ArrayList<>();
 
 		for (Document doc : subareas().find()) {
-			try {
-				UUID id = UUID.fromString(doc.getString("id"));
-				UUID regionId = UUID.fromString(doc.getString("regionId"));
-				String name = doc.getString("name");
+			UUID id = UUID.fromString(doc.getString("id"));
+			UUID regionId = UUID.fromString(doc.getString("regionId"));
+			String name = doc.getString("name");
 
-				World world = resolveWorld(doc.getString("worldName"));
-				if (world == null) continue;
+			World world = resolveWorld(doc.getString("worldName"));
+			if (world == null) continue;
 
-				Block point1 = SubArea.parseBlockLocation(world, doc.getString("point1"));
-				Block point2 = SubArea.parseBlockLocation(world, doc.getString("point2"));
+			Block point1 = SubArea.parseBlockLocation(world, doc.getString("point1"));
+			Block point2 = SubArea.parseBlockLocation(world, doc.getString("point2"));
 
-				String membersRaw = doc.getString("members");
-				List<SerializableMember> members = (membersRaw != null && !membersRaw.isEmpty())
-						? Arrays.stream(membersRaw.split("§")).map(SerializableMember::fromString).collect(Collectors.toList())
-						: new ArrayList<>();
+			String membersRaw = doc.getString("members");
+			List<SerializableMember> members = (membersRaw != null && !membersRaw.isEmpty())
+					? Arrays.stream(membersRaw.split("§")).map(SerializableMember::fromString).collect(Collectors.toList())
+					: new ArrayList<>();
 
-				long flags = doc.getLong("flags");
-				String rentRaw = str(doc, "rent");
-				SerializableRent rent = rentRaw != null ? SerializableRent.fromString(rentRaw) : null;
-				long createdAt = doc.getLong("createdAt");
+			long flags = doc.getLong("flags");
+			String rentRaw = str(doc, "rent");
+			SerializableRent rent = rentRaw != null ? SerializableRent.fromString(rentRaw) : null;
+			long createdAt = doc.getLong("createdAt");
 
-				SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
-						point1, point2, members, flags, rent, createdAt);
+			SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
+					point1, point2, members, flags, rent, createdAt);
 
-				Homestead.subAreasCache.putOrUpdate(subArea);
-			} catch (Exception e) {
-				Logger.warning("Failed to import a sub-area document: " + e.getMessage());
-			}
+			subAreas.add(subArea);
 		}
 
-		Logger.info("Imported " + Homestead.subAreasCache.size() + " sub-areas.");
+		return subAreas;
 	}
 
-	public void importLevels() {
-		Homestead.levelsCache.clear();
+	@Override
+	public List<Level> importLevels() throws Exception {
+		List<Level> levels = new ArrayList<>();
 
 		for (Document doc : levels().find()) {
-			try {
-				UUID id = UUID.fromString(doc.getString("id"));
-				UUID regionId = UUID.fromString(doc.getString("regionId"));
-				int level = doc.getInteger("level");
-				long xp = doc.getLong("experience");
-				long totalXp = doc.getLong("totalExperience");
-				long createdAt = doc.getLong("createdAt");
+			UUID id = UUID.fromString(doc.getString("id"));
+			UUID regionId = UUID.fromString(doc.getString("regionId"));
+			int level = doc.getInteger("level");
+			long xp = doc.getLong("experience");
+			long totalXp = doc.getLong("totalExperience");
+			long createdAt = doc.getLong("createdAt");
 
-				Level lvl = new Level(id, regionId, level, xp, totalXp, createdAt);
-				Homestead.levelsCache.putOrUpdate(lvl);
-			} catch (Exception e) {
-				Logger.warning("Failed to import a level document: " + e.getMessage());
-			}
+			Level lvl = new Level(id, regionId, level, xp, totalXp, createdAt);
+			levels.add(lvl);
 		}
 
-		Logger.info("Imported " + Homestead.levelsCache.size() + " levels.");
+		return levels;
 	}
 
-	public void exportRegions() {
+	@Override
+	public void exportRegions(List<Region> regions) throws Exception {
 		Set<String> dbIds = new HashSet<>();
 		for (Document doc : regions().find().projection(new Document("id", 1))) {
 			dbIds.add(doc.getString("id"));
@@ -269,7 +255,7 @@ public final class MongoDB {
 
 		Set<String> cacheIds = new HashSet<>();
 
-		for (Region region : Homestead.regionsCache.getAll()) {
+		for (Region region : regions) {
 			String id = region.id.toString();
 			cacheIds.add(id);
 
@@ -312,11 +298,10 @@ public final class MongoDB {
 		for (String deletedId : dbIds) {
 			regions().deleteOne(Filters.eq("id", deletedId));
 		}
-
-		Logger.debug("Exported " + cacheIds.size() + " regions and deleted " + dbIds.size() + " regions.");
 	}
 
-	public void exportWars() {
+	@Override
+	public void exportWars(List<War> wars) throws Exception {
 		Set<String> dbIds = new HashSet<>();
 		for (Document doc : wars().find().projection(new Document("id", 1))) {
 			dbIds.add(doc.getString("id"));
@@ -324,7 +309,7 @@ public final class MongoDB {
 
 		Set<String> cacheIds = new HashSet<>();
 
-		for (War war : Homestead.warsCache.getAll()) {
+		for (War war : wars) {
 			String id = war.id.toString();
 			cacheIds.add(id);
 
@@ -345,11 +330,10 @@ public final class MongoDB {
 		for (String deletedId : dbIds) {
 			wars().deleteOne(Filters.eq("id", deletedId));
 		}
-
-		Logger.debug("Exported " + cacheIds.size() + " wars and deleted " + dbIds.size() + " wars.");
 	}
 
-	public void exportSubAreas() {
+	@Override
+	public void exportSubAreas(List<SubArea> subareas) throws Exception {
 		Set<String> dbIds = new HashSet<>();
 		for (Document doc : subareas().find().projection(new Document("id", 1))) {
 			dbIds.add(doc.getString("id"));
@@ -357,7 +341,7 @@ public final class MongoDB {
 
 		Set<String> cacheIds = new HashSet<>();
 
-		for (SubArea subArea : Homestead.subAreasCache.getAll()) {
+		for (SubArea subArea : subareas) {
 			String id = subArea.id.toString();
 			cacheIds.add(id);
 
@@ -381,11 +365,10 @@ public final class MongoDB {
 		for (String deletedId : dbIds) {
 			subareas().deleteOne(Filters.eq("id", deletedId));
 		}
-
-		Logger.debug("Exported " + cacheIds.size() + " sub-areas and deleted " + dbIds.size() + " sub-areas.");
 	}
 
-	public void exportLevels() {
+	@Override
+	public void exportLevels(List<Level> levels) throws Exception {
 		Set<String> dbIds = new HashSet<>();
 		for (Document doc : levels().find().projection(new Document("id", 1))) {
 			dbIds.add(doc.getString("id"));
@@ -393,7 +376,7 @@ public final class MongoDB {
 
 		Set<String> cacheIds = new HashSet<>();
 
-		for (Level lvl : Homestead.levelsCache.getAll()) {
+		for (Level lvl : levels) {
 			String id = lvl.getUniqueId().toString();
 			cacheIds.add(id);
 
@@ -411,20 +394,40 @@ public final class MongoDB {
 		for (String deletedId : dbIds) {
 			levels().deleteOne(Filters.eq("id", deletedId));
 		}
-
-		Logger.debug("Exported " + cacheIds.size() + " levels and deleted " + dbIds.size() + " levels.");
 	}
 
-	public void closeConnection() {
-		if (mongoClient != null) {
-			mongoClient.close();
-			Logger.warning("Connection for MongoDB has been closed.");
+	@Override
+	public void prepareTables() throws Exception {
+	}
+
+	@Override
+	public long getLatency() {
+		List<String> collections = List.of(
+				COLLECTION_PREFIX + "regions",
+				COLLECTION_PREFIX + "wars",
+				COLLECTION_PREFIX + "subareas",
+				COLLECTION_PREFIX + "levels"
+		);
+
+		try {
+			long startTime = System.currentTimeMillis();
+
+			for (String collection : collections) {
+				mongoDatabase.getCollection(collection).countDocuments();
+			}
+
+			long endTime = System.currentTimeMillis();
+
+			return endTime - startTime;
+		} catch (Exception ignored) {
+			return -1L;
 		}
 	}
 
-	public long getLatency() {
-		long before = System.currentTimeMillis();
-		regions().countDocuments();
-		return System.currentTimeMillis() - before;
+	@Override
+	public void closeConnection() throws Exception {
+		if (mongoClient != null) {
+			mongoClient.close();
+		}
 	}
 }

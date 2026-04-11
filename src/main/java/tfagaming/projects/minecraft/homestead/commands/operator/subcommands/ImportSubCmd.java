@@ -74,8 +74,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 			}
 
 			Region region = RegionManager.createRegion(owner.getName(),
-					Bukkit.getOfflinePlayer(claim.getOwnerID()),
-					true);
+					Bukkit.getOfflinePlayer(claim.getOwnerID()));
 
 			for (Chunk chunk : claim.getChunks()) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
@@ -122,7 +121,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 
 			Region region;
 			if (RegionManager.getRegionsOwnedByPlayer(owner).isEmpty()) {
-				region = RegionManager.createRegion(owner.getName(), owner, true);
+				region = RegionManager.createRegion(owner.getName(), owner);
 				imported++;
 			} else {
 				region = RegionManager.getRegionsOwnedByPlayer(owner).getFirst();
@@ -177,7 +176,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 				continue;
 			}
 
-			Region region = RegionManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
+			Region region = RegionManager.createRegion(offlinePlayer.getName(), offlinePlayer);
 
 			for (ChunkPos chunkPos : chunkPositions) {
 				Chunk chunk = ChunkManager.getFromLocation(Bukkit.getWorld(chunkPos.world()), chunkPos.x(),
@@ -215,7 +214,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 				continue;
 			}
 
-			Region region = RegionManager.createRegion(owner.getName(), owner, true);
+			Region region = RegionManager.createRegion(owner.getName(), owner);
 
 			for (World world : Bukkit.getWorlds()) {
 				for (ChunkCoordinate chunkCoord : Objects.requireNonNull(land.getChunks(world))) {
@@ -265,7 +264,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 				continue;
 			}
 
-			Region region = RegionManager.createRegion(offlinePlayer.getName(), offlinePlayer, true);
+			Region region = RegionManager.createRegion(offlinePlayer.getName(), offlinePlayer);
 
 			for (World world : Bukkit.getWorlds()) {
 				net.william278.huskclaims.position.World hcWorld = api.getWorld(world.getName());

@@ -267,7 +267,7 @@ public class ClaimCommand extends CommandBuilder {
 					return null;
 				}
 
-				region = RegionManager.createRegion(player.getName(), player, true);
+				region = RegionManager.createRegion(player.getName(), player);
 				TargetRegionSession.newSession(player, region);
 			}
 		}

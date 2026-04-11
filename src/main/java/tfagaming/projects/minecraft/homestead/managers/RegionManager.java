@@ -41,14 +41,20 @@ public final class RegionManager {
 	}
 
 	/**
-	 * Creates a new region owned by the given player.
-	 * The region's upkeep timer is scheduled if upkeep is enabled.
-	 * A {@link RegionCreateEvent} is fired on the next server tick.
+	 * Creates a region, optionally ensuring the name is unique by appending a counter.
 	 * @param name The region name
 	 * @param player The owner of the region
 	 */
 	public static Region createRegion(String name, OfflinePlayer player) {
-		Region region = new Region(name, player);
+		String newName = name;
+		int counter = 1;
+
+		while (RegionManager.isNameUsed(newName)) {
+			newName = name + counter;
+			counter++;
+		}
+
+		Region region = new Region(newName, player);
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
 			int delay = Resources.<RegionsFile>get(ResourceType.Regions).getInt("upkeep.start-upkeep");
@@ -62,42 +68,6 @@ public final class RegionManager {
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 
 		return region;
-	}
-
-	/**
-	 * Creates a region, optionally ensuring the name is unique by appending a counter.
-	 * Upkeep and event logic is identical to {@link #createRegion(String, OfflinePlayer)}.
-	 * @param name The region name
-	 * @param player The owner of the region
-	 * @param verifyName Verify if another region has the same name
-	 */
-	public static Region createRegion(String name, OfflinePlayer player, boolean verifyName) {
-		if (verifyName) {
-			String newName = name;
-			int counter = 1;
-
-			while (RegionManager.isNameUsed(newName)) {
-				newName = name + counter;
-				counter++;
-			}
-
-			Region region = new Region(newName, player);
-
-			if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
-				int delay = Resources.<RegionsFile>get(ResourceType.Regions).getInt("upkeep.start-upkeep");
-
-				region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
-			}
-
-			Homestead.regionsCache.putOrUpdate(region);
-
-			RegionCreateEvent event = new RegionCreateEvent(region, player);
-			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
-
-			return region;
-		} else {
-			return createRegion(name, player);
-		}
 	}
 
 	/** Returns a list of every loaded region, directly from dynamic cache. */

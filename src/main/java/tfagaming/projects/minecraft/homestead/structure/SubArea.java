@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class SubArea {
+	private boolean autoUpdate = true;
+
 	public final UUID id;
 	public UUID regionId;
 	public String name;
@@ -53,6 +55,15 @@ public class SubArea {
 		this.flags = flags;
 		this.rent = rent;
 		this.createdAt = createdAt;
+	}
+
+	/**
+	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
+	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
+	 * @param autoUpdate Auto-Update toggle
+	 */
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
 	}
 
 	// Utility methods
@@ -396,6 +407,8 @@ public class SubArea {
 	}
 
 	public void updateCache() {
+		if (!autoUpdate) return;
+
 		Homestead.subAreasCache.putOrUpdate(this);
 	}
 }

@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.database.cache;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 
 import java.util.ArrayList;
@@ -9,14 +10,17 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SubAreasCache extends ConcurrentHashMap<UUID, SubArea> {
-	public SubAreasCache(int interval) {
-		Homestead.getInstance().runAsyncTimerTask(() -> {
-			Homestead.database.exportSubAreas();
-		}, 10, interval);
+	public SubAreasCache() {
 	}
 
 	public List<SubArea> getAll() {
 		return new ArrayList<>(this.values());
+	}
+
+	public void putAll(List<SubArea> subAreas) {
+		for (SubArea subArea : subAreas) {
+			putOrUpdate(subArea);
+		}
 	}
 
 	public void putOrUpdate(SubArea subArea) {

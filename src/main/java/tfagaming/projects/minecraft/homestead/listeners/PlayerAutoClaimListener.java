@@ -119,7 +119,7 @@ public final class PlayerAutoClaimListener implements Listener {
 					return;
 				}
 
-				region = RegionManager.createRegion(player.getName(), player, true);
+				region = RegionManager.createRegion(player.getName(), player);
 				TargetRegionSession.newSession(player, region);
 			}
 		}

@@ -14,6 +14,8 @@ public class Level {
 	public static final double COEFFICIENT = 50;
 	public static final double CONSTANT = 100;
 
+	private boolean autoUpdate = true;
+
 	public final UUID id;
 	public UUID regionId;
 	public int level;
@@ -37,6 +39,15 @@ public class Level {
 		this.experience = experience;
 		this.totalExperience = totalExperience;
 		this.createdAt = createdAt;
+	}
+
+	/**
+	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
+	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
+	 * @param autoUpdate Auto-Update toggle
+	 */
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
 	}
 
 	// MEE6 XP formula: ƒ(x) = base * (x²) + (coefficient * x) + constant
@@ -174,6 +185,8 @@ public class Level {
 	}
 
 	private void updateCache() {
+		if (!autoUpdate) return;
+
 		Homestead.levelsCache.putOrUpdate(this);
 	}
 }

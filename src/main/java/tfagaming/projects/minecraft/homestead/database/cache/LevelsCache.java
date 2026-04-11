@@ -9,14 +9,17 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LevelsCache extends ConcurrentHashMap<UUID, Level> {
-	public LevelsCache(int interval) {
-		Homestead.getInstance().runAsyncTimerTask(() -> {
-			Homestead.database.exportLevels();
-		}, 10, interval);
+	public LevelsCache() {
 	}
 
 	public List<Level> getAll() {
 		return new ArrayList<>(this.values());
+	}
+
+	public void putAll(List<Level> levels) {
+		for (Level level : levels) {
+			putOrUpdate(level);
+		}
 	}
 
 	public void putOrUpdate(Level level) {

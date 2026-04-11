@@ -50,6 +50,7 @@ database:
     password: "PASSWORD"
     database: "homestead_data"
     table_prefix: ""
+    jdbc_url_parameters: ""
 
   # MariaDB settings (only used if provider = "mariadb")
   mariadb:
@@ -59,6 +60,7 @@ database:
     password: "PASSWORD"
     database: "homestead_data"
     table_prefix: ""
+    jdbc_url_parameters: "?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
 
   # MySQL settings (only used if provider = "mysql")
   mysql:
@@ -68,6 +70,7 @@ database:
     password: "PASSWORD"
     database: "homestead_data"
     table_prefix: ""
+    jdbc_url_parameters: ""
 
   # MongoDB settings (only used if provider = "mongodb")
   mongodb:

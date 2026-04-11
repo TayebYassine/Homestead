@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
  * The region structure.
  */
 public class Region {
+	private boolean autoUpdate = true;
+
 	public UUID id;
 	public String displayName;
 	public String name;
@@ -69,6 +71,15 @@ public class Region {
 		this.taxesAmount = 0;
 		this.welcomeSign = null;
 		this.mapColor = 0;
+	}
+
+	/**
+	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
+	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
+	 * @param autoUpdate Auto-Update toggle
+	 */
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
 	}
 
 	public UUID getUniqueId() {
@@ -766,6 +777,8 @@ public class Region {
 
 	// Other
 	public void updateCache() {
+		if (!autoUpdate) return;
+
 		Homestead.regionsCache.putOrUpdate(this);
 	}
 }

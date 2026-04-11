@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class War {
+	private boolean autoUpdate = true;
+
 	public UUID id;
 	public String name;
 	public String description;
@@ -37,6 +39,15 @@ public class War {
 		this.startedAt = System.currentTimeMillis();
 
 		this.regions.addAll(regions);
+	}
+
+	/**
+	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
+	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
+	 * @param autoUpdate Auto-Update toggle
+	 */
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
 	}
 
 	public UUID getUniqueId() {
@@ -125,6 +136,8 @@ public class War {
 	}
 
 	public void updateCache() {
+		if (!autoUpdate) return;
+
 		Homestead.warsCache.putOrUpdate(this);
 	}
 }
