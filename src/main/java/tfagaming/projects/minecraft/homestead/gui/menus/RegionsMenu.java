@@ -65,10 +65,16 @@ public final class RegionsMenu {
 							return;
 						}
 
+						if(!player.hasPermission("homestead.region.teleport")){
+							Messages.send(player, 212);
+							return;
+						}
+
 						boolean allowed = PlayerUtils.isOperator(_player)
 								|| region.isOwner(player)
 								|| (PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN, true)
-								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true));
+								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true))
+								&& player.hasPermission("homestead.region.teleport");
 
 						if (!allowed) {
 							Messages.send(_player, 45, new Placeholder().add("{region}", region.getName()));

@@ -47,6 +47,11 @@ public final class RegionClaimedChunks {
 					SerializableChunk chunk = chunks.get(context.getIndex());
 
 					if (context.getEvent().isRightClick()) {
+						if(!player.hasPermission("homestead.region.teleport")){
+							Messages.send(player, 212);
+							return;
+						}
+
 						new DelayedTeleport(player, chunk.bukkitLocation());
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
 						if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
