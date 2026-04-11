@@ -335,23 +335,6 @@
 				</executions>
 			</plugin>
 
-			<!-- API classifier -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.3.0</version>
-				<executions>
-					<execution>
-						<id>api-jar</id>
-						<phase>package</phase>
-						<goals><goal>jar</goal></goals>
-						<configuration>
-							<classifier>api</classifier>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<!-- Shade -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -359,6 +342,7 @@
 				<version>3.5.1</version>
 				<executions>
 					<execution>
+						<id>shade</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
@@ -366,12 +350,9 @@
 						<configuration>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
+							<shadedArtifactAttached>false</shadedArtifactAttached>
 
 							<artifactSet>
-								<includes>
-									<include>com.technicjelle:BMUtils</include>
-									<include>me.lucko:commodore</include>
-								</includes>
 								<excludes>
 									<exclude>com.flowpowered:flow-math</exclude>
 								</excludes>
@@ -391,6 +372,28 @@
 									<shadedPattern>tfagaming.projects.minecraft.homestead.libs.faststats</shadedPattern>
 								</relocation>
 							</relocations>
+
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>tfagaming.projects.minecraft.homestead.Homestead</mainClass>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>api-jar</id>
+						<phase>install</phase>
+						<goals><goal>jar</goal></goals>
+						<configuration>
+							<classifier>api</classifier>
 						</configuration>
 					</execution>
 				</executions>
