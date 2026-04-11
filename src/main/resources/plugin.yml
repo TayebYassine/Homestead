@@ -89,6 +89,10 @@ permissions:
     default: true
   homestead.region.war:
     default: true
+  homestead.region.weather:
+    default: true
+  homestead.region.time:
+    default: true
   homestead.region.*:
     default: true
     children:
@@ -193,10 +197,6 @@ permissions:
     default: true
   homestead.commands.region.withdraw:
     default: true
-  homestead.region.weather:
-    default: true
-  homestead.region.time:
-      default: true
   homestead.commands.region.*:
     default: true
     children:
