@@ -158,7 +158,11 @@ public class SerializableChunk {
 	}
 
 	public String toString(boolean noDetails) {
-		return worldId + "," + x + "," + z;
+		if (noDetails) {
+			return worldId + "," + x + "," + z;
+		} else {
+			return toString();
+		}
 	}
 
 	public Location bukkitLocation() {

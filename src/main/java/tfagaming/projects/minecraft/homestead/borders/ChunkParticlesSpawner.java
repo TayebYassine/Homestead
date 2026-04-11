@@ -161,9 +161,8 @@ public class ChunkParticlesSpawner {
 		}
 
 		Chunk neighbor = world.getChunkAt(chunkX, chunkZ);
-		Region neighborRegion = ChunkManager.getRegionOwnsTheChunk(neighbor);
 
-		if (neighborRegion != null && neighborRegion.getUniqueId().equals(region.getUniqueId())) {
+		if (ChunkManager.isChunkClaimedByRegion(region, neighbor)) {
 			return;
 		}
 
