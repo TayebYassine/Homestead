@@ -92,7 +92,7 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 		}
 
 		PlayerBank.withdraw(player, amount);
-		region.addBalanceToBank(amount);
+		region.depositBank(amount);
 
 		Messages.send(player, 66, new Placeholder()
 				.add("{region}", region.getName())

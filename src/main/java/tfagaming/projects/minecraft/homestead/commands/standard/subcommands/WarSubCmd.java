@@ -151,7 +151,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				War war = WarManager.declareWar(name, prize, List.of(region, targetRegion));
+				War war = WarManager.declareWar(name, prize, region, targetRegion);
 
 				List<String> listString = Resources.<LanguageFile>get(ResourceType.Language).getStringList("147");
 
@@ -191,7 +191,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				War war = WarManager.surrenderRegionFromFirstWarFound(region.getUniqueId());
+				War war = WarManager.removeRegionFromWar(region.getUniqueId());
 
 				if (war != null && war.getRegions().size() == 1) {
 					Region winner = war.getRegions().getFirst();
@@ -199,7 +199,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					double prize = war.getPrize();
 
 					region.withdrawBank(prize);
-					winner.addBalanceToBank(prize);
+					winner.depositBank(prize);
 
 					if (winner.getOwner().isOnline()) {
 						Messages.send((Player) winner.getOwner(), 155);
@@ -221,7 +221,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				War war = WarManager.findWarByRegionId(region.getUniqueId());
+				War war = WarManager.findWarByRegion(region.getUniqueId());
 
 				if (!WarManager.isRegionInWar(region.getUniqueId()) || war == null) {
 					Messages.send(player, 152);

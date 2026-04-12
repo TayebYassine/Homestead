@@ -162,7 +162,7 @@ public class PlayerUtils {
 		boolean response;
 
 		SerializableRent rent = region.getRent();
-		War war = WarManager.findWarByRegionId(regionId);
+		War war = WarManager.findWarByRegion(regionId);
 
 		if (rent != null && rent.getPlayerId() != null
 				&& rent.getPlayerId().equals(player.getUniqueId())
@@ -225,7 +225,7 @@ public class PlayerUtils {
 			return FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
 		}
 
-		War war = WarManager.findWarByRegionId(region.getUniqueId());
+		War war = WarManager.findWarByRegion(region.getUniqueId());
 
 		if (war != null) {
 			List<UUID> warMembers = WarManager.getMembersOfWar(war.getUniqueId())

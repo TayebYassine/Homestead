@@ -140,6 +140,13 @@ wars:
   min-prize: 1000.0
   max-prize: 1000000000.0
 
+  # Force keep inventory when a player is part of a war and died?
+  # This completely ignores the game rule set for any world.
+  keep-inventory: false
+
+  # Give the region owner's head to the region owner who won the war?
+  give-head: true
+
 # Welcome Signs Feature
 # Clickable signs that teleport to region homes
 welcome-signs:
