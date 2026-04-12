@@ -129,6 +129,15 @@ dependencies {
 
 All versions are available in [GitHub Packages](https://github.com/TayebYassine/Homestead/packages/2787077/versions).
 
+## Metrics
+
+Homestead is receiving anonymous data and sending them to [bStats](https://bstats.org/plugin/bukkit/Homestead/25286) and [FastStats](https://faststats.dev/project/homestead/minecraft-plugin), two well-known metrics service providers for Minecraft plugins industry.
+
+<img src="https://faststats.dev/embed/default:516c7d15-a0ff-400e-9e60-c017ac4b5777:servers-and-players?w=800&h=300&theme=dark" />
+
+<img src="https://bstats.org/signatures/bukkit/Homestead.svg" />
+
+
 ## Contributing
 
 Click here: [CONTRIBUTING.md](./CONTRIBUTING.md)
