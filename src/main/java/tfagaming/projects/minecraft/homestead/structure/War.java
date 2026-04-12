@@ -31,13 +31,7 @@ public class War {
 	}
 
 	public War(String name, List<UUID> regions) {
-		this.id = UUID.randomUUID();
-		this.name = name;
-		this.displayName = name;
-		this.description = Resources.<LanguageFile>get(ResourceType.Language).getString("default.war-description");
-		this.prize = 0.0;
-		this.startedAt = System.currentTimeMillis();
-
+		this(name);
 		this.regions.addAll(regions);
 	}
 
@@ -54,7 +48,6 @@ public class War {
 		return id;
 	}
 
-	// Name and displayname
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -73,7 +66,6 @@ public class War {
 		updateCache();
 	}
 
-	// Description
 	public String getDescription() {
 		return description;
 	}
@@ -83,7 +75,6 @@ public class War {
 		updateCache();
 	}
 
-	// Prize
 	public double getPrize() {
 		return prize;
 	}
@@ -93,35 +84,31 @@ public class War {
 		updateCache();
 	}
 
-	// Started At
 	public long getStartedAt() {
 		return startedAt;
 	}
 
-	// Regions
 	public ArrayList<UUID> getRegionUniqueIds() {
 		return regions;
 	}
 
 	public ArrayList<Region> getRegions() {
-		ArrayList<Region> regions = new ArrayList<>();
+		ArrayList<Region> resolved = new ArrayList<>();
 
 		for (UUID uuid : this.regions) {
 			Region region = RegionManager.findRegion(uuid);
-
 			if (region != null) {
-				regions.add(region);
+				resolved.add(region);
 			}
 		}
 
-		return regions;
+		return resolved;
 	}
 
 	public void addRegion(Region region) {
 		if (this.regions.contains(region.id)) {
 			return;
 		}
-
 		this.regions.add(region.id);
 		updateCache();
 	}
@@ -130,14 +117,17 @@ public class War {
 		if (!this.regions.contains(region.id)) {
 			return;
 		}
-
 		this.regions.remove(region.id);
 		updateCache();
 	}
 
+	public Region getWinner() {
+		ArrayList<Region> current = getRegions();
+		return current.size() == 1 ? current.getFirst() : null;
+	}
+
 	public void updateCache() {
 		if (!autoUpdate) return;
-
 		Homestead.warsCache.putOrUpdate(this);
 	}
 }

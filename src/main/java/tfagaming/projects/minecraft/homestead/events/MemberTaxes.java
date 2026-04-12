@@ -42,7 +42,7 @@ public final class MemberTaxes {
 
 					if (PlayerBank.get(targetPlayer) >= amountToPay) {
 						PlayerBank.withdraw(targetPlayer, amountToPay);
-						region.addBalanceToBank(amountToPay);
+						region.depositBank(amountToPay);
 
 						region.setMemberTaxesAt(member, TaxesUtils.getNewTaxesAt());
 

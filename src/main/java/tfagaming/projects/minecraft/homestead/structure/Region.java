@@ -251,7 +251,7 @@ public class Region {
 		updateCache();
 	}
 
-	public void addBalanceToBank(double money) {
+	public void depositBank(double money) {
 		this.bank += money;
 		updateCache();
 	}

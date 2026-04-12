@@ -81,6 +81,21 @@ public class ItemUtils {
 		return getItem(displayname, loreCopy, material);
 	}
 
+	// Get player head
+	public static ItemStack getPlayerHead(OfflinePlayer player) {
+		ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+
+		SkullMeta meta = (SkullMeta) head.getItemMeta();
+
+		if (meta != null) {
+			meta.setOwningPlayer(player);
+			meta.setDisplayName(player.getName() + "'s Head");
+			head.setItemMeta(meta);
+		}
+
+		return head;
+	}
+
 	// Get player head based by texture
 	public static ItemStack getPlayerHead(String displayname, List<String> lore, String texture) {
 		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;

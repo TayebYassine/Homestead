@@ -12,15 +12,35 @@ public final class WarManager {
 	private WarManager() {
 	}
 
-	/** @param name  The war display name
-	 *  @param prize The reward given to the winning region
-	 *  @param regions The participating regions (minimum 2)
+	/**
+	 * Declares a new war between exactly two regions.
+	 *
+	 * @param name    The war display name
+	 * @param prize   The reward given to the winning region; must be &gt; 0
+	 * @param regionA The first participating region
+	 * @param regionB The second participating region
 	 */
-	public static War declareWar(String name, double prize, List<Region> regions) {
+	public static War declareWar(String name, double prize, Region regionA, Region regionB) {
+		if (regionA.getUniqueId().equals(regionB.getUniqueId())) {
+			throw new IllegalArgumentException("A war must involve two distinct regions.");
+		}
+
+		if (isRegionInWar(regionA.getUniqueId()) || isRegionInWar(regionB.getUniqueId())) {
+			throw new IllegalStateException("One of the regions is currently in a war.");
+		}
+
 		War war = new War(name);
-		regions.forEach(war::addRegion);
+
+		war.setAutoUpdate(false);
+
+		war.addRegion(regionA);
+		war.addRegion(regionB);
 		war.setPrize(prize);
+
+		war.setAutoUpdate(true);
+
 		Homestead.warsCache.putOrUpdate(war);
+
 		return war;
 	}
 
@@ -28,7 +48,7 @@ public final class WarManager {
 		return Homestead.warsCache.getAll();
 	}
 
-	/** Returns the war with the exact UUID, or null if none exists. */
+	/** Returns the war with the exact UUID, or {@code null} if none exists. */
 	public static War findWar(UUID id) {
 		return getAll().stream()
 				.filter(w -> w.getUniqueId().equals(id))
@@ -36,7 +56,7 @@ public final class WarManager {
 				.orElse(null);
 	}
 
-	/** Returns the war with the exact name, or null if none exists. */
+	/** Returns the war with the exact name (case-sensitive), or {@code null} if none exists. */
 	public static War findWar(String name) {
 		return getAll().stream()
 				.filter(w -> w.getName().equals(name))
@@ -44,8 +64,8 @@ public final class WarManager {
 				.orElse(null);
 	}
 
-	/** Returns the war the given region is participating in, or null. */
-	public static War findWarByRegionId(UUID regionId) {
+	/** Returns the war the given region is participating in, or {@code null}. */
+	public static War findWarByRegion(UUID regionId) {
 		return getAll().stream()
 				.filter(w -> w.getRegions().stream()
 						.anyMatch(r -> r.getUniqueId().equals(regionId)))
@@ -53,7 +73,7 @@ public final class WarManager {
 				.orElse(null);
 	}
 
-	/** Ends and removes the war with the given UUID from cache. */
+	/** Ends and removes the war with the given UUID. */
 	public static void endWar(UUID id) {
 		War war = findWar(id);
 		if (war != null) {
@@ -62,7 +82,8 @@ public final class WarManager {
 	}
 
 	/**
-	 * Collects all members and owners from the first two regions of a war.
+	 * Collects all members and owners from every region in the war.
+	 *
 	 * @param warId The war UUID
 	 */
 	public static List<OfflinePlayer> getMembersOfWar(UUID warId) {
@@ -71,39 +92,32 @@ public final class WarManager {
 			return Collections.emptyList();
 		}
 
-		Region first = war.getRegions().get(0);
-		Region second = war.getRegions().get(1);
-
 		Set<OfflinePlayer> players = new HashSet<>();
-
-		first.getMembers().forEach(m -> players.add(m.bukkit()));
-		second.getMembers().forEach(m -> players.add(m.bukkit()));
-
-		players.add(first.getOwner());
-		players.add(second.getOwner());
+		for (Region region : war.getRegions()) {
+			region.getMembers().forEach(m -> players.add(m.bukkit()));
+			players.add(region.getOwner());
+		}
 
 		return new ArrayList<>(players);
 	}
 
-	/** Returns true if the given player is a member or owner of any active war. */
+	/** Returns {@code true} if the given player is a member or owner of any active war. */
 	public static boolean isPlayerInWar(OfflinePlayer player) {
 		return getAll().stream()
 				.anyMatch(war -> getMembersOfWar(war.getUniqueId()).contains(player));
 	}
 
 	/**
-	 * Removes the given region from whichever war it belongs to.
-	 * @param regionId The region UUID to surrender
-	 * @return The war the region was removed from, or null if not found
+	 * Removes the given region from whichever war it belongs to, without ending the war.
+	 * The caller is responsible for checking the war's state afterward and ending it if needed.
+	 *
+	 * @param regionId The UUID of the region to remove
 	 */
-	public static War surrenderRegionFromFirstWarFound(UUID regionId) {
+	public static War removeRegionFromWar(UUID regionId) {
 		for (War war : getAll()) {
 			for (Region region : war.getRegions()) {
 				if (region.getUniqueId().equals(regionId)) {
 					war.removeRegion(region);
-					if (war.getRegions().size() < 2) {
-						endWar(war.getUniqueId());
-					}
 					return war;
 				}
 			}
@@ -111,24 +125,21 @@ public final class WarManager {
 		return null;
 	}
 
-	/** Checks whether any active war already carries the supplied name. */
+	/** Checks whether any active war already carries the supplied name (case-insensitive). */
 	public static boolean isNameUsed(String name) {
 		return getAll().stream()
 				.anyMatch(w -> w.getName().equalsIgnoreCase(name));
 	}
 
-	/** Returns true if the given region is currently participating in any war. */
+	/** Returns {@code true} if the given region is currently participating in any war. */
 	public static boolean isRegionInWar(UUID regionId) {
-		return getAll().stream()
-				.anyMatch(w -> w.getRegions().stream()
-						.anyMatch(r -> r.getUniqueId().equals(regionId)));
+		return findWarByRegion(regionId) != null;
 	}
 
 	public static void cleanStartup() {
 		Logger.debug("Cleaning up wars data...");
 
 		List<War> warsToEnd = new ArrayList<>();
-		int updated = 0;
 
 		for (War war : Homestead.warsCache.getAll()) {
 			if (war.getRegions().size() < 2) {
@@ -138,13 +149,12 @@ public final class WarManager {
 
 		for (War war : warsToEnd) {
 			WarManager.endWar(war.getUniqueId());
-			updated++;
 		}
 
-		if (updated == 0) {
+		if (warsToEnd.isEmpty()) {
 			Logger.debug("No data corruption was found!");
 		} else {
-			Logger.debug(updated + " updates have been applied to wars data.");
+			Logger.debug(warsToEnd.size() + " corrupted war(s) were removed.");
 		}
 	}
 }

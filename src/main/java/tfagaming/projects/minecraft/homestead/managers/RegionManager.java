@@ -207,7 +207,7 @@ public final class RegionManager {
 		final List<SubArea> subAreas = SubAreaManager.getSubAreasOfRegion(from.getUniqueId());
 		final List<SerializableMember> members = from.getMembers();
 
-		to.addBalanceToBank(bank);
+		to.depositBank(bank);
 
 		for (SerializableChunk chunk : chunks) {
 			to.addChunk(chunk);
