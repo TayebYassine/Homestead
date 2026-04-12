@@ -50,7 +50,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Homestead extends JavaPlugin {
-	private final static String VERSION = "5.1.0.0-26w15b";
+	private final static String VERSION = "5.1.0.0-26w15c";
 	private final static boolean SNAPSHOT = true;
 	public static Database database;
 	public static RegionsCache regionsCache;

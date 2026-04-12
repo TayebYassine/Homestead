@@ -28,14 +28,14 @@ public final class Database {
 						Resources.<ConfigFile>get(ResourceType.Config).getInt("database.postgresql.port"),
 						Resources.<ConfigFile>get(ResourceType.Config).getString("database.postgresql.database"),
 						Resources.<ConfigFile>get(ResourceType.Config).getString("database.postgresql.table_prefix"),
-						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.jdbc_url_parameters"));
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.postgresql.jdbc_url_parameters"));
 			case MARIADB -> new MariaDB(Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.username"),
 						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.password"),
 						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.host"),
 						Resources.<ConfigFile>get(ResourceType.Config).getInt("database.mariadb.port"),
 						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.database"),
 						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.table_prefix"),
-						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.jdbc_url_parameters"));
+						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mariadb.jdbc_url_parameters"));
 			case MYSQL -> new MySQL(Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.username"),
 						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.password"),
 						Resources.<ConfigFile>get(ResourceType.Config).getString("database.mysql.host"),
@@ -53,6 +53,14 @@ public final class Database {
 	}
 
 	public Driver getProvider() { return provider; }
+
+	public <T extends Provider> T getInstance() {
+		if (instance == null) {
+			return null;
+		}
+
+		return (T) instance;
+	}
 
 	public void importToCache() throws Exception {
 		if (instance == null) {
