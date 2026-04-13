@@ -95,7 +95,7 @@ public final class Resources {
 			Logger.warning("THIS IS NOT A BUG OR A VULNERABILITY; THIS IS A MESSAGE FROM THE DEVELOPERS OF HOMESTEAD.");
 			Logger.warning("-----------------------------");
 
-			new ConfigMigrator(
+			boolean migrationHappened = new ConfigMigrator(
 					new File(plugin.getDataFolder(), "config.yml"),
 					List.of(
 							new File(plugin.getDataFolder(), "regions.yml"),
@@ -104,6 +104,10 @@ public final class Resources {
 							new File(plugin.getDataFolder(), "limits.yml")
 					)
 			).migrate();
+
+			if (migrationHappened) {
+				Resources.load(plugin);
+			}
 		} catch (IOException e) {
 			Logger.error("[Migrator] Something went terribly wrong, unable to migrate from old 'config.yml' to the new resource files!");
 			Logger.error(e);

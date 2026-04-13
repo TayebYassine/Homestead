@@ -27,18 +27,18 @@ public final class ConfigMigrator {
 	}
 
 	/**
-	 * Runs the migration.
+	 * Runs the migration, returns {@code true} when a change has happened.
 	 *
 	 * @throws IOException If saving any modified file fails.
 	 */
-	public void migrate() throws IOException {
-		if (!configFile.exists()) return;
+	public boolean migrate() throws IOException {
+		if (!configFile.exists()) return false;
 
 		FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 		Set<String> configTopKeys = config.getKeys(false);
 
 		if (configTopKeys.isEmpty()) {
-			return;
+			return false;
 		}
 
 		List<String> globalMigratedKeys = new ArrayList<>();
@@ -76,7 +76,7 @@ public final class ConfigMigrator {
 
 		if (globalMigratedKeys.isEmpty()) {
 			Logger.info("[Migrator] No legacy keys found in 'config.yml', nothing to migrate.");
-			return;
+			return false;
 		}
 
 		for (String key : globalMigratedKeys) {
@@ -85,6 +85,8 @@ public final class ConfigMigrator {
 
 		config.save(configFile);
 		Logger.info("[Migrator] Removed migrated key(s) from config.yml: " + globalMigratedKeys);
+
+		return true;
 	}
 
 	private void mergeSection(ConfigurationSection src, ConfigurationSection dst) {
