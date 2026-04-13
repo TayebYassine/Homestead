@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.menus;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import tfagaming.projects.minecraft.homestead.integrations.NexoMC;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
@@ -40,29 +41,17 @@ public class MenuUtils {
 			String texture = data.getOriginalType().split("-")[1];
 
 			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
+		} else if (data.getOriginalType().startsWith("NEXOMC-")) {
+			String itemId = data.getOriginalType().split("-")[1];
+
+			return NexoMC.getCustomNexoItem(itemId, data.getName(), data.getLore(), placeholder);
 		} else {
 			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType(), placeholder);
 		}
 	}
 
 	public static ItemStack getButton(int path, OfflinePlayer... playerHead) {
-		ButtonData data = getButtonData(path);
-
-		if (data.getOriginalType().startsWith("PLAYERHEAD-")) {
-			String texture = data.getOriginalType().split("-")[1];
-
-			if (texture.equalsIgnoreCase("this")) {
-				if (playerHead.length == 0) {
-					return ItemUtils.getItem(data.getName(), data.getLore(), Material.BARRIER);
-				} else {
-					return ItemUtils.getPlayerHead(data.getName(), data.getLore(), playerHead[0].getUniqueId());
-				}
-			} else {
-				return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture);
-			}
-		} else {
-			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType());
-		}
+		return getButton(path, new Placeholder(), playerHead);
 	}
 
 	public static ItemStack getButton(int path, Placeholder placeholder, OfflinePlayer... playerHead) {
@@ -81,7 +70,11 @@ public class MenuUtils {
 			} else {
 				return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
 			}
-		} else {
+		} else if (data.getOriginalType().startsWith("NEXOMC-")) {
+			String itemId = data.getOriginalType().split("-")[1];
+
+			return NexoMC.getCustomNexoItem(itemId, data.getName(), data.getLore(), placeholder);
+		}  else {
 			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType(), placeholder);
 		}
 	}
@@ -113,6 +106,10 @@ public class MenuUtils {
 			String texture = type.split("-")[1];
 
 			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
+		} else if (type != null && type.startsWith("NEXOMC-")) {
+			String itemId = type.split("-")[1];
+
+			return NexoMC.getCustomNexoItem(itemId, data.getName(), data.getLore(), placeholder);
 		} else {
 			return ItemUtils.getItem(data.getName(), data.getLore(),
 					Material.getMaterial(type == null ? "BARRIER" : type), placeholder);

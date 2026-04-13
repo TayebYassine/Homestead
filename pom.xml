@@ -77,6 +77,10 @@
 			<name>TheNextLvl</name>
 			<url>https://repo.thenextlvl.net/releases</url>
 		</repository>
+		<repository>
+			<id>nexomc-releases</id>
+			<url>https://repo.nexomc.com/releases/</url>
+		</repository>
 	</repositories>
 
 	<dependencyManagement>
@@ -294,6 +298,19 @@
 			<groupId>dev.faststats.metrics</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>0.16.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.nexomc</groupId>
+			<artifactId>nexo</artifactId>
+			<version>1.21.0</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>dev.triumphteam</groupId>
+					<artifactId>triumph-gui</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 

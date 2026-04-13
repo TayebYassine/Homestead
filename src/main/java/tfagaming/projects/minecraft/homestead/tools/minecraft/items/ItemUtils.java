@@ -22,6 +22,50 @@ import java.util.List;
 import java.util.UUID;
 
 public class ItemUtils {
+	public static ItemStack applyMetadata(ItemStack item, String displayname, List<String> lore) {
+		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
+
+		ItemMeta meta = item.getItemMeta();
+
+		if (meta != null) {
+			meta.setDisplayName(ColorTranslator.translate(displayname));
+
+			if (loreCopy != null) {
+				ArrayList<String> lorelist = new ArrayList<>();
+				for (String each : loreCopy) {
+					String[] lines = each.split("\\n");
+					for (String line : lines) {
+						if (!line.contains("&")) {
+							line = "&f" + line;
+						}
+						lorelist.add(ColorTranslator.translate(line));
+					}
+				}
+				meta.setLore(lorelist);
+			}
+		}
+
+		item.setItemMeta(meta);
+
+		return item;
+	}
+
+	public static ItemStack applyMetadata(ItemStack item, String displayname, List<String> lore, Placeholder placeholder) {
+		displayname = Formatter.applyPlaceholders(displayname, placeholder);
+
+		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
+
+		if (loreCopy != null) {
+			for (int i = 0; i < loreCopy.size(); i++) {
+				String string = loreCopy.get(i);
+				string = Formatter.applyPlaceholders(string, placeholder);
+				loreCopy.set(i, string);
+			}
+		}
+
+		return applyMetadata(item, displayname, loreCopy);
+	}
+
 	public static ItemStack getItem(ButtonData data) {
 		return getItem(data.getName(), data.getLore(), data.getType());
 	}
