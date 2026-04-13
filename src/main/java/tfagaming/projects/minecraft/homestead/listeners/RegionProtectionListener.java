@@ -710,6 +710,13 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				});
 			}
+		} else if (damager instanceof Projectile) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			}
 		} else if (Explosives.isExplosive(damager)) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);

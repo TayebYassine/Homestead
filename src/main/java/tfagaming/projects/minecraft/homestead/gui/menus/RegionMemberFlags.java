@@ -99,6 +99,7 @@ public final class RegionMemberFlags {
 					String flagString = PlayerFlags.getFlags().get(flagListIndex);
 
 					if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
+						PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 						Messages.send(player, 42);
 						return;
 					}

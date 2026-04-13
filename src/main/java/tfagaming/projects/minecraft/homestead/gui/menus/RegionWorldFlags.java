@@ -54,6 +54,7 @@ public final class RegionWorldFlags {
 					String flagString = WorldFlags.getFlags().get(context.getIndex());
 
 					if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
+						PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 						Messages.send(player, 42);
 						return;
 					}

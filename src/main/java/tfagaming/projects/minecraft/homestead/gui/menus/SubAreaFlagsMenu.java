@@ -14,6 +14,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public final class SubAreaFlagsMenu {
 					String flagString = PlayerFlags.getFlags().get(context.getIndex());
 
 					if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
+						PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 						Messages.send(player, 42);
 						return;
 					}
