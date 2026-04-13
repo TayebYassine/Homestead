@@ -559,7 +559,7 @@ public final class RegionProtectionListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onEntityBlockForm(EntityBlockFormEvent event) {
+	public void onPlayerFrostWalkerEnchantedBootsUsage(EntityBlockFormEvent event) {
 		Entity entity = event.getEntity();
 		Block block = event.getBlock();
 
@@ -668,7 +668,7 @@ public final class RegionProtectionListener implements Listener {
 		} else if (ChunkManager.isChunkClaimed(chunk)) {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
+			if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
 				event.setCancelled(true);
 			}
 		}
@@ -799,7 +799,7 @@ public final class RegionProtectionListener implements Listener {
 		} else if (ChunkManager.isChunkClaimed(chunk)) {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
+			if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
 				event.setCancelled(true);
 			}
 		}
@@ -819,7 +819,7 @@ public final class RegionProtectionListener implements Listener {
 		} else if (ChunkManager.isChunkClaimed(chunk)) {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
+			if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
 				event.setCancelled(true);
 			}
 		}
@@ -863,7 +863,7 @@ public final class RegionProtectionListener implements Listener {
 		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_DAMAGE_ENTITIES)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
 					event.setCancelled(true);
 				}
 			}
@@ -920,7 +920,7 @@ public final class RegionProtectionListener implements Listener {
 		Entity entity = event.getAttacker();
 
 		if (entity instanceof Player player) {
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.VEHICLES, null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -984,7 +984,7 @@ public final class RegionProtectionListener implements Listener {
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
 				event.setCancelled(true);
 			});
-		} else if (entity instanceof ItemFrame || entity instanceof GlowItemFrame) {
+		} else if (entity instanceof ItemFrame) {
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
 				event.setCancelled(true);
 			});
@@ -1011,7 +1011,7 @@ public final class RegionProtectionListener implements Listener {
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
 				event.setCancelled(true);
 			});
-		} else if (entity instanceof ItemFrame || entity instanceof GlowItemFrame) {
+		} else if (entity instanceof ItemFrame) {
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
 				event.setCancelled(true);
 			});
@@ -1380,11 +1380,15 @@ public final class RegionProtectionListener implements Listener {
 		Location location = block.getLocation();
 		Chunk chunk = location.getChunk();
 
-		if (entity instanceof Sheep || entity instanceof Goat || entity instanceof Cow || entity instanceof Villager || entity instanceof Bee || block.getType().hasGravity()) {
+		if (entity instanceof Sheep || entity instanceof Goat || entity instanceof Cow || entity instanceof Villager || entity instanceof Bee || entity instanceof FallingBlock || block.getType().hasGravity()) {
 			return;
 		}
 
-		if (entity instanceof Wither || entity instanceof WitherSkull) {
+		if (entity instanceof Player player) {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (entity instanceof Wither || entity instanceof WitherSkull) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
@@ -1392,7 +1396,7 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				}
 			}
-		} else if (!(entity instanceof Player || entity instanceof FallingBlock)) {
+		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
@@ -1530,6 +1534,25 @@ public final class RegionProtectionListener implements Listener {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.SNOWMAN_TRAILS)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onWeatherSnowForm(EntityBlockFormEvent event) {
+		Block block = event.getBlock();
+		BlockState state = event.getNewState();
+		Material stateType = state.getType();
+
+		if (stateType == Material.SNOW) {
+			Chunk chunk = block.getChunk();
+
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.WEATHER_SNOW)) {
 					event.setCancelled(true);
 				}
 			}

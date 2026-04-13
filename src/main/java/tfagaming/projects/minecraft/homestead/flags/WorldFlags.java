@@ -26,6 +26,8 @@ public final class WorldFlags {
 	public static final long WINDCHARGE_BURST = 1L << 19;
 	public static final long COPPER_GOLEMS_INTERACTION = 1L << 20;
 	public static final long WARS = 1L << 21;
+	public static final long PROJECTILES = 1L << 22;
+	public static final long WEATHER_SNOW = 1L << 23;
 
 	private static final Map<String, Long> MAPPED_FLAGS = new LinkedHashMap<>();
 
@@ -52,6 +54,8 @@ public final class WorldFlags {
 		MAPPED_FLAGS.put("windcharge-burst", WINDCHARGE_BURST);
 		MAPPED_FLAGS.put("copper-golems-interaction", COPPER_GOLEMS_INTERACTION);
 		MAPPED_FLAGS.put("wars", WARS);
+		MAPPED_FLAGS.put("projectiles", PROJECTILES);
+		MAPPED_FLAGS.put("weather-snow", WEATHER_SNOW);
 	}
 
 	/**

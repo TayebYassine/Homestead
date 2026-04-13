@@ -86,3 +86,6 @@ default-world-flags:
   windcharge-burst: false           # Wind charges burst
   copper-golems-interaction: false  # Copper golems from outside enter
   wars: false                       # Region can be targeted for war
+  projectiles: false                # Any kind of projectile from any source except players
+  weather-snow: true                # Snow form during weather storm (in cold biomes)
+

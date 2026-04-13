@@ -553,6 +553,16 @@ flags-info:
       - "&7Allow any player to declare war"
       - "&7on this region?"
     type: PLAYERHEAD-d51e6cbd10b0ff98b47f93d9f34deaaf690f40d5db9950016071e7ae5d2ab226
+  projectiles:
+    description:
+      - "&7Allow any kind of projectile, shot by any"
+      - "&7source (except players), to hit blocks/entities?"
+    type: TIPPED_ARROW
+  weather-snow:
+    description:
+      - "&7Allow weather storm to form snow in cold"
+      - "&7biomes?"
+    type: GHAST_TEAR
 
   # REGION CONTROL FLAGS
   trust-players:
