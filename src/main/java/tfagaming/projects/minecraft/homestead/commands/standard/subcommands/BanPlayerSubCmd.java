@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -97,6 +98,11 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		if (args.length > 1) {
 			List<String> reasonList = Arrays.asList(args).subList(1, args.length);
 			reason = String.join(" ", reasonList);
+		}
+
+		if (ColorTranslator.containsMiniMessageTag(reason)) {
+			Messages.send(player, 30);
+			return true;
 		}
 
 		region.banPlayer(target, reason);

@@ -3,9 +3,13 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.chat;
 import org.bukkit.ChatColor;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public final class ColorTranslator {
 	private static final String STANDARD_CODES = "0123456789AaBbCcDdEeFfKkLlMmNnOoRr";
+	private static final Pattern MINIMESSAGE_TAG_PATTERN = Pattern.compile(
+            "<\\/?[a-zA-Z_][a-zA-Z0-9_]*(?::[^>]*?|\\s+[a-zA-Z_][a-zA-Z0-9_]*=\"[^\"]*\")*?>"
+	);
 
 	private static final Map<Character, String> LEGACY_TO_MM_TAG = Map.ofEntries(
 			Map.entry('0', "black"),
@@ -148,6 +152,20 @@ public final class ColorTranslator {
 		if (input == null) return null;
 		input = input.replaceAll("<[^>]+>", "");
 		return preserve(input);
+	}
+
+	/**
+	 * Checks if the input string contains any MiniMessage tag.
+	 *
+	 * @param input The string to check
+	 * @return {@code true} if the string contains any MiniMessage tag, {@code false} otherwise
+	 */
+	public static boolean containsMiniMessageTag(String input) {
+		if (input == null || input.isEmpty()) {
+			return false;
+		}
+
+		return MINIMESSAGE_TAG_PATTERN.matcher(input).find();
 	}
 
 	private static String expandHex(String hex3) {

@@ -21,6 +21,7 @@ import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.ArrayList;
@@ -148,6 +149,11 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				if (name.length() > 512) {
 					Messages.send(player, 145);
+					return true;
+				}
+
+				if (ColorTranslator.containsMiniMessageTag(name)) {
+					Messages.send(player, 30);
 					return true;
 				}
 

@@ -23,6 +23,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
@@ -175,6 +176,11 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				if (SubAreaManager.isNameUsed(region.getUniqueId(), newName)) {
 					Messages.send(player, 58);
+					return true;
+				}
+
+				if (ColorTranslator.containsMiniMessageTag(newName)) {
+					Messages.send(player, 30);
 					return true;
 				}
 

@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -66,6 +67,10 @@ public final class SubAreaMenu {
 				}
 				if (SubAreaManager.isNameUsed(region.getUniqueId(), message)) {
 					Messages.send(player, 58);
+					return false;
+				}
+				if (ColorTranslator.containsMiniMessageTag(message)) {
+					Messages.send(player, 30);
 					return false;
 				}
 				return true;

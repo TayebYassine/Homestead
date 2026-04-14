@@ -20,6 +20,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
@@ -76,6 +77,10 @@ public final class MiscellaneousSettings {
 					Messages.send(player, 2);
 					return false;
 				}
+				if (ColorTranslator.containsMiniMessageTag(message)) {
+					Messages.send(player, 30);
+					return false;
+				}
 				return true;
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 78);
 		});
@@ -108,6 +113,10 @@ public final class MiscellaneousSettings {
 					Messages.send(player, 11);
 					return false;
 				}
+				if (ColorTranslator.containsMiniMessageTag(message)) {
+					Messages.send(player, 30);
+					return false;
+				}
 				return true;
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 79);
 		});
@@ -136,6 +145,10 @@ public final class MiscellaneousSettings {
 				}
 				if (region.getDescription().equals(message)) {
 					Messages.send(player, 11);
+					return false;
+				}
+				if (ColorTranslator.containsMiniMessageTag(message)) {
+					Messages.send(player, 30);
 					return false;
 				}
 				return true;

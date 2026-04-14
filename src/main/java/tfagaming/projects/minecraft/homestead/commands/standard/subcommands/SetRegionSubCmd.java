@@ -25,6 +25,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
@@ -97,6 +98,11 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
+				if (ColorTranslator.containsMiniMessageTag(regionDisplayName)) {
+					Messages.send(player, 30);
+					return true;
+				}
+
 				final String oldDisplayName = region.getDisplayName();
 
 				region.setDisplayName(regionDisplayName);
@@ -146,6 +152,11 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				if (region.getDescription().equals(description)) {
 					Messages.send(player, 11);
+					return true;
+				}
+
+				if (ColorTranslator.containsMiniMessageTag(description)) {
+					Messages.send(player, 30);
 					return true;
 				}
 
