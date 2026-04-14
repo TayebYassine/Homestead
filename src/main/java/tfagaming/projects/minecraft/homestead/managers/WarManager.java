@@ -107,6 +107,13 @@ public final class WarManager {
 				.anyMatch(war -> getMembersOfWar(war.getUniqueId()).contains(player));
 	}
 
+	/** Returns {@code true} if the given player is a member or owner of any active war. */
+	public static boolean isPlayerInWar(OfflinePlayer player, War war) {
+		if (war == null) return false;
+
+		return getMembersOfWar(war.getUniqueId()).stream().map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId());
+	}
+
 	/**
 	 * Removes the given region from whichever war it belongs to, without ending the war.
 	 * The caller is responsible for checking the war's state afterward and ending it if needed.

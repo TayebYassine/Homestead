@@ -15,8 +15,10 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MenuUtils {
+
 	public static String getTitle(int path) {
 		return Resources.<MenusFile>get(ResourceType.Menus).getString("titles." + path);
 	}
@@ -26,94 +28,48 @@ public class MenuUtils {
 		List<String> lore = Resources.<MenusFile>get(ResourceType.Menus).getStringList("buttons." + path + ".lore");
 		String type = Resources.<MenusFile>get(ResourceType.Menus).getString("buttons." + path + ".type");
 
-		if (name == null)
-			name = "NO NAME";
-		if (lore == null)
-			lore = new ArrayList<>();
-		if (type == null)
-			type = "BARRIER";
+		if (name == null) name = "NO NAME";
+		if (lore == null) lore = new ArrayList<>();
+		if (type == null) type = "BARRIER";
 
 		return new ButtonData(name, lore, type);
 	}
 
 	public static ItemStack getButton(ButtonData data, Placeholder placeholder) {
-		if (data.getOriginalType().startsWith("PLAYERHEAD-")) {
-			String texture = data.getOriginalType().split("-")[1];
-
-			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
-		} else if (data.getOriginalType().startsWith("NEXOMC-")) {
-			String itemId = data.getOriginalType().split("-")[1];
-
-			return NexoMC.getCustomNexoItem(itemId, data.getName(), data.getLore(), placeholder);
-		} else {
-			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType(), placeholder);
-		}
+		return resolveItem(data, data.getOriginalType(), placeholder, null);
 	}
 
-	public static ItemStack getButton(int path, OfflinePlayer... playerHead) {
+	public static ItemStack getButton(int path, OfflinePlayer playerHead) {
 		return getButton(path, new Placeholder(), playerHead);
 	}
 
-	public static ItemStack getButton(int path, Placeholder placeholder, OfflinePlayer... playerHead) {
-		ButtonData data = getButtonData(path);
-
-		if (data.getOriginalType().startsWith("PLAYERHEAD-")) {
-			String texture = data.getOriginalType().split("-")[1];
-
-			if (texture.equalsIgnoreCase("this")) {
-				if (playerHead.length == 0) {
-					return ItemUtils.getItem(data.getName(), data.getLore(), Material.BARRIER, placeholder);
-				} else {
-					return ItemUtils.getPlayerHead(data.getName(), data.getLore(), playerHead[0].getUniqueId(),
-							placeholder);
-				}
-			} else {
-				return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
-			}
-		} else if (data.getOriginalType().startsWith("NEXOMC-")) {
-			String itemId = data.getOriginalType().split("-")[1];
-
-			return NexoMC.getCustomNexoItem(itemId, data.getName(), data.getLore(), placeholder);
-		}  else {
-			return ItemUtils.getItem(data.getName(), data.getLore(), data.getType(), placeholder);
-		}
+	public static ItemStack getButton(int path, Placeholder placeholder, OfflinePlayer playerHead) {
+		return resolveItem(getButtonData(path), null, placeholder, playerHead);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static ItemStack getFlagButton(String flag, boolean value) {
 		Placeholder placeholder = new Placeholder();
 
-		Object description = Resources.<LanguageFile>get(ResourceType.Language).getRaw("flags-info." + flag + ".description");
+		Object description = Resources.<LanguageFile>get(ResourceType.Language)
+				.getRaw("flags-info." + flag + ".description");
 
 		placeholder.add("{flag}", flag);
 
-		if (description instanceof String) {
-			placeholder.add("{flag-description}", description.toString());
+		if (description instanceof String s) {
+			placeholder.add("{flag-description}", s);
 		} else if (description instanceof List<?> list) {
-			List<String> strList = list.stream().map(String::valueOf).toList();
-
-			placeholder.add("{flag-description}", String.join("\n", strList));
+			placeholder.add("{flag-description}",
+					list.stream().map(String::valueOf).collect(Collectors.joining("\n")));
 		}
 
 		placeholder.add("{state}", Formatter.getFlagState(value));
 		placeholder.add("{flag-allowed}",
 				Formatter.getBoolean(!Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flag)));
 
-		ButtonData data = getButtonData(17);
-		String type = Resources.<LanguageFile>get(ResourceType.Language).getString("flags-info." + flag + ".type");
+		String type = Resources.<LanguageFile>get(ResourceType.Language)
+				.getString("flags-info." + flag + ".type");
 
-		if (type != null && type.startsWith("PLAYERHEAD-")) {
-			String texture = type.split("-")[1];
-
-			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
-		} else if (type != null && type.startsWith("NEXOMC-")) {
-			String itemId = type.split("-")[1];
-
-			return NexoMC.getCustomNexoItem(itemId, data.getName(), data.getLore(), placeholder);
-		} else {
-			return ItemUtils.getItem(data.getName(), data.getLore(),
-					Material.getMaterial(type == null ? "BARRIER" : type), placeholder);
-		}
+		return resolveItem(getButtonData(17), type, placeholder, null);
 	}
 
 	public static ItemStack getBackButton() {
@@ -132,17 +88,42 @@ public class MenuUtils {
 		return ItemUtils.getItem(getButtonData(3));
 	}
 
-	public static class ButtonData {
-		public final String name;
-		public final List<String> lore;
-		public final Material type;
-		public String originalType;
+	private static ItemStack resolveItem(ButtonData data, String typeOverride,
+										 Placeholder placeholder, OfflinePlayer player) {
+		String type = typeOverride != null ? typeOverride : data.getOriginalType();
+		if (type == null) type = "BARRIER";
+
+		if (type.startsWith("PLAYERHEAD-")) {
+			String texture = type.split("-", 2)[1];
+			if (texture.equalsIgnoreCase("this")) {
+				return player != null
+						? ItemUtils.getPlayerHead(data.getName(), data.getLore(), player.getUniqueId(), placeholder)
+						: ItemUtils.getItem(data.getName(), data.getLore(), Material.BARRIER, placeholder);
+			}
+			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
+		}
+
+		if (type.startsWith("NEXOMC-")) {
+			String itemId = type.split("-", 2)[1];
+			return NexoMC.getCustomNexoItem(itemId, data.getName(), data.getLore(), placeholder);
+		}
+
+		Material material = Material.getMaterial(type);
+		return ItemUtils.getItem(data.getName(), data.getLore(),
+				material != null ? material : Material.BARRIER, placeholder);
+	}
+
+	public static final class ButtonData {
+		private final String name;
+		private final List<String> lore;
+		private final Material type;
+		private final String originalType;
 
 		public ButtonData(String name, List<String> lore, String type) {
 			this.name = name;
 			this.lore = lore;
-			this.type = Material.getMaterial(type);
 			this.originalType = type;
+			this.type = Material.getMaterial(type);
 		}
 
 		public String getName() {
@@ -153,12 +134,12 @@ public class MenuUtils {
 			return lore;
 		}
 
-		public Material getType() {
-			return type == null ? Material.BARRIER : type;
-		}
-
 		public String getOriginalType() {
 			return originalType;
+		}
+
+		public Material getType() {
+			return type != null ? type : Material.BARRIER;
 		}
 	}
 }

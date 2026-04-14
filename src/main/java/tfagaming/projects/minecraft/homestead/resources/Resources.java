@@ -82,19 +82,6 @@ public final class Resources {
 		loadStandaloneResource(plugin, RESOURCE_REGIONS, ResourceType.Regions, RegionsFile::new, Collections.emptySet());
 
 		try {
-			Logger.warning("--- ATTENTION TO ALL SERVER OPERATORS ---");
-			Logger.warning("-----------------------------");
-			Logger.warning("THIS IS NOT A BUG OR A VULNERABILITY; THIS IS A MESSAGE FROM THE DEVELOPERS OF HOMESTEAD.");
-			Logger.warning("------------------------------");
-			Logger.warning("All of your settings will be migrated from the ancient 'config.yml' to the new resource");
-			Logger.warning("files, including: 'regions.yml', 'flags.yml', 'levels.yml', and 'limits.yml'.");
-			Logger.warning("All configuration keys are now in their right place, well organized, and easier to change in the future.");
-			Logger.warning("-----------------------------");
-			Logger.warning("THIS NOTICE WILL BE REMOVED IN THE FUTURE.");
-			Logger.warning("-----------------------------");
-			Logger.warning("THIS IS NOT A BUG OR A VULNERABILITY; THIS IS A MESSAGE FROM THE DEVELOPERS OF HOMESTEAD.");
-			Logger.warning("-----------------------------");
-
 			boolean migrationHappened = new ConfigMigrator(
 					new File(plugin.getDataFolder(), "config.yml"),
 					List.of(

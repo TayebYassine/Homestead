@@ -1643,16 +1643,16 @@ public final class RegionProtectionListener implements Listener {
 			if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk))
 				return true;
 
-			if (player != null && PlayerUtils.isOperator(player)) return true;
+			if (player == null) return true;
+
+			if (PlayerUtils.isOperator(player)) return true;
 
 			if (!ChunkManager.isChunkClaimed(chunk)) return true;
 
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 			if (region == null) return true;
 
-			assert player != null;
-			if (region.isOwner(player) && !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag))
-				return true;
+			if (region.isOwner(player)) return true;
 
 			SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(location);
 

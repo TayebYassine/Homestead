@@ -38,9 +38,19 @@ public class PlayerUtils {
 
 	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
 	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
-	private static final Set<Long> RENT_BLACKLIST = Set.of(
+	public static final Set<Long> RENT_FLAGS_SET = Set.of(
+			PlayerFlags.PVP
+	);
+	public static final Set<Long> WAR_FLAGS_SET = Set.of(
 			PlayerFlags.PVP,
-			PlayerFlags.PASSTHROUGH
+			PlayerFlags.DOORS,
+			PlayerFlags.TRAP_DOORS,
+			PlayerFlags.FENCE_GATES,
+			PlayerFlags.PASSTHROUGH,
+			PlayerFlags.ELYTRA,
+			PlayerFlags.TELEPORT,
+			PlayerFlags.PICKUP_ITEMS,
+			PlayerFlags.TAKE_FALL_DAMAGE
 	);
 
 	public static void sendMessageRegionEnter(Player player, Placeholder placeholder) {
@@ -143,17 +153,17 @@ public class PlayerUtils {
 	/**
 	 * Checks whether the given player has the specified player flag in the target region.
 	 * If the player lacks the permission, a cooldown-gated info message is sent,
-	 * except for the TAKE_FALL_DAMAGE flag where no message is shown.
+	 * except for the {@code TAKE_FALL_DAMAGE} flag where no message is shown.
 	 * <p>
-	 * Resolution order:
-	 * 1) If the player is the active renter of the region, permissions are granted for all flags except PVP.
-	 * 2) Otherwise, if the player is a member, the member flags are used.
-	 * 3) Otherwise, the region's global player flags are used.
+	 * Resolution order:<br>
+	 * 1. If the player is the active renter of the region, permissions are granted for all flags except {@code PVP}.<br>
+	 * 2. Otherwise, if the player is a member, the member flags are used.<br>
+	 * 3. Otherwise, the region's global player flags are used.<br>
 	 *
-	 * @param regionId the region UUID
-	 * @param player   the player to fetch
-	 * @param flag     the PlayerFlags bit to fetch
-	 * @return true if the action is allowed; false otherwise
+	 * @param regionId The region UUID
+	 * @param player The player to fetch
+	 * @param flag The PlayerFlags bit to fetch
+	 * @return {@code true} If the action is allowed; {@code false} otherwise
 	 */
 	public static boolean hasPermissionFlag(UUID regionId, Player player, long flag, boolean notify) {
 		Region region = RegionManager.findRegion(regionId);
@@ -166,13 +176,11 @@ public class PlayerUtils {
 
 		if (rent != null && rent.getPlayerId() != null
 				&& rent.getPlayerId().equals(player.getUniqueId())
-				&& !List.of(PlayerFlags.PVP, PlayerFlags.PASSTHROUGH).contains(flag)) {
+				&& !RENT_FLAGS_SET.contains(flag)) {
 			response = true;
 		} else if (war != null
-				&& WarManager.getMembersOfWar(war.getUniqueId()).stream()
-				.map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId())
-				&& List.of(PlayerFlags.PVP, PlayerFlags.DOORS, PlayerFlags.TRAP_DOORS,
-				PlayerFlags.PASSTHROUGH, PlayerFlags.FENCE_GATES, PlayerFlags.ELYTRA).contains(flag)) {
+				&& WarManager.isPlayerInWar(player, war)
+				&& WAR_FLAGS_SET.contains(flag)) {
 			response = true;
 		} else if (region.isPlayerMember(player)) {
 			SerializableMember member = region.getMember(player);
@@ -196,24 +204,13 @@ public class PlayerUtils {
 		Region region = RegionManager.findRegion(regionId);
 		if (region == null) return true;
 
-		boolean allowed = calculatePermission(region, subAreaId, player, flag);
-
-		if (!allowed && notify && !COOLDOWN.contains(player.getUniqueId())) {
-			sendDenialMessage(player, region, flag);
-		}
-
-		return allowed;
-	}
-
-	private static boolean calculatePermission(Region region, UUID subAreaId,
-											   Player player, long flag) {
 		SubArea subArea = subAreaId != null ? SubAreaManager.findSubArea(subAreaId) : null;
 
 		if (subArea != null) {
 			SerializableRent subRent = subArea.getRent();
 			if (subRent != null && subRent.getPlayerId() != null
 					&& subRent.getPlayerId().equals(player.getUniqueId())
-					&& !RENT_BLACKLIST.contains(flag)) {
+					&& !RENT_FLAGS_SET.contains(flag)) {
 				return true;
 			}
 
@@ -225,34 +222,7 @@ public class PlayerUtils {
 			return FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
 		}
 
-		War war = WarManager.findWarByRegion(region.getUniqueId());
-
-		if (war != null) {
-			List<UUID> warMembers = WarManager.getMembersOfWar(war.getUniqueId())
-					.stream().map(OfflinePlayer::getUniqueId).toList();
-
-			if (warMembers.contains(player.getUniqueId())) {
-				Set<Long> warFlags = Set.of(PlayerFlags.PVP, PlayerFlags.DOORS,
-						PlayerFlags.TRAP_DOORS, PlayerFlags.PASSTHROUGH,
-						PlayerFlags.FENCE_GATES, PlayerFlags.ELYTRA);
-				if (warFlags.contains(flag)) return true;
-			}
-		}
-
-		SerializableRent regionRent = region.getRent();
-
-		if (regionRent != null && regionRent.getPlayerId() != null
-				&& regionRent.getPlayerId().equals(player.getUniqueId())
-				&& !RENT_BLACKLIST.contains(flag)) {
-			return true;
-		}
-
-		if (region.isPlayerMember(player)) {
-			SerializableMember member = region.getMember(player);
-			return FlagsCalculator.isFlagSet(member.getFlags(), flag);
-		}
-
-		return FlagsCalculator.isFlagSet(region.getPlayerFlags(), flag);
+		return hasPermissionFlag(regionId, player, flag, notify);
 	}
 
 	private static void sendDenialMessage(Player player, Region region, long flag) {

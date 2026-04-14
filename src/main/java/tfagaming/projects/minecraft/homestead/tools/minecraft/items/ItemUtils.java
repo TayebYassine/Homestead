@@ -16,54 +16,52 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.Bu
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class ItemUtils {
-	public static ItemStack applyMetadata(ItemStack item, String displayname, List<String> lore) {
-		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
 
-		ItemMeta meta = item.getItemMeta();
-
-		if (meta != null) {
-			meta.setDisplayName(ColorTranslator.translate(displayname));
-
-			if (loreCopy != null) {
-				ArrayList<String> lorelist = new ArrayList<>();
-				for (String each : loreCopy) {
-					String[] lines = each.split("\\n");
-					for (String line : lines) {
-						if (!line.contains("&")) {
-							line = "&f" + line;
-						}
-						lorelist.add(ColorTranslator.translate(line));
-					}
-				}
-				meta.setLore(lorelist);
+	private static List<String> buildLore(List<String> lore) {
+		if (lore == null) return null;
+		List<String> result = new ArrayList<>();
+		for (String entry : lore) {
+			for (String line : entry.split("\\n")) {
+				if (!line.contains("&")) line = "&f" + line;
+				result.add(ColorTranslator.translate(line));
 			}
 		}
+		return result;
+	}
 
+	private static void applyMeta(ItemStack item, String displayName, List<String> lore) {
+		ItemMeta meta = item.getItemMeta();
+		if (meta == null) return;
+		meta.setDisplayName(ColorTranslator.translate(displayName));
+		List<String> built = buildLore(lore);
+		if (built != null) meta.setLore(built);
 		item.setItemMeta(meta);
+	}
 
+	private static List<String> applyPlaceholders(List<String> lore, Placeholder placeholder) {
+		if (lore == null) return null;
+		List<String> copy = new ArrayList<>(lore);
+		copy.replaceAll(line -> Formatter.applyPlaceholders(line, placeholder));
+		return copy;
+	}
+
+	public static ItemStack applyMetadata(ItemStack item, String displayName, List<String> lore) {
+		applyMeta(item, displayName, lore);
 		return item;
 	}
 
-	public static ItemStack applyMetadata(ItemStack item, String displayname, List<String> lore, Placeholder placeholder) {
-		displayname = Formatter.applyPlaceholders(displayname, placeholder);
-
-		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
-
-		if (loreCopy != null) {
-			for (int i = 0; i < loreCopy.size(); i++) {
-				String string = loreCopy.get(i);
-				string = Formatter.applyPlaceholders(string, placeholder);
-				loreCopy.set(i, string);
-			}
-		}
-
-		return applyMetadata(item, displayname, loreCopy);
+	public static ItemStack applyMetadata(ItemStack item, String displayName, List<String> lore,
+										  Placeholder placeholder) {
+		return applyMetadata(
+				item,
+				Formatter.applyPlaceholders(displayName, placeholder),
+				applyPlaceholders(lore, placeholder)
+		);
 	}
 
 	public static ItemStack getItem(ButtonData data) {
@@ -74,215 +72,99 @@ public class ItemUtils {
 		return getItem(data.getName(), data.getLore(), data.getType(), placeholder);
 	}
 
-	public static ItemStack getItem(String displayname, List<String> lore, Material material) {
-		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
-
-		if (material == null) {
-			material = Material.BARRIER;
-		}
-
+	public static ItemStack getItem(String displayName, List<String> lore, Material material) {
+		if (material == null) material = Material.BARRIER;
 		ItemStack item = new ItemStack(material);
-
-		ItemMeta meta = item.getItemMeta();
-
-		if (meta != null) {
-			meta.setDisplayName(ColorTranslator.translate(displayname));
-
-			if (loreCopy != null) {
-				ArrayList<String> lorelist = new ArrayList<>();
-				for (String each : loreCopy) {
-					String[] lines = each.split("\\n");
-					for (String line : lines) {
-						if (!line.contains("&")) {
-							line = "&f" + line;
-						}
-						lorelist.add(ColorTranslator.translate(line));
-					}
-				}
-				meta.setLore(lorelist);
-			}
-		}
-
-		item.setItemMeta(meta);
-
+		applyMeta(item, displayName, lore);
 		return item;
 	}
 
-	public static ItemStack getItem(String displayname, List<String> lore, Material material,
+	public static ItemStack getItem(String displayName, List<String> lore, Material material,
 									Placeholder placeholder) {
-		displayname = Formatter.applyPlaceholders(displayname, placeholder);
-
-		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
-
-		if (loreCopy != null) {
-			for (int i = 0; i < loreCopy.size(); i++) {
-				String string = loreCopy.get(i);
-				string = Formatter.applyPlaceholders(string, placeholder);
-				loreCopy.set(i, string);
-			}
-		}
-
-		return getItem(displayname, loreCopy, material);
+		return getItem(
+				Formatter.applyPlaceholders(displayName, placeholder),
+				applyPlaceholders(lore, placeholder),
+				material
+		);
 	}
 
-	// Get player head
 	public static ItemStack getPlayerHead(OfflinePlayer player) {
 		ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-
 		SkullMeta meta = (SkullMeta) head.getItemMeta();
-
 		if (meta != null) {
 			meta.setOwningPlayer(player);
 			meta.setDisplayName(player.getName() + "'s Head");
 			head.setItemMeta(meta);
 		}
-
 		return head;
 	}
 
-	// Get player head based by texture
-	public static ItemStack getPlayerHead(String displayname, List<String> lore, String texture) {
-		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
-
+	public static ItemStack getPlayerHead(String displayName, List<String> lore, String texture) {
 		ItemStack item = getCustomHeadTexture(texture);
 		if (item.getType() != Material.PLAYER_HEAD) {
 			throw new IllegalStateException("Failed to create a valid Player Head!");
 		}
-
-		ItemMeta meta = item.getItemMeta();
-
-		if (meta != null) {
-			meta.setDisplayName(ColorTranslator.translate(displayname));
-
-			if (loreCopy != null) {
-				ArrayList<String> lorelist = new ArrayList<>();
-				for (String each : loreCopy) {
-					String[] lines = each.split("\\n");
-					for (String line : lines) {
-						if (!line.contains("&")) {
-							line = "&f" + line;
-						}
-						lorelist.add(ColorTranslator.translate(line));
-					}
-				}
-				meta.setLore(lorelist);
-			}
-		}
-
-		item.setItemMeta(meta);
-
+		applyMeta(item, displayName, lore);
 		return item;
 	}
 
-	public static ItemStack getPlayerHead(String displayname, List<String> lore, String texture,
+	public static ItemStack getPlayerHead(String displayName, List<String> lore, String texture,
 										  Placeholder placeholder) {
-		displayname = Formatter.applyPlaceholders(displayname, placeholder);
+		return getPlayerHead(
+				Formatter.applyPlaceholders(displayName, placeholder),
+				applyPlaceholders(lore, placeholder),
+				texture
+		);
+	}
 
-		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
-
-		if (loreCopy != null) {
-			for (int i = 0; i < loreCopy.size(); i++) {
-				String string = loreCopy.get(i);
-				string = Formatter.applyPlaceholders(string, placeholder);
-				loreCopy.set(i, string);
-			}
+	public static ItemStack getPlayerHead(String displayName, List<String> lore, UUID playerId) {
+		ItemStack item = getPlayerHeadById(playerId);
+		if (item.getType() != Material.PLAYER_HEAD) {
+			throw new IllegalStateException("Failed to create a valid Player Head!");
 		}
+		applyMeta(item, displayName, lore);
+		return item;
+	}
 
-		return getPlayerHead(displayname, loreCopy, texture);
+	public static ItemStack getPlayerHead(String displayName, List<String> lore, UUID playerId,
+										  Placeholder placeholder) {
+		return getPlayerHead(
+				Formatter.applyPlaceholders(displayName, placeholder),
+				applyPlaceholders(lore, placeholder),
+				playerId
+		);
 	}
 
 	private static ItemStack getCustomHeadTexture(String texture) {
 		ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 		SkullMeta meta = (SkullMeta) head.getItemMeta();
-
 		if (meta != null) {
-			meta.setOwnerProfile(
-					getProfile("https://textures.minecraft.net/texture/" + texture));
+			meta.setOwnerProfile(getProfile("https://textures.minecraft.net/texture/" + texture));
 			head.setItemMeta(meta);
 		}
-
 		return head;
 	}
 
 	private static PlayerProfile getProfile(String url) {
 		PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID());
 		PlayerTextures textures = profile.getTextures();
-
-		URL urlobject;
-
 		try {
-			urlobject = URI.create(url).toURL();
-		} catch (IllegalArgumentException | MalformedURLException exception) {
-			throw new RuntimeException("Invalid URL", exception);
+			textures.setSkin(URI.create(url).toURL());
+		} catch (IllegalArgumentException | MalformedURLException e) {
+			throw new RuntimeException("Invalid texture URL: " + url, e);
 		}
-
-		textures.setSkin(urlobject);
 		profile.setTextures(textures);
-
 		return profile;
-	}
-
-	// Get player head based by UUID
-	public static ItemStack getPlayerHead(String displayname, List<String> lore, UUID playerId) {
-		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
-
-		ItemStack item = getPlayerHeadById(playerId);
-		if (item.getType() != Material.PLAYER_HEAD) {
-			throw new IllegalStateException("Failed to create a valid Player Head!");
-		}
-
-		ItemMeta meta = item.getItemMeta();
-
-		if (meta != null) {
-			meta.setDisplayName(ColorTranslator.translate(displayname));
-
-			if (loreCopy != null) {
-				ArrayList<String> lorelist = new ArrayList<>();
-				for (String each : loreCopy) {
-					if (!each.contains("&")) {
-						each = "&f" + each;
-					}
-					lorelist.add(ColorTranslator.translate(each));
-				}
-				meta.setLore(lorelist);
-			}
-		}
-
-		item.setItemMeta(meta);
-		return item;
-	}
-
-	public static ItemStack getPlayerHead(String displayname, List<String> lore, UUID playerId,
-										  Placeholder placeholder) {
-		displayname = Formatter.applyPlaceholders(displayname, placeholder);
-
-		List<String> loreCopy = (lore != null) ? new ArrayList<>(lore) : null;
-
-		if (loreCopy != null) {
-			for (int i = 0; i < loreCopy.size(); i++) {
-				String string = loreCopy.get(i);
-				string = Formatter.applyPlaceholders(string, placeholder);
-				loreCopy.set(i, string);
-			}
-		}
-
-		return getPlayerHead(displayname, loreCopy, playerId);
 	}
 
 	private static ItemStack getPlayerHeadById(UUID playerId) {
 		ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 		SkullMeta meta = (SkullMeta) head.getItemMeta();
-
 		OfflinePlayer player = Homestead.getInstance().getOfflinePlayerSync(playerId);
-
-		if (player == null) {
-			return new ItemStack(Material.PLAYER_HEAD);
-		} else if (meta != null) {
+		if (player != null && meta != null) {
 			meta.setOwningPlayer(player);
-
 			head.setItemMeta(meta);
 		}
-
 		return head;
 	}
 }
