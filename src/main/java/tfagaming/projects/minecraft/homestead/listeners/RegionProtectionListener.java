@@ -84,11 +84,11 @@ public final class RegionProtectionListener implements Listener {
 					}
 
 					if (fromRegion == null) {
-						if (!toRegion.isWorldFlagSet(WorldFlags.COPPER_GOLEMS_INTERACTION)) {
+						if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
 							entity.remove();
 						}
 					} else if (!fromRegion.getUniqueId().equals(toRegion.getUniqueId())) {
-						if (!toRegion.isWorldFlagSet(WorldFlags.COPPER_GOLEMS_INTERACTION)) {
+						if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
 							entity.remove();
 						}
 					}
@@ -649,7 +649,7 @@ public final class RegionProtectionListener implements Listener {
 				if (ChunkManager.isChunkClaimed(chunk)) {
 					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-					if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSIONS_DAMAGE)) {
+					if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
 						event.setCancelled(true);
 					}
 				}
@@ -744,14 +744,14 @@ public final class RegionProtectionListener implements Listener {
 		} else if (Explosives.isExplosive(damager)) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSIONS_DAMAGE)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
 					event.setCancelled(true);
 				}
 			}
 		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_DAMAGE_ENTITIES)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_DAMAGE)) {
 					event.setCancelled(true);
 				}
 			}
@@ -1122,7 +1122,7 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSIONS_DAMAGE)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
 					event.setCancelled(true);
 				}
 			} else {
@@ -1161,7 +1161,7 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSIONS_DAMAGE)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
 					event.setCancelled(true);
 				}
 			} else {
@@ -1431,7 +1431,7 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_GRIEF)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
 					event.setCancelled(true);
 				}
 			}
@@ -1455,11 +1455,11 @@ public final class RegionProtectionListener implements Listener {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (entity instanceof Monster || entity instanceof IronGolem) {
-				if (region != null && !region.isWorldFlagSet(WorldFlags.HOSTILE_ENTITIES_SPAWN)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.HOSTILE_ENTITY_SPAWN)) {
 					event.setCancelled(true);
 				}
 			} else if (entity instanceof Mob) {
-				if (region != null && !region.isWorldFlagSet(WorldFlags.PASSIVE_ENTITIES_SPAWN)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PASSIVE_ENTITY_SPAWN)) {
 					event.setCancelled(true);
 				}
 			}
@@ -1475,7 +1475,7 @@ public final class RegionProtectionListener implements Listener {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (!(entity instanceof Player)) {
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITIES_GRIEF)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
 					event.setCancelled(true);
 				}
 			}

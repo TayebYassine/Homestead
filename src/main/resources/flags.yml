@@ -64,14 +64,14 @@ default-players-flags:
 # World/Environment Flags
 # Controls environmental effects and mob behavior
 default-world-flags:
-  passive-entities-spawn: true      # Passive mobs (animals) spawn
-  hostile-entities-spawn: true      # Hostile mobs (monsters) spawn
-  entities-grief: false             # Entities damage blocks (except creepers)
-  entities-damage-entities: false   # Entities attack each other
+  passive-entity-spawn: true        # Passive mobs (animals) spawn
+  hostile-entity-spawn: true        # Hostile mobs (monsters) spawn
+  entity-grief: false               # Entities damage blocks (except creepers)
+  entity-damage: false              # Entities attack each other
   leaves-decay: true                # Leaves decay naturally
   fire-spread: false                # Fire spreads to other blocks
   liquid-flow: false                # Water/lava flows into region from outside
-  explosions-damage: false          # Explosions damage blocks (except wither)
+  explosion-damage: false           # Explosions damage blocks (except wither)
   wither-damage: false              # Wither damage
   wilderness-pistons: false         # Pistons outside push blocks into region
   wilderness-dispensers: false      # Dispensers outside dispense into region
@@ -84,7 +84,6 @@ default-world-flags:
   ice-melting: true                 # Ice melts
   snowman-trails: true              # Snow golems leave snow trails
   windcharge-burst: false           # Wind charges burst
-  copper-golems-interaction: false  # Copper golems from outside enter
   wars: false                       # Region can be targeted for war
   projectiles: false                # Any kind of projectile from any source except players
   weather-snow: true                # Snow form during weather storm (in cold biomes)

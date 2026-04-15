@@ -34,7 +34,7 @@ public final class ItemTransportingEntityValidateTargetListener implements Liste
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.COPPER_GOLEMS_INTERACTION)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
 					event.setAllowed(false);
 				}
 			}

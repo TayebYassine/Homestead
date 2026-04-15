@@ -4,14 +4,14 @@ import java.util.*;
 
 public final class WorldFlags {
 
-	public static final long PASSIVE_ENTITIES_SPAWN = 1L;
-	public static final long HOSTILE_ENTITIES_SPAWN = 1L << 1;
-	public static final long ENTITIES_GRIEF = 1L << 2;
-	public static final long ENTITIES_DAMAGE_ENTITIES = 1L << 3;
+	public static final long PASSIVE_ENTITY_SPAWN = 1L;
+	public static final long HOSTILE_ENTITY_SPAWN = 1L << 1;
+	public static final long ENTITY_GRIEFING = 1L << 2;
+	public static final long ENTITY_DAMAGE = 1L << 3;
 	public static final long LEAVES_DECAY = 1L << 4;
 	public static final long FIRE_SPREAD = 1L << 5;
 	public static final long LIQUID_FLOW = 1L << 6;
-	public static final long EXPLOSIONS_DAMAGE = 1L << 7;
+	public static final long EXPLOSION_DAMAGE = 1L << 7;
 	public static final long WITHER_DAMAGE = 1L << 8;
 	public static final long WILDERNESS_PISTONS = 1L << 9;
 	public static final long WILDERNESS_DISPENSERS = 1L << 10;
@@ -24,6 +24,9 @@ public final class WorldFlags {
 	public static final long ICE_MELTING = 1L << 17;
 	public static final long SNOWMAN_TRAILS = 1L << 18;
 	public static final long WINDCHARGE_BURST = 1L << 19;
+	/**
+	 * @deprecated Terminally deprecated, use {@code ENTITY_GRIEFING} instead.
+	 */
 	public static final long COPPER_GOLEMS_INTERACTION = 1L << 20;
 	public static final long WARS = 1L << 21;
 	public static final long PROJECTILES = 1L << 22;
@@ -32,14 +35,14 @@ public final class WorldFlags {
 	private static final Map<String, Long> MAPPED_FLAGS = new LinkedHashMap<>();
 
 	static {
-		MAPPED_FLAGS.put("passive-entities-spawn", PASSIVE_ENTITIES_SPAWN);
-		MAPPED_FLAGS.put("hostile-entities-spawn", HOSTILE_ENTITIES_SPAWN);
-		MAPPED_FLAGS.put("entities-grief", ENTITIES_GRIEF);
-		MAPPED_FLAGS.put("entities-damage-entities", ENTITIES_DAMAGE_ENTITIES);
+		MAPPED_FLAGS.put("passive-entity-spawn", PASSIVE_ENTITY_SPAWN);
+		MAPPED_FLAGS.put("hostile-entity-spawn", HOSTILE_ENTITY_SPAWN);
+		MAPPED_FLAGS.put("entity-grief", ENTITY_GRIEFING);
+		MAPPED_FLAGS.put("entity-damage", ENTITY_DAMAGE);
 		MAPPED_FLAGS.put("leaves-decay", LEAVES_DECAY);
 		MAPPED_FLAGS.put("fire-spread", FIRE_SPREAD);
 		MAPPED_FLAGS.put("liquid-flow", LIQUID_FLOW);
-		MAPPED_FLAGS.put("explosions-damage", EXPLOSIONS_DAMAGE);
+		MAPPED_FLAGS.put("explosion-damage", EXPLOSION_DAMAGE);
 		MAPPED_FLAGS.put("wither-damage", WITHER_DAMAGE);
 		MAPPED_FLAGS.put("wilderness-pistons", WILDERNESS_PISTONS);
 		MAPPED_FLAGS.put("wilderness-dispensers", WILDERNESS_DISPENSERS);
@@ -52,7 +55,7 @@ public final class WorldFlags {
 		MAPPED_FLAGS.put("ice-melting", ICE_MELTING);
 		MAPPED_FLAGS.put("snowman-trails", SNOWMAN_TRAILS);
 		MAPPED_FLAGS.put("windcharge-burst", WINDCHARGE_BURST);
-		MAPPED_FLAGS.put("copper-golems-interaction", COPPER_GOLEMS_INTERACTION);
+		// MAPPED_FLAGS.put("copper-golems-interaction", COPPER_GOLEMS_INTERACTION);
 		MAPPED_FLAGS.put("wars", WARS);
 		MAPPED_FLAGS.put("projectiles", PROJECTILES);
 		MAPPED_FLAGS.put("weather-snow", WEATHER_SNOW);

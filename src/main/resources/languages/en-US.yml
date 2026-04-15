@@ -447,26 +447,26 @@ flags-info:
     type: ZOMBIE_SPAWN_EGG
 
   # WORLD FLAGS
-  passive-entities-spawn:
+  passive-entity-spawn:
     description:
       - "&7Allow passive entities, such as sheep and cows,"
       - "&7to spawn in the region?"
       - " "
       - "&7Spawners affected? &cNo"
     type: PLAYERHEAD-84e5cdb0edb362cb454586d1fd0ebe971423f015b0b1bfc95f8d5af8afe7e810
-  hostile-entities-spawn:
+  hostile-entity-spawn:
     description:
       - "&7Allow hostile entities, such as zombies and skeletons,"
       - "&7to spawn in the region?"
       - " "
       - "&7Spawners affected? &cNo"
     type: SPAWNER
-  entities-grief:
+  entity-grief:
     description:
       - "&7Allow entities, such as ravagers and endermen,"
       - "&7to cause damage in the region?"
     type: CREEPER_HEAD
-  entities-damage-entities:
+  entity-damage:
     description:
       - "&7Allow entities to attack each other?"
     type: IRON_SWORD
@@ -488,7 +488,7 @@ flags-info:
       - "&cPlayers can create Lava casts and grief your"
       - "&cregion if this flag is set to Allow!"
     type: WATER_BUCKET
-  explosions-damage:
+  explosion-damage:
     description:
       - "&7Allow explosions, such as TNT or creepers,"
       - "&7to damage the region?"
@@ -545,11 +545,6 @@ flags-info:
     description:
       - "&7Allow windcharges to burst?"
     type: WIND_CHARGE
-  copper-golems-interaction:
-    description:
-      - "&7Allow copper golems to interact with"
-      - "&7copper chests inside the region?"
-    type: COPPER_GOLEM_SPAWN_EGG
   wars:
     description:
       - "&7Allow any player to declare war"
