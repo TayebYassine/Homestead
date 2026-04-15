@@ -17,11 +17,11 @@ import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.storage.StorageManager;
+import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
-import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
@@ -31,6 +31,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorting.*;
 
 /**
  * Handles creating, deleting, and updating regions.<br>
@@ -80,13 +82,7 @@ public final class RegionManager {
 	 * @param id The region UUID
 	 */
 	public static Region findRegion(UUID id) {
-		for (Region region : getAll()) {
-			if (region.getUniqueId().equals(id)) {
-				return region;
-			}
-		}
-
-		return null;
+		return Homestead.regionsCache.get(id);
 	}
 
 	/**
@@ -134,6 +130,8 @@ public final class RegionManager {
 				TargetRegionSession.randomizeRegion(onlinePlayer);
 			}
 		}
+
+		LevelManager.deleteLevelByRegion(region.getUniqueId());
 
 		StorageManager.deleteStorage(id);
 
@@ -226,13 +224,10 @@ public final class RegionManager {
 
 	/** Collects every unique owner across all regions. */
 	public static List<OfflinePlayer> getAllOwners() {
-		List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();
-
-		for (Region region : getAll()) {
-			players.add(region.getOwner());
-		}
-
-		return ListUtils.removeDuplications(players);
+		return getAll().stream()
+				.map(Region::getOwner)
+				.distinct()
+				.collect(Collectors.toList());
 	}
 
 	/** Supplies all regions sorted alphabetically by name. */
@@ -275,15 +270,9 @@ public final class RegionManager {
 	 * @param player The player
 	 */
 	public static List<Region> getRegionsOwnedByPlayer(OfflinePlayer player) {
-		List<Region> regions = new ArrayList<Region>();
-
-		for (Region region : getAll()) {
-			if (region.isOwner(player)) {
-				regions.add(region);
-			}
-		}
-
-		return regions;
+		return getAll().stream()
+				.filter(r -> r.isOwner(player))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -376,24 +365,23 @@ public final class RegionManager {
 
 	/** Averages the region's ranks across four core metrics to give a global standing. */
 	public static int getGlobalRank(UUID id) {
-		double sum = getRank(RegionSorting.BANK, id)
-				+ getRank(RegionSorting.CHUNKS_COUNT, id)
-				+ getRank(RegionSorting.MEMBERS_COUNT, id)
-				+ getRank(RegionSorting.RATING, id)
-				+ getRank(RegionSorting.CREATION_DATE, id);
+		int sum = 0;
+		for (RegionSorting type : new RegionSorting[]{BANK, CHUNKS_COUNT, MEMBERS_COUNT, RATING, CREATION_DATE}) {
+			List<Region> sorted = sortRegions(type);
+			for (int i = 0; i < sorted.size(); i++) {
+				if (sorted.get(i).getUniqueId().equals(id)) {
+					sum += i + 1;
+					break;
+				}
+			}
+		}
 
 		return (int) Math.round(sum / 5.0);
 	}
 
 	/** Checks whether any region already carries the supplied name, ignoring case. */
 	public static boolean isNameUsed(String name) {
-		for (Region region : getAll()) {
-			if (region.getName().equalsIgnoreCase(name)) {
-				return true;
-			}
-		}
-
-		return false;
+		return findRegion(name) != null;
 	}
 
 	/** Tests whether the player's current chunk is claimed by the supplied region. */
@@ -417,12 +405,7 @@ public final class RegionManager {
 			return 0.0;
 		}
 
-		int totalRate = 0;
-		for (SerializableRate rate : rates) {
-			totalRate += rate.getRate();
-		}
-
-		return (double) totalRate / rates.size();
+		return rates.stream().mapToInt(SerializableRate::getRate).average().orElse(0.0);
 	}
 
 	/**

@@ -56,12 +56,7 @@ public final class LevelManager {
 	 * @param id The level ID
 	 */
 	public static Level findLevel(UUID id) {
-		for (Level level : getAll()) {
-			if (level.getUniqueId().equals(id)) {
-				return level;
-			}
-		}
-		return null;
+		return Homestead.levelsCache.get(id);
 	}
 
 	/**
@@ -81,10 +76,6 @@ public final class LevelManager {
 	 * @param id The level ID
 	 */
 	public static void deleteLevel(UUID id) {
-		Level level = findLevel(id);
-		if (level == null) {
-			return;
-		}
 		Homestead.levelsCache.remove(id);
 	}
 

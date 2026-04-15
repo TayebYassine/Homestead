@@ -50,10 +50,7 @@ public final class WarManager {
 
 	/** Returns the war with the exact UUID, or {@code null} if none exists. */
 	public static War findWar(UUID id) {
-		return getAll().stream()
-				.filter(w -> w.getUniqueId().equals(id))
-				.findFirst()
-				.orElse(null);
+		return Homestead.warsCache.get(id);
 	}
 
 	/** Returns the war with the exact name (case-sensitive), or {@code null} if none exists. */
@@ -75,10 +72,7 @@ public final class WarManager {
 
 	/** Ends and removes the war with the given UUID. */
 	public static void endWar(UUID id) {
-		War war = findWar(id);
-		if (war != null) {
-			Homestead.warsCache.remove(war.getUniqueId());
-		}
+		Homestead.warsCache.remove(id);
 	}
 
 	/**
@@ -103,15 +97,25 @@ public final class WarManager {
 
 	/** Returns {@code true} if the given player is a member or owner of any active war. */
 	public static boolean isPlayerInWar(OfflinePlayer player) {
-		return getAll().stream()
-				.anyMatch(war -> getMembersOfWar(war.getUniqueId()).contains(player));
+		UUID pid = player.getUniqueId();
+		return getAll().stream().anyMatch(war ->
+				war.getRegions().stream().anyMatch(r ->
+						r.getOwner().getUniqueId().equals(pid) ||
+								r.getMembers().stream().anyMatch(m -> m.getPlayerId().equals(pid))
+				)
+		);
 	}
 
 	/** Returns {@code true} if the given player is a member or owner of any active war. */
 	public static boolean isPlayerInWar(OfflinePlayer player, War war) {
 		if (war == null) return false;
 
-		return getMembersOfWar(war.getUniqueId()).stream().map(OfflinePlayer::getUniqueId).toList().contains(player.getUniqueId());
+		UUID pid = player.getUniqueId();
+
+		return war.getRegions().stream().anyMatch(r ->
+				r.getOwner().getUniqueId().equals(pid) ||
+						r.getMembers().stream().anyMatch(m -> m.getPlayerId().equals(pid))
+		);
 	}
 
 	/**

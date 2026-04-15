@@ -25,6 +25,8 @@ import java.util.*;
  * This is a utility class that helps manage chunks more easily. Updating and setting data to regions is generally done to the {@link Region} object.
  */
 public final class ChunkManager {
+	private static final Random random = new Random();
+
 	private ChunkManager() {
 	}
 
@@ -441,7 +443,7 @@ public final class ChunkManager {
 		List<SerializableChunk> chunks = region.getChunks();
 		if (chunks == null || chunks.isEmpty()) return;
 
-		int index = new Random().nextInt(chunks.size());
+		int index = random.nextInt(chunks.size());
 
 		forceUnclaimChunk(id, chunks.get(index).bukkit());
 	}

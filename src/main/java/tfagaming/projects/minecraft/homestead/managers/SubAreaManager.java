@@ -61,13 +61,7 @@ public final class SubAreaManager {
 	 * @param id The sub-area ID
 	 */
 	public static SubArea findSubArea(UUID id) {
-		for (SubArea area : getAll()) {
-			if (area.getUniqueId().equals(id)) {
-				return area;
-			}
-		}
-
-		return null;
+		return Homestead.subAreasCache.get(id);
 	}
 
 	/**
@@ -76,12 +70,11 @@ public final class SubAreaManager {
 	 * @param name The sub-area name
 	 */
 	public static SubArea findSubArea(UUID regionId, String name) {
-		for (SubArea area : getSubAreasOfRegion(regionId)) {
-			if (area.getName().equals(name)) {
+		for (SubArea area : getAll()) {
+			if (area.getRegionId().equals(regionId) && area.getName().equals(name)) {
 				return area;
 			}
 		}
-
 		return null;
 	}
 
@@ -106,24 +99,13 @@ public final class SubAreaManager {
 	 * @param id The sub-area ID
 	 */
 	public static void deleteSubArea(UUID id) {
-		SubArea subArea = findSubArea(id);
-
-		if (subArea == null) {
-			return;
-		}
-
 		Homestead.subAreasCache.remove(id);
 	}
 
 	/** Checks whether any sub-area already carries the supplied name, ignoring case. */
 	public static boolean isNameUsed(UUID regionId, String name) {
-		for (SubArea area : getSubAreasOfRegion(regionId)) {
-			if (area.getName().equalsIgnoreCase(name)) {
-				return true;
-			}
-		}
-
-		return false;
+		return getAll().stream()
+				.anyMatch(a -> a.getRegionId().equals(regionId) && a.getName().equalsIgnoreCase(name));
 	}
 
 	public static void cleanStartup() {
