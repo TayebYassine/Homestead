@@ -38,6 +38,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank
 import java.util.concurrent.TimeUnit;
 
 public final class CustomSignsListener implements Listener {
+	private static final boolean ADVENTURE_SUPPORTED = PlatformBridge.isAdventureClassPresent();
 
 	private static String getEventLine(SignChangeEvent event, int index) {
 		return event.getLine(index) != null ? event.getLine(index) : "";
@@ -143,8 +144,8 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		setEventLine(event, 0, ChatColor.GREEN + "[Welcome]");
-		setEventLine(event, 1, ChatColor.DARK_GREEN + region.getName());
+		setEventLine(event, 0, (ADVENTURE_SUPPORTED ? "<green>" : ChatColor.GREEN) + "[Welcome]");
+		setEventLine(event, 1, (ADVENTURE_SUPPORTED ? "<dark_green>" : ChatColor.DARK_GREEN) + region.getName());
 		setEventLine(event, 2, "");
 		setEventLine(event, 3, "");
 
@@ -185,10 +186,10 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		setEventLine(event, 0, ChatColor.GREEN + "[Rent]");
-		setEventLine(event, 1, ChatColor.DARK_GREEN + region.getName());
-		setEventLine(event, 2, ChatColor.RED + Formatter.getBalance(price));
-		setEventLine(event, 3, ChatColor.GOLD + formatMillisToReadable(durationMs));
+		setEventLine(event, 0, (ADVENTURE_SUPPORTED ? "<green>" : ChatColor.GREEN) + "[Rent]");
+		setEventLine(event, 1, (ADVENTURE_SUPPORTED ? "<dark_green>" : ChatColor.DARK_GREEN) + region.getName());
+		setEventLine(event, 2, (ADVENTURE_SUPPORTED ? "<red>" : ChatColor.RED) + Formatter.getBalance(price));
+		setEventLine(event, 3, (ADVENTURE_SUPPORTED ? "<gold>" : ChatColor.GOLD) + formatMillisToReadable(durationMs));
 
 		return false;
 	}
@@ -223,9 +224,9 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		setEventLine(event, 0, ChatColor.GREEN + "[Sell]");
-		setEventLine(event, 1, ChatColor.DARK_GREEN + region.getName());
-		setEventLine(event, 2, ChatColor.RED + Formatter.getBalance(price));
+		setEventLine(event, 0, (ADVENTURE_SUPPORTED ? "<green>" : ChatColor.GREEN) + "[Sell]");
+		setEventLine(event, 1, (ADVENTURE_SUPPORTED ? "<dark_green>" : ChatColor.DARK_GREEN) + region.getName());
+		setEventLine(event, 2, (ADVENTURE_SUPPORTED ? "<red>" : ChatColor.RED) + Formatter.getBalance(price));
 		setEventLine(event, 3, "");
 
 		return false;
