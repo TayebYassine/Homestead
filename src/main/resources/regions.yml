@@ -3,6 +3,13 @@
 # Disable if using dynamic world loading that happens after startup
 clean-startup: true
 
+# Welcome message
+# Sends a message when a player joins the server
+welcome-message:
+  enabled: true
+
+  message: "&eWelcome back! There are &6{unread-logs} &eunread mails, with &6{regions-invited} &eregions sent you an invite!"
+
 # Log Private Region Chat to Console
 # Log all region chat messages for moderation purposes
 log-private-chat: true
