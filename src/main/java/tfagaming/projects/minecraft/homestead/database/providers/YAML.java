@@ -56,7 +56,7 @@ public final class YAML implements Provider {
 		File[] regionFiles = regionsFolder
 				.listFiles((dir, name) -> name.startsWith("region_") && name.endsWith(".yml"));
 
-		if (regionFiles == null || regionFiles.length == 0) {
+		if (regionFiles == null) {
 			return regions;
 		}
 
@@ -157,7 +157,7 @@ public final class YAML implements Provider {
 		File[] warFiles = warsFolder
 				.listFiles((dir, name) -> name.startsWith("war_") && name.endsWith(".yml"));
 
-		if (warFiles == null || warFiles.length == 0) {
+		if (warFiles == null) {
 			return wars;
 		}
 
@@ -192,7 +192,7 @@ public final class YAML implements Provider {
 		List<SubArea> subAreas = new ArrayList<>();
 		File[] files = subAreasFolder.listFiles((dir, name) -> name.startsWith("subarea_") && name.endsWith(".yml"));
 
-		if (files == null || files.length == 0) {
+		if (files == null) {
 			return subAreas;
 		}
 
@@ -235,7 +235,7 @@ public final class YAML implements Provider {
 		List<Level> levels = new ArrayList<>();
 		File[] files = levelsFolder.listFiles((d, n) -> n.startsWith("level_") && n.endsWith(".yml"));
 
-		if (files == null || files.length == 0) {
+		if (files == null) {
 			return levels;
 		}
 

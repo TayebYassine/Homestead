@@ -63,7 +63,7 @@ enter-exit-region-message:
   enabled: true
 
   # Display type: title, actionbar, or chat
-  type: 'title'
+  type: 'actionbar'
 
   # Message content (use & for colors)
   # Variables: {region-displayname}, {region-description}, {region-owner}
@@ -243,3 +243,52 @@ delayed-teleport:
     color: "PURPLE"
     style: "SEGMENTED_10"
     countdown-mode: "DEPLETE"
+
+# Cooldown for actions
+cooldown:
+  # Flag state change
+  flag-change-state:
+    ignore-operators: false # Operators bypass cooldown
+    value: 3 # Cooldown in seconds
+
+  # Region spawn update
+  region-spawn-change:
+    ignore-operators: true
+    value: 600 # 10 minutes
+
+  # Region name update
+  region-rename-change:
+    ignore-operators: true
+    value: 600 # 10 minutes
+
+  # Region description update
+  region-description-change:
+    ignore-operators: true
+    value: 300 # 5 minutes
+
+  # Region owner transfer
+  # Sale signs are affected too!
+  region-transfer-ownership:
+    ignore-operators: true
+    value: 604800 # 7 days
+
+  # Region dynamic map settings change
+  # This includes map coloring and region icon.
+  region-dynamic-map-settings-change:
+    ignore-operators: true
+    value: 43200 # 12 hours
+
+  # Region claim a chunk
+  region-chunk-claim:
+    ignore-operators: true
+    value: 5 # 5 seconds
+
+  # Region unclaim a chunk
+  region-chunk-unclaim:
+    ignore-operators: true
+    value: 5 # 5 seconds
+
+  # Region teleportation
+  region-teleport:
+    ignore-operators: true
+    value: 15 # 15 seconds

@@ -11,15 +11,14 @@ import java.util.List;
 import java.util.UUID;
 
 public class War {
-	private boolean autoUpdate = true;
-
+	public final ArrayList<UUID> regions = new ArrayList<>();
 	public UUID id;
 	public String name;
 	public String description;
 	public String displayName;
-	public final ArrayList<UUID> regions = new ArrayList<>();
 	public double prize;
 	public long startedAt;
+	private boolean autoUpdate = true;
 
 	public War(String name) {
 		this.id = UUID.randomUUID();

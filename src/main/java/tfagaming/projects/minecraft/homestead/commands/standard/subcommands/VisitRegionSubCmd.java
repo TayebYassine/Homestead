@@ -36,6 +36,11 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		if (!player.hasPermission("homestead.region.teleport")) {
+			Messages.send(player, 212);
+			return true;
+		}
+
 		if (Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeSignEnabled()) {
 			if (args.length < 1) {
 				new RegionsWithWelcomeSigns(player);
@@ -88,11 +93,6 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 				Messages.send(player, 0, new Placeholder()
 						.add("{usage}", getUsage())
 				);
-				return true;
-			}
-
-			if(!player.hasPermission("homestead.region.teleport")){
-				Messages.send(player, 212);
 				return true;
 			}
 

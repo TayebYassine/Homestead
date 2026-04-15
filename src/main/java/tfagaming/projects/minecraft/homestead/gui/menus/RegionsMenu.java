@@ -65,7 +65,7 @@ public final class RegionsMenu {
 							return;
 						}
 
-						if(!player.hasPermission("homestead.region.teleport")){
+						if (!player.hasPermission("homestead.region.teleport")) {
 							Messages.send(player, 212);
 							return;
 						}
@@ -81,7 +81,10 @@ public final class RegionsMenu {
 							return;
 						}
 
+						player.closeInventory();
+
 						new DelayedTeleport(_player, region.getLocation().bukkit());
+
 						return;
 					}
 

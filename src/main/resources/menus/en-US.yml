@@ -359,6 +359,7 @@ buttons:
       - "&7Set the displayname of the region, current"
       - "&7one is: &2{region-displayname}"
       - ""
+      - "&e&lNote:"
       - "&eThe display name is the actual name of the"
       - "&eregion, which you can use spaces and any"
       - "&echaracter!"

@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
 
@@ -33,7 +34,13 @@ public final class RegionsWithWelcomeSigns {
 					Region region = regions.get(context.getIndex());
 
 					if (context.getEvent().isLeftClick()) {
+						if (!player.hasPermission("homestead.region.teleport")) {
+							Messages.send(player, 212);
+							return;
+						}
+
 						player.closeInventory();
+
 						new DelayedTeleport(player, region.getWelcomeSign().bukkit());
 					}
 				});

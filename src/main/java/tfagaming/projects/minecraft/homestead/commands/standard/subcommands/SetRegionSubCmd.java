@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDescriptionUpdateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDisplaynameUpdateEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.MiscellaneousSettings;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
@@ -73,6 +74,11 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
+				if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) {
+					Cooldown.sendCooldownMessage(player);
+					return true;
+				}
+
 				List<String> regionDisplayNameList = Arrays.asList(args).subList(1, args.length);
 				String regionDisplayName = String.join(" ", regionDisplayNameList);
 
@@ -105,6 +111,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				final String oldDisplayName = region.getDisplayName();
 
+				Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
+
 				region.setDisplayName(regionDisplayName);
 
 				Messages.send(player, 15, new Placeholder()
@@ -127,6 +135,11 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
+					return true;
+				}
+
+				if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE)) {
+					Cooldown.sendCooldownMessage(player);
 					return true;
 				}
 
@@ -162,6 +175,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				final String oldDescription = region.getDescription();
 
+				Cooldown.startCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE);
+
 				region.setDescription(description);
 
 				Messages.send(player, 17, new Placeholder()
@@ -184,6 +199,11 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
 					);
+					return true;
+				}
+
+				if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
+					Cooldown.sendCooldownMessage(player);
 					return true;
 				}
 
@@ -210,6 +230,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				final int oldColor = region.getMapColor();
 
+				Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
+
 				region.setMapColor(color);
 
 				Messages.send(player, 19, new Placeholder()
@@ -220,6 +242,11 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				break;
 			}
 			case "spawn": {
+				if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE)) {
+					Cooldown.sendCooldownMessage(player);
+					return true;
+				}
+
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
@@ -241,6 +268,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
+				Cooldown.startCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE);
+
 				region.setLocation(location);
 
 				Messages.send(player, 72, new Placeholder()
@@ -258,6 +287,11 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 			case "icon": {
 				if (!player.hasPermission("homestead.region.dynamicmaps.icon")) {
 					Messages.send(player, 8);
+					return true;
+				}
+
+				if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
+					Cooldown.sendCooldownMessage(player);
 					return true;
 				}
 
@@ -300,6 +334,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 					return true;
 				}
+
+				Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
 
 				region.setIcon(iconInput);
 

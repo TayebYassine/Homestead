@@ -1,7 +1,10 @@
 package tfagaming.projects.minecraft.homestead.borders;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
@@ -129,9 +132,9 @@ public class ChunkParticlesSpawner {
 			int minX = chunkX * 16;
 			int minZ = chunkZ * 16;
 
-			checkAndSpawn(world, region, chunkX, chunkZ - 1, minX, minZ,      yOffset, dustOptions, Direction.NORTH);
+			checkAndSpawn(world, region, chunkX, chunkZ - 1, minX, minZ, yOffset, dustOptions, Direction.NORTH);
 			checkAndSpawn(world, region, chunkX, chunkZ + 1, minX, minZ + 16, yOffset, dustOptions, Direction.SOUTH);
-			checkAndSpawn(world, region, chunkX - 1, chunkZ, minX,      minZ, yOffset, dustOptions, Direction.WEST);
+			checkAndSpawn(world, region, chunkX - 1, chunkZ, minX, minZ, yOffset, dustOptions, Direction.WEST);
 			checkAndSpawn(world, region, chunkX + 1, chunkZ, minX + 16, minZ, yOffset, dustOptions, Direction.EAST);
 		}
 	}

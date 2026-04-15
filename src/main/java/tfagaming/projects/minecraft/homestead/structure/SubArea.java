@@ -16,18 +16,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class SubArea {
-	private boolean autoUpdate = true;
-
 	public final UUID id;
-	public UUID regionId;
-	public String name;
 	public final UUID worldId;
 	public final int[] point1;
 	public final int[] point2;
+	public final long createdAt;
+	public UUID regionId;
+	public String name;
 	public List<SerializableMember> members = new ArrayList<>();
 	public long flags;
 	public SerializableRent rent;
-	public final long createdAt;
+	private boolean autoUpdate = true;
 
 	public SubArea(UUID regionId, String name, World world, Block point1, Block point2, long flags) {
 		this.id = UUID.randomUUID();
@@ -55,15 +54,6 @@ public class SubArea {
 		this.flags = flags;
 		this.rent = rent;
 		this.createdAt = createdAt;
-	}
-
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
 	}
 
 	// Utility methods
@@ -154,6 +144,15 @@ public class SubArea {
 
 	public static int[] getBlockLocation(Block block) {
 		return new int[]{block.getX(), block.getY(), block.getZ()};
+	}
+
+	/**
+	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
+	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
+	 * @param autoUpdate Auto-Update toggle
+	 */
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
 	}
 
 	// Set and get

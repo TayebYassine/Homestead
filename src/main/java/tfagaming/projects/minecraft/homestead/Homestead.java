@@ -45,8 +45,9 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.Dela
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class Homestead extends JavaPlugin {
@@ -211,7 +212,7 @@ public class Homestead extends JavaPlugin {
 			}
 		}
 
-			Logger.debug("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
+		Logger.debug("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
 

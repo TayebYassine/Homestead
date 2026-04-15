@@ -310,8 +310,8 @@ public final class Formatter {
 	 */
 	public static String getPlayerStatus(OfflinePlayer player) {
 		return Bukkit.getBannedPlayers().contains(player) ? Resources.<LanguageFile>get(ResourceType.Language).getString("default.banned")
-						: (player.isOnline() ? Resources.<LanguageFile>get(ResourceType.Language).getString("default.online")
-						: Resources.<LanguageFile>get(ResourceType.Language).getString("default.offline"));
+				: (player.isOnline() ? Resources.<LanguageFile>get(ResourceType.Language).getString("default.online")
+				: Resources.<LanguageFile>get(ResourceType.Language).getString("default.offline"));
 	}
 
 	/**
@@ -334,21 +334,17 @@ public final class Formatter {
 		long seconds = remaining % 60;
 
 		if (days != 0) {
-			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-days").replace("{v}", String.valueOf(days));
+			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-days").replace("{v}", String.valueOf(Math.abs(days)));
 		}
 
 		if (hours != 0) {
-			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-hours").replace("{v}", String.valueOf(hours));
+			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-hours").replace("{v}", String.valueOf(Math.abs(hours)));
 		}
 
 		if (minutes != 0) {
-			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-minutes").replace("{v}", String.valueOf(minutes));
+			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-minutes").replace("{v}", String.valueOf(Math.abs(minutes)));
 		}
 
-		if (seconds != 0) {
-			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-seconds").replace("{v}", String.valueOf(seconds));
-		}
-
-		return "0";
+		return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-seconds").replace("{v}", String.valueOf(Math.abs(seconds)));
 	}
 }

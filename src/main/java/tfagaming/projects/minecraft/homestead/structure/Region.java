@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
  * The region structure.
  */
 public class Region {
-	private boolean autoUpdate = true;
-
 	public UUID id;
 	public String displayName;
 	public String name;
@@ -50,6 +48,7 @@ public class Region {
 	public int time;
 	public SerializableLocation welcomeSign;
 	public String icon;
+	private boolean autoUpdate = true;
 
 	/**
 	 * Create a new region instance.
@@ -687,6 +686,11 @@ public class Region {
 		return logs;
 	}
 
+	public void setLogs(List<SerializableLog> logs) {
+		this.logs = logs;
+		updateCache();
+	}
+
 	public List<SerializableLog> getLogs(boolean sorted) {
 		if (sorted) {
 			return getLogs().stream()
@@ -695,11 +699,6 @@ public class Region {
 		} else {
 			return getLogs();
 		}
-	}
-
-	public void setLogs(List<SerializableLog> logs) {
-		this.logs = logs;
-		updateCache();
 	}
 
 	public void addLog(SerializableLog log) {

@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -32,6 +33,11 @@ public class UnclaimCommand extends CommandBuilder {
 
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
+			return true;
+		}
+
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
+			Cooldown.sendCooldownMessage(player);
 			return true;
 		}
 
@@ -67,6 +73,8 @@ public class UnclaimCommand extends CommandBuilder {
 			Messages.send(player, 23);
 			return true;
 		}
+
+		Cooldown.startCooldown(player,  Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
 		ChunkManager.Error error = ChunkManager.unclaimChunk(region.getUniqueId(), chunk);
 

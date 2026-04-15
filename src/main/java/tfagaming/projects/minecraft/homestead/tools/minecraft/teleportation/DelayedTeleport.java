@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -30,18 +31,19 @@ public class DelayedTeleport {
 	public static final Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
 	public static final Map<UUID, Location> initialLocations = new ConcurrentHashMap<>();
 	public static final Map<UUID, BossBar> activeBossBars = new ConcurrentHashMap<>();
-	public static Map<UUID, BukkitRunnable> bossBarTasks = new ConcurrentHashMap<>();
 	public static final Map<UUID, TaskHandle> bossBarTaskHandles = new ConcurrentHashMap<>();
+	public static Map<UUID, BukkitRunnable> bossBarTasks = new ConcurrentHashMap<>();
 
 	public DelayedTeleport(Player player, Location location) {
-		this(player, location, null);
-	}
-
-	public DelayedTeleport(Player player, Location location, String locationName) {
 		UUID playerId = player.getUniqueId();
 
 		if (tasks.containsKey(playerId)) {
 			cancelTeleport(playerId);
+			return;
+		}
+
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_TELEPORT)) {
+			Cooldown.sendCooldownMessage(player);
 			return;
 		}
 
@@ -191,6 +193,8 @@ public class DelayedTeleport {
 			Messages.send(player, 52);
 			return;
 		}
+
+		Cooldown.startCooldown(player, Cooldown.Type.REGION_TELEPORT);
 
 		if (Homestead.isFolia()) {
 			player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN);

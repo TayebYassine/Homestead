@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public final class ColorTranslator {
 	private static final String STANDARD_CODES = "0123456789AaBbCcDdEeFfKkLlMmNnOoRr";
 	private static final Pattern MINIMESSAGE_TAG_PATTERN = Pattern.compile(
-            "<\\/?[a-zA-Z_][a-zA-Z0-9_]*(?::[^>]*?|\\s+[a-zA-Z_][a-zA-Z0-9_]*=\"[^\"]*\")*?>"
+			"<\\/?[a-zA-Z_][a-zA-Z0-9_]*(?::[^>]*?|\\s+[a-zA-Z_][a-zA-Z0-9_]*=\"[^\"]*\")*?>"
 	);
 
 	private static final Map<Character, String> LEGACY_TO_MM_TAG = Map.ofEntries(

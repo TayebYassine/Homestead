@@ -36,8 +36,6 @@ import java.util.UUID;
 
 public class PlayerUtils {
 
-	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
-	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
 	public static final Set<Long> RENT_FLAGS_SET = Set.of(
 			PlayerFlags.PVP
 	);
@@ -52,6 +50,8 @@ public class PlayerUtils {
 			PlayerFlags.PICKUP_ITEMS,
 			PlayerFlags.TAKE_FALL_DAMAGE
 	);
+	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
+	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
 
 	public static void sendMessageRegionEnter(Player player, Placeholder placeholder) {
 		String type = Resources.<RegionsFile>get(ResourceType.Regions).getString("enter-exit-region-message.type").toLowerCase();
@@ -178,8 +178,7 @@ public class PlayerUtils {
 				&& rent.getPlayerId().equals(player.getUniqueId())
 				&& !RENT_FLAGS_SET.contains(flag)) {
 			response = true;
-		} else if (war != null
-				&& WarManager.isPlayerInWar(player, war)
+		} else if (WarManager.isPlayerInWar(player, war)
 				&& WAR_FLAGS_SET.contains(flag)) {
 			response = true;
 		} else if (region.isPlayerMember(player)) {

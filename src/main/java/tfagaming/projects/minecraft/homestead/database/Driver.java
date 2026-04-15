@@ -6,7 +6,8 @@ public enum Driver {
 	MYSQL("MySQL"),
 	SQLITE("SQLite"),
 	YAML("YAML"),
-	MONGODB("MongoDB"),;
+	MONGODB("MongoDB"),
+	;
 
 	private final String name;
 

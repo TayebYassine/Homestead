@@ -26,7 +26,7 @@ public class HomeSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if(!player.hasPermission("homestead.region.teleport")){
+		if (!player.hasPermission("homestead.region.teleport")) {
 			Messages.send(player, 212);
 			return true;
 		}

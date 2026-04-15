@@ -4,6 +4,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -25,7 +26,7 @@ public final class SubAreaMemberFlags {
 	/** Index 0 is the bulk-toggle item; all flag buttons start at index 1. */
 	private static final int BULK_INDEX = 0;
 
-	private final HashSet<UUID> cooldowns = new HashSet<>();
+	
 
 	public SubAreaMemberFlags(Player player, Region region, SubArea subArea, SerializableMember member) {
 		OfflinePlayer memberBukkit = member.bukkit();
@@ -38,7 +39,7 @@ public final class SubAreaMemberFlags {
 				buildItemsList(member),
 				(_player, event) -> new SubAreaMembers(player, region, subArea),
 				(_player, context) -> {
-					if (cooldowns.contains(player.getUniqueId())) return;
+					if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
 					if (!player.hasPermission("homestead.region.flags.members")) {
 						Messages.send(player, 8);
@@ -85,12 +86,12 @@ public final class SubAreaMemberFlags {
 							return;
 						}
 
+						Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
+
 						subArea.setMemberFlags(member, newFlags);
 						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 						context.getInstance().setItems(buildItemsList(member));
 
-						cooldowns.add(player.getUniqueId());
-						Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
 						return;
 					}
 
@@ -111,16 +112,15 @@ public final class SubAreaMemberFlags {
 					long flag = PlayerFlags.valueOf(flagString);
 					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
+					Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
+
 					subArea.setMemberFlags(member, isSet
 							? FlagsCalculator.removeFlag(flags, flag)
 							: FlagsCalculator.addFlag(flags, flag));
 
 					PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-					cooldowns.add(player.getUniqueId());
 					context.getInstance().replaceSlot(index, MenuUtils.getFlagButton(flagString, !isSet));
-
-					Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
 				});
 
 		gui.open(player, MenuUtils.getEmptySlot());

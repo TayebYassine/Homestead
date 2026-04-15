@@ -13,15 +13,13 @@ public class Level {
 	public static final double BASE = 5;
 	public static final double COEFFICIENT = 50;
 	public static final double CONSTANT = 100;
-
-	private boolean autoUpdate = true;
-
 	public final UUID id;
+	public final long createdAt;
 	public UUID regionId;
 	public int level;
 	public long experience;
 	public long totalExperience;
-	public final long createdAt;
+	private boolean autoUpdate = true;
 
 	public Level(UUID regionId) {
 		this.id = UUID.randomUUID();
@@ -41,6 +39,13 @@ public class Level {
 		this.createdAt = createdAt;
 	}
 
+	// MEE6 XP formula: ƒ(x) = base * (x²) + (coefficient * x) + constant
+	public static long getXpForLevel(int level) {
+		if (level < 0) return 0;
+		double xp = BASE * Math.pow(level, 2) + (COEFFICIENT * level) + CONSTANT;
+		return (long) Math.floor(xp);
+	}
+
 	/**
 	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
 	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
@@ -48,13 +53,6 @@ public class Level {
 	 */
 	public void setAutoUpdate(boolean autoUpdate) {
 		this.autoUpdate = autoUpdate;
-	}
-
-	// MEE6 XP formula: ƒ(x) = base * (x²) + (coefficient * x) + constant
-	public static long getXpForLevel(int level) {
-		if (level < 0) return 0;
-		double xp = BASE * Math.pow(level, 2) + (COEFFICIENT * level) + CONSTANT;
-		return (long) Math.floor(xp);
 	}
 
 	public UUID getUniqueId() {

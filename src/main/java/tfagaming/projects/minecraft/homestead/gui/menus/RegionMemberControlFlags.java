@@ -4,6 +4,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
@@ -20,7 +21,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.*;
 
 public final class RegionMemberControlFlags {
-	private final HashSet<UUID> cooldowns = new HashSet<>();
+	
 
 	public RegionMemberControlFlags(Player player, Region region, SerializableMember member) {
 		List<ItemStack> items = new ArrayList<>();
@@ -40,7 +41,7 @@ public final class RegionMemberControlFlags {
 				items,
 				(_player, event) -> new RegionMembersMenu(player, region),
 				(_player, context) -> {
-					if (cooldowns.contains(player.getUniqueId())) return;
+					if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
 					if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
 						Messages.send(player, 159);
@@ -66,16 +67,15 @@ public final class RegionMemberControlFlags {
 					long flag = RegionControlFlags.valueOf(flagString);
 					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
+					Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
+
 					region.setMemberRegionControlFlags(member, isSet
 							? FlagsCalculator.removeFlag(flags, flag)
 							: FlagsCalculator.addFlag(flags, flag));
 
 					PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-					cooldowns.add(player.getUniqueId());
 					context.getInstance().replaceSlot(context.getIndex(), MenuUtils.getFlagButton(flagString, !isSet));
-
-					Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
 				});
 
 		gui.open(player, MenuUtils.getEmptySlot());

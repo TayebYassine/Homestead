@@ -29,7 +29,9 @@ public class RegionsFile extends ResourceFile {
 		return getBoolean("adjacent-chunks");
 	}
 
-	public boolean isBordersEnabled() { return getBoolean("borders.enabled"); }
+	public boolean isBordersEnabled() {
+		return getBoolean("borders.enabled");
+	}
 
 	public Color getDustColor(DustColorType type) {
 		List<Integer> rgb = getIntegerList("borders.dust-colors." + type.getName());
@@ -43,23 +45,6 @@ public class RegionsFile extends ResourceFile {
 
 	public float getDustSize() {
 		return getFloat("borders.dust-size", 3.0F);
-	}
-
-	public enum DustColorType {
-		OWNER("owner"),
-		MEMBER("member"),
-		VISITOR("visitor"),
-		SUB_AREA("sub-area");
-
-		public final String name;
-
-		DustColorType(String name) {
-			this.name = name;
-		}
-
-		public String getName() {
-			return name;
-		}
 	}
 
 	public boolean isRewardsEnabled() {
@@ -86,5 +71,22 @@ public class RegionsFile extends ResourceFile {
 		}
 
 		return size;
+	}
+
+	public enum DustColorType {
+		OWNER("owner"),
+		MEMBER("member"),
+		VISITOR("visitor"),
+		SUB_AREA("sub-area");
+
+		public final String name;
+
+		DustColorType(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
 	}
 }

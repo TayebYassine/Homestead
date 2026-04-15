@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
@@ -42,6 +43,11 @@ public class ClaimCommand extends CommandBuilder {
 
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
+			return true;
+		}
+
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_CLAIM)) {
+			Cooldown.sendCooldownMessage(player);
 			return true;
 		}
 
@@ -112,6 +118,8 @@ public class ClaimCommand extends CommandBuilder {
 
 		SelectionToolListener.cancelPlayerSession(player);
 
+		Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_CLAIM);
+
 		return true;
 	}
 
@@ -174,6 +182,9 @@ public class ClaimCommand extends CommandBuilder {
 		}
 
 		validateAndClaim(player, region, chunksToClaim);
+
+		Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_CLAIM);
+
 		return true;
 	}
 

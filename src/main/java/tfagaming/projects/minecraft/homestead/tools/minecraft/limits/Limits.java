@@ -15,7 +15,8 @@ public class Limits {
 
 	public static int getPlayerLimit(OfflinePlayer player, LimitType limit) {
 		return switch (limit) {
-			case REGIONS, MAX_SUBAREA_VOLUME, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN -> getBaseLimitValue(player, limit);
+			case REGIONS, MAX_SUBAREA_VOLUME, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN ->
+					getBaseLimitValue(player, limit);
 			default -> 0;
 		};
 	}

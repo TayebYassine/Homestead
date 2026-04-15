@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
@@ -47,10 +48,12 @@ public final class RegionClaimedChunks {
 					SerializableChunk chunk = chunks.get(context.getIndex());
 
 					if (context.getEvent().isRightClick()) {
-						if(!player.hasPermission("homestead.region.teleport")){
+						if (!player.hasPermission("homestead.region.teleport")) {
 							Messages.send(player, 212);
 							return;
 						}
+
+						player.closeInventory();
 
 						new DelayedTeleport(player, chunk.bukkitLocation());
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
@@ -83,6 +86,11 @@ public final class RegionClaimedChunks {
 						chunks = region.getChunks();
 						context.getInstance().setItems(getItems(player, region));
 					} else {
+						if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
+							Cooldown.sendCooldownMessage(player);
+							return;
+						}
+
 						if (!ChunkManager.isChunkClaimed(chunk.bukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.bukkit())) {
 							return;
 						}
@@ -91,6 +99,8 @@ public final class RegionClaimedChunks {
 								RegionControlFlags.UNCLAIM_CHUNKS)) {
 							return;
 						}
+
+						Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
 						int before = region.getChunks().size();
 						ChunkManager.unclaimChunk(region.getUniqueId(), chunk.bukkit());

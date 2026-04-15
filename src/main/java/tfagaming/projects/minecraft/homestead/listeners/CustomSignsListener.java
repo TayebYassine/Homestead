@@ -16,6 +16,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
@@ -284,6 +285,11 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private void handleSellSignInteraction(Player player, Sign sign, Block signBlock) {
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP)) {
+			Cooldown.sendCooldownMessage(player);
+			return;
+		}
+
 		try {
 			String regionName = getSignLine(sign, 1);
 			String priceStr = getSignLine(sign, 2);
@@ -311,6 +317,8 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
+			Cooldown.startCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP);
+
 			PlayerBank.withdraw(player, price);
 			PlayerBank.deposit(region.getOwner(), price);
 
@@ -319,6 +327,10 @@ public final class CustomSignsListener implements Listener {
 
 			if (region.isPlayerMember(player)) {
 				region.removeMember(player);
+			}
+
+			if (region.isPlayerInvited(player)) {
+				region.removePlayerInvite(player);
 			}
 
 			Messages.send(player, 124, new Placeholder()
