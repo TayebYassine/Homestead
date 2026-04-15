@@ -1,10 +1,21 @@
 package tfagaming.projects.minecraft.homestead.managers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.*;
 
@@ -82,6 +93,15 @@ public final class WarManager {
 	 */
 	public static List<OfflinePlayer> getMembersOfWar(UUID warId) {
 		War war = findWar(warId);
+		return getMembersOfWar(war);
+	}
+
+	/**
+	 * Collects all members and owners from every region in the war.
+	 *
+	 * @param war The war
+	 */
+	public static List<OfflinePlayer> getMembersOfWar(War war) {
 		if (war == null || war.getRegions().size() < 2) {
 			return Collections.emptyList();
 		}
@@ -145,6 +165,61 @@ public final class WarManager {
 	/** Returns {@code true} if the given region is currently participating in any war. */
 	public static boolean isRegionInWar(UUID regionId) {
 		return findWarByRegion(regionId) != null;
+	}
+
+	public static void sendWarEndedAndWhoWinnerToWarMembers(List<OfflinePlayer> receivers, Region winner) {
+		for (OfflinePlayer warPlayer : receivers) {
+			if (warPlayer.isOnline()) {
+				Player player = (Player) warPlayer;
+
+				Messages.send(player, 214, new Placeholder()
+						.add("{region}", winner.getName())
+				);
+			}
+		}
+	}
+
+	public static void broadcastDeclarationOfWar(War war) {
+		String type = Resources.<RegionsFile>get(ResourceType.Regions).getString("wars.broadcast-type");
+
+		switch (type.toLowerCase()) {
+			case "regions": {
+				List<OfflinePlayer> players = WarManager.getMembersOfWar(war.getUniqueId());
+
+				for (OfflinePlayer p : players) {
+					if (p.isOnline()) {
+						sendBroadcastMessage((Player) p, war, war.getRegions().getFirst(), war.getRegions().getLast());
+					}
+				}
+
+				break;
+			}
+			case "server": {
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					sendBroadcastMessage(p, war, war.getRegions().getFirst(), war.getRegions().getLast());
+				}
+
+				Logger.info("[Broadcast - War] Declaration of War: Name = " + war.getName() + ", Regions = " + war.getRegions().getFirst().getName() + " & " + war.getRegions().getLast().getName());
+
+				break;
+			}
+		}
+	}
+
+	private static void sendBroadcastMessage(Player player, War war, Region regionA, Region regionB) {
+		List<String> listString = Resources.<LanguageFile>get(ResourceType.Language).getStringList("147");
+
+		Placeholder placeholder = new Placeholder()
+				.add("{war-name}", war.getName())
+				.add("{regionplayer}", regionA.getName())
+				.add("{regiontarget}", regionB.getName())
+				.add("{prize}", tfagaming.projects.minecraft.homestead.tools.java.Formatter.getBalance(war.getPrize()));
+
+		player.playSound(player.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
+
+		for (String string : listString) {
+			Messages.send(player, Formatter.applyPlaceholders(string, placeholder));
+		}
 	}
 
 	public static void cleanStartup() {

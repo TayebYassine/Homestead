@@ -1,10 +1,12 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -29,7 +31,11 @@ public final class PlayerDeathListener implements Listener {
 				continue;
 			}
 
-			War war = WarManager.removeRegionFromWar(region.getUniqueId());
+			War war = WarManager.findWarByRegion(region.getUniqueId());
+
+			final List<OfflinePlayer> warMembers = List.copyOf(WarManager.getMembersOfWar(war.getUniqueId()));
+
+			war = WarManager.removeRegionFromWar(region.getUniqueId());
 
 			if (war == null) {
 				continue;
@@ -37,10 +43,16 @@ public final class PlayerDeathListener implements Listener {
 
 			Region winner = war.getWinner();
 
+			Cooldown.startCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED);
+
 			if (winner != null) {
 				distributePrize(war, region, winner);
 				giveHeadToWinner(winner, victim);
+
+				Cooldown.startCooldown(winner, Cooldown.Type.WAR_FLAG_DISABLED);
 			}
+
+			WarManager.sendWarEndedAndWhoWinnerToWarMembers(warMembers, winner);
 
 			WarManager.endWar(war.getUniqueId());
 

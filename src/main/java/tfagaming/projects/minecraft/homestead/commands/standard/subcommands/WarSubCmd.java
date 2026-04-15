@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -159,27 +160,7 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				War war = WarManager.declareWar(name, prize, region, targetRegion);
 
-				List<String> listString = Resources.<LanguageFile>get(ResourceType.Language).getStringList("147");
-
-				Placeholder placeholder = new Placeholder()
-						.add("{war-name}", war.getName())
-						.add("{regionplayer}", region.getName())
-						.add("{regiontarget}", targetRegion.getName())
-						.add("{prize}", Formatter.getBalance(prize));
-
-				List<OfflinePlayer> players = WarManager.getMembersOfWar(war.getUniqueId());
-
-				for (OfflinePlayer p : players) {
-					if (p.isOnline()) {
-						Player player1 = (Player) p;
-
-						player1.playSound(player1.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
-
-						for (String string : listString) {
-							Messages.send(player1, Formatter.applyPlaceholders(string, placeholder));
-						}
-					}
-				}
+				WarManager.broadcastDeclarationOfWar(war);
 
 				break;
 			}
@@ -197,19 +178,31 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				War war = WarManager.removeRegionFromWar(region.getUniqueId());
+				War war = WarManager.findWarByRegion(region.getUniqueId());
 
-				if (war != null && war.getRegions().size() == 1) {
-					Region winner = war.getRegions().getFirst();
+				final List<OfflinePlayer> warMembers = List.copyOf(WarManager.getMembersOfWar(war.getUniqueId()));
 
-					double prize = war.getPrize();
+				war = WarManager.removeRegionFromWar(region.getUniqueId());
 
-					region.withdrawBank(prize);
-					winner.depositBank(prize);
+				if (war != null) {
+					Region winner = war.getWinner();
 
-					if (winner.getOwner().isOnline()) {
-						Messages.send((Player) winner.getOwner(), 155);
+					if (winner != null) {
+						double prize = war.getPrize();
+
+						region.withdrawBank(prize);
+						winner.depositBank(prize);
+
+						if (winner.getOwner().isOnline()) {
+							Messages.send((Player) winner.getOwner(), 155);
+						}
+
+						Cooldown.startCooldown(winner, Cooldown.Type.WAR_FLAG_DISABLED);
 					}
+
+					Cooldown.startCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED);
+
+					WarManager.sendWarEndedAndWhoWinnerToWarMembers(warMembers, winner);
 
 					WarManager.endWar(war.getUniqueId());
 				}
@@ -251,7 +244,7 @@ public class WarSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 1 && args[0].equalsIgnoreCase("declare")) {
+		if (args.length == 2 && args[0].equalsIgnoreCase("declare")) {
 			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
 		}
 

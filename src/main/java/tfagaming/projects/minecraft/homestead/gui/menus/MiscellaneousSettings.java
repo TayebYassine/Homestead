@@ -183,7 +183,10 @@ public final class MiscellaneousSettings {
 		gui.addItem(14, MenuUtils.getButton(37, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
-			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE)) return;
+			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE)) {
+				Cooldown.sendCooldownMessage(player);
+				return;
+			}
 
 			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_SPAWN))
 				return;

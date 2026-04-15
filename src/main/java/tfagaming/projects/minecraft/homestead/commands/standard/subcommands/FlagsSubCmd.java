@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -258,6 +259,11 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				long flags = region.getWorldFlags();
 				long flag = WorldFlags.valueOf(flagInput);
+
+				if (Cooldown.hasCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
+					Cooldown.sendCooldownMessage(player);
+					return true;
+				}
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 

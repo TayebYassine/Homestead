@@ -154,6 +154,12 @@ wars:
   # Give the region owner's head to the region owner who won the war?
   give-head: true
 
+  # Broadcast the message "A war has been declared"
+  # - regions: Only sent to regions in the war
+  # - server: Will be sent to the entire server
+  # - silent: No message will be sent
+  broadcast-type: "regions"
+
 # Welcome Signs Feature
 # Clickable signs that teleport to region homes
 welcome-signs:
@@ -299,3 +305,9 @@ cooldown:
   region-teleport:
     ignore-operators: true
     value: 15 # 15 seconds
+
+  # Disallow regions to disable wars when they finished a war
+  # From example below, if a region won or lost a war, they cannot change the wars flag state for 36 hours.
+  war-flag-disabled:
+    ignore-operators: true
+    value: 129600 # 36 hours

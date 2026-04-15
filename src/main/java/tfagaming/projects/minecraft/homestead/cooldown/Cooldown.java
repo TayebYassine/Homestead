@@ -1,10 +1,12 @@
 package tfagaming.projects.minecraft.homestead.cooldown;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
+import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -25,6 +27,10 @@ public final class Cooldown {
 
 	public static void startCooldown(Player player, Type type) {
 		startCooldown(player.getUniqueId(), type);
+	}
+
+	public static void startCooldown(Region region, Type type) {
+		startCooldown(region.getUniqueId(), type);
 	}
 
 	public static void addCooldown(UUID id, Type type) {
@@ -52,6 +58,20 @@ public final class Cooldown {
 		return false;
 	}
 
+	public static boolean hasCooldown(Region region) {
+		UUID id = region.getUniqueId();
+
+		if (COOLDOWNS.containsKey(id)) {
+			CooldownData data = COOLDOWNS.get(id);
+
+			OfflinePlayer owner = region.getOwner();
+
+			return !(data.getType().ignoreOperators() && PlayerUtils.isOperator(owner));
+		}
+
+		return false;
+	}
+
 	public static boolean hasCooldown(Player player, Type type) {
 		UUID id = player.getUniqueId();
 
@@ -59,6 +79,20 @@ public final class Cooldown {
 			CooldownData data = COOLDOWNS.get(id);
 
 			return data.getType() == type && !(type.ignoreOperators() && PlayerUtils.isOperator(player));
+		}
+
+		return false;
+	}
+
+	public static boolean hasCooldown(Region region, Type type) {
+		UUID id = region.getUniqueId();
+
+		if (COOLDOWNS.containsKey(id)) {
+			CooldownData data = COOLDOWNS.get(id);
+
+			OfflinePlayer owner = region.getOwner();
+
+			return data.getType() == type && !(data.getType().ignoreOperators() && PlayerUtils.isOperator(owner));
 		}
 
 		return false;
@@ -133,7 +167,8 @@ public final class Cooldown {
 		REGION_DYNAMIC_MAP_SETTINGS_CHANGE("region-dynamic-map-settings-change"),
 		REGION_CHUNK_CLAIM("region-chunk-claim"),
 		REGION_CHUNK_UNCLAIM("region-chunk-unclaim"),
-		REGION_TELEPORT("region-teleport");
+		REGION_TELEPORT("region-teleport"),
+		WAR_FLAG_DISABLED("war-flag-disabled");
 
 		private final String key;
 

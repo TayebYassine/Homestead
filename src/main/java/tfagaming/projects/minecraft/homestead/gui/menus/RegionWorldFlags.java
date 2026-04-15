@@ -69,6 +69,12 @@ public final class RegionWorldFlags {
 
 					long flags = region.getWorldFlags();
 					long flag = WorldFlags.valueOf(flagString);
+
+					if (Cooldown.hasCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
+						Cooldown.sendCooldownMessage(player);
+						return;
+					}
+
 					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
 					Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
