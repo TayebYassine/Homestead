@@ -35,12 +35,24 @@ public class MenuUtils {
 		return new ButtonData(name, lore, type);
 	}
 
+	public static ItemStack getButton(ButtonData data) {
+		return resolveItem(data, data.getOriginalType(), new Placeholder(), null);
+	}
+
 	public static ItemStack getButton(ButtonData data, Placeholder placeholder) {
 		return resolveItem(data, data.getOriginalType(), placeholder, null);
 	}
 
+	public static ItemStack getButton(int path) {
+		return getButton(path, new Placeholder(), null);
+	}
+
 	public static ItemStack getButton(int path, OfflinePlayer playerHead) {
 		return getButton(path, new Placeholder(), playerHead);
+	}
+
+	public static ItemStack getButton(int path, Placeholder placeholder) {
+		return resolveItem(getButtonData(path), null, placeholder, null);
 	}
 
 	public static ItemStack getButton(int path, Placeholder placeholder, OfflinePlayer playerHead) {
@@ -73,19 +85,19 @@ public class MenuUtils {
 	}
 
 	public static ItemStack getBackButton() {
-		return ItemUtils.getItem(getButtonData(0));
+		return getButton(0);
 	}
 
 	public static ItemStack getPreviousPageButton() {
-		return ItemUtils.getItem(getButtonData(1));
+		return getButton(1);
 	}
 
 	public static ItemStack getNextPageButton() {
-		return ItemUtils.getItem(getButtonData(2));
+		return getButton(2);
 	}
 
 	public static ItemStack getEmptySlot() {
-		return ItemUtils.getItem(getButtonData(3));
+		return getButton(3);
 	}
 
 	private static ItemStack resolveItem(ButtonData data, String typeOverride,
@@ -117,7 +129,7 @@ public class MenuUtils {
 		private final String name;
 		private final List<String> lore;
 		private final Material type;
-		private final String originalType;
+		private String originalType;
 
 		public ButtonData(String name, List<String> lore, String type) {
 			this.name = name;
@@ -136,6 +148,10 @@ public class MenuUtils {
 
 		public String getOriginalType() {
 			return originalType;
+		}
+
+		public void setOriginalType(String type) {
+			this.originalType = type;
 		}
 
 		public Material getType() {

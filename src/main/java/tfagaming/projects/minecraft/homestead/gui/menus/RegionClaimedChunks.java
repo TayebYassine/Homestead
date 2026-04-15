@@ -132,11 +132,11 @@ public final class RegionClaimedChunks {
 			ButtonData data = MenuUtils.getButtonData(33);
 
 			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD")) {
-				data.originalType = switch (chunk.bukkitLocation().getWorld().getEnvironment()) {
+				data.setOriginalType(switch (chunk.bukkitLocation().getWorld().getEnvironment()) {
 					case NETHER -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.nether");
 					case THE_END -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.the_end");
 					default -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.overworld");
-				};
+				});
 			}
 
 			items.add(MenuUtils.getButton(data, placeholder));
