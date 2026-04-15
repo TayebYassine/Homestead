@@ -489,8 +489,15 @@ public final class RegionProtectionListener implements Listener {
 	/**
 	 * Returns true for archaeology brushing blocks when the player holds a brush.
 	 */
+	private boolean isArchaeologyBlock(Material type) {
+		return (type == Material.SUSPICIOUS_GRAVEL || type == Material.SUSPICIOUS_SAND);
+	}
+	
+	/**
+	 * Returns true for archaeology brushing blocks when the player holds a brush.
+	 */
 	private boolean isArchaeologyBlockWithBrush(Material type, Player player) {
-		if (!(type == Material.SUSPICIOUS_GRAVEL || type == Material.SUSPICIOUS_SAND)) return false;
+		if (!isArchaeologyBlock(type)) return false;
 		return player.getInventory().getItemInMainHand().getType() == Material.BRUSH;
 	}
 
@@ -528,6 +535,23 @@ public final class RegionProtectionListener implements Listener {
 				 JUKEBOX, COMPOSTER, DAYLIGHT_DETECTOR -> true;
 			default -> false;
 		};
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerBrushBlock(BlockDropItemEvent event) {
+		Player player = event.getPlayer();
+		Block block = event.getBlock();
+		BlockState blockState = event.getBlockState();
+		Material type = blockState.getType();
+
+		if (isArchaeologyBlock(type)) {
+			Location location = block.getLocation();
+			Chunk chunk = location.getChunk();
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				event.setCancelled(true);
+			});
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
