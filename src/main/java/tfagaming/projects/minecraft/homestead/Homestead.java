@@ -594,8 +594,8 @@ public class Homestead extends JavaPlugin {
 		Homestead.warsCache.clear();
 		Homestead.subAreasCache.clear();
 		Homestead.levelsCache.clear();
-		TargetRegionSession.sessions.clear();
-		AutoClaimSession.sessions.clear();
+		TargetRegionSession.SESSIONS.clear();
+		AutoClaimSession.SESSIONS.clear();
 		DelayedTeleport.cleanup();
 
 		Logger.info("Cache cleaned.");

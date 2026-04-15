@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.database;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.database.providers.*;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -105,6 +106,8 @@ public final class Database {
 	public void closeConnection() throws Exception {
 		this.instance.closeConnection();
 		this.instance = null;
+
+		Logger.warning("Connection closed for " + provider.toString() + ".");
 	}
 
 	public long getLatency() {
