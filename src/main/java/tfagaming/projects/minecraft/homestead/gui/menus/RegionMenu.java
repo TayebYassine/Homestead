@@ -68,16 +68,31 @@ public final class RegionMenu {
 				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 
 		gui.addItem(10, MenuUtils.getButton(6, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionPlayersManagement(player, region);
 		});
 
 		gui.addItem(11, MenuUtils.getButton(7, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionClaimedChunks(player, region);
 		});
 
 		gui.addItem(12, MenuUtils.getButton(8, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (event.isLeftClick()) {
 				new GlobalPlayerFlags(player, region);
 			} else if (event.isRightClick()) {
@@ -86,16 +101,31 @@ public final class RegionMenu {
 		});
 
 		gui.addItem(13, MenuUtils.getButton(9, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new MiscellaneousSettings(player, region);
 		});
 
 		gui.addItem(14, MenuUtils.getButton(10, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new SubAreasMenu(player, region);
 		});
 
 		gui.addItem(20, MenuUtils.getButton(79, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new Rewards(player, region, () -> new RegionMenu(player, region));
 		});
@@ -103,6 +133,11 @@ public final class RegionMenu {
 		gui.addItem(21, MenuUtils.getButton(11, placeholder), null);
 
 		gui.addItem(22, MenuUtils.getButton(12, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
@@ -120,6 +155,11 @@ public final class RegionMenu {
 		});
 
 		gui.addItem(23, MenuUtils.getButton(80, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionLevels(player, region, () -> new RegionMenu(player, region));
 		});
@@ -127,11 +167,21 @@ public final class RegionMenu {
 		gui.addItem(24, MenuUtils.getButton(15, placeholder), null);
 
 		gui.addItem(15, MenuUtils.getButton(13, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionLogs(player, region);
 		});
 
 		gui.addItem(16, MenuUtils.getButton(16, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					RegionControlFlags.SET_WEATHER_AND_TIME)) {
 				return;
@@ -156,12 +206,22 @@ public final class RegionMenu {
 		});
 
 		gui.addItem(27, MenuUtils.getBackButton(), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionsMenu(player);
 		});
 
 		if (region.isPlayerMember(player)) {
 			gui.addItem(35, MenuUtils.getButton(14, placeholder), (_player, event) -> {
+				if (RegionManager.findRegion(region.getUniqueId()) == null) {
+					player.closeInventory();
+					return;
+				}
+
 				if (!event.isLeftClick()) return;
 
 				region.removeMember(player);

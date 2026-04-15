@@ -9,6 +9,8 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
@@ -39,6 +41,18 @@ public final class SubAreaMemberFlags {
 				buildItemsList(member),
 				(_player, event) -> new SubAreaMembers(player, region, subArea),
 				(_player, context) -> {
+					if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
+
+					boolean stillMember = Objects.requireNonNull(SubAreaManager.findSubArea(subArea.getUniqueId())).isPlayerMember(memberBukkit);
+
+					if (!stillMember) {
+						player.closeInventory();
+						return;
+					}
+
 					if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
 					if (!player.hasPermission("homestead.region.flags.members")) {

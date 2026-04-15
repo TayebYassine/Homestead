@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
@@ -33,6 +35,11 @@ public final class SubAreaMembers {
 				(_player, event) -> new SubAreaMenu(player, region, subArea),
 				(_player, context) -> {
 					if (context.getIndex() >= members.size()) return;
+
+					if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
 
 					if (!player.hasPermission("homestead.region.subareas.players.flags")) {
 						Messages.send(player, 8);

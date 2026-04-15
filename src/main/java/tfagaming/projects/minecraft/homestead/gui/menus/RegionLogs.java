@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLog;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -31,6 +32,11 @@ public final class RegionLogs {
 				(_player, event) -> new RegionMenu(player, region),
 				(_player, context) -> {
 					if (context.getIndex() >= logs.size()) return;
+
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
 
 					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 							RegionControlFlags.MANAGE_LOGS)) {

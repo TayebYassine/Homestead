@@ -14,28 +14,29 @@ import java.util.Random;
 import java.util.UUID;
 
 public final class TargetRegionSession {
-	public static final HashMap<UUID, Region> sessions = new HashMap<UUID, Region>();
+	private static final Random random = new Random();
+	public static final HashMap<UUID, Region> SESSIONS = new HashMap<UUID, Region>();
 
 	private TargetRegionSession() {
 
 	}
 
 	public static void newSession(Player player, Region region) {
-		sessions.put(player.getUniqueId(), region);
+		SESSIONS.put(player.getUniqueId(), region);
 	}
 
 	public static void newSession(Player player) {
 		List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
 		if (!regions.isEmpty()) {
-			sessions.putIfAbsent(player.getUniqueId(), regions.getFirst());
+			SESSIONS.putIfAbsent(player.getUniqueId(), regions.getFirst());
 		} else {
-			sessions.putIfAbsent(player.getUniqueId(), null);
+			SESSIONS.putIfAbsent(player.getUniqueId(), null);
 		}
 	}
 
 	public static Region getRegion(OfflinePlayer player) {
-		Region region = sessions.get(player.getUniqueId());
+		Region region = SESSIONS.get(player.getUniqueId());
 
 		if (region == null && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("autoset-target-region") && player.isOnline() && !RegionManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 			randomizeRegion((Player) player);
@@ -47,13 +48,13 @@ public final class TargetRegionSession {
 	}
 
 	public static void setRegion(OfflinePlayer player, Region region) {
-		sessions.put(player.getUniqueId(), region);
+		SESSIONS.put(player.getUniqueId(), region);
 	}
 
 	public static void setRegion(OfflinePlayer player, String regionName) {
 		Region region = RegionManager.findRegion(regionName);
 
-		sessions.put(player.getUniqueId(), region);
+		SESSIONS.put(player.getUniqueId(), region);
 	}
 
 	public static void randomizeRegion(
@@ -61,9 +62,8 @@ public final class TargetRegionSession {
 		List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
 		if (regions.isEmpty()) {
-			sessions.put(player.getUniqueId(), null);
+			SESSIONS.put(player.getUniqueId(), null);
 		} else {
-			Random random = new Random();
 			int randomIndex = random.nextInt(regions.size());
 
 			setRegion(player, regions.get(randomIndex));
@@ -71,10 +71,10 @@ public final class TargetRegionSession {
 	}
 
 	public static boolean hasSession(Player player) {
-		return sessions.containsKey(player.getUniqueId()) && getRegion(player) != null;
+		return SESSIONS.containsKey(player.getUniqueId()) && getRegion(player) != null;
 	}
 
 	public static void removeSession(Player player) {
-		sessions.remove(player.getUniqueId());
+		SESSIONS.remove(player.getUniqueId());
 	}
 }

@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
@@ -18,21 +19,41 @@ public final class RegionPlayersManagement {
 				.add("{region-invited-players}", region.getInvitedPlayers().size());
 
 		gui.addItem(11, MenuUtils.getButton(18, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionMembersMenu(player, region);
 		});
 
 		gui.addItem(13, MenuUtils.getButton(19, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionBannedPlayers(player, region);
 		});
 
 		gui.addItem(15, MenuUtils.getButton(20, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionPlayersInvited(player, region);
 		});
 
 		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionMenu(player, region);
 		});

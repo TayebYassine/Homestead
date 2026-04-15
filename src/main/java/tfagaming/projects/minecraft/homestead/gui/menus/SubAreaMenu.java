@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -39,6 +40,11 @@ public final class SubAreaMenu {
 				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 
 		gui.addItem(11, MenuUtils.getButton(43, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.subareas.rename")) {
@@ -78,18 +84,33 @@ public final class SubAreaMenu {
 		});
 
 		gui.addItem(12, MenuUtils.getButton(44, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			new SubAreaFlagsMenu(player, region, subArea);
 		});
 
 		gui.addItem(13, MenuUtils.getButton(70, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			new SubAreaMembers(player, region, subArea);
 		});
 
 		gui.addItem(14, MenuUtils.getButton(71, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
@@ -107,6 +128,11 @@ public final class SubAreaMenu {
 		});
 
 		gui.addItem(15, MenuUtils.getButton(45, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.subareas.delete")) {
@@ -124,6 +150,11 @@ public final class SubAreaMenu {
 		});
 
 		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new SubAreasMenu(player, region);
 		});

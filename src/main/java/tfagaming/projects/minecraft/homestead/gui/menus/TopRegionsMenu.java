@@ -40,6 +40,11 @@ public final class TopRegionsMenu {
 
 					Region region = regions.get(context.getIndex());
 
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
+
 					if (context.getEvent().isLeftClick()) {
 						new RegionInfoMenu(player, region, () ->
 								new TopRegionsMenu(player, this.isPublicRegionsOnly, sortMode));

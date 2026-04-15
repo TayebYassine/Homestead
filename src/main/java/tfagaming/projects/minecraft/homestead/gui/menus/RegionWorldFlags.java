@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.UUID;
 
 public final class RegionWorldFlags {
-	
 
 	public RegionWorldFlags(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
@@ -40,6 +40,11 @@ public final class RegionWorldFlags {
 				items,
 				(_player, event) -> new RegionMenu(player, region),
 				(_player, context) -> {
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
+
 					if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
 					if (!player.hasPermission("homestead.region.flags.world")) {

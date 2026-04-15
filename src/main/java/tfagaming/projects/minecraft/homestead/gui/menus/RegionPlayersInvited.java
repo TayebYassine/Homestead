@@ -52,6 +52,11 @@ public final class RegionPlayersInvited {
 				});
 
 		gui.addActionButton(0, MenuUtils.getButton(29), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.players.trust")) {
@@ -132,6 +137,11 @@ public final class RegionPlayersInvited {
 		});
 
 		gui.addActionButton(2, MenuUtils.getButton(31), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			if (region.getInvitedPlayers().isEmpty()) {

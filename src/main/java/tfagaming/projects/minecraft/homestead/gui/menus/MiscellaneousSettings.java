@@ -47,6 +47,11 @@ public final class MiscellaneousSettings {
 				.add("{region-description}", region.getDescription());
 
 		gui.addItem(11, MenuUtils.getButton(34, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) {

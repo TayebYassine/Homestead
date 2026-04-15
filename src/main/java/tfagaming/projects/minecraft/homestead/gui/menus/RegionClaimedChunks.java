@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
@@ -44,6 +45,11 @@ public final class RegionClaimedChunks {
 				(_player, event) -> new RegionMenu(player, region),
 				(_player, context) -> {
 					if (context.getIndex() >= chunks.size()) return;
+
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
 
 					SerializableChunk chunk = chunks.get(context.getIndex());
 

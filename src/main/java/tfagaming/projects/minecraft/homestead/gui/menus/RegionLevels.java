@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.LevelManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
@@ -32,6 +33,9 @@ public final class RegionLevels {
 				buildLevelButtons(region),
 				(p, e) -> backButton.run(),
 				(p, c) -> {
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+					}
 				}
 		);
 

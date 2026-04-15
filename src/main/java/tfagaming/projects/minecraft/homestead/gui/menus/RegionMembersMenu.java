@@ -43,6 +43,11 @@ public final class RegionMembersMenu {
 				(_player, context) -> {
 					if (context.getIndex() >= members.size()) return;
 
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
+
 					SerializableMember member = members.get(context.getIndex());
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {

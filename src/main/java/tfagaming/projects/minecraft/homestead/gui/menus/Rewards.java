@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -27,6 +28,11 @@ public final class Rewards {
 		), null);
 
 		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			backButton.run();
 		});

@@ -34,6 +34,11 @@ public final class RegionsWithWelcomeSigns {
 					Region region = regions.get(context.getIndex());
 
 					if (context.getEvent().isLeftClick()) {
+						if (RegionManager.findRegion(region.getUniqueId()) == null) {
+							player.closeInventory();
+							return;
+						}
+
 						if (!player.hasPermission("homestead.region.teleport")) {
 							Messages.send(player, 212);
 							return;

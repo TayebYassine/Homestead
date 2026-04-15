@@ -55,11 +55,21 @@ public final class RegionsMenu {
 					Region region = regions.get(index);
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
+						if (RegionManager.findRegion(region.getUniqueId()) == null) {
+							player.closeInventory();
+							return;
+						}
+
 						new RegionInfoMenu(_player, region, () -> new RegionsMenu(_player));
 						return;
 					}
 
 					if (context.getEvent().isRightClick()) {
+						if (RegionManager.findRegion(region.getUniqueId()) == null) {
+							player.closeInventory();
+							return;
+						}
+
 						if (region.getLocation() == null) {
 							Messages.send(_player, 71, new Placeholder().add("{region}", region.getName()));
 							return;
@@ -89,6 +99,11 @@ public final class RegionsMenu {
 					}
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
+						if (RegionManager.findRegion(region.getUniqueId()) == null) {
+							player.closeInventory();
+							return;
+						}
+
 						Region current = TargetRegionSession.getRegion(_player);
 						if (current != null && current.getUniqueId().equals(region.getUniqueId())) return;
 
@@ -102,6 +117,11 @@ public final class RegionsMenu {
 					}
 
 					if (context.getEvent().isLeftClick()) {
+						if (RegionManager.findRegion(region.getUniqueId()) == null) {
+							player.closeInventory();
+							return;
+						}
+
 						new RegionMenu(_player, region);
 					}
 				});

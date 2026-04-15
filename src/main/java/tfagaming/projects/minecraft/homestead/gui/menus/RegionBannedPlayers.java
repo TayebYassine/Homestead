@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionBulkUnbanPlayersE
 import tfagaming.projects.minecraft.homestead.api.events.RegionUnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBannedPlayer;
@@ -38,6 +39,11 @@ public final class RegionBannedPlayers {
 				(_player, event) -> new RegionPlayersManagement(player, region),
 				(_player, context) -> {
 					if (context.getIndex() >= bannedPlayers.size()) return;
+
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
 
 					SerializableBannedPlayer bannedPlayer = bannedPlayers.get(context.getIndex());
 
