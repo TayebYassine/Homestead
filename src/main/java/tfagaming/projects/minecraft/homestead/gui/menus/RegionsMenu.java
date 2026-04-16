@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class RegionsMenu {
 	private static final Set<UUID> ADMIN_SHOW_ALL = ConcurrentHashMap.newKeySet();
 
+	private static final List<Region> REGIONS_ADMIN = new ArrayList<>(RegionManager.getAll());
 	private List<Region> regions = new ArrayList<>();
 
 	public RegionsMenu(Player player) {
@@ -142,7 +143,7 @@ public final class RegionsMenu {
 	}
 
 	private List<Region> computeRegionList(Player player) {
-		if (isShowAllEnabled(player)) return new ArrayList<>(RegionManager.getAll());
+		if (isShowAllEnabled(player)) return REGIONS_ADMIN;
 
 		List<Region> list = new ArrayList<>();
 		list.addAll(RegionManager.getRegionsOwnedByPlayer(player));

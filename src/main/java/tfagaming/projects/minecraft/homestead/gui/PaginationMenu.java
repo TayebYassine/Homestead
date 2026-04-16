@@ -170,7 +170,6 @@ public class PaginationMenu implements Listener {
 	 */
 	public void setItems(List<ItemStack> newItems) {
 		boolean wasOpen = player != null && player.getOpenInventory() != null;
-		// String oldTitle = wasOpen ? player.getOpenInventory().getTitle() : null;
 
 		this.items.clear();
 		this.items.addAll(newItems);
@@ -277,6 +276,13 @@ public class PaginationMenu implements Listener {
 		if (topInventory.getSize() != size) {
 			return;
 		}
+
+		// Cancel silently if the player clicked too recently
+		if (InventoryManager.isOnCooldown(player)) {
+			event.setCancelled(true);
+			return;
+		}
+		InventoryManager.updateCooldown(player);
 
 		event.setCancelled(true);
 		int slot = event.getRawSlot();

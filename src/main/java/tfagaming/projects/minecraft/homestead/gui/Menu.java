@@ -106,19 +106,28 @@ public class Menu implements Listener {
 			return;
 		}
 
-		if (InventoryManager.getMenu(player) == this && event.getInventory().equals(this.inventory)) {
-			if (passthrough) return;
+		if (InventoryManager.getMenu(player) != this || !event.getInventory().equals(this.inventory)) {
+			return;
+		}
 
+		// Cancel silently if the player clicked too recently
+		if (InventoryManager.isOnCooldown(player)) {
 			event.setCancelled(true);
-			if (event.getClick() == ClickType.MIDDLE) return;
+			return;
+		}
+		InventoryManager.updateCooldown(player);
 
-			int slot = event.getRawSlot();
+		if (passthrough) return;
 
-			if (callbacks.containsKey(slot) && callbacks.get(slot) != null) {
-				plugin.runPlayerTask(player, () -> {
-					callbacks.get(slot).accept(player, event);
-				});
-			}
+		event.setCancelled(true);
+		if (event.getClick() == ClickType.MIDDLE) return;
+
+		int slot = event.getRawSlot();
+
+		if (callbacks.containsKey(slot) && callbacks.get(slot) != null) {
+			plugin.runPlayerTask(player, () -> {
+				callbacks.get(slot).accept(player, event);
+			});
 		}
 	}
 
