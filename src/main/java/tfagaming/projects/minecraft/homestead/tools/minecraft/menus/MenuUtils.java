@@ -115,7 +115,7 @@ public class MenuUtils {
 			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
 		}
 
-		if (type.startsWith("NEXOMC-")) {
+		if (type.startsWith("NEXOMC-") || type.startsWith("NEXO-")) {
 			String itemId = type.split("-", 2)[1];
 			return NexoMC.getCustomNexoItem(itemId, data.getName(), data.getLore(), placeholder);
 		}
