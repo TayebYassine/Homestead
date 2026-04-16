@@ -25,10 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class RegionsMenu {
 	private static final Set<UUID> ADMIN_SHOW_ALL = ConcurrentHashMap.newKeySet();
 
-	private static final List<Region> REGIONS_ADMIN = new ArrayList<>(RegionManager.getAll());
+	private final List<Region> REGIONS_ADMIN;
 	private List<Region> regions = new ArrayList<>();
 
 	public RegionsMenu(Player player) {
+		this.REGIONS_ADMIN = RegionManager.getAll();
 		this.regions = computeRegionList(player);
 
 		PaginationMenu gui = new PaginationMenu(
