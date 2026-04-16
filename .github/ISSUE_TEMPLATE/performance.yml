@@ -1,0 +1,57 @@
+name: Performance Issue
+description: Performance issue caused by Homestead
+labels: ["Performance"]
+body:
+  - type: input
+    id: server-software
+    attributes:
+      label: Server Software & Version
+      placeholder: e.g. Paper 1.21.10, Spigot 26.1, Folia 1.21.9
+    validations:
+      required: true
+
+  - type: input
+    id: homestead-version
+    attributes:
+      label: Homestead Version
+      placeholder: e.g. 5.0.2.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Any evidence proving the performance issue, such as output of /spark profiler.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      placeholder: Detailed steps to reproduce it, if possible
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Screenshots, configuration files, plugins, or anything else relevant.
+      placeholder: Paste screenshots, config snippets, or plugin list here (optional).
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Please confirm all of the following before submitting.
+      options:
+        - label: I am using the latest version of the plugin.
+          required: true
+        - label: I am willing to cooperate to get this issue resolved as soon as possible.
+          required: true
+        - label: I understand that I must speak in the English language to make communication easier.
+          required: true
