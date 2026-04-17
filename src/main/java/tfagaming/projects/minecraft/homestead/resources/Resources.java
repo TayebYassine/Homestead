@@ -15,8 +15,9 @@ import java.util.*;
 public final class Resources {
 
 	private static final String RESOURCE_CONFIG = "config.yml";
-	private static final String RESOURCE_LANG_DEFAULT = "languages/en-US.yml";
-	private static final String RESOURCE_MENUS_DEFAULT = "menus/en-US.yml";
+	private static final String RESOURCE_LANG_DIR = "languages/";
+	private static final String RESOURCE_MENUS_DIR = "menus/";
+	private static final Set<String> RESOURCE_LANGUAGE_CODES = Set.of("en-US", "es-ES");
 	private static final String RESOURCE_FLAGS = "flags.yml";
 	private static final String RESOURCE_LEVELS = "levels.yml";
 	private static final String RESOURCE_LIMITS = "limits.yml";
@@ -54,24 +55,24 @@ public final class Resources {
 
 		ConfigFile config = get(ResourceType.Config);
 
-		File langDir = new File(plugin.getDataFolder(), "languages/");
-		ensureDirectoryWithDefault(plugin, langDir, RESOURCE_LANG_DEFAULT);
+		File langDir = new File(plugin.getDataFolder(), RESOURCE_LANG_DIR);
+		ensureDirectoryWithDefault(plugin, langDir, RESOURCE_LANGUAGE_CODES);
 
 		String langSetting = config.getLanguageSetting();
 		File langFile = resolveLocaleFile(langDir, langSetting, "en-US.yml");
 
-		validateAndFix(plugin, RESOURCE_LANG_DEFAULT, langFile, Collections.emptySet());
+		validateAndFixDirectory(plugin, langDir, RESOURCE_LANGUAGE_CODES, Collections.emptySet());
 
 		REGISTRY.put(ResourceType.Language, new LanguageFile(langFile));
 		Logger.info("Language file '" + langFile.getName() + "' loaded.");
 
-		File menusDir = new File(plugin.getDataFolder(), "menus/");
-		ensureDirectoryWithDefault(plugin, menusDir, RESOURCE_MENUS_DEFAULT);
+		File menusDir = new File(plugin.getDataFolder(), RESOURCE_MENUS_DIR);
+		ensureDirectoryWithDefault(plugin, menusDir, RESOURCE_LANGUAGE_CODES);
 
 		String menusSetting = config.getMenusSetting();
 		File menusFile = resolveLocaleFile(menusDir, menusSetting, "en-US.yml");
 
-		validateAndFix(plugin, RESOURCE_MENUS_DEFAULT, menusFile, Collections.emptySet());
+		validateAndFixDirectory(plugin, menusDir, RESOURCE_LANGUAGE_CODES, Collections.emptySet());
 
 		REGISTRY.put(ResourceType.Menus, new MenusFile(menusFile));
 		Logger.info("Menus file '" + menusFile.getName() + "' loaded.");
@@ -128,15 +129,18 @@ public final class Resources {
 		return file;
 	}
 
-	private static void ensureDirectoryWithDefault(Homestead plugin, File dir, String bundledDefault) throws IOException {
+	private static void ensureDirectoryWithDefault(Homestead plugin, File dir, Set<String> langCodes) throws IOException {
 		if (dir.isDirectory()) return;
 
 		if (!dir.mkdirs()) throw new IOException("mkdirs() returned false for " + dir);
 
-		File defaultFile = new File(dir, new File(bundledDefault).getName());
-		InputStream stream = plugin.getResource(bundledDefault);
-		if (stream != null) {
-			FileUtils.copyInputStreamToFile(stream, defaultFile);
+		for (String langCode : langCodes) {
+			File file = new File(dir, new File(langCode).getName());
+			InputStream stream = plugin.getResource(langCode);
+
+			if (stream != null) {
+				FileUtils.copyInputStreamToFile(stream, file);
+			}
 		}
 	}
 
@@ -163,6 +167,31 @@ public final class Resources {
 			Logger.warning("'" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
 			validator.fix();
 			Logger.info("'" + targetFile.getName() + "' has been repaired.");
+		}
+	}
+
+	private static void validateAndFixDirectory(
+			Homestead plugin,
+			File dir,
+			Set<String> langCodes,
+			Set<String> filteredSubtrees) throws IOException {
+		if (dir.isDirectory()) return;
+
+		for (String langCode : langCodes) {
+			String resourcePath = dir.getName() + "/" + langCode + ".yml";
+			File targetFile = new File(dir, new File(langCode).getName());
+
+			if (!targetFile.exists()) {
+				ensureFile(plugin, targetFile, resourcePath);
+			}
+
+			ResourceValidator validator = new ResourceValidator(resourcePath, targetFile, filteredSubtrees);
+
+			if (!validator.validate()) {
+				Logger.warning("'" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
+				validator.fix();
+				Logger.info("'" + targetFile.getName() + "' has been repaired.");
+			}
 		}
 	}
 

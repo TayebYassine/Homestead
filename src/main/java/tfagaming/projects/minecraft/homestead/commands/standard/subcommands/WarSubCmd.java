@@ -202,7 +202,7 @@ public class WarSubCmd extends SubCommandBuilder {
 
 					Cooldown.startCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED);
 
-					WarManager.sendWarEndedAndWhoWinnerToWarMembers(warMembers, winner);
+					WarManager.tellPlayersWarEnded(warMembers, winner);
 
 					WarManager.endWar(war.getUniqueId());
 				}

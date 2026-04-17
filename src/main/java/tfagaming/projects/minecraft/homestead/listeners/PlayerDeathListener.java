@@ -52,7 +52,7 @@ public final class PlayerDeathListener implements Listener {
 				Cooldown.startCooldown(winner, Cooldown.Type.WAR_FLAG_DISABLED);
 			}
 
-			WarManager.sendWarEndedAndWhoWinnerToWarMembers(warMembers, winner);
+			WarManager.tellPlayersWarEnded(warMembers, winner);
 
 			WarManager.endWar(war.getUniqueId());
 

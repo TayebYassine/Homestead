@@ -167,7 +167,7 @@ public final class WarManager {
 		return findWarByRegion(regionId) != null;
 	}
 
-	public static void sendWarEndedAndWhoWinnerToWarMembers(List<OfflinePlayer> receivers, Region winner) {
+	public static void tellPlayersWarEnded(List<OfflinePlayer> receivers, Region winner) {
 		for (OfflinePlayer warPlayer : receivers) {
 			if (warPlayer.isOnline()) {
 				Player player = (Player) warPlayer;
