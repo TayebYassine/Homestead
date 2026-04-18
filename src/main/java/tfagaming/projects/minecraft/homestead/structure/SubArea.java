@@ -18,8 +18,8 @@ import java.util.UUID;
 public class SubArea {
 	public final UUID id;
 	public final UUID worldId;
-	public final int[] point1;
-	public final int[] point2;
+	public int[] point1;
+	public int[] point2;
 	public final long createdAt;
 	public UUID regionId;
 	public String name;
@@ -175,6 +175,7 @@ public class SubArea {
 
 	public void setName(String name) {
 		this.name = name;
+		updateCache();
 	}
 
 	public UUID getWorldId() {
@@ -191,6 +192,16 @@ public class SubArea {
 
 	public Block getSecondPoint() {
 		return parseBlockLocation(getWorld(), point2);
+	}
+
+	public void setFirstPoint(Block point) {
+		this.point1 = getBlockLocation(point);
+		updateCache();
+	}
+
+	public void setSecondPoint(Block point) {
+		this.point2 = getBlockLocation(point);
+		updateCache();
 	}
 
 	// Members

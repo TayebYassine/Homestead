@@ -12,7 +12,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.MiscellaneousSettings;
-import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIconTools;
+import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIcon;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -329,7 +329,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!RegionIconTools.isValidIcon(iconInput)) {
+				if (!RegionIcon.isValidIcon(iconInput)) {
 					Messages.send(player, 99);
 
 					return true;
@@ -477,7 +477,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 		} else if (args.length == 2 && args[0].equalsIgnoreCase("mapcolor"))
 			suggestions.addAll(MapColor.getAll());
 		else if (args.length == 2 && args[0].equalsIgnoreCase("icon")) {
-			suggestions.addAll(RegionIconTools.getAllIcons());
+			suggestions.addAll(RegionIcon.getAllIcons());
 			suggestions.add("Default");
 		}
 

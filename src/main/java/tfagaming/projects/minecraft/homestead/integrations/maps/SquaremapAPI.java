@@ -108,7 +108,7 @@ public class SquaremapAPI {
 	}
 
 	private void addRegionIcon(SimpleLayerProvider targetLayer, Region region, String hoverText) {
-		BufferedImage bufferedIcon = RegionIconTools.getIconBufferedImage(region.getIcon());
+		BufferedImage bufferedIcon = RegionIcon.getIconBufferedImage(region.getIcon());
 
 		int iconSize = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.icons.size");
 

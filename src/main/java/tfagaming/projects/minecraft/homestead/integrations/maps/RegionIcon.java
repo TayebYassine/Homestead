@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RegionIconTools {
+public class RegionIcon {
 	private static final Map<String, BufferedImage> icons = new HashMap<>();
 	private static BufferedImage defaultIcon;
 
@@ -39,7 +39,7 @@ public class RegionIconTools {
 		int totalIcons = allIcons.size();
 		int downloadedCount = 0;
 
-		Logger.warning("Downloaded icons status: 0% (0 / " + totalIcons + ")");
+		Logger.warning("[Dynamic Maps] Downloaded icons status: 0% (0 / " + totalIcons + ")");
 
 		defaultIcon = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.default"));
 
@@ -56,7 +56,7 @@ public class RegionIconTools {
 				icons.putIfAbsent(icon, downloaded);
 
 				downloadedCount++;
-				Logger.warning("Downloaded icons status: " + (int) ((downloadedCount / (float) totalIcons) * 100) + "% (" + downloadedCount + " / " + totalIcons + ")");
+				Logger.warning("[Dynamic Maps] Downloaded icons status: " + (int) ((downloadedCount / (float) totalIcons) * 100) + "% (" + downloadedCount + " / " + totalIcons + ")");
 			}
 		}
 	}
@@ -70,7 +70,7 @@ public class RegionIconTools {
 
 			return ImageIO.read(connection.getInputStream());
 		} catch (Exception e) {
-			Logger.warning("Failed to download the icon! URL: " + imageUrl);
+			Logger.warning("[Dynamic Maps] Failed to download the icon! URL: " + imageUrl);
 			return null;
 		}
 	}

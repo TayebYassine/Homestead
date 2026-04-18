@@ -270,6 +270,7 @@ prefix: "&8[&6Homestead&8]&r"
 212: "{__prefix__} &cNo tienes permiso para teletransportarte."
 213: "{__prefix__} &c¡Demasiado rápido! Por favor espera unos segundos antes de ejecutar el comando."
 214: "&eLa guerra ha terminado, ¡y los miembros de &2{region}&e son los ganadores!"
+215: "{__prefix__} &7¡Se ha redimensionado la sub-área!"
 
 logs:
   0: "Por {executor}, nombre de región actualizado a {newname}."

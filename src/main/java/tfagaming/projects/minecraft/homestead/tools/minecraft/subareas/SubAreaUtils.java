@@ -10,18 +10,22 @@ import java.util.UUID;
 
 public class SubAreaUtils {
 	public static boolean isIntersectingOtherSubArea(UUID id, SerializableBlock firstPoint, SerializableBlock secondPoint) {
+		return getIntersectedSubArea(id, firstPoint, secondPoint) != null;
+	}
+
+	public static SubArea getIntersectedSubArea(UUID id, SerializableBlock firstPoint, SerializableBlock secondPoint) {
 		Region region = RegionManager.findRegion(id);
 
 		if (region == null) {
-			return false;
+			return null;
 		}
 
 		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(id)) {
 			if (subArea.isIntersectingOtherSubArea(firstPoint, secondPoint)) {
-				return true;
+				return subArea;
 			}
 		}
 
-		return false;
+		return null;
 	}
 }

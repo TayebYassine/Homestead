@@ -270,6 +270,7 @@ prefix: "&8[&6Homestead&8]&r"
 212: "{__prefix__} &cYou have no permission to teleport."
 213: "{__prefix__} &cToo fast! Please wait for few seconds before running the command."
 214: "&eThe war has ended, and &2{region}&e's members are the winners!"
+215: "{__prefix__} &7Resized the sub-area!"
 
 logs:
   0: "By {executor}, updated region name to {newname}."
