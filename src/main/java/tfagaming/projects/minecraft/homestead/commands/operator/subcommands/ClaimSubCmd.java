@@ -107,17 +107,13 @@ public class ClaimSubCmd extends SubCommandBuilder {
 		}
 
 		List<Chunk> toClaim = new ArrayList<>();
-		int minCX = centreChunkX - radius;
-		int maxCX = centreChunkX + radius;
-		int minCZ = centreChunkZ - radius;
-		int maxCZ = centreChunkZ + radius;
+		int minCX = centreChunkX - (radius - 1);
+		int maxCX = centreChunkX + (radius - 1);
+		int minCZ = centreChunkZ - (radius - 1);
+		int maxCZ = centreChunkZ + (radius - 1);
 
 		for (int cx = minCX; cx <= maxCX; cx++) {
 			for (int cz = minCZ; cz <= maxCZ; cz++) {
-				if (Math.abs(cx - centreChunkX) + Math.abs(cz - centreChunkZ) > radius) {
-					continue;
-				}
-
 				if (!world.isChunkLoaded(cx, cz)) {
 					continue;
 				}

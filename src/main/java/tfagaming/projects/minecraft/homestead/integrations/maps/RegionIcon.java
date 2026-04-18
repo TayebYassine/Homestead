@@ -1,7 +1,9 @@
 package tfagaming.projects.minecraft.homestead.integrations.maps;
 
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
@@ -12,12 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RegionIconTools {
+public class RegionIcon {
 	private static final Map<String, BufferedImage> icons = new HashMap<>();
 	private static BufferedImage defaultIcon;
 
 	public static List<String> getAllIcons() {
-		return Homestead.config.getKeysUnderPath("dynamic-maps.icons.list");
+		return Resources.<ConfigFile>get(ResourceType.Config).getKeysUnderPath("dynamic-maps.icons.list");
 	}
 
 	public static boolean isValidIcon(String icon) {
@@ -37,16 +39,16 @@ public class RegionIconTools {
 		int totalIcons = allIcons.size();
 		int downloadedCount = 0;
 
-		Logger.warning("Downloaded icons status: 0% (0 / " + totalIcons + ")");
+		Logger.warning("[Dynamic Maps] Downloaded icons status: 0% (0 / " + totalIcons + ")");
 
-		defaultIcon = downloadIcon(Homestead.config.getString("dynamic-maps.icons.default"));
+		defaultIcon = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.default"));
 
 		for (String icon : getAllIcons()) {
 			if (icons.containsKey(icon)) {
 				continue;
 			}
 
-			String url = Homestead.config.getString("dynamic-maps.icons.list." + icon);
+			String url = Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.list." + icon);
 
 			if (url != null) {
 				BufferedImage downloaded = downloadIcon(url);
@@ -54,7 +56,7 @@ public class RegionIconTools {
 				icons.putIfAbsent(icon, downloaded);
 
 				downloadedCount++;
-				Logger.warning("Downloaded icons status: " + (int) ((downloadedCount / (float) totalIcons) * 100) + "% (" + downloadedCount + " / " + totalIcons + ")");
+				Logger.warning("[Dynamic Maps] Downloaded icons status: " + (int) ((downloadedCount / (float) totalIcons) * 100) + "% (" + downloadedCount + " / " + totalIcons + ")");
 			}
 		}
 	}
@@ -66,11 +68,9 @@ public class RegionIconTools {
 
 			connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-			BufferedImage bufferedImage = ImageIO.read(connection.getInputStream());
-
-			return bufferedImage;
+			return ImageIO.read(connection.getInputStream());
 		} catch (Exception e) {
-			Logger.warning("Failed to download the icon! URL: " + imageUrl);
+			Logger.warning("[Dynamic Maps] Failed to download the icon! URL: " + imageUrl);
 			return null;
 		}
 	}

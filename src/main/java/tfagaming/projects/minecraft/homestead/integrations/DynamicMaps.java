@@ -78,7 +78,9 @@ public final class DynamicMaps {
 
 		if (bluemap == null) {
 			try {
-				Class.forName("de.bluecolored.bluemap.api.BlueMapAPI");
+				if (!isBlueMapInstalled()) {
+					throw new NoClassDefFoundError("BlueMap not installed");
+				}
 
 				de.bluecolored.bluemap.api.BlueMapAPI.onEnable((api) -> {
 					bluemap = new BlueMapAPI(instance, api);
@@ -87,32 +89,60 @@ public final class DynamicMaps {
 
 					bluemap.update();
 				});
-			} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
+			} catch (NoClassDefFoundError ignored) {
 			}
 		} else {
 			bluemap.update();
 		}
 
-		if (Homestead.config.isDebugEnabled()) {
-			Logger.info("Updated dynamic map plugin markers.");
+		Logger.debug("Updated dynamic map plugin markers.");
+	}
+
+	private static boolean isDynmapInstalled() {
+		try {
+			Class.forName("org.dynmap.markers.MarkerSet");
+
+			Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("dynmap");
+
+			return plugin != null && plugin.isEnabled();
+		} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
+			return false;
 		}
 	}
 
-	public static boolean isDynmapInstalled() {
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("dynmap");
+	private static boolean isPl3xMapInstalled() {
+		try {
+			Class.forName("net.pl3x.map.core.Pl3xMap");
 
-		return plugin != null && plugin.isEnabled();
+			Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Pl3xMap");
+
+			return plugin != null && plugin.isEnabled();
+		} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
+			return false;
+		}
 	}
 
-	public static boolean isPl3xMapInstalled() {
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Pl3xMap");
+	private static boolean isSquaremapInstalled() {
+		try {
+			Class.forName("xyz.jpenilla.squaremap.api.Point");
 
-		return plugin != null && plugin.isEnabled();
+			Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("squaremap");
+
+			return plugin != null && plugin.isEnabled();
+		} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
+			return false;
+		}
 	}
 
-	public static boolean isSquaremapInstalled() {
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("squaremap");
+	private static boolean isBlueMapInstalled() {
+		try {
+			Class.forName("de.bluecolored.bluemap.api.BlueMapAPI");
 
-		return plugin != null && plugin.isEnabled();
+			Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("BlueMap");
+
+			return plugin != null && plugin.isEnabled();
+		} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
+			return false;
+		}
 	}
 }

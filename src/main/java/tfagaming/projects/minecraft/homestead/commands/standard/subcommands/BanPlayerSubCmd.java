@@ -8,10 +8,14 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -89,11 +93,16 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		String reason = Homestead.language.getString("default.reason");
+		String reason = Resources.<LanguageFile>get(ResourceType.Language).getString("default.reason");
 
 		if (args.length > 1) {
 			List<String> reasonList = Arrays.asList(args).subList(1, args.length);
 			reason = String.join(" ", reasonList);
+		}
+
+		if (ColorTranslator.containsMiniMessageTag(reason)) {
+			Messages.send(player, 30);
+			return true;
 		}
 
 		region.banPlayer(target, reason);

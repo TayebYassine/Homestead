@@ -3,6 +3,9 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 
@@ -21,6 +24,13 @@ public class BordersSubCmd extends SubCommandBuilder {
 
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
+			return true;
+		}
+
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled();
+
+		if (!isEnabled) {
+			Messages.send(player, 105);
 			return true;
 		}
 

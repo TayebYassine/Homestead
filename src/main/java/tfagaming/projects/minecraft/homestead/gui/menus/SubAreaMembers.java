@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
@@ -19,7 +21,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubAreaMembers {
+public final class SubAreaMembers {
 	private List<SerializableMember> members;
 
 	public SubAreaMembers(Player player, Region region, SubArea subArea) {
@@ -34,6 +36,16 @@ public class SubAreaMembers {
 				(_player, context) -> {
 					if (context.getIndex() >= members.size()) return;
 
+					if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
+
+					if (!player.hasPermission("homestead.region.subareas.players.flags")) {
+						Messages.send(player, 8);
+						return;
+					}
+
 					SerializableMember member = members.get(context.getIndex());
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
@@ -46,10 +58,6 @@ public class SubAreaMembers {
 							return;
 						}
 
-						if (!player.hasPermission("homestead.region.subareas.players")) {
-							Messages.send(player, 8);
-							return;
-						}
 						if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 								RegionControlFlags.MANAGE_SUBAREAS)) {
 							return;
@@ -62,11 +70,6 @@ public class SubAreaMembers {
 						context.getInstance().setItems(getItems(player, region, subArea));
 
 					} else if (context.getEvent().isLeftClick()) {
-						if (!player.hasPermission("homestead.region.subareas.players")) {
-							Messages.send(player, 8);
-							return;
-						}
-
 						new SubAreaMemberFlags(player, region, subArea, member);
 					}
 				});

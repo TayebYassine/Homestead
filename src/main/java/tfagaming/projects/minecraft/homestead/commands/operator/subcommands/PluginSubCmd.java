@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.managers.LevelManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
@@ -28,9 +29,9 @@ public class PluginSubCmd extends SubCommandBuilder {
 					.add("{wars}", WarManager.getAll().size())
 					.add("{subareas}", SubAreaManager.getAll().size())
 					.add("{levels}", LevelManager.getAll().size())
-					.add("{provider}", Homestead.database.getSelectedProvider())
+					.add("{provider}", Homestead.database.getProvider().toString())
 					.add("{avg-response-db}", Homestead.database.getLatency())
-					.add("{avg-response-cache}", Homestead.database.getLatency())
+					.add("{avg-response-cache}", Database.getCacheLatency())
 			);
 		} else {
 			sender.sendMessage("Please wait...");
@@ -46,9 +47,9 @@ public class PluginSubCmd extends SubCommandBuilder {
 					{"Wars", WarManager.getAll().size()},
 					{"Sub-Areas", SubAreaManager.getAll().size()},
 					{"Levels", LevelManager.getAll().size()},
-					{"Provider", Homestead.database.getSelectedProvider()},
+					{"Provider", Homestead.database.getProvider().toString()},
 					{"Database Latency", Homestead.database.getLatency() + "ms"},
-					{"Cache Latency", Homestead.database.getLatency() + "ms"}
+					{"Cache Latency", Database.getCacheLatency() + "ms"}
 			};
 
 			ListUtils.printTable(headers, data);

@@ -6,12 +6,14 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionRenameEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -34,6 +36,11 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 			Messages.send(player, 0, new Placeholder()
 					.add("{usage}", getUsage())
 			);
+			return true;
+		}
+
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) {
+			Cooldown.sendCooldownMessage(player);
 			return true;
 		}
 
@@ -66,7 +73,14 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		if (ColorTranslator.containsMiniMessageTag(regionName)) {
+			Messages.send(player, 30);
+			return true;
+		}
+
 		final String oldName = region.getName();
+
+		Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
 
 		region.setName(regionName);
 

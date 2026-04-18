@@ -22,12 +22,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RegionsMenu {
+public final class RegionsMenu {
 	private static final Set<UUID> ADMIN_SHOW_ALL = ConcurrentHashMap.newKeySet();
 
+	private final List<Region> REGIONS_ADMIN;
 	private List<Region> regions = new ArrayList<>();
 
 	public RegionsMenu(Player player) {
+		this.REGIONS_ADMIN = RegionManager.getAll();
 		this.regions = computeRegionList(player);
 
 		PaginationMenu gui = new PaginationMenu(
@@ -55,31 +57,55 @@ public class RegionsMenu {
 					Region region = regions.get(index);
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
+						if (RegionManager.findRegion(region.getUniqueId()) == null) {
+							player.closeInventory();
+							return;
+						}
+
 						new RegionInfoMenu(_player, region, () -> new RegionsMenu(_player));
 						return;
 					}
 
 					if (context.getEvent().isRightClick()) {
+						if (RegionManager.findRegion(region.getUniqueId()) == null) {
+							player.closeInventory();
+							return;
+						}
+
 						if (region.getLocation() == null) {
 							Messages.send(_player, 71, new Placeholder().add("{region}", region.getName()));
+							return;
+						}
+
+						if (!player.hasPermission("homestead.region.teleport")) {
+							Messages.send(player, 212);
 							return;
 						}
 
 						boolean allowed = PlayerUtils.isOperator(_player)
 								|| region.isOwner(player)
 								|| (PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN, true)
-								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true));
+								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true))
+								&& player.hasPermission("homestead.region.teleport");
 
 						if (!allowed) {
 							Messages.send(_player, 45, new Placeholder().add("{region}", region.getName()));
 							return;
 						}
 
+						player.closeInventory();
+
 						new DelayedTeleport(_player, region.getLocation().bukkit());
+
 						return;
 					}
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
+						if (RegionManager.findRegion(region.getUniqueId()) == null) {
+							player.closeInventory();
+							return;
+						}
+
 						Region current = TargetRegionSession.getRegion(_player);
 						if (current != null && current.getUniqueId().equals(region.getUniqueId())) return;
 
@@ -93,6 +119,11 @@ public class RegionsMenu {
 					}
 
 					if (context.getEvent().isLeftClick()) {
+						if (RegionManager.findRegion(region.getUniqueId()) == null) {
+							player.closeInventory();
+							return;
+						}
+
 						new RegionMenu(_player, region);
 					}
 				});
@@ -113,7 +144,7 @@ public class RegionsMenu {
 	}
 
 	private List<Region> computeRegionList(Player player) {
-		if (isShowAllEnabled(player)) return new ArrayList<>(RegionManager.getAll());
+		if (isShowAllEnabled(player)) return REGIONS_ADMIN;
 
 		List<Region> list = new ArrayList<>();
 		list.addAll(RegionManager.getRegionsOwnedByPlayer(player));

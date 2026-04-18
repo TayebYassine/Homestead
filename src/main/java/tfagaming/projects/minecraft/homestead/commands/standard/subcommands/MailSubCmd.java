@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLog;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.ArrayList;
@@ -64,6 +65,11 @@ public class MailSubCmd extends SubCommandBuilder {
 
 		List<String> messageList = Arrays.asList(args).subList(1, args.length);
 		String message = String.join(" ", messageList);
+
+		if (ColorTranslator.containsMiniMessageTag(message)) {
+			Messages.send(player, 30);
+			return true;
+		}
 
 		RegionManager.addNewLog(region.getUniqueId(), player.getName(), message);
 

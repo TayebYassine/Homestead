@@ -9,6 +9,9 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
@@ -22,7 +25,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionPlayersInvited {
+public final class RegionPlayersInvited {
 	private List<OfflinePlayer> invitedPlayers;
 
 	public RegionPlayersInvited(Player player, Region region) {
@@ -49,6 +52,11 @@ public class RegionPlayersInvited {
 				});
 
 		gui.addActionButton(0, MenuUtils.getButton(29), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.players.trust")) {
@@ -61,7 +69,7 @@ public class RegionPlayersInvited {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
-				if (Homestead.config.isInstantTrustSystemEnabled()) {
+				if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
 					region.removePlayerInvite(targetPlayer);
 					region.addMember(targetPlayer);
 
@@ -69,6 +77,17 @@ public class RegionPlayersInvited {
 					Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 				} else {
 					region.addPlayerInvite(targetPlayer);
+
+					Placeholder placeholder = new Placeholder()
+							.add("{region}", region.getName())
+							.add("{playername}", targetPlayer.getName())
+							.add("{ownername}", region.getOwner().getName());
+
+					Messages.send(player, 36, placeholder);
+
+					if (targetPlayer.isOnline()) {
+						Messages.send(targetPlayer.getPlayer(), 139, placeholder);
+					}
 				}
 
 				RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
@@ -118,6 +137,11 @@ public class RegionPlayersInvited {
 		});
 
 		gui.addActionButton(2, MenuUtils.getButton(31), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			if (region.getInvitedPlayers().isEmpty()) {

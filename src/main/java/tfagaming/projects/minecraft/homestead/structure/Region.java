@@ -7,6 +7,10 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
 
@@ -44,6 +48,7 @@ public class Region {
 	public int time;
 	public SerializableLocation welcomeSign;
 	public String icon;
+	private boolean autoUpdate = true;
 
 	/**
 	 * Create a new region instance.
@@ -54,17 +59,26 @@ public class Region {
 		this.id = UUID.randomUUID();
 		this.displayName = name;
 		this.name = name;
-		this.description = Homestead.language.getString("default.description").replace("{owner}",
+		this.description = Resources.<LanguageFile>get(ResourceType.Language).getString("default.region-description").replace("{owner}",
 				player.getName() == null ? "Unknown" : player.getName());
 		this.ownerId = player.getUniqueId();
-		this.location = new SerializableLocation(player.getLocation());
+		this.location = null;
 		this.createdAt = System.currentTimeMillis();
-		this.playerFlags = Homestead.config.getDefaultPlayerFlags();
-		this.worldFlags = Homestead.config.getDefaultWorldFlags();
+		this.playerFlags = Resources.<FlagsFile>get(ResourceType.Flags).getDefaultPlayerFlags();
+		this.worldFlags = Resources.<FlagsFile>get(ResourceType.Flags).getDefaultWorldFlags();
 		this.upkeepAt = 0;
 		this.taxesAmount = 0;
 		this.welcomeSign = null;
 		this.mapColor = 0;
+	}
+
+	/**
+	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
+	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
+	 * @param autoUpdate Auto-Update toggle
+	 */
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
 	}
 
 	public UUID getUniqueId() {
@@ -236,7 +250,7 @@ public class Region {
 		updateCache();
 	}
 
-	public void addBalanceToBank(double money) {
+	public void depositBank(double money) {
 		this.bank += money;
 		updateCache();
 	}
@@ -329,14 +343,16 @@ public class Region {
 		if (!isPlayerMember(player)) {
 			long newFlags = playerFlags;
 
-			for (String flagString : PlayerFlags.getFlags()) {
-				if (Homestead.config.isFlagDisabled(flagString)) continue;
+			if (Resources.<FlagsFile>get(ResourceType.Flags).allowFlagsOnPlayerTrust()) {
+				for (String flagString : PlayerFlags.getFlags()) {
+					if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) continue;
 
-				long flag = PlayerFlags.valueOf(flagString);
+					long flag = PlayerFlags.valueOf(flagString);
 
-				boolean isSet = FlagsCalculator.isFlagSet(newFlags, flag);
-				if (!isSet) {
-					newFlags = FlagsCalculator.addFlag(newFlags, flag);
+					boolean isSet = FlagsCalculator.isFlagSet(newFlags, flag);
+					if (!isSet) {
+						newFlags = FlagsCalculator.addFlag(newFlags, flag);
+					}
 				}
 			}
 
@@ -632,7 +648,7 @@ public class Region {
 
 	public void banPlayer(OfflinePlayer player) {
 		if (!isPlayerBanned(player)) {
-			bannedPlayers.add(new SerializableBannedPlayer(player, Homestead.language.getString("default.reason")));
+			bannedPlayers.add(new SerializableBannedPlayer(player, Resources.<LanguageFile>get(ResourceType.Language).getString("default.reason")));
 			updateCache();
 		}
 	}
@@ -675,12 +691,22 @@ public class Region {
 		updateCache();
 	}
 
+	public List<SerializableLog> getLogs(boolean sorted) {
+		if (sorted) {
+			return getLogs().stream()
+					.sorted(Comparator.comparingLong(SerializableLog::getSentAt).reversed())
+					.collect(Collectors.toList());
+		} else {
+			return getLogs();
+		}
+	}
+
 	public void addLog(SerializableLog log) {
 		if (logs.stream().anyMatch(l -> l.getId().equals(log.getId()))) {
 			return;
 		}
 
-		if (logs.size() >= 150) {
+		if (logs.size() >= 100) {
 			removeOldestLog();
 		}
 
@@ -750,6 +776,8 @@ public class Region {
 
 	// Other
 	public void updateCache() {
+		if (!autoUpdate) return;
+
 		Homestead.regionsCache.putOrUpdate(this);
 	}
 }

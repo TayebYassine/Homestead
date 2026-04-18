@@ -45,7 +45,7 @@ public final class LogsFile {
 		try (FileWriter writer = new FileWriter(logFile, true)) {
 			String timestamp = LocalDateTime.now().format(formatter);
 			writer.write("[" + timestamp + "] " + message + "\n");
-		} catch (IOException e) {
+		} catch (IOException ignored) {
 
 		}
 	}
@@ -57,7 +57,7 @@ public final class LogsFile {
 
 		try (FileWriter writer = new FileWriter(logFile, false)) {
 			writer.write("");
-		} catch (IOException e) {
+		} catch (IOException ignored) {
 
 		}
 	}

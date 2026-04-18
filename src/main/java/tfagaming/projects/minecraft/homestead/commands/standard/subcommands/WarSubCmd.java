@@ -7,16 +7,22 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.ArrayList;
@@ -43,7 +49,7 @@ public class WarSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		boolean isEnabled = Homestead.config.getBoolean("wars.enabled");
+		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("wars.enabled");
 
 		if (!isEnabled) {
 			Messages.send(player, 105);
@@ -124,8 +130,8 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				double prize = Double.parseDouble(prizeInput);
 
-				double minPrize = Homestead.config.getDouble("wars.min-prize");
-				double maxPrize = Homestead.config.getDouble("wars.max-prize");
+				double minPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.min-prize");
+				double maxPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.max-prize");
 
 				if (prize < minPrize || prize > maxPrize) {
 					Messages.send(player, 160);
@@ -137,39 +143,24 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				List<String> nameList = Arrays.asList(args).subList(4, args.length);
+				List<String> nameList = Arrays.asList(args).subList(3, args.length);
 				String name = String.join(" ", nameList);
 
-				if (name.isEmpty()) name = "Unnamed War";
+				if (name.isEmpty()) name = "War";
 
 				if (name.length() > 512) {
 					Messages.send(player, 145);
 					return true;
 				}
 
-				War war = WarManager.declareWar(name, prize, List.of(region, targetRegion));
-
-				List<String> listString = Homestead.language.getStringList("147");
-
-				Placeholder placeholder = new Placeholder()
-						.add("{war-name}", war.getName())
-						.add("{regionplayer}", region.getName())
-						.add("{regiontarget}", targetRegion.getName())
-						.add("{prize}", Formatter.getBalance(prize));
-
-				List<OfflinePlayer> players = WarManager.getMembersOfWar(war.getUniqueId());
-
-				for (OfflinePlayer p : players) {
-					if (p.isOnline()) {
-						Player player1 = (Player) p;
-
-						player1.playSound(player1.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
-
-						for (String string : listString) {
-							Messages.send(player1, Formatter.applyPlaceholders(string, placeholder));
-						}
-					}
+				if (ColorTranslator.containsMiniMessageTag(name)) {
+					Messages.send(player, 30);
+					return true;
 				}
+
+				War war = WarManager.declareWar(name, prize, region, targetRegion);
+
+				WarManager.broadcastDeclarationOfWar(war);
 
 				break;
 			}
@@ -187,19 +178,31 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				War war = WarManager.surrenderRegionFromFirstWarFound(region.getUniqueId());
+				War war = WarManager.findWarByRegion(region.getUniqueId());
 
-				if (war != null && war.getRegions().size() == 1) {
-					Region winner = war.getRegions().getFirst();
+				final List<OfflinePlayer> warMembers = List.copyOf(WarManager.getMembersOfWar(war.getUniqueId()));
 
-					double prize = war.getPrize();
+				war = WarManager.removeRegionFromWar(region.getUniqueId());
 
-					region.withdrawBank(prize);
-					winner.addBalanceToBank(prize);
+				if (war != null) {
+					Region winner = war.getWinner();
 
-					if (winner.getOwner().isOnline()) {
-						Messages.send((Player) winner.getOwner(), 155);
+					if (winner != null) {
+						double prize = war.getPrize();
+
+						region.withdrawBank(prize);
+						winner.depositBank(prize);
+
+						if (winner.getOwner().isOnline()) {
+							Messages.send((Player) winner.getOwner(), 155);
+						}
+
+						Cooldown.startCooldown(winner, Cooldown.Type.WAR_FLAG_DISABLED);
 					}
+
+					Cooldown.startCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED);
+
+					WarManager.tellPlayersWarEnded(warMembers, winner);
 
 					WarManager.endWar(war.getUniqueId());
 				}
@@ -217,7 +220,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				War war = WarManager.findWarByRegionId(region.getUniqueId());
+				War war = WarManager.findWarByRegion(region.getUniqueId());
 
 				if (!WarManager.isRegionInWar(region.getUniqueId()) || war == null) {
 					Messages.send(player, 152);
@@ -241,8 +244,9 @@ public class WarSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 1 && args[0].equalsIgnoreCase("declare"))
+		if (args.length == 2 && args[0].equalsIgnoreCase("declare")) {
 			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
+		}
 
 		return suggestions;
 	}

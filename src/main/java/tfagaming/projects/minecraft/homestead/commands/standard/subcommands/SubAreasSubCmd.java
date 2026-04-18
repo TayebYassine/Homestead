@@ -23,6 +23,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
@@ -178,6 +179,11 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
+				if (ColorTranslator.containsMiniMessageTag(newName)) {
+					Messages.send(player, 30);
+					return true;
+				}
+
 				final String oldName = subArea.getName();
 
 				subArea.setName(newName);
@@ -209,6 +215,53 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				Messages.send(player, 62, new Placeholder()
 						.add("{subarea}", subArea.getName())
 				);
+
+				return true;
+			}
+			case "resize": {
+				if (!player.hasPermission("homestead.region.subareas.resize")) {
+					Messages.send(player, 8);
+					return true;
+				}
+
+				String name = args[1];
+
+				SubArea subArea = SubAreaManager.findSubArea(region.getUniqueId(), name);
+
+				if (subArea == null) {
+					Messages.send(player, 60);
+					return true;
+				}
+
+				Selection session = SelectionToolListener.getPlayerSession(player);
+
+				if (session == null) {
+					Messages.send(player, 54);
+					return true;
+				}
+
+				Block firstCorner = session.getFirstPosition();
+				Block secondCorner = session.getSecondPosition();
+
+				for (Chunk chunk : ChunkUtils.getChunksInArea(firstCorner, secondCorner)) {
+					if (!(ChunkManager.isChunkClaimedByRegion(region, chunk) && firstCorner.getWorld().getUID().equals(subArea.getWorldId()))) {
+						Messages.send(player, 55);
+						return true;
+					}
+				}
+
+				SubArea intersectedSubArea = SubAreaUtils.getIntersectedSubArea(region.getUniqueId(), new SerializableBlock(firstCorner),
+						new SerializableBlock(secondCorner));
+
+				if (intersectedSubArea != null && !intersectedSubArea.getUniqueId().equals(subArea.getUniqueId())) {
+					Messages.send(player, 56);
+					return true;
+				}
+
+				subArea.setFirstPoint(firstCorner);
+				subArea.setSecondPoint(secondCorner);
+
+				Messages.send(player, 215);
 
 				return true;
 			}
@@ -370,6 +423,11 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					}
 
 					case "flags": {
+						if (!player.hasPermission("homestead.region.subareas.players.flags")) {
+							Messages.send(player, 8);
+							return true;
+						}
+
 						if (args.length < 5) {
 							Messages.send(player, 0, new Placeholder()
 									.add("{usage}", getUsage())
@@ -465,7 +523,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1)
-			suggestions.addAll(List.of("create", "delete", "rename", "flags", "players"));
+			suggestions.addAll(List.of("create", "delete", "rename", "flags", "players", "resize"));
 		else if (args.length == 2 && !args[0].equals("create")) {
 			Region region = TargetRegionSession.getRegion(player);
 

@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionDescriptionUpdate
 import tfagaming.projects.minecraft.homestead.api.events.RegionDisplaynameUpdateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionRenameEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
@@ -20,6 +21,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
@@ -30,7 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MiscellaneousSettings {
+public final class MiscellaneousSettings {
 
 	private static final Map<UUID, UUID> DELETE_CONFIRM_REGION = new ConcurrentHashMap<>();
 	private static final Map<UUID, Long> DELETE_CONFIRM_TIME = new ConcurrentHashMap<>();
@@ -45,12 +47,23 @@ public class MiscellaneousSettings {
 				.add("{region-description}", region.getDescription());
 
 		gui.addItem(11, MenuUtils.getButton(34, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
+
+			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) {
+				Cooldown.sendCooldownMessage(player);
+				return;
+			}
 
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				final String oldName = region.getName();
+				Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
 				region.setName(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				RegionManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
@@ -76,6 +89,10 @@ public class MiscellaneousSettings {
 					Messages.send(player, 2);
 					return false;
 				}
+				if (ColorTranslator.containsMiniMessageTag(message)) {
+					Messages.send(player, 30);
+					return false;
+				}
 				return true;
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 78);
 		});
@@ -83,10 +100,16 @@ public class MiscellaneousSettings {
 		gui.addItem(12, MenuUtils.getButton(35, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
+			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) {
+				Cooldown.sendCooldownMessage(player);
+				return;
+			}
+
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				final String oldDisplayname = region.getDisplayName();
+				Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
 				region.setDisplayName(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				RegionManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
@@ -108,6 +131,10 @@ public class MiscellaneousSettings {
 					Messages.send(player, 11);
 					return false;
 				}
+				if (ColorTranslator.containsMiniMessageTag(message)) {
+					Messages.send(player, 30);
+					return false;
+				}
 				return true;
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 79);
 		});
@@ -115,10 +142,17 @@ public class MiscellaneousSettings {
 		gui.addItem(13, MenuUtils.getButton(36, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
+			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE)) {
+				Cooldown.sendCooldownMessage(player);
+				return;
+			}
+
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				final String oldDescription = region.getDescription();
+
+				Cooldown.startCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE);
 
 				region.setDescription(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
@@ -138,6 +172,10 @@ public class MiscellaneousSettings {
 					Messages.send(player, 11);
 					return false;
 				}
+				if (ColorTranslator.containsMiniMessageTag(message)) {
+					Messages.send(player, 30);
+					return false;
+				}
 				return true;
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 80);
 		});
@@ -145,17 +183,23 @@ public class MiscellaneousSettings {
 		gui.addItem(14, MenuUtils.getButton(37, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
+			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE)) {
+				Cooldown.sendCooldownMessage(player);
+				return;
+			}
+
 			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_SPAWN))
 				return;
 
 			Location location = player.getLocation();
 			Chunk chunk = location.getChunk();
 
-			if (ChunkManager.getRegionOwnsTheChunk(chunk) == null
-					|| !ChunkManager.getRegionOwnsTheChunk(chunk).getUniqueId().equals(region.getUniqueId())) {
+			if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
 				Messages.send(player, 142);
 				return;
 			}
+
+			Cooldown.startCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE);
 
 			region.setLocation(location);
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
@@ -167,10 +211,16 @@ public class MiscellaneousSettings {
 		gui.addItem(15, MenuUtils.getButton(38, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
+			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP)) {
+				Cooldown.sendCooldownMessage(player);
+				return;
+			}
+
 			player.closeInventory();
 
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
+				Cooldown.startCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP);
 				region.setOwner(targetPlayer);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				if (region.isPlayerMember(targetPlayer)) region.removeMember(targetPlayer);

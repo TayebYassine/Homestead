@@ -11,6 +11,9 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
@@ -134,13 +137,13 @@ public final class SelectionToolListener implements Listener {
 		cancelTask(player);
 
 		TaskHandle task = Homestead.getInstance().runSyncTimerTask(
-				() -> PlatformBridge.get().sendActionBar(player, Homestead.config.getString("selection-tool.messages." + path)), 20);
+				() -> PlatformBridge.get().sendActionBar(player, Resources.<RegionsFile>get(ResourceType.Regions).getString("selection-tool.messages." + path)), 20);
 
 		tasks.put(player.getUniqueId(), task);
 	}
 
 	private Material getSelectionToolType() {
-		String itemString = Homestead.config.getString("selection-tool.item");
+		String itemString = Resources.<RegionsFile>get(ResourceType.Regions).getString("selection-tool.item");
 		return Material.getMaterial(itemString);
 	}
 

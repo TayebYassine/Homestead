@@ -27,7 +27,7 @@ public final class CommandsCooldownListener implements Listener {
 			if (cooldown.contains(player.getUniqueId())) {
 				event.setCancelled(true);
 
-				Messages.send(player, 118);
+				Messages.send(player, 213);
 			} else {
 				int cooldownPlayer = Limits.getPlayerLimit(player, Limits.LimitType.COMMANDS_COOLDOWN);
 

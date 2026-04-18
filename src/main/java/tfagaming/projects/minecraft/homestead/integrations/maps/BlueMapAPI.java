@@ -13,6 +13,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -109,8 +112,8 @@ public class BlueMapAPI {
 
 		String hoverTextRaw = Formatter.applyPlaceholders(
 				isOperator
-						? Homestead.config.getString("dynamic-maps.chunks.operator-description")
-						: Homestead.config.getString("dynamic-maps.chunks.description"),
+						? Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.operator-description")
+						: Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.description"),
 				placeholder
 		);
 
@@ -126,12 +129,12 @@ public class BlueMapAPI {
 
 		int chunkColor = region.getMapColor() == 0
 				? (isOperator
-				? Homestead.config.getInt("dynamic-maps.chunks.operator-color")
-				: Homestead.config.getInt("dynamic-maps.chunks.color"))
+				? Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.operator-color")
+				: Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.color"))
 				: region.getMapColor();
 
-		int chunkTransparencyInfill = Homestead.config.getInt("dynamic-maps.chunks.transparency-fill");
-		int chunkTransparencyOutline = Homestead.config.getInt("dynamic-maps.chunks.transparency-outline");
+		int chunkTransparencyInfill = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-outline");
 
 		World world = resolveRegionWorld(region);
 		if (world == null) return;

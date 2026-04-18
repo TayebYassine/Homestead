@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 
-public class RegionInfoMenu {
+public final class RegionInfoMenu {
 	public RegionInfoMenu(Player player, Region region, Runnable backButton) {
 		Menu gui = new Menu(MenuUtils.getTitle(8).replace("{region}", region.getName()), 9 * 3);
 
@@ -30,11 +30,21 @@ public class RegionInfoMenu {
 		gui.addItem(13, MenuUtils.getButton(26, placeholder), null);
 
 		gui.addItem(15, MenuUtils.getButton(61, placeholder), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			new RegionRating(player, region, () -> new RegionInfoMenu(player, region, backButton));
 		});
 
 		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 			backButton.run();
 		});

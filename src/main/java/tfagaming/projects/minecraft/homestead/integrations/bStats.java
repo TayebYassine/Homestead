@@ -1,7 +1,7 @@
 package tfagaming.projects.minecraft.homestead.integrations;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.database.Database;
+import tfagaming.projects.minecraft.homestead.database.Driver;
 import tfagaming.projects.minecraft.homestead.integrations.bstats.Metrics;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-public class bStats {
+public final class bStats {
 	public bStats(Homestead plugin) {
 		try {
 			Metrics metrics = new Metrics(plugin, 25286);
@@ -21,7 +21,7 @@ public class bStats {
 			// Regions
 			metrics.addCustomChart(new Metrics.SingleLineChart("regions", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					return RegionManager.getAll().size();
 				}
 			}));
@@ -29,7 +29,7 @@ public class bStats {
 			// Sub-Areas
 			metrics.addCustomChart(new Metrics.SingleLineChart("subareas", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					return SubAreaManager.getAll().size();
 				}
 			}));
@@ -37,7 +37,7 @@ public class bStats {
 			// Trusted Players
 			metrics.addCustomChart(new Metrics.SingleLineChart("trusted_players", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					int players = 0;
 
 					for (Region region : RegionManager.getAll()) {
@@ -51,7 +51,7 @@ public class bStats {
 			// Chunks
 			metrics.addCustomChart(new Metrics.SingleLineChart("chunks", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					int chunks = 0;
 
 					for (Region region : RegionManager.getAll()) {
@@ -65,30 +65,13 @@ public class bStats {
 			// Database
 			metrics.addCustomChart(new Metrics.AdvancedPie("database_provider", new Callable<Map<String, Integer>>() {
 				@Override
-				public Map<String, Integer> call() throws Exception {
+				public Map<String, Integer> call() {
 					Map<String, Integer> map = new HashMap<>();
 
-					switch (Database.parseProviderFromString(Homestead.database.getSelectedProvider())) {
-						case PostgreSQL:
-							map.put("PostgreSQL", 1);
-							break;
-						case MariaDB:
-							map.put("MariaDB", 1);
-							break;
-						case MySQL:
-							map.put("MySQL", 1);
-							break;
-						case MongoDB:
-							map.put("MongoDB", 1);
-							break;
-						case SQLite:
-							map.put("SQLite", 1);
-							break;
-						case YAML:
-							map.put("YAML", 1);
-							break;
-						default:
-							break;
+					Driver provider = Homestead.database.getProvider();
+
+					if (provider != null) {
+						map.put(provider.toString(), 1);
 					}
 
 					return map;
@@ -98,7 +81,7 @@ public class bStats {
 			// Dynamic Maps
 			metrics.addCustomChart(new Metrics.AdvancedPie("dynamic_maps", new Callable<Map<String, Integer>>() {
 				@Override
-				public Map<String, Integer> call() throws Exception {
+				public Map<String, Integer> call() {
 					Map<String, Integer> map = new HashMap<>();
 
 					map.put("Dynmap", DynamicMaps.dynmap == null ? 0 : 1);
@@ -113,7 +96,7 @@ public class bStats {
 			// Wars
 			metrics.addCustomChart(new Metrics.SingleLineChart("wars", new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					return WarManager.getAll().size();
 				}
 			}));

@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
@@ -14,7 +15,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubAreasMenu {
+public final class SubAreasMenu {
 	private final List<SubArea> subAreas;
 
 	public SubAreasMenu(Player player, Region region) {
@@ -28,6 +29,11 @@ public class SubAreasMenu {
 				(_player, event) -> new RegionMenu(player, region),
 				(_player, context) -> {
 					if (context.getIndex() >= subAreas.size()) return;
+
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
 
 					SubArea subArea = subAreas.get(context.getIndex());
 

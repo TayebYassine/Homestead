@@ -1,0 +1,62 @@
+# Region Leveling System
+# Reward players for killing mobs inside their region
+# XP gained -> region levels up -> unlocks bonuses
+
+levels:
+  # Enable region leveling
+  enabled: true
+
+  # XP per entity type (kill must happen IN your region, except Ender Dragon)
+  # Format: ENTITY_NAME: [ min_xp, max_xp ]
+  on-kill-entity:
+    ENDER_DRAGON: [ 1000, 3000 ]
+    WARDEN: [ 500, 1000 ]
+    WITHER: [ 200, 500 ]
+    WITHER_SKELETON: [ 50, 100 ]
+    GHAST: [ 25, 50 ]
+    ZOMBIE: [ 10, 20 ]
+    SKELETON: [ 10, 20 ]
+    HUSK: [ 10, 20 ]
+    PIG: [ 10, 20 ]
+    SHEEP: [ 10, 20 ]
+    COW: [ 10, 20 ]
+    CHICKEN: [ 10, 20 ]
+
+  # Level-Based Rewards (keep levels and rewards in ASCENDING order)
+  # Rewards stack.
+  rewards:
+    5: # Level 5; Rewards: 1 Chunk, 5% Upkeep Reduction
+      chunks: 1
+      members: 0
+      subareas: 0
+      upkeep-reduction: 5
+
+    10: # Level 10; Rewards: 2 Chunks, 1 Trusted player, 5% Upkeep Reduction
+      chunks: 2
+      members: 1
+      subareas: 0
+      upkeep-reduction: 5
+
+    15: # Level 15; Rewards: 4 Chunks, 2 Trusted players, 1 Sub-Areas, 10% Upkeep Reduction
+      chunks: 4
+      members: 2
+      subareas: 1
+      upkeep-reduction: 10
+
+    20: # ...
+      chunks: 4
+      members: 2
+      subareas: 1
+      upkeep-reduction: 15
+
+    30:
+      chunks: 4
+      members: 2
+      subareas: 1
+      upkeep-reduction: 30
+
+    50:
+      chunks: 8
+      members: 6
+      subareas: 4
+      upkeep-reduction: 50

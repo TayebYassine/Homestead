@@ -5,12 +5,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
@@ -95,8 +96,7 @@ public final class PlayerAutoClaimListener implements Listener {
 			return;
 		}
 
-		boolean wgEnabled = Homestead.config.getBoolean("worldguard.protect-existing-regions");
-		if (wgEnabled && WorldGuardAPI.isChunkInWorldGuardRegion(chunk)) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).protectWorldGuardRegions() && WorldGuardAPI.isChunkInRegion(chunk)) {
 			Messages.send(player, 133);
 			return;
 		}
@@ -117,7 +117,7 @@ public final class PlayerAutoClaimListener implements Listener {
 					return;
 				}
 
-				region = RegionManager.createRegion(player.getName(), player, true);
+				region = RegionManager.createRegion(player.getName(), player);
 				TargetRegionSession.newSession(player, region);
 			}
 		}
@@ -157,9 +157,7 @@ public final class PlayerAutoClaimListener implements Listener {
 				region.setLocation(player.getLocation());
 			}
 
-			if (!ChunkParticlesSpawner.isTaskRunning(player)) {
-				ChunkBorder.show(player);
-			}
+			ChunkBorder.show(player);
 		} else {
 			switch (error) {
 				case REGION_NOT_FOUND -> Messages.send(player, 9);

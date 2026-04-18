@@ -1,6 +1,6 @@
 name: Homestead
 main: tfagaming.projects.minecraft.homestead.Homestead
-version: 5.0.2.2
+version: 5.1.0.0
 description: 'A chunk-based land claiming plugin'
 author: TayebYassine
 api-version: 1.21.9
@@ -73,17 +73,29 @@ permissions:
     default: true
   homestead.region.subareas.rename:
     default: true
+  homestead.region.subareas.resize:
+    default: true
   homestead.region.subareas.flags:
     default: true
   homestead.region.subareas.players:
     default: true
+  homestead.region.subareas.players.flags:
+    default: true
   homestead.region.bank:
+    default: true
+  homestead.region.fly:
     default: true
   homestead.region.dynamicmaps.icon:
     default: true
   homestead.region.dynamicmaps.color:
     default: true
   homestead.region.war:
+    default: true
+  homestead.region.weather:
+    default: true
+  homestead.region.time:
+    default: true
+  homestead.region.teleport:
     default: true
   homestead.region.*:
     default: true
@@ -103,12 +115,18 @@ permissions:
       homestead.region.subareas.create: true
       homestead.region.subareas.delete: true
       homestead.region.subareas.rename: true
+      homestead.region.subareas.resize: true
       homestead.region.subareas.flags: true
       homestead.region.subareas.players: true
+      homestead.region.subareas.players.flags: true
       homestead.region.bank: true
+      homestead.region.fly: true
       homestead.region.dynamicmaps.icon: true
       homestead.region.dynamicmaps.color: true
       homestead.region.war: true
+      homestead.region.weather: true
+      homestead.region.time: true
+      homestead.region.teleport: true
   homestead.commands.region.accept:
     default: true
   homestead.commands.region.auto:
@@ -132,6 +150,8 @@ permissions:
   homestead.commands.region.deposit:
     default: true
   homestead.commands.region.flags:
+    default: true
+  homestead.commands.region.fly:
     default: true
   homestead.commands.region.help:
     default: true
@@ -167,6 +187,8 @@ permissions:
     default: true
   homestead.commands.region.subareas:
     default: true
+  homestead.commands.region.storage:
+    default: true
   homestead.commands.region.top:
     default: true
   homestead.commands.region.trust:
@@ -196,6 +218,7 @@ permissions:
       homestead.commands.region.deny: true
       homestead.commands.region.deposit: true
       homestead.commands.region.flags: true
+      homestead.commands.region.fly: true
       homestead.commands.region.help: true
       homestead.commands.region.home: true
       homestead.commands.region.kick: true
@@ -213,6 +236,7 @@ permissions:
       homestead.commands.region.rewards: true
       homestead.commands.region.set: true
       homestead.commands.region.subareas: true
+      homestead.commands.region.storage: true
       homestead.commands.region.top: true
       homestead.commands.region.trust: true
       homestead.commands.region.unban: true
@@ -250,3 +274,5 @@ permissions:
       homestead.commands.homesteadadmin.claim: true
       homestead.commands.homesteadadmin.unclaim: true
       homestead.commands.homesteadadmin.transfer: true
+  homestead.operator:
+    default: op

@@ -1,9 +1,11 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.limits;
 
 import org.bukkit.OfflinePlayer;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LimitsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
@@ -13,7 +15,8 @@ public class Limits {
 
 	public static int getPlayerLimit(OfflinePlayer player, LimitType limit) {
 		return switch (limit) {
-			case REGIONS, MAX_SUBAREA_VOLUME, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN -> getBaseLimitValue(player, limit);
+			case REGIONS, MAX_SUBAREA_VOLUME, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN ->
+					getBaseLimitValue(player, limit);
 			default -> 0;
 		};
 	}
@@ -39,7 +42,7 @@ public class Limits {
 					+ Rewards.getSubAreasByEachMember(region)
 					+ Rewards.getSubAreasByPlayTime(owner)
 					+ LevelRewards.getSubAreasByLevel(region);
-			case MAX_SUBAREA_VOLUME, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN -> getBaseLimitValue(owner, limit);
+			case MAX_SUBAREA_VOLUME, MAX_BANK_DEPOSIT, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN -> getBaseLimitValue(owner, limit);
 			default -> 0;
 		};
 	}
@@ -57,7 +60,7 @@ public class Limits {
 	private static int getBaseLimitValue(OfflinePlayer player, LimitType limit) {
 		String limitKey = getLimitConfigKey(limit);
 
-		Object playerOverride = Homestead.config.getRaw(
+		Object playerOverride = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
 				"player-limits." + player.getName() + "." + limitKey
 		);
 		if (playerOverride != null) {
@@ -69,7 +72,7 @@ public class Limits {
 		switch (method) {
 			case STATIC:
 				String opKey = PlayerUtils.isOperator(player) ? "op" : "non-op";
-				Object staticValue = Homestead.config.getRaw(
+				Object staticValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
 						"limits.static." + opKey + "." + limitKey
 				);
 				return staticValue == null ? 0 : (int) staticValue;
@@ -79,7 +82,7 @@ public class Limits {
 				if (group == null) {
 					group = "default";
 				}
-				Object groupValue = Homestead.config.getRaw(
+				Object groupValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
 						"limits.groups." + group + "." + limitKey
 				);
 				return groupValue == null ? 0 : (int) groupValue;
@@ -137,13 +140,14 @@ public class Limits {
 			case MEMBERS_PER_REGION -> "members-per-region";
 			case SUBAREAS_PER_REGION -> "subareas-per-region";
 			case MAX_SUBAREA_VOLUME -> "max-subarea-volume";
+			case MAX_BANK_DEPOSIT -> "max-bank-deposit";
 			case MAX_FORCE_LOADED_CHUNKS -> "max-force-loaded-chunks";
 			case COMMANDS_COOLDOWN -> "commands-cooldown";
 		};
 	}
 
 	public static LimitMethod getLimitsMethod() {
-		String method = Homestead.config.getString("limits.method");
+		String method = Resources.<LimitsFile>get(ResourceType.Limits).getString("limits.method");
 		return switch (method) {
 			case "static" -> LimitMethod.STATIC;
 			case "groups" -> LimitMethod.GROUPS;
@@ -157,6 +161,7 @@ public class Limits {
 		MEMBERS_PER_REGION,
 		SUBAREAS_PER_REGION,
 		MAX_SUBAREA_VOLUME,
+		MAX_BANK_DEPOSIT,
 		MAX_FORCE_LOADED_CHUNKS,
 		COMMANDS_COOLDOWN
 	}

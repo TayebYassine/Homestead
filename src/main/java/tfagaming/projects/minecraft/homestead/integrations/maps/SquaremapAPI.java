@@ -5,6 +5,9 @@ import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -56,12 +59,12 @@ public class SquaremapAPI {
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
 		String hoverText = Formatter
-				.applyPlaceholders(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
-						: Homestead.config.getString("dynamic-maps.chunks.description"), placeholder);
+				.applyPlaceholders(isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.operator-description")
+						: Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.description"), placeholder);
 
 		int chunkColor = region.getMapColor() == 0
-				? (isOperator ? Homestead.config.getInt("dynamic-maps.chunks.operator-color")
-				: Homestead.config.getInt("dynamic-maps.chunks.color"))
+				? (isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.operator-color")
+				: Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.color"))
 				: region.getMapColor();
 
 		World world = chunk.getWorld();
@@ -90,7 +93,7 @@ public class SquaremapAPI {
 				!isChunkClaimed(region, chunk, GeoDirection.EAST), !isChunkClaimed(region, chunk, GeoDirection.SOUTH),
 				!isChunkClaimed(region, chunk, GeoDirection.WEST));
 
-		boolean isEnabled = Homestead.config.getBoolean("dynamic-maps.icons.enabled");
+		boolean isEnabled = Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled");
 
 		if (isEnabled) {
 			final SimpleLayerProvider targetLayerFinal = targetLayer;
@@ -105,9 +108,9 @@ public class SquaremapAPI {
 	}
 
 	private void addRegionIcon(SimpleLayerProvider targetLayer, Region region, String hoverText) {
-		BufferedImage bufferedIcon = RegionIconTools.getIconBufferedImage(region.getIcon());
+		BufferedImage bufferedIcon = RegionIcon.getIconBufferedImage(region.getIcon());
 
-		int iconSize = Homestead.config.getInt("dynamic-maps.icons.size");
+		int iconSize = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.icons.size");
 
 		if (region.getLocation() == null) {
 			return;
@@ -184,8 +187,8 @@ public class SquaremapAPI {
 		Polygon fillArea = Marker.polygon(List.of(
 				topLeft, topRight, bottomRight, bottomLeft, topLeft));
 
-		int chunkTransparencyInfill = Homestead.config.getInt("dynamic-maps.chunks.transparency-fill");
-		int chunkTransparencyOutline = Homestead.config.getInt("dynamic-maps.chunks.transparency-outline");
+		int chunkTransparencyInfill = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-outline");
 
 		MarkerOptions fillOptions = MarkerOptions.builder()
 				.hoverTooltip(hoverText)

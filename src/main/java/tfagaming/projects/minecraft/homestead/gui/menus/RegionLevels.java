@@ -2,9 +2,12 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.LevelManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
 import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -16,7 +19,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewar
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionLevels {
+public final class RegionLevels {
 	private static final int MAX_LEVEL = 50;
 
 	public RegionLevels(Player player, Region region, Runnable backButton) {
@@ -30,6 +33,9 @@ public class RegionLevels {
 				buildLevelButtons(region),
 				(p, e) -> backButton.run(),
 				(p, c) -> {
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+					}
 				}
 		);
 
@@ -41,6 +47,7 @@ public class RegionLevels {
 
 			int current = lvl == null ? 0 : lvl.getLevel();
 			long xp = lvl == null ? 0 : lvl.getExperience();
+			double percentage = lvl == null ? 0.0 : lvl.getProgressPercentage();
 			long needed = Level.getXpForLevel(current);
 			double pct = needed == 0 ? 0 : (double) xp / needed;
 
@@ -51,7 +58,8 @@ public class RegionLevels {
 					.add("{level}", current)
 					.add("{next-lvl}", current + 1)
 					.add("{xp}", NumberUtils.convertToBalance(xp))
-					.add("{next-lvl-xp}", NumberUtils.convertToBalance(needed));
+					.add("{next-lvl-xp}", NumberUtils.convertToBalance(needed))
+					.add("{next-lvl-percentage}", NumberUtils.truncate(percentage));
 
 			ItemStack bluePane = MenuUtils.getButton(75, placeholder);
 			ItemStack grayPane = MenuUtils.getButton(76, placeholder);
@@ -94,7 +102,7 @@ public class RegionLevels {
 	}
 
 	private String getLevelRewardInfo(int lvl) {
-		List<String> rewards = Homestead.menusConfig.get("button-levels." + lvl);
+		List<String> rewards = Resources.<MenusFile>get(ResourceType.Menus).getStringList("button-levels." + lvl);
 
 		if (rewards == null || rewards.isEmpty()) return Formatter.getNone();
 

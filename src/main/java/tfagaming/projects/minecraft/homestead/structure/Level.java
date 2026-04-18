@@ -1,20 +1,25 @@
 package tfagaming.projects.minecraft.homestead.structure;
 
+import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.UUID;
 
 public class Level {
-	// MEE6 formula constants (configurable)
-	public static double BASE = 5;
-	public static double COEFFICIENT = 50;
-	public static double CONSTANT = 100;
-	public UUID id;
+	// MEE6 formula constants
+	public static final double BASE = 5;
+	public static final double COEFFICIENT = 50;
+	public static final double CONSTANT = 100;
+	public final UUID id;
+	public final long createdAt;
 	public UUID regionId;
 	public int level;
 	public long experience;
 	public long totalExperience;
-	public long createdAt;
+	private boolean autoUpdate = true;
 
 	public Level(UUID regionId) {
 		this.id = UUID.randomUUID();
@@ -41,7 +46,15 @@ public class Level {
 		return (long) Math.floor(xp);
 	}
 
-	// Getters
+	/**
+	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
+	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
+	 * @param autoUpdate Auto-Update toggle
+	 */
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
+	}
+
 	public UUID getUniqueId() {
 		return id;
 	}
@@ -59,7 +72,6 @@ public class Level {
 		return level;
 	}
 
-	// Setters for admin commands
 	public void setLevel(int level) {
 		this.level = Math.max(0, level);
 		this.experience = 0;
@@ -121,7 +133,7 @@ public class Level {
 		updateCache();
 	}
 
-	// Check and process level ups (handles multiple levels)
+	// Check and process level ups
 	private void checkLevelUp() {
 		long needed = getXpForNextLevel();
 
@@ -134,8 +146,18 @@ public class Level {
 	}
 
 	// Level up hook
-	public void onLevelUp() {
-		// Fire custom event, give rewards, etc.
+	private void onLevelUp() {
+		Region region = RegionManager.findRegion(getRegionId());
+
+		if (region == null) return;
+
+		if (region.getOwner() != null && region.getOwner().isOnline()) {
+			Player owner = (Player) region.getOwner();
+
+			Messages.send(owner, 208, new Placeholder()
+					.add("{level}", this.level)
+			);
+		}
 	}
 
 	public void setXp(long experience) {
@@ -161,6 +183,8 @@ public class Level {
 	}
 
 	private void updateCache() {
+		if (!autoUpdate) return;
+
 		Homestead.levelsCache.putOrUpdate(this);
 	}
 }

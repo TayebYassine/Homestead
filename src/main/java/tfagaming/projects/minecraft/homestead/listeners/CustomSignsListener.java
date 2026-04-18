@@ -16,10 +16,14 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLocation;
@@ -34,6 +38,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank
 import java.util.concurrent.TimeUnit;
 
 public final class CustomSignsListener implements Listener {
+	private static final boolean ADVENTURE_SUPPORTED = PlatformBridge.isAdventureClassPresent();
 
 	private static String getEventLine(SignChangeEvent event, int index) {
 		return event.getLine(index) != null ? event.getLine(index) : "";
@@ -126,7 +131,7 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private boolean handleWelcomeSign(SignChangeEvent event, Player player) {
-		if (!Homestead.config.isWelcomeSignEnabled()) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeSignEnabled()) {
 			Messages.send(player, 105);
 			return true;
 		}
@@ -139,8 +144,8 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		setEventLine(event, 0, ChatColor.GREEN + "[Welcome]");
-		setEventLine(event, 1, ChatColor.DARK_GREEN + region.getName());
+		setEventLine(event, 0, (ADVENTURE_SUPPORTED ? "<green>" : ChatColor.GREEN) + "[Welcome]");
+		setEventLine(event, 1, (ADVENTURE_SUPPORTED ? "<dark_green>" : ChatColor.DARK_GREEN) + region.getName());
 		setEventLine(event, 2, "");
 		setEventLine(event, 3, "");
 
@@ -149,7 +154,7 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private boolean handleRentSign(SignChangeEvent event, Player player) {
-		if (!Homestead.config.getBoolean("renting.enabled")) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled")) {
 			Messages.send(player, 105);
 			return true;
 		}
@@ -165,8 +170,8 @@ public final class CustomSignsListener implements Listener {
 		}
 
 		double price = Double.parseDouble(priceStr);
-		double minRent = Homestead.config.getDouble("renting.min-rent");
-		double maxRent = Homestead.config.getDouble("renting.max-rent");
+		double minRent = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("renting.min-rent");
+		double maxRent = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("renting.max-rent");
 
 		if (price < minRent || price > maxRent) {
 			Messages.send(player, 122);
@@ -181,16 +186,16 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		setEventLine(event, 0, ChatColor.GREEN + "[Rent]");
-		setEventLine(event, 1, ChatColor.DARK_GREEN + region.getName());
-		setEventLine(event, 2, ChatColor.RED + Formatter.getBalance(price));
-		setEventLine(event, 3, ChatColor.GOLD + formatMillisToReadable(durationMs));
+		setEventLine(event, 0, (ADVENTURE_SUPPORTED ? "<green>" : ChatColor.GREEN) + "[Rent]");
+		setEventLine(event, 1, (ADVENTURE_SUPPORTED ? "<dark_green>" : ChatColor.DARK_GREEN) + region.getName());
+		setEventLine(event, 2, (ADVENTURE_SUPPORTED ? "<red>" : ChatColor.RED) + Formatter.getBalance(price));
+		setEventLine(event, 3, (ADVENTURE_SUPPORTED ? "<gold>" : ChatColor.GOLD) + formatMillisToReadable(durationMs));
 
 		return false;
 	}
 
 	private boolean handleSellSign(SignChangeEvent event, Player player) {
-		if (!Homestead.config.getBoolean("selling.enabled")) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("selling.enabled")) {
 			Messages.send(player, 105);
 			return true;
 		}
@@ -206,8 +211,8 @@ public final class CustomSignsListener implements Listener {
 		}
 
 		double price = Double.parseDouble(priceStr);
-		double minSell = Homestead.config.getDouble("selling.min-sell");
-		double maxSell = Homestead.config.getDouble("selling.max-sell");
+		double minSell = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("selling.min-sell");
+		double maxSell = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("selling.max-sell");
 
 		if (price < minSell || price > maxSell) {
 			Messages.send(player, 122);
@@ -219,9 +224,9 @@ public final class CustomSignsListener implements Listener {
 			return true;
 		}
 
-		setEventLine(event, 0, ChatColor.GREEN + "[Sell]");
-		setEventLine(event, 1, ChatColor.DARK_GREEN + region.getName());
-		setEventLine(event, 2, ChatColor.RED + Formatter.getBalance(price));
+		setEventLine(event, 0, (ADVENTURE_SUPPORTED ? "<green>" : ChatColor.GREEN) + "[Sell]");
+		setEventLine(event, 1, (ADVENTURE_SUPPORTED ? "<dark_green>" : ChatColor.DARK_GREEN) + region.getName());
+		setEventLine(event, 2, (ADVENTURE_SUPPORTED ? "<red>" : ChatColor.RED) + Formatter.getBalance(price));
 		setEventLine(event, 3, "");
 
 		return false;
@@ -281,6 +286,11 @@ public final class CustomSignsListener implements Listener {
 	}
 
 	private void handleSellSignInteraction(Player player, Sign sign, Block signBlock) {
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP)) {
+			Cooldown.sendCooldownMessage(player);
+			return;
+		}
+
 		try {
 			String regionName = getSignLine(sign, 1);
 			String priceStr = getSignLine(sign, 2);
@@ -308,6 +318,8 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
+			Cooldown.startCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP);
+
 			PlayerBank.withdraw(player, price);
 			PlayerBank.deposit(region.getOwner(), price);
 
@@ -316,6 +328,10 @@ public final class CustomSignsListener implements Listener {
 
 			if (region.isPlayerMember(player)) {
 				region.removeMember(player);
+			}
+
+			if (region.isPlayerInvited(player)) {
+				region.removePlayerInvite(player);
 			}
 
 			Messages.send(player, 124, new Placeholder()

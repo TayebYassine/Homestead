@@ -4,9 +4,15 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -25,7 +31,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.Dela
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionClaimedChunks {
+public final class RegionClaimedChunks {
 	private List<SerializableChunk> chunks;
 
 	public RegionClaimedChunks(Player player, Region region) {
@@ -40,9 +46,21 @@ public class RegionClaimedChunks {
 				(_player, context) -> {
 					if (context.getIndex() >= chunks.size()) return;
 
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
+
 					SerializableChunk chunk = chunks.get(context.getIndex());
 
 					if (context.getEvent().isRightClick()) {
+						if (!player.hasPermission("homestead.region.teleport")) {
+							Messages.send(player, 212);
+							return;
+						}
+
+						player.closeInventory();
+
 						new DelayedTeleport(player, chunk.bukkitLocation());
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
 						if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
@@ -74,6 +92,11 @@ public class RegionClaimedChunks {
 						chunks = region.getChunks();
 						context.getInstance().setItems(getItems(player, region));
 					} else {
+						if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
+							Cooldown.sendCooldownMessage(player);
+							return;
+						}
+
 						if (!ChunkManager.isChunkClaimed(chunk.bukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.bukkit())) {
 							return;
 						}
@@ -83,11 +106,13 @@ public class RegionClaimedChunks {
 							return;
 						}
 
+						Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
+
 						int before = region.getChunks().size();
 						ChunkManager.unclaimChunk(region.getUniqueId(), chunk.bukkit());
 
 						if (region.getChunks().size() < before) {
-							double chunkPrice = Homestead.config.getDouble("chunk-price");
+							double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
 							if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
 						}
 
@@ -123,11 +148,11 @@ public class RegionClaimedChunks {
 			ButtonData data = MenuUtils.getButtonData(33);
 
 			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD")) {
-				data.originalType = switch (chunk.bukkitLocation().getWorld().getEnvironment()) {
-					case NETHER -> Homestead.menusConfig.get("button-types.world.nether");
-					case THE_END -> Homestead.menusConfig.get("button-types.world.the_end");
-					default -> Homestead.menusConfig.get("button-types.world.overworld");
-				};
+				data.setOriginalType(switch (chunk.bukkitLocation().getWorld().getEnvironment()) {
+					case NETHER -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.nether");
+					case THE_END -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.the_end");
+					default -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.overworld");
+				});
 			}
 
 			items.add(MenuUtils.getButton(data, placeholder));

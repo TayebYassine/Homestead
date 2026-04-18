@@ -15,6 +15,9 @@ import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -42,9 +45,7 @@ public class Pl3xMapAPI {
 	public void clearAllMarkers() {
 		for (SimpleLayer layer : layers.values()) {
 			if (layer != null) {
-				layer.getMarkers().removeIf((__) -> {
-					return true;
-				});
+				layer.getMarkers().removeIf((__) -> true);
 			}
 		}
 	}
@@ -63,12 +64,12 @@ public class Pl3xMapAPI {
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
 		String hoverText = Formatter
-				.applyPlaceholders(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
-						: Homestead.config.getString("dynamic-maps.chunks.description"), placeholder);
+				.applyPlaceholders(isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.operator-description")
+						: Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.description"), placeholder);
 
 		int chunkColor = region.getMapColor() == 0
-				? (isOperator ? Homestead.config.getInt("dynamic-maps.chunks.operator-color")
-				: Homestead.config.getInt("dynamic-maps.chunks.color"))
+				? (isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.operator-color")
+				: Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.color"))
 				: region.getMapColor();
 
 		World world = chunk.getWorld();
@@ -98,7 +99,7 @@ public class Pl3xMapAPI {
 					!isChunkClaimed(region, chunk, GeoDirection.WEST));
 		}
 
-		boolean isEnabled = Homestead.config.getBoolean("dynamic-maps.icons.enabled");
+		boolean isEnabled = Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled");
 
 		if (isEnabled) {
 			final SimpleLayer finalLayer = layer;
@@ -125,8 +126,8 @@ public class Pl3xMapAPI {
 		Point point1 = Point.of(chunk.getX() * 16, chunk.getZ() * 16);
 		Point point2 = Point.of(chunk.getX() * 16 + 16, chunk.getZ() * 16 + 16);
 
-		int chunkTransparencyInfill = Homestead.config.getInt("dynamic-maps.chunks.transparency-fill");
-		int chunkTransparencyOutline = Homestead.config.getInt("dynamic-maps.chunks.transparency-outline");
+		int chunkTransparencyInfill = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-outline");
 
 		Rectangle rectangle = new Rectangle(markerId, point1, point2);
 		rectangle.setOptions(Options.builder()
@@ -236,9 +237,9 @@ public class Pl3xMapAPI {
 	}
 
 	private void addRegionIcon(SimpleLayer layer, Region region, String hoverText) {
-		BufferedImage bufferedIcon = RegionIconTools.getIconBufferedImage(region.getIcon());
+		BufferedImage bufferedIcon = RegionIcon.getIconBufferedImage(region.getIcon());
 
-		int iconSize = Homestead.config.getInt("dynamic-maps.icons.size");
+		int iconSize = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.icons.size");
 
 		if (region.getLocation() == null) {
 			return;

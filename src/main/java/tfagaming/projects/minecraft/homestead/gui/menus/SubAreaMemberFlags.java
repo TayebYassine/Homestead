@@ -4,10 +4,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -18,11 +24,11 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 import java.util.*;
 
-public class SubAreaMemberFlags {
+public final class SubAreaMemberFlags {
 	/** Index 0 is the bulk-toggle item; all flag buttons start at index 1. */
 	private static final int BULK_INDEX = 0;
 
-	private final HashSet<UUID> cooldowns = new HashSet<>();
+	
 
 	public SubAreaMemberFlags(Player player, Region region, SubArea subArea, SerializableMember member) {
 		OfflinePlayer memberBukkit = member.bukkit();
@@ -35,10 +41,32 @@ public class SubAreaMemberFlags {
 				buildItemsList(member),
 				(_player, event) -> new SubAreaMembers(player, region, subArea),
 				(_player, context) -> {
-					if (cooldowns.contains(player.getUniqueId())) return;
+					if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
+
+					boolean stillMember = Objects.requireNonNull(SubAreaManager.findSubArea(subArea.getUniqueId())).isPlayerMember(memberBukkit);
+
+					if (!stillMember) {
+						player.closeInventory();
+						return;
+					}
+
+					if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
+
+					if (!player.hasPermission("homestead.region.flags.members")) {
+						Messages.send(player, 8);
+						return;
+					}
 
 					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 							RegionControlFlags.MANAGE_SUBAREAS)) {
+						return;
+					}
+
+					if (player.getUniqueId().equals(member.getPlayerId())) {
+						Messages.send(player, 159);
 						return;
 					}
 
@@ -53,7 +81,7 @@ public class SubAreaMemberFlags {
 						int changed = 0;
 
 						for (String flagString : PlayerFlags.getFlags()) {
-							if (Homestead.config.isFlagDisabled(flagString)) continue;
+							if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) continue;
 
 							long flag = PlayerFlags.valueOf(flagString);
 							boolean isSet = FlagsCalculator.isFlagSet(newFlags, flag);
@@ -72,12 +100,12 @@ public class SubAreaMemberFlags {
 							return;
 						}
 
+						Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
+
 						subArea.setMemberFlags(member, newFlags);
 						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 						context.getInstance().setItems(buildItemsList(member));
 
-						cooldowns.add(player.getUniqueId());
-						Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
 						return;
 					}
 
@@ -86,7 +114,8 @@ public class SubAreaMemberFlags {
 
 					String flagString = PlayerFlags.getFlags().get(flagListIndex);
 
-					if (Homestead.config.isFlagDisabled(flagString)) {
+					if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
+						PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 						Messages.send(player, 42);
 						return;
 					}
@@ -97,16 +126,15 @@ public class SubAreaMemberFlags {
 					long flag = PlayerFlags.valueOf(flagString);
 					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
+					Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
+
 					subArea.setMemberFlags(member, isSet
 							? FlagsCalculator.removeFlag(flags, flag)
 							: FlagsCalculator.addFlag(flags, flag));
 
 					PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-					cooldowns.add(player.getUniqueId());
 					context.getInstance().replaceSlot(index, MenuUtils.getFlagButton(flagString, !isSet));
-
-					Homestead.getInstance().runAsyncTaskLater(() -> cooldowns.remove(player.getUniqueId()), 1);
 				});
 
 		gui.open(player, MenuUtils.getEmptySlot());

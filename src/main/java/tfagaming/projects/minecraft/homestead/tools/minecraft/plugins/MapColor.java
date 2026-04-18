@@ -1,7 +1,5 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.plugins;
 
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

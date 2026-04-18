@@ -40,7 +40,7 @@ public final class PlayerFlags {
 	public static final long ELYTRA = 1L << 34;
 	public static final long SPAWN_ENTITIES = 1L << 35;
 
-	public static final Map<String, Long> MAPPED_FLAGS = new HashMap<>();
+	private static final Map<String, Long> MAPPED_FLAGS = new HashMap<>();
 
 	static {
 		MAPPED_FLAGS.put("pvp", PVP);
@@ -81,6 +81,9 @@ public final class PlayerFlags {
 		MAPPED_FLAGS.put("spawn-entities", SPAWN_ENTITIES);
 	}
 
+	/**
+	 * Get list of flag names.
+	 */
 	public static List<String> getFlags() {
 		List<String> flags = new ArrayList<>(MAPPED_FLAGS.keySet());
 
@@ -89,11 +92,19 @@ public final class PlayerFlags {
 		return flags;
 	}
 
+	/**
+	 * Get bitwise value of a flag name. If the flag is undefined, it will return a <b>0</b>.
+	 * @param name The flag name
+	 */
 	public static long valueOf(String name) {
 		Long val = MAPPED_FLAGS.get(name.toLowerCase());
 		return val != null ? val : 0;
 	}
 
+	/**
+	 * Get flag name from a bitwise value. If the bitwise value is undefined, it will return an <b>unknown-flag</b>.
+	 * @param flag The bitwise value
+	 */
 	public static String from(long flag) {
 		for (Map.Entry<String, Long> e : MAPPED_FLAGS.entrySet()) {
 			if (e.getValue() == flag) return e.getKey();
@@ -101,6 +112,10 @@ public final class PlayerFlags {
 		return "unknown-flag";
 	}
 
+	/**
+	 * Get list of flag names that exist in the bitwise value.
+	 * @param flags The flags
+	 */
 	public static List<String> getSet(long flags) {
 		List<String> enabled = new ArrayList<>();
 		for (Map.Entry<String, Long> e : MAPPED_FLAGS.entrySet()) {
@@ -111,6 +126,10 @@ public final class PlayerFlags {
 		return enabled;
 	}
 
+	/**
+	 * Get list of flag names that does not exist in the bitwise value.
+	 * @param flags The flags
+	 */
 	public static List<String> getUnset(long flags) {
 		List<String> disabled = new ArrayList<>();
 		for (Map.Entry<String, Long> e : MAPPED_FLAGS.entrySet()) {

@@ -2,7 +2,9 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.chat;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
@@ -51,7 +53,7 @@ public final class Messages {
 	}
 
 	private static void sendFormatted(Object receiver, int path, Placeholder placeholder) {
-		Object object = Homestead.language.getRaw(String.valueOf(path));
+		Object object = Resources.<LanguageFile>get(ResourceType.Language).getRaw(String.valueOf(path));
 
 		if (object instanceof String string) {
 			sendFormatted(receiver, string, placeholder);
@@ -67,7 +69,7 @@ public final class Messages {
 			placeholder = new Placeholder();
 		}
 
-		placeholder.add("{__prefix__}", Homestead.config.getPrefix());
+		placeholder.add("{__prefix__}", Resources.<LanguageFile>get(ResourceType.Language).getPrefix());
 
 		message = Formatter.applyPlaceholders(message, placeholder);
 

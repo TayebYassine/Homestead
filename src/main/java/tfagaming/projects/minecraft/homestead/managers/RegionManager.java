@@ -8,14 +8,22 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
-import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
+import tfagaming.projects.minecraft.homestead.integrations.FastAsyncWorldEditAPI;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.storage.StorageManager;
+import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
-import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
 
 import java.util.ArrayList;
@@ -23,6 +31,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorting.*;
 
 /**
  * Handles creating, deleting, and updating regions.<br>
@@ -33,17 +43,23 @@ public final class RegionManager {
 	}
 
 	/**
-	 * Creates a new region owned by the given player.
-	 * The region's upkeep timer is scheduled if upkeep is enabled.
-	 * A {@link RegionCreateEvent} is fired on the next server tick.
+	 * Creates a region, optionally ensuring the name is unique by appending a counter.
 	 * @param name The region name
 	 * @param player The owner of the region
 	 */
 	public static Region createRegion(String name, OfflinePlayer player) {
-		Region region = new Region(name, player);
+		String newName = name;
+		int counter = 1;
 
-		if (Homestead.config.getBoolean("upkeep.enabled")) {
-			int delay = Homestead.config.getInt("upkeep.start-upkeep");
+		while (RegionManager.isNameUsed(newName)) {
+			newName = name + counter;
+			counter++;
+		}
+
+		Region region = new Region(newName, player);
+
+		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
+			int delay = Resources.<RegionsFile>get(ResourceType.Regions).getInt("upkeep.start-upkeep");
 
 			region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
 		}
@@ -56,42 +72,6 @@ public final class RegionManager {
 		return region;
 	}
 
-	/**
-	 * Creates a region, optionally ensuring the name is unique by appending a counter.
-	 * Upkeep and event logic is identical to {@link #createRegion(String, OfflinePlayer)}.
-	 * @param name The region name
-	 * @param player The owner of the region
-	 * @param verifyName Verify if another region has the same name
-	 */
-	public static Region createRegion(String name, OfflinePlayer player, boolean verifyName) {
-		if (verifyName) {
-			String newName = name;
-			int counter = 1;
-
-			while (RegionManager.isNameUsed(newName)) {
-				newName = name + counter;
-				counter++;
-			}
-
-			Region region = new Region(newName, player);
-
-			if (Homestead.config.getBoolean("upkeep.enabled")) {
-				int delay = Homestead.config.getInt("upkeep.start-upkeep");
-
-				region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
-			}
-
-			Homestead.regionsCache.putOrUpdate(region);
-
-			RegionCreateEvent event = new RegionCreateEvent(region, player);
-			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
-
-			return region;
-		} else {
-			return createRegion(name, player);
-		}
-	}
-
 	/** Returns a list of every loaded region, directly from dynamic cache. */
 	public static List<Region> getAll() {
 		return Homestead.regionsCache.getAll();
@@ -102,13 +82,7 @@ public final class RegionManager {
 	 * @param id The region UUID
 	 */
 	public static Region findRegion(UUID id) {
-		for (Region region : getAll()) {
-			if (region.getUniqueId().equals(id)) {
-				return region;
-			}
-		}
-
-		return null;
+		return Homestead.regionsCache.get(id);
 	}
 
 	/**
@@ -143,13 +117,23 @@ public final class RegionManager {
 			SubAreaManager.deleteSubArea(subArea.getUniqueId());
 		}
 
-		if (Homestead.config.regenerateChunksWithWorldEdit()) {
-			for (SerializableChunk chunk : region.getChunks()) {
-				Homestead.getInstance().runAsyncTask(() -> {
-					WorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.getX(), chunk.getZ());
-				});
+		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithFAWE() && !Homestead.isFolia()) {
+			Homestead.getInstance().runAsyncTask(() -> {
+				for (SerializableChunk chunk : region.getChunks()) {
+					FastAsyncWorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.bukkit());
+				}
+			});
+		}
+
+		for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+			if (TargetRegionSession.hasSession(onlinePlayer) && TargetRegionSession.getRegion(onlinePlayer).getUniqueId().equals(id)) {
+				TargetRegionSession.randomizeRegion(onlinePlayer);
 			}
 		}
+
+		LevelManager.deleteLevelByRegion(region.getUniqueId());
+
+		StorageManager.deleteStorage(id);
 
 		Homestead.regionsCache.remove(id);
 
@@ -170,24 +154,9 @@ public final class RegionManager {
 			return;
 		}
 
+		message = ColorTranslator.preserve(message);
+
 		region.addLog(new SerializableLog(author, message));
-	}
-
-	/**
-	 * Appends a system log entry to the region using a language-file message path.
-	 * @param id The region UUID
-	 * @param messagePath The key under "logs." in the language file
-	 */
-	public static void addNewLog(UUID id, int messagePath) {
-		Region region = findRegion(id);
-
-		if (region == null) {
-			return;
-		}
-
-		String message = Homestead.language.getString("logs." + messagePath);
-
-		region.addLog(new SerializableLog(Homestead.language.getString("default.author"), message));
 	}
 
 	/**
@@ -203,10 +172,21 @@ public final class RegionManager {
 			return;
 		}
 
-		String message = Homestead.language.getString("logs." + messagePath);
+		String message = Resources.<LanguageFile>get(ResourceType.Language).getString("logs." + messagePath);
 
-		region.addLog(new SerializableLog(Homestead.language.getString("default.author"),
+		message = ColorTranslator.preserve(message);
+
+		region.addLog(new SerializableLog(Resources.<LanguageFile>get(ResourceType.Language).getString("default.log-author"),
 				Formatter.applyPlaceholders(message, placeholder)));
+	}
+
+	/**
+	 * Appends a system log entry to the region using a language-file message path.
+	 * @param id The region UUID
+	 * @param messagePath The key under "logs." in the language file
+	 */
+	public static void addNewLog(UUID id, int messagePath) {
+		addNewLog(id, messagePath, new Placeholder());
 	}
 
 	/**
@@ -225,7 +205,7 @@ public final class RegionManager {
 		final List<SubArea> subAreas = SubAreaManager.getSubAreasOfRegion(from.getUniqueId());
 		final List<SerializableMember> members = from.getMembers();
 
-		to.addBalanceToBank(bank);
+		to.depositBank(bank);
 
 		for (SerializableChunk chunk : chunks) {
 			to.addChunk(chunk);
@@ -244,13 +224,10 @@ public final class RegionManager {
 
 	/** Collects every unique owner across all regions. */
 	public static List<OfflinePlayer> getAllOwners() {
-		List<OfflinePlayer> players = new ArrayList<OfflinePlayer>();
-
-		for (Region region : getAll()) {
-			players.add(region.getOwner());
-		}
-
-		return ListUtils.removeDuplications(players);
+		return getAll().stream()
+				.map(Region::getOwner)
+				.distinct()
+				.collect(Collectors.toList());
 	}
 
 	/** Supplies all regions sorted alphabetically by name. */
@@ -293,15 +270,9 @@ public final class RegionManager {
 	 * @param player The player
 	 */
 	public static List<Region> getRegionsOwnedByPlayer(OfflinePlayer player) {
-		List<Region> regions = new ArrayList<Region>();
-
-		for (Region region : getAll()) {
-			if (region.isOwner(player)) {
-				regions.add(region);
-			}
-		}
-
-		return regions;
+		return getAll().stream()
+				.filter(r -> r.isOwner(player))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -394,24 +365,23 @@ public final class RegionManager {
 
 	/** Averages the region's ranks across four core metrics to give a global standing. */
 	public static int getGlobalRank(UUID id) {
-		double sum = getRank(RegionSorting.BANK, id)
-				+ getRank(RegionSorting.CHUNKS_COUNT, id)
-				+ getRank(RegionSorting.MEMBERS_COUNT, id)
-				+ getRank(RegionSorting.RATING, id)
-				+ getRank(RegionSorting.CREATION_DATE, id);
+		int sum = 0;
+		for (RegionSorting type : new RegionSorting[]{BANK, CHUNKS_COUNT, MEMBERS_COUNT, RATING, CREATION_DATE}) {
+			List<Region> sorted = sortRegions(type);
+			for (int i = 0; i < sorted.size(); i++) {
+				if (sorted.get(i).getUniqueId().equals(id)) {
+					sum += i + 1;
+					break;
+				}
+			}
+		}
 
 		return (int) Math.round(sum / 5.0);
 	}
 
 	/** Checks whether any region already carries the supplied name, ignoring case. */
 	public static boolean isNameUsed(String name) {
-		for (Region region : getAll()) {
-			if (region.getName().equalsIgnoreCase(name)) {
-				return true;
-			}
-		}
-
-		return false;
+		return findRegion(name) != null;
 	}
 
 	/** Tests whether the player's current chunk is claimed by the supplied region. */
@@ -435,12 +405,7 @@ public final class RegionManager {
 			return 0.0;
 		}
 
-		int totalRate = 0;
-		for (SerializableRate rate : rates) {
-			totalRate += rate.getRate();
-		}
-
-		return (double) totalRate / rates.size();
+		return rates.stream().mapToInt(SerializableRate::getRate).average().orElse(0.0);
 	}
 
 	/**

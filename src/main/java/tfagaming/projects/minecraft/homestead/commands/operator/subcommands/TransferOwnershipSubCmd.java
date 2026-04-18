@@ -50,7 +50,7 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 
 		if (region.isOwner(target.getUniqueId())) {
 			Messages.send(sender, 192);
-			return false;
+			return true;
 		}
 
 		if (region.isPlayerBanned(target)) {

@@ -3,33 +3,34 @@
 # Menu titles
 titles:
   0: "Regions"
-  1: "Region: &2{region}"
-  2: "Player Flags (Global)"
+  1: "Region - &2{region}"
+  2: "Player Flags - &9Global"
   3: "World Flags"
   4: "Manage Players"
   5: "Trusted Players"
-  6: "Player Flags (&3{playername}&r)"
-  7: "Region Control (&3{playername}&r)"
-  8: "Region: &2{region}"
+  6: "Player Flags - &3{playername}&r"
+  7: "Region Control - &3{playername}&r"
+  8: "Region - &2{region}"
   9: "Banned Players"
   10: "Invited Players"
   11: "Chunk List"
   12: "Miscellaneous Settings"
   13: "Logs & Mails"
   14: "Sub-Areas"
-  15: "Sub-Area: &2{subarea}"
+  15: "Sub-Area - &2{subarea}"
   16: "Sub-Area Flags"
-  17: "Region Rating: &2{region}"
+  17: "Region Rating - &2{region}"
   18: "Top Regions" # by Bank Balance
   19: "Top Regions" # by Chunks
   20: "Top Regions" # by Members
   21: "Top Regions" # by Creation Date
   22: "Top Regions" # by Player Rating
-  23: "Rewards: &2{region}"
+  23: "Rewards - &2{region}"
   24: "Sub-Area Members"
-  25: "Sub-Area Flags (&3{playername}&r)"
-  26: "Levels and Rank: &2{region}"
+  25: "Sub-Area Flags - &3{playername}&r"
+  26: "Levels and Rank - &2{region}"
   27: "Player Information"
+  28: "Storage - &2{region}"
 
 # Menu buttons
 # Each button has its own unique index, which you cannot change or add/remove buttons.
@@ -181,6 +182,9 @@ buttons:
       - "&7• Weather: &b{region-weather}"
       - "&7• Time: &b{region-time}"
       - ""
+      - "&7You must go outside of region borders and"
+      - "&7then re-enter to see the applied changes!"
+      - ""
       - "&#FFD54F&n➥ Left-click to change the weather."
       - "&#FFD54F&n➥ Right-click to change the time."
     type: PLAYERHEAD-65f37826161c792d7f6c920b2fa06b88e6845288ab02ad9b65d4bbf5ca2ce1e3
@@ -207,6 +211,7 @@ buttons:
     lore:
       - "&7Ban or unban players."
       - ""
+      - "&e&lNote:"
       - "&eYou cannot trust any banned player. You must"
       - "&eunban them to send an invite."
       - ""
@@ -354,6 +359,7 @@ buttons:
       - "&7Set the displayname of the region, current"
       - "&7one is: &2{region-displayname}"
       - ""
+      - "&e&lNote:"
       - "&eThe display name is the actual name of the"
       - "&eregion, which you can use spaces and any"
       - "&echaracter!"
@@ -718,12 +724,14 @@ buttons:
   75:
     name: "&#391AE8&lProgress"
     lore:
-      - "&7Next Level: &6{next-lvl} &7- &6{xp}&7/&6{next-lvl-xp} XP"
+      - "&7Progress: &6{xp}&7/&6{next-lvl-xp} XP &7(&a{next-lvl-percentage}%&7)"
+      - "&7Next Level: &6{next-lvl}"
     type: BLUE_STAINED_GLASS_PANE
   76:
     name: "&#808080&lRemaining"
     lore:
-      - "&7Next Level: &6{next-lvl} &7- &6{xp}&7/&6{next-lvl-xp} XP"
+      - "&7Progress: &6{xp}&7/&6{next-lvl-xp} XP &7(&a{next-lvl-percentage}%&7)"
+      - "&7Next Level: &6{next-lvl}"
     type: LIGHT_GRAY_STAINED_GLASS_PANE
   77:
     name: "&#81C784&lLevel {level}"
@@ -758,6 +766,12 @@ buttons:
     type: NETHER_STAR
   81:
     name: "&#BA68C8&lPublic? &r{is-public-regions}"
+    lore:
+      - "&7If &aEnabled&7, only regions with allowed permissions"
+      - "&7for everyone to visit it will be listed."
+      - ""
+      - "&7If &cDisabled&7, all regions will be listed"
+      - "&7here."
     type: COMPARATOR
 
 # Do NOT modify these

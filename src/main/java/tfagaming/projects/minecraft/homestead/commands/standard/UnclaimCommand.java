@@ -3,10 +3,13 @@ package tfagaming.projects.minecraft.homestead.commands.standard;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -30,6 +33,11 @@ public class UnclaimCommand extends CommandBuilder {
 
 		if (player == null) {
 			sender.sendMessage("This command can only be used by players.");
+			return true;
+		}
+
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
+			Cooldown.sendCooldownMessage(player);
 			return true;
 		}
 
@@ -66,10 +74,12 @@ public class UnclaimCommand extends CommandBuilder {
 			return true;
 		}
 
+		Cooldown.startCooldown(player,  Cooldown.Type.REGION_CHUNK_UNCLAIM);
+
 		ChunkManager.Error error = ChunkManager.unclaimChunk(region.getUniqueId(), chunk);
 
 		if (error == null) {
-			double chunkPrice = Homestead.config.getDouble("chunk-price");
+			double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
 			if (chunkPrice > 0) {
 				PlayerBank.deposit(region.getOwner(), chunkPrice);
 			}

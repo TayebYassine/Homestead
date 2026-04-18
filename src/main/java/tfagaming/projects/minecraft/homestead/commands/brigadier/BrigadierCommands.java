@@ -30,6 +30,8 @@ public final class BrigadierCommands {
 				.literalSub("mergeaccept").end()
 				.literalSub("rewards").end()
 				.literalSub("top").end()
+				.literalSub("fly").end()
+				.literalSub("storage").end()
 
 				.literalSub("accept")
 				.stringArg("region")
@@ -165,6 +167,9 @@ public final class BrigadierCommands {
 				.stringArg("subarea")
 				.stringArg("newname")
 				.endNested()
+				.literalSub("resize")
+				.stringArg("subarea")
+				.endNested()
 				.literalSub("flags")
 				.stringArg("subarea")
 				.stringArg("flag")
@@ -188,6 +193,7 @@ public final class BrigadierCommands {
 				.literalSub("declare")
 				.stringArg("region")
 				.intArg("prize", 0, 1000000000)
+				.greedyStringArg("name")
 				.endNested()
 				.literalSub("surrender")
 				.endNested()
@@ -200,6 +206,9 @@ public final class BrigadierCommands {
 
 	private void registerSimpleCommands() {
 		BrigadierCommandBuilder.create("claim")
+				.literalSub("radius")
+				.intArg("length", 1, 10)
+				.end()
 				.register(plugin, commodore);
 
 		BrigadierCommandBuilder.create("unclaim")

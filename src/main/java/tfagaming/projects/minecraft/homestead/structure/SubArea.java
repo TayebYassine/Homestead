@@ -16,16 +16,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class SubArea {
-	public UUID id;
-	public UUID regionId;
-	public String name;
-	public UUID worldId;
+	public final UUID id;
+	public final UUID worldId;
 	public int[] point1;
 	public int[] point2;
+	public final long createdAt;
+	public UUID regionId;
+	public String name;
 	public List<SerializableMember> members = new ArrayList<>();
 	public long flags;
 	public SerializableRent rent;
-	public long createdAt;
+	private boolean autoUpdate = true;
 
 	public SubArea(UUID regionId, String name, World world, Block point1, Block point2, long flags) {
 		this.id = UUID.randomUUID();
@@ -145,6 +146,15 @@ public class SubArea {
 		return new int[]{block.getX(), block.getY(), block.getZ()};
 	}
 
+	/**
+	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
+	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
+	 * @param autoUpdate Auto-Update toggle
+	 */
+	public void setAutoUpdate(boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
+	}
+
 	// Set and get
 	public UUID getUniqueId() {
 		return id;
@@ -165,6 +175,7 @@ public class SubArea {
 
 	public void setName(String name) {
 		this.name = name;
+		updateCache();
 	}
 
 	public UUID getWorldId() {
@@ -181,6 +192,16 @@ public class SubArea {
 
 	public Block getSecondPoint() {
 		return parseBlockLocation(getWorld(), point2);
+	}
+
+	public void setFirstPoint(Block point) {
+		this.point1 = getBlockLocation(point);
+		updateCache();
+	}
+
+	public void setSecondPoint(Block point) {
+		this.point2 = getBlockLocation(point);
+		updateCache();
 	}
 
 	// Members
@@ -396,6 +417,8 @@ public class SubArea {
 	}
 
 	public void updateCache() {
+		if (!autoUpdate) return;
+
 		Homestead.subAreasCache.putOrUpdate(this);
 	}
 }

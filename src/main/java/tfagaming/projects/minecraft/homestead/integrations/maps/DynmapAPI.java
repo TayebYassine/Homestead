@@ -6,6 +6,9 @@ import org.dynmap.markers.MarkerSet;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.integrations.maps.listeners.DynmapListener;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -19,7 +22,7 @@ public class DynmapAPI {
 	public DynmapAPI(Homestead plugin) {
 		try {
 			DynmapCommonAPIListener.register(new DynmapListener());
-		} catch (NoClassDefFoundError e) {
+		} catch (NoClassDefFoundError ignored) {
 
 		}
 	}
@@ -65,14 +68,14 @@ public class DynmapAPI {
 			return;
 		}
 
-		int chunkTransparencyInfill = Homestead.config.getInt("dynamic-maps.chunks.transparency-fill");
-		int chunkTransparencyOutline = Homestead.config.getInt("dynamic-maps.chunks.transparency-outline");
+		int chunkTransparencyInfill = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-fill");
+		int chunkTransparencyOutline = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-outline");
 
 		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
 
 		int chunkColor = region.getMapColor() == 0
-				? (isOperator ? Homestead.config.getInt("dynamic-maps.chunks.operator-color")
-				: Homestead.config.getInt("dynamic-maps.chunks.color"))
+				? (isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.operator-color")
+				: Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.color"))
 				: region.getMapColor();
 
 		areaMarker.setLineStyle(1, (double) chunkTransparencyInfill / 100, chunkColor);
@@ -89,8 +92,8 @@ public class DynmapAPI {
 				.add("{region-size}", region.getChunks().size() * 256);
 
 		String description = Formatter
-				.applyPlaceholders(isOperator ? Homestead.config.getString("dynamic-maps.chunks.operator-description")
-						: Homestead.config.getString("dynamic-maps.chunks.description"), placeholder);
+				.applyPlaceholders(isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.operator-description")
+						: Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.description"), placeholder);
 
 		areaMarker.setDescription(description);
 	}

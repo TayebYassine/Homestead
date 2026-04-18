@@ -11,13 +11,13 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Set;
 
-public class YAMLValidator {
+public class ResourceValidator {
 	private final FileConfiguration defaultConfig;
 	private final FileConfiguration targetConfig;
 	private final File targetFile;
 	private final Set<String> filteredSubtrees;
 
-	public YAMLValidator(String resourceFileName, File targetFile) {
+	public ResourceValidator(String resourceFileName, File targetFile) {
 		defaultConfig = loadResourceConfig(resourceFileName);
 
 		this.targetFile = targetFile;
@@ -26,7 +26,7 @@ public class YAMLValidator {
 		this.filteredSubtrees = Collections.emptySet();
 	}
 
-	public YAMLValidator(String resourceFileName, File targetFile, Set<String> filteredSubtrees) {
+	public ResourceValidator(String resourceFileName, File targetFile, Set<String> filteredSubtrees) {
 		defaultConfig = loadResourceConfig(resourceFileName);
 
 		this.targetFile = targetFile;
@@ -35,7 +35,7 @@ public class YAMLValidator {
 		this.filteredSubtrees = filteredSubtrees;
 	}
 
-	public YAMLValidator(String resourceFileName, String targetFileName, Set<String> filteredSubtrees) {
+	public ResourceValidator(String resourceFileName, String targetFileName, Set<String> filteredSubtrees) {
 		defaultConfig = loadResourceConfig(resourceFileName);
 
 		File targetFile = new File(targetFileName);

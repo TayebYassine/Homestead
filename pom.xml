@@ -6,7 +6,7 @@
 
 	<groupId>tfagaming.projects.minecraft.homestead</groupId>
 	<artifactId>homestead</artifactId>
-	<version>5.0.2.2</version>
+	<version>5.1.0.0</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,6 +31,10 @@
 			<id>codemc-creatorfromhell</id>
 			<url>https://repo.codemc.io/repository/creatorfromhell/</url>
 		</repository>
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
 		<repository>
 			<id>sk89q-repo</id>
 			<url>https://maven.enginehub.org/repo/</url>
@@ -73,6 +77,10 @@
 			<name>TheNextLvl</name>
 			<url>https://repo.thenextlvl.net/releases</url>
 		</repository>
+		<repository>
+			<id>nexomc-releases</id>
+			<url>https://repo.nexomc.com/releases/</url>
+		</repository>
 	</repositories>
 
 	<dependencyManagement>
@@ -84,6 +92,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+            <dependency>
+                <groupId>com.intellectualsites.bom</groupId>
+                <artifactId>bom-newest</artifactId>
+                <version>1.56</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -247,6 +262,24 @@
 			<scope>provided</scope>
 		</dependency>
 
+        <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Bukkit</artifactId>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>FastAsyncWorldEdit-Core</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
 		<dependency>
 			<groupId>com.github.angeschossen</groupId>
 			<artifactId>LandsAPI</artifactId>
@@ -265,6 +298,19 @@
 			<groupId>dev.faststats.metrics</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>0.16.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.nexomc</groupId>
+			<artifactId>nexo</artifactId>
+			<version>1.21.0</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>dev.triumphteam</groupId>
+					<artifactId>triumph-gui</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -306,23 +352,6 @@
 				</executions>
 			</plugin>
 
-			<!-- API classifier -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.3.0</version>
-				<executions>
-					<execution>
-						<id>api-jar</id>
-						<phase>package</phase>
-						<goals><goal>jar</goal></goals>
-						<configuration>
-							<classifier>api</classifier>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<!-- Shade -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -330,6 +359,7 @@
 				<version>3.5.1</version>
 				<executions>
 					<execution>
+						<id>shade</id>
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
@@ -337,12 +367,9 @@
 						<configuration>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>false</minimizeJar>
+							<shadedArtifactAttached>false</shadedArtifactAttached>
 
 							<artifactSet>
-								<includes>
-									<include>com.technicjelle:BMUtils</include>
-									<include>me.lucko:commodore</include>
-								</includes>
 								<excludes>
 									<exclude>com.flowpowered:flow-math</exclude>
 								</excludes>
@@ -362,6 +389,28 @@
 									<shadedPattern>tfagaming.projects.minecraft.homestead.libs.faststats</shadedPattern>
 								</relocation>
 							</relocations>
+
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>tfagaming.projects.minecraft.homestead.Homestead</mainClass>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>api-jar</id>
+						<phase>install</phase>
+						<goals><goal>jar</goal></goals>
+						<configuration>
+							<classifier>api</classifier>
 						</configuration>
 					</execution>
 				</executions>

@@ -74,7 +74,7 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 		String amountInput = args[0];
 
 		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput))
-				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > 2147483647)) {
+				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > 2_147_483_647)) {
 			Messages.send(player, 64);
 			return true;
 		}

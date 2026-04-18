@@ -1,16 +1,19 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.LevelManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LevelsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
@@ -40,7 +43,15 @@ public final class EntityDeathListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent event) {
+		boolean levelsEnabled = Resources.<LevelsFile>get(ResourceType.Levels).isEnabled();
+
+		if (!levelsEnabled) {
+			return;
+		}
+
 		LivingEntity entity = event.getEntity();
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
 		EntityType type = entity.getType();
 		Player killer = entity.getKiller();
 
@@ -64,6 +75,10 @@ public final class EntityDeathListener implements Listener {
 			return;
 		}
 
+		if (!(entity instanceof EnderDragon) && !ChunkManager.isChunkClaimedByRegion(region, chunk)) {
+			return;
+		}
+
 		long amount = LevelManager.addRandomXp(region.getUniqueId(), xpRange[0], xpRange[1]);
 
 		Messages.send(killer, 198, new Placeholder()
@@ -75,6 +90,6 @@ public final class EntityDeathListener implements Listener {
 		killer.playSound(killer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.2f);
 
 		COOLDOWN.add(killer.getUniqueId());
-		Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(killer.getUniqueId()), 5);
+		Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(killer.getUniqueId()), 2);
 	}
 }

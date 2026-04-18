@@ -6,7 +6,11 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
-import tfagaming.projects.minecraft.homestead.integrations.WorldEditAPI;
+import tfagaming.projects.minecraft.homestead.integrations.FastAsyncWorldEditAPI;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
@@ -21,6 +25,8 @@ import java.util.*;
  * This is a utility class that helps manage chunks more easily. Updating and setting data to regions is generally done to the {@link Region} object.
  */
 public final class ChunkManager {
+	private static final Random random = new Random();
+
 	private ChunkManager() {
 	}
 
@@ -41,7 +47,7 @@ public final class ChunkManager {
 			return Error.CHUNK_IN_DISABLED_WORLD;
 		}
 
-		if (Homestead.config.isAdjacentChunksRuleEnabled() && !region.getChunks().isEmpty() && !hasAdjacentOwnedChunk(region, chunk)) {
+		if (Resources.<RegionsFile>get(ResourceType.Regions).isAdjacentChunksRuleEnabled() && !region.getChunks().isEmpty() && !hasAdjacentOwnedChunk(region, chunk)) {
 			return Error.CHUNK_NOT_ADJACENT_TO_REGION;
 		}
 
@@ -81,16 +87,16 @@ public final class ChunkManager {
 			return Error.REGION_NOT_FOUND;
 		}
 
-		if (Homestead.config.isAdjacentChunksRuleEnabled() && !force && wouldSplitRegion(region, chunk)) {
+		if (Resources.<RegionsFile>get(ResourceType.Regions).isAdjacentChunksRuleEnabled() && !force && wouldSplitRegion(region, chunk)) {
 			return Error.CHUNK_WOULD_SPLIT_REGION;
 		}
 
 		removeChunk(id, chunk);
 
-		if (Homestead.config.regenerateChunksWithWorldEdit()) {
-			Homestead.getInstance().runAsyncTask(() ->
-					WorldEditAPI.regenerateChunk(chunk.getWorld(), chunk.getX(), chunk.getZ())
-			);
+		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithFAWE() && !Homestead.isFolia()) {
+			Homestead.getInstance().runAsyncTask(() -> {
+				FastAsyncWorldEditAPI.regenerateChunk(chunk.getWorld(), chunk);
+			});
 		}
 
 		if (region.getLocation() != null && ChunkUtils.areEqual(region.getLocation().bukkit().getChunk(), chunk)) {
@@ -204,13 +210,13 @@ public final class ChunkManager {
 	public static boolean isChunkInDisabledWorld(Chunk chunk) {
 		String worldName = chunk.getWorld().getName();
 
-		List<String> exact = Homestead.config.getStringList("disabled-worlds-exact");
+		List<String> exact = Resources.<RegionsFile>get(ResourceType.Regions).getStringList("disabled-worlds-exact");
 
 		if (exact.contains(worldName)) {
 			return true;
 		}
 
-		List<String> patterns = Homestead.config.getStringList("disabled-worlds-pattern");
+		List<String> patterns = Resources.<RegionsFile>get(ResourceType.Regions).getStringList("disabled-worlds-pattern");
 
 		for (String pat : patterns) {
 			if (!pat.contains("*") && !pat.contains("?")) {
@@ -437,7 +443,7 @@ public final class ChunkManager {
 		List<SerializableChunk> chunks = region.getChunks();
 		if (chunks == null || chunks.isEmpty()) return;
 
-		int index = new Random().nextInt(chunks.size());
+		int index = random.nextInt(chunks.size());
 
 		forceUnclaimChunk(id, chunks.get(index).bukkit());
 	}

@@ -5,12 +5,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.GlobalPlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionWorldFlags;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -91,6 +95,11 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
+				if (!PlayerUtils.isOperator(player) && !region.isOwner(player) && player.getUniqueId().equals(target.getUniqueId())) {
+					Messages.send(player, 159);
+					return true;
+				}
+
 				String flagInput = args[2];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {
@@ -98,7 +107,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (Homestead.config.isFlagDisabled(flagInput)) {
+				if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagInput)) {
 					Messages.send(player, 42);
 					return true;
 				}
@@ -171,7 +180,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (Homestead.config.isFlagDisabled(flagInput)) {
+				if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagInput)) {
 					Messages.send(player, 42);
 					return true;
 				}
@@ -243,13 +252,18 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (Homestead.config.isFlagDisabled(flagInput)) {
+				if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagInput)) {
 					Messages.send(player, 42);
 					return true;
 				}
 
 				long flags = region.getWorldFlags();
 				long flag = WorldFlags.valueOf(flagInput);
+
+				if (Cooldown.hasCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
+					Cooldown.sendCooldownMessage(player);
+					return true;
+				}
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 

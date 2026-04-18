@@ -5,11 +5,11 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableLog;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -18,11 +18,11 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionLogs {
+public final class RegionLogs {
 	private List<SerializableLog> logs;
 
 	public RegionLogs(Player player, Region region) {
-		logs = region.getLogs();
+		logs = region.getLogs(true);
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtils.getTitle(13), 9 * 5,
@@ -33,6 +33,11 @@ public class RegionLogs {
 				(_player, context) -> {
 					if (context.getIndex() >= logs.size()) return;
 
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
+
 					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 							RegionControlFlags.MANAGE_LOGS)) {
 						return;
@@ -42,7 +47,7 @@ public class RegionLogs {
 
 					if (context.getEvent().isLeftClick()) {
 						region.setLogAsRead(log.getId());
-						logs = region.getLogs();
+						logs = region.getLogs(true);
 						context.getInstance().setItems(getItems(player, region));
 
 					} else if (context.getEvent().isRightClick()) {
@@ -52,7 +57,7 @@ public class RegionLogs {
 						}
 
 						region.removeLog(log.getId());
-						logs = region.getLogs();
+						logs = region.getLogs(true);
 						context.getInstance().setItems(getItems(player, region));
 					}
 				});
@@ -102,7 +107,7 @@ public class RegionLogs {
 					.add("{index}", i + 1)
 					.add("{log-sentat}", Formatter.getDate(log.getSentAt()))
 					.add("{log-author}", log.getAuthor())
-					.add("{log-message}", ColorTranslator.preserve(wrapMessage(log.getMessage())));
+					.add("{log-message}", wrapMessage(log.getMessage()));
 
 			items.add(MenuUtils.getButton(log.isRead() ? 40 : 39, placeholder));
 		}

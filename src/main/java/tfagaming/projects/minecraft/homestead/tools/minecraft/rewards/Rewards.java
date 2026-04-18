@@ -2,7 +2,9 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.rewards;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
-import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 
 import java.util.List;
@@ -10,25 +12,25 @@ import java.util.Map;
 
 public class Rewards {
 	public static int getChunksByEachMember(Region region) {
-		if (!Homestead.config.isRewardsEnabled()) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).isRewardsEnabled()) {
 			return 0;
 		}
 
-		int chunksPerMember = Homestead.config.getInt("rewards.for-each-member.chunks");
+		int chunksPerMember = Resources.<RegionsFile>get(ResourceType.Regions).getRewardChunksPerMember();
 		return region.getMembers().size() * chunksPerMember;
 	}
 
 	public static int getSubAreasByEachMember(Region region) {
-		if (!Homestead.config.isRewardsEnabled()) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).isRewardsEnabled()) {
 			return 0;
 		}
 
-		int subAreasPerMember = Homestead.config.getInt("rewards.for-each-member.subareas");
+		int subAreasPerMember = Resources.<RegionsFile>get(ResourceType.Regions).getRewardSubAreasPerMember();
 		return region.getMembers().size() * subAreasPerMember;
 	}
 
 	public static int getChunksByPlayTime(OfflinePlayer player) {
-		if (!Homestead.config.isRewardsEnabled()) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).isRewardsEnabled()) {
 			return 0;
 		}
 
@@ -37,13 +39,13 @@ public class Rewards {
 		}
 
 		long playerMinutes = getPlayerMinutes(player);
-		List<Map<?, ?>> rewards = Homestead.config.getConfig().getMapList("rewards.by-playtime");
+		List<Map<?, ?>> rewards = Resources.<RegionsFile>get(ResourceType.Regions).getConfig().getMapList("rewards.by-playtime");
 
 		return getHighestRewardValue(rewards, playerMinutes, "chunks");
 	}
 
 	public static int getSubAreasByPlayTime(OfflinePlayer player) {
-		if (!Homestead.config.isRewardsEnabled()) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).isRewardsEnabled()) {
 			return 0;
 		}
 
@@ -52,7 +54,7 @@ public class Rewards {
 		}
 
 		long playerMinutes = getPlayerMinutes(player);
-		List<Map<?, ?>> rewards = Homestead.config.getConfig().getMapList("rewards.by-playtime");
+		List<Map<?, ?>> rewards = Resources.<RegionsFile>get(ResourceType.Regions).getConfig().getMapList("rewards.by-playtime");
 
 		return getHighestRewardValue(rewards, playerMinutes, "subareas");
 	}

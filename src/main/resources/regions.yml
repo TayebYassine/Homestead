@@ -1,0 +1,313 @@
+# Startup Data Cleanup
+# Remove invalid data on startup (orphaned regions, broken coordinates, etc.)
+# Disable if using dynamic world loading that happens after startup
+clean-startup: true
+
+# Welcome message
+# Sends a message when a player joins the server
+welcome-message:
+  enabled: true
+
+  message: "&eWelcome back! There are &6{unread-logs} &eunread mails, with &6{regions-invited} &eregions sent you an invite!"
+
+# Log Private Region Chat to Console
+# Log all region chat messages for moderation purposes
+log-private-chat: true
+
+# Adjacent Chunks Requirement
+# Force all claimed chunks to be connected (no scattered claims)
+# Disable for multi-location builds (bases + farms)
+adjacent-chunks: true
+
+# Chunk Purchase Price
+# Cost to claim one chunk (0.0 = free)
+# Requires economy plugin
+chunk-price: 0.0
+
+# Auto-Select Target Region
+# Automatically assign a random target region to new players
+autoset-target-region: true
+
+# Disabled Worlds (Exact Names)
+# List exact world names where claiming is disabled (case-sensitive)
+disabled-worlds-exact:
+  - "world_the_end"
+  - "factions"
+  - "pvp_arena"
+
+# Disabled Worlds (Pattern Matching)
+# Wildcard patterns for worlds where claiming is disabled
+# * = any characters
+disabled-worlds-pattern:
+  - "em_*"
+  - "minigame_*_end"
+
+# Region Borders Visualization
+borders:
+  # Enable border display toggle (/region borders)
+  enabled: true
+
+  # Display type: particles (recommended) or blocks
+  type: particles
+
+  # Dust colors, RGB format (type = 'particles')
+  # Format: [RED, GREEN, BLUE], from 0 to 255.
+  dust-colors:
+    owner: [0, 255, 0]
+    member: [255, 255, 0]
+    visitor: [255, 0, 0]
+    sub-area: [0, 179, 255]
+
+  # Dust size (type = 'particles')
+  dust-size: 3.0
+
+  # Block type for block-based borders (type = 'blocks')
+  block-type: GRAY_GLAZED_TERRACOTTA
+
+# Enter/Exit Region Messages
+enter-exit-region-message:
+  # Enable enter/exit messages
+  enabled: true
+
+  # Display type: title, actionbar, or chat
+  type: 'actionbar'
+
+  # Message content (use & for colors)
+  # Variables: {region-displayname}, {region-description}, {region-owner}
+  messages:
+    enter:
+      title: [ "&2{region-displayname}", "&7{region-description}" ]
+      actionbar: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
+      chat: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
+    exit:
+      title: [ "&3Wilderness", "&7Roam the wild!" ]
+      actionbar: "&7You left the territory of &2{region-displayname}&7."
+      chat: "&7You left the territory of &2{region-displayname}&7."
+
+# Selection Tool
+selection-tool:
+  # Item used to select corners
+  item: GOLDEN_HOE
+
+  # Selection status messages
+  messages:
+    none: "&7Please select two corners/points inside or outside of the region."
+    firstCorner: "&7First corner: &a✔ &7| Second corner: &c✘"
+    secondCorner: "&7First corner: &c✘ &7| Second corner: &a✔"
+    selectionDone: "&aYou can create a new sub-area or claim new chunks!"
+
+# Region Upkeep System
+# Requires Vault + economy plugin
+upkeep:
+  # Enable recurring maintenance fees
+  enabled: false
+
+  # Cost per chunk per payment period
+  per-chunk: 100.0
+
+  # Auto-unclaim chunks if payment fails
+  unclaim-chunks: true
+
+  # Grace period before first payment (seconds)
+  # 604800 = 1 week, 1209600 = 2 weeks, 2592000 = 30 days
+  start-upkeep: 604800
+
+  # Payment frequency (seconds)
+  upkeep-timer: 604800
+
+# Member Taxes System
+# Require members to pay fees to stay in region
+taxes:
+  enabled: false
+  min-tax: 0.0
+  max-tax: 10000.0
+  tax-timer: 604800
+
+# Region Renting System
+renting:
+  enabled: true
+  min-rent: 500.0
+  max-rent: 10000000.0
+
+# Region Selling System
+selling:
+  enabled: true
+  min-sell: 10.0
+  max-sell: 1000000000.0
+
+# Sub-Areas Feature
+# Create zones with different permissions within regions
+sub-areas:
+  enabled: true
+
+# Wars System
+# Region PvP conflicts with economic stakes
+wars:
+  enabled: false
+  min-prize: 1000.0
+  max-prize: 1000000000.0
+
+  # Force keep inventory when a player is part of a war and died?
+  # This completely ignores the game rule set for any world.
+  keep-inventory: false
+
+  # Give the region owner's head to the region owner who won the war?
+  give-head: true
+
+  # Broadcast the message "A war has been declared"
+  # - regions: Only sent to regions in the war
+  # - server: Will be sent to the entire server
+  # - silent: No message will be sent
+  broadcast-type: "regions"
+
+# Welcome Signs Feature
+# Clickable signs that teleport to region homes
+welcome-signs:
+  enabled: false
+
+# Reward System
+# Bonus chunks/sub-areas for member count and playtime
+rewards:
+  enabled: true
+
+  # Bonus per trusted member
+  for-each-member:
+    chunks: 2
+    subareas: 1
+
+  # Playtime tiers (highest applicable tier only)
+  # Time format: minutes + hours + days (additive)
+  by-playtime:
+    - minutes: 30
+      hours: 0
+      days: 0
+      chunks: 1
+      subareas: 1
+    - minutes: 0
+      hours: 3
+      days: 0
+      chunks: 2
+      subareas: 2
+    - minutes: 0
+      hours: 12
+      days: 0
+      chunks: 4
+      subareas: 3
+    - minutes: 0
+      hours: 0
+      days: 1
+      chunks: 6
+      subareas: 4
+    - minutes: 0
+      hours: 0
+      days: 3
+      chunks: 8
+      subareas: 6
+    - minutes: 0
+      hours: 0
+      days: 7
+      chunks: 10
+      subareas: 8
+
+# Region Storage
+# Allow trusted players in a region to share a private chest for everyone, no permissions required
+storage:
+  enabled: false
+
+  # Storage size, values: 9, 18, 27, 36, 45, or 54
+  size: 27
+
+# Special Features
+special-feat:
+  # TNT only explodes below Y=63 in unclaimed areas (protects surface)
+  tnt-explodes-only-below-sea-level: false
+
+  # Disable region protection in disabled-worlds (recommended: true)
+  ignore-region-protection-if-action-in-disabled-world: true
+
+  # Skip trust acceptance (/region trust adds immediately without /region accept)
+  ignore-trust-acceptance-system: false
+
+  # Teleport to region spawn instead of world spawn when exiting End
+  teleport-players-back-to-region-spawn-when-entering-end-exit-portal: true
+
+# Teleport Delay System
+delayed-teleport:
+  # Enable countdown for /region visit, /region home, welcome signs
+  enabled: true
+
+  # Delay duration (seconds)
+  delay: 3
+
+  # Teleport cost (0.0 = free)
+  price: 0.0
+
+  # Cancel teleport if player moves
+  cancel-on-move: true
+
+  # Operators bypass delay
+  ignore-operators: true
+
+  # Boss bar countdown display
+  boss-bar:
+    enabled: true
+    # Placeholders: {seconds}, {location}
+    title: "&7Teleporting in &3{seconds}s&7..."
+    color: "PURPLE"
+    style: "SEGMENTED_10"
+    countdown-mode: "DEPLETE"
+
+# Cooldown for actions
+cooldown:
+  # Flag state change
+  flag-change-state:
+    ignore-operators: false # Operators bypass cooldown
+    value: 3 # Cooldown in seconds
+
+  # Region spawn update
+  region-spawn-change:
+    ignore-operators: true
+    value: 600 # 10 minutes
+
+  # Region name update
+  region-rename-change:
+    ignore-operators: true
+    value: 600 # 10 minutes
+
+  # Region description update
+  region-description-change:
+    ignore-operators: true
+    value: 300 # 5 minutes
+
+  # Region owner transfer
+  # Sale signs are affected too!
+  region-transfer-ownership:
+    ignore-operators: true
+    value: 604800 # 7 days
+
+  # Region dynamic map settings change
+  # This includes map coloring and region icon.
+  region-dynamic-map-settings-change:
+    ignore-operators: true
+    value: 43200 # 12 hours
+
+  # Region claim a chunk
+  region-chunk-claim:
+    ignore-operators: true
+    value: 5 # 5 seconds
+
+  # Region unclaim a chunk
+  region-chunk-unclaim:
+    ignore-operators: true
+    value: 5 # 5 seconds
+
+  # Region teleportation
+  region-teleport:
+    ignore-operators: true
+    value: 15 # 15 seconds
+
+  # Disallow regions to disable wars when they finished a war
+  # From example below, if a region won or lost a war, they cannot change the wars flag state for 36 hours.
+  war-flag-disabled:
+    ignore-operators: true
+    value: 129600 # 36 hours

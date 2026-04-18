@@ -49,7 +49,6 @@ public final class RegionRent {
 				if (leaser != null && leaser.isOnline()) {
 					Player player = (Player) leaser;
 
-					// TODO Update this
 					Messages.send(player, 130, new Placeholder()
 							.add("{region}", subArea.getName())
 					);

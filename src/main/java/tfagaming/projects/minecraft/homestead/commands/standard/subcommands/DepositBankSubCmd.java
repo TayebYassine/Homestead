@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -74,7 +75,7 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 		String amountInput = args[0];
 
 		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput))
-				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > 2147483647)) {
+				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > 2_147_483_647)) {
 			Messages.send(player, 64);
 			return true;
 		}
@@ -91,8 +92,13 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		if ((amount + region.getBank()) >= Limits.getRegionLimit(region, Limits.LimitType.MAX_BANK_DEPOSIT)) {
+			Messages.send(player, 116);
+			return true;
+		}
+
 		PlayerBank.withdraw(player, amount);
-		region.addBalanceToBank(amount);
+		region.depositBank(amount);
 
 		Messages.send(player, 66, new Placeholder()
 				.add("{region}", region.getName())

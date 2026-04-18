@@ -14,7 +14,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSoun
 import java.util.ArrayList;
 import java.util.List;
 
-public class TopRegionsMenu {
+public final class TopRegionsMenu {
 	private final boolean isPublicRegionsOnly;
 	private List<Region> regions;
 
@@ -39,6 +39,11 @@ public class TopRegionsMenu {
 					if (context.getIndex() >= regions.size()) return;
 
 					Region region = regions.get(context.getIndex());
+
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
 
 					if (context.getEvent().isLeftClick()) {
 						new RegionInfoMenu(player, region, () ->

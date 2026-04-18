@@ -10,6 +10,9 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEven
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -25,7 +28,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionMembersMenu {
+public final class RegionMembersMenu {
 	private List<SerializableMember> members;
 
 	public RegionMembersMenu(Player player, Region region) {
@@ -40,16 +43,17 @@ public class RegionMembersMenu {
 				(_player, context) -> {
 					if (context.getIndex() >= members.size()) return;
 
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
+
 					SerializableMember member = members.get(context.getIndex());
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
 						new PlayerInfo(player, member.bukkit(), () -> new RegionMembersMenu(player, region));
 
 					} else if (context.getEvent().isRightClick()) {
-						if (!player.hasPermission("homestead.region.flags.members")) {
-							Messages.send(player, 8);
-							return;
-						}
 						new RegionMemberControlFlags(player, region, member);
 
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
@@ -77,10 +81,6 @@ public class RegionMembersMenu {
 						context.getInstance().setItems(getItems(player, region));
 
 					} else if (context.getEvent().isLeftClick()) {
-						if (!player.hasPermission("homestead.region.flags.members")) {
-							Messages.send(player, 8);
-							return;
-						}
 						new RegionMemberFlags(player, region, member);
 					}
 				});
@@ -98,7 +98,7 @@ public class RegionMembersMenu {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
-				if (Homestead.config.isInstantTrustSystemEnabled()) {
+				if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
 					region.removePlayerInvite(targetPlayer);
 					region.addMember(targetPlayer);
 
@@ -159,7 +159,7 @@ public class RegionMembersMenu {
 
 	private List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
-		boolean taxesEnabled = Homestead.vault.isEconomyReady() && Homestead.config.getBoolean("taxes.enabled");
+		boolean taxesEnabled = Homestead.vault.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled");
 
 		for (SerializableMember member : members) {
 			OfflinePlayer memberBukkit = member.bukkit();

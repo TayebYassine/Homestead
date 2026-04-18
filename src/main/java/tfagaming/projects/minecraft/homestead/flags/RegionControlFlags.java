@@ -23,7 +23,7 @@ public final class RegionControlFlags {
 	public static final long KICK_PLAYERS = 1L << 16;
 	public static final long SET_WEATHER_AND_TIME = 1L << 17;
 
-	public static final Map<String, Long> MAPPED_FLAGS = new LinkedHashMap<>();
+	private static final Map<String, Long> MAPPED_FLAGS = new LinkedHashMap<>();
 
 	static {
 		MAPPED_FLAGS.put("trust-players", TRUST_PLAYERS);
@@ -46,6 +46,9 @@ public final class RegionControlFlags {
 		MAPPED_FLAGS.put("set-weather-and-time", SET_WEATHER_AND_TIME);
 	}
 
+	/**
+	 * Get list of flag names.
+	 */
 	public static List<String> getFlags() {
 		List<String> flags = new ArrayList<>(MAPPED_FLAGS.keySet());
 
@@ -54,11 +57,19 @@ public final class RegionControlFlags {
 		return flags;
 	}
 
+	/**
+	 * Get bitwise value of a flag name. If the flag is undefined, it will return a <b>0</b>.
+	 * @param name The flag name
+	 */
 	public static long valueOf(String name) {
-		Long val = MAPPED_FLAGS.get(name.toLowerCase(Locale.ROOT));
+		Long val = MAPPED_FLAGS.get(name.toLowerCase());
 		return val != null ? val : 0;
 	}
 
+	/**
+	 * Get flag name from a bitwise value. If the bitwise value is undefined, it will return an <b>unknown-flag</b>.
+	 * @param flag The bitwise value
+	 */
 	public static String from(long flag) {
 		for (Map.Entry<String, Long> e : MAPPED_FLAGS.entrySet()) {
 			if (e.getValue() == flag) return e.getKey();
@@ -66,18 +77,30 @@ public final class RegionControlFlags {
 		return "unknown-flag";
 	}
 
+	/**
+	 * Get list of flag names that exist in the bitwise value.
+	 * @param flags The flags
+	 */
 	public static List<String> getSet(long flags) {
 		List<String> enabled = new ArrayList<>();
 		for (Map.Entry<String, Long> e : MAPPED_FLAGS.entrySet()) {
-			if (FlagsCalculator.isFlagSet(flags, e.getValue())) enabled.add(e.getKey());
+			if (FlagsCalculator.isFlagSet(flags, e.getValue())) {
+				enabled.add(e.getKey());
+			}
 		}
 		return enabled;
 	}
 
+	/**
+	 * Get list of flag names that does not exist in the bitwise value.
+	 * @param flags The flags
+	 */
 	public static List<String> getUnset(long flags) {
 		List<String> disabled = new ArrayList<>();
 		for (Map.Entry<String, Long> e : MAPPED_FLAGS.entrySet()) {
-			if (!FlagsCalculator.isFlagSet(flags, e.getValue())) disabled.add(e.getKey());
+			if (!FlagsCalculator.isFlagSet(flags, e.getValue())) {
+				disabled.add(e.getKey());
+			}
 		}
 		return disabled;
 	}

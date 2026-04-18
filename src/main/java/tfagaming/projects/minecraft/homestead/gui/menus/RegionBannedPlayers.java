@@ -7,10 +7,10 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionBulkUnbanPlayersEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionDisplaynameUpdateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBannedPlayer;
@@ -24,9 +24,8 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class RegionBannedPlayers {
+public final class RegionBannedPlayers {
 	private List<SerializableBannedPlayer> bannedPlayers;
 
 	public RegionBannedPlayers(Player player, Region region) {
@@ -40,6 +39,11 @@ public class RegionBannedPlayers {
 				(_player, event) -> new RegionPlayersManagement(player, region),
 				(_player, context) -> {
 					if (context.getIndex() >= bannedPlayers.size()) return;
+
+					if (RegionManager.findRegion(region.getUniqueId()) == null) {
+						player.closeInventory();
+						return;
+					}
 
 					SerializableBannedPlayer bannedPlayer = bannedPlayers.get(context.getIndex());
 

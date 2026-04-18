@@ -1,8 +1,11 @@
 package tfagaming.projects.minecraft.homestead.tools.java;
 
 import org.bukkit.*;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
@@ -14,6 +17,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class Formatter {
+	/**
+	 * Apply placeholders to a string.
+	 * @param string The string
+	 * @param placeholder The placeholders
+	 */
 	public static String applyPlaceholders(String string, Placeholder placeholder) {
 		Map<String, String> replacements = placeholder.build();
 
@@ -32,11 +40,15 @@ public final class Formatter {
 		return string;
 	}
 
+	/**
+	 * Get beautiful and readable {@link Location} string.
+	 * @param location The location
+	 */
 	public static String getLocation(Location location) {
 		World world = location.getWorld();
 
 		return applyPlaceholders(
-				Homestead.config.getString("formatters.location"),
+				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.location"),
 				new Placeholder()
 						.add("{world}", world == null ? "UnknownWorld" : world.getName())
 						.add("{x}", NumberUtils.truncate(location.getX()))
@@ -45,11 +57,15 @@ public final class Formatter {
 		);
 	}
 
+	/**
+	 * Get beautiful and readable {@link Chunk} string.
+	 * @param chunk The chunk
+	 */
 	public static String getLocationChunk(Chunk chunk) {
 		World world = chunk.getWorld();
 
 		return applyPlaceholders(
-				Homestead.config.getString("formatters.chunk"),
+				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.chunk"),
 				new Placeholder()
 						.add("{world}", world.getName())
 						.add("{x}", NumberUtils.truncate(chunk.getX()))
@@ -57,19 +73,27 @@ public final class Formatter {
 		);
 	}
 
+	/**
+	 * Get beautiful and readable balance string.
+	 * @param amount The amount
+	 */
 	public static String getBalance(double amount) {
 		String balance = NumberUtils.convertToBalance(amount);
-		String format = Homestead.config.getString("formatters.balance");
+		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.balance");
 
 		return format.replace("{balance}", balance);
 	}
 
+	/**
+	 * Get beautiful and readable date timestamp string.
+	 * @param date The date timestamp
+	 */
 	public static String getDate(long date) {
-		String pattern = Homestead.config.getString("formatters.date-format");
+		String pattern = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.date-format");
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
 		String formatted = simpleDateFormat.format(date);
-		String dateWithAgo = Homestead.config.getString("formatters.date");
+		String dateWithAgo = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.date");
 
 		Placeholder placeholder = new Placeholder()
 				.add("{date}", formatted)
@@ -78,24 +102,36 @@ public final class Formatter {
 		return applyPlaceholders(dateWithAgo, placeholder);
 	}
 
+	/**
+	 * Get beautiful and readable rate string.
+	 * @param rate The average rating
+	 */
 	public static String getRating(double rate) {
 		return getRating(Math.round((float) rate));
 	}
 
+	/**
+	 * Get beautiful and readable rate string.
+	 * @param rate The rate, from 1 to 5.
+	 */
 	public static String getRating(int rate) {
-		if (rate == 0) {
+		if (rate == 0 || rate > 5) {
 			return getNone();
 		}
 
-		String star = Homestead.language.getString("default.star");
+		String star = Resources.<LanguageFile>get(ResourceType.Language).getString("default.star");
 
 		return getStarColor(rate) + star.repeat(rate);
 	}
 
 	private static String getStarColor(int rate) {
-		return Homestead.language.getString("default.star-color." + rate);
+		return Resources.<LanguageFile>get(ResourceType.Language).getString("default.star-color." + rate);
 	}
 
+	/**
+	 * Get beautiful and readable remaining time string.
+	 * @param time The remaining time
+	 */
 	public static String getRemainingTime(long time) {
 		long currentTime = System.currentTimeMillis();
 
@@ -112,7 +148,7 @@ public final class Formatter {
 		long seconds = remaining % 60;
 
 		return applyPlaceholders(
-				Homestead.config.getString("formatters.duration"),
+				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.duration"),
 				new Placeholder()
 						.add("{d}", days)
 						.add("{h}", hours)
@@ -121,6 +157,10 @@ public final class Formatter {
 		);
 	}
 
+	/**
+	 * Get beautiful and readable {@link OfflinePlayer}'s playtime string.
+	 * @param player The player
+	 */
 	public static String getPlayerPlaytime(OfflinePlayer player) {
 		long totalMinutes = getPlayerMinutes(player);
 		long totalSeconds = totalMinutes * 60;
@@ -135,7 +175,7 @@ public final class Formatter {
 		long seconds = remainingSeconds % 60;
 
 		return applyPlaceholders(
-				Homestead.config.getString("formatters.duration"),
+				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.duration"),
 				new Placeholder()
 						.add("{d}", days)
 						.add("{h}", hours)
@@ -150,7 +190,7 @@ public final class Formatter {
 
 	public static String formatPaginationMenuTitle(String title, int currentPage, int totalPages) {
 		return applyPlaceholders(
-				Homestead.config.getString("formatters.gui-pagination-title"),
+				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.gui-pagination-title"),
 				new Placeholder()
 						.add("{title}", title)
 						.add("{current-page}", currentPage)
@@ -160,7 +200,7 @@ public final class Formatter {
 
 	public static String formatPrivateChat(String regionName, String sender, String message) {
 		return applyPlaceholders(
-				Homestead.config.getString("formatters.private-chat"),
+				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.private-chat"),
 				new Placeholder()
 						.add("{region}", regionName)
 						.add("{sender}", sender)
@@ -168,6 +208,10 @@ public final class Formatter {
 		);
 	}
 
+	/**
+	 * Get beautiful and readable list of regions that a player owns.
+	 * @param player The player
+	 */
 	public static String getPlayerOwnedRegions(OfflinePlayer player) {
 		List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
@@ -175,13 +219,17 @@ public final class Formatter {
 			return getNone();
 		}
 
-		String format = Homestead.config.getString("formatters.player-regions");
+		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions");
 
 		return regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
-				.collect(Collectors.joining(Homestead.config.getString("formatters.player-regions-joining")));
+				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions-joining")));
 	}
 
+	/**
+	 * Get beautiful and readable list of region that a player is trusted in.
+	 * @param player The player
+	 */
 	public static String getPlayerTrustedRegions(OfflinePlayer player) {
 		List<Region> regions = RegionManager.getRegionsHasPlayerAsMember(player);
 
@@ -189,13 +237,17 @@ public final class Formatter {
 			return getNone();
 		}
 
-		String format = Homestead.config.getString("formatters.player-regions");
+		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions");
 
 		return regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
-				.collect(Collectors.joining(Homestead.config.getString("formatters.player-regions-joining")));
+				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions-joining")));
 	}
 
+	/**
+	 * Get beautiful and readable list of members of a region.
+	 * @param region The region
+	 */
 	public static String getMembersOfRegion(Region region) {
 		List<SerializableMember> members = region.getMembers();
 
@@ -203,7 +255,7 @@ public final class Formatter {
 			return getNone();
 		}
 
-		String format = Homestead.config.getString("formatters.region-members");
+		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.region-members");
 
 		return members.stream()
 				.map((member) -> format.replace("{playername}",
@@ -212,9 +264,13 @@ public final class Formatter {
 										: Objects.requireNonNull(member.bukkit().getName())
 						)
 				)
-				.collect(Collectors.joining(Homestead.config.getString("formatters.region-members-joining")));
+				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.region-members-joining")));
 	}
 
+	/**
+	 * Get beautiful and readable list of regions part of a war.
+	 * @param war The war
+	 */
 	public static String getRegionsOfWar(War war) {
 		List<Region> regions = war.getRegions();
 
@@ -222,39 +278,46 @@ public final class Formatter {
 			return getNone();
 		}
 
-		String format = Homestead.config.getString("formatters.war-regions");
+		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.war-regions");
 
 		return regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
-				.collect(Collectors.joining(Homestead.config.getString("formatters.war-regions-joining")));
+				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.war-regions-joining")));
 	}
 
 	public static String getNone() {
-		return Homestead.language.getString("default.none");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString("default.none");
 	}
 
 	public static String getNever() {
-		return Homestead.language.getString("default.never");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString("default.never");
 	}
 
 	public static String getBoolean(boolean value) {
-		return Homestead.language.getString(value ? "default.isTrue" : "default.isFalse");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "default.isTrue" : "default.isFalse");
 	}
 
 	public static String getToggle(boolean value) {
-		return Homestead.language.getString(value ? "default.isEnabled" : "default.isDisabled");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "default.isEnabled" : "default.isDisabled");
 	}
 
 	public static String getFlagState(boolean value) {
-		return Homestead.language.getString(value ? "default.flagSet" : "default.flagUnset");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "default.flagSet" : "default.flagUnset");
 	}
 
+	/**
+	 * Get the player status; <b>Online</b>, <b>Offline</b>, or server <b>Banned</b>.
+	 */
 	public static String getPlayerStatus(OfflinePlayer player) {
-		return Bukkit.getBannedPlayers().contains(player) ? Homestead.language.getString("default.banned")
-						: (player.isOnline() ? Homestead.language.getString("default.online")
-						: Homestead.language.getString("default.offline"));
+		return Bukkit.getBannedPlayers().contains(player) ? Resources.<LanguageFile>get(ResourceType.Language).getString("default.banned")
+				: (player.isOnline() ? Resources.<LanguageFile>get(ResourceType.Language).getString("default.online")
+				: Resources.<LanguageFile>get(ResourceType.Language).getString("default.offline"));
 	}
 
+	/**
+	 * Get beautiful and readable duration "ago" string.
+	 * @param time The date timestamp
+	 */
 	public static String getAgo(long time) {
 		long currentTime = System.currentTimeMillis();
 
@@ -271,21 +334,17 @@ public final class Formatter {
 		long seconds = remaining % 60;
 
 		if (days != 0) {
-			return Homestead.config.getString("formatters.ago-days").replace("{v}", String.valueOf(days));
+			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-days").replace("{v}", String.valueOf(Math.abs(days)));
 		}
 
 		if (hours != 0) {
-			return Homestead.config.getString("formatters.ago-hours").replace("{v}", String.valueOf(hours));
+			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-hours").replace("{v}", String.valueOf(Math.abs(hours)));
 		}
 
 		if (minutes != 0) {
-			return Homestead.config.getString("formatters.ago-minutes").replace("{v}", String.valueOf(minutes));
+			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-minutes").replace("{v}", String.valueOf(Math.abs(minutes)));
 		}
 
-		if (seconds != 0) {
-			return Homestead.config.getString("formatters.ago-seconds").replace("{v}", String.valueOf(seconds));
-		}
-
-		return "0";
+		return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-seconds").replace("{v}", String.valueOf(Math.abs(seconds)));
 	}
 }
