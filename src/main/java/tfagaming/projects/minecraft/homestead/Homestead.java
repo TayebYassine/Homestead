@@ -51,8 +51,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class Homestead extends JavaPlugin {
-	private final static String VERSION = "5.1.0.0-rc-1";
-	private final static boolean SNAPSHOT = true;
+	private final static String VERSION = "5.1.0.0";
+	private final static boolean SNAPSHOT = false;
 	public static Database database;
 	public static RegionsCache regionsCache;
 	public static WarsCache warsCache;
