@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 
@@ -88,6 +89,11 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 
 		if (amount > PlayerBank.get(player)) {
 			Messages.send(player, 65);
+			return true;
+		}
+
+		if ((amount + region.getBank()) >= Limits.getRegionLimit(region, Limits.LimitType.MAX_BANK_DEPOSIT)) {
+			Messages.send(player, 116);
 			return true;
 		}
 

@@ -8,7 +8,7 @@ limits:
 
   # Group-Based Limits (only used if method = 'groups')
   # Configure per group: regions, chunks-per-region, members-per-region, subareas-per-region,
-  # max-subarea-volume (blocks³), max-force-loaded-chunks, commands-cooldown (seconds)
+  # max-subarea-volume (blocks³), max-bank-deposit, max-force-loaded-chunks, commands-cooldown (seconds)
   groups:
     default:
       regions: 1
@@ -16,6 +16,7 @@ limits:
       members-per-region: 2
       subareas-per-region: 1
       max-subarea-volume: 400
+      max-bank-deposit: 100000000
       max-force-loaded-chunks: 2
       commands-cooldown: 2
 
@@ -25,6 +26,7 @@ limits:
       members-per-region: 8
       subareas-per-region: 3
       max-subarea-volume: 800
+      max-bank-deposit: 100000000
       max-force-loaded-chunks: 4
       commands-cooldown: 1
 
@@ -34,6 +36,7 @@ limits:
       members-per-region: 16
       subareas-per-region: 6
       max-subarea-volume: 1600
+      max-bank-deposit: 100000000
       max-force-loaded-chunks: 4
       commands-cooldown: 0
 
@@ -43,6 +46,7 @@ limits:
       members-per-region: 50
       subareas-per-region: 20
       max-subarea-volume: 5000
+      max-bank-deposit: 100000000
       max-force-loaded-chunks: 100
       commands-cooldown: 0
 
@@ -55,6 +59,7 @@ limits:
       members-per-region: 2
       subareas-per-region: 1
       max-subarea-volume: 400
+      max-bank-deposit: 100000000
       max-force-loaded-chunks: 2
       commands-cooldown: 2
 
@@ -64,6 +69,7 @@ limits:
       members-per-region: 50
       subareas-per-region: 20
       max-subarea-volume: 5000
+      max-bank-deposit: 100000000
       max-force-loaded-chunks: 100
       commands-cooldown: 0
 
@@ -80,6 +86,8 @@ player-limits:
   #   members-per-region: 15
   #   subareas-per-region: 10
   #   max-subarea-volume: 2000
+  #   max-bank-deposit: 100000000
+  #   max-force-loaded-chunks: 100
   #   commands-cooldown: 0
   A_PLAYER_NAME_GOES_HERE_FOR_SPECIAL_LIMITS:
     regions: 10
@@ -87,4 +95,6 @@ player-limits:
     members-per-region: 16
     subareas-per-region: 10
     max-subarea-volume: 1200
+    max-bank-deposit: 100000000
+    max-force-loaded-chunks: 100
     commands-cooldown: 0
