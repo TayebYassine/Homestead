@@ -135,8 +135,9 @@ public final class Resources {
 		if (!dir.mkdirs()) throw new IOException("mkdirs() returned false for " + dir);
 
 		for (String langCode : langCodes) {
-			File file = new File(dir, new File(langCode).getName());
-			InputStream stream = plugin.getResource(langCode);
+			String resourcePath = dir.getName() + "/" + langCode + ".yml";
+			File file = new File(dir, langCode + ".yml");
+			InputStream stream = plugin.getResource(resourcePath);
 
 			if (stream != null) {
 				FileUtils.copyInputStreamToFile(stream, file);
@@ -175,11 +176,12 @@ public final class Resources {
 			File dir,
 			Set<String> langCodes,
 			Set<String> filteredSubtrees) throws IOException {
-		if (dir.isDirectory()) return;
+
+		if (!dir.isDirectory()) return;
 
 		for (String langCode : langCodes) {
 			String resourcePath = dir.getName() + "/" + langCode + ".yml";
-			File targetFile = new File(dir, new File(langCode).getName());
+			File targetFile = new File(dir, langCode + ".yml");
 
 			if (!targetFile.exists()) {
 				ensureFile(plugin, targetFile, resourcePath);
