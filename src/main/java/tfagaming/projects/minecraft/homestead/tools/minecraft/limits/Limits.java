@@ -1,6 +1,8 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.limits;
 
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -10,6 +12,11 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Limits {
 
@@ -70,15 +77,18 @@ public class Limits {
 		LimitMethod method = getLimitsMethod();
 
 		switch (method) {
-			case STATIC:
+			case STATIC -> {
 				String opKey = PlayerUtils.isOperator(player) ? "op" : "non-op";
+
 				Object staticValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
 						"limits.static." + opKey + "." + limitKey
 				);
-				return staticValue == null ? 0 : (int) staticValue;
 
-			case GROUPS:
+				return staticValue == null ? 0 : (int) staticValue;
+			}
+			case GROUPS -> {
 				String group = PlayerUtils.getPlayerGroup(player);
+
 				if (group == null) {
 					group = "default";
 				}
@@ -86,10 +96,54 @@ public class Limits {
 						"limits.groups." + group + "." + limitKey
 				);
 				return groupValue == null ? 0 : (int) groupValue;
-
-			default:
-				return 0;
+			}
+			case PERMISSIONS -> {
+				return getPermissionBasedLimit(player, limit);
+			}
 		}
+
+		return 0;
+	}
+
+	private static int getPermissionBasedLimit(OfflinePlayer player, LimitType limit) {
+		String limitKey = getLimitConfigKey(limit);
+
+		if (!player.isOnline()) return 0;
+
+		Player onlinePlayer = player.getPlayer();
+
+		if (onlinePlayer == null) return 0;
+
+		Set<String> effectivePerms = onlinePlayer.getEffectivePermissions()
+				.stream()
+				.filter(PermissionAttachmentInfo::getValue)
+				.map(PermissionAttachmentInfo::getPermission)
+				.collect(Collectors.toSet());
+
+		List<String> priorityGroups = Resources.<LimitsFile>get(ResourceType.Limits)
+				.getStringList("limits.permissions-priority");
+
+		if (priorityGroups.isEmpty()) {
+			priorityGroups = Objects.requireNonNull(Resources.<LimitsFile>get(ResourceType.Limits)
+                            .getConfig()
+                            .getConfigurationSection("limits.permissions"))
+					.getKeys(false)
+					.stream()
+					.toList();
+		}
+
+		for (String group : priorityGroups) {
+			if (effectivePerms.contains("homestead.group." + group)) {
+				Object limitValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
+						"limits.permissions." + group + "." + limitKey
+				);
+				if (limitValue != null) {
+					return (int) limitValue;
+				}
+			}
+		}
+
+		return 0;
 	}
 
 	private static boolean hasReachedRegionsLimit(OfflinePlayer player) {
@@ -151,6 +205,7 @@ public class Limits {
 		return switch (method) {
 			case "static" -> LimitMethod.STATIC;
 			case "groups" -> LimitMethod.GROUPS;
+			case "permissions" -> LimitMethod.PERMISSIONS;
 			default -> LimitMethod.STATIC;
 		};
 	}
@@ -168,6 +223,7 @@ public class Limits {
 
 	public enum LimitMethod {
 		GROUPS,
-		STATIC
+		STATIC,
+		PERMISSIONS
 	}
 }

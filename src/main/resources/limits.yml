@@ -4,6 +4,7 @@ limits:
   # Limit Assignment Method
   # 'static': Everyone gets same limits (except operators). Simple, no permissions plugin needed.
   # 'groups': Limits based on permission groups (LuckPerms, etc.). Requires permissions plugin.
+  # 'permissions': Limits based on custom permission group name, no weight required (like LuckPerms). THIS IS EXPERIMENTAL
   method: 'static'
 
   # Group-Based Limits (only used if method = 'groups')
@@ -73,6 +74,54 @@ limits:
       max-force-loaded-chunks: 100
       commands-cooldown: 0
 
+  # Permissions Limits (only used if method = 'permissions')
+  # Just like groups, but you will use permissions instead.
+  permissions-priority:
+    - admin
+    - vip
+    - mvp
+    - default
+
+  permissions:
+    default:
+      regions: 1
+      chunks-per-region: 4
+      members-per-region: 2
+      subareas-per-region: 1
+      max-subarea-volume: 400
+      max-bank-deposit: 100000000
+      max-force-loaded-chunks: 2
+      commands-cooldown: 2
+
+    vip:
+      regions: 2
+      chunks-per-region: 6
+      members-per-region: 8
+      subareas-per-region: 3
+      max-subarea-volume: 800
+      max-bank-deposit: 100000000
+      max-force-loaded-chunks: 4
+      commands-cooldown: 1
+
+    mvp:
+      regions: 3
+      chunks-per-region: 12
+      members-per-region: 16
+      subareas-per-region: 6
+      max-subarea-volume: 1600
+      max-bank-deposit: 100000000
+      max-force-loaded-chunks: 4
+      commands-cooldown: 0
+
+    admin:
+      regions: 10
+      chunks-per-region: 100
+      members-per-region: 50
+      subareas-per-region: 20
+      max-subarea-volume: 5000
+      max-bank-deposit: 100000000
+      max-force-loaded-chunks: 100
+      commands-cooldown: 0
 
 # Per-Player Custom Limits
 # Override limits for specific players by username (case-sensitive!)
