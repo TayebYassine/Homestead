@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.structure.serializable;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtility;
 
 import java.util.UUID;
 
@@ -173,7 +174,7 @@ public class SerializableChunk {
 		location.setY(world.getHighestBlockYAt(location) + 2);
 
 		if (world.getEnvironment() == World.Environment.NETHER) {
-			Location newLocation = findSafeNetherLocation(world, x * 16 + 8, z * 16 + 8);
+			Location newLocation = ChunkUtility.findSafeNetherLocation(world, x * 16 + 8, z * 16 + 8);
 			if (newLocation != null) {
 				location = newLocation;
 			}
@@ -184,25 +185,6 @@ public class SerializableChunk {
 	public Chunk bukkit() {
 		Location loc = bukkitLocation();
 		return (loc != null) ? loc.getChunk() : null;
-	}
-
-	private Location findSafeNetherLocation(World world, int x, int z) {
-		int minY = 32;
-		int maxY = 124; // Prevents ceiling spawn issues
-
-		for (int y = maxY; y >= minY; y--) {
-			Block block = world.getBlockAt(x, y, z);
-			Block above = world.getBlockAt(x, y + 1, z);
-			Block aboveAbove = world.getBlockAt(x, y + 2, z);
-
-			if ((block.getType() != Material.AIR && block.getType() != Material.LAVA)
-					&& above.getType() == Material.AIR
-					&& aboveAbove.getType() == Material.AIR) {
-				return new Location(world, x + 0.5, y + 1, z + 0.5);
-			}
-		}
-
-		return null;
 	}
 
 	@Override

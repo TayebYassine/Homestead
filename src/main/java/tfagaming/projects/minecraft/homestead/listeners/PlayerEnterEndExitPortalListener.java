@@ -9,12 +9,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.Map;
 import java.util.UUID;
@@ -83,21 +83,11 @@ public class PlayerEnterEndExitPortalListener implements Listener {
 
 		Location targetLocation = region.getLocation().bukkit();
 
-		teleportPlayer(player, targetLocation);
+		PlayerUtility.teleportPlayer(player, targetLocation);
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		lastLocations.remove(event.getPlayer().getUniqueId());
-	}
-
-	private void teleportPlayer(Player player, Location location) {
-		if (location == null) return;
-
-		if (Homestead.isFolia()) {
-			player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-		} else {
-			player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-		}
 	}
 }

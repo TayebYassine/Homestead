@@ -363,33 +363,6 @@ public final class ChunkManager {
 	}
 
 	/**
-	 * Returns a safe location inside the given chunk (overworld/end).
-	 * @param player The player
-	 * @param chunk The chunk
-	 */
-	public static Location getLocation(Player player, Chunk chunk) {
-		World world = chunk.getWorld();
-		if (world == null) return null;
-
-		int x = chunk.getX() * 16 + 8;
-		int z = chunk.getZ() * 16 + 8;
-
-		Location loc;
-		if (world.getEnvironment() == World.Environment.NETHER) {
-			loc = ChunkUtility.findSafeNetherLocation(world, x, z);
-		} else {
-			int highest = world.getHighestBlockYAt(x, z);
-			loc = new Location(world, x, highest + 2, z);
-		}
-
-		if (loc != null) {
-			loc.setPitch(player.getLocation().getPitch());
-			loc.setYaw(player.getLocation().getYaw());
-		}
-		return loc;
-	}
-
-	/**
 	 * Removes a random chunk from the region.
 	 * @param id The region UUID
 	 */

@@ -193,11 +193,7 @@ public final class DelayedTeleport {
 
 		Cooldown.startCooldown(player, Cooldown.Type.REGION_TELEPORT);
 
-		if (Homestead.isFolia()) {
-			player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-		} else {
-			player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-		}
+		PlayerUtility.teleportPlayer(player, location);
 
 		PlayerSound.play(player, PlayerSound.PredefinedSound.TELEPORT);
 

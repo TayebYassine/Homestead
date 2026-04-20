@@ -88,11 +88,20 @@ public final class ChunkUtility {
 	}
 
 	/**
-	 * Returns a safe location for a SerializableChunk.
+	 * Returns a safe location inside the given chunk (overworld/end).
 	 * @param player The player
 	 * @param chunk The chunk
 	 */
 	public static Location getLocation(Player player, SerializableChunk chunk) {
+		return getLocation(player, chunk.bukkit());
+	}
+
+	/**
+	 * Returns a safe location inside the given chunk (overworld/end).
+	 * @param player The player
+	 * @param chunk The chunk
+	 */
+	public static Location getLocation(Player player, Chunk chunk) {
 		World world = chunk.getWorld();
 		if (world == null) return null;
 
@@ -101,7 +110,7 @@ public final class ChunkUtility {
 
 		Location loc;
 		if (world.getEnvironment() == World.Environment.NETHER) {
-			loc = findSafeNetherLocation(world, x, z);
+			loc = ChunkUtility.findSafeNetherLocation(world, x, z);
 		} else {
 			int highest = world.getHighestBlockYAt(x, z);
 			loc = new Location(world, x, highest + 2, z);
@@ -121,13 +130,21 @@ public final class ChunkUtility {
 	 * @param z    The location (Z axis)
 	 */
 	public static Location findSafeNetherLocation(World world, int x, int z) {
-		for (int y = 32; y < 127; y++) {
+		int minY = 32;
+		int maxY = 124;
+
+		for (int y = maxY; y >= minY; y--) {
 			Block block = world.getBlockAt(x, y, z);
 			Block above = world.getBlockAt(x, y + 1, z);
-			if (block.getType() == Material.AIR && above.getType() == Material.AIR) {
-				return new Location(world, x + 0.5, y, z + 0.5);
+			Block aboveAbove = world.getBlockAt(x, y + 2, z);
+
+			if ((block.getType() != Material.AIR && block.getType() != Material.LAVA)
+					&& above.getType() == Material.AIR
+					&& aboveAbove.getType() == Material.AIR) {
+				return new Location(world, x + 0.5, y + 1, z + 0.5);
 			}
 		}
+
 		return null;
 	}
 }

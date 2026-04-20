@@ -25,6 +25,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits.LimitMethod;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
@@ -130,11 +131,13 @@ public final class PlayerUtility {
 	}
 
 	public static void teleportPlayerToChunk(Player player, Chunk chunk) {
-		Location location = ChunkManager.getLocation(player, chunk);
+		Location location = ChunkUtility.getLocation(player, chunk);
 
-		if (location == null) {
-			return;
-		}
+		teleportPlayer(player, location);
+	}
+
+	public static void teleportPlayer(Player player, Location location) {
+		if (location == null) return;
 
 		if (Homestead.isFolia()) {
 			player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
