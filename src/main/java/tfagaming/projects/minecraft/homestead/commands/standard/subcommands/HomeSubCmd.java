@@ -8,8 +8,8 @@ import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 
 public class HomeSubCmd extends SubCommandBuilder {
 	public HomeSubCmd() {
@@ -45,10 +45,10 @@ public class HomeSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.isOperator(player)
+		if (!PlayerUtility.isOperator(player)
 				&& !region.isOwner(player)
-				&& !(PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
-				&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true)
+				&& !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
+				&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true)
 				&& player.hasPermission("homestead.region.teleport"))) {
 			Messages.send(player, 45, new Placeholder()
 					.add("{region}", region.getName())

@@ -34,7 +34,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class PlayerUtils {
+public final class PlayerUtility {
+	private PlayerUtility() {
+	}
 
 	public static final Set<Long> RENT_FLAGS_SET = Set.of(
 			PlayerFlags.PVP
@@ -239,7 +241,7 @@ public class PlayerUtils {
 		Region region = RegionManager.findRegion(regionId);
 
 		if (region != null) {
-			if (PlayerUtils.isOperator(player) || region.isOwner(player)) return true;
+			if (PlayerUtility.isOperator(player) || region.isOwner(player)) return true;
 
 			boolean response = true;
 

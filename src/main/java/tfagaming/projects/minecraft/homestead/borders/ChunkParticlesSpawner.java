@@ -14,7 +14,7 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 
 import java.util.List;
 import java.util.Map;

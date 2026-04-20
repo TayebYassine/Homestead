@@ -19,7 +19,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -122,7 +122,7 @@ public final class PlayerAutoClaimListener implements Listener {
 			}
 		}
 
-		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				RegionControlFlags.CLAIM_CHUNKS)) {
 			return;
 		}

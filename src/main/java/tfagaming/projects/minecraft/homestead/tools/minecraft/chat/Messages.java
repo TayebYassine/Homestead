@@ -12,6 +12,9 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformB
 import java.util.List;
 
 public final class Messages {
+	private Messages() {
+	}
+
 	public static void send(Player player, String... message) {
 		sendFormatted(player, String.join(" ", message), null);
 	}

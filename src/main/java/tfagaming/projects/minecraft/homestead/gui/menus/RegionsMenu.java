@@ -11,10 +11,10 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +33,13 @@ public final class RegionsMenu {
 		this.regions = computeRegionList(player);
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(0), 9 * 4,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getTitle(0), 9 * 4,
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				getItems(player),
 				(_player, event) -> _player.closeInventory(),
 				(_player, context) -> {
-					boolean hasToggle = PlayerUtils.isOperator(_player);
+					boolean hasToggle = PlayerUtility.isOperator(_player);
 					int index = context.getIndex();
 
 					if (hasToggle && index == 0) {
@@ -82,10 +82,10 @@ public final class RegionsMenu {
 							return;
 						}
 
-						boolean allowed = PlayerUtils.isOperator(_player)
+						boolean allowed = PlayerUtility.isOperator(_player)
 								|| region.isOwner(player)
-								|| (PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN, true)
-								&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true))
+								|| (PlayerUtility.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN, true)
+								&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true))
 								&& player.hasPermission("homestead.region.teleport");
 
 						if (!allowed) {
@@ -128,15 +128,15 @@ public final class RegionsMenu {
 					}
 				});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private static boolean isShowAllEnabled(Player p) {
-		return PlayerUtils.isOperator(p) && ADMIN_SHOW_ALL.contains(p.getUniqueId());
+		return PlayerUtility.isOperator(p) && ADMIN_SHOW_ALL.contains(p.getUniqueId());
 	}
 
 	private static void toggleShowAll(Player p) {
-		if (!PlayerUtils.isOperator(p)) return;
+		if (!PlayerUtility.isOperator(p)) return;
 
 		if (!ADMIN_SHOW_ALL.add(p.getUniqueId())) ADMIN_SHOW_ALL.remove(p.getUniqueId());
 
@@ -155,8 +155,8 @@ public final class RegionsMenu {
 	private List<ItemStack> getItems(Player player) {
 		List<ItemStack> items = new ArrayList<>();
 
-		if (PlayerUtils.isOperator(player)) {
-			items.add(isShowAllEnabled(player) ? MenuUtils.getButton(62) : MenuUtils.getButton(63));
+		if (PlayerUtility.isOperator(player)) {
+			items.add(isShowAllEnabled(player) ? MenuUtility.getButton(62) : MenuUtility.getButton(63));
 		}
 
 		Region targetRegion = TargetRegionSession.getRegion(player);
@@ -170,7 +170,7 @@ public final class RegionsMenu {
 					.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
 
 			boolean isTarget = targetRegion != null && targetRegion.getUniqueId().equals(region.getUniqueId());
-			items.add(MenuUtils.getButton(isTarget ? 5 : 4, placeholder));
+			items.add(MenuUtility.getButton(isTarget ? 5 : 4, placeholder));
 		}
 
 		return items;

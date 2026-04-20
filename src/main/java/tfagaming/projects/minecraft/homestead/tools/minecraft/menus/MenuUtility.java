@@ -11,13 +11,15 @@ import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtility;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MenuUtils {
+public final class MenuUtility {
+	private MenuUtility() {
+	}
 
 	public static String getTitle(int path) {
 		return Resources.<MenusFile>get(ResourceType.Menus).getString("titles." + path);
@@ -28,7 +30,7 @@ public class MenuUtils {
 		List<String> lore = Resources.<MenusFile>get(ResourceType.Menus).getStringList("buttons." + path + ".lore");
 		String type = Resources.<MenusFile>get(ResourceType.Menus).getString("buttons." + path + ".type");
 
-		if (name == null) name = "NO NAME";
+		if (name == null) name = "UNDEFINED";
 		if (lore == null) lore = new ArrayList<>();
 		if (type == null) type = "BARRIER";
 
@@ -109,19 +111,19 @@ public class MenuUtils {
 			String texture = type.split("-", 2)[1];
 			if (texture.equalsIgnoreCase("this")) {
 				return player != null
-						? ItemUtils.getPlayerHead(data.getName(), data.getLore(), player.getUniqueId(), placeholder)
-						: ItemUtils.getItem(data.getName(), data.getLore(), Material.BARRIER, placeholder);
+						? ItemUtility.getPlayerHead(data.getName(), data.getLore(), player.getUniqueId(), placeholder)
+						: ItemUtility.getItem(data.getName(), data.getLore(), Material.BARRIER, placeholder);
 			}
-			return ItemUtils.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
+			return ItemUtility.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
 		}
 
 		if (type.startsWith("NEXOMC-") || type.startsWith("NEXO-")) {
 			String itemId = type.split("-", 2)[1];
-			return NexoMC.getCustomNexoItem(itemId, data.getName(), data.getLore(), placeholder);
+			return NexoMC.getNexoItem(itemId, data.getName(), data.getLore(), placeholder);
 		}
 
 		Material material = Material.getMaterial(type);
-		return ItemUtils.getItem(data.getName(), data.getLore(),
+		return ItemUtility.getItem(data.getName(), data.getLore(),
 				material != null ? material : Material.BARRIER, placeholder);
 	}
 

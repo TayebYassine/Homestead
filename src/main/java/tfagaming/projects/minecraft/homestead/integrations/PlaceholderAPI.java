@@ -13,7 +13,7 @@ import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.UpkeepUtility;
 
 public final class PlaceholderAPI extends PlaceholderExpansion {
 	public PlaceholderAPI() {
@@ -108,7 +108,7 @@ public final class PlaceholderAPI extends PlaceholderExpansion {
 					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.upkeep_amount");
 				}
 
-				yield Formatter.getBalance(UpkeepUtils.getAmountToPay(region));
+				yield Formatter.getBalance(UpkeepUtility.getAmountToPay(region));
 			}
 			case "upkeep_at" -> {
 				if (region == null) {

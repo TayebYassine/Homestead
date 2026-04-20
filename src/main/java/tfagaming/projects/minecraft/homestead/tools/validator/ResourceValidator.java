@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Set;
 
-public class ResourceValidator {
+public final class ResourceValidator {
 	private final FileConfiguration defaultConfig;
 	private final FileConfiguration targetConfig;
 	private final File targetFile;

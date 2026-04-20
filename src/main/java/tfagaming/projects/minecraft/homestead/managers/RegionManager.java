@@ -17,14 +17,13 @@ import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.storage.StorageManager;
-import tfagaming.projects.minecraft.homestead.structure.Level;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
-import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.UpkeepUtility;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -61,7 +60,7 @@ public final class RegionManager {
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
 			int delay = Resources.<RegionsFile>get(ResourceType.Regions).getInt("upkeep.start-upkeep");
 
-			region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
+			region.setUpkeepAt(UpkeepUtility.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
 		}
 
 		Homestead.regionsCache.putOrUpdate(region);

@@ -21,6 +21,8 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtility.*;
+
 public final class MongoDB implements Provider {
 	private static final ReplaceOptions UPSERT = new ReplaceOptions().upsert(true);
 	private final MongoClient mongoClient;
@@ -205,8 +207,8 @@ public final class MongoDB implements Provider {
 			World world = resolveWorld(doc.getString("worldName"));
 			if (world == null) continue;
 
-			Block point1 = SubArea.parseBlockLocation(world, doc.getString("point1"));
-			Block point2 = SubArea.parseBlockLocation(world, doc.getString("point2"));
+			Block point1 = parseBlockLocation(world, doc.getString("point1"));
+			Block point2 = parseBlockLocation(world, doc.getString("point2"));
 
 			String membersRaw = doc.getString("members");
 			List<SerializableMember> members = (membersRaw != null && !membersRaw.isEmpty())
@@ -351,8 +353,8 @@ public final class MongoDB implements Provider {
 					.append("regionId", subArea.regionId.toString())
 					.append("name", subArea.name)
 					.append("worldName", subArea.worldId.toString())
-					.append("point1", SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point1))
-					.append("point2", SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point2))
+					.append("point1", toStringBlockLocation(subArea.getWorld(), subArea.point1))
+					.append("point2", toStringBlockLocation(subArea.getWorld(), subArea.point2))
 					.append("members", membersStr)
 					.append("flags", subArea.flags)
 					.append("rent", subArea.rent != null ? subArea.rent.toString() : null)

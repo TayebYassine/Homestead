@@ -13,7 +13,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 import xyz.jpenilla.squaremap.api.*;
 import xyz.jpenilla.squaremap.api.Point;
 import xyz.jpenilla.squaremap.api.marker.*;
@@ -56,7 +56,7 @@ public class SquaremapAPI {
 				.add("{region-description}", region.getDescription())
 				.add("{region-size}", region.getChunks().size() * 256);
 
-		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
+		boolean isOperator = PlayerUtility.isOperator(region.getOwner());
 
 		String hoverText = Formatter
 				.applyPlaceholders(isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.operator-description")

@@ -3,23 +3,21 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.*;
 
@@ -33,10 +31,10 @@ public final class RegionMemberFlags {
 		OfflinePlayer memberBukkit = member.bukkit();
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(6).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
+				MenuUtility.getTitle(6).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
 				9 * 5,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				buildItemsList(member),
 				(_player, event) -> new RegionMembersMenu(player, region),
 				(_player, context) -> {
@@ -59,7 +57,7 @@ public final class RegionMemberFlags {
 						return;
 					}
 
-					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+					if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 							RegionControlFlags.SET_MEMBER_FLAGS)) {
 						return;
 					}
@@ -132,19 +130,19 @@ public final class RegionMemberFlags {
 
 					PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-					context.getInstance().replaceSlot(index, MenuUtils.getFlagButton(flagString, !isSet));
+					context.getInstance().replaceSlot(index, MenuUtility.getFlagButton(flagString, !isSet));
 				});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> buildItemsList(SerializableMember member) {
 		List<ItemStack> items = new ArrayList<>();
-		items.add(MenuUtils.getButton(65)); // bulk-toggle item
+		items.add(MenuUtility.getButton(65)); // bulk-toggle item
 
 		for (String flagString : PlayerFlags.getFlags()) {
 			boolean value = FlagsCalculator.isFlagSet(member.getFlags(), PlayerFlags.valueOf(flagString));
-			items.add(MenuUtils.getFlagButton(flagString, value));
+			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
 		return items;

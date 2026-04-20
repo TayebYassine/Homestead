@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.storage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 
 import java.util.UUID;
 
@@ -41,11 +41,11 @@ public class RegionStorage {
 
 		SharedStorage storage = getStorage(region);
 
-		String title = MenuUtils.getTitle(28).replace("{region}", region.getName());
+		String title = MenuUtility.getTitle(28).replace("{region}", region.getName());
 
 		StorageMenu menu = new StorageMenu(player, region.getUniqueId(), title, storage.getSize());
 
-		menu.addItem(getStorageSize(region) - 9, MenuUtils.getBackButton(), (_player, click) -> {
+		menu.addItem(getStorageSize(region) - 9, MenuUtility.getBackButton(), (_player, click) -> {
 			if (click.isLeftClick()) {
 				_player.closeInventory();
 			}

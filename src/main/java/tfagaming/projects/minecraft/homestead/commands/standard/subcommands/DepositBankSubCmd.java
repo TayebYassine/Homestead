@@ -15,7 +15,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				RegionControlFlags.DEPOSIT_MONEY)) {
 			return true;
 		}

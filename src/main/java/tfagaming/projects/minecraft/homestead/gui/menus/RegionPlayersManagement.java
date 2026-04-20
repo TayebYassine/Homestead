@@ -6,11 +6,11 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 
 public final class RegionPlayersManagement {
 	public RegionPlayersManagement(Player player, Region region) {
-		Menu gui = new Menu(MenuUtils.getTitle(4), 9 * 3);
+		Menu gui = new Menu(MenuUtility.getTitle(4), 9 * 3);
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region-members}", region.getMembers().size())
@@ -18,7 +18,7 @@ public final class RegionPlayersManagement {
 				.add("{region-banned-players}", region.getBannedPlayers().size())
 				.add("{region-invited-players}", region.getInvitedPlayers().size());
 
-		gui.addItem(11, MenuUtils.getButton(18, placeholder), (_player, event) -> {
+		gui.addItem(11, MenuUtility.getButton(18, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -28,7 +28,7 @@ public final class RegionPlayersManagement {
 			new RegionMembersMenu(player, region);
 		});
 
-		gui.addItem(13, MenuUtils.getButton(19, placeholder), (_player, event) -> {
+		gui.addItem(13, MenuUtility.getButton(19, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -38,7 +38,7 @@ public final class RegionPlayersManagement {
 			new RegionBannedPlayers(player, region);
 		});
 
-		gui.addItem(15, MenuUtils.getButton(20, placeholder), (_player, event) -> {
+		gui.addItem(15, MenuUtility.getButton(20, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -48,7 +48,7 @@ public final class RegionPlayersManagement {
 			new RegionPlayersInvited(player, region);
 		});
 
-		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+		gui.addItem(18, MenuUtility.getBackButton(), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -58,6 +58,6 @@ public final class RegionPlayersManagement {
 			new RegionMenu(player, region);
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 }

@@ -19,16 +19,16 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.UpkeepUtility;
 import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
 import tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType;
 
 public final class RegionMenu {
 	public RegionMenu(Player player, Region region) {
-		Menu gui = new Menu(MenuUtils.getTitle(1).replace("{region}", region.getName()), 9 * 4);
+		Menu gui = new Menu(MenuUtility.getTitle(1).replace("{region}", region.getName()), 9 * 4);
 
 		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
 		boolean isUpkeepEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled");
@@ -48,7 +48,7 @@ public final class RegionMenu {
 				.add("{region-members-max}", Limits.getRegionLimit(region, Limits.LimitType.MEMBERS_PER_REGION))
 				.add("{upkeep-enabled}", Formatter.getToggle(isUpkeepEnabled))
 				.add("{upkeep-date}", isUpkeepEnabled ? Formatter.getRemainingTime(region.getUpkeepAt()) : Formatter.getNever())
-				.add("{upkeep-amount}", Formatter.getBalance(UpkeepUtils.getAmountToPay(region)))
+				.add("{upkeep-amount}", Formatter.getBalance(UpkeepUtility.getAmountToPay(region)))
 				.add("{region-global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
 				.add("{region-rank-bank}", RegionManager.getRank(RegionSorting.BANK, region.getUniqueId()))
 				.add("{region-rank-chunks}", RegionManager.getRank(RegionSorting.CHUNKS_COUNT, region.getUniqueId()))
@@ -67,7 +67,7 @@ public final class RegionMenu {
 				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
 				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 
-		gui.addItem(10, MenuUtils.getButton(6, placeholder), (_player, event) -> {
+		gui.addItem(10, MenuUtility.getButton(6, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -77,7 +77,7 @@ public final class RegionMenu {
 			new RegionPlayersManagement(player, region);
 		});
 
-		gui.addItem(11, MenuUtils.getButton(7, placeholder), (_player, event) -> {
+		gui.addItem(11, MenuUtility.getButton(7, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -87,7 +87,7 @@ public final class RegionMenu {
 			new RegionClaimedChunks(player, region);
 		});
 
-		gui.addItem(12, MenuUtils.getButton(8, placeholder), (_player, event) -> {
+		gui.addItem(12, MenuUtility.getButton(8, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -100,7 +100,7 @@ public final class RegionMenu {
 			}
 		});
 
-		gui.addItem(13, MenuUtils.getButton(9, placeholder), (_player, event) -> {
+		gui.addItem(13, MenuUtility.getButton(9, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -110,7 +110,7 @@ public final class RegionMenu {
 			new MiscellaneousSettings(player, region);
 		});
 
-		gui.addItem(14, MenuUtils.getButton(10, placeholder), (_player, event) -> {
+		gui.addItem(14, MenuUtility.getButton(10, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -120,7 +120,7 @@ public final class RegionMenu {
 			new SubAreasMenu(player, region);
 		});
 
-		gui.addItem(20, MenuUtils.getButton(79, placeholder), (_player, event) -> {
+		gui.addItem(20, MenuUtility.getButton(79, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -130,9 +130,9 @@ public final class RegionMenu {
 			new Rewards(player, region, () -> new RegionMenu(player, region));
 		});
 
-		gui.addItem(21, MenuUtils.getButton(11, placeholder), null);
+		gui.addItem(21, MenuUtility.getButton(11, placeholder), null);
 
-		gui.addItem(22, MenuUtils.getButton(12, placeholder), (_player, event) -> {
+		gui.addItem(22, MenuUtility.getButton(12, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -140,7 +140,7 @@ public final class RegionMenu {
 
 			if (!event.isLeftClick()) return;
 
-			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 				Messages.send(player, 159);
 				return;
 			}
@@ -154,7 +154,7 @@ public final class RegionMenu {
 			}
 		});
 
-		gui.addItem(23, MenuUtils.getButton(80, placeholder), (_player, event) -> {
+		gui.addItem(23, MenuUtility.getButton(80, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -164,9 +164,9 @@ public final class RegionMenu {
 			new RegionLevels(player, region, () -> new RegionMenu(player, region));
 		});
 
-		gui.addItem(24, MenuUtils.getButton(15, placeholder), null);
+		gui.addItem(24, MenuUtility.getButton(15, placeholder), null);
 
-		gui.addItem(15, MenuUtils.getButton(13, placeholder), (_player, event) -> {
+		gui.addItem(15, MenuUtility.getButton(13, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -176,13 +176,13 @@ public final class RegionMenu {
 			new RegionLogs(player, region);
 		});
 
-		gui.addItem(16, MenuUtils.getButton(16, placeholder), (_player, event) -> {
+		gui.addItem(16, MenuUtility.getButton(16, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
 			}
 
-			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					RegionControlFlags.SET_WEATHER_AND_TIME)) {
 				return;
 			}
@@ -205,7 +205,7 @@ public final class RegionMenu {
 			new RegionMenu(player, region);
 		});
 
-		gui.addItem(27, MenuUtils.getBackButton(), (_player, event) -> {
+		gui.addItem(27, MenuUtility.getBackButton(), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -216,7 +216,7 @@ public final class RegionMenu {
 		});
 
 		if (region.isPlayerMember(player)) {
-			gui.addItem(35, MenuUtils.getButton(14, placeholder), (_player, event) -> {
+			gui.addItem(35, MenuUtility.getButton(14, placeholder), (_player, event) -> {
 				if (RegionManager.findRegion(region.getUniqueId()) == null) {
 					player.closeInventory();
 					return;
@@ -239,6 +239,6 @@ public final class RegionMenu {
 			});
 		}
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 }

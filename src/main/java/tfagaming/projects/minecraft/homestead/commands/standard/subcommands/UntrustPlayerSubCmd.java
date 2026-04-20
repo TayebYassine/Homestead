@@ -14,7 +14,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				RegionControlFlags.UNTRUST_PLAYERS)) {
 			return true;
 		}

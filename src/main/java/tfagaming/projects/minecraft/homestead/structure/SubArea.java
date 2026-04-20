@@ -9,11 +9,13 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableBlock;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
-import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.TaxesUtility;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtility.*;
 
 public class SubArea {
 	public final UUID id;
@@ -54,96 +56,6 @@ public class SubArea {
 		this.flags = flags;
 		this.rent = rent;
 		this.createdAt = createdAt;
-	}
-
-	// Utility methods
-	public static int getMinX(Block firstPoint, Block secondPoint) {
-		return Math.min(firstPoint.getX(), secondPoint.getX());
-	}
-
-	public static int getMinX(SerializableBlock firstPoint, SerializableBlock secondPoint) {
-		return Math.min(firstPoint.getX(), secondPoint.getX());
-	}
-
-	public static int getMaxX(Block firstPoint, Block secondPoint) {
-		return Math.max(firstPoint.getX(), secondPoint.getX());
-	}
-
-	public static int getMaxX(SerializableBlock firstPoint, SerializableBlock secondPoint) {
-		return Math.max(firstPoint.getX(), secondPoint.getX());
-	}
-
-	public static int getMinY(Block firstPoint, Block secondPoint) {
-		return Math.min(firstPoint.getY(), secondPoint.getY());
-	}
-
-	public static int getMinY(SerializableBlock firstPoint, SerializableBlock secondPoint) {
-		return Math.min(firstPoint.getY(), secondPoint.getY());
-	}
-
-	public static int getMaxY(Block firstPoint, Block secondPoint) {
-		return Math.max(firstPoint.getY(), secondPoint.getY());
-	}
-
-	public static int getMaxY(SerializableBlock firstPoint, SerializableBlock secondPoint) {
-		return Math.max(firstPoint.getY(), secondPoint.getY());
-	}
-
-	public static int getMinZ(Block firstPoint, Block secondPoint) {
-		return Math.min(firstPoint.getZ(), secondPoint.getZ());
-	}
-
-	public static int getMinZ(SerializableBlock firstPoint, SerializableBlock secondPoint) {
-		return Math.min(firstPoint.getZ(), secondPoint.getZ());
-	}
-
-	public static int getMaxZ(Block firstPoint, Block secondPoint) {
-		return Math.max(firstPoint.getZ(), secondPoint.getZ());
-	}
-
-	public static int getMaxZ(SerializableBlock firstPoint, SerializableBlock secondPoint) {
-		return Math.max(firstPoint.getZ(), secondPoint.getZ());
-	}
-
-	public static int getVolume(Block firstPoint, Block secondPoint) {
-		int width = getMaxX(firstPoint, secondPoint) - getMinX(firstPoint, secondPoint) + 1;
-		int height = getMaxY(firstPoint, secondPoint) - getMinY(firstPoint, secondPoint) + 1;
-		int depth = getMaxZ(firstPoint, secondPoint) - getMinZ(firstPoint, secondPoint) + 1;
-
-		return width * height * depth;
-	}
-
-	public static int getVolume(SerializableBlock firstPoint, SerializableBlock secondPoint) {
-		int width = getMaxX(firstPoint, secondPoint) - getMinX(firstPoint, secondPoint) + 1;
-		int height = getMaxY(firstPoint, secondPoint) - getMinY(firstPoint, secondPoint) + 1;
-		int depth = getMaxZ(firstPoint, secondPoint) - getMinZ(firstPoint, secondPoint) + 1;
-
-		return width * height * depth;
-	}
-
-	public static String toStringBlockLocation(World world, int[] coords) {
-		return toStringBlockLocation(world, parseBlockLocation(world, coords));
-	}
-
-	public static String toStringBlockLocation(World world, Block block) {
-		return (world.getName() + ";" + block.getX() + ";" + block.getY() + ";" + block.getZ());
-	}
-
-	public static Block parseBlockLocation(World world, int[] coords) {
-		return new Location(world, coords[0], coords[1], coords[2]).getBlock();
-	}
-
-	public static Block parseBlockLocation(World world, String coordsString) {
-		String[] splitted = coordsString.split(";");
-
-		int[] coords = {Integer.parseInt(splitted[1]), Integer.parseInt(splitted[2]),
-				Integer.parseInt(splitted[3])};
-
-		return parseBlockLocation(world, coords);
-	}
-
-	public static int[] getBlockLocation(Block block) {
-		return new int[]{block.getX(), block.getY(), block.getZ()};
 	}
 
 	/**
@@ -218,7 +130,7 @@ public class SubArea {
 		if (!isPlayerMember(player)) {
 			SerializableMember member = new SerializableMember(player, flags, 0);
 
-			member.setTaxesAt(TaxesUtils.getNewTaxesAt());
+			member.setTaxesAt(TaxesUtility.getNewTaxesAt());
 
 			members.add(member);
 			updateCache();

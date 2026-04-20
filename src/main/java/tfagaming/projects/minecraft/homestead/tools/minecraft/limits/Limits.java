@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LimitsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards;
 
@@ -18,7 +18,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Limits {
+public final class Limits {
+	private Limits() {
+	}
 
 	public static int getPlayerLimit(OfflinePlayer player, LimitType limit) {
 		return switch (limit) {
@@ -78,7 +80,7 @@ public class Limits {
 
 		switch (method) {
 			case STATIC -> {
-				String opKey = PlayerUtils.isOperator(player) ? "op" : "non-op";
+				String opKey = PlayerUtility.isOperator(player) ? "op" : "non-op";
 
 				Object staticValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
 						"limits.static." + opKey + "." + limitKey
@@ -87,7 +89,7 @@ public class Limits {
 				return staticValue == null ? 0 : (int) staticValue;
 			}
 			case GROUPS -> {
-				String group = PlayerUtils.getPlayerGroup(player);
+				String group = PlayerUtility.getPlayerGroup(player);
 
 				if (group == null) {
 					group = "default";

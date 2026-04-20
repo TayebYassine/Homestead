@@ -18,7 +18,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				RegionControlFlags.TRUST_PLAYERS)) {
 			return true;
 		}

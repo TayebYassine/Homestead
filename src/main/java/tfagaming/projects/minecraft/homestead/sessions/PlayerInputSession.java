@@ -13,7 +13,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 
 import java.util.Map;

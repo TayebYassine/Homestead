@@ -15,7 +15,7 @@ import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.War;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtility;
 
 import java.util.List;
 
@@ -105,7 +105,7 @@ public final class PlayerDeathListener implements Listener {
 		}
 
 		Player winnerOwner = (Player) winner.getOwner();
-		ItemStack head = ItemUtils.getPlayerHead(victim);
+		ItemStack head = ItemUtility.getPlayerHead(victim);
 
 		if (winnerOwner.getInventory().firstEmpty() == -1) {
 			winnerOwner.getWorld().dropItemNaturally(winnerOwner.getLocation(), head);

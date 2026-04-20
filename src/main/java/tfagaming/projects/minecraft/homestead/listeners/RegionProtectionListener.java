@@ -43,7 +43,7 @@ import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -1669,7 +1669,7 @@ public final class RegionProtectionListener implements Listener {
 
 			if (player == null) return true;
 
-			if (PlayerUtils.isOperator(player)) return true;
+			if (PlayerUtility.isOperator(player)) return true;
 
 			if (!ChunkManager.isChunkClaimed(chunk)) return true;
 
@@ -1681,8 +1681,8 @@ public final class RegionProtectionListener implements Listener {
 			SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(location);
 
 			return subArea != null
-					? PlayerUtils.hasPermissionFlag(region.getUniqueId(), subArea.getUniqueId(), player, flag, true)
-					: PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, flag, true);
+					? PlayerUtility.hasPermissionFlag(region.getUniqueId(), subArea.getUniqueId(), player, flag, true)
+					: PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, flag, true);
 		}
 
 		public static void hasPermission(Player player,

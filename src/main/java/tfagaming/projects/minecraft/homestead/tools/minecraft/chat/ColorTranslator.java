@@ -36,6 +36,9 @@ public final class ColorTranslator {
 			Map.entry('r', "reset")
 	);
 
+	private ColorTranslator() {
+	}
+
 	public static String legacyToMiniMessage(String input) {
 		if (input == null || input.isEmpty()) return input;
 

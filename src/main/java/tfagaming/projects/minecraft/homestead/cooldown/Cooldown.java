@@ -10,7 +10,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.Map;
 import java.util.UUID;
@@ -52,7 +52,7 @@ public final class Cooldown {
 		if (COOLDOWNS.containsKey(id)) {
 			CooldownData data = COOLDOWNS.get(id);
 
-			return !(data.getType().ignoreOperators() && PlayerUtils.isOperator(player));
+			return !(data.getType().ignoreOperators() && PlayerUtility.isOperator(player));
 		}
 
 		return false;
@@ -66,7 +66,7 @@ public final class Cooldown {
 
 			OfflinePlayer owner = region.getOwner();
 
-			return !(data.getType().ignoreOperators() && PlayerUtils.isOperator(owner));
+			return !(data.getType().ignoreOperators() && PlayerUtility.isOperator(owner));
 		}
 
 		return false;
@@ -78,7 +78,7 @@ public final class Cooldown {
 		if (COOLDOWNS.containsKey(id)) {
 			CooldownData data = COOLDOWNS.get(id);
 
-			return data.getType() == type && !(type.ignoreOperators() && PlayerUtils.isOperator(player));
+			return data.getType() == type && !(type.ignoreOperators() && PlayerUtility.isOperator(player));
 		}
 
 		return false;
@@ -92,7 +92,7 @@ public final class Cooldown {
 
 			OfflinePlayer owner = region.getOwner();
 
-			return data.getType() == type && !(data.getType().ignoreOperators() && PlayerUtils.isOperator(owner));
+			return data.getType() == type && !(data.getType().ignoreOperators() && PlayerUtility.isOperator(owner));
 		}
 
 		return false;

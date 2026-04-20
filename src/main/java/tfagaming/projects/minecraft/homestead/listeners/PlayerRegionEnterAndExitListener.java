@@ -22,7 +22,7 @@ import tfagaming.projects.minecraft.homestead.sessions.ClaimFlySession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
 
 import java.util.HashMap;
@@ -55,7 +55,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 					&& sessions.get(player.getUniqueId()).equals(region.getUniqueId())) {
 				return;
 			} else {
-				if (!PlayerUtils.isOperator(player) && ClaimFlySession.hasSession(player)) {
+				if (!PlayerUtility.isOperator(player) && ClaimFlySession.hasSession(player)) {
 					ClaimFlySession.removeSession(player);
 
 					player.setAllowFlight(false);
@@ -65,11 +65,11 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				}
 			}
 
-			if (!PlayerUtils.isOperator(player) && region.isPlayerBanned(player)) {
+			if (!PlayerUtility.isOperator(player) && region.isPlayerBanned(player)) {
 				Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
-					PlayerUtils.teleportPlayerToChunk(player, nearbyChunk);
+					PlayerUtility.teleportPlayerToChunk(player, nearbyChunk);
 				}
 
 				Messages.send(player, 28, new Placeholder()
@@ -80,12 +80,12 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				return;
 			}
 
-			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)
-					&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true) && !WarManager.isRegionInWar(region.getOwnerId())) {
+			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)
+					&& !PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true) && !WarManager.isRegionInWar(region.getOwnerId())) {
 				Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
-					PlayerUtils.teleportPlayerToChunk(player, nearbyChunk);
+					PlayerUtility.teleportPlayerToChunk(player, nearbyChunk);
 				}
 
 				return;
@@ -97,7 +97,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 						.add("{region-owner}", region.getOwner().getName())
 						.add("{region-description}", region.getDescription().replace("%player%", player.getName()));
 
-				PlayerUtils.sendMessageRegionEnter(player, placeholder);
+				PlayerUtility.sendMessageRegionEnter(player, placeholder);
 			}
 
 			sessions.put(player.getUniqueId(), region.getUniqueId());
@@ -128,9 +128,9 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			}
 
 			// Checking if player has an elytra
-			if (player.isGliding() && isWearingElytra(player) && !PlayerUtils.isOperator(player)) {
+			if (player.isGliding() && isWearingElytra(player) && !PlayerUtility.isOperator(player)) {
 				if (!region.isOwner(player)
-						&& !PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.ELYTRA, true)) {
+						&& !PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.ELYTRA, true)) {
 					player.setGliding(false);
 				}
 			}
@@ -152,7 +152,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 					placeholder.add("{region-description}", region.getDescription());
 				}
 
-				PlayerUtils.sendMessageRegionExit(player, placeholder);
+				PlayerUtility.sendMessageRegionExit(player, placeholder);
 			}
 
 			sessions.remove(player.getUniqueId());
@@ -169,7 +169,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				player.removePotionEffect(PotionEffectType.GLOWING);
 			}
 
-			if (!PlayerUtils.isOperator(player) && ClaimFlySession.hasSession(player)) {
+			if (!PlayerUtility.isOperator(player) && ClaimFlySession.hasSession(player)) {
 				ClaimFlySession.removeSession(player);
 
 				player.setAllowFlight(false);

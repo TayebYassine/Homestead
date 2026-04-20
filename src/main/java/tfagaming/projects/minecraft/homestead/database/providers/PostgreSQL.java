@@ -16,6 +16,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtility.*;
+
 public final class PostgreSQL implements Provider {
 	private static final String JDBC_URL = "jdbc:postgresql://";
 	private final String TABLE_PREFIX;
@@ -192,8 +194,8 @@ public final class PostgreSQL implements Provider {
 					continue;
 				}
 
-				Block point1 = SubArea.parseBlockLocation(world, rs.getString("point1"));
-				Block point2 = SubArea.parseBlockLocation(world, rs.getString("point2"));
+				Block point1 = parseBlockLocation(world, rs.getString("point1"));
+				Block point2 = parseBlockLocation(world, rs.getString("point2"));
 
 				List<SerializableMember> members =
 						Arrays.stream((String[]) rs.getArray("members").getArray())
@@ -481,8 +483,8 @@ public final class PostgreSQL implements Provider {
 				upsertStmt.setObject(2, subArea.regionId);
 				upsertStmt.setString(3, subArea.name);
 				upsertStmt.setString(4, subArea.worldId.toString());
-				upsertStmt.setString(5, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point1));
-				upsertStmt.setString(6, SubArea.toStringBlockLocation(subArea.getWorld(), subArea.point2));
+				upsertStmt.setString(5, toStringBlockLocation(subArea.getWorld(), subArea.point1));
+				upsertStmt.setString(6, toStringBlockLocation(subArea.getWorld(), subArea.point2));
 				upsertStmt.setArray(7, connection.createArrayOf("text", membersArray));
 				upsertStmt.setLong(8, subArea.flags);
 				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);

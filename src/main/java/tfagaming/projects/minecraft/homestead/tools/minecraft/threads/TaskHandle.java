@@ -1,11 +1,14 @@
-package tfagaming.projects.minecraft.homestead.tools.minecraft.papermc;
+package tfagaming.projects.minecraft.homestead.tools.minecraft.threads;
 
 import org.bukkit.scheduler.BukkitTask;
 
-public class TaskHandle {
+public final class TaskHandle {
 
 	private final Object task;
 
+	/**
+	 * @param task An instance of {@link BukkitTask} or {@link io.papermc.paper.threadedregions.scheduler.ScheduledTask}.
+	 */
 	public TaskHandle(Object task) {
 		this.task = task;
 	}

@@ -10,7 +10,10 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import java.util.List;
 import java.util.Map;
 
-public class Rewards {
+public final class Rewards {
+	private Rewards() {
+	}
+
 	public static int getChunksByEachMember(Region region) {
 		if (!Resources.<RegionsFile>get(ResourceType.Regions).isRewardsEnabled()) {
 			return 0;

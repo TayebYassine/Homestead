@@ -13,7 +13,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 
 import java.util.ArrayList;
@@ -26,10 +26,10 @@ public final class RegionLevels {
 		Level lvl = LevelManager.getLevelByRegion(region.getUniqueId());
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(26).replace("{region}", region.getName()),
+				MenuUtility.getTitle(26).replace("{region}", region.getName()),
 				9 * 5,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				buildLevelButtons(region),
 				(p, e) -> backButton.run(),
 				(p, c) -> {
@@ -42,7 +42,7 @@ public final class RegionLevels {
 		gui.setItemsPerPage(9);
 
 		gui.addOpenHandler(inv -> {
-			ItemStack empty = MenuUtils.getEmptySlot();
+			ItemStack empty = MenuUtility.getEmptySlot();
 			for (int i = 18; i < 27; i++) inv.setItem(i, empty);
 
 			int current = lvl == null ? 0 : lvl.getLevel();
@@ -61,14 +61,14 @@ public final class RegionLevels {
 					.add("{next-lvl-xp}", NumberUtils.convertToBalance(needed))
 					.add("{next-lvl-percentage}", NumberUtils.truncate(percentage));
 
-			ItemStack bluePane = MenuUtils.getButton(75, placeholder);
-			ItemStack grayPane = MenuUtils.getButton(76, placeholder);
+			ItemStack bluePane = MenuUtility.getButton(75, placeholder);
+			ItemStack grayPane = MenuUtility.getButton(76, placeholder);
 
 			for (int i = 0; i < blue; i++) inv.setItem(27 + i, bluePane);
 			for (int i = 0; i < gray; i++) inv.setItem(27 + blue + i, grayPane);
 		});
 
-		gui.addActionButton(1, MenuUtils.getButton(74, new Placeholder()
+		gui.addActionButton(1, MenuUtility.getButton(74, new Placeholder()
 				.add("{level}", lvl == null ? 0 : lvl.getLevel())
 				.add("{xp}", NumberUtils.convertToBalance(lvl == null ? 0 : lvl.getExperience()))
 				.add("{reward-chunks}", LevelRewards.getChunksByLevel(region))
@@ -78,7 +78,7 @@ public final class RegionLevels {
 		), (_a, _c) -> {
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> buildLevelButtons(Region region) {
@@ -95,7 +95,7 @@ public final class RegionLevels {
 					.add("{current-xp}", NumberUtils.convertToBalance(currentXp))
 					.add("{level-rewards}", getLevelRewardInfo(l));
 
-			list.add(MenuUtils.getButton(l <= unlocked ? 77 : 78, placeholder));
+			list.add(MenuUtility.getButton(l <= unlocked ? 77 : 78, placeholder));
 		}
 
 		return list;

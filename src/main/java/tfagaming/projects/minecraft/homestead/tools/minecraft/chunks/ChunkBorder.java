@@ -13,7 +13,10 @@ import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 
-public class ChunkBorder {
+public final class ChunkBorder {
+	private ChunkBorder() {
+	}
+
 	public static BorderType getMethod() {
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled();
 

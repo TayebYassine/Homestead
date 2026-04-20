@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.integrations.maps.DynmapAPI;
 import tfagaming.projects.minecraft.homestead.integrations.maps.Pl3xMapAPI;
 import tfagaming.projects.minecraft.homestead.integrations.maps.SquaremapAPI;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationUtility;
 
 public final class DynamicMaps {
 	public static DynmapAPI dynmap;
@@ -102,9 +103,7 @@ public final class DynamicMaps {
 		try {
 			Class.forName("org.dynmap.markers.MarkerSet");
 
-			Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("dynmap");
-
-			return plugin != null && plugin.isEnabled();
+			return IntegrationUtility.isEnabled(IntegrationUtility.Integration.DYNMAP);
 		} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
 			return false;
 		}
@@ -114,9 +113,7 @@ public final class DynamicMaps {
 		try {
 			Class.forName("net.pl3x.map.core.Pl3xMap");
 
-			Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Pl3xMap");
-
-			return plugin != null && plugin.isEnabled();
+			return IntegrationUtility.isEnabled(IntegrationUtility.Integration.PL3XMAP);
 		} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
 			return false;
 		}
@@ -126,9 +123,7 @@ public final class DynamicMaps {
 		try {
 			Class.forName("xyz.jpenilla.squaremap.api.Point");
 
-			Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("squaremap");
-
-			return plugin != null && plugin.isEnabled();
+			return IntegrationUtility.isEnabled(IntegrationUtility.Integration.SQUAREMAP);
 		} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
 			return false;
 		}
@@ -138,9 +133,7 @@ public final class DynamicMaps {
 		try {
 			Class.forName("de.bluecolored.bluemap.api.BlueMapAPI");
 
-			Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("BlueMap");
-
-			return plugin != null && plugin.isEnabled();
+			return IntegrationUtility.isEnabled(IntegrationUtility.Integration.BLUEMAP);
 		} catch (NoClassDefFoundError | ClassNotFoundException ignored) {
 			return false;
 		}

@@ -6,12 +6,12 @@ import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 
 public final class PlayerInfo {
 	public PlayerInfo(Player player, OfflinePlayer target, Runnable backButton) {
-		Menu gui = new Menu(MenuUtils.getTitle(27), 9 * 3);
+		Menu gui = new Menu(MenuUtility.getTitle(27), 9 * 3);
 
 		Placeholder placeholder = new Placeholder()
 				.add("{regions-count}", RegionManager.getRegionsOwnedByPlayer(target).size()
@@ -24,15 +24,15 @@ public final class PlayerInfo {
 				.add("{player-owned-regions}", Formatter.getPlayerOwnedRegions(target))
 				.add("{player-trusted-regions}", Formatter.getPlayerTrustedRegions(target));
 
-		gui.addItem(11, MenuUtils.getButton(21, placeholder, target), null);
-		gui.addItem(13, MenuUtils.getButton(22, placeholder), null);
-		gui.addItem(15, MenuUtils.getButton(23, placeholder), null);
+		gui.addItem(11, MenuUtility.getButton(21, placeholder, target), null);
+		gui.addItem(13, MenuUtility.getButton(22, placeholder), null);
+		gui.addItem(15, MenuUtility.getButton(23, placeholder), null);
 
-		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+		gui.addItem(18, MenuUtility.getBackButton(), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 			backButton.run();
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 }

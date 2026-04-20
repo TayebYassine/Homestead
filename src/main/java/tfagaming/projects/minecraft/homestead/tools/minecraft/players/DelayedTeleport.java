@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation;
+package tfagaming.projects.minecraft.homestead.tools.minecraft.players;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,17 +17,14 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DelayedTeleport {
+public final class DelayedTeleport {
 	public static final Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
 	public static final Map<UUID, Location> initialLocations = new ConcurrentHashMap<>();
 	public static final Map<UUID, BossBar> activeBossBars = new ConcurrentHashMap<>();
@@ -56,7 +53,7 @@ public class DelayedTeleport {
 
 		boolean ignoreOperators = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("delayed-teleport.ignore-operators");
 
-		if (ignoreOperators && PlayerUtils.isOperator(player)) {
+		if (ignoreOperators && PlayerUtility.isOperator(player)) {
 			teleportPlayer(player, location);
 			return;
 		}

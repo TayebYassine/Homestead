@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
@@ -39,9 +40,9 @@ import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.storage.StorageManager;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.papermc.TaskHandle;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationsUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,12 +74,6 @@ public class Homestead extends JavaPlugin {
 
 	public static Homestead getInstance() {
 		return INSTANCE;
-	}
-
-	public static boolean isExternalPluginEnabled(String pluginName) {
-		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin(pluginName);
-
-		return plugin != null && plugin.isEnabled();
 	}
 
 	public static boolean isFolia() {
@@ -146,7 +141,7 @@ public class Homestead extends JavaPlugin {
 			return;
 		}
 
-		if (!IntegrationsUtils.isVaultInstalled()) {
+		if (!IntegrationUtility.isEnabled(IntegrationUtility.Integration.VAULT)) {
 			Logger.error("Unable to start the plugin; \"Vault\" is required. Shutting down plugin instance...");
 
 			if (isFolia()) {
@@ -271,7 +266,7 @@ public class Homestead extends JavaPlugin {
 		if (ItemTransportingEntityValidateTargetListener.isClassFound()) {
 			Logger.debug("Event [ItemTransportingEntityValidateTargetListener] found, using PaperMC built-in event for Copper Golems interaction");
 
-			getServer().getPluginManager().registerEvents(new ItemTransportingEntityValidateTargetListener(), this);
+			registerEvent(new ItemTransportingEntityValidateTargetListener());
 		} else {
 			Logger.debug("Event [ItemTransportingEntityValidateTargetListener] not found, using alternative method with Entities Moving listener");
 
@@ -297,63 +292,23 @@ public class Homestead extends JavaPlugin {
 	}
 
 	private void registerEvents() {
+		registerEvent(new PlayerJoinListener());
+		registerEvent(new PlayerEnterEndExitPortalListener());
+		registerEvent(new DelayedTeleportListener());
+		registerEvent(new EntityDeathListener());
+		registerEvent(new BorderBreakListener());
+		registerEvent(new PlayerDeathListener());
+		registerEvent(new PlayerAutoClaimListener());
+		registerEvent(new CustomSignsListener());
+		registerEvent(new CommandsCooldownListener());
+		registerEvent(new SelectionToolListener());
+		registerEvent(new RegionProtectionListener());
+		registerEvent(new PlayerRegionEnterAndExitListener());
+	}
+
+	private void registerEvent(Listener listener) {
 		try {
-			getServer().getPluginManager().registerEvents(new PlayerRegionEnterAndExitListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new RegionProtectionListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new SelectionToolListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new CommandsCooldownListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new CustomSignsListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new PlayerAutoClaimListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new BorderBreakListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new EntityDeathListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new DelayedTeleportListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new PlayerEnterEndExitPortalListener(), this);
-		} catch (Exception e) {
-			Logger.error(e);
-		}
-		try {
-			getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+			getServer().getPluginManager().registerEvents(listener, this);
 		} catch (Exception e) {
 			Logger.error(e);
 		}
@@ -588,11 +543,11 @@ public class Homestead extends JavaPlugin {
 			moveCheckTask.cancel();
 		}
 
-		Logger.warning("Saving storage for each region...");
+		Logger.info("Saving storage for each region...");
 
 		StorageManager.saveAll();
 
-		Logger.warning("Cleaning cache...");
+		Logger.info("Cleaning cache...");
 
 		Homestead.regionsCache.clear();
 		Homestead.warsCache.clear();
@@ -601,8 +556,6 @@ public class Homestead extends JavaPlugin {
 		TargetRegionSession.SESSIONS.clear();
 		AutoClaimSession.SESSIONS.clear();
 		DelayedTeleport.cleanup();
-
-		Logger.info("Cache cleaned.");
 
 		Logger.info("Homestead has been disabled. Goodbye!");
 	}
@@ -616,10 +569,10 @@ public class Homestead extends JavaPlugin {
 	}
 
 	public void registerExternalPlugins() {
-		if (isExternalPluginEnabled("PlaceholderAPI")) {
-			boolean placeholderRegistered = new PlaceholderAPI().register();
+		if (IntegrationUtility.isEnabled(IntegrationUtility.Integration.PAPI)) {
+			boolean registered = new PlaceholderAPI().register();
 
-			if (!placeholderRegistered) {
+			if (!registered) {
 				Logger.error("Failed to register hooks.");
 			}
 		}

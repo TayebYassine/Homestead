@@ -3,6 +3,8 @@ package tfagaming.projects.minecraft.homestead.flags;
 import java.util.*;
 
 public final class RegionControlFlags {
+	private RegionControlFlags() {
+	}
 
 	public static final long TRUST_PLAYERS = 1L;
 	public static final long UNTRUST_PLAYERS = 1L << 1;

@@ -3,7 +3,6 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -15,9 +14,9 @@ import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.*;
 
@@ -29,16 +28,16 @@ public final class RegionMemberControlFlags {
 
 		for (String flagString : RegionControlFlags.getFlags()) {
 			boolean value = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), RegionControlFlags.valueOf(flagString));
-			items.add(MenuUtils.getFlagButton(flagString, value));
+			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
 		OfflinePlayer memberBukkit = member.bukkit();
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(7).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
+				MenuUtility.getTitle(7).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
 				9 * 5,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				items,
 				(_player, event) -> new RegionMembersMenu(player, region),
 				(_player, context) -> {
@@ -56,7 +55,7 @@ public final class RegionMemberControlFlags {
 
 					if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
-					if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+					if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 						Messages.send(player, 159);
 						return;
 					}
@@ -88,9 +87,9 @@ public final class RegionMemberControlFlags {
 
 					PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-					context.getInstance().replaceSlot(context.getIndex(), MenuUtils.getFlagButton(flagString, !isSet));
+					context.getInstance().replaceSlot(context.getIndex(), MenuUtility.getFlagButton(flagString, !isSet));
 				});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 }

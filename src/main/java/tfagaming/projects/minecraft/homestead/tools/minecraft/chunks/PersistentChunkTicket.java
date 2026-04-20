@@ -10,7 +10,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class PersistentChunkTicket {
+public final class PersistentChunkTicket {
+	private PersistentChunkTicket() {
+	}
+
 	public static void addPersistent(Homestead plugin, Chunk chunk) {
 		World world = chunk.getWorld();
 

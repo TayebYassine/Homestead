@@ -16,6 +16,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtility.*;
+
 public final class SQLite implements Provider {
 	private static final String JDBC_URL = "jdbc:sqlite:";
 	private final Connection connection;
@@ -264,8 +266,8 @@ public final class SQLite implements Provider {
 					continue;
 				}
 
-				Block point1 = SubArea.parseBlockLocation(world, rs.getString("point1"));
-				Block point2 = SubArea.parseBlockLocation(world, rs.getString("point2"));
+				Block point1 = parseBlockLocation(world, rs.getString("point1"));
+				Block point2 = parseBlockLocation(world, rs.getString("point2"));
 
 				List<SerializableMember> members = !rs.getString("members").isEmpty()
 						? Arrays.stream(rs.getString("members").split("§"))
@@ -323,8 +325,8 @@ public final class SQLite implements Provider {
 				upsertStmt.setString(2, subArea.regionId.toString());
 				upsertStmt.setString(3, subArea.name);
 				upsertStmt.setString(4, subArea.worldId.toString());
-				upsertStmt.setString(5, SubArea.toStringBlockLocation(world, subArea.point1));
-				upsertStmt.setString(6, SubArea.toStringBlockLocation(world, subArea.point2));
+				upsertStmt.setString(5, toStringBlockLocation(world, subArea.point1));
+				upsertStmt.setString(6, toStringBlockLocation(world, subArea.point2));
 				upsertStmt.setString(7, membersStr);
 				upsertStmt.setLong(8, subArea.flags);
 				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);

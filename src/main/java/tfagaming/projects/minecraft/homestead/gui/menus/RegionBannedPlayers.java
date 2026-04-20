@@ -18,9 +18,9 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +32,9 @@ public final class RegionBannedPlayers {
 		bannedPlayers = region.getBannedPlayers();
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(9), 9 * 4,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getTitle(9), 9 * 4,
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				getItems(player, region),
 				(_player, event) -> new RegionPlayersManagement(player, region),
 				(_player, context) -> {
@@ -56,7 +56,7 @@ public final class RegionBannedPlayers {
 						return;
 					}
 
-					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+					if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 							RegionControlFlags.UNBAN_PLAYERS)) {
 						return;
 					}
@@ -71,7 +71,7 @@ public final class RegionBannedPlayers {
 					context.getInstance().setItems(getItems(player, region));
 				});
 
-		gui.addActionButton(0, MenuUtils.getButton(28), (_player, event) -> {
+		gui.addActionButton(0, MenuUtility.getButton(28), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.players.ban")) {
@@ -101,7 +101,7 @@ public final class RegionBannedPlayers {
 					Messages.send(player, 29, new Placeholder().add("{playername}", message));
 					return false;
 				}
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.BAN_PLAYERS)) {
 					return false;
 				}
@@ -121,14 +121,14 @@ public final class RegionBannedPlayers {
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region)), 73);
 		});
 
-		gui.addActionButton(2, MenuUtils.getButton(32), (_player, event) -> {
+		gui.addActionButton(2, MenuUtility.getButton(32), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.players.unban")) {
 				Messages.send(player, 8);
 				return;
 			}
-			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					RegionControlFlags.UNBAN_PLAYERS)) {
 				return;
 			}
@@ -149,7 +149,7 @@ public final class RegionBannedPlayers {
 			Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region));
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {
@@ -164,7 +164,7 @@ public final class RegionBannedPlayers {
 					.add("{player-bannedat}", Formatter.getDate(bannedPlayer.getBannedAt()))
 					.add("{player-banreason}", bannedPlayer.getReason());
 
-			items.add(MenuUtils.getButton(27, placeholder, bannedPlayer.bukkit()));
+			items.add(MenuUtility.getButton(27, placeholder, bannedPlayer.bukkit()));
 		}
 
 		return items;

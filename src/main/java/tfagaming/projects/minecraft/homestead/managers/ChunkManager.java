@@ -14,8 +14,9 @@ import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.PersistentChunkTicket;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtility;
 
 import java.util.*;
 
@@ -99,7 +100,7 @@ public final class ChunkManager {
 			});
 		}
 
-		if (region.getLocation() != null && ChunkUtils.areEqual(region.getLocation().bukkit().getChunk(), chunk)) {
+		if (region.getLocation() != null && ChunkUtility.areEqual(region.getLocation().bukkit().getChunk(), chunk)) {
 			region.setLocationToNull();
 		}
 
@@ -128,8 +129,8 @@ public final class ChunkManager {
 		PersistentChunkTicket.removePersistent(Homestead.getInstance(), chunk);
 
 		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(id)) {
-			for (Chunk subAreaChunk : ChunkUtils.getChunksInArea(subArea.getFirstPoint(), subArea.getSecondPoint())) {
-				if (ChunkUtils.areEqual(subAreaChunk, chunk)) {
+			for (Chunk subAreaChunk : ChunkUtility.getChunksInArea(subArea.getFirstPoint(), subArea.getSecondPoint())) {
+				if (ChunkUtility.areEqual(subAreaChunk, chunk)) {
 					SubAreaManager.deleteSubArea(subArea.getUniqueId());
 					break;
 				}
@@ -161,7 +162,7 @@ public final class ChunkManager {
 		}
 
 		List<SerializableChunk> chunks = new ArrayList<>(byKey.values());
-		chunks.removeIf(c -> ChunkUtils.areEqual(c.bukkit(), chunkToRemove));
+		chunks.removeIf(c -> ChunkUtility.areEqual(c.bukkit(), chunkToRemove));
 
 		if (chunks.isEmpty()) return false;
 
@@ -375,7 +376,7 @@ public final class ChunkManager {
 
 		Location loc;
 		if (world.getEnvironment() == World.Environment.NETHER) {
-			loc = findSafeNetherLocation(world, x, z);
+			loc = ChunkUtility.findSafeNetherLocation(world, x, z);
 		} else {
 			int highest = world.getHighestBlockYAt(x, z);
 			loc = new Location(world, x, highest + 2, z);
@@ -386,50 +387,6 @@ public final class ChunkManager {
 			loc.setYaw(player.getLocation().getYaw());
 		}
 		return loc;
-	}
-
-	/**
-	 * Returns a safe location for a SerializableChunk.
-	 * @param player The player
-	 * @param chunk The chunk
-	 */
-	public static Location getLocation(Player player, SerializableChunk chunk) {
-		World world = chunk.getWorld();
-		if (world == null) return null;
-
-		int x = chunk.getX() * 16 + 8;
-		int z = chunk.getZ() * 16 + 8;
-
-		Location loc;
-		if (world.getEnvironment() == World.Environment.NETHER) {
-			loc = findSafeNetherLocation(world, x, z);
-		} else {
-			int highest = world.getHighestBlockYAt(x, z);
-			loc = new Location(world, x, highest + 2, z);
-		}
-
-		if (loc != null) {
-			loc.setPitch(player.getLocation().getPitch());
-			loc.setYaw(player.getLocation().getYaw());
-		}
-		return loc;
-	}
-
-	/**
-	 * Finds a safe standable location in the Nether near (x, z).
-	 * @param world The world
-	 * @param x The location (X axis)
-	 * @param z    The location (Z axis)
-	 */
-	private static Location findSafeNetherLocation(World world, int x, int z) {
-		for (int y = 32; y < 127; y++) {
-			Block block = world.getBlockAt(x, y, z);
-			Block above = world.getBlockAt(x, y + 1, z);
-			if (block.getType() == Material.AIR && above.getType() == Material.AIR) {
-				return new Location(world, x + 0.5, y, z + 0.5);
-			}
-		}
-		return null;
 	}
 
 	/**

@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
 import java.util.ArrayList;
@@ -29,10 +29,10 @@ public final class TopRegionsMenu {
 		regions = ListUtils.removeDuplications(regions);
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(sortMode.titleId),
+				MenuUtility.getTitle(sortMode.titleId),
 				9 * 5,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				getItems(player),
 				(_player, event) -> _player.closeInventory(),
 				(_player, context) -> {
@@ -52,7 +52,7 @@ public final class TopRegionsMenu {
 				}
 		);
 
-		gui.addActionButton(0, MenuUtils.getButton(sortMode.buttonId), (_player, event) -> {
+		gui.addActionButton(0, MenuUtility.getButton(sortMode.buttonId), (_player, event) -> {
 			if (event.isLeftClick()) {
 				new TopRegionsMenu(player, this.isPublicRegionsOnly, sortMode.next());
 			} else if (event.isRightClick()) {
@@ -62,7 +62,7 @@ public final class TopRegionsMenu {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 		});
 
-		gui.addActionButton(2, MenuUtils.getButton(81, new Placeholder()
+		gui.addActionButton(2, MenuUtility.getButton(81, new Placeholder()
 				.add("{is-public-regions}", Formatter.getToggle(this.isPublicRegionsOnly))
 		), (_player, event) -> {
 			if (event.isLeftClick()) {
@@ -70,7 +70,7 @@ public final class TopRegionsMenu {
 			}
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> getItems(Player player) {
@@ -92,7 +92,7 @@ public final class TopRegionsMenu {
 					.add("{region-members}", String.valueOf(region.getMembers().size()))
 					.add("{region-chunks}", String.valueOf(region.getChunks().size()));
 
-			items.add(MenuUtils.getButton(55, placeholder));
+			items.add(MenuUtility.getButton(55, placeholder));
 		}
 
 		return items;

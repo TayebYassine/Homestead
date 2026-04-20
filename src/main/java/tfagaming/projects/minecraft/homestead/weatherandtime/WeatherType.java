@@ -2,7 +2,10 @@ package tfagaming.projects.minecraft.homestead.weatherandtime;
 
 import java.util.List;
 
-public class WeatherType {
+public final class WeatherType {
+	private WeatherType() {
+	}
+
 	public final static int SERVER = 0;
 	public final static int CLEAR = 1;
 	public final static int RAIN = 2;

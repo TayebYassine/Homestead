@@ -10,7 +10,7 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +22,9 @@ public final class SubAreasMenu {
 		subAreas = SubAreaManager.getSubAreasOfRegion(region.getUniqueId());
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(14), 9 * 4,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getTitle(14), 9 * 4,
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				getItems(player, region),
 				(_player, event) -> new RegionMenu(player, region),
 				(_player, context) -> {
@@ -42,18 +42,18 @@ public final class SubAreasMenu {
 					}
 				});
 
-		gui.addActionButton(1, MenuUtils.getButton(72, new Placeholder()
+		gui.addActionButton(1, MenuUtility.getButton(72, new Placeholder()
 				.add("{max-subareas}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))
 		), null);
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (SubArea subArea : subAreas) {
-			items.add(MenuUtils.getButton(42, new Placeholder()
+			items.add(MenuUtility.getButton(42, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{subarea}", subArea.getName())
 					.add("{subarea-volume}", subArea.getVolume())

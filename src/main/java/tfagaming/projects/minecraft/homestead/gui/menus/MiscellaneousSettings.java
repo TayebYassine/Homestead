@@ -23,10 +23,10 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.Map;
 import java.util.UUID;
@@ -39,14 +39,14 @@ public final class MiscellaneousSettings {
 	private static final long DELETE_CONFIRM_WINDOW_MS = 6000L;
 
 	public MiscellaneousSettings(Player player, Region region) {
-		Menu gui = new Menu(MenuUtils.getTitle(12), 9 * 3);
+		Menu gui = new Menu(MenuUtility.getTitle(12), 9 * 3);
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region}", region.getName())
 				.add("{region-displayname}", region.getDisplayName())
 				.add("{region-description}", region.getDescription());
 
-		gui.addItem(11, MenuUtils.getButton(34, placeholder), (_player, event) -> {
+		gui.addItem(11, MenuUtility.getButton(34, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -75,7 +75,7 @@ public final class MiscellaneousSettings {
 
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 			}, (message) -> {
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
 					return false;
 				if (!StringUtils.isValidRegionName(message)) {
 					Messages.send(player, 1);
@@ -97,7 +97,7 @@ public final class MiscellaneousSettings {
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 78);
 		});
 
-		gui.addItem(12, MenuUtils.getButton(35, placeholder), (_player, event) -> {
+		gui.addItem(12, MenuUtility.getButton(35, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
 			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) {
@@ -121,7 +121,7 @@ public final class MiscellaneousSettings {
 
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 			}, (message) -> {
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
 					return false;
 				if (!StringUtils.isValidRegionDisplayName(message)) {
 					Messages.send(player, 14);
@@ -139,7 +139,7 @@ public final class MiscellaneousSettings {
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 79);
 		});
 
-		gui.addItem(13, MenuUtils.getButton(36, placeholder), (_player, event) -> {
+		gui.addItem(13, MenuUtility.getButton(36, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
 			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE)) {
@@ -162,7 +162,7 @@ public final class MiscellaneousSettings {
 
 				Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 			}, (message) -> {
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_DESCRIPTION))
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_DESCRIPTION))
 					return false;
 				if (!StringUtils.isValidRegionDescription(message)) {
 					Messages.send(player, 16);
@@ -180,7 +180,7 @@ public final class MiscellaneousSettings {
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 80);
 		});
 
-		gui.addItem(14, MenuUtils.getButton(37, placeholder), (_player, event) -> {
+		gui.addItem(14, MenuUtility.getButton(37, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
 			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE)) {
@@ -188,7 +188,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_SPAWN))
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_SPAWN))
 				return;
 
 			Location location = player.getLocation();
@@ -208,7 +208,7 @@ public final class MiscellaneousSettings {
 					.add("{location}", Formatter.getLocation(location)));
 		});
 
-		gui.addItem(15, MenuUtils.getButton(38, placeholder), (_player, event) -> {
+		gui.addItem(15, MenuUtility.getButton(38, placeholder), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
 			if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP)) {
@@ -236,7 +236,7 @@ public final class MiscellaneousSettings {
 					Messages.send(player, 29, new Placeholder().add("{playername}", message));
 					return false;
 				}
-				if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+				if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 					Messages.send(player, 30);
 					return false;
 				}
@@ -252,10 +252,10 @@ public final class MiscellaneousSettings {
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)), 81);
 		});
 
-		gui.addItem(22, MenuUtils.getButton(64, placeholder), (_player, event) -> {
+		gui.addItem(22, MenuUtility.getButton(64, placeholder), (_player, event) -> {
 			if (!(event.isRightClick() && event.isShiftClick())) return;
 
-			if (!PlayerUtils.isOperator(_player) && !region.isOwner(_player)) {
+			if (!PlayerUtility.isOperator(_player) && !region.isOwner(_player)) {
 				Messages.send(_player, 159);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
@@ -291,11 +291,11 @@ public final class MiscellaneousSettings {
 			Messages.send(player, 158);
 		});
 
-		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+		gui.addItem(18, MenuUtility.getBackButton(), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 			new RegionMenu(player, region);
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 }

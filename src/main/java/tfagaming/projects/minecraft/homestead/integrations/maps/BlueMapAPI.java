@@ -21,7 +21,7 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -98,7 +98,7 @@ public class BlueMapAPI {
 	public void addRegionMarker(Region region) {
 		if (region == null || region.getChunks() == null || region.getChunks().isEmpty()) return;
 
-		boolean isOperator = PlayerUtils.isOperator(region.getOwner());
+		boolean isOperator = PlayerUtility.isOperator(region.getOwner());
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region}", region.getName())

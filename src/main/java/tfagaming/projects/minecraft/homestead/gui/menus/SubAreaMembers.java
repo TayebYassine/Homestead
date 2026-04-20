@@ -14,9 +14,9 @@ import tfagaming.projects.minecraft.homestead.structure.SubArea;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +28,9 @@ public final class SubAreaMembers {
 		members = subArea.getMembers();
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(24), 9 * 4,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getTitle(24), 9 * 4,
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				getItems(player, region, subArea),
 				(_player, event) -> new SubAreaMenu(player, region, subArea),
 				(_player, context) -> {
@@ -58,7 +58,7 @@ public final class SubAreaMembers {
 							return;
 						}
 
-						if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+						if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 								RegionControlFlags.MANAGE_SUBAREAS)) {
 							return;
 						}
@@ -74,7 +74,7 @@ public final class SubAreaMembers {
 					}
 				});
 
-		gui.addActionButton(1, MenuUtils.getButton(68), (_player, event) -> {
+		gui.addActionButton(1, MenuUtility.getButton(68), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.subareas.players")) {
@@ -97,7 +97,7 @@ public final class SubAreaMembers {
 					Messages.send(player, 29, new Placeholder().add("{playername}", message));
 					return false;
 				}
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.MANAGE_SUBAREAS)) {
 					return false;
 				}
@@ -117,7 +117,7 @@ public final class SubAreaMembers {
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new SubAreaMembers(player, region, subArea)), 75);
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> getItems(Player player, Region region, SubArea subArea) {
@@ -126,7 +126,7 @@ public final class SubAreaMembers {
 		for (SerializableMember member : members) {
 			OfflinePlayer memberBukkit = member.bukkit();
 
-			items.add(MenuUtils.getButton(69, new Placeholder()
+			items.add(MenuUtility.getButton(69, new Placeholder()
 							.add("{region}", region.getName())
 							.add("{subarea}", subArea.getName())
 							.add("{playername}", memberBukkit == null ? "?" : memberBukkit.getName()),

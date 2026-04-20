@@ -12,7 +12,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
-import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.TaxesUtility;
 
 public final class MemberTaxes {
 	private MemberTaxes() {
@@ -32,7 +32,7 @@ public final class MemberTaxes {
 
 			for (SerializableMember member : region.getMembers()) {
 				if (member.getTaxesAt() == 0) {
-					region.setMemberTaxesAt(member, TaxesUtils.getNewTaxesAt());
+					region.setMemberTaxesAt(member, TaxesUtility.getNewTaxesAt());
 
 					continue;
 				}
@@ -44,7 +44,7 @@ public final class MemberTaxes {
 						PlayerBank.withdraw(targetPlayer, amountToPay);
 						region.depositBank(amountToPay);
 
-						region.setMemberTaxesAt(member, TaxesUtils.getNewTaxesAt());
+						region.setMemberTaxesAt(member, TaxesUtility.getNewTaxesAt());
 
 						if (targetPlayer.isOnline()) {
 							Player targetPlayerOnline = (Player) targetPlayer;

@@ -12,7 +12,7 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.structure.serializable.*;
-import tfagaming.projects.minecraft.homestead.tools.other.TaxesUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.TaxesUtility;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -358,7 +358,7 @@ public class Region {
 
 			SerializableMember member = new SerializableMember(player, newFlags, 0L);
 
-			member.setTaxesAt(TaxesUtils.getNewTaxesAt());
+			member.setTaxesAt(TaxesUtility.getNewTaxesAt());
 
 			members.add(member);
 			updateCache();

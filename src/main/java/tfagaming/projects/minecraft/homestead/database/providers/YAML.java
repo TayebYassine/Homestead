@@ -18,6 +18,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtility.*;
+
 public final class YAML implements Provider {
 	private final File regionsFolder;
 	private final File warsFolder;
@@ -206,8 +208,8 @@ public final class YAML implements Provider {
 			World world = resolveWorld(Objects.requireNonNull(cfg.getString("worldName")));
 			if (world == null) continue;
 
-			Block point1 = SubArea.parseBlockLocation(world, Objects.requireNonNull(cfg.getString("point1")));
-			Block point2 = SubArea.parseBlockLocation(world, Objects.requireNonNull(cfg.getString("point2")));
+			Block point1 = parseBlockLocation(world, Objects.requireNonNull(cfg.getString("point1")));
+			Block point2 = parseBlockLocation(world, Objects.requireNonNull(cfg.getString("point2")));
 
 			List<SerializableMember> members = cfg.getStringList("members").stream()
 					.map(SerializableMember::fromString)
@@ -408,8 +410,8 @@ public final class YAML implements Provider {
 				cfg.set("regionId", sub.regionId.toString());
 				cfg.set("name", sub.name);
 				cfg.set("worldName", sub.worldId.toString());
-				cfg.set("point1", SubArea.toStringBlockLocation(sub.getWorld(), sub.point1));
-				cfg.set("point2", SubArea.toStringBlockLocation(sub.getWorld(), sub.point2));
+				cfg.set("point1", toStringBlockLocation(sub.getWorld(), sub.point1));
+				cfg.set("point2", toStringBlockLocation(sub.getWorld(), sub.point2));
 				cfg.set("members", sub.members.stream()
 						.map(SerializableMember::toString)
 						.collect(Collectors.toList()));

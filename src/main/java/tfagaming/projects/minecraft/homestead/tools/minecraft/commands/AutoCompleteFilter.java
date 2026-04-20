@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class AutoCompleteFilter {
+	private AutoCompleteFilter() {
+	}
+
 	public static List<String> filter(List<String> suggestions, String[] args) {
 		suggestions = ListUtils.removeDuplications(suggestions);
 

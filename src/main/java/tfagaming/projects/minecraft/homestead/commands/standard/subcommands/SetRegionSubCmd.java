@@ -28,7 +28,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
 
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.RENAME_REGION)) {
 					return true;
 				}
@@ -153,7 +153,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.SET_DESCRIPTION)) {
 					return true;
 				}
@@ -254,7 +254,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.SET_SPAWN)) {
 					return true;
 				}
@@ -424,7 +424,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!PlayerUtils.isOperator(player)
+				if (!PlayerUtility.isOperator(player)
 						&& !(region.isOwner(player) || region.isPlayerMember(player))) {
 					Messages.send(player, 10);
 					return true;
@@ -466,7 +466,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 			suggestions.addAll(
 					List.of("displayname", "target", "description", "mapcolor", "spawn", "icon", "tax"));
 		else if (args.length == 2 && args[0].equalsIgnoreCase("target")) {
-			if (PlayerUtils.isOperator(player)) {
+			if (PlayerUtility.isOperator(player)) {
 				suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
 			} else {
 				suggestions.addAll(

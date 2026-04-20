@@ -21,12 +21,12 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.PersistentChunkTicket;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.ButtonData;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility.ButtonData;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +38,9 @@ public final class RegionClaimedChunks {
 		this.chunks = region.getChunks();
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(11), 9 * 5,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getTitle(11), 9 * 5,
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				getItems(player, region),
 				(_player, event) -> new RegionMenu(player, region),
 				(_player, context) -> {
@@ -63,7 +63,7 @@ public final class RegionClaimedChunks {
 
 						new DelayedTeleport(player, chunk.bukkitLocation());
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-						if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+						if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 							Messages.send(player, 30);
 							return;
 						}
@@ -101,7 +101,7 @@ public final class RegionClaimedChunks {
 							return;
 						}
 
-						if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+						if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 								RegionControlFlags.UNCLAIM_CHUNKS)) {
 							return;
 						}
@@ -125,11 +125,11 @@ public final class RegionClaimedChunks {
 					}
 				});
 
-		gui.addActionButton(1, MenuUtils.getButton(73, new Placeholder()
+		gui.addActionButton(1, MenuUtility.getButton(73, new Placeholder()
 				.add("{max-chunks}", Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION))
 		), null);
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {
@@ -145,7 +145,7 @@ public final class RegionClaimedChunks {
 					.add("{chunk-location}", Formatter.getLocation(chunk.bukkitLocation()))
 					.add("{chunk-is-loaded}", Formatter.getBoolean(chunk.isForceLoaded()));
 
-			ButtonData data = MenuUtils.getButtonData(33);
+			ButtonData data = MenuUtility.getButtonData(33);
 
 			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD")) {
 				data.setOriginalType(switch (chunk.bukkitLocation().getWorld().getEnvironment()) {
@@ -155,7 +155,7 @@ public final class RegionClaimedChunks {
 				});
 			}
 
-			items.add(MenuUtils.getButton(data, placeholder));
+			items.add(MenuUtility.getButton(data, placeholder));
 		}
 
 		return items;

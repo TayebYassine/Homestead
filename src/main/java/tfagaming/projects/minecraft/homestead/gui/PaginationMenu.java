@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 
 import java.util.HashMap;
 import java.util.List;
@@ -230,7 +230,7 @@ public class PaginationMenu implements Listener {
 		if (page > 0) {
 			inventory.setItem(size - 9, prevPageItem);
 		} else {
-			inventory.setItem(size - 9, MenuUtils.getBackButton());
+			inventory.setItem(size - 9, MenuUtility.getBackButton());
 		}
 
 		if (end < items.size()) {

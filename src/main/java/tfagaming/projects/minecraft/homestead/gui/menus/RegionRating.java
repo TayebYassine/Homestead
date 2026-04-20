@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
 public final class RegionRating {
@@ -16,7 +16,7 @@ public final class RegionRating {
 	private static final int[] RATING_BUTTON_IDS = {48, 49, 50, 51, 52};
 
 	public RegionRating(Player player, Region region, Runnable backButton) {
-		Menu gui = new Menu(MenuUtils.getTitle(17).replace("{region}", region.getName()), 9 * 3);
+		Menu gui = new Menu(MenuUtility.getTitle(17).replace("{region}", region.getName()), 9 * 3);
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region}", region.getName())
@@ -27,7 +27,7 @@ public final class RegionRating {
 		for (int i = 0; i < RATING_SLOTS.length; i++) {
 			final int rating = i + 1;
 
-			gui.addItem(RATING_SLOTS[i], MenuUtils.getButton(RATING_BUTTON_IDS[i], placeholder), (_player, event) -> {
+			gui.addItem(RATING_SLOTS[i], MenuUtility.getButton(RATING_BUTTON_IDS[i], placeholder), (_player, event) -> {
 				if (RegionManager.findRegion(region.getUniqueId()) == null) {
 					player.closeInventory();
 					return;
@@ -43,10 +43,10 @@ public final class RegionRating {
 		}
 
 		gui.addItem(22, region.isPlayerRated(player)
-						? MenuUtils.getButton(54, placeholder)
-						: MenuUtils.getButton(53), null);
+						? MenuUtility.getButton(54, placeholder)
+						: MenuUtility.getButton(53), null);
 
-		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+		gui.addItem(18, MenuUtility.getBackButton(), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -56,6 +56,6 @@ public final class RegionRating {
 			backButton.run();
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 }

@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.sessions.ClaimFlySession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 public class FlySubCmd extends SubCommandBuilder {
 	public FlySubCmd() {
@@ -33,7 +33,7 @@ public class FlySubCmd extends SubCommandBuilder {
 		Chunk chunk = player.getLocation().getChunk();
 		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-		if (region == null || (!PlayerUtils.isOperator(player) && !(region.isOwner(player) || region.isPlayerMember(player)))) {
+		if (region == null || (!PlayerUtility.isOperator(player) && !(region.isOwner(player) || region.isPlayerMember(player)))) {
 			Messages.send(player, 207);
 			return true;
 		}

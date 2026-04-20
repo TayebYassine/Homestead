@@ -13,7 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LevelRewards {
+public final class LevelRewards {
+	private LevelRewards() {
+	}
+
 	public static int getChunksByLevel(Region region) {
 		return getHighestLevelReward(region, "chunks");
 	}

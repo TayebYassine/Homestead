@@ -10,7 +10,7 @@ import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.storage.RegionStorage;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 public class StorageSubCmd extends SubCommandBuilder {
 	public StorageSubCmd() {
@@ -41,7 +41,7 @@ public class StorageSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.isOperator(player) && !region.isOwner(player) && !region.isPlayerMember(player)) {
+		if (!PlayerUtility.isOperator(player) && !region.isOwner(player) && !region.isPlayerMember(player)) {
 			Messages.send(player, 30);
 			return true;
 		}

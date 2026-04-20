@@ -18,13 +18,13 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 public final class SubAreaMenu {
 	public SubAreaMenu(Player player, Region region, SubArea subArea) {
-		Menu gui = new Menu(MenuUtils.getTitle(15).replace("{subarea}", subArea.getName()), 9 * 3);
+		Menu gui = new Menu(MenuUtility.getTitle(15).replace("{subarea}", subArea.getName()), 9 * 3);
 
 		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
 		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled");
@@ -39,7 +39,7 @@ public final class SubAreaMenu {
 				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
 				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 
-		gui.addItem(11, MenuUtils.getButton(43, placeholder), (_player, event) -> {
+		gui.addItem(11, MenuUtility.getButton(43, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -59,7 +59,7 @@ public final class SubAreaMenu {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				Homestead.getInstance().runSyncTask(() -> new SubAreaMenu(player, region, subArea));
 			}, (message) -> {
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.MANAGE_SUBAREAS)) {
 					return false;
 				}
@@ -83,7 +83,7 @@ public final class SubAreaMenu {
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new SubAreaMenu(player, region, subArea)), 88);
 		});
 
-		gui.addItem(12, MenuUtils.getButton(44, placeholder), (_player, event) -> {
+		gui.addItem(12, MenuUtility.getButton(44, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -94,7 +94,7 @@ public final class SubAreaMenu {
 			new SubAreaFlagsMenu(player, region, subArea);
 		});
 
-		gui.addItem(13, MenuUtils.getButton(70, placeholder), (_player, event) -> {
+		gui.addItem(13, MenuUtility.getButton(70, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -105,7 +105,7 @@ public final class SubAreaMenu {
 			new SubAreaMembers(player, region, subArea);
 		});
 
-		gui.addItem(14, MenuUtils.getButton(71, placeholder), (_player, event) -> {
+		gui.addItem(14, MenuUtility.getButton(71, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -113,7 +113,7 @@ public final class SubAreaMenu {
 
 			if (!event.isLeftClick()) return;
 
-			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 				Messages.send(player, 159);
 				return;
 			}
@@ -127,7 +127,7 @@ public final class SubAreaMenu {
 			}
 		});
 
-		gui.addItem(15, MenuUtils.getButton(45, placeholder), (_player, event) -> {
+		gui.addItem(15, MenuUtility.getButton(45, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -139,7 +139,7 @@ public final class SubAreaMenu {
 				Messages.send(player, 8);
 				return;
 			}
-			if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					RegionControlFlags.MANAGE_SUBAREAS)) {
 				return;
 			}
@@ -149,7 +149,7 @@ public final class SubAreaMenu {
 			new SubAreasMenu(player, region);
 		});
 
-		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+		gui.addItem(18, MenuUtility.getBackButton(), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -159,6 +159,6 @@ public final class SubAreaMenu {
 			new SubAreasMenu(player, region);
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 }

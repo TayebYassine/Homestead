@@ -1,6 +1,9 @@
 package tfagaming.projects.minecraft.homestead.flags;
 
 public final class FlagsCalculator {
+	private FlagsCalculator() {
+	}
+
 	/**
 	 * Add Bitwise flags with other flags.<br>
 	 * <b>Warning</b>: Do not mix {@link PlayerFlags}, {@link WorldFlags}, and {@link RegionControlFlags}.

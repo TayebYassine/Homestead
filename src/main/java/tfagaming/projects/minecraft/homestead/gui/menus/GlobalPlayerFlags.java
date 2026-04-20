@@ -2,7 +2,6 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
@@ -14,14 +13,12 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 
 public final class GlobalPlayerFlags {
 
@@ -30,13 +27,13 @@ public final class GlobalPlayerFlags {
 
 		for (String flagString : PlayerFlags.getFlags()) {
 			boolean value = FlagsCalculator.isFlagSet(region.getPlayerFlags(), PlayerFlags.valueOf(flagString));
-			items.add(MenuUtils.getFlagButton(flagString, value));
+			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(2), 9 * 5,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getTitle(2), 9 * 5,
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				items,
 				(_player, event) -> new RegionMenu(player, region),
 				(_player, context) -> {
@@ -52,7 +49,7 @@ public final class GlobalPlayerFlags {
 						return;
 					}
 
-					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+					if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 							RegionControlFlags.SET_GLOBAL_FLAGS)) {
 						return;
 					}
@@ -79,9 +76,9 @@ public final class GlobalPlayerFlags {
 
 					PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-					context.getInstance().replaceSlot(context.getIndex(), MenuUtils.getFlagButton(flagString, !isSet));
+					context.getInstance().replaceSlot(context.getIndex(), MenuUtility.getFlagButton(flagString, !isSet));
 				});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 }

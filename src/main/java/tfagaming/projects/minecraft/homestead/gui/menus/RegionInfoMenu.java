@@ -7,11 +7,11 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorti
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 
 public final class RegionInfoMenu {
 	public RegionInfoMenu(Player player, Region region, Runnable backButton) {
-		Menu gui = new Menu(MenuUtils.getTitle(8).replace("{region}", region.getName()), 9 * 3);
+		Menu gui = new Menu(MenuUtility.getTitle(8).replace("{region}", region.getName()), 9 * 3);
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region}", region.getName())
@@ -26,10 +26,10 @@ public final class RegionInfoMenu {
 				.add("{region-rank-members}", RegionManager.getRank(RegionSorting.MEMBERS_COUNT, region.getUniqueId()))
 				.add("{region-rank-rating}", RegionManager.getRank(RegionSorting.RATING, region.getUniqueId()));
 
-		gui.addItem(11, MenuUtils.getButton(25, placeholder), null);
-		gui.addItem(13, MenuUtils.getButton(26, placeholder), null);
+		gui.addItem(11, MenuUtility.getButton(25, placeholder), null);
+		gui.addItem(13, MenuUtility.getButton(26, placeholder), null);
 
-		gui.addItem(15, MenuUtils.getButton(61, placeholder), (_player, event) -> {
+		gui.addItem(15, MenuUtility.getButton(61, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -39,7 +39,7 @@ public final class RegionInfoMenu {
 			new RegionRating(player, region, () -> new RegionInfoMenu(player, region, backButton));
 		});
 
-		gui.addItem(18, MenuUtils.getBackButton(), (_player, event) -> {
+		gui.addItem(18, MenuUtility.getBackButton(), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {
 				player.closeInventory();
 				return;
@@ -49,6 +49,6 @@ public final class RegionInfoMenu {
 			backButton.run();
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 }

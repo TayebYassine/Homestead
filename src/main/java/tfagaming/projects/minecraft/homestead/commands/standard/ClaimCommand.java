@@ -23,10 +23,10 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.hasControlRegionPermissionFlag(
+		if (!PlayerUtility.hasControlRegionPermissionFlag(
 				region.getUniqueId(),
 				player,
 				RegionControlFlags.CLAIM_CHUNKS)) {
@@ -85,7 +85,7 @@ public class ClaimCommand extends CommandBuilder {
 
 		List<Chunk> chunksToClaim = new ArrayList<>();
 
-		for (Chunk chunk : ChunkUtils.getChunksInArea(firstCorner, secondCorner)) {
+		for (Chunk chunk : ChunkUtility.getChunksInArea(firstCorner, secondCorner)) {
 			if (ChunkManager.isChunkInDisabledWorld(chunk)) {
 				Messages.send(player, 20);
 				return true;
@@ -174,7 +174,7 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.hasControlRegionPermissionFlag(
+		if (!PlayerUtility.hasControlRegionPermissionFlag(
 				region.getUniqueId(),
 				player,
 				RegionControlFlags.CLAIM_CHUNKS)) {

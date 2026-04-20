@@ -4,6 +4,9 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public final class PlayerSound {
+	private PlayerSound() {
+	}
+
 	public static void play(Player player, PredefinedSound sound) {
 		player.playSound(player.getLocation(), sound.getSound(), sound.getVolume(), sound.getPitch());
 	}

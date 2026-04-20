@@ -25,10 +25,10 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				RegionControlFlags.MANAGE_SUBAREAS)) {
 			return true;
 		}
@@ -89,14 +89,14 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				Block firstCorner = session.getFirstPosition();
 				Block secondCorner = session.getSecondPosition();
 
-				for (Chunk chunk : ChunkUtils.getChunksInArea(firstCorner, secondCorner)) {
+				for (Chunk chunk : ChunkUtility.getChunksInArea(firstCorner, secondCorner)) {
 					if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
 						Messages.send(player, 55);
 						return true;
 					}
 				}
 
-				if (SubAreaUtils.isIntersectingOtherSubArea(region.getUniqueId(), new SerializableBlock(firstCorner),
+				if (SubAreaUtility.isIntersectingOtherSubArea(region.getUniqueId(), new SerializableBlock(firstCorner),
 						new SerializableBlock(secondCorner))) {
 					Messages.send(player, 56);
 					return true;
@@ -119,7 +119,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				int volume = SubArea.getVolume(firstCorner, secondCorner);
+				int volume = SubAreaUtility.getVolume(firstCorner, secondCorner);
 				int maxVolume = Limits.getRegionLimit(region, Limits.LimitType.MAX_SUBAREA_VOLUME);
 
 				if (volume >= maxVolume) {
@@ -243,14 +243,14 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				Block firstCorner = session.getFirstPosition();
 				Block secondCorner = session.getSecondPosition();
 
-				for (Chunk chunk : ChunkUtils.getChunksInArea(firstCorner, secondCorner)) {
+				for (Chunk chunk : ChunkUtility.getChunksInArea(firstCorner, secondCorner)) {
 					if (!(ChunkManager.isChunkClaimedByRegion(region, chunk) && firstCorner.getWorld().getUID().equals(subArea.getWorldId()))) {
 						Messages.send(player, 55);
 						return true;
 					}
 				}
 
-				SubArea intersectedSubArea = SubAreaUtils.getIntersectedSubArea(region.getUniqueId(), new SerializableBlock(firstCorner),
+				SubArea intersectedSubArea = SubAreaUtility.getIntersectedSubArea(region.getUniqueId(), new SerializableBlock(firstCorner),
 						new SerializableBlock(secondCorner));
 
 				if (intersectedSubArea != null && !intersectedSubArea.getUniqueId().equals(subArea.getUniqueId())) {
@@ -372,7 +372,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.MANAGE_SUBAREAS)) {
 					return true;
 				}

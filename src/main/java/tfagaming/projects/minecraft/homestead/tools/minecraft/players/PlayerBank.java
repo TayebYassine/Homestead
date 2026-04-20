@@ -4,6 +4,9 @@ import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
 
 public final class PlayerBank {
+	private PlayerBank() {
+	}
+
 	public static double get(OfflinePlayer player) {
 		if (!Homestead.vault.isEconomyReady()) {
 			return 0.0;

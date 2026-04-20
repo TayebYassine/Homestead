@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ForceUnclaimCommand extends CommandBuilder {
 			return false;
 		}
 
-		if (!PlayerUtils.isOperator(player)) {
+		if (!PlayerUtility.isOperator(player)) {
 			Messages.send(sender, 8);
 			return true;
 		}

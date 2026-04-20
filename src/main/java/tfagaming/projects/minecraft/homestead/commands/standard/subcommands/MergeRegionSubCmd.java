@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 			Messages.send(player, 30);
 			return true;
 		}

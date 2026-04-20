@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapColor {
+public final class MapColor {
+	private MapColor() {
+	}
+
 	// Most used colors
 	public static final int RED = 0xFF0000;
 	public static final int GREEN = 0x00FF00;
@@ -151,7 +154,7 @@ public class MapColor {
 		String name = COLOR_CODE_TO_NAME.get(color);
 
 		if (name == null) {
-			return "Unknown";
+			return "UNDEFINED";
 		}
 
 		return formatColorName(name);

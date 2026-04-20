@@ -3,6 +3,9 @@ package tfagaming.projects.minecraft.homestead.flags;
 import java.util.*;
 
 public final class PlayerFlags {
+	private PlayerFlags() {
+	}
+
 	public static final long BREAK_BLOCKS = 1L;
 	public static final long PLACE_BLOCKS = 1L << 1;
 	public static final long CONTAINERS = 1L << 2;

@@ -2,7 +2,10 @@ package tfagaming.projects.minecraft.homestead.weatherandtime;
 
 import java.util.List;
 
-public class TimeType {
+public final class TimeType {
+	private TimeType() {
+	}
+
 	public final static int SERVER = 0;
 	public final static int MORNING = 1;
 	public final static int NOON = 6000;

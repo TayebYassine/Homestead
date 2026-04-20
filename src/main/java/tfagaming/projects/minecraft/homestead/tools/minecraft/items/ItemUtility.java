@@ -12,7 +12,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils.ButtonData;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility.ButtonData;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemUtils {
+public final class ItemUtility {
+	private ItemUtility() {
+	}
 
 	private static List<String> buildLore(List<String> lore) {
 		if (lore == null) return null;

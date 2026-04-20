@@ -11,9 +11,9 @@ import tfagaming.projects.minecraft.homestead.structure.serializable.Serializabl
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,9 @@ public final class RegionLogs {
 		logs = region.getLogs(true);
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(13), 9 * 5,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getTitle(13), 9 * 5,
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				getItems(player, region),
 				(_player, event) -> new RegionMenu(player, region),
 				(_player, context) -> {
@@ -38,7 +38,7 @@ public final class RegionLogs {
 						return;
 					}
 
-					if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+					if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 							RegionControlFlags.MANAGE_LOGS)) {
 						return;
 					}
@@ -51,7 +51,7 @@ public final class RegionLogs {
 						context.getInstance().setItems(getItems(player, region));
 
 					} else if (context.getEvent().isRightClick()) {
-						if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+						if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 							Messages.send(player, 159);
 							return;
 						}
@@ -62,7 +62,7 @@ public final class RegionLogs {
 					}
 				});
 
-		gui.addActionButton(0, MenuUtils.getButton(46), (_player, event) -> {
+		gui.addActionButton(0, MenuUtility.getButton(46), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
 			if (region.getLogs().isEmpty()) {
@@ -75,10 +75,10 @@ public final class RegionLogs {
 			Homestead.getInstance().runSyncTask(() -> new RegionLogs(player, region));
 		});
 
-		gui.addActionButton(2, MenuUtils.getButton(41), (_player, event) -> {
+		gui.addActionButton(2, MenuUtility.getButton(41), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
-			if (!PlayerUtils.isOperator(player) && !region.isOwner(player)) {
+			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 				Messages.send(player, 159);
 				return;
 			}
@@ -93,7 +93,7 @@ public final class RegionLogs {
 			Homestead.getInstance().runSyncTask(() -> new RegionLogs(player, region));
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {
@@ -109,7 +109,7 @@ public final class RegionLogs {
 					.add("{log-author}", log.getAuthor())
 					.add("{log-message}", wrapMessage(log.getMessage()));
 
-			items.add(MenuUtils.getButton(log.isRead() ? 40 : 39, placeholder));
+			items.add(MenuUtility.getButton(log.isRead() ? 40 : 39, placeholder));
 		}
 
 		return items;

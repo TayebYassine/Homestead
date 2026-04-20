@@ -9,8 +9,8 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +23,9 @@ public final class RegionsWithWelcomeSigns {
 				new ArrayList<>(RegionManager.getRegionsWithWelcomeSigns()));
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(0), 9 * 5,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getTitle(0), 9 * 5,
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				getItems(player),
 				(_player, event) -> _player.closeInventory(),
 				(_player, context) -> {
@@ -50,14 +50,14 @@ public final class RegionsWithWelcomeSigns {
 					}
 				});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> getItems(Player player) {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (Region region : regions) {
-			items.add(MenuUtils.getButton(47, new Placeholder()
+			items.add(MenuUtility.getButton(47, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{region-displayname}", region.getDisplayName())
 					.add("{region-owner}", region.getOwner().getName())

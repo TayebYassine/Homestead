@@ -15,8 +15,8 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.teleportation.DelayedTeleport;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,10 +112,10 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 				return true;
 			}
 
-			if (!PlayerUtils.isOperator(player)
+			if (!PlayerUtility.isOperator(player)
 					&& !region.isOwner(player)
-					&& !(PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
-					&& PlayerUtils.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true)
+					&& !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
+					&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true)
 					&& player.hasPermission("homestead.region.teleport"))) {
 				Messages.send(player, 131, new Placeholder()
 						.add("{region}", region.getName())
@@ -140,7 +140,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			if (Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeSignEnabled()) {
 				suggestions.addAll(RegionManager.getPlayersWithRegionsHasWelcomeSigns().stream().map(OfflinePlayer::getName).toList());
 			} else {
-				if (PlayerUtils.isOperator(player)) {
+				if (PlayerUtility.isOperator(player)) {
 					suggestions.addAll(
 							RegionManager.getAll().stream().map(Region::getName).toList());
 				} else {

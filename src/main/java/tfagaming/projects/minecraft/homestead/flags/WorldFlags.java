@@ -3,6 +3,8 @@ package tfagaming.projects.minecraft.homestead.flags;
 import java.util.*;
 
 public final class WorldFlags {
+	private WorldFlags() {
+	}
 
 	public static final long PASSIVE_ENTITY_SPAWN = 1L;
 	public static final long HOSTILE_ENTITY_SPAWN = 1L << 1;

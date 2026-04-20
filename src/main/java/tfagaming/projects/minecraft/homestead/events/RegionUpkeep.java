@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.other.UpkeepUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.UpkeepUtility;
 
 public final class RegionUpkeep {
 	private RegionUpkeep() {
@@ -21,10 +21,10 @@ public final class RegionUpkeep {
 	public static void trigger(Homestead instance) {
 		for (Region region : RegionManager.getAll()) {
 			if (System.currentTimeMillis() > region.getUpkeepAt()) {
-				double amountToPay = UpkeepUtils.getAmountToPay(region);
+				double amountToPay = UpkeepUtility.getAmountToPay(region);
 
 				if (amountToPay > region.getBank()) {
-					int chunksToRemove = UpkeepUtils.getChunksToRemove(region);
+					int chunksToRemove = UpkeepUtility.getChunksToRemove(region);
 
 					if (chunksToRemove > 0) {
 						for (int i = 0; i < chunksToRemove; i++) {
@@ -46,7 +46,7 @@ public final class RegionUpkeep {
 				} else {
 					region.withdrawBank(amountToPay);
 
-					region.setUpkeepAt(UpkeepUtils.getNewUpkeepAt());
+					region.setUpkeepAt(UpkeepUtility.getNewUpkeepAt());
 
 					if (region.getOwner().isOnline()) {
 						Player regionOwner = (Player) region.getOwner();

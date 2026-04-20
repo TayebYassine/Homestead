@@ -14,8 +14,8 @@ import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtils;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				RegionControlFlags.KICK_PLAYERS)) {
 			return true;
 		}
@@ -94,10 +94,10 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		Chunk chunk = ChunkUtils.findNearbyUnclaimedChunk(target);
+		Chunk chunk = ChunkUtility.findNearbyUnclaimedChunk(target.getLocation(), 64);
 
 		if (chunk != null) {
-			PlayerUtils.teleportPlayerToChunk(target, chunk);
+			PlayerUtility.teleportPlayerToChunk(target, chunk);
 		}
 
 		Messages.send(player, 144, new Placeholder()

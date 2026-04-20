@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.tools.other;
+package tfagaming.projects.minecraft.homestead.tools.minecraft.economy;
 
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -6,7 +6,10 @@ import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 
-public class UpkeepUtils {
+public final class UpkeepUtility {
+	private UpkeepUtility() {
+	}
+
 	public static long getNewUpkeepAt() {
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
 			return System.currentTimeMillis() + (Resources.<RegionsFile>get(ResourceType.Regions).getInt("upkeep.upkeep-timer") * 1000L);

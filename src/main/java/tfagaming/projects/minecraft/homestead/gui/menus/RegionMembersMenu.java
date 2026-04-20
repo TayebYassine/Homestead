@@ -21,9 +21,9 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +35,9 @@ public final class RegionMembersMenu {
 		members = region.getMembers();
 
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtils.getTitle(5), 9 * 4,
-				MenuUtils.getNextPageButton(),
-				MenuUtils.getPreviousPageButton(),
+				MenuUtility.getTitle(5), 9 * 4,
+				MenuUtility.getNextPageButton(),
+				MenuUtility.getPreviousPageButton(),
 				getItems(player, region),
 				(_player, event) -> new RegionPlayersManagement(player, region),
 				(_player, context) -> {
@@ -63,7 +63,7 @@ public final class RegionMembersMenu {
 							Messages.send(player, 8);
 							return;
 						}
-						if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+						if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 								RegionControlFlags.UNTRUST_PLAYERS)) {
 							return;
 						}
@@ -85,7 +85,7 @@ public final class RegionMembersMenu {
 					}
 				});
 
-		gui.addActionButton(1, MenuUtils.getButton(29), (_player, event) -> {
+		gui.addActionButton(1, MenuUtility.getButton(29), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.region.players.trust")) {
@@ -120,7 +120,7 @@ public final class RegionMembersMenu {
 					Messages.send(player, 29, new Placeholder().add("{playername}", message));
 					return false;
 				}
-				if (!PlayerUtils.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						RegionControlFlags.TRUST_PLAYERS)) {
 					return false;
 				}
@@ -154,7 +154,7 @@ public final class RegionMembersMenu {
 			}, (__player) -> Homestead.getInstance().runSyncTask(() -> new RegionMembersMenu(player, region)), 75);
 		});
 
-		gui.open(player, MenuUtils.getEmptySlot());
+		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {
@@ -173,7 +173,7 @@ public final class RegionMembersMenu {
 							: Formatter.getNever())
 					.add("{tax-amount}", Formatter.getBalance(region.getTaxesAmount()));
 
-			items.add(MenuUtils.getButton(24, placeholder, member.bukkit()));
+			items.add(MenuUtility.getButton(24, placeholder, member.bukkit()));
 		}
 
 		return items;
