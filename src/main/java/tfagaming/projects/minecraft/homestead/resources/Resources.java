@@ -17,7 +17,7 @@ public final class Resources {
 	private static final String RESOURCE_CONFIG = "config.yml";
 	private static final String RESOURCE_LANG_DIR = "languages/";
 	private static final String RESOURCE_MENUS_DIR = "menus/";
-	private static final Set<String> RESOURCE_LANGUAGE_CODES = Set.of("en-US", "es-ES");
+	private static final Set<String> RESOURCE_LANGUAGE_CODES = Set.of("en-US", "es-ES", "hu-HU");
 	private static final String RESOURCE_FLAGS = "flags.yml";
 	private static final String RESOURCE_LEVELS = "levels.yml";
 	private static final String RESOURCE_LIMITS = "limits.yml";
