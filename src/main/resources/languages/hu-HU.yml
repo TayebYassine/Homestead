@@ -1,0 +1,632 @@
+# WARNING:
+# MiniMessage is NOT supported on Spigot.
+# If you are using Spigot, please remove any XML-like tags, for example, "<click:…>", "<hover:…>", "<red>"… etc.
+
+# NOTE:
+# Legacy color formats and MiniMessage formats are supported for PaperMC and its forks (Folia, Purpur...).
+
+default:
+  region-description: "Tulajdonos: {owner}"
+  war-description: No description
+  reason: Nincs ok megadva
+  none: "&cSenki"
+  never: "&cSoha"
+  isTrue: "&aBe"
+  isFalse: "&cKi"
+  isEnabled: "&aBe"
+  isDisabled: "&cKi"
+  flagSet: "&aEngedélyezve"
+  flagUnset: "&cTiltva"
+  online: "&aonline"
+  offline: "&coffline"
+  banned: "&4bannolva"
+  log-author: Server
+  star: ★
+  star-color:
+    "1": "&c"
+    "2": "&6"
+    "3": "&e"
+    "4": "&a"
+    "5": "&a"  
+
+prefix: "&8[&6Homestead&8]&r"
+"0": "{__prefix__} &7Hibád parancs, használd: &e{usage}"
+"1": "{__prefix__} &cA régió nevének alfanumerikusnak kell lennie, más karakterek tiltva vannak."
+"2": "{__prefix__} &cEz a régió név már foglalt, válassz másik nevet."
+"3": "{__prefix__} &7Új régió sikeresen létrehozva: &2{name}\n&a➡ &7Szerkeszd a régiódat: <hover:show_text:'<gray>/hs menu'><click:run_command:'/hs menu'><aqua>Kattints ide!</click></hover>\n&a➡ &7Hívd meg a barátaid! <hover:show_text:'<gray>Adj hozzá játékosokat  /hs trust [player] paranccsal'><click:suggest_command:'/hs trust'><aqua>Kattints ide!</click></hover>"
+"4": "{__prefix__} &7Nem állítottál be célzott régiót. Kérlek válassz egyet: &e/hs set target [region]"
+"5": "{__prefix__} &cMeg kell erősítened a végrehajtáshoz."
+"6": "{__prefix__} &7A régió &2{region} &7törölve lett."
+"7": "{__prefix__} &7Ismeretlen alparancs, talán erre gondoltál... &e{similarity-subcmds}"
+"8": "{__prefix__} &cEhhez a parancshoz nincs jogod!"
+"9": "{__prefix__} &cEzzel a névvel nem található régió."
+"10": "{__prefix__} &cA tulajdonosnak vagy tagnak kell lenned, hogy kiválaszthasd ezt a régiót."
+"11": "{__prefix__} &7Konfiguráció változatlan, mivel nem változott beállítás."
+"12": "{__prefix__} &7Régió &2{region} &7kiválasztva. A régiókra vonatkozó parancsok (pl. &e/claim&7, &e/region trust&7) erre a régióra lesznek használva."
+"13": "{__prefix__} &7A régió sikeresen át lett nevezve &2{oldname}-ról/ről &7erre: &2{newname}&7."
+"14": "{__prefix__} &cA megjelenítendő névnek 2 és 64 karakter között kell lennie."
+"15": "{__prefix__} &7A régió megjelenítendő neve át lett nevezve &2{olddisplayname}-ról/ről &7erre: &2{newdisplayname}&7."
+"16": "{__prefix__} &cA leírásnak 2 és 128 karakter között kell lennie."
+"17": "{__prefix__} &7A régió leírása frissítve."
+"18": "{__prefix__} &cHibás szín lett megadva."
+"19": "{__prefix__} &7A térkép színe meg lett változtatva {oldcolor}-ról/ről &7erre: {newcolor}&7."
+"20": "{__prefix__} &cEbben a világban nem lehet levédeni."
+"21": "{__prefix__} &cEz a chunk már le van védve egy másik régió által (&2{region}&c)."
+"22": "{__prefix__} &7Ez a chunk mostantól a régiód része &2{region}&7. Hogy töröld ezt a chunkot használd ezt: &e/unclaim"
+"23": "{__prefix__} &cNem tudsz törölni olyan chunkot, ami nem a kiválasztott régió része."
+"24": "{__prefix__} &7A chunk törölve lett ebből a régióból: &2{region}&7."
+"25": "{__prefix__} &7Ez a chunk egy régiónak sem a része. Levédheted a &e/claim &7paranccsal"
+"26": "{__prefix__} &7Régió határok mutatása befejezve."
+"27": "{__prefix__} &aRégió határok mutatása."
+"28": "{__prefix__} &cKi vagy tiltva ebből a régióból &2{region} - &7{ban-reason}"
+"29": "{__prefix__} &cEzzel a névvel nem található játékos &3{playername}&c."
+"30": "{__prefix__} &cEhhez nincs jogod!"
+"31": "{__prefix__} &7Játékos kitiltva &3{playername} &7a régióból &2{region} &7ezzel az indokkal: {reason}"
+"32": "{__prefix__} &3{playername} &7már ki lett tiltva."
+"33": "{__prefix__} &3{playername} &7nincs kitiltva."
+"34": "{__prefix__} &3{playername} &7tiltása feloldva ebben a régióban: &2{region}&7."
+"35": "{__prefix__} &3{playername} &7meg lett hívva a régiódba."
+"36": "{__prefix__} &aSikeresen meghívtad &3{playername}&a-t a régiódba &2{region}&a."
+"37": "{__prefix__} &3{playername}&7 meghívása visszavonva."
+"38": "{__prefix__} &3{player} &7el lett távolítva a régióból &2{region}&7."
+"39": "{__prefix__} &3{playername} &cnincs meghívva vagy hozzáadva ehhez a régióhóz &2{region}&c."
+"40": "{__prefix__} &3{playername} &cnincs hozzáadva ehhez a régióhóz &2{region}&c."
+"41": "{__prefix__} &cHibás flag lett megadva."
+"42": "{__prefix__} &cEz a flag ki van kapcsolva. Nem változtathatod meg az állapotát."
+"43": "{__prefix__} &6{flag} &7➜ &e{state}&7; &3{player} &7(Régió: &2{region}&7)."
+"44": "{__prefix__} &6{flag} &7➜ &e{state}&7; &9Látogatók &7(Régió: &2{region}&7)."
+"45": "{__prefix__} &cA régió &2{region} &cnem hívott meg téged."
+"46": "{__prefix__} &7Elfogadtad a meghívást. Mostantól a &2{region}&7 régió tagja vagy!"
+"47": "{__prefix__} &7Elutasítottad a&2{region}&7 régió meghívását."
+"48": "{__prefix__} &3{playername} &cmár a régió tagja!"
+"49": "{__prefix__} &6{flag} &7➜ &e{state}&7; &aKörnyezet &7(Régió: &2{region}&7)."
+"50": "{__prefix__} &cEzt a flaget nincs jogod állítani! &7(Flag: &6{flag}&7, Régió: &2{region}&7)"
+"51": "{__prefix__} &7El lettél teleportálva a következő helyszínre: {location}"
+"52": "{__prefix__} &cNem biztonságos terület észlelve, teleportálás leállítva."
+"53": "{__prefix__} &7Teleportálás elkezdve ne mozdulj &33 másodpercig&7!"
+"54": "{__prefix__} &cKi kell választanod 2 sarkot egy arany kapával."
+"55": "{__prefix__} &cMinden saroknak a régiódban kell lennie."
+"56": "{__prefix__} &cA kiválasztott sarkok belelógnak egy már létező alterületbe."
+"57": "{__prefix__} &cAz elterület nevének alfanumerikusnak kell lennie. Más karakterek tiltva vannak."
+"58": "{__prefix__} &cEz az alterület név már foglalt. Válassz másikat."
+"59": "{__prefix__} &7Alterület sikeresen létrehozva: &2{subarea} &7(Terület: &6{subarea-volume}&7)"
+"60": "{__prefix__} &cEzzel a névvel nem található alterület."
+"61": "{__prefix__} &7Az alterület sikeresen át lett nevezve &2{oldname}-ról/ről &7erre: &2{newname}&7."
+"62": "{__prefix__} &7Alterület sikeresen törölve &2{subarea}&7."
+"63": "{__prefix__} &6{flag} &7➜ &e{state}&7; &2{subarea} &7- &9Látogatók &7(Régió: &2{region}&7)."
+"64": "{__prefix__} &cA befizetni vagy kivenni kívánt pénznek érvényes számnak kell lennie."
+"65": "{__prefix__} &cNincs elég pénzed ennyit befizetni!"
+"66": "{__prefix__} &7Sikeresen befizettél &c{amount}-t &7a régióba &2{region}&7."
+"67": "{__prefix__} &cNincs elég pénz a régióban, hogy ennyit kivegyél!"
+"68": "{__prefix__} &7Sikeresen kivettél &c{amount}-t &7a régióból &2{region}&7."
+"69": "{__prefix__} &cA pénz rendszer jelenleg ki van kapcsolva. Keress fel egy adminisztrátort"
+"70": "{__prefix__} &cEhhez a beállításhoz nincs jogod! &7(Flag: &6{flag}&7, Régió: &2{region}&7)"
+"71": "{__prefix__} &cA régiónak &2{region} &cnincs spawn pontja!"
+"72": "{__prefix__} &7A régió helyzete sikeresen frissítve &2{region}&7. Próbáld ki a &e/hs home &7paranccsal."
+"73": "&eAdd meg a kitiltani kívánt játékos nevét. &7Írd be, hogy 'cancel' a visszavonáshoz."
+"74": "{__prefix__} &cNem hívhatsz meg kitiltott játékost. Először le kell szedned róla a tiltást."
+"75": "&eAdd meg a játékos nevét a meghíváshoz. &7Írd be, hogy 'cancel' a visszavonáshoz."
+"76": "{__prefix__} &cNincs visszavonható meghívás."
+"77": "{__prefix__} &cNincs senki kitiltva."
+"78": "&eAdd meg az új régió nevét. &7Írd be, hogy 'cancel' a visszavonáshoz."
+"79": "&eAdd meg az új régió megjelenített nevét. &7Írd be, hogy 'cancel' a visszavonáshoz."
+"80": "&eAdd meg az új régió leírását. &7Írd be, hogy 'cancel' a visszavonáshoz."
+"81": "&eAdd meg a játékos nevét, akinek át szeretnéd adni a régiót."
+"82": "{__prefix__} &7Régió sikeresen átadva &3{playername}&7-nak/-nek. Mostantól nem te vagy a régió &2{region}&7 tulajdonosa."
+"83": "{__prefix__} &cNincs törölni való log."
+"84": "{__prefix__} &cÉrvénytelen adatbázis típus, használd az alábbiak valamelyikét: PostgreSQL, MariaDB, SQLite, MySQL, MongoDB, or YAML"
+"85": "{__prefix__} &cJelenleg is ezt a típust használod, kérlek válassz másikat."
+"86": "{__prefix__} &7Sikeresen exportálva lettek a &6{regions} &7régiók, &6{wars} &7figyelmeztetések, és az &6{subareas} &7alterületek ebből: &3{current-provider} &7ebbe: &3{selected-provider}&7."
+"87": "{__prefix__} &cVáratlan hiba lépett fel a plugin használata közben; További információért nézd meg a konzolt."
+"88": "&eAdd meg az új alterület nevét. &7Írd be, hogy 'cancel' a visszavonáshoz."
+"89":
+- "&2Homestead&7, a prémium-feature ingyenes plugin."
+- ""
+- "&9Elérhető adatok:"
+- "&7• Verzió: &6{plugin-version}"
+- "&7• Régiók: &6{regions}"
+- "&7• Háborúk: &6{wars}"
+- "&7• Alterületek: &6{subareas}"
+- "&7• Szintek: &6{levels}"
+- "&7• Adatbázis: &3{provider}"
+- "&7• Adatbázis késleltetés: &a{avg-response-db}ms &7(cache: &a{avg-response-cache}ms&7)"
+"90": "{__prefix__} &aKonfiguráció újratöltve. &7Néhány változtatáshoz szükséges lehet a szerver újraindítása!"
+"91": "{__prefix__} &cNincs frissíthető log."
+"92": "{__prefix__} &7Minden log sikeresen olvasottnak jelölve."
+"93": "{__prefix__} &7Minden log sikeresen törölve."
+"94": "{__prefix__} &7Minden játékos tiltása sikeresen feloldva."
+"95": "{__prefix__} &7Minden meghívás sikeresen visszavonva."
+"96": "{__prefix__} &aA Homestead legfrissebb vezióján vagy!"
+"97": "{__prefix__} &eFrissítés elérhető! Letöltés: https://www.spigotmc.org/resources/121873/"
+"98": "{__prefix__} &7Kérlek várj..."
+"99": "{__prefix__} &cÉrvénytelen ikon lett megadva."
+"100": "{__prefix__} &7A régió ikonja sikeresen frissítve. &2{region}&7."
+"101":
+- "&2Homestead&7, a prémium-feature ingyenes plugin."
+- ""
+- "&aTeljes útmutatóért keresd fel a dokumentációt:"
+- "&a➥ &9https://tayebyassine.github.io/Homestead/"
+- ""
+- "&7Fejlesztők: &6TayebYassine"
+- "&c❤-el készítve"
+"102": "{__prefix__} &cAz adó értékének érvényes számnak kell lennie."
+"103": "{__prefix__} &7Az adót sikeresen beállítva minden tagnak ennyire:&c{tax-amount}&7 a régióban &2{region}&7."
+"104": "{__prefix__} &cAz adó értékéneg {min} és {max} között kell lennie."
+"105": "{__prefix__} &cEz a funkció ki van kapcsolva."
+"106": "{__prefix__} &7Sikeresen kifizettél &c{amount}-t &7a régiónak &2{region}&7."
+"107": "{__prefix__} &7A jelenlegi egyenleged: &c{balance}&7."
+"108": "{__prefix__} &cKi lettél rúgva a régióból &2{region}&c. Nem tudtad fizetni az adót."
+"109": "{__prefix__} &7Sikeresen kifizettél &c{amount}-t &7a régió fenttartásáért &2{region}&7."
+"110": "{__prefix__} &7A régió bankja mostantól &c{bank}&7."
+"111": "{__prefix__} &cNem lehet kifizetni {amount}-t a régió fenttartásához &2{region}&c."
+"112": "{__prefix__} &cChunkok eltávolítva: &7{chunks} chunk"
+"113": "{__prefix__} &cIsmeretlen plugin, lehetséges pluginok: GriefPrevention, ClaimChunk, LandLord, Lands, HuskClaims"
+"114": "{__prefix__} &cEz a plugin nincs telepítve a szerverre, vagy ki lett kapcsolva."
+"115": "{__prefix__} &7Sikeresen importálva &6{regions} &7régió."
+"116": "{__prefix__} &cElérted a maximum limited."
+"117": "{__prefix__} &cNem hozhatsz létre alterületet, amely területe átlépi a &7{max} blokkot\n&7{volume}&c blokknyi területet jelöltél ki."
+"118": "{__prefix__} &cTöltési időn vagy, próbáld újra pár másodperc múlva."
+"119": "{__prefix__} &cA táblát egy olyan területen belül kell lehelyezned, amelynek a tulajdonosa vagy."
+"120": "{__prefix__} &cÉrvénytelen formátum."
+"121": "{__prefix__} &cPár sornak üresnek kell lennie."
+"122": "{__prefix__} &cÉrvénytelen ár, adj meg egy érvényes számot."
+"123": "{__prefix__} &cEzt a táblát nem szerkesztheted."
+"124": "{__prefix__} &7A régió sikeresen megvéve &2{region} &7ennyiért: &c{price}&7."
+"125": "{__prefix__} &cNincs elég pénzed, hogy ezt megvedd."
+"126": "{__prefix__} &7Sikeresen bérbevetted a régiót &2{region}&7. A szerződés lejár ekkor: &6{rent-end}"
+"127": "{__prefix__} &7Bérlés sikeresen visszavonva."
+"128": "{__prefix__} &cEz a régió nem bérelhető."
+"129": "{__prefix__} &cAz időtartam túl rövid vagy túl hosszú."
+"130": "{__prefix__} &eA szerződési idő lejárt. Ki lettél rúgva a régióból &2{region}&e."
+"131": "{__prefix__} &cNem látogathatod meg ezt a régiót &2{region}&c."
+"132": "{__prefix__} &cEnnek a játékosnak nincs régiója üdvözlőtáblával."
+"133": "{__prefix__} &cEz a chunk belelóg egy WorldGuard levédésbe. Kérlek próbáld meg arrébb."
+"134": "{__prefix__} &7Az értékelésed be lett küldve."
+"135": "{__prefix__} &7Automata foglalás elkezdve. Járkálj, hogy lefoglald az üres chunkokat."
+"136": "{__prefix__} &7Automata foglalás befejezve."
+"137": "{__prefix__} &cÉrvénytelen régió index."
+"138": "{__prefix__} &3{playername} &7elfogadta a meghívásod a régióba &2{region}."
+"139": "{__prefix__} &3{ownername} &7megvott téged a régiójába &2{region}&7.\n<click:run_command:'/hs accept {region}'>&aElfogadás</click> &7| <click:run_command:'/hs deny {region}'>&cElutasítás</click>"
+"140": "{__prefix__} &cCsak olyan chunkokat védhetsz le, ami szomszédos a meglévő régió(i)dra."
+"141": "{__prefix__} &cNem törölheted ezt a chunkot, mert kettévágná a régiódat."
+"142": "{__prefix__} &cNem teheted a régiód helyzetét a régión kívül."
+"143": "{__prefix__} &cA játékos nincs a régión belül."
+"144": "{__prefix__} &3{playername} &7sikeresen kirúgva a régióból &2{region}&7."
+"145": "{__prefix__} &cA háború neve túl hosszú."
+"146": "{__prefix__} &cA nyereménynek érvényes számnak kell lennie."
+"147":
+- " "
+- "&c&l >> EGY HÁBORÚ LETT KIKIÁLTVA <<"
+- "&c&l-------------------------------"
+- "&cHáború: &7{war-name}"
+- "&cRégiók: &7{regionplayer} &cés &7{regiontarget}"
+- "&cA győztes nyereménye: &7{prize}"
+- "&c&l-------------------------------"
+- " "
+"148": "{__prefix__} &cNem indíthatsz háborút magad ellen."
+"149": "{__prefix__} &cA tagja vagy ennek a régiónak. Nem indíthatsz ellene háborút csak a régió tulajdonosa tulajdonos."
+"150": "{__prefix__} &cA régió épp háborúban áll egy másik régióval. Nem indíthatsz ellene háborút"
+"151": "{__prefix__} &cMár háborúban vagy egy régióval."
+"152": "{__prefix__} &cNem vagy háborúban senkivel."
+"153": "{__prefix__} &7Feladtátok a harcot. Elvesztettétek a háborút"
+"154": "{__prefix__} &7Régiók: &2{regions}&7, Nyeremény: &c{prize}"
+"155": "{__prefix__} &aGratulálok, megnyertétek a háborút. A nyeremény bekerült a régió bankjába."
+"156": "{__prefix__} &cEz a funkció nem elérhető, mert a régió háborúban áll."
+"157": "{__prefix__} &cNem kiálthatsz ki háborút ez ellen a régió ellen, mert nincs elég pénzük a nyereményhez."
+"158": "{__prefix__} &eShift + Jobb-Klikkelj újra 6 másodpercen belül, hogy megerősítsd a régió törlését."
+"159": "{__prefix__} &cA régió tulajdonosának kell lenned ehhez."
+"160": "{__prefix__} &cÉrvénytelen nyeremény, adj meg érvényes számot."
+"161": "{__prefix__} &7Tömeges változtatás végrehajtva: &e{changes} flag(s) &7-> {new-value}&7 (zárolt flagek kihagyva)."
+"162": "{__prefix__} &eNem lett változtatás végrehajtva (már minden változtatás ilyen volt vagy zárolva vannak)."
+"163": "{__prefix__} &4Meghaltatok. &cElvesztettétek a háborút."
+"164": "{__prefix__} &cNem indíthatsz háborút. Valamelyik régió békében él."
+"165": "{__prefix__} &eMár 5 üzenetet küldtél és egyik sem lett elolvasva. Várj amég elolvassák őket."
+"166": "{__prefix__} &7Levél elküldve. Várj amég &3{region-owner} &7elolvassa."
+"167": "{__prefix__} &2{region}&7 egyenlege: &c{balance}&7."
+"168": "{__prefix__} &eA nyeremények ki vannak kapcsolva."
+"169": "{__prefix__} &6{flag} &7➜ &e{state}&7; &2{subarea} &7- &3{player} &7(Régió: &2{region}&7)."
+"170": "{__prefix__} &cEz a játékos nem tagja az alterületnek."
+"171": "{__prefix__} &cEzt a játékost nem adhatod hozzá az elterülethez. A játékosnak a régió tagjának kell lennie!"
+"172": "{__prefix__} &3{player} &7hozzáadva az elterülethez &2{subarea}&7."
+"173": "{__prefix__} &3{player} &7eltávolítva az alterületről &2{subarea}&7."
+"174": "{__prefix__} &cA játékos már hozzá lett adva ehhez az alterülethez"
+"175": "{__prefix__} &cA játékos nem az alterület tagja."
+"176": "{__prefix__} &cNem tudod ugyan azt a régiót magával egyesíteni."
+"177": "{__prefix__} &cA kérelem már el lett küldve."
+"178": "{__prefix__} &cA régió már kapott egy kérelmet egy másik játékostól!"
+"179": "{__prefix__} &cA másik régió tulajdonosának online kell lennie!"
+"180": "{__prefix__} &aÖsszeolvasztási kérelem elküldve! &7Várj amég a tulajdonos elfogadja."
+"181": "{__prefix__} &3{player} &7össze akarja olvasztani a régióját &2{region} &7a tiéddel &2{targetregion}&7. Hogy elfogadd a kérelmét használd ezt: &a/hs mergeaccept"
+"182": "{__prefix__} &cEnnek a régiónak nem lett küldve összeolvasztási kérelem."
+"183": "{__prefix__} &2{region} &7Sikeresen összeolvasztva a te régióddal."
+"184": "{__prefix__} &cÉrvénytelen chunk koordináták!"
+"185": "{__prefix__} &cA sugárnak érvényes számnak kell lennie."
+"186": "{__prefix__} &cNem található üres chunk."
+"187": "{__prefix__} &6{chunks} &7le lett védve a régió &6{total} &7max chunkjából &2{region}&7."
+"188": "{__prefix__} &cA világ amiben tartózkodsz nem található!"
+"189": "{__prefix__} &cA sugárnak 1 és 20 között kell lennie."
+"190": "{__prefix__} &cNem található a régió által foglalt chunk."
+"191": "{__prefix__} &6{chunks} &7törölve a régió &6{total} &7max chunkjából &2{region}&7."
+"192": "{__prefix__} &cA játékos már birtokolja ezt a területet."
+"193": "{__prefix__} &7A régió tulajdonosa &2{region} &7meg lett változtatva rá: &3{player}&7."
+"194": "{__prefix__} &7Az alterület &2{subarea} sikeresen bérbeadva &2{region}&7. A szerződés véget ér: &6{rent-end}"
+"195": "{__prefix__} &cAz alterület nem bérelhető."
+"196": "{__prefix__} &cEgy régió vagy alterület bérlőt nem lehet kitiltani, hozzáadni, vagy kidobni! Leállíthatod a bérlést, ha te vagy a régió tulajdonosa."
+"197": "{__prefix__} &cA szintek nem elérhetőek."
+"198": "&7Megöltél egy &3{entity}&7-t, és elértél &6{xp} XP-t &7a régiónak &2{region}&7!"
+"199": "{__prefix__} &3{playername} &7csatlakozott a régióhoz &2{region}."
+"200": "{__prefix__} &3{player}&-nak/nek nincs elég pénze &c{price}, nem tudsz chunkot lefoglalni!"
+"201": "{__prefix__} &cMegmozdultál, teleportálás megszakítva!"
+"202": "{__prefix__} &7Kész."
+"203": "{__prefix__} &cNincs elég pénzed {price}, hogy teleportálj!"
+"204": "{__prefix__} &7Már nem vagy a régió tagja &2{region}&7!"
+"205": "{__prefix__} &aRepülés bekapcsolva. &7Csak a régió területén belül tudsz repülni!"
+"206": "{__prefix__} &7Repülés kikapcsolva."
+"207": "{__prefix__} &cNem tudod bekapcsolni a repülést olyan régióban, ahol nem vagy tag, vagy régión kívül"
+"208": "&aGratulálunk, elérted a &6{level}. &aszintet!"
+"209": "{__prefix__} &cA megadott sugár túl nagy vagy túl kicsi."
+"210": "{__prefix__} &cNincs jogod a régió időjárást állítanod."
+"211": "{__prefix__} &cNincs jogod a régió idejét állítanod."
+"212": "{__prefix__} &cNincs jogod teleportálni."
+"213": "{__prefix__} &cTúl gyors vagy! Várj egy kicsit mielőtt újrapróbálnád."
+"214": "&eA háború véget ért. &2{region}&e tagjai nyertek!"
+"215": "{__prefix__} &7Alterület átméretezve!"
+
+logs:
+  "0": By {executor}, updated region name to {newname}.
+  "1": By {executor}, updated location to {location}.
+  "2": By {executor}, trusted a new member {playername}.
+  "3": By {executor}, removed a member {playername}.
+  "4": "{playername} has left the region."
+  "5": "{playername} has been kicked, they're unable to pay taxes."
+  "6": By {executor}, updated displayname to {newdisplayname}.
+
+flags-info:
+  # PLAYER FLAGS
+  break-blocks:
+    description:
+    - "&7Tudjon minden játékos blokkot törni?"
+    type: IRON_PICKAXE
+  place-blocks:
+    description:
+    - "&7Tudjon minden játékos blokkot lerakni?"
+    type: OAK_LOG
+  containers:
+    description:
+    - "&7Tudjon minden játékos tárolót kinyitni?"
+    - " "
+    - "&e&lMegjegyzés:"
+    - "&eaz Ender láda, Barkácsasztal, Enchant"
+    - "&easztal kivétel ez alól."
+    type: CHEST
+  doors:
+    description:
+    - "&7Tudja minden játékos használni az ajtót?"
+    type: OAK_DOOR
+  trap-doors:
+    description:
+    - "&7Tudja minden játékos használni a csapóajtót?"
+    type: OAK_TRAPDOOR
+  fence-gates:
+    description:
+    - "&7Tudja minden játékos használni a kerítéskaput?"
+    type: OAK_FENCE_GATE
+  use-anvil:
+    description:
+    - "&7Tudja minden játékos használni az üllőt?"
+    - " "
+    - "&e&lMegjegyzés:"
+    - "&eHa engedélyezve van, mindenki használhatja"
+    - "&eaz üllőket és azok eltörhetnek."
+    type: ANVIL
+  redstone:
+    description:
+    - "&7Tudjon minden játékos redstonet használni?"
+    type: REDSTONE
+  levers:
+    description:
+    - "&7Tudjon minden játékos kart használni?"
+    type: LEVER
+  buttons:
+    description:
+    - "&7Tudjon minden játékos gombot használni?"
+    type: STONE_BUTTON
+  pressure-plates:
+    description:
+    - "&7Tudja minden játékos aktiválni a pressure platet?"
+    type: STONE_PRESSURE_PLATE
+  use-bells:
+    description:
+    - "&7Tudja minden játékos használni a harangot?"
+    type: BELL
+  trigger-tripwire:
+    description:
+    - "&7Tudja minden játékos aktiválni a tripwiret?"
+    type: TRIPWIRE_HOOK
+  frost-walker:
+    description:
+    - "&7Tudja minden játékos jéggé fagyasztani"
+    - "&7a vizet Frost Walker varázslattal?"
+    type: DIAMOND_BOOTS
+  harvest-crops:
+    description:
+    - "&7Le tudja minden játékos aratni a növényeket?"
+    type: WHEAT_SEEDS
+  block-trampling:
+    description:
+    - "&7Le tudja minden játékos taposni a növényeket?"
+    type: TURTLE_EGG
+  general-interaction:
+    description:
+    - "&7Tudjon minden játékos általánosan interaktálni?"
+    - "&7Például:"
+    - " &7- Tortát enni"
+    - " &7- Növényt rakni/kivenni vázából"
+    - " &7- Bármilyen vázát használni"
+    type: STRING
+  armor-stands:
+    description:
+    - "&7Tudjon minden játékos interaktálni a páncélállvánnyal?"
+    type: ARMOR_STAND
+  interact-entities:
+    description:
+    - "&7Tudjon minden játékos interaktálni az állatokkal?"
+    type: SHEARS
+  item-frame-interaction:
+    description:
+    - "&7Tudja minden játékos használni az item framet?"
+    type: ITEM_FRAME
+  damage-passive-entities:
+    description:
+    - "&7Tudja minden játékos bántani a passzív állatokat,"
+    - "&7pl tehén, bárány, disznó... ?"
+    type: IRON_SWORD
+  damage-hostile-entities:
+    description:
+    - "&7Tudja minden játékos bántani az ellenséges szörnyeket,"
+    - "&7pl zombi, csontváz, pók... ?"
+    type: ZOMBIE_HEAD
+  trade-villagers:
+    description:
+    - "&7Tudjon minden játékos kereskedni a falusiakkal?"
+    type: EMERALD
+  ignite:
+    description:
+    - "&7Tudjon minden játékos tüzet kelteni?"
+    type: FLINT_AND_STEEL
+  vehicles:
+    description:
+    - "&7Tudja minden játékos használni a,"
+    - "&7Csilléket, csónakokat stb... ?"
+    type: MINECART
+  teleport-spawn:
+    description:
+    - "&7Tudjon minden játékos a régió spawnjára"
+    - "&7teleportálni?"
+    type: ENDER_EYE
+  passthrough:
+    description:
+    - "&7Beléphessen minden játékos a régióba?"
+    type: IRON_BOOTS
+  pvp:
+    description:
+    - "&7Meg tudja minden játékos ütni egymást?"
+    type: DIAMOND_SWORD
+  take-fall-damage:
+    description:
+    - "&7Tudjon minden játékos sérülni az esésből?"
+    type: FEATHER
+  teleport:
+    description:
+    - "&7Tudjon minden játékos teleportálni"
+    - "&7ender gyönggyel és chorus gyümölccsel?"
+    type: CHORUS_FRUIT
+  throw-potions:
+    description:
+    - "&7Tudjon minden játékos főzetet dobálni?"
+    type: SPLASH_POTION
+  pickup-items:
+    description:
+    - "&7Fel tudja minden játékos venni a tárgyakat?"
+    type: SUNFLOWER
+  sleep:
+    description:
+    - "&7Tudjon minden játékos aludni az ágyban?"
+    type: RED_BED
+  trigger-raid:
+    description:
+    - "&7Tudjon minden játékos raidet indítani?"
+    type: PLAYERHEAD-4aee6bb37cbfc92b0d86db5ada4790c64ff4468d68b84942fde04405e8ef5333
+  elytra:
+    description:
+    - "&7Tudjon minden játékos Elytrával repülni?"
+    type: ELYTRA
+  spawn-entities:
+    description:
+    - "&7Tudjon minden játékos idéző tojást használni?"
+    type: ZOMBIE_SPAWN_EGG
+  
+  # WORLD FLAGS
+  passive-entity-spawn:
+    description:
+    - "&7Tudjanak passzív állatok spawnolni a régióban?"
+    - " "
+    - "&7Ez a spawnerekre &cnincs &7hatással."
+    type: PLAYERHEAD-84e5cdb0edb362cb454586d1fd0ebe971423f015b0b1bfc95f8d5af8afe7e810
+  hostile-entity-spawn:
+    description:
+    - "&7Tudjanak ellenséges szörnyek spawnolni a régióban?"
+    - " "
+    - "&7Ez a spawnerekre &cnincs &7hatással."
+    type: SPAWNER
+  
+  entity-grief:
+    description:
+    - "&7Tudjanak a szörnyek pl. enderman, ravager"
+    - "&7rombolni a régióban?"
+    type: CREEPER_HEAD
+  entity-damage:
+    description:
+    - "&7Egymásra támadhassanak az élőlények?"
+    type: IRON_SWORD
+  explosion-damage:
+    description:
+    - "&7Tudjon a tnt és a creeper rombolni a régióban?"
+    type: TNT
+  leaves-decay:
+    description:
+    - "&7Lebomolhasson a levél természetesen?"
+    type: VINE
+  fire-spread:
+    description:
+    - "&7Terjedhessen a tűz?"
+    type: FLINT_AND_STEEL
+  liquid-flow:
+    description:
+    - "&7Be tudjon folyni a folyadék a régióba?"
+    - " "
+    type: WATER_BUCKET
+  wither-damage:
+    description:
+    - "&7Tudjon a wither rombolni a régióban?"
+    type: PLAYERHEAD-74f328f5044129b5d1f96affd1b8c05bcde6bd8e756aff5c5020585eef8a3daf
+  wilderness-pistons:
+    description:
+    - "&7Be tudjon tolni a dugattyú blokkokat a régióba?"
+    type: PISTON
+  wilderness-dispensers:
+    description:
+    - "&7Tudjon az adagoló interaktálni kívülről a régióval?"
+    type: DISPENSER
+  wilderness-minecarts:
+    description:
+    - "&7Be tudjon menni csille kívülről a régióba?"
+    type: MINECART
+  plant-growth:
+    description:
+    - "&7Tudjon növény nőni a régióban?"
+    type: OAK_SAPLING
+  grass-growth:
+    description:
+    - "&7Tudjon fű és micélium terjedni a régióban?"
+    type: GRASS_BLOCK
+  sculk-spread:
+    description:
+    - "&7Tudjon a sculk terjedni a régióban?"
+    type: SCULK_SENSOR
+  player-glowing:
+    description:
+    - "&7Minden játékos világítson a régióban?"
+    type: SPECTRAL_ARROW
+  snow-melting:
+    description:
+    - "&7El tudjon olvadni a hó a régióban?"
+    type: SNOW
+  ice-melting:
+    description:
+    - "&7El tudjon olvadni a jég a régióban?"
+    type: ICE
+  snowman-trails:
+    description:
+    - "&7Tudjon a hógólem hónyomot hagyni?"
+    type: PLAYERHEAD-e6f20aec528c3968dd8164f9d9336b081b3a2c7ecf189cf73df6f925e5a4ed14
+  windcharge-burst:
+    description:
+    - "&7Tudjon a szél töltet robbanni a régióban?"
+    type: WIND_CHARGE
+  copper-golems-interaction:
+    description:
+    - "&7Tudjon a rézgólem ládákhoz hozzáférni a régióban?"
+    type: CHISELED_COPPER
+  wars:
+    description:
+    - "&7Tudjon bárki háborút indítani ebben a régióban?"
+    type: PLAYERHEAD-d51e6cbd10b0ff98b47f93d9f34deaaf690f40d5db9950016071e7ae5d2ab226
+  projectiles:
+    description:
+      - "&7Tudjon bármilyen lövedék(nem játékos által kilőtt)"
+      - "&7 blokkokat/entitásokat eltalálni?"
+    type: TIPPED_ARROW
+  weather-snow:
+    description:
+      - "&7Tudjon hó lerakódni hóeséskor?"
+    type: GHAST_TEAR
+  
+  # REGION CONTROL FLAGS
+  trust-players:
+    description:
+    - "&7Tudjon a tag más játékosokat hozzáadni a régióhoz?"
+    type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
+  untrust-players:
+    description:
+    - "&7Tudjon a tag más játékosokat eltávolítani a régióból?"
+    type: PLAYERHEAD-4e4b8b8d2362c864e062301487d94d3272a6b570afbf80c2c5b148c954579d46
+  ban-players:
+    description:
+    - "&7Ki tudjon a tag tiltani más játékosokat a régióból?"
+    type: MACE
+  unban-players:
+    description:
+    - "&7Vissza tudja vonni a tag más játékosok kitiltását a régióból?"
+    type: BARRIER
+  claim-chunks:
+    description:
+    - "&7Tudjon a tag chunkokat foglalni?"
+    type: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
+  unclaim-chunks:
+    description:
+    - "&7Tudjon a tag chunkokat törölni?"
+    type: GOLDEN_SHOVEL
+  deposit-money:
+    description:
+    - "&7Tudjon a tag pénz berakni a régióba?"
+    type: GOLD_NUGGET
+  withdraw-money:
+    description:
+    - "&7Tudjon a tag pénzt kivenni a régióból?"
+    type: FEATHER
+  set-global-flags:
+    description:
+    - "&7Tudja a tag állítani a globális flageket?"
+    type: LEVER
+  set-world-flags:
+    description:
+    - "&7Tudja a tag állítani a környezeti flageket?"
+    type: LEVER
+  set-member-flags:
+    description:
+    - "&7Tudja a tag állítani más tagok flagjeit?"
+    type: LEVER
+  set-spawn:
+    description:
+    - "&7Tudja a tag állítani a régió helyét?"
+    type: ENDER_EYE
+  manage-subareas:
+    description:
+    - "&7Tudja a tag kezelni az alterületeket?"
+    type: GOLDEN_HOE
+  rename-region:
+    description:
+    - "&7Át tudja nevezni a tag a régiót?"
+    type: NAME_TAG
+  set-description:
+    description:
+    - "&7Tudja a tag szerkeszteni a régió leírását?"
+    type: OAK_SIGN
+  manage-logs:
+    description:
+    - "&7Tudja a tag kezelni a logokat?"
+    - " "
+    - "&c&lVigyázat:"
+    - "&cEz megakadályozza, hogy bárki törölje a logokat! Egy vagy"
+    - "&ctöbb tag engedélyezése változtatásokat hajt végre a régión és"
+    - "&cmódosíthatja az elmentett logokat."
+    type: BOOKSHELF
+  kick-players:
+    description:
+    - "&7Tudjon a tag kirúgni játékosokat a régióból?"
+    type: RABBIT_FOOT
+  set-weather-and-time:
+    description:
+    - "&7Tudja a tag állítani a régió időjárását?"
+    type: PLAYERHEAD-65f37826161c792d7f6c920b2fa06b88e6845288ab02ad9b65d4bbf5ca2ce1e3

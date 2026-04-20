@@ -1,0 +1,791 @@
+# Configuration file for all menus
+
+# Menu titles
+titles:
+  '0': Régiók
+  '1': 'Régió: &2{region}'
+  '2': Játékos Flagek (Globális)
+  '3': Világ Flagek
+  '4': Játékosok Kezelése
+  '5': Hozzáadott Játékosok
+  '6': Játékos Flagek (&3{playername}&r)
+  '7': Régió Kontroll (&3{playername}&r)
+  '8': 'Régió: &2{region}'
+  '9': Kitiltott Játékosok
+  '10': Megívott Játékosok
+  '11': Chunk Lista
+  '12': Egyéb Beállítások
+  '13': Napló, Szintek
+  '14': Alterületek
+  '15': 'Alterület: &2{subarea}'
+  '16': Alterület Flagek
+  '17': 'Régió Értékelés: &2{region}'
+  '18': Top Régiók # by Bank Balance
+  '19': Top Régiók # by Chunks
+  '20': Top Régiók # by Members
+  '21': Top Régiók # by Creation Date
+  '22': Top Régióks # by Player Rating
+  '23': 'Jutalmak: &2{region}'
+  '24': Alrégió Tagok
+  '25': Alrégió Flagek (&3{playername}&r)
+  '26': 'Szintek és Rangok: &2{region}'
+  '27': Játékos Információ
+  '28': Storage - &2{region}
+
+# Menu buttons
+# Each button has its own unique index, which you cannot change or add/remove buttons.
+# Button details:
+# - Name: The button name/title
+# - Lore: The button description, must be a string list
+# - Type: The button type, must be a valid Minecraft Item name (Diamong → DIAMOND) in UPPER CASE! (or player heads, read documentation)
+# You can use hexadecimal color codes (&#FF00FF...) or default Minecraft color codes (&6, &b...).
+buttons:
+  '0':
+    name: '&c&lVissza'
+    lore:
+    - '&7Vissza az előző menübe.'
+    type: RED_STAINED_GLASS_PANE
+  '1':
+    name: '&9&lElőző'
+    lore:
+    - '&7Vissza az előző oldalra.'
+    type: ARROW
+  '2':
+    name: '&9&lKövetkező'
+    lore:
+    - '&7Tovább a következő odalra.'
+    type: ARROW
+  '3':
+    name: ' '
+    type: GRAY_STAINED_GLASS_PANE
+  '4':
+    name: '&#FFB74D&lRégió: &r&2{region} &8(&2{region-displayname}&8)'
+    lore:
+    - '&7• Tulajdonos: &3{region-owner}'
+    - '&7• Bank: &c{region-bank}'
+    - '&7• Létrehozva: &6{region-createdat}'
+    - ''
+    - '&#FFB74D&n➥ Shift + Bal-Klikk, hogy kiválaszd.'
+    - '&#FFB74D&n➥ Shift + Jobb-Klikk bővebb információkért.'
+    - '&#FFB74D&n➥ Bal-Klikk szerkesztéshez.'
+    - '&#FFB74D&n➥ Jobb-Klikk a területre teleportáláshoz.'
+    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+  '5':
+    name: '&#FF9A76&lRégió: &r&2{region} &8(&2{region-displayname}&8)'
+    lore:
+    - '&7Kiválasztottad ezt a régiót. A régiókra vonatkozó parancsok'
+    - '&7(pl.&e/claim&7, &e/rg trust&7) erre a régióra lesznek használva.'
+    - ''
+    - '&7• Tulajdonos: &3{region-owner}'
+    - '&7• Bank: &c{region-bank}'
+    - '&7• Létrehozva: &6{region-createdat}'
+    - ''
+    - '&#FF9A76&n➥ Shift + Bal-Klikk, hogy kiválaszd a régiót.'
+    - '&#FF9A76&n➥ Shift + Jobb-Klikk bővebb információkért.'
+    - '&#FF9A76&n➥ Bal-Klikk a régió szerkesztéséhez.'
+    - '&#FF9A76&n➥ Jobb-Klikk a régióba teleportáláshoz.'
+    type: PLAYERHEAD-a79a5c95ee17abfef45c8dc224189964944d560f19a44f19f8a46aef3fee4756
+  '6':
+    name: '&#BA68C8&lJátékosok Kezelése'
+    lore:
+    - '&7Kezeld a régióhoz tartozó játékosokat pl. ban, unban,'
+    - '&7trust, untrust, invite...'
+    - ''
+    - '&7Ennek a régiónak &6{region-members} &7tagja van.'
+    - ''
+    - '&#BA68C8&n➥ Bal-Klikk a játékosok kezeléséhez.'
+    type: PLAYERHEAD-75ad626181111e55ebfc906a8e7040c66b8efe94f7c07448d5710012d68436c
+  '7':
+    name: '&#64B5F6&lChunk Lista'
+    lore:
+    - '&7Nézd meg a levédett chunkok listáját.'
+    - ''
+    - '&7Ennek a régiónak &6{region-chunks}&7/&6{region-chunks-max} &7levédett chunkja
+      van.'
+    - ''
+    - '&#64B5F6&n➥ Bal-Klikk a chunkok megtekintéséhez.'
+    type: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
+  '8':
+    name: '&#4FC3F7&lFlagek Kezelése'
+    lore:
+    - '&7Kezeld a globális és környezeti flageket.'
+    - ''
+    - '&e&lMegjegyzés:'
+    - '&eA globális flagek nincsenek hatással a tagokra,'
+    - '&enekik specifikusan tagonként kell beállítani.'
+    - ''
+    - '&#4FC3F7&n➥ Bal-Klikk a globális flagek szerkesztéséhez.'
+    - '&#4FC3F7&n➥ Jobb-Klikk a környezeti flagek szerkesztéséhez.'
+    type: PLAYERHEAD-e8b8c6a46d87cf86a55df214cf84bf45cca25edb9a676e96364dd6a6eea235b3
+  '9':
+    name: '&#81C784&lEgyéb Beállíások'
+    lore:
+    - '&7Átnevezés, leírás beállítása stb...'
+    - ''
+    - '&#81C784&n➥ Bal-Klikk az egyéb beállítások szerkesztéséhez.'
+    type: PLAYERHEAD-ec2ff244dfc9dd3a2cef63112e7502dc6367b0d02132950347b2b479a72366dd
+  '10':
+    name: '&#FFB74D&lAlterületek &8({subareas-enabled}&8)'
+    lore:
+    - '&7A régión belüli alterületek kezelése.'
+    - ''
+    - '&7Ennek a régiónak &6{region-subareas}&7/&6{region-subareas-max} &7alterülete
+      van.'
+    - ''
+    - '&#FFB74D&n➥ Bal-Klikk az alterületek kezeléséhez.'
+    type: OAK_FENCE
+  '11':
+    name: '&#AED581&lFenttartás &8({upkeep-enabled}&8)'
+    lore:
+    - '&7• Chunkok: &6{region-chunks}'
+    - '&7• Díj: &6{upkeep-amount}'
+    - '&7• Határidő: &6{upkeep-date}'
+    type: EMERALD
+  '12':
+    name: '&#FF8A65&lBérlés &8({rent-enabled}&8)'
+    lore:
+    - '&7• Játékos: &6{rent-renter}'
+    - '&7• Díj: &6{rent-price}'
+    - '&7• Lejárat: &6{rent-until}'
+    - ''
+    - '&#FF8A65&n➥ Bal-Klikk a bérlés megszakításához.'
+    type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
+  '13':
+    name: '&#9575CD&lNapló'
+    lore:
+    - '&7Nézd meg a régió összes naplóbejegyzését.'
+    - ''
+    - '&6{region-logs} &7üzenet (&6{region-logs-unread} &7olvasatlan).'
+    - ''
+    - '&#9575CD&n➥ Bal-Klikk az üzenetek és naplóbejegyzések olvasásához.'
+    type: PLAYERHEAD-c2af9b072d19455809dc9d09d9da8bb32f63ad16b015ac772acd9a9f22c77098
+  '14':
+    name: '&#EF5350&lKilépés'
+    lore:
+    - '&7Lépj ki a régióból.'
+    - ''
+    - '&#EF5350&n➥ Bal-Klikk a régió elhagyásához.'
+    type: OAK_DOOR
+  '15':
+    name: '&#42A5F5&lRangsor Információk'
+    lore:
+    - '&7A régió tulajdonosa &3{region-owner}'
+    - ''
+    - '&7• Globális: &d#{region-global-rank}'
+    - '&7• Rang szerint: &a#{region-rank-bank}'
+    - '&7• Chunk szerint: &a#{region-rank-chunks}'
+    - '&7• Tagok szerint: &a#{region-rank-members}'
+    - '&7• Értékelés szerint: &a#{region-rank-rating}'
+    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+  '16':
+    name: '&#FFD54F&lIdőjárás és idő'
+    lore:
+    - '&7• Időjárás: &b{region-weather}'
+    - '&7• Idő: &b{region-time}'
+    - ''
+    - '&#FFD54F&n➥ Bal-Klikk az időjárás állításához.'
+    - '&#FFD54F&n➥ Jobb-Klikk az idő állításához.'
+    type: PLAYERHEAD-65f37826161c792d7f6c920b2fa06b88e6845288ab02ad9b65d4bbf5ca2ce1e3
+  '17':
+    name: '&#81D4FA&lFlag: &6{flag}'
+    lore:
+    - '&7{flag-description}'
+    - ''
+    - '&7➤ Állapot: {state}'
+    - ''
+    - '&#81D4FA&n➥ Bal-Klikk az állapot átváltásához.'
+  '18':
+    name: '&#4DB6AC&lHozzáadott Játékosok'
+    lore:
+    - '&7Játékos eltávolítása vagy flagjeinek szerkesztése.'
+    - ''
+    - '&6{region-members}&7/&6{region-members-max} &7hozzáadott játékos a régióban.'
+    - ''
+    - '&#4DB6AC&n➥ Bal-Klikk a tagok megtekintéséhez.'
+    type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
+  '19':
+    name: '&#E57373&lKitiltott Játékosok'
+    lore:
+    - '&7Játékosok kitiltása vagy feloldása.'
+    - ''
+    - '&eNem adhatsz a régióhoz kitiltott játékosokat. Előbb'
+    - '&efel kell őt oldanod a meghíváshoz.'
+    - ''
+    - '&6{region-banned-players} &7Kitiltott játékos a régióban.'
+    - ''
+    - '&#E57373&n➥ Bal-Klikk a kitiltott játékosok kezeléséhez'
+    type: BARRIER
+  '20':
+    name: '&#FFB74D&lMeghívott Játékosok'
+    lore:
+    - '&7Hívj meg vagy vonj vissza játékosmeghívásokat.'
+    - ''
+    - '&6{region-invited-players} &7meghívott játékos a régióban.'
+    - ''
+    - '&#FFB74D&n➥ Bal-Klikk a meghívások kezeléséhez.'
+    type: WRITABLE_BOOK
+  '21':
+    name: '&#81C784&l{playername}'
+    lore:
+    - '&7A játékos jelenleg {player-status}&7.'
+    - ''
+    - '&7• Egyenleg: &c{player-balance}'
+    - '&7• Ping: &a{player-ping}'
+    - '&7• Csatlakozás ideje: &6{player-joinedat}'
+    type: PLAYERHEAD-this
+  '22':
+    name: '&#4DD0E1&lTulajdonban Lévő Régiók'
+    lore:
+    - '&7A játékos tulajdonában lévő régiók.'
+    - ''
+    - '{player-owned-regions}'
+    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+  '23':
+    name: '&#7986CB&lRégiók Tagja'
+    lore:
+    - '&7Régiók, amelyekhez ez a játékos hozzá van adva.'
+    - ''
+    - '{player-trusted-regions}'
+    type: PLAYERHEAD-ae156eb5affddf208617aab7b430fad9f2c991ec2f38304a0c213f31e76cbbe4
+  '24':
+    name: '&#AED581&l{playername}'
+    lore:
+    - '&7Ez a játékos hozzá van adva ehhez a régióhoz&2{region}&7.'
+    - ''
+    - '&7• Csatlakozás ideje: &6{member-joinedat}'
+    - '&7• Adó: &c{tax-amount}'
+    - '&7• Határidő: &6{taxes-dueon}'
+    - ''
+    - '&#AED581&n➥ Shift + Bal-Klikk a játékos eltávolításához.'
+    - '&#AED581&n➥ Shift + Jobb-Klikk több információhoz.'
+    - '&#AED581&n➥ Bal-Klikk a játékos flagjeinek állításához.'
+    - '&#AED581&n➥ Jobb-Klikk a játékos jog flagjeinek állításhoz.'
+    type: PLAYERHEAD-this
+  '25':
+    name: '&#FFB74D&lRégió: &2{region}'
+    lore:
+    - '&7• Tulajdonos: &3{region-owner}'
+    - '&7• Létrehozva: &6{region-createdat}'
+    - '&7• Egyenleg: &c{region-bank}'
+    - '&7• Értékelés: &r{region-rating}'
+    - ''
+    - '&7• Globális Helyezés: &d#{region-global-rank}'
+    - '&7• Helyezés Egyenleg Alapján: &a#{region-rank-bank}'
+    - '&7• Helyezés Chunkok Alapján: &a#{region-rank-chunks}'
+    - '&7• Helyezés Tagok Alapján: &a#{region-rank-members}'
+    - '&7• Helyezés Értékelés Alapján: &a#{region-rank-rating}'
+    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+  '26':
+    name: '&#81C784&lTagok'
+    lore:
+    - '{region-members}'
+    type: PLAYER_HEAD
+  '27':
+    name: '&#EF9A9A&l{playername}'
+    lore:
+    - '&7Ez a játékos ki van tiltva.'
+    - ''
+    - '&7• Kitiltva: &6{player-bannedat}'
+    - '&7• Indok: &f{player-banreason}'
+    - ''
+    - '&#EF9A9A&n➥ Bal-Klikk a tiltás feloldásához.'
+    type: PLAYERHEAD-this
+  '28':
+    name: '&#D32F2F&lJátékos Kitiltása'
+    lore:
+    - '&7Tilts ki játékost név alapján.'
+    - ''
+    - '&#D32F2F&n➥ Bal-Klikk játékos kitiltásához.'
+    type: MACE
+  '29':
+    name: '&#66BB6A&lJátékos Meghívása'
+    lore:
+    - '&7Hívj meg játékost ehhez a régióhoz.'
+    - ''
+    - '&#66BB6A&n➥ Bal-Klikk játékos meghívásához.'
+    type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
+  '30':
+    name: '&#FFF176&l{playername}'
+    lore:
+    - '&7Ez a játékos már meg van hívva. El kell fogadnia'
+    - '&7a meghívást a régióhoz való csatlakozáshoz.'
+    - ''
+    - '&#FFF176&n➥ Bal-Klikk a meghívás visszavonásához.'
+    type: WRITABLE_BOOK
+  '31':
+    name: '&#FF7043&lTisztítás'
+    lore:
+    - '&7Vonj vissza minden meghívást.'
+    - ''
+    - '&#FF7043&n➥ Bal-Klikk a tisztításhoz.'
+    type: BRUSH
+  '32':
+    name: '&#FFAB91&lMinden tiltás feloldása'
+    lore:
+    - '&7Oldj fel minde kitiltott játékost.'
+    - ''
+    - '&#FFAB91&n➥ Bal-Klikk a tiltások feloldásához.'
+    type: BRUSH
+  '33':
+    name: '&#42A5F5&lChunk #{index}'
+    lore:
+    - '&7Ez a chunk a régió része &2{region}&7.'
+    - ''
+    - '&7• Lefoglalva: &6{chunk-claimedat}'
+    - '&7• Pozíció: &6{chunk-location}'
+    - '&7• Mindig betöltve? {chunk-is-loaded}'
+    - ''
+    - '&#42A5F5&n➥ Shift + Bal-Klikk a chunk betöltéséhez.'
+    - '&#42A5F5&n➥ Bal-Klikk a chunk törléséhez.'
+    - '&#42A5F5&n➥ Jobb-Klikk a chunkhoz teleportáláshoz.'
+    type: CUSTOM::GETBYWORLD
+  '34':
+    name: '&#FFB74D&lRégió Átnevezése'
+    lore:
+    - '&7Nevezd át a régiót.'
+    - '&7A jelenlegi név: &2{region}'
+    - ''
+    - '&#FFB74D&n➥ Bal-Klikk a régió átnevezéséhez.'
+    type: NAME_TAG
+  '35':
+    name: '&#FFD54F&lMegjelenő Név Bellítása'
+    lore:
+    - '&7Állítsd be a régió megjelenő nevét.'
+    - '&7A jelenlegi név: &2{region-displayname}'
+    - ''
+    - '&eA megjelenő név, amit minden játékos lát.'
+    - '&eEbben használhatsz bármilyen karaktert és szóközt!'
+    - ''
+    - '&#FFD54F&n➥ Bal-Klikk a megjelenő név szerkesztéséhez.'
+    type: NAME_TAG
+  '36':
+    name: '&#81C784&lLeírás Beállítása'
+    lore:
+    - '&7Állítsd be a régió leírását.'
+    - '&7A jelenlegi leírás: &7{region-description}'
+    - ''
+    - '&7Egyedi változók:'
+    - '&7• &a%player%&7: A régióba belépő játékos neve'
+    - ''
+    - '&7Példa: &aÜdv, %player%!'
+    - '&#81C784&n➥ Bal-Klikk a leírás szerkesztéséhez.'
+    type: OAK_SIGN
+  '37':
+    name: '&#9575CD&lHelyzet Beállítása'
+    lore:
+    - '&7Állítsd a régió helyzetét a jelenlegi pozíciódra.'
+    - ''
+    - '&#9575CD&n➥ Bal-Klikk a helyzet frissítéséhez.'
+    type: ENDER_PEARL
+  '38':
+    name: '&#FF8A65&lTulajdon Jog Átadása'
+    lore:
+    - '&7Add át a régiót egy másik játékosnak.'
+    - ''
+    - '&c&lFigyelem:'
+    - '&cEz a folyamat végleges. Miután átadod a tulajdon'
+    - '&cjogot, már nem leszel a régió tulajdonosa.'
+    - '&cA régió tagjai, chunkjai és egyenlege nem változik.'
+    - ''
+    - '&#FF8A65&n➥ Bal-Klikk a tulajdon jog átadásához.'
+    type: PLAYER_HEAD
+  '39':
+    name: '&#64B5F6&lBejegyzés #{index}'
+    lore:
+    - '&7• Létrehozó: &3{log-author}'
+    - '&7• Időpont: &6{log-sentat}'
+    - ''
+    - '&7➽ &f{log-message}'
+    - ''
+    - '&#64B5F6&n➥ Bal-Klikk az olvasottnak jelöléshez.'
+    - '&#64B5F6&n➥ Jobb-Klikk a bejegyzés törléséhez.'
+    type: BOOK
+  '40':
+    name: '&#81C784&lBejegyzés #{index} &7(Olvasottnak Jelölve)'
+    lore:
+    - '&7• Létrehozó: &3{log-author}'
+    - '&7• Időpont: &6{log-sentat}'
+    - ''
+    - '&7➽ &f{log-message}'
+    - ''
+    - '&#81C784&n➥ Jobb-Klikk a bejegyzés törléséhez.'
+    type: ENCHANTED_BOOK
+  '41':
+    name: '&#FF7043&lTisztítás'
+    lore:
+    - '&7Törölj minden bejegyzést.'
+    - ''
+    - '&#FF7043&n➥ Bal-Klikk a tisztításhoz.'
+    type: BRUSH
+  '42':
+    name: '&#FFB74D&l{subarea}'
+    lore:
+    - '&7Ez az alterület a régióban van &2{region}&7.'
+    - ''
+    - '&7• Terület: &6{subarea-volume}'
+    - '&7• Létrehozva: &6{subarea-createdat}'
+    - ''
+    - '&#FFB74D&n➥ Bal-Klikk az alterület szerkesztéséhez.'
+    type: OAK_FENCE
+  '43':
+    name: '&#FFD54F&lAlterület Átnevezése'
+    lore:
+    - '&7Nevezd át az alterületet.'
+    - '&7A jelenlegi név: &2{subarea}'
+    - ''
+    - '&#FFD54F&n➥ Bal-Klikk a név szerkesztéséhez.'
+    type: NAME_TAG
+  '44':
+    name: '&#4FC3F7&lFlagek'
+    lore:
+    - '&7Állítsd be a globális flageket'
+    - ''
+    - '&e&lMegjegyzés:'
+    - '&eA régió tagjaira nem lesz hatással, ha nem'
+    - '&eaz alterület tagjai!'
+    - ''
+    - '&#4FC3F7&n➥ Bal-Klikk a flagek szerkesztéséhez.'
+    type: PLAYERHEAD-e8b8c6a46d87cf86a55df214cf84bf45cca25edb9a676e96364dd6a6eea235b3
+  '45':
+    name: '&#E57373&lTörlés'
+    lore:
+    - '&7Töröld az alterületet.'
+    - ''
+    - '&#E57373&n➥ Bal-Klikk az alterület törléséhez.'
+    type: BARRIER
+  '46':
+    name: '&#81C784&lMind Olvasottnak Jelölése'
+    lore:
+    - '&7Jelölj minden bejegyzést olvasottnak.'
+    - ''
+    - '&#81C784&n➥ Bal-Klikk az olvasottnak jelöléshez.'
+    type: BOOKSHELF
+  '47':
+    name: '&#FFD54F&l{region-displayname}'
+    lore:
+    - '&7• Tulajdonos: &3{region-owner}'
+    - '&7• Létrehozva: &6{region-createdat}'
+    - '&7• Egyenleg: &c{region-bank}'
+    - '&7• Értékelés: &r{region-rating}'
+    - ''
+    - '&#FFD54F&n➥ Bal-Klikk a meglátogatáshoz.'
+    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+  '48':
+    name: '&#E57373&l★'
+    lore:
+    - '&#E57373&n➥ Bal-Klikk az értékeléshez.'
+    type: RED_STAINED_GLASS
+  '49':
+    name: '&#FFB74D&l★★'
+    lore:
+    - '&#FFB74D&n➥ Bal-Klikk az értékeléshez.'
+    type: ORANGE_STAINED_GLASS
+  '50':
+    name: '&#FFF176&l★★★'
+    lore:
+    - '&#FFF176&n➥ Bal-Klikk az értékeléshez.'
+    type: YELLOW_STAINED_GLASS
+  '51':
+    name: '&#AED581&l★★★★'
+    lore:
+    - '&#AED581&n➥ Bal-Klikk az értékeléshez.'
+    type: LIME_STAINED_GLASS
+  '52':
+    name: '&#81C784&l★★★★★'
+    lore:
+    - '&#81C784&n➥ Bal-Klikk az értékeléshez.'
+    type: GREEN_STAINED_GLASS
+  '53':
+    name: '&#E0E0E0&lMég nem értékelted ezt a régiót!'
+    type: PAPER
+  '54':
+    name: '&#FFF176&lÉrtékelted ezt a régiót: &r{player-rate}'
+    type: PAPER
+  '55':
+    name: '&#CE93D8&l#{rank} &r&2{region} &8(&2{region-displayname}&8)'
+    lore:
+    - '&7A régió tulajdonosa &3{region-owner}'
+    - ''
+    - '&7A régió helyezése: &d#{rank}&7!'
+    - ''
+    - '&#CE93D8&n➥ Bal-Klikk bővebb információkhoz.'
+    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+  '56':
+    name: '&#BA68C8&lSzűrő'
+    lore:
+    - '&7A szűrő az egyenleg alapján rangsorolva mutatja a régiókat'
+    - '&7(legtöbbtől a legkevesebbig).'
+    - ''
+    - '&a➤ Egyenleg'
+    - '&7➤ Chunkok'
+    - '&7➤ Tagok'
+    - '&7➤ Legrégebbi'
+    - '&7➤ Értékelés'
+    - ''
+    - '&#BA68C8&n➥ Bal-Klikk a szűrő módosításához.'
+    type: HOPPER
+  '57':
+    name: '&#64B5F6&lSzűrő'
+    lore:
+    - '&7A szűrő a chunkok alapján rangsorolva mutatja a régiókat'
+    - '&7(legtöbbtől a legkevesebbig).'
+    - ''
+    - '&7➤ Egyenleg'
+    - '&a➤ Chunkok'
+    - '&7➤ Tagok'
+    - '&7➤ Legrégebbi'
+    - '&7➤ Értékelés'
+    - ''
+    - '&#64B5F6&n➥ Bal- vagy Jobb-Klikk a szűrő módosítsához.'
+    type: HOPPER
+  '58':
+    name: '&#4FC3F7&lSzűrő'
+    lore:
+    - '&7A szűrő a tagok alapján rangsorolva mutatja a régiókat'
+    - '&7(legtöbbtől a legkevesebbig).'
+    - ''
+    - '&7➤ Egyenleg'
+    - '&7➤ Chunkok'
+    - '&a➤ Tagok'
+    - '&7➤ Legrégebbi'
+    - '&7➤ Értékelés'
+    - ''
+    - '&#4FC3F7&n➥ Bal- vagy Jobb-Klikk a szűrő módosítsához.'
+    type: HOPPER
+  '59':
+    name: '&#81C784&lSzűrő'
+    lore:
+    - '&7A szűrő a létrehozás ideje alapján rangsorolva mutatja a régiókat'
+    - '&7(legrégebbitől a legújabbig).'
+    - ''
+    - '&7➤ Egyenleg'
+    - '&7➤ Chunkok'
+    - '&7➤ Tagok'
+    - '&a➤ Legrégebbi'
+    - '&7➤ Értékelés'
+    - ''
+    - '&#81C784&n➥ Bal- vagy Jobb-Klikk a szűrő módosítsához.'
+    type: HOPPER
+  '60':
+    name: '&#FFD54F&lSzűrő'
+    lore:
+    - '&7A szűrő az értékelések alapján rangsorolva mutatja a régiókat'
+    - '&7(legjobbtól legrosszabbig).'
+    - ''
+    - '&7➤ Egyenleg'
+    - '&7➤ Chunkok'
+    - '&7➤ Tagok'
+    - '&7➤ Legrégebbi'
+    - '&a➤ Értékelés'
+    - ''
+    - '&#FFD54F&n➥ Bal- vagy Jobb-Klikk a szűrő módosítsához.'
+    type: HOPPER
+  '61':
+    name: '&#CE93D8&lÉrtékelés'
+    lore:
+    - '&7Értékeld ezt a régiót!'
+    - ''
+    - '&#CE93D8&n➥ Bal-Klikk a régió értékeléséhez.'
+    type: NETHER_STAR
+  '62':
+    name: '&#66BB6A&lÖsszes Régió Mutatása'
+    lore:
+    - '&7Állapot: &aBE'
+    - '&aJelenleg az összes régió látható.'
+    - ''
+    - '&#66BB6A&n➥ Bal-Klikk a váltáshoz.'
+    type: ENDER_EYE
+  '63':
+    name: '&#FF7043&lÖsszes Régió Mutatása'
+    lore:
+    - '&7Állapot: &cKI'
+    - '&cJelenleg csak a saját régióid láthatók.'
+    - ''
+    - '&#FF7043&n➥ Bal-Klikk a váltáshoz.'
+    type: ENDER_PEARL
+  '64':
+    name: '&#D32F2F&lRégió Törlése'
+    lore:
+    - '&c&lVigyázat:'
+    - '&cCsak a tulajdonosa tudja törölni a régiót.'
+    - '&cEz a folyamat &4visszafordíthatatlan&c.'
+    - ''
+    - '&#D32F2F&n➥ Shift + Jobb-Klikk a régió törléséhez.'
+    type: BARRIER
+  '65':
+    name: '&#FFB74D&lTömeges Flag Állítás'
+    lore:
+    - '&7Állítsd az összes flaget egyszerre!'
+    - ''
+    - '&#FFB74D&n➥ Bal-Klikk az összes bekapcsolásához.'
+    - '&#FFB74D&n➥ Jobb-Klikk az összes kikapcsolásához.'
+    type: JIGSAW
+  '66':
+    name: '&#AED581&lJutalmak Tagok Alapján'
+    lore:
+    - '&7Meghívott játékosok: &6{members}'
+    - ''
+    - '&7• Feloldott jutalmak:'
+    - '  &7- &a✔ {chunks} Feloldott Chunk'
+    - '  &7- &a✔ {subareas} Feloldott Alterület'
+    type: PAPER
+  '67':
+    name: '&#81C784&lJutalmak Játékidő Alapján'
+    lore:
+    - '&7Játékidő: &6{player-playtime}'
+    - ''
+    - '&7• Feloldott jutalmak:'
+    - '  &7- &a✔ {chunks} Feloldott Chunk'
+    - '  &7- &a✔ {subareas} Feloldott Alterület'
+    type: PAPER
+  '68':
+    name: '&#66BB6A&lJátékos Hozzáadása'
+    lore:
+    - '&7Adj hozzá játékost ehhez az alterülethez'
+    - ''
+    - '&#66BB6A&n➥ Bal-Klikk játékos hozzáadásához.'
+    type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
+  '69':
+    name: '&#C5E1A5&l{playername}'
+    lore:
+    - '&7Ez a játékos a régió tagja &2{region}&7,'
+    - '&7és az alterület tagja &3{subarea}&7.'
+    - ''
+    - '&#C5E1A5&n➥ Shift + Bal-Klikk a játékos eltávolításához.'
+    - '&#C5E1A5&n➥ Shift + Jobb-Klikk bővebb információkhoz.'
+    - '&#C5E1A5&n➥ Left-click to configure player flags for this sub-area.'
+    type: PLAYERHEAD-this
+  '70':
+    name: '&#7986CB&lAlterület Játékosok'
+    lore:
+    - '&7Állíts flageket az alterület játékosaira.'
+    - ''
+    - '&e&lMegjegyzés:'
+    - '&eAz alterület jogoknak nagyobb a prioritása, mint'
+    - '&eaz alap régiónak! Specifikusan állíhatsz játékosoknak'
+    - '&ejogokat az alterületen anélkül, hogy mások is kapnának.'
+    - ''
+    - '&7• Játékosok: &6{subarea-players}'
+    - ''
+    - '&#7986CB&n➥ Bal-Klikk a játékosok megtekintéséhez.'
+    type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
+  '71':
+    name: '&#FF8A65&lBérlés &8({rent-enabled}&8)'
+    lore:
+    - '&7• Játékos: &6{rent-renter}'
+    - '&7• Ár: &6{rent-price}'
+    - '&7• Lejárati idő: &6{rent-until}'
+    - ''
+    - '&#FF8A65&n➥ Bal-Klikk az alrégió kiadásának visszavonásához.'
+    type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
+  '72':
+    name: '&#42A5F5&lInformáció'
+    lore:
+    - '&7Ennek a régiónak &6{max-subareas} &7alterülete lehet!'
+    - '&7Érj el nagyobb rangot, hogy többet feloldj.'
+    - ' '
+    - '&7Nézd meg a jutalmakat: &e/hs rewards'
+    type: PAPER
+  '73':
+    name: '&#42A5F5&lInformáció'
+    lore:
+    - '&7Ennek a régiónak &6{max-chunks} &7lefoglalt chunkja lehet!'
+    - '&7Érj el nagyobb rangot, hogy többet feloldj.'
+    - ' '
+    - '&7Nézd meg a jutalmakat: &e/hs rewards'
+    type: PAPER
+  '74':
+    name: '&#42A5F5&lInformáció'
+    lore:
+    - '&7Szerezz tapasztalati pontot, hogy fejleszd a régiód!'
+    - '&7Ölj szörnyeket, hogy több tapasztalati pontot szerezz.'
+    - '&7Minden szint specifikus mennyiségű pontot igényel!'
+    - ' '
+    - '&7• Szint: &6{level}'
+    - '&7• XP: &6{xp}'
+    - '&7• Feloldott Jutalmak:'
+    - '  &7- &a✔ {reward-chunks} Chunkok'
+    - '  &7- &a✔ {reward-members} Tagok'
+    - '  &7- &a✔ {reward-subareas} Alterületek'
+    - '  &7- &a✔ {reward-upkeep}% Fenttartási Ár'
+    type: PAPER
+  '75':
+    name: '&#391AE8&lHaladás'
+    lore:
+    - '&7Következő szint: &6{next-lvl} &7- &6{xp}&7/&6{next-lvl-xp} XP'
+    type: BLUE_STAINED_GLASS_PANE
+  '76':
+    name: '&#808080&lHátralévő'
+    lore:
+    - '&7Következő szint: &6{next-lvl} &7- &6{xp}&7/&6{next-lvl-xp} XP'
+    type: LIGHT_GRAY_STAINED_GLASS_PANE
+  '77':
+    name: '&#81C784&lSzint {level}'
+    lore:
+    - '&7Ez a szint fel van oldva!'
+    - ' '
+    - '&7Jutalmak:'
+    - '{level-rewards}'
+    type: GREEN_CONCRETE
+  '78':
+    name: '&#E57373&lSzint {level}'
+    lore:
+    - '&7Ez a szint le van zárva. Még &6{xp} XP &7kell'
+    - '&7a feloldáshoz!'
+    - ' '
+    - '&7Jutalmak:'
+    - '{level-rewards}'
+    type: RED_CONCRETE
+  '79':
+    name: '&#AED581&lJutalmak'
+    lore:
+    - '&7Nézd meg a feloldott jutalmaid.'
+    - ''
+    - '&#AED581&n➥ Bal-Klikk a jutalmak megtekintéséhez.'
+    type: PLAYERHEAD-d1c3e87f30290045d019506c805834ba971f5aeec0d7d0505261f314a5465638
+  '80':
+    name: '&#1DCAE0&lSzintek'
+    lore:
+    - '&7Nézd meg a régió szintjeit.'
+    - ''
+    - '&#1DCAE0&n➥ Bal-Klikk a szintek megtekintéséhez.'
+    type: NETHER_STAR
+  '81':
+    name: '&#BA68C8&lPublikus? &r{is-public-regions}'
+    type: COMPARATOR
+    lore:
+    - '&7Ha &abe &7van kapcsolva&7, csak azok a régiók láthatók,'
+    - '&7ami a sajátod vagy hozzá vagy adva.'
+    - ''
+    - '&7Ha &cki &7van kapcsolva, akkor az összes régió látható.'
+    - '&7here.'
+
+# Do NOT modify these
+button-types:
+  world:
+    overworld: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
+    nether: PLAYERHEAD-99c6a378a72da175831c9394fa45eb7343f31d7d058fa76a9a646be007b7888d
+    the_end: PLAYERHEAD-bba96aa005acf805a15b3ba49e5004dcff0cc127c57be0266b8b7a52dd8df753
+
+# Make sure the level rewards are synchronized as in config.yml
+button-levels:
+  '5':
+  - '&a✔ 1 Chunk'
+  - '&a✔ 5% Fenttartási ár'
+  '10':
+  - '&a✔ 2 Chunk'
+  - '&a✔ 1 Tag'
+  '15':
+  - '&a✔ 4 Chunk'
+  - '&a✔ 2 Tag'
+  - '&a✔ 1 Alterület'
+  - '&a✔ 10% Fenttartási ár'
+  '20':
+  - '&a✔ 15% Fenttartási ár'
+  '30':
+  - '&a✔ 30% Fenttartási ár'
+  '50':
+  - '&a✔ 10 Chunk'
+  - '&a✔ 6 Tag'
+  - '&a✔ 5 Alterület'
+  - '&a✔ 50% Fenttartási ár'
