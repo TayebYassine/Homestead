@@ -77,6 +77,10 @@ public class SerializableLocation {
 		return worldId == null ? null : Bukkit.getWorld(worldId);
 	}
 
+	public UUID getWorldId() {
+		return worldId;
+	}
+
 	public void setWorld(World world) {
 		this.worldId = world.getUID();
 	}

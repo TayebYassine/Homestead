@@ -24,6 +24,7 @@ import java.awt.image.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class SquaremapAPI {
 	private static final Map<World, SimpleLayerProvider> layers = new HashMap<>();
@@ -98,11 +99,18 @@ public class SquaremapAPI {
 		if (isEnabled) {
 			final SimpleLayerProvider targetLayerFinal = targetLayer;
 
-			if (region.getLocation() != null
-					&& region.getLocation().bukkit().getChunk().equals(chunk.bukkit())) {
-				Homestead.getInstance().runAsyncTask(() -> {
-					addRegionIcon(targetLayerFinal, region, hoverText);
-				});
+			if (region.getLocation() != null) {
+				double locX = region.getLocation().getX();
+				double locZ = region.getLocation().getZ();
+				int regionChunkX = (int) Math.floor(locX) >> 4;
+				int regionChunkZ = (int) Math.floor(locZ) >> 4;
+
+				if (regionChunkX == chunk.getX() && regionChunkZ == chunk.getZ()
+						&& region.getLocation().getWorldId().equals(chunk.getWorldId())) {
+					Homestead.getInstance().runAsyncTask(() -> {
+						addRegionIcon(targetLayerFinal, region, hoverText);
+					});
+				}
 			}
 		}
 	}
@@ -237,43 +245,22 @@ public class SquaremapAPI {
 	public boolean isChunkClaimed(Region region, SerializableChunk chunk, GeoDirection direction) {
 		int x = chunk.getX();
 		int z = chunk.getZ();
-		World world = chunk.getWorld();
+		UUID worldId = chunk.getWorldId();
 
-		boolean result;
 		switch (direction) {
-			case NORTH: {
-				Region chunksRegion = ChunkManager
-						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z - 1).bukkit());
-
-				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
-				break;
-			}
-			case EAST: {
-				Region chunksRegion = ChunkManager
-						.getRegionOwnsTheChunk(new SerializableChunk(world, x + 1, z).bukkit());
-
-				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
-				break;
-			}
-			case SOUTH: {
-				Region chunksRegion = ChunkManager
-						.getRegionOwnsTheChunk(new SerializableChunk(world, x, z + 1).bukkit());
-
-				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
-				break;
-			}
-			case WEST: {
-				Region chunksRegion = ChunkManager
-						.getRegionOwnsTheChunk(new SerializableChunk(world, x - 1, z).bukkit());
-
-				result = chunksRegion != null && chunksRegion.getUniqueId().equals(region.getUniqueId());
-				break;
-			}
-			default:
-				result = false;
+			case NORTH: z -= 1; break;
+			case EAST:  x += 1; break;
+			case SOUTH: z += 1; break;
+			case WEST:  x -= 1; break;
+			default: return false;
 		}
 
-		return result;
+		final int nx = x, nz = z;
+
+		return region.getChunks().stream()
+				.anyMatch(c -> c.getWorldId().equals(worldId)
+						&& c.getX() == nx
+						&& c.getZ() == nz);
 	}
 
 	public void update() {
