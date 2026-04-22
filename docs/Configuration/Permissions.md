@@ -100,40 +100,37 @@ These allow players to:
 **What These Do:**
 
 - `homestead.operator`: Grants access to all admin features, can edit any region
-- `homestead.admin.forceunclaim`: Can delete anyone's regions
+- `homestead.admin.forceunclaim`: Can unclaim anyone's regions
 - `/hsadmin` commands: Manage imports, exports, updates, and system settings
 
 ### Region Management Permissions
 
 Permissions for players to manage their own regions:
 
-| Permission                             | Description                              |
-|----------------------------------------|------------------------------------------|
-| `homestead.region.*`                   | All region management permissions        |
-| `homestead.region.create`              | Create new regions                       |
-| `homestead.region.delete`              | Delete owned regions                     |
-| `homestead.region.chat`                | Use region chat                          |
-| `homestead.region.mail`                | Send mail to region members              |
-| `homestead.region.players.trust`       | Trust players in regions                 |
-| `homestead.region.players.untrust`     | Untrust players from regions             |
-| `homestead.region.players.ban`         | Ban players from regions                 |
-| `homestead.region.players.unban`       | Unban players from regions               |
-| `homestead.region.flags.global`        | Edit global player flags                 |
-| `homestead.region.flags.world`         | Edit world/environment flags             |
-| `homestead.region.flags.members`       | Edit member-specific flags               |
-| `homestead.region.subareas.create`     | Create sub-areas                         |
-| `homestead.region.subareas.delete`     | Delete sub-areas                         |
-| `homestead.region.subareas.rename`     | Rename sub-areas                         |
-| `homestead.region.subareas.flags`      | Edit sub-area flags                      |
-| `homestead.region.bank`                | Access region banking                    |
-| `homestead.region.dynamicmaps.icon`    | Change region icon on maps               |
-| `homestead.region.dynamicmaps.color`   | Change region color on maps              |
-| `homestead.region.war`                 | Declare war on regions                   |
-
-**Using Wildcards:**
-
-- `homestead.region.*` gives **all** of the above permissions at once
-- Useful for VIP ranks or players you trust completely
+| Permission                           | Description                       |
+|--------------------------------------|-----------------------------------|
+| `homestead.region.*`                 | All region management permissions |
+| `homestead.region.create`            | Create new regions                |
+| `homestead.region.delete`            | Delete owned regions              |
+| `homestead.region.chat`              | Use region chat                   |
+| `homestead.region.mail`              | Send mail to region members       |
+| `homestead.region.players.trust`     | Trust players in regions          |
+| `homestead.region.players.untrust`   | Untrust players from regions      |
+| `homestead.region.players.ban`       | Ban players from regions          |
+| `homestead.region.players.unban`     | Unban players from regions        |
+| `homestead.region.flags.global`      | Edit global player flags          |
+| `homestead.region.flags.world`       | Edit world/environment flags      |
+| `homestead.region.flags.members`     | Edit member-specific flags        |
+| `homestead.region.subareas.create`   | Create sub-areas                  |
+| `homestead.region.subareas.delete`   | Delete sub-areas                  |
+| `homestead.region.subareas.rename`   | Rename sub-areas                  |
+| `homestead.region.subareas.flags`    | Edit sub-area flags               |
+| `homestead.region.subareas.resize`   | Resize existing sub-areas         |
+| `homestead.region.bank`              | Access region banking             |
+| `homestead.region.fly`               | Fly within region borders         |
+| `homestead.region.dynamicmaps.icon`  | Change region icon on maps        |
+| `homestead.region.dynamicmaps.color` | Change region color on maps       |
+| `homestead.region.war`               | Declare war on regions            |
 
 ### Command Permissions
 
@@ -183,113 +180,6 @@ Permissions for individual commands:
 | `homestead.commands.region.war`       | `/region war`              |
 | `homestead.commands.region.withdraw`  | `/region withdraw`         |
 
-## Permission Setup Examples
-
-### Default Players (Everyone)
-
-```yaml
-# Using LuckPerms commands:
-/lp group default permission set homestead.commands.region true
-/lp group default permission set homestead.commands.region.* true
-/lp group default permission set homestead.commands.claim true
-/lp group default permission set homestead.commands.unclaim true
-```
-
-**Result:** Players can create regions, claim chunks, trust members, and use all basic features.
-
-### VIP Players (Paid Rank)
-
-Additional permissions for VIP players:
-
-```yaml
-/lp group vip permission set homestead.region.war true
-/lp group vip permission set homestead.region.dynamicmaps.icon true
-/lp group vip permission set homestead.region.dynamicmaps.color true
-```
-
-**Result:** VIPs can declare wars and customize their region's appearance on maps.
-
-### Moderators (Staff)
-
-Moderators need limited admin access:
-
-```yaml
-/lp group moderator permission set homestead.commands.region.* true
-/lp group moderator permission set homestead.admin.forceunclaim true
-```
-
-**Result:** Mods can manage regions and force-unclaim rule-breaking claims.
-
-### Administrators (Full Staff)
-
-Administrators need complete access:
-
-```yaml
-/lp group admin permission set homestead.operator true
-```
-
-**Result:** Admins have full Homestead access including `/hsadmin` commands.
-
-## Group-Specific Limits
-
-Homestead uses permission groups to assign claiming limits. See [Ranks and Limits](./Ranks%20and%20Limits.md) for:
-
-- Setting chunk limits per group
-- Member limits per group
-- Sub-area limits per group
-- Cooldowns per group
-
-## Advanced Permission Setups
-
-### Temporary Permissions
-
-**Grant someone temporary admin access (1 hour):**
-```yaml
-/lp user PlayerName permission settemp homestead.operator true 1h
-```
-
-**Grant VIP features for 30 days:**
-```yaml
-/lp user PlayerName parent addtemp vip 30d
-```
-
-### Per-World Permissions
-
-**Allow claiming only in the overworld:**
-```yaml
-/lp group default permission set homestead.commands.claim true world
-/lp group default permission set homestead.commands.claim false world_nether
-/lp group default permission set homestead.commands.claim false world_the_end
-```
-
-### Negative Permissions
-
-**Give all region permissions except war:**
-```yaml
-/lp group default permission set homestead.region.* true
-/lp group default permission set homestead.region.war false
-```
-
-## Checking Permissions
-
-### Check What a Player Has
-
-```yaml
-/lp user PlayerName permission info
-```
-
-### Check What a Group Has
-
-```yaml
-/lp group default permission info
-```
-
-### Test a Specific Permission
-
-```yaml
-/lp user PlayerName permission fetch homestead.commands.region.create
-```
-
 ## Troubleshooting
 
 **Player can't use any commands:**
@@ -306,29 +196,6 @@ Homestead uses permission groups to assign claiming limits. See [Ranks and Limit
 - Operators should automatically have access
 - Verify they have OP status: `/op PlayerName`
 - Check if permissions plugin is overriding OP status
-
-## Quick Reference
-
-**Essential Permissions for Playing:**
-```
-homestead.commands.region
-homestead.commands.region.*
-homestead.commands.claim
-homestead.commands.unclaim
-```
-
-**Full Player Access (No Admin):**
-```
-homestead.region.*
-homestead.commands.region.*
-homestead.commands.claim
-homestead.commands.unclaim
-```
-
-**Full Admin Access:**
-```
-homestead.operator
-```
 
 ## Getting More Help
 

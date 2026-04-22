@@ -6,142 +6,66 @@ Ranks and limits control how many regions, chunks, and members each player can h
 
 Choose between two methods for managing player limits:
 
-### Groups Method
-
-Uses your permissions plugin (like LuckPerms) to assign different limits based on player groups.
-
-**Best for:**
-
-- Servers with VIP/donor ranks
-- Tiered gameplay progression
-- Rewarding players with rank upgrades
-- Varied player bases
-
-### Static Method
-
-All players get the same limits, regardless of rank.
-
-**Best for:**
-
-- Small friend servers
-- Servers without ranks
-- Simple, equal gameplay
-- No permission plugin installed
+- **groups:** Uses your permissions plugin (like LuckPerms) to assign different limits based on player groups.
+- **static:** All players get the same limits, regardless of rank.
+- **permissions:** Same as groups but using permissions instead. Use `homestead.group.(GROUP NAME)`.
 
 ## Configuring the Method
 
-Set your preferred method in `config.yml`:
+Set your preferred method in `limits.yml`:
 
 ```yaml
 limits:
-  # Choose one:
-  # - 'groups': Use permission groups (requires LuckPerms, etc.)
-  # - 'static': Everyone gets the same limits
-  method: 'groups'
+  method: 'static'
 ```
 
 ## Understanding Limits
 
 Each limit type controls a different aspect of claiming:
 
-| Limit                | What It Controls                                    |
-|----------------------|-----------------------------------------------------|
-| `regions`            | Maximum regions a player can create                 |
-| `chunks-per-region`  | Maximum chunks claimable per region                 |
-| `members-per-region` | Maximum trusted members per region                  |
-| `subareas-per-region`| Maximum sub-areas per region                        |
-| `max-subarea-volume` | Maximum size of a sub-area (in blocks³)             |
-| `commands-cooldown`  | Cooldown between commands (in seconds)              |
+| Limit                     | What It Controls                        |
+|---------------------------|-----------------------------------------|
+| `regions`                 | Maximum regions a player can create     |
+| `chunks-per-region`       | Maximum chunks claimable per region     |
+| `members-per-region`      | Maximum trusted members per region      |
+| `subareas-per-region`     | Maximum sub-areas per region            |
+| `max-subarea-volume`      | Maximum size of a sub-area (in blocks³) |
+| `max-bank-deposit`        | Maximum bank deposit per region         |
+| `max-force-loaded-chunks` | Maximum force loaded chunks per region  |
+| `commands-cooldown`       | Cooldown between commands (in seconds)  |
 
-## Groups Method Configuration
+## Groups Configuration
 
-### Defining Group Limits
-
-In `config.yml`, under `limits.groups`, define limits for each permission group:
+In `limits.yml`, under `limits.groups`, define limits for each permission group:
 
 ```yaml
 limits:
   method: 'groups'
   
   groups:
-    default:  # Basic players
+    default: # Basic players
       regions: 1
       chunks-per-region: 4
       members-per-region: 2
       subareas-per-region: 1
       max-subarea-volume: 400
+      max-bank-deposit: 100000000
+      max-force-loaded-chunks: 2
       commands-cooldown: 2
       
     vip:  # VIP rank
-      regions: 2
-      chunks-per-region: 8
-      members-per-region: 5
-      subareas-per-region: 3
-      max-subarea-volume: 800
-      commands-cooldown: 1
+      ...
       
-    mvp:  # Premium rank
-      regions: 3
-      chunks-per-region: 16
-      members-per-region: 10
-      subareas-per-region: 5
-      max-subarea-volume: 1600
-      commands-cooldown: 0
-      
-    admin:  # Staff
-      regions: 10
-      chunks-per-region: 100
-      members-per-region: 50
-      subareas-per-region: 20
-      max-subarea-volume: 5000
-      commands-cooldown: 0
+    ...
 ```
-
-### How Groups Are Detected
-
-Homestead uses your permissions plugin to determine a player's group:
-
-1. Player joins the server
-2. Homestead checks their primary permission group (via Vault/LuckPerms)
-3. Applies the limits defined for that group
-4. If the group isn't defined in config, player gets 0 limits (can't claim)
 
 !!! warning "Undefined Groups"
 
     Any group **not** listed in the config will have **all limits set to 0**. This means players in that group cannot claim chunks or create regions. Always define all your server's groups!
 
-### Adding New Groups
+## Static Configuration
 
-When you add a new rank/group to your server:
-
-1. Add it to `config.yml` under `limits.groups`
-2. Set appropriate limits for that group
-3. Reload Homestead: `/hsadmin reload`
-
-**Example - Adding a "Helper" group:**
-
-```yaml
-limits:
-  groups:
-    default:
-      regions: 1
-      chunks-per-region: 4
-      # ...
-      
-    helper:  # New group
-      regions: 2
-      chunks-per-region: 10
-      members-per-region: 5
-      subareas-per-region: 2
-      max-subarea-volume: 600
-      commands-cooldown: 1
-```
-
-## Static Method Configuration
-
-### Defining Static Limits
-
-In `config.yml`, under `limits.static`, define limits for operators and non-operators:
+In `limits.yml`, under `limits.static`, define limits for operators and non-operators:
 
 ```yaml
 limits:
@@ -149,28 +73,35 @@ limits:
   
   static:
     non-op:  # Regular players
-      regions: 1
-      chunks-per-region: 4
-      members-per-region: 2
-      subareas-per-region: 1
-      max-subarea-volume: 400
-      commands-cooldown: 2
+      ...
       
     op:  # Server operators
-      regions: 10
-      chunks-per-region: 100
-      members-per-region: 50
-      subareas-per-region: 20
-      max-subarea-volume: 5000
-      commands-cooldown: 0
+      ...
 ```
 
-### How Static Limits Work
+## Permissions Configuration
 
-- All regular players get `non-op` limits
-- All operators get `op` limits
-- No permission groups are checked
-- Simple and straightforward
+Same logic as [groups configuration](#groups-configuration), but the players must have the permission `homestead.group.(GROUP NAME)` instead of
+using LuckPerms groups system.
+
+Examples: `homestead.group.default`, `homestead.group.vip`...
+
+```yaml
+limits:
+  method: 'permissions'
+
+  permissions-priority:
+    - admin
+    - vip
+    - mvp
+    - default
+
+  permissions:
+    default:
+      ...
+      
+    ...
+```
 
 ## Per-Player Limits
 
@@ -178,23 +109,13 @@ Override limits for specific players without creating new groups!
 
 ### Configuration
 
-In `config.yml`, under `player-limits`, define custom limits for individual players:
+In `limits.yml`, under `player-limits`, define custom limits for individual players:
 
 ```yaml
 player-limits:
   Steve:  # Player's exact username
-    regions: 5
-    chunks-per-region: 25
-    members-per-region: 15
-    subareas-per-region: 10
-    max-subarea-volume: 2000
-    commands-cooldown: 0
+    ...
     
   Alex:  # Another player
-    regions: 3
-    chunks-per-region: 12
-    members-per-region: 8
-    subareas-per-region: 4
-    max-subarea-volume: 1000
-    commands-cooldown: 1
+    ...
 ```

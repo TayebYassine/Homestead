@@ -51,13 +51,7 @@ Run the migration command:
 /hsadmin import [plugin]
 ```
 
-Replace `[plugin]` with the name of your old plugin:
-
-- **GriefPrevention**: `/hsadmin import GriefPrevention`
-- **ClaimChunk**: `/hsadmin import ClaimChunk`
-- **LandLord4**: `/hsadmin import LandLord`
-- **Lands**: `/hsadmin import Lands`
-- **HuskClaims**: `/hsadmin import Huskclaims`
+Replace `[plugin]` with the name of your old plugin.
 
 ### Step 4: Wait for Completion
 
@@ -100,6 +94,6 @@ Only after confirming everything works:
 
 ✗ Permissions, groups, roles... 
 
-!!! info "Why Not Everything?"
+!!! question "Why Not Everything?"
 
     Each plugin uses different systems for flags, economy, and advanced features. Homestead imports core claim data and uses its own defaults for everything else.

@@ -4,8 +4,9 @@ Flags are permissions that control what players and the environment can do insid
 
 ## Understanding Flags
 
-**Player Flags** control what players (including non-members) can do in your region.  
-**World Flags** control environmental effects and mob behavior.
+- **Player Flags** control what players (including non-members) can do in your region.
+- **World Flags** control environmental effects and mob behavior.
+- **Region Control Flags** control what trusted players can manage in your region.
 
 Each flag can be set to:
 
@@ -27,9 +28,9 @@ default-players-flags:
   # ... more flags
   
 default-world-flags:
-  passive-entities-spawn: true   # Allow by default
-  hostile-entities-spawn: true   # Allow by default
-  entities-grief: false          # Deny by default
+  passive-entity-spawn: true   # Allow by default
+  hostile-entity-spawn: true   # Allow by default
+  entity-grief: false          # Deny by default
   # ... more flags
 ```
 
@@ -46,16 +47,12 @@ Player flags control what non-members can do inside regions. Members and owners 
 | frost-walker   | Deny    | Use Frost Walker enchanted boots (creates ice) |
 | ignite         | Deny    | Start fires with flint and steel               |
 
-**Use case:** Keep these denied to prevent griefing. Only trust specific players if you want them to build.
-
 ### Container Access
 
 | Flag       | Default | Description                |
 |------------|:-------:|----------------------------|
 | containers | Deny    | Open chests, barrels, etc. |
 | use-anvil  | Deny    | Use anvils                 |
-
-**Use case:** Deny container access to protect valuable items. Enable for shops or community storage areas.
 
 ### Doors & Gates
 
@@ -64,8 +61,6 @@ Player flags control what non-members can do inside regions. Members and owners 
 | doors       | Deny    | Open/close doors    |
 | trap-doors  | Deny    | Open/close trapdoors|
 | fence-gates | Deny    | Open/close gates    |
-
-**Use case:** Deny to keep your base secure. Allow if you want visitors to enter buildings.
 
 ### Redstone & Mechanisms
 
@@ -78,16 +73,12 @@ Player flags control what non-members can do inside regions. Members and owners 
 | trigger-tripwire| Deny    | Activate tripwires              |
 | use-bells       | Deny    | Ring bells                      |
 
-**Use case:** Deny to prevent outsiders from using your redstone contraptions. Allow for public farms or minigames.
-
 ### Farming & Crops
 
 | Flag             | Default | Description                             |
 |------------------|:-------:|-----------------------------------------|
 | harvest-crops    | Deny    | Harvest (break) crops                   |
 | block-trampling  | Deny    | Trample farmland and turtle eggs        |
-
-**Use case:** Deny to protect your farms. Allow for public/community farms.
 
 ### Entity Interaction
 
@@ -102,8 +93,6 @@ Player flags control what non-members can do inside regions. Members and owners 
 | vehicles                 | Deny    | Ride vehicles (minecarts, horses, boats)  |
 | spawn-entities           | Allow   | Use spawn eggs                            |
 
-**Use case:** Control who can interact with your animals, villagers, and decorations.
-
 ### Movement & Teleportation
 
 | Flag            | Default | Description                                |
@@ -113,11 +102,6 @@ Player flags control what non-members can do inside regions. Members and owners 
 | elytra          | Allow   | Fly with elytra                            |
 | teleport-spawn  | Deny    | Teleport to region's spawn point           |
 
-**Use case:**
-
-- Set `passthrough: false` for completely private regions
-- Allow `elytra` for aerial access but deny `teleport` to control entry points
-
 ### Combat
 
 | Flag             | Default | Description                    |
@@ -126,16 +110,14 @@ Player flags control what non-members can do inside regions. Members and owners 
 | take-fall-damage | Deny    | Take damage from falling       |
 | throw-potions    | Deny    | Throw splash/lingering potions |
 
-**Use case:** Enable PvP for arena regions. Deny fall damage in parkour areas.
-
 ### Other Actions
 
-| Flag              | Default | Description                        |
-|-------------------|:-------:|------------------------------------|
-| general-interaction| Deny   | General interactions (catch-all)   |
-| pickup-items      | Allow   | Pick up dropped items              |
-| sleep             | Deny    | Use beds to sleep                  |
-| trigger-raid      | Deny    | Start raids by entering with Bad Omen |
+| Flag                | Default | Description                           |
+|---------------------|:-------:|---------------------------------------|
+| general-interaction |  Deny   | General interactions (catch-all)      |
+| pickup-items        |  Allow  | Pick up dropped items                 |
+| sleep               |  Deny   | Use beds to sleep                     |
+| trigger-raid        |  Deny   | Start raids by entering with Bad Omen |
 
 ## World Flags
 
@@ -143,39 +125,31 @@ World flags control the environment, mob spawning, and natural events within reg
 
 ### Mob Spawning
 
-| Flag                   | Default | Description                        |
-|------------------------|:-------:|------------------------------------|
-| passive-entities-spawn | Allow   | Spawn passive mobs (animals)       |
-| hostile-entities-spawn | Allow   | Spawn hostile mobs (monsters)      |
-
-**Use case:**
-
-- Deny hostile spawning for safe zones
-- Deny passive spawning to prevent lag from animals
-- Allow both for normal gameplay
+| Flag                 | Default | Description                        |
+|----------------------|:-------:|------------------------------------|
+| passive-entity-spawn | Allow   | Spawn passive mobs (animals)       |
+| hostile-entity-spawn | Allow   | Spawn hostile mobs (monsters)      |
 
 ### Entity Damage
 
-| Flag                      | Default | Description                              |
-|---------------------------|:-------:|------------------------------------------|
-| entities-grief            | Deny    | Entities (except creepers) damage blocks |
-| entities-damage-entities  | Deny    | Entities attack each other               |
-| explosions-damage         | Deny    | Explosions (except wither) damage blocks |
-| wither-damage             | Deny    | Wither damages blocks                    |
-
-**Use case:** Keep these denied to prevent environmental damage to your builds.
+| Flag             | Default | Description                              |
+|------------------|:-------:|------------------------------------------|
+| entity-grief     |  Deny   | Entities (except creepers) damage blocks |
+| entity-damage    |  Deny   | Entities attack each other               |
+| explosion-damage |  Deny   | Explosions (except wither) damage blocks |
+| wither-damage    |  Deny   | Wither damages blocks                    |
+| projectiles      |  Deny   | Any projectile shot by a non-player      |
 
 ### Environmental Effects
 
-| Flag          | Default | Description                |
-|---------------|:-------:|----------------------------|
-| fire-spread   | Deny    | Fire spreads to blocks     |
-| leaves-decay  | Allow   | Leaves decay naturally     |
-| liquid-flow   | Deny    | Water/lava flows in        |
-| snow-melting  | Allow   | Snow melts naturally       |
-| ice-melting   | Allow   | Ice melts naturally        |
-
-**Use case:** Deny `fire-spread` to prevent accidental fires. Deny `liquid-flow` to stop grief via water/lava.
+| Flag         | Default | Description            |
+|--------------|:-------:|------------------------|
+| fire-spread  |  Deny   | Fire spreads to blocks |
+| leaves-decay |  Allow  | Leaves decay naturally |
+| liquid-flow  |  Deny   | Water/lava flows in    |
+| snow-melting |  Allow  | Snow melts naturally   |
+| ice-melting  |  Allow  | Ice melts naturally    |
+| weather-snow |  Allow  | Weather snow           |
 
 ### Plant Growth
 
@@ -185,18 +159,16 @@ World flags control the environment, mob spawning, and natural events within reg
 | grass-growth | Allow   | Grass spreads             |
 | sculk-spread | Allow   | Sculk spreads from shriekers |
 
-**Use case:** Allow for normal farming. Deny if you want static decorative plants.
-
 ### External Interactions
 
-| Flag                     | Default | Description                                  |
-|--------------------------|:-------:|----------------------------------------------|
-| wilderness-pistons       | Deny    | Pistons outside region push/pull blocks in   |
-| wilderness-dispensers    | Deny    | Dispensers outside region dispense into region |
-| wilderness-minecarts     | Deny    | Minecarts from outside enter region          |
-| wilderness-copper-golems | Deny    | Copper golems from outside enter region      |
+| Flag                        | Default | Description                                  |
+|-----------------------------|:-------:|----------------------------------------------|
+| wilderness-pistons          | Deny    | Pistons outside region push/pull blocks in   |
+| wilderness-dispensers       | Deny    | Dispensers outside region dispense into region |
+| wilderness-minecarts        | Deny    | Minecarts from outside enter region          |
+| copper-golems-interaction\* | Deny    | Copper golems from outside enter region      |
 
-**Use case:** Keep denied to prevent griefing from the outside.
+\*: Removed since version **5.1.0.0**
 
 ### Special Features
 
@@ -206,92 +178,3 @@ World flags control the environment, mob spawning, and natural events within reg
 | snowman-trails   | Allow   | Snow golems leave snow trails       |
 | windcharge-burst | Deny    | Wind charges can burst in region    |
 | wars             | Deny    | Region can be targeted for war      |
-
-## Configuring Flags
-
-### In-Game
-
-Players can change flags for their own regions using:
-
-- The `/region flags` command
-- The region menu GUI (press the configured item)
-
-### Default Values
-
-Server admins configure default flag values in `config.yml`:
-
-```yaml
-default-players-flags:
-  break-blocks: false       # Non-members can't break blocks
-  place-blocks: false       # Non-members can't place blocks
-  containers: false         # Non-members can't open chests
-  doors: false              # Non-members can't open doors
-  passthrough: true         # Anyone can enter the region
-  pvp: false                # No PvP by default
-  pickup-items: true        # Anyone can pick up items
-  elytra: true              # Anyone can fly with elytra
-  
-default-world-flags:
-  passive-entities-spawn: true    # Animals spawn normally
-  hostile-entities-spawn: true    # Monsters spawn normally
-  entities-grief: false           # Prevent mob griefing
-  fire-spread: false              # Prevent fire spreading
-  explosions-damage: false        # Prevent explosion damage
-  liquid-flow: false              # Prevent water/lava flow
-  plant-growth: true              # Allow farming
-  leaves-decay: true              # Leaves decay naturally
-```
-
-## Common Flag Combinations
-
-### Safe Spawn/Town
-
-```yaml
-passthrough: true              # Anyone can enter
-break-blocks: false            # No building
-place-blocks: false            # No building  
-pvp: false                     # No fighting
-hostile-entities-spawn: false  # No monsters
-take-fall-damage: false        # Safe landing
-```
-
-### PvP Arena
-
-```yaml
-passthrough: true          # Anyone can enter
-pvp: true                  # Enable PvP
-break-blocks: false        # Prevent terrain damage
-place-blocks: false        # Prevent terrain damage
-explosions-damage: false   # Protect arena structure
-```
-
-### Public Farm
-
-```yaml
-passthrough: true       # Anyone can enter
-harvest-crops: true     # Anyone can harvest
-place-blocks: true      # Anyone can replant
-break-blocks: true      # Anyone can till soil
-plant-growth: true      # Crops grow normally
-```
-
-### Private Base
-
-```yaml
-passthrough: false        # Members only
-break-blocks: false       # Extra protection
-place-blocks: false       # Extra protection
-containers: false         # Protect storage
-doors: false              # Locked doors
-hostile-entities-spawn: false  # Safe environment
-```
-
-### Shop Region
-
-```yaml
-passthrough: true          # Customers can enter
-containers: true           # Can buy from chests
-buttons: true              # Can use item sorters
-break-blocks: false        # Can't grief
-place-blocks: false        # Can't grief
-```

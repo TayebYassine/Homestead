@@ -71,19 +71,19 @@ The plugin offers more than 75 flags, allowing players to set specific permissio
 
 This depends on which software you are using. No worries, here is a guide.
 
-### Spigot / PaperMC / Purpur / Pufferfish...
-
 > [!IMPORTANT]
 > As of Homestead 5.0.1.0, the API was changed from the Spigot API to the PaperMC API, implementing a new platform bridge to make Spigot run with the PaperMC API.
-> 
+>
 > Any software that was forked from the Spigot source will generally not work with Homestead.
+
+### Spigot / PaperMC / Purpur / Pufferfish...
 
 - **Minecraft 1.21** to **1.21.8** — **Homestead 1.0.0** to **4.2.0**
 - **Minecraft 1.21.9** to latest — **Homestead 4.3.0** to latest
 
 #### Dependencies
 
-- [Vault](https://www.spigotmc.org/resources/34315/)
+- [Vault](https://www.spigotmc.org/resources/34315/) (Spigot), or [ServiceIO](https://modrinth.com/plugin/service-io)
 - Any Permissions plugin, like [LuckPerms](https://www.spigotmc.org/resources/28140/). (optional)
 - Any Economy plugin, like [EssentialsX](https://www.spigotmc.org/resources/9089/) with built-in Economy API. (optional)
 
@@ -109,7 +109,7 @@ How to include the API with Maven:
 <dependency>
   <groupId>tfagaming.projects.minecraft.homestead</groupId>
   <artifactId>homestead</artifactId>
-  <version>5.0.2.1</version>
+  <version>5.1.0.0</version>
   <classifier>api</classifier>
   <scope>provided</scope>
 </dependency>
@@ -123,7 +123,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("tfagaming.projects.minecraft.homestead:homestead:5.0.2.1:api")
+    compileOnly("tfagaming.projects.minecraft.homestead:homestead:5.1.0.0:api")
 }
 ```
 
@@ -133,10 +133,15 @@ All versions are available in [GitHub Packages](https://github.com/TayebYassine/
 
 Homestead is receiving anonymous data and sending them to [bStats](https://bstats.org/plugin/bukkit/Homestead/25286) and [FastStats](https://faststats.dev/project/homestead/minecraft-plugin), two well-known metrics service providers for Minecraft plugins industry.
 
+Metrics is **enabled** by default. You have all rights to completely disable metrics in the plugin's configuration files.
+<details>
+<summary>Metrics Embedded Images</summary>
+
 <img src="https://faststats.dev/embed/default:516c7d15-a0ff-400e-9e60-c017ac4b5777:servers-and-players?w=800&h=300&theme=dark" />
 
 <img src="https://bstats.org/signatures/bukkit/Homestead.svg" />
 
+</details>
 
 ## Contributing
 

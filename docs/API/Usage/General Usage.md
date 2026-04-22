@@ -13,14 +13,10 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.structure.*;
 
-// The region name
-String name = "ExampleRegion";
-
 // The owner of the region
 Player player = Bukkit.getPlayer("TFA_Gaming");
 
-// true = Verify if another region has the same name ('true' is recommended)
-Region region = RegionManager.createRegion(name, player, true);
+Region region = RegionManager.createRegion("ExampleRegion", player);
 ```
 
 ### Fetching a region:
@@ -50,15 +46,14 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.structure.*;
 
-// The player is the executor of the deletion
+// The player is the executor of the deletion (optional)
 Player player = Bukkit.getPlayer("TFA_Gaming");
 
-// Finding a region by name
-Region region = RegionManager.findRegion("ExampleRegion");
+UUID regionId = UUID.fromString("31c0eb1d-6df9-407d-937f-de6101dd0134");
 
 // If the region exist (not null)
 if (region != null) {
-    RegionManager.deleteRegion(region.getUniqueId(), player);
+    RegionManager.deleteRegion(regionId, player);
 }
 ```
 

@@ -6,14 +6,14 @@ A database stores all region data for your server. Homestead includes a built-in
 
 Choose the database provider that best fits your server size and technical setup:
 
-| Provider         | Status             | Recommended For                               |
-|:-----------------|:-------------------|:----------------------------------------------|
-| PostgreSQL       | :material-check:   | Large servers (~1,000+ daily players)         |
-| MariaDB          | :material-check:   | Large servers (~1,000+ daily players)         |
-| MySQL            | :material-check:   | Large servers (~1,000+ daily players)         |
-| MongoDB          | 5.0.1.0            | Medium servers (~500 daily players)           |
-| SQLite (Default) | :material-check:   | Small servers (~100 daily players)            |
-| YAML             | :material-check:   | Small/private servers (~50 players)           |
+| Provider         | Status            | Recommended For                               |
+|:-----------------|:------------------|:----------------------------------------------|
+| PostgreSQL       | :material-check:  | Large servers (~1,000+ daily players)         |
+| MariaDB          | :material-check:  | Large servers (~1,000+ daily players)         |
+| MySQL            | :material-check:  | Large servers (~1,000+ daily players)         |
+| MongoDB          | :material-check:  | Medium servers (~500 daily players)           |
+| SQLite (Default) | :material-check:  | Small servers (~100 daily players)            |
+| YAML             | :material-check:  | Small/private servers (~50 players)           |
 
 ### Which Provider Should I Use?
 
@@ -49,34 +49,43 @@ To switch providers, change the `provider` value in `config.yml` to one of these
 database:
   provider: "sqlite"
 
-  # PostgreSQL configuration
+  # PostgreSQL settings (only used if provider = "postgresql")
   postgresql:
-    host: "localhost"
-    port: 5432
-    username: "your_username"
-    password: "your_password"
-    database: "homestead_data"
-    table_prefix: ""
-    
-  # MariaDB configuration
+     host: "localhost"
+     port: 5432
+     username: "USERNAME"
+     password: "PASSWORD"
+     database: "homestead_data"
+     table_prefix: ""
+     jdbc_url_parameters: ""
+
+   # MariaDB settings (only used if provider = "mariadb")
   mariadb:
-    host: "localhost"
-    port: 3306
-    username: "your_username"
-    password: "your_password"
-    database: "homestead_data"
-    table_prefix: ""
+     host: "localhost"
+     port: 3306
+     username: "USERNAME"
+     password: "PASSWORD"
+     database: "homestead_data"
+     table_prefix: ""
+     jdbc_url_parameters: "?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
 
-  # MySQL configuration
+   # MySQL settings (only used if provider = "mysql")
   mysql:
-    host: "localhost"
-    port: 3306
-    username: "your_username"
-    password: "your_password"
-    database: "homestead_data"
-    table_prefix: ""
+     host: "localhost"
+     port: 3306
+     username: "USERNAME"
+     password: "PASSWORD"
+     database: "homestead_data"
+     table_prefix: ""
+     jdbc_url_parameters: ""
 
-  # SQLite configuration
+   # MongoDB settings (only used if provider = "mongodb")
+  mongodb:
+     uri: "mongodb://localhost:27017"  # Or Atlas SRV URI
+     database: "homestead"
+     collection_prefix: "hs_"
+
+   # SQLite filename (only used if provider = "sqlite")
   sqlite: "homestead_data.db"
 ```
 
@@ -90,6 +99,10 @@ database:
 4. Make sure the port is correct:
     - MySQL/MariaDB: Usually `3306`
     - PostgreSQL: Usually `5432`
+
+**For MongoDB:**
+
+Create your new connection in the official site: [https://www.mongodb.com/](https://www.mongodb.com/)
 
 **For SQLite:**
 

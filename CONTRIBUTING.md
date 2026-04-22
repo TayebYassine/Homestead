@@ -17,7 +17,7 @@ Thank you for your interest in contributing to Homestead! To maintain consistenc
 
 ### **Before Submitting a PR:**  
 1. **Fork & Sync**  
-   - Fork the repo and sync with the latest `main` branch.  
+   - Fork the repo and sync with the latest `main` branch. In case there is a development branch (e.g. `dev-5.1.0.0`, `dev-4.3.0`), fork that branch instead of the main one.  
 
 2. **Code Quality Checks**  
    - Ensure your code follows the style guide.  

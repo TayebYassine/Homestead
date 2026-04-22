@@ -18,7 +18,6 @@ With welcome signs enabled:
 
 ```yaml
 welcome-signs:
-  # Enable welcome signs feature?
   enabled: false
 ```
 
@@ -37,28 +36,8 @@ Think of sub-areas as "regions within regions":
 
 ```yaml
 sub-areas:
-  # Enable sub-areas feature?
   enabled: true
 ```
-
-### Use Cases
-
-**Example 1: Public Shop in Private Base**
-
-- Main region: Private base (only you can build)
-- Sub-area: Shop area (public can enter and use chests)
-
-**Example 2: PvP Arena in Town**
-
-- Main region: Safe town (no PvP)
-- Sub-area: Arena (PvP enabled)
-
-**Example 3: Farm in Wilderness Region**
-
-- Main region: General land
-- Sub-area: Community farm (public can harvest)
-
-For detailed sub-area management, see the [Sub-Areas Guide](../Usage/Sub-Areas.md).
 
 ### Limits
 
@@ -83,11 +62,7 @@ borders:
   # Enable region borders?
   enabled: true
 
-  # Display type: "particles" or "blocks"
-  type: particles
-
-  # Block type (only used if type is "blocks")
-  block-type: GRAY_GLAZED_TERRACOTTA
+  ...
 ```
 
 ### Border Types
@@ -105,30 +80,6 @@ borders:
 - More visible than particles
 - May cause visual conflicts
 - Useful for clearly defined boundaries
-
-### Block Type Options
-
-If using `type: blocks`, choose from any Minecraft block:
-
-```yaml
-block-type: GLASS               # Transparent
-block-type: GLOWSTONE           # Bright and visible
-block-type: REDSTONE_BLOCK      # Red color
-block-type: BARRIER             # Invisible but present
-block-type: SEA_LANTERN         # Glowing
-```
-
-### Performance Considerations
-
-**For servers with many players:**
-
-- Use `particles` for better performance
-- Consider disabling if experiencing lag
-
-**For smaller servers:**
-
-- Either option works fine
-- `blocks` can be more visible
 
 !!! warning "Particle Visibility Issues"
 
@@ -221,14 +172,6 @@ disabled-worlds-pattern:
   - "em_*"  # EliteMobs dungeons
 ```
 
-### Finding World Names
-
-Not sure what your world is called?
-
-1. Use `/worlds` or similar command (if available)
-2. Check server files in the main directory (each folder is a world)
-3. Check your world management plugin's config
-
 ## Disabled Flags
 
 Prevent players from modifying specific flags, forcing them to use default values.
@@ -240,30 +183,10 @@ disabled-flags:
   - "use-bells"
   - "trigger-raid"
   - "wither-damage"
-  - "explosions-damage"
+  - "explosion-damage"
 ```
 
-### When to Use
-
-**Prevent players from:**
-
-- Enabling dangerous features (explosions, wither damage)
-- Changing important server-wide settings
-- Creating exploits with specific flag combinations
-- Overriding gameplay balance decisions
-
-### Finding Flag Names
-
 All available flags are listed in the [Flags Documentation](./Flags.md).
-
-### Default Behavior
-
-When a flag is disabled:
-
-- It still does appear in the flags menu
-- Players can't change it with commands
-- The flag uses the default value from `config.yml`
-- Only server operators can change it manually in the database (not recommended)
 
 ## TNT Exploding Below Sea Level
 
@@ -312,22 +235,3 @@ special-feat:
 
 1. Owner trusts a player: `/region trust PlayerName`
 2. Player is immediately trusted (no acceptance needed)
-
-## Testing Your Configuration
-
-After making changes:
-
-1. **Reload Homestead:**
-   ```
-   /hsadmin reload
-   ```
-
-2. **Test each setting:**
-    - Try claiming in disabled worlds
-    - Attempt to change disabled flags
-    - Check border visibility
-    - Test welcome signs (if enabled)
-
-3. **Check console** for any configuration errors
-
-4. **Restart server** if reload doesn't apply changes

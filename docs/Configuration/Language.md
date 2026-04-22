@@ -2,6 +2,8 @@
 
 Homestead includes an English (US) language file by default. You can translate it to any language or customize the messages to match your server's style.
 
+Available languages: **en-US**, **es-ES**, **hu-HU**.
+
 ## Changing the Language
 
 The language setting is in `config.yml`:
@@ -30,26 +32,6 @@ Default file:
 ```
 plugins/Homestead/languages/en-US.yml
 ```
-
-## Common Language Codes
-
-This is the table for common language codes if you don't know your local language code!
-
-| Language             | Code  | Example Filename |
-|----------------------|-------|------------------|
-| English (US)         | en-US | en-US.yml        |
-| English (UK)         | en-GB | en-GB.yml        |
-| Spanish              | es-ES | es-ES.yml        |
-| French               | fr-FR | fr-FR.yml        |
-| German               | de-DE | de-DE.yml        |
-| Portuguese (Brazil)  | pt-BR | pt-BR.yml        |
-| Russian              | ru-RU | ru-RU.yml        |
-| Chinese (Simplified) | zh-CN | zh-CN.yml        |
-| Japanese             | ja-JP | ja-JP.yml        |
-| Korean               | ko-KR | ko-KR.yml        |
-| Dutch                | nl-NL | nl-NL.yml        |
-| Italian              | it-IT | it-IT.yml        |
-| Polish               | pl-PL | pl-PL.yml        |
 
 ## Translating the Language File
 
@@ -109,52 +91,7 @@ success-message: "&aSuccess! Region created."
 info-message: "&7Region: &2{region-name}"
 ```
 
-**Common Color Codes:**
-
-- `&c` - Red (errors)
-- `&a` - Green (success)
-- `&e` - Yellow (warnings)
-- `&7` - Gray (info)
-- `&2` - Dark green (emphasis)
-- `&b` - Aqua (links)
-
-Translate the text but keep the color codes in place.
-
-### Keep Formatting Codes
-
-These special codes control text appearance:
-
-- `&l` - **Bold**
-- `&o` - *Italic*
-- `&n` - <u>Underline</u>
-- `&m` - ~~Strikethrough~~
-- `&r` - Reset formatting
-
-## Testing Your Translation
-
-After creating a new language file:
-
-1. Set the language in `config.yml`:
-   ```yaml
-   language: "es-ES"  # Your language code
-   ```
-
-2. Reload the plugin:
-   ```
-   /hsadmin reload
-   ```
-
-3. Test various commands to see your translations:
-   ```
-   /region help
-   /region create TestRegion
-   /region info
-   ```
-
-4. Check for:
-    - Missing translations (shows the English version)
-    - Broken variables (shows the variable name instead of data)
-    - Formatting issues (weird colors or symbols)
+MiniMessage tags are supported and do not translate the tag names!
 
 ## Common Issues
 
@@ -180,7 +117,3 @@ After creating a new language file:
 - Check that the file is in `plugins/Homestead/languages/`
 - Make sure the file extension is `.yml`
 - Validate YAML syntax using an online YAML validator
-
-## Customizing Messages
-
-Even if you're keeping English, you can customize messages to match your server's style!

@@ -12,7 +12,13 @@ Homestead uses menus for:
 - Accessing region settings
 - And much more!
 
-All menu customization is done in the `menus.yml` file located in the Homestead plugin folder.
+All menu customization is done in the `menus/(LANGUAGE CODE).yml` file located in the Homestead plugin folder.
+
+By default, the menus file is `menus/en-US.yml`.
+
+## Changing the Menu language
+
+Same configuration as [Language](./Language.md), but the directory is `menus` instead of `languages`.
 
 ## Customizing Menu Titles
 
@@ -20,7 +26,7 @@ Menu titles appear at the top of the chest inventory interface.
 
 ### Configuration
 
-In `menus.yml`, find the `menu-titles` section:
+In `en-US.yml` or any menus file, find the `menu-titles` section:
 
 ```yaml
 menu-titles:
@@ -46,61 +52,9 @@ menu-titles:
   5: "&b» &fMembers &b«"         # Aqua arrows, white text
 ```
 
-**Common Color Codes:**
-
-- `&0` - Black
-- `&1` - Dark Blue
-- `&2` - Dark Green
-- `&3` - Dark Aqua
-- `&4` - Dark Red
-- `&5` - Dark Purple
-- `&6` - Gold
-- `&7` - Gray
-- `&8` - Dark Gray
-- `&9` - Blue
-- `&a` - Green
-- `&b` - Aqua
-- `&c` - Red
-- `&d` - Light Purple
-- `&e` - Yellow
-- `&f` - White
-
-**Formatting Codes:**
-
-- `&l` - **Bold**
-- `&o` - *Italic*
-- `&n` - <u>Underline</u>
-- `&m` - ~~Strikethrough~~
-- `&r` - Reset formatting
-
 ## Customizing Menu Buttons
 
 Buttons are the clickable items in menus. Each button has a name, description (lore), and appearance (item type).
-
-### Configuration
-
-In `menus.yml`, find the `buttons` section:
-
-```yaml
-buttons:
-  0:
-    name: "&cBack"
-    lore:
-      - "&7Return to the previous menu."
-    type: RED_STAINED_GLASS_PANE
-    
-  1:
-    name: "&9Previous"
-    lore:
-      - "&7Go to the previous page."
-    type: ARROW
-    
-  2:
-    name: "&9Next"
-    lore:
-      - "&7Go to the next page."
-    type: ARROW
-```
 
 ### Button Properties
 
@@ -159,39 +113,43 @@ Where `<texture>` is the texture ID from Minecraft-Heads.com.
 
 ### Getting Custom Player Head Textures
 
-**Step-by-Step Guide:**
+1. Visit [Minecraft-Heads.com](https://minecraft-heads.com/)
 
-1. **Visit [Minecraft-Heads.com](https://minecraft-heads.com/)**
+2. Search for a head design you like (e.g., "grass block", "warning sign", "arrow up")
 
-2. **Search** for a head design you like (e.g., "grass block", "warning sign", "arrow up")
+3. Select the head you want to use
 
-3. **Select** the head you want to use
+4. Scroll down to find the "Minecraft URL" section
 
-4. **Scroll down** to find the "Minecraft URL" section
-
-5. **Copy the URL**, which looks like:
+5. Copy the URL, which looks like:
    ```
    http://textures.minecraft.net/texture/f9e986ccac3dc804f1bebe054dfb3e800480b7e08b2e7c6a86c84621c756c142
    ```
 
-6. **Extract the texture ID** (everything after `/texture/`):
+6. Extract the texture ID (everything after `/texture/`):
    ```
    f9e986ccac3dc804f1bebe054dfb3e800480b7e08b2e7c6a86c84621c756c142
    ```
 
-7. **Use it in your button**:
+7. Use it in your button:
    ```yaml
    type: PLAYERHEAD-f9e986ccac3dc804f1bebe054dfb3e800480b7e08b2e7c6a86c84621c756c142
    ```
 
-!!! tip "Popular Head Categories"
+### Using NexoMC
 
-    - **Arrows**: Up, down, left, right navigation
-    - **Symbols**: Checkmarks, X marks, warning signs
-    - **Blocks**: Realistic versions of Minecraft blocks
-    - **Letters**: Individual alphabet letters
-    - **Numbers**: 0-9 for displays
-    - **Misc**: Gears, keys, locks, coins
+Same steps as [getting custom player head textures](#getting-custom-player-head-textures), but use `NEXO-` or `NEXOMC-` instead of `PLAYERHEAD-`, following the custom item ID
+you have created with Nexo!
+
+!!! warning "Nexo Custom ID Rule"
+
+    Do not use dashes (`-`) for your custom items, use underscore (`_`) instead.
+
+Example: `NEXO-custom_arrow_button`.
+
+!!! question "Is Oraxen supported?"
+
+    No.
 
 ### Fallback Behavior
 
@@ -203,19 +161,10 @@ If a material name doesn't exist (wrong spelling, version mismatch, etc.), Homes
 
 ## Reloading Changes
 
-After editing `menus.yml`, reload the configuration:
+After editing your menus file, reload the configuration:
 
 ```
 /hsadmin reload
 ```
 
 Players may need to close and reopen menus to see changes.
-
-## Best Practices
-
-1. **Use consistent colors** for similar actions (green for confirm, red for cancel)
-2. **Keep lore concise**; players should quickly understand the button
-3. **Test thoroughly** after making changes
-4. **Back up** `menus.yml` before major changes
-5. **Use player heads** for unique, professional-looking menus
-6. **Consider color-blind players**; don't rely only on color to convey meaning
