@@ -3,6 +3,12 @@ site_author: Tayeb Yassine
 site_description: An advanced, chunk-based land claiming plugin for Minecraft servers, with multiple APIs support, based on Bukkit API.
 copyright: Copyright (©) 2025 Tayeb Yassine
 
+extra:
+  social:
+    - icon: fontawesome/solid/code
+      link: /Homestead/javadoc/
+      name: JavaDoc
+
 theme:
   name: material
 

@@ -7,6 +7,8 @@ on:
       - 'docs/**'
       - 'mkdocs.yml'
       - '.github/workflows/cicd.yml'
+      - 'pom.xml'
+      - 'version.yml'
 
 permissions:
   contents: read
@@ -24,16 +26,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Generate JavaDoc
+        run: mvn clean javadoc:javadoc -DskipTests
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
-      - name: Install dependencies
+      - name: Install MkDocs dependencies
         run: pip install mkdocs mkdocs-material
 
       - name: Build MkDocs site
         run: mkdocs build
+
+      - name: Copy JavaDoc to site
+        run: |
+          mkdir -p site/javadoc
+          cp -r target/site/apidocs/* site/javadoc/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
