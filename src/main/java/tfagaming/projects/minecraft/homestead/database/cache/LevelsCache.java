@@ -1,12 +1,10 @@
 package tfagaming.projects.minecraft.homestead.database.cache;
 
-import tfagaming.projects.minecraft.homestead.structure.Level;
-
-import java.util.UUID;
+import tfagaming.projects.minecraft.homestead.models.Level;
 
 public final class LevelsCache extends AbstractCache<Level> {
 	@Override
-	protected UUID getId(Level level) {
-		return level.getUniqueId();
+	protected long getId(Level model) {
+		return model.getUniqueId();
 	}
 }

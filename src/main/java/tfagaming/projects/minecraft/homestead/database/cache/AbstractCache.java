@@ -2,11 +2,10 @@ package tfagaming.projects.minecraft.homestead.database.cache;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractCache<V> extends ConcurrentHashMap<UUID, V> implements Cache<UUID, V> {
-	protected abstract UUID getId(V item);
+public abstract class AbstractCache<V> extends ConcurrentHashMap<Long, V> implements Cache<Long, V> {
+	protected abstract long getId(V item);
 
 	@Override
 	public List<V> getAll() {

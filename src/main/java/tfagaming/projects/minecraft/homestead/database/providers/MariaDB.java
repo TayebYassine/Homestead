@@ -218,7 +218,7 @@ public final class MariaDB implements Provider {
 								.collect(Collectors.toList())
 								: new ArrayList<>();
 
-				long flags = rs.getLong("flags");
+				long playerFlags = rs.getLong("playerFlags");
 
 				SerializableRent rent = rs.getString("rent") != null ? SerializableRent.fromString(rs.getString("rent"))
 						: null;
@@ -226,7 +226,7 @@ public final class MariaDB implements Provider {
 				long createdAt = rs.getLong("created_at");
 
 				SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
-						point1, point2, members, flags, rent, createdAt);
+						point1, point2, members, playerFlags, rent, createdAt);
 
 				subAreas.add(subArea);
 			}
@@ -452,7 +452,7 @@ public final class MariaDB implements Provider {
 
 		final String upsertSql = """
 				INSERT INTO `%ssubareas`
-				    (id, region_id, name, world_name, point1, point2, members, flags, rent, created_at)
+				    (id, region_id, name, world_name, point1, point2, members, playerFlags, rent, created_at)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON DUPLICATE KEY UPDATE
 				    region_id  = VALUES(region_id),
@@ -461,7 +461,7 @@ public final class MariaDB implements Provider {
 				    point1     = VALUES(point1),
 				    point2     = VALUES(point2),
 				    members    = VALUES(members),
-				    flags      = VALUES(flags),
+				    playerFlags      = VALUES(playerFlags),
 				    rent       = VALUES(rent),
 				    created_at = VALUES(created_at)
 				""".formatted(TABLE_PREFIX);
@@ -490,7 +490,7 @@ public final class MariaDB implements Provider {
 				upsertStmt.setString(5, toStringBlockLocation(subArea.getWorld(), subArea.point1));
 				upsertStmt.setString(6, toStringBlockLocation(subArea.getWorld(), subArea.point2));
 				upsertStmt.setString(7, membersStr);
-				upsertStmt.setLong(8, subArea.flags);
+				upsertStmt.setLong(8, subArea.playerFlags);
 				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);
 				upsertStmt.setLong(10, subArea.createdAt);
 				upsertStmt.addBatch();
@@ -627,7 +627,7 @@ public final class MariaDB implements Provider {
 				    point1     TEXT NOT NULL,
 				    point2     TEXT NOT NULL,
 				    members    TEXT NOT NULL,
-				    flags      BIGINT NOT NULL,
+				    playerFlags      BIGINT NOT NULL,
 				    rent       TEXT,
 				    created_at BIGINT NOT NULL
 				)

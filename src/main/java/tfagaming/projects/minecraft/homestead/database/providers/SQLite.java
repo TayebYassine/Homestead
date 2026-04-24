@@ -273,14 +273,14 @@ public final class SQLite implements Provider {
 						? Arrays.stream(rs.getString("members").split("§"))
 						.map(SerializableMember::fromString).collect(Collectors.toList())
 						: new ArrayList<>();
-				long flags = rs.getLong("flags");
+				long playerFlags = rs.getLong("playerFlags");
 
 				SerializableRent rent = rs.getString("rent") != null ? SerializableRent.fromString(rs.getString("rent"))
 						: null;
 
 				long createdAt = rs.getLong("createdAt");
 
-				SubArea subArea = new SubArea(id, regionId, name, world.getUID(), point1, point2, members, flags, rent, createdAt);
+				SubArea subArea = new SubArea(id, regionId, name, world.getUID(), point1, point2, members, playerFlags, rent, createdAt);
 
 				subAreas.add(subArea);
 			}
@@ -302,7 +302,7 @@ public final class SQLite implements Provider {
 		}
 
 		String upsertSql = "INSERT OR REPLACE INTO subareas (" +
-				"id, regionId, name, worldName, point1, point2, members, flags, rent, createdAt" +
+				"id, regionId, name, worldName, point1, point2, members, playerFlags, rent, createdAt" +
 				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		String deleteSql = "DELETE FROM subareas WHERE id = ?";
@@ -328,7 +328,7 @@ public final class SQLite implements Provider {
 				upsertStmt.setString(5, toStringBlockLocation(world, subArea.point1));
 				upsertStmt.setString(6, toStringBlockLocation(world, subArea.point2));
 				upsertStmt.setString(7, membersStr);
-				upsertStmt.setLong(8, subArea.flags);
+				upsertStmt.setLong(8, subArea.playerFlags);
 				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);
 				upsertStmt.setLong(10, subArea.createdAt);
 
@@ -579,7 +579,7 @@ public final class SQLite implements Provider {
 						        point1 TEXT NOT NULL,
 						        point2 TEXT NOT NULL,
 						        members TEXT NOT NULL,
-						        flags INTEGER NOT NULL,
+						        playerFlags INTEGER NOT NULL,
 						        rent TEXT,
 						        createdAt INTEGER NOT NULL
 						    )

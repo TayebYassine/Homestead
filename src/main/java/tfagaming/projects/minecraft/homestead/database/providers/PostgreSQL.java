@@ -202,14 +202,14 @@ public final class PostgreSQL implements Provider {
 								.map(SerializableMember::fromString)
 								.collect(Collectors.toList());
 
-				long flags = rs.getLong("flags");
+				long playerFlags = rs.getLong("playerFlags");
 
 				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
 
 				long createdAt = rs.getLong("created_at");
 
 				SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
-						point1, point2, members, flags, rent, createdAt);
+						point1, point2, members, playerFlags, rent, createdAt);
 
 				subAreas.add(subArea);
 			}
@@ -448,7 +448,7 @@ public final class PostgreSQL implements Provider {
 
 		final String upsertSql = """
 				INSERT INTO %ssubareas
-				    (id, region_id, name, world_name, point1, point2, members, flags, rent, created_at)
+				    (id, region_id, name, world_name, point1, point2, members, playerFlags, rent, created_at)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 				ON CONFLICT (id) DO UPDATE SET
 				    region_id  = EXCLUDED.region_id,
@@ -457,7 +457,7 @@ public final class PostgreSQL implements Provider {
 				    point1     = EXCLUDED.point1,
 				    point2     = EXCLUDED.point2,
 				    members    = EXCLUDED.members,
-				    flags      = EXCLUDED.flags,
+				    playerFlags      = EXCLUDED.playerFlags,
 				    rent       = EXCLUDED.rent,
 				    created_at = EXCLUDED.created_at
 				""".formatted(TABLE_PREFIX);
@@ -486,7 +486,7 @@ public final class PostgreSQL implements Provider {
 				upsertStmt.setString(5, toStringBlockLocation(subArea.getWorld(), subArea.point1));
 				upsertStmt.setString(6, toStringBlockLocation(subArea.getWorld(), subArea.point2));
 				upsertStmt.setArray(7, connection.createArrayOf("text", membersArray));
-				upsertStmt.setLong(8, subArea.flags);
+				upsertStmt.setLong(8, subArea.playerFlags);
 				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);
 				upsertStmt.setLong(10, subArea.createdAt);
 				upsertStmt.addBatch();
@@ -619,7 +619,7 @@ public final class PostgreSQL implements Provider {
 				    point1     TEXT NOT NULL,
 				    point2     TEXT NOT NULL,
 				    members    TEXT[] NOT NULL,
-				    flags      BIGINT NOT NULL,
+				    playerFlags      BIGINT NOT NULL,
 				    rent       TEXT,
 				    created_at BIGINT NOT NULL
 				)

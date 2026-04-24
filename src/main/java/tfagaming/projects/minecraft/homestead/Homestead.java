@@ -9,7 +9,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.commands.brigadier.BrigadierCommands;
@@ -20,10 +19,7 @@ import tfagaming.projects.minecraft.homestead.commands.standard.RegionCommand;
 import tfagaming.projects.minecraft.homestead.commands.standard.UnclaimCommand;
 import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.database.Driver;
-import tfagaming.projects.minecraft.homestead.database.cache.LevelsCache;
-import tfagaming.projects.minecraft.homestead.database.cache.RegionsCache;
-import tfagaming.projects.minecraft.homestead.database.cache.SubAreasCache;
-import tfagaming.projects.minecraft.homestead.database.cache.WarsCache;
+import tfagaming.projects.minecraft.homestead.database.cache.*;
 import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
 import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
@@ -37,6 +33,7 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.snowflake.SnowflakeGenerator;
 import tfagaming.projects.minecraft.homestead.storage.StorageManager;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
@@ -55,11 +52,21 @@ public class Homestead extends JavaPlugin {
 	private final static String VERSION = "5.1.0.1";
 	private final static boolean SNAPSHOT = false;
 	public static Database database;
-	public static RegionsCache regionsCache;
+
+	// Cache
+	public static RegionCache regionsCache;
+	public static RegionMemberCache regionMemberCache;
+	public static RegionBannedPlayerCache regionBannedPlayerCache;
+	public static RegionChunkCache regionChunkCache;
+	public static RegionInviteCache regionInviteCache;
+	public static RegionLogCache regionLogCache;
+	public static RegionRateCache regionRateCache;
 	public static WarsCache warsCache;
 	public static SubAreasCache subAreasCache;
 	public static LevelsCache levelsCache;
+
 	public static Vault vault;
+	public static SnowflakeGenerator SNOWFLAKE;
 	private static Homestead INSTANCE;
 	private static long STARTED_AT;
 	private static TaskHandle moveCheckTask;
@@ -88,6 +95,7 @@ public class Homestead extends JavaPlugin {
 	public void onEnable() {
 		Homestead.INSTANCE = this;
 		Homestead.STARTED_AT = System.currentTimeMillis();
+		Homestead.SNOWFLAKE = new SnowflakeGenerator();
 
 		new Logger();
 
@@ -116,7 +124,13 @@ public class Homestead extends JavaPlugin {
 			return;
 		}
 
-		Homestead.regionsCache = new RegionsCache();
+		Homestead.regionsCache = new RegionCache();
+		Homestead.regionMemberCache = new RegionMemberCache();
+		Homestead.regionBannedPlayerCache = new RegionBannedPlayerCache();
+		Homestead.regionChunkCache = new RegionChunkCache();
+		Homestead.regionInviteCache = new RegionInviteCache();
+		Homestead.regionLogCache = new RegionLogCache();
+		Homestead.regionRateCache = new RegionRateCache();
 		Homestead.warsCache = new WarsCache();
 		Homestead.subAreasCache = new SubAreasCache();
 		Homestead.levelsCache = new LevelsCache();
