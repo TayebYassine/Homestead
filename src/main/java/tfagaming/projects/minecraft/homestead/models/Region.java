@@ -105,6 +105,14 @@ public final class Region {
 		return INSTANCE.getOfflinePlayerSync(ownerId);
 	}
 
+	public boolean isOwner(OfflinePlayer player) {
+		return isOwner(player.getUniqueId());
+	}
+
+	public boolean isOwner(UUID id) {
+		return this.ownerId.equals(id);
+	}
+
 	public void setOwner(OfflinePlayer owner) {
 		this.ownerId = owner.getUniqueId();
 		update();

@@ -11,7 +11,7 @@ There are 3 available managers: `RegionsManager`, `ChunksManager`, and `WarsMana
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.managers.*;
-import tfagaming.projects.minecraft.homestead.structure.*;
+
 
 // The owner of the region
 Player player = Bukkit.getPlayer("TFA_Gaming");
@@ -23,7 +23,7 @@ Region region = RegionManager.createRegion("ExampleRegion", player);
 
 ```java
 import tfagaming.projects.minecraft.homestead.managers.*;
-import tfagaming.projects.minecraft.homestead.structure.*;
+
 import java.util.UUID;
 
 Region region;
@@ -44,7 +44,7 @@ RegionManager.findRegion(regionId);
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.managers.*;
-import tfagaming.projects.minecraft.homestead.structure.*;
+
 
 // The player is the executor of the deletion (optional)
 Player player = Bukkit.getPlayer("TFA_Gaming");
@@ -62,7 +62,7 @@ if (region != null) {
 ```java
 import org.bukkit.*;
 import tfagaming.projects.minecraft.homestead.managers.*;
-import tfagaming.projects.minecraft.homestead.structure.*;
+
 
 // The chunk to claim
 Chunk chunk = ...;
@@ -85,7 +85,7 @@ if (error == null) {
 ```java
 import org.bukkit.*;
 import tfagaming.projects.minecraft.homestead.managers.*;
-import tfagaming.projects.minecraft.homestead.structure.*;
+
 
 // The chunk to unclaim
 Chunk chunk = ...;
@@ -108,7 +108,7 @@ if (error == null) {
 ```java
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.structure.*;
+
 
 Region region = ...;
 
@@ -134,7 +134,7 @@ if (region.isPlayerMember(player)) {
 
 ```java
 import tfagaming.projects.minecraft.homestead.flags.*;
-import tfagaming.projects.minecraft.homestead.structure.*;
+
 
 Region region = ...;
 
@@ -182,7 +182,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import tfagaming.projects.minecraft.homestead.api.events.*;
-import tfagaming.projects.minecraft.homestead.structure.*;
+
 
 public class HomesteadCustomEvents implements Listener {
 	@EventHandler

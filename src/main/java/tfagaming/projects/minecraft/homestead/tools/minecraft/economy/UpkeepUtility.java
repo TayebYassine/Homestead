@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.economy;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-import tfagaming.projects.minecraft.homestead.structure.Region;
+
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 
 public final class UpkeepUtility {

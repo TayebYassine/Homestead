@@ -3,10 +3,10 @@ package tfagaming.projects.minecraft.homestead.cooldown;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-import tfagaming.projects.minecraft.homestead.structure.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -17,33 +17,21 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class Cooldown {
-	private static final Homestead instance = Homestead.getInstance();
+	private static final Homestead INSTANCE = Homestead.getInstance();
 	private static final Map<UUID, CooldownData> COOLDOWNS = new ConcurrentHashMap<>();
 
-	public static void startCooldown(UUID id, Type type) {
-		addCooldown(id, type);
-		startCooldownAsync(id, type.getCooldown());
-	}
-
 	public static void startCooldown(Player player, Type type) {
-		startCooldown(player.getUniqueId(), type);
+		addCooldown(player.getUniqueId(), type);
+		startCooldownSync(player.getUniqueId(), type.getCooldown());
 	}
 
-	public static void startCooldown(Region region, Type type) {
-		startCooldown(region.getUniqueId(), type);
-	}
-
-	public static void addCooldown(UUID id, Type type) {
+	private static void addCooldown(UUID id, Type type) {
 		long endTime = System.currentTimeMillis() + (type.getCooldown() * 1000L);
 		COOLDOWNS.put(id, new CooldownData(type, endTime));
 	}
 
-	public static void removeCooldown(UUID id) {
+	public static void removePlayerCooldown(UUID id) {
 		COOLDOWNS.remove(id);
-	}
-
-	public static boolean hasCooldown(UUID id) {
-		return COOLDOWNS.containsKey(id);
 	}
 
 	public static boolean hasCooldown(Player player) {
@@ -53,20 +41,6 @@ public final class Cooldown {
 			CooldownData data = COOLDOWNS.get(id);
 
 			return !(data.getType().ignoreOperators() && PlayerUtility.isOperator(player));
-		}
-
-		return false;
-	}
-
-	public static boolean hasCooldown(Region region) {
-		UUID id = region.getUniqueId();
-
-		if (COOLDOWNS.containsKey(id)) {
-			CooldownData data = COOLDOWNS.get(id);
-
-			OfflinePlayer owner = region.getOwner();
-
-			return !(data.getType().ignoreOperators() && PlayerUtility.isOperator(owner));
 		}
 
 		return false;
@@ -84,22 +58,8 @@ public final class Cooldown {
 		return false;
 	}
 
-	public static boolean hasCooldown(Region region, Type type) {
-		UUID id = region.getUniqueId();
-
-		if (COOLDOWNS.containsKey(id)) {
-			CooldownData data = COOLDOWNS.get(id);
-
-			OfflinePlayer owner = region.getOwner();
-
-			return data.getType() == type && !(data.getType().ignoreOperators() && PlayerUtility.isOperator(owner));
-		}
-
-		return false;
-	}
-
-	public static long getRemainingTime(UUID id) {
-		CooldownData data = COOLDOWNS.get(id);
+	public static long getRemainingTime(Player player) {
+		CooldownData data = COOLDOWNS.get(player.getUniqueId());
 		if (data == null) {
 			return 0;
 		}
@@ -107,21 +67,6 @@ public final class Cooldown {
 		return data.getEndTime();
 	}
 
-	public static long getRemainingTime(Player player) {
-		return getRemainingTime(player.getUniqueId());
-	}
-
-	public static void startCooldownAsync(UUID id, int duration) {
-		if (duration <= 0) {
-			return;
-		}
-
-		Homestead.getInstance().runAsyncTaskLater(() -> {
-			COOLDOWNS.remove(id);
-		}, duration);
-	}
-
-	// not used
 	private static void startCooldownSync(UUID id, int duration) {
 		if (duration <= 0) {
 			return;

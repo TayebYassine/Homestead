@@ -5,7 +5,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.models.Region;
+
 
 public class RegionBanPlayerEvent extends Event {
 	private static final HandlerList HANDLERS = new HandlerList();

@@ -9,11 +9,12 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
+
+
 import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 
 import java.util.List;
@@ -25,8 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Handles particle spawning around claimed region chunks for a specific player.
  */
 public class ChunkParticlesSpawner {
-
-	private static final Map<UUID, TaskHandle> tasks = new ConcurrentHashMap<>();
+	private static final Map<UUID, TaskHandle> TASKS = new ConcurrentHashMap<>();
 	private final Player player;
 
 	/**
@@ -43,7 +43,7 @@ public class ChunkParticlesSpawner {
 			return;
 		}
 
-		if (!tasks.containsKey(player.getUniqueId())) {
+		if (!TASKS.containsKey(player.getUniqueId())) {
 			startRepeatingEffect();
 		}
 	}
@@ -56,7 +56,7 @@ public class ChunkParticlesSpawner {
 	 */
 	public static void cancelTask(TaskHandle task, Player player) {
 		if (task != null) {
-			tasks.remove(player.getUniqueId());
+			TASKS.remove(player.getUniqueId());
 			task.cancel();
 		}
 	}
@@ -67,7 +67,7 @@ public class ChunkParticlesSpawner {
 	 * @param player The player whose task should be cancelled
 	 */
 	public static void cancelTask(Player player) {
-		TaskHandle task = tasks.remove(player.getUniqueId());
+		TaskHandle task = TASKS.remove(player.getUniqueId());
 		if (task != null) {
 			task.cancel();
 		}
@@ -80,7 +80,7 @@ public class ChunkParticlesSpawner {
 	 * @param player The player to check
 	 */
 	public static boolean isTaskRunning(Player player) {
-		return tasks.containsKey(player.getUniqueId());
+		return TASKS.containsKey(player.getUniqueId());
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class ChunkParticlesSpawner {
 			return;
 		}
 
-		tasks.put(player.getUniqueId(), task);
+		TASKS.put(player.getUniqueId(), task);
 
 		instance.runAsyncTaskLater(() -> cancelTask(task, player), 60 * 3);
 	}

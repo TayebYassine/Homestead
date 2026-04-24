@@ -7,7 +7,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,15 @@ public final class ChunkUtility {
 	private ChunkUtility() {
 	}
 
+	public static List<Chunk> getChunksInArea(SeBlock corner1, SeBlock corner2) {
+		if (corner1 == null || corner2 == null) return new ArrayList<>();
+
+		return getChunksInArea(corner1.toBukkit(), corner2.toBukkit());
+	}
+
 	public static List<Chunk> getChunksInArea(Block corner1, Block corner2) {
+		if (corner1 == null || corner2 == null) return new ArrayList<>();
+
 		World world = corner1.getWorld();
 		List<Chunk> chunks = new ArrayList<>();
 

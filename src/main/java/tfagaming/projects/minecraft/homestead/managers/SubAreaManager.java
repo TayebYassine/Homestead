@@ -5,12 +5,11 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.structure.SubArea;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableMember;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public final class SubAreaManager {
 	private SubAreaManager() {
@@ -25,11 +24,19 @@ public final class SubAreaManager {
 	 * @param point2 The second corner point
 	 * @param flags Default global player flags
 	 */
-	public static SubArea createSubArea(UUID regionId, String name, World world, Block point1, Block point2, long flags) {
-		SubArea subArea = new SubArea(regionId, name, world, point1, point2, flags);
-
+	public static SubArea createSubArea(long regionId, String name, World world, Block point1, Block point2, long flags) {
+		SubArea subArea = new SubArea(
+				Homestead.SNOWFLAKE.nextId(),
+				regionId,
+				name,
+				world.getUID(),
+				point1,
+				point2,
+				flags,
+				null,
+				System.currentTimeMillis()
+		);
 		Homestead.subAreasCache.putOrUpdate(subArea);
-
 		return subArea;
 	}
 
@@ -44,23 +51,21 @@ public final class SubAreaManager {
 	 * Get sub-areas of a region.
 	 * @param regionId The region ID
 	 */
-	public static List<SubArea> getSubAreasOfRegion(UUID regionId) {
+	public static List<SubArea> getSubAreasOfRegion(long regionId) {
 		List<SubArea> subAreas = new ArrayList<>();
-
 		for (SubArea area : getAll()) {
-			if (area.getRegionId().equals(regionId)) {
+			if (area.getRegionId() == regionId) {
 				subAreas.add(area);
 			}
 		}
-
 		return subAreas;
 	}
 
 	/**
-	 * Retrieves the sub-area with the exact UUID, or null if none exists.
+	 * Retrieves the sub-area with the exact ID, or null if none exists.
 	 * @param id The sub-area ID
 	 */
-	public static SubArea findSubArea(UUID id) {
+	public static SubArea findSubArea(long id) {
 		return Homestead.subAreasCache.get(id);
 	}
 
@@ -69,9 +74,9 @@ public final class SubAreaManager {
 	 * @param regionId The region ID
 	 * @param name The sub-area name
 	 */
-	public static SubArea findSubArea(UUID regionId, String name) {
+	public static SubArea findSubArea(long regionId, String name) {
 		for (SubArea area : getAll()) {
-			if (area.getRegionId().equals(regionId) && area.getName().equals(name)) {
+			if (area.getRegionId() == regionId && area.getName().equalsIgnoreCase(name)) {
 				return area;
 			}
 		}
@@ -90,22 +95,33 @@ public final class SubAreaManager {
 				return subArea;
 			}
 		}
-
 		return null;
 	}
 
 	/**
-	 * Permanently deletes the specified sub-area.
+	 * Permanently deletes the specified sub-area and its related members.
 	 * @param id The sub-area ID
 	 */
-	public static void deleteSubArea(UUID id) {
+	public static void deleteSubArea(long id) {
+		// Delete related sub-area members
+		for (RegionMember member : MemberManager.getMembersOfSubArea(id)) {
+			MemberManager.deleteMember(member.getUniqueId());
+		}
 		Homestead.subAreasCache.remove(id);
 	}
 
+	/**
+	 * Updates a sub-area in the cache.
+	 * @param subArea The sub-area to update
+	 */
+	public static void updateSubArea(SubArea subArea) {
+		Homestead.subAreasCache.putOrUpdate(subArea);
+	}
+
 	/** Checks whether any sub-area already carries the supplied name, ignoring case. */
-	public static boolean isNameUsed(UUID regionId, String name) {
+	public static boolean isNameUsed(long regionId, String name) {
 		return getAll().stream()
-				.anyMatch(a -> a.getRegionId().equals(regionId) && a.getName().equalsIgnoreCase(name));
+				.anyMatch(a -> a.getRegionId() == regionId && a.getName().equalsIgnoreCase(name));
 	}
 
 	public static void cleanStartup() {
@@ -116,7 +132,6 @@ public final class SubAreaManager {
 
 		for (SubArea subArea : Homestead.subAreasCache.getAll()) {
 			World world = subArea.getWorld();
-
 			if (world == null) {
 				subAreasToDelete.add(subArea);
 				continue;
@@ -127,16 +142,12 @@ public final class SubAreaManager {
 				continue;
 			}
 
-			List<SerializableMember> membersToRemove = new ArrayList<>();
-			for (SerializableMember member : subArea.getMembers()) {
-				if (member.bukkit() == null) {
-					membersToRemove.add(member);
+			// Clean invalid members
+			for (RegionMember member : MemberManager.getMembersOfSubArea(subArea.getUniqueId())) {
+				if (org.bukkit.Bukkit.getOfflinePlayer(member.getPlayerId()).getName() == null) {
+					MemberManager.deleteMember(member.getUniqueId());
+					updated++;
 				}
-			}
-
-			for (SerializableMember member : membersToRemove) {
-				subArea.removeMember(member);
-				updated++;
 			}
 		}
 

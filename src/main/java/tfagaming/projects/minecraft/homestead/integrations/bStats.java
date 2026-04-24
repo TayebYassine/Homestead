@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
-import tfagaming.projects.minecraft.homestead.structure.Region;
+
 
 import java.util.HashMap;
 import java.util.Map;

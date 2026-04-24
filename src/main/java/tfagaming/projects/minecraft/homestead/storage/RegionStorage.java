@@ -2,7 +2,7 @@ package tfagaming.projects.minecraft.homestead.storage;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import tfagaming.projects.minecraft.homestead.structure.Region;
+
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 
 import java.util.UUID;

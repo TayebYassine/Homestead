@@ -6,8 +6,8 @@ import tfagaming.projects.minecraft.homestead.managers.LevelManager;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LevelsFile;
-import tfagaming.projects.minecraft.homestead.structure.Level;
-import tfagaming.projects.minecraft.homestead.structure.Region;
+
+
 
 import java.util.HashMap;
 import java.util.List;

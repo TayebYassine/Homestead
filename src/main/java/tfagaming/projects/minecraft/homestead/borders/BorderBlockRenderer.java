@@ -7,8 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.serializable.SerializableChunk;
+
+
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 
 import java.util.ArrayList;

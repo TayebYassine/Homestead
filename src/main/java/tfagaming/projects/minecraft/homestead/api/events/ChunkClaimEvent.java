@@ -4,7 +4,8 @@ import org.bukkit.Chunk;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import tfagaming.projects.minecraft.homestead.structure.Region;
+import tfagaming.projects.minecraft.homestead.models.Region;
+
 
 public class ChunkClaimEvent extends Event {
 	private static final HandlerList HANDLERS = new HandlerList();

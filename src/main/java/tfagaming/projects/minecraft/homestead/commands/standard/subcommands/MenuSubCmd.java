@@ -6,7 +6,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionMenu;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionsMenu;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-import tfagaming.projects.minecraft.homestead.structure.Region;
+
 
 public class MenuSubCmd extends SubCommandBuilder {
 	public MenuSubCmd() {

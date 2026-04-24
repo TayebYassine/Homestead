@@ -119,7 +119,7 @@ public final class RegionChunk {
 		update();
 	}
 
-	public Chunk toBukkitChunk() {
+	public Chunk toBukkit() {
 		World world = getWorld();
 		if (world == null) return null;
 		return world.getChunkAt(x, z);

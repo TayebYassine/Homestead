@@ -2,12 +2,11 @@ package tfagaming.projects.minecraft.homestead.managers;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.structure.Level;
+import tfagaming.projects.minecraft.homestead.models.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 public final class LevelManager {
 	private static final Random random = new Random();
@@ -19,15 +18,13 @@ public final class LevelManager {
 	 * Create a new level entry for a region.
 	 * @param regionId The region ID
 	 */
-	public static Level createLevel(UUID regionId) {
+	public static Level createLevel(long regionId) {
 		if (getLevelByRegion(regionId) != null) {
 			return null;
 		}
 
-		Level level = new Level(regionId);
-
+		Level level = new Level(Homestead.SNOWFLAKE.nextId(), regionId, 0, 0, 0, System.currentTimeMillis());
 		Homestead.levelsCache.putOrUpdate(level);
-
 		return level;
 	}
 
@@ -42,9 +39,9 @@ public final class LevelManager {
 	 * Get level by region ID.
 	 * @param regionId The region ID
 	 */
-	public static Level getLevelByRegion(UUID regionId) {
+	public static Level getLevelByRegion(long regionId) {
 		for (Level level : getAll()) {
-			if (level.getRegionId().equals(regionId)) {
+			if (level.getRegionId() == regionId) {
 				return level;
 			}
 		}
@@ -52,10 +49,10 @@ public final class LevelManager {
 	}
 
 	/**
-	 * Retrieves the level with the exact UUID, or null if none exists.
+	 * Retrieves the level with the exact ID, or null if none exists.
 	 * @param id The level ID
 	 */
-	public static Level findLevel(UUID id) {
+	public static Level findLevel(long id) {
 		return Homestead.levelsCache.get(id);
 	}
 
@@ -63,7 +60,7 @@ public final class LevelManager {
 	 * Get or create level for a region.
 	 * @param regionId The region ID
 	 */
-	public static Level getOrCreateLevel(UUID regionId) {
+	public static Level getOrCreateLevel(long regionId) {
 		Level level = getLevelByRegion(regionId);
 		if (level == null) {
 			level = createLevel(regionId);
@@ -75,7 +72,7 @@ public final class LevelManager {
 	 * Permanently deletes the specified level.
 	 * @param id The level ID
 	 */
-	public static void deleteLevel(UUID id) {
+	public static void deleteLevel(long id) {
 		Homestead.levelsCache.remove(id);
 	}
 
@@ -83,7 +80,7 @@ public final class LevelManager {
 	 * Delete level by region ID.
 	 * @param regionId The region ID
 	 */
-	public static void deleteLevelByRegion(UUID regionId) {
+	public static void deleteLevelByRegion(long regionId) {
 		Level level = getLevelByRegion(regionId);
 		if (level != null) {
 			deleteLevel(level.getUniqueId());
@@ -95,9 +92,10 @@ public final class LevelManager {
 	 * @param regionId The region ID
 	 * @param amount Amount of XP to add
 	 */
-	public static void addXp(UUID regionId, long amount) {
+	public static void addXp(long regionId, long amount) {
 		Level level = getOrCreateLevel(regionId);
 		level.addXp(amount);
+		Homestead.levelsCache.putOrUpdate(level);
 	}
 
 	/**
@@ -106,7 +104,7 @@ public final class LevelManager {
 	 * @param min Minimum XP (can be double, will be floored)
 	 * @param max Maximum XP (can be double, will be floored)
 	 */
-	public static long addRandomXp(UUID regionId, double min, double max) {
+	public static long addRandomXp(long regionId, double min, double max) {
 		long minLong = (long) Math.floor(min);
 		long maxLong = (long) Math.floor(max);
 
@@ -120,7 +118,6 @@ public final class LevelManager {
 		long amount = minLong + (long) (random.nextDouble() * range);
 
 		addXp(regionId, amount);
-
 		return amount;
 	}
 
@@ -130,7 +127,7 @@ public final class LevelManager {
 	 * @param min Minimum XP
 	 * @param max Maximum XP
 	 */
-	public static long addRandomXp(UUID regionId, long min, long max) {
+	public static long addRandomXp(long regionId, long min, long max) {
 		return addRandomXp(regionId, (double) min, (double) max);
 	}
 
@@ -139,10 +136,11 @@ public final class LevelManager {
 	 * @param regionId The region ID
 	 * @param amount Amount of XP to remove
 	 */
-	public static void removeXp(UUID regionId, long amount) {
+	public static void removeXp(long regionId, long amount) {
 		Level level = getLevelByRegion(regionId);
 		if (level != null) {
 			level.removeXp(amount);
+			Homestead.levelsCache.putOrUpdate(level);
 		}
 	}
 
@@ -151,9 +149,10 @@ public final class LevelManager {
 	 * @param regionId The region ID
 	 * @param experience XP amount
 	 */
-	public static void setXp(UUID regionId, long experience) {
+	public static void setXp(long regionId, long experience) {
 		Level level = getOrCreateLevel(regionId);
 		level.setXp(experience);
+		Homestead.levelsCache.putOrUpdate(level);
 	}
 
 	/**
@@ -161,19 +160,21 @@ public final class LevelManager {
 	 * @param regionId The region ID
 	 * @param level Level to set
 	 */
-	public static void setLevel(UUID regionId, int level) {
+	public static void setLevel(long regionId, int level) {
 		Level lvl = getOrCreateLevel(regionId);
 		lvl.setLevel(level);
+		Homestead.levelsCache.putOrUpdate(lvl);
 	}
 
 	/**
 	 * Reset level to 0.
 	 * @param regionId The region ID
 	 */
-	public static void resetLevel(UUID regionId) {
+	public static void resetLevel(long regionId) {
 		Level level = getLevelByRegion(regionId);
 		if (level != null) {
 			level.reset();
+			Homestead.levelsCache.putOrUpdate(level);
 		}
 	}
 
@@ -196,13 +197,13 @@ public final class LevelManager {
 	 * Get region's rank on leaderboard.
 	 * @param regionId The region ID
 	 */
-	public static int getRank(UUID regionId) {
+	public static int getRank(long regionId) {
 		Level target = getLevelByRegion(regionId);
 		if (target == null) return -1;
 
 		int rank = 1;
 		for (Level level : getAll()) {
-			if (level.getUniqueId().equals(target.getUniqueId())) continue;
+			if (level.getUniqueId() == target.getUniqueId()) continue;
 
 			if (level.getLevel() > target.getLevel()) {
 				rank++;
