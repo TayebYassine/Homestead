@@ -1,34 +1,41 @@
 package tfagaming.projects.minecraft.homestead.database.providers;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
-import tfagaming.projects.minecraft.homestead.structure.Level;
-import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.SubArea;
-import tfagaming.projects.minecraft.homestead.structure.War;
-import tfagaming.projects.minecraft.homestead.structure.serializable.*;
-import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
+import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.models.*;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtility.*;
 
 public final class YAML implements Provider {
 	private final File regionsFolder;
+	private final File regionMembersFolder;
+	private final File regionChunksFolder;
+	private final File regionLogsFolder;
+	private final File regionRatesFolder;
+	private final File regionInvitesFolder;
+	private final File regionBannedPlayersFolder;
 	private final File warsFolder;
+	private final File warRegionsFolder;
 	private final File subAreasFolder;
 	private final File levelsFolder;
 
 	public YAML(File dataFolder) throws IOException {
 		this.regionsFolder = prepareDataFolder(dataFolder, "regions");
+		this.regionMembersFolder = prepareDataFolder(dataFolder, "region_members");
+		this.regionChunksFolder = prepareDataFolder(dataFolder, "region_chunks");
+		this.regionLogsFolder = prepareDataFolder(dataFolder, "region_logs");
+		this.regionRatesFolder = prepareDataFolder(dataFolder, "region_rates");
+		this.regionInvitesFolder = prepareDataFolder(dataFolder, "region_invites");
+		this.regionBannedPlayersFolder = prepareDataFolder(dataFolder, "region_banned_players");
 		this.warsFolder = prepareDataFolder(dataFolder, "wars");
+		this.warRegionsFolder = prepareDataFolder(dataFolder, "war_regions");
 		this.subAreasFolder = prepareDataFolder(dataFolder, "subareas");
 		this.levelsFolder = prepareDataFolder(dataFolder, "levels");
 	}
@@ -44,446 +51,1003 @@ public final class YAML implements Provider {
 
 	private File prepareDataFolder(File dataFolder, String dirName) throws IOException {
 		File dir = new File(dataFolder, dirName);
-
-		if (!dir.exists() && !dir.mkdir()) {
+		if (!dir.exists() && !dir.mkdirs()) {
 			throw new IOException("Unable to create '" + dirName + "' directory, path: " + dir.getAbsolutePath());
 		}
-
 		return dir;
 	}
 
+
+	@Override
+	public void prepareTables() throws Exception {
+		if (legacyFilesExist()) {
+			migrateFromLegacy();
+		}
+	}
+
+	private boolean legacyFilesExist() {
+		File[] regionFiles = regionsFolder.listFiles((dir, name) -> name.startsWith("region_") && name.endsWith(".yml"));
+		if (regionFiles == null || regionFiles.length == 0) return false;
+
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(regionFiles[0]);
+		return cfg.contains("chunks") || cfg.contains("members");
+	}
+
+	private void migrateFromLegacy() throws Exception {
+		Map<String, Long> regionIdMap = new HashMap<>();
+		Map<String, Long> subAreaIdMap = new HashMap<>();
+
+		List<Region> newRegions = new ArrayList<>();
+		List<RegionMember> newMembers = new ArrayList<>();
+		List<RegionChunk> newChunks = new ArrayList<>();
+		List<RegionLog> newLogs = new ArrayList<>();
+		List<RegionRate> newRates = new ArrayList<>();
+		List<RegionInvite> newInvites = new ArrayList<>();
+		List<RegionBannedPlayer> newBanned = new ArrayList<>();
+		List<SubArea> newSubAreas = new ArrayList<>();
+		List<Level> newLevels = new ArrayList<>();
+		List<War> newWars = new ArrayList<>();
+		Map<Long, List<Long>> warRegionMap = new LinkedHashMap<>();
+
+
+		File[] regionFiles = regionsFolder.listFiles((dir, name) -> name.startsWith("region_") && name.endsWith(".yml"));
+		if (regionFiles != null) {
+			for (File file : regionFiles) {
+				YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+				String oldId = cfg.getString("id");
+				if (oldId == null) continue;
+				try {
+					long newId = Homestead.SNOWFLAKE.nextId();
+					regionIdMap.put(oldId, newId);
+
+					UUID ownerId = UUID.fromString(Objects.requireNonNull(cfg.getString("ownerId")));
+					long createdAt = cfg.getLong("createdAt");
+					Region region = new Region(newId, cfg.getString("name"), ownerId, createdAt);
+
+					region.setDisplayName(cfg.getString("displayName"));
+					region.setDescription(cfg.getString("description"));
+					region.setPlayerFlags(cfg.getLong("playerFlags"));
+					region.setWorldFlags(cfg.getLong("worldFlags"));
+					region.setBank(cfg.getDouble("bank"));
+					region.setMapColor(cfg.getInt("mapColor"));
+					region.setUpkeepAt(cfg.getLong("upkeepAt"));
+					region.setTaxes(cfg.getDouble("taxesAmount"));
+					region.setWeather(cfg.getInt("weather"));
+					region.setTime(cfg.getInt("time"));
+					region.setMapIcon(cfg.getString("icon"));
+
+					String locStr = cfg.getString("location");
+					if (LegacyParsers.isNotBlank(locStr)) region.setLocation(SeLocation.deserialize(locStr));
+
+					String wsStr = cfg.getString("welcomeSign");
+					if (LegacyParsers.isNotBlank(wsStr)) region.setWelcomeSign(SeLocation.deserialize(wsStr));
+
+					String rentStr = cfg.getString("rent");
+					if (LegacyParsers.isNotBlank(rentStr)) region.setRent(SeRent.deserialize(rentStr));
+
+					newRegions.add(region);
+
+					for (String part : cfg.getStringList("chunks")) {
+						if (part == null || part.isBlank()) continue;
+						RegionChunk c = LegacyParsers.parseLegacyChunk(newId, part);
+						if (c != null) newChunks.add(c);
+					}
+
+					for (String part : cfg.getStringList("members")) {
+						if (part == null || part.isBlank()) continue;
+						RegionMember m = LegacyParsers.parseLegacyMember(newId, RegionMember.LinkageType.REGION, part);
+						if (m != null) newMembers.add(m);
+					}
+
+					for (String part : cfg.getStringList("rates")) {
+						if (part == null || part.isBlank()) continue;
+						RegionRate r = LegacyParsers.parseLegacyRate(newId, part);
+						if (r != null) newRates.add(r);
+					}
+
+					for (String part : cfg.getStringList("invitedPlayers")) {
+						if (part == null || part.isBlank()) continue;
+						try {
+							UUID pid = UUID.fromString(part.trim());
+							newInvites.add(new RegionInvite(Homestead.SNOWFLAKE.nextId(), newId, pid, createdAt));
+						} catch (IllegalArgumentException ignored) {
+						}
+					}
+
+					for (String part : cfg.getStringList("bannedPlayers")) {
+						if (part == null || part.isBlank()) continue;
+						RegionBannedPlayer b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
+						if (b != null) newBanned.add(b);
+					}
+
+					for (String part : cfg.getStringList("logs")) {
+						if (part == null || part.isBlank()) continue;
+						RegionLog l = LegacyParsers.parseLegacyLog(newId, part);
+						if (l != null) newLogs.add(l);
+					}
+				} catch (Exception ignored) {
+				}
+			}
+		}
+
+
+		File[] subFiles = subAreasFolder.listFiles((dir, name) -> name.startsWith("subarea_") && name.endsWith(".yml"));
+		if (subFiles != null) {
+			for (File file : subFiles) {
+				YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+				String oldId = cfg.getString("id");
+				String oldRegionId = cfg.getString("regionId");
+				if (oldId == null || oldRegionId == null) continue;
+				try {
+					Long newRegionId = regionIdMap.get(oldRegionId);
+					if (newRegionId == null) continue;
+
+					long newSubAreaId = Homestead.SNOWFLAKE.nextId();
+					subAreaIdMap.put(oldId, newSubAreaId);
+
+					UUID worldId = LegacyParsers.resolveWorldUUID(cfg.getString("worldName"));
+					if (worldId == null) continue;
+
+					var point1 = LegacyParsers.parseLegacyBlock(worldId, cfg.getString("point1"));
+					var point2 = LegacyParsers.parseLegacyBlock(worldId, cfg.getString("point2"));
+					if (point1 == null || point2 == null) continue;
+
+					String rentStr = cfg.getString("rent");
+					SeRent rent = LegacyParsers.isNotBlank(rentStr) ? SeRent.deserialize(rentStr) : null;
+
+					SubArea subArea = new SubArea(
+							newSubAreaId,
+							newRegionId,
+							cfg.getString("name"),
+							worldId,
+							point1,
+							point2,
+							cfg.getLong("flags"),
+							rent,
+							cfg.getLong("createdAt"));
+					newSubAreas.add(subArea);
+
+					for (String part : cfg.getStringList("members")) {
+						if (part == null || part.isBlank()) continue;
+						RegionMember m = LegacyParsers.parseLegacyMember(newSubAreaId, RegionMember.LinkageType.SUBAREA, part);
+						if (m != null) newMembers.add(m);
+					}
+				} catch (Exception ignored) {
+				}
+			}
+		}
+
+
+		File[] levelFiles = levelsFolder.listFiles((d, n) -> n.startsWith("level_") && n.endsWith(".yml"));
+		if (levelFiles != null) {
+			for (File file : levelFiles) {
+				YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+				String oldRegionId = cfg.getString("regionId");
+				if (oldRegionId == null) continue;
+				try {
+					Long newRegionId = regionIdMap.get(oldRegionId);
+					if (newRegionId == null) continue;
+					newLevels.add(new Level(
+							Homestead.SNOWFLAKE.nextId(),
+							newRegionId,
+							cfg.getInt("level"),
+							cfg.getLong("experience"),
+							cfg.getLong("totalExperience"),
+							cfg.getLong("createdAt")));
+				} catch (Exception ignored) {
+				}
+			}
+		}
+
+
+		File[] warFiles = warsFolder.listFiles((dir, name) -> name.startsWith("war_") && name.endsWith(".yml"));
+		if (warFiles != null) {
+			for (File file : warFiles) {
+				YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+				String oldWarId = cfg.getString("id");
+				if (oldWarId == null) continue;
+				try {
+					long newWarId = Homestead.SNOWFLAKE.nextId();
+					List<Long> mappedRegionIds = new ArrayList<>();
+					for (String raw : cfg.getStringList("regions")) {
+						if (raw == null || raw.isBlank()) continue;
+						Long mapped = regionIdMap.get(raw.trim());
+						if (mapped != null) mappedRegionIds.add(mapped);
+					}
+					War war = new War(
+							newWarId,
+							cfg.getString("name"),
+							cfg.getString("displayName"),
+							cfg.getString("description"),
+							mappedRegionIds,
+							cfg.getDouble("prize"),
+							cfg.getLong("startedAt"));
+					newWars.add(war);
+					warRegionMap.put(newWarId, mappedRegionIds);
+				} catch (Exception ignored) {
+				}
+			}
+		}
+
+
+		deleteFilesInFolder(regionsFolder, "region_", ".yml");
+		deleteFilesInFolder(subAreasFolder, "subarea_", ".yml");
+		deleteFilesInFolder(levelsFolder, "level_", ".yml");
+		deleteFilesInFolder(warsFolder, "war_", ".yml");
+
+
+		batchInsertRegions(newRegions);
+		batchInsertRegionMembers(newMembers);
+		batchInsertRegionChunks(newChunks);
+		batchInsertRegionLogs(newLogs);
+		batchInsertRegionRates(newRates);
+		batchInsertRegionInvites(newInvites);
+		batchInsertRegionBannedPlayers(newBanned);
+		batchInsertSubAreas(newSubAreas);
+		batchInsertLevels(newLevels);
+		batchInsertWars(newWars);
+		batchInsertWarRegions(warRegionMap);
+	}
+
+	private void deleteFilesInFolder(File folder, String prefix, String suffix) {
+		File[] files = folder.listFiles((dir, name) -> name.startsWith(prefix) && name.endsWith(suffix));
+		if (files != null) {
+			for (File f : files) f.delete();
+		}
+	}
+
+
+	private void batchInsertRegions(List<Region> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (Region r : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", r.getUniqueId());
+			cfg.set("name", r.getName());
+			cfg.set("displayName", r.getDisplayName());
+			cfg.set("description", r.getDescription());
+			cfg.set("ownerId", r.getOwnerId().toString());
+			cfg.set("location", r.getLocation() != null ? r.getLocation().serialize() : null);
+			cfg.set("playerFlags", r.getPlayerFlags());
+			cfg.set("worldFlags", r.getWorldFlags());
+			cfg.set("taxes", r.getTaxes());
+			cfg.set("bank", r.getBank());
+			cfg.set("mapColor", r.getMapColor());
+			cfg.set("mapIcon", r.getMapIcon());
+			cfg.set("rent", r.getRent() != null ? r.getRent().serialize() : null);
+			cfg.set("weather", r.getWeather());
+			cfg.set("time", r.getTime());
+			cfg.set("welcomeSign", r.getWelcomeSign() != null ? r.getWelcomeSign().serialize() : null);
+			cfg.set("upkeepAt", r.getUpkeepAt());
+			cfg.set("createdAt", r.getCreatedAt());
+
+			File out = new File(regionsFolder, "region_" + r.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertRegionMembers(List<RegionMember> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (RegionMember m : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", m.getUniqueId());
+			cfg.set("playerId", m.getPlayerId().toString());
+			cfg.set("linkageType", m.getLinkageType().getValue());
+			cfg.set("regionId", m.getRegionId());
+			cfg.set("subAreaId", m.getSubAreaId());
+			cfg.set("playerFlags", m.getPlayerFlags());
+			cfg.set("controlFlags", m.getControlFlags());
+			cfg.set("joinedAt", m.getJoinedAt());
+			cfg.set("taxesAt", m.getTaxesAt());
+
+			File out = new File(regionMembersFolder, "region_member_" + m.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertRegionChunks(List<RegionChunk> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (RegionChunk c : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", c.getUniqueId());
+			cfg.set("regionId", c.getRegionId());
+			cfg.set("worldId", c.getWorldId().toString());
+			cfg.set("x", c.getX());
+			cfg.set("z", c.getZ());
+			cfg.set("claimedAt", c.getClaimedAt());
+			cfg.set("forceLoaded", c.isForceLoaded());
+
+			File out = new File(regionChunksFolder, "region_chunk_" + c.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertRegionLogs(List<RegionLog> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (RegionLog l : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", l.getUniqueId());
+			cfg.set("regionId", l.getRegionId());
+			cfg.set("author", l.getAuthor());
+			cfg.set("message", l.getMessage());
+			cfg.set("sentAt", l.getSentAt());
+			cfg.set("read", l.isRead());
+
+			File out = new File(regionLogsFolder, "region_log_" + l.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertRegionRates(List<RegionRate> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (RegionRate r : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", r.getUniqueId());
+			cfg.set("regionId", r.getRegionId());
+			cfg.set("playerId", r.getPlayerId().toString());
+			cfg.set("rate", r.getRate());
+			cfg.set("ratedAt", r.getRatedAt());
+
+			File out = new File(regionRatesFolder, "region_rate_" + r.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertRegionInvites(List<RegionInvite> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (RegionInvite i : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", i.getUniqueId());
+			cfg.set("regionId", i.getRegionId());
+			cfg.set("playerId", i.getPlayerId().toString());
+			cfg.set("invitedAt", i.getInvitedAt());
+
+			File out = new File(regionInvitesFolder, "region_invite_" + i.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertRegionBannedPlayers(List<RegionBannedPlayer> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (RegionBannedPlayer b : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", b.getUniqueId());
+			cfg.set("regionId", b.getRegionId());
+			cfg.set("playerId", b.getPlayerId().toString());
+			cfg.set("reason", b.getReason());
+			cfg.set("bannedAt", b.getBannedAt());
+
+			File out = new File(regionBannedPlayersFolder, "region_banned_player_" + b.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertSubAreas(List<SubArea> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (SubArea s : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", s.getUniqueId());
+			cfg.set("regionId", s.getRegionId());
+			cfg.set("name", s.getName());
+			cfg.set("worldId", s.getWorldId().toString());
+			cfg.set("point1", s.getPoint1().serialize());
+			cfg.set("point2", s.getPoint2().serialize());
+			cfg.set("playerFlags", s.getPlayerFlags());
+			cfg.set("rent", s.getRent() != null ? s.getRent().serialize() : null);
+			cfg.set("createdAt", s.getCreatedAt());
+
+			File out = new File(subAreasFolder, "subarea_" + s.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertLevels(List<Level> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (Level l : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", l.getUniqueId());
+			cfg.set("regionId", l.getRegionId());
+			cfg.set("level", l.getLevel());
+			cfg.set("experience", l.getExperience());
+			cfg.set("totalExperience", l.getTotalExperience());
+			cfg.set("createdAt", l.getCreatedAt());
+
+			File out = new File(levelsFolder, "level_" + l.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertWars(List<War> rows) throws Exception {
+		if (rows.isEmpty()) return;
+		for (War w : rows) {
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", w.getUniqueId());
+			cfg.set("name", w.getName());
+			cfg.set("displayName", w.getDisplayName());
+			cfg.set("description", w.getDescription());
+			cfg.set("prize", w.getPrize());
+			cfg.set("startedAt", w.getStartedAt());
+
+			File out = new File(warsFolder, "war_" + w.getUniqueId() + ".yml");
+			cfg.save(out);
+		}
+	}
+
+	private void batchInsertWarRegions(Map<Long, List<Long>> warRegionMap) throws Exception {
+		if (warRegionMap.isEmpty()) return;
+		for (var entry : warRegionMap.entrySet()) {
+			for (long regionId : entry.getValue()) {
+				YamlConfiguration cfg = new YamlConfiguration();
+				cfg.set("warId", entry.getKey());
+				cfg.set("regionId", regionId);
+
+				File out = new File(warRegionsFolder, "war_region_" + entry.getKey() + "_" + regionId + ".yml");
+				cfg.save(out);
+			}
+		}
+	}
+
+
 	@Override
 	public List<Region> importRegions() throws Exception {
-		List<Region> regions = new ArrayList<>();
-		File[] regionFiles = regionsFolder
-				.listFiles((dir, name) -> name.startsWith("region_") && name.endsWith(".yml"));
+		List<Region> list = new ArrayList<>();
+		File[] files = regionsFolder.listFiles((dir, name) -> name.startsWith("region_") && name.endsWith(".yml"));
+		if (files == null) return list;
 
-		if (regionFiles == null) {
-			return regions;
+		for (File file : files) {
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			long id = cfg.getLong("id");
+			UUID ownerId = UUID.fromString(Objects.requireNonNull(cfg.getString("ownerId")));
+			long created = cfg.getLong("createdAt");
+
+			Region region = new Region(id, cfg.getString("name"), ownerId, created);
+			region.setDisplayName(cfg.getString("displayName"));
+			region.setDescription(cfg.getString("description"));
+			region.setPlayerFlags(cfg.getLong("playerFlags"));
+			region.setWorldFlags(cfg.getLong("worldFlags"));
+			region.setTaxes(cfg.getDouble("taxes"));
+			region.setBank(cfg.getDouble("bank"));
+			region.setMapColor(cfg.getInt("mapColor"));
+			region.setMapIcon(cfg.getString("mapIcon"));
+			region.setWeather(cfg.getInt("weather"));
+			region.setTime(cfg.getInt("time"));
+			region.setUpkeepAt(cfg.getLong("upkeepAt"));
+
+			String locStr = cfg.getString("location");
+			if (locStr != null) region.setLocation(SeLocation.deserialize(locStr));
+			String wsStr = cfg.getString("welcomeSign");
+			if (wsStr != null) region.setWelcomeSign(SeLocation.deserialize(wsStr));
+			String rentStr = cfg.getString("rent");
+			if (rentStr != null) region.setRent(SeRent.deserialize(rentStr));
+
+			list.add(region);
 		}
-
-		for (File file : regionFiles) {
-			YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-
-			UUID id = UUID.fromString(Objects.requireNonNull(config.getString("id")));
-			String displayName = config.getString("displayName");
-			String name = config.getString("name");
-			String description = config.getString("description");
-			OfflinePlayer owner = tfagaming.projects.minecraft.homestead.Homestead.getInstance()
-					.getOfflinePlayerSync(UUID.fromString(Objects.requireNonNull(config.getString("ownerId"))));
-			SerializableLocation location = SerializableLocation.fromString(config.getString("location"));
-			long createdAt = config.getLong("createdAt");
-			long playerFlags = config.getLong("playerFlags");
-			long worldFlags = config.getLong("worldFlags");
-			double bank = config.getDouble("bank");
-			int mapColor = config.getInt("mapColor");
-
-			List<SerializableChunk> chunks = config.getStringList("chunks").stream()
-					.map(SerializableChunk::fromString)
-					.collect(Collectors.toList());
-
-			List<SerializableMember> members = config.getStringList("members").stream()
-					.map(SerializableMember::fromString)
-					.collect(Collectors.toList());
-
-			List<SerializableRate> rates = config.getStringList("rates").stream()
-					.map(SerializableRate::fromString)
-					.collect(Collectors.toList());
-
-			List<OfflinePlayer> invitedPlayers = config.getStringList("invitedPlayers").stream()
-					.map(uuidString -> tfagaming.projects.minecraft.homestead.Homestead.getInstance().getOfflinePlayerSync(UUID.fromString(uuidString)))
-					.collect(Collectors.toList());
-
-			List<SerializableBannedPlayer> bannedPlayers = config.getStringList("bannedPlayers").stream()
-					.map(SerializableBannedPlayer::fromString)
-					.collect(Collectors.toList());
-
-			List<SerializableLog> logs = config.getStringList("logs").stream()
-					.map(SerializableLog::fromString)
-					.collect(Collectors.toList());
-
-			SerializableRent rent = config.getString("rent") != null
-					? SerializableRent.fromString(config.getString("rent"))
-					: null;
-			long upkeepAt = config.getLong("upkeepAt");
-			double taxesAmount = config.getDouble("taxesAmount");
-			int weather = config.getInt("weather");
-			int time = config.getInt("time");
-			SerializableLocation welcomeSign = config.getString("welcomeSign") != null
-					? SerializableLocation.fromString(config.getString("welcomeSign"))
-					: null;
-			String icon = config.getString("icon") == null ? null : config.getString("icon");
-
-			if (owner == null) {
-				continue;
-			}
-
-			Region region = new Region(name, owner);
-
-			region.setAutoUpdate(false);
-
-			region.id = id;
-			region.displayName = displayName;
-			region.description = description;
-			region.location = location;
-			region.createdAt = createdAt;
-			region.playerFlags = playerFlags;
-			region.worldFlags = worldFlags;
-			region.bank = bank;
-			region.mapColor = mapColor;
-			region.setChunks(chunks);
-			region.setMembers(members);
-			region.setRates(rates);
-			region.setInvitedPlayers(ListUtils.removeNullElements(invitedPlayers));
-			region.setBannedPlayers(bannedPlayers);
-			region.setLogs(logs);
-			region.rent = rent;
-			region.upkeepAt = upkeepAt;
-			region.taxesAmount = taxesAmount;
-			region.weather = weather;
-			region.time = time;
-			region.welcomeSign = welcomeSign;
-			region.icon = icon;
-
-			region.setAutoUpdate(true);
-
-			regions.add(region);
-		}
-
-		return regions;
+		return list;
 	}
 
 	@Override
-	public List<War> importWars() throws Exception {
-		List<War> wars = new ArrayList<>();
-		File[] warFiles = warsFolder
-				.listFiles((dir, name) -> name.startsWith("war_") && name.endsWith(".yml"));
+	public List<RegionMember> importRegionMembers() throws Exception {
+		List<RegionMember> list = new ArrayList<>();
+		File[] files = regionMembersFolder.listFiles((dir, name) -> name.startsWith("region_member_") && name.endsWith(".yml"));
+		if (files == null) return list;
 
-		if (warFiles == null) {
-			return wars;
+		for (File file : files) {
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			UUID playerId = UUID.fromString(Objects.requireNonNull(cfg.getString("playerId")));
+			int typeVal = cfg.getInt("linkageType");
+			long regionId = cfg.getLong("regionId");
+			long subAreaId = cfg.getLong("subAreaId");
+
+			RegionMember.LinkageType type =
+					typeVal == RegionMember.LinkageType.REGION.getValue()
+							? RegionMember.LinkageType.REGION
+							: RegionMember.LinkageType.SUBAREA;
+			long linkageId = type == RegionMember.LinkageType.REGION ? regionId : subAreaId;
+
+			RegionMember member = new RegionMember(playerId, type, linkageId);
+			member.setPlayerFlags(cfg.getLong("playerFlags"));
+			member.setControlFlags(cfg.getLong("controlFlags"));
+			member.setJoinedAt(cfg.getLong("joinedAt"));
+			member.setTaxesAt(cfg.getLong("taxesAt"));
+			list.add(member);
 		}
+		return list;
+	}
 
-		for (File file : warFiles) {
-			YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+	@Override
+	public List<RegionChunk> importRegionChunks() throws Exception {
+		List<RegionChunk> list = new ArrayList<>();
+		File[] files = regionChunksFolder.listFiles((dir, name) -> name.startsWith("region_chunk_") && name.endsWith(".yml"));
+		if (files == null) return list;
 
-			UUID id = UUID.fromString(Objects.requireNonNull(config.getString("id")));
-			String displayName = config.getString("displayName");
-			String name = config.getString("name");
-			String description = config.getString("description");
-			List<UUID> regions = config.getStringList("regions").stream()
-					.map(UUID::fromString)
-					.collect(Collectors.toList());
-			double prize = config.getDouble("prize");
-			long startedAt = config.getLong("startedAt");
-
-			War war = new War(name, regions);
-			war.id = id;
-			war.displayName = displayName;
-			war.description = description;
-			war.prize = prize;
-			war.startedAt = startedAt;
-
-			wars.add(war);
+		for (File file : files) {
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			list.add(new RegionChunk(
+					cfg.getLong("id"),
+					cfg.getLong("regionId"),
+					UUID.fromString(Objects.requireNonNull(cfg.getString("worldId"))),
+					cfg.getInt("x"),
+					cfg.getInt("z"),
+					cfg.getLong("claimedAt"),
+					cfg.getBoolean("forceLoaded")));
 		}
+		return list;
+	}
 
-		return wars;
+	@Override
+	public List<RegionLog> importRegionLogs() throws Exception {
+		List<RegionLog> list = new ArrayList<>();
+		File[] files = regionLogsFolder.listFiles((dir, name) -> name.startsWith("region_log_") && name.endsWith(".yml"));
+		if (files == null) return list;
+
+		for (File file : files) {
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			list.add(new RegionLog(
+					cfg.getLong("id"),
+					cfg.getLong("regionId"),
+					cfg.getString("author"),
+					cfg.getString("message"),
+					cfg.getLong("sentAt"),
+					cfg.getBoolean("read")));
+		}
+		return list;
+	}
+
+	@Override
+	public List<RegionRate> importRegionRates() throws Exception {
+		List<RegionRate> list = new ArrayList<>();
+		File[] files = regionRatesFolder.listFiles((dir, name) -> name.startsWith("region_rate_") && name.endsWith(".yml"));
+		if (files == null) return list;
+
+		for (File file : files) {
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			list.add(new RegionRate(
+					cfg.getLong("id"),
+					cfg.getLong("regionId"),
+					UUID.fromString(Objects.requireNonNull(cfg.getString("playerId"))),
+					cfg.getInt("rate"),
+					cfg.getLong("ratedAt")));
+		}
+		return list;
+	}
+
+	@Override
+	public List<RegionInvite> importRegionInvites() throws Exception {
+		List<RegionInvite> list = new ArrayList<>();
+		File[] files = regionInvitesFolder.listFiles((dir, name) -> name.startsWith("region_invite_") && name.endsWith(".yml"));
+		if (files == null) return list;
+
+		for (File file : files) {
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			list.add(new RegionInvite(
+					cfg.getLong("id"),
+					cfg.getLong("regionId"),
+					UUID.fromString(Objects.requireNonNull(cfg.getString("playerId"))),
+					cfg.getLong("invitedAt")));
+		}
+		return list;
+	}
+
+	@Override
+	public List<RegionBannedPlayer> importRegionBannedPlayers() throws Exception {
+		List<RegionBannedPlayer> list = new ArrayList<>();
+		File[] files = regionBannedPlayersFolder.listFiles((dir, name) -> name.startsWith("region_banned_player_") && name.endsWith(".yml"));
+		if (files == null) return list;
+
+		for (File file : files) {
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			list.add(new RegionBannedPlayer(
+					cfg.getLong("id"),
+					cfg.getLong("regionId"),
+					UUID.fromString(Objects.requireNonNull(cfg.getString("playerId"))),
+					cfg.getString("reason"),
+					cfg.getLong("bannedAt")));
+		}
+		return list;
 	}
 
 	@Override
 	public List<SubArea> importSubAreas() throws Exception {
-		List<SubArea> subAreas = new ArrayList<>();
+		List<SubArea> list = new ArrayList<>();
 		File[] files = subAreasFolder.listFiles((dir, name) -> name.startsWith("subarea_") && name.endsWith(".yml"));
-
-		if (files == null) {
-			return subAreas;
-		}
+		if (files == null) return list;
 
 		for (File file : files) {
 			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-
-			UUID id = UUID.fromString(Objects.requireNonNull(cfg.getString("id")));
-			UUID regionId = UUID.fromString(Objects.requireNonNull(cfg.getString("regionId")));
-			String name = cfg.getString("name");
-
-			World world = resolveWorld(Objects.requireNonNull(cfg.getString("worldName")));
-			if (world == null) continue;
-
-			Block point1 = parseBlockLocation(world, Objects.requireNonNull(cfg.getString("point1")));
-			Block point2 = parseBlockLocation(world, Objects.requireNonNull(cfg.getString("point2")));
-
-			List<SerializableMember> members = cfg.getStringList("members").stream()
-					.map(SerializableMember::fromString)
-					.collect(Collectors.toList());
-
-			long flags = cfg.getLong("flags");
-
-			SerializableRent rent = cfg.getString("rent") != null
-					? SerializableRent.fromString(cfg.getString("rent"))
-					: null;
-
-			long createdAt = cfg.getLong("createdAt");
-
-			SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
-					point1, point2, members, flags, rent, createdAt);
-
-			subAreas.add(subArea);
+			UUID worldId = UUID.fromString(Objects.requireNonNull(cfg.getString("worldId")));
+			SeBlock p1 = SeBlock.deserialize(cfg.getString("point1"));
+			SeBlock p2 = SeBlock.deserialize(cfg.getString("point2"));
+			if (p1 == null || p2 == null) continue;
+			String rentStr = cfg.getString("rent");
+			SeRent rent = rentStr != null ? SeRent.deserialize(rentStr) : null;
+			list.add(new SubArea(
+					cfg.getLong("id"),
+					cfg.getLong("regionId"),
+					cfg.getString("name"),
+					worldId, p1, p2,
+					cfg.getLong("playerFlags"),
+					rent,
+					cfg.getLong("createdAt")));
 		}
-
-		return subAreas;
+		return list;
 	}
 
 	@Override
 	public List<Level> importLevels() throws Exception {
-		List<Level> levels = new ArrayList<>();
+		List<Level> list = new ArrayList<>();
 		File[] files = levelsFolder.listFiles((d, n) -> n.startsWith("level_") && n.endsWith(".yml"));
-
-		if (files == null) {
-			return levels;
-		}
+		if (files == null) return list;
 
 		for (File file : files) {
 			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-			UUID id = UUID.fromString(Objects.requireNonNull(cfg.getString("id")));
-			UUID regionId = UUID.fromString(Objects.requireNonNull(cfg.getString("regionId")));
-			int level = cfg.getInt("level");
-			long xp = cfg.getLong("experience");
-			long totalXp = cfg.getLong("totalExperience");
-			long createdAt = cfg.getLong("createdAt");
+			list.add(new Level(
+					cfg.getLong("id"),
+					cfg.getLong("regionId"),
+					cfg.getInt("level"),
+					cfg.getLong("experience"),
+					cfg.getLong("totalExperience"),
+					cfg.getLong("createdAt")));
+		}
+		return list;
+	}
 
-			Level lvl = new Level(id, regionId, level, xp, totalXp, createdAt);
-			levels.add(lvl);
+	@Override
+	public List<War> importWars() throws Exception {
+		Map<Long, List<Long>> warRegions = new HashMap<>();
+		File[] juncFiles = warRegionsFolder.listFiles((dir, name) -> name.startsWith("war_region_") && name.endsWith(".yml"));
+		if (juncFiles != null) {
+			for (File file : juncFiles) {
+				YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+				warRegions.computeIfAbsent(cfg.getLong("warId"), k -> new ArrayList<>()).add(cfg.getLong("regionId"));
+			}
 		}
 
-		return levels;
+		List<War> list = new ArrayList<>();
+		File[] files = warsFolder.listFiles((dir, name) -> name.startsWith("war_") && name.endsWith(".yml"));
+		if (files == null) return list;
+
+		for (File file : files) {
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+			long warId = cfg.getLong("id");
+			list.add(new War(
+					warId,
+					cfg.getString("name"),
+					cfg.getString("displayName"),
+					cfg.getString("description"),
+					warRegions.getOrDefault(warId, new ArrayList<>()),
+					cfg.getDouble("prize"),
+					cfg.getLong("startedAt")));
+		}
+		return list;
 	}
+
 
 	@Override
 	public void exportRegions(List<Region> regions) throws Exception {
-		Set<UUID> existingFiles = new HashSet<>();
-		File[] regionFiles = regionsFolder
-				.listFiles((dir, name) -> name.startsWith("region_") && name.endsWith(".yml"));
-		if (regionFiles != null) {
-			for (File file : regionFiles) {
-				try {
-					String uuidStr = file.getName().replace("region_", "").replace(".yml", "");
-					existingFiles.add(UUID.fromString(uuidStr));
-				} catch (IllegalArgumentException ignored) {
-				}
-			}
-		}
+		Set<Long> existingIds = scanExistingIds(regionsFolder, "region_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
 
-		Set<UUID> cacheRegionIds = new HashSet<>();
 		for (Region region : regions) {
-			try {
-				UUID regionId = region.id;
-				cacheRegionIds.add(regionId);
+			long id = region.getUniqueId();
+			cacheIds.add(id);
 
-				File regionFile = new File(regionsFolder, "region_" + regionId.toString() + ".yml");
-				YamlConfiguration config = new YamlConfiguration();
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", id);
+			cfg.set("name", region.getName());
+			cfg.set("displayName", region.getDisplayName());
+			cfg.set("description", region.getDescription());
+			cfg.set("ownerId", region.getOwnerId().toString());
+			cfg.set("location", region.getLocation() != null ? region.getLocation().serialize() : null);
+			cfg.set("playerFlags", region.getPlayerFlags());
+			cfg.set("worldFlags", region.getWorldFlags());
+			cfg.set("taxes", region.getTaxes());
+			cfg.set("bank", region.getBank());
+			cfg.set("mapColor", region.getMapColor());
+			cfg.set("mapIcon", region.getMapIcon());
+			cfg.set("rent", region.getRent() != null ? region.getRent().serialize() : null);
+			cfg.set("weather", region.getWeather());
+			cfg.set("time", region.getTime());
+			cfg.set("welcomeSign", region.getWelcomeSign() != null ? region.getWelcomeSign().serialize() : null);
+			cfg.set("upkeepAt", region.getUpkeepAt());
+			cfg.set("createdAt", region.getCreatedAt());
 
-				config.set("id", regionId.toString());
-				config.set("displayName", region.displayName);
-				config.set("name", region.name);
-				config.set("description", region.description);
-				config.set("ownerId", region.getOwnerId().toString());
-				config.set("location", region.location != null ? region.location.toString() : null);
-				config.set("createdAt", region.createdAt);
-				config.set("playerFlags", region.playerFlags);
-				config.set("worldFlags", region.worldFlags);
-				config.set("bank", region.bank);
-				config.set("mapColor", region.mapColor);
-
-				config.set("chunks", region.chunks.stream()
-						.map(SerializableChunk::toString)
-						.collect(Collectors.toList()));
-
-				config.set("members", region.members.stream()
-						.map(SerializableMember::toString)
-						.collect(Collectors.toList()));
-
-				config.set("rates", region.rates.stream()
-						.map(SerializableRate::toString)
-						.collect(Collectors.toList()));
-
-				config.set("invitedPlayers", region.getInvitedPlayers().stream()
-						.map(OfflinePlayer::getUniqueId)
-						.map(UUID::toString)
-						.collect(Collectors.toList()));
-
-				config.set("bannedPlayers", region.bannedPlayers.stream()
-						.map(SerializableBannedPlayer::toString)
-						.collect(Collectors.toList()));
-
-				config.set("logs", region.logs.stream()
-						.map(SerializableLog::toString)
-						.collect(Collectors.toList()));
-
-				config.set("rent", region.rent != null ? region.rent.toString() : null);
-				config.set("upkeepAt", region.upkeepAt);
-				config.set("taxesAmount", region.taxesAmount);
-				config.set("weather", region.weather);
-				config.set("time", region.time);
-				config.set("welcomeSign", region.welcomeSign != null ? region.welcomeSign.toString() : null);
-				config.set("icon", region.icon != null ? region.icon : null);
-
-				config.save(regionFile);
-			} catch (IOException e) {
-				throw new SQLException("Failed to save region: " + e.getMessage(), e);
-			}
+			File out = new File(regionsFolder, "region_" + id + ".yml");
+			cfg.save(out);
 		}
 
-		existingFiles.removeAll(cacheRegionIds);
-		for (UUID deletedId : existingFiles) {
-			File toDelete = new File(regionsFolder, "region_" + deletedId.toString() + ".yml");
-			toDelete.delete();
+		existingIds.removeAll(cacheIds);
+		for (long deletedId : existingIds) {
+			new File(regionsFolder, "region_" + deletedId + ".yml").delete();
 		}
 	}
 
 	@Override
-	public void exportWars(List<War> wars) throws Exception {
-		Set<UUID> existingFiles = new HashSet<>();
-		File[] warFiles = warsFolder
-				.listFiles((dir, name) -> name.startsWith("war_") && name.endsWith(".yml"));
-		if (warFiles != null) {
-			for (File file : warFiles) {
-				try {
-					String uuidStr = file.getName().replace("war_", "").replace(".yml", "");
-					existingFiles.add(UUID.fromString(uuidStr));
-				} catch (IllegalArgumentException ignored) {
-				}
-			}
+	public void exportRegionMembers(List<RegionMember> members) throws Exception {
+		Set<Long> existingIds = scanExistingIds(regionMembersFolder, "region_member_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
+
+		for (RegionMember m : members) {
+			long id = m.getUniqueId();
+			cacheIds.add(id);
+
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", id);
+			cfg.set("playerId", m.getPlayerId().toString());
+			cfg.set("linkageType", m.getLinkageType().getValue());
+			cfg.set("regionId", m.getRegionId());
+			cfg.set("subAreaId", m.getSubAreaId());
+			cfg.set("playerFlags", m.getPlayerFlags());
+			cfg.set("controlFlags", m.getControlFlags());
+			cfg.set("joinedAt", m.getJoinedAt());
+			cfg.set("taxesAt", m.getTaxesAt());
+
+			File out = new File(regionMembersFolder, "region_member_" + id + ".yml");
+			cfg.save(out);
 		}
 
-		Set<UUID> cacheWarIds = new HashSet<>();
-		for (War war : wars) {
-			try {
-				UUID warId = war.id;
-				cacheWarIds.add(warId);
-
-				File warFile = new File(warsFolder, "war_" + warId.toString() + ".yml");
-				YamlConfiguration config = new YamlConfiguration();
-
-				config.set("id", warId.toString());
-				config.set("displayName", war.displayName);
-				config.set("name", war.name);
-				config.set("description", war.description);
-				config.set("regions", war.regions.stream()
-						.map(UUID::toString)
-						.collect(Collectors.toList()));
-				config.set("prize", war.prize);
-				config.set("startedAt", war.startedAt);
-
-				config.save(warFile);
-			} catch (IOException e) {
-				throw new SQLException("Failed to save war: " + e.getMessage(), e);
-			}
-		}
-
-		existingFiles.removeAll(cacheWarIds);
-		for (UUID deletedId : existingFiles) {
-			File toDelete = new File(warsFolder, "war_" + deletedId.toString() + ".yml");
-			toDelete.delete();
+		existingIds.removeAll(cacheIds);
+		for (long deletedId : existingIds) {
+			new File(regionMembersFolder, "region_member_" + deletedId + ".yml").delete();
 		}
 	}
 
 	@Override
-	public void exportSubAreas(List<SubArea> subareas) throws Exception {
-		Set<UUID> existingFiles = new HashSet<>();
-		File[] files = subAreasFolder.listFiles((dir, name) -> name.startsWith("subarea_") && name.endsWith(".yml"));
-		if (files != null) {
-			for (File file : files) {
-				try {
-					existingFiles.add(UUID.fromString(file.getName().replace("subarea_", "").replace(".yml", "")));
-				} catch (IllegalArgumentException ignored) {
-				}
-			}
+	public void exportRegionChunks(List<RegionChunk> chunks) throws Exception {
+		Set<Long> existingIds = scanExistingIds(regionChunksFolder, "region_chunk_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
+
+		for (RegionChunk c : chunks) {
+			long id = c.getUniqueId();
+			cacheIds.add(id);
+
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", id);
+			cfg.set("regionId", c.getRegionId());
+			cfg.set("worldId", c.getWorldId().toString());
+			cfg.set("x", c.getX());
+			cfg.set("z", c.getZ());
+			cfg.set("claimedAt", c.getClaimedAt());
+			cfg.set("forceLoaded", c.isForceLoaded());
+
+			File out = new File(regionChunksFolder, "region_chunk_" + id + ".yml");
+			cfg.save(out);
 		}
 
-		Set<UUID> cacheIds = new HashSet<>();
-		for (SubArea sub : subareas) {
-			try {
-				UUID id = sub.id;
-				cacheIds.add(id);
+		existingIds.removeAll(cacheIds);
+		for (long deletedId : existingIds) {
+			new File(regionChunksFolder, "region_chunk_" + deletedId + ".yml").delete();
+		}
+	}
 
-				YamlConfiguration cfg = new YamlConfiguration();
-				cfg.set("id", id.toString());
-				cfg.set("regionId", sub.regionId.toString());
-				cfg.set("name", sub.name);
-				cfg.set("worldName", sub.worldId.toString());
-				cfg.set("point1", toStringBlockLocation(sub.getWorld(), sub.point1));
-				cfg.set("point2", toStringBlockLocation(sub.getWorld(), sub.point2));
-				cfg.set("members", sub.members.stream()
-						.map(SerializableMember::toString)
-						.collect(Collectors.toList()));
-				cfg.set("flags", sub.flags);
-				cfg.set("rent", sub.rent != null ? sub.rent.toString() : null);
-				cfg.set("createdAt", sub.createdAt);
+	@Override
+	public void exportRegionLogs(List<RegionLog> logs) throws Exception {
+		Set<Long> existingIds = scanExistingIds(regionLogsFolder, "region_log_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
 
-				File out = new File(subAreasFolder, "subarea_" + id + ".yml");
-				cfg.save(out);
-			} catch (IOException e) {
-				throw new SQLException("Failed to save sub-area: " + e.getMessage(), e);
-			}
+		for (RegionLog l : logs) {
+			long id = l.getUniqueId();
+			cacheIds.add(id);
+
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", id);
+			cfg.set("regionId", l.getRegionId());
+			cfg.set("author", l.getAuthor());
+			cfg.set("message", l.getMessage());
+			cfg.set("sentAt", l.getSentAt());
+			cfg.set("read", l.isRead());
+
+			File out = new File(regionLogsFolder, "region_log_" + id + ".yml");
+			cfg.save(out);
 		}
 
-		existingFiles.removeAll(cacheIds);
-		for (UUID deletedId : existingFiles) {
-			File toDelete = new File(subAreasFolder, "subarea_" + deletedId + ".yml");
-			toDelete.delete();
+		existingIds.removeAll(cacheIds);
+		for (long deletedId : existingIds) {
+			new File(regionLogsFolder, "region_log_" + deletedId + ".yml").delete();
+		}
+	}
+
+	@Override
+	public void exportRegionRates(List<RegionRate> rates) throws Exception {
+		Set<Long> existingIds = scanExistingIds(regionRatesFolder, "region_rate_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
+
+		for (RegionRate r : rates) {
+			long id = r.getUniqueId();
+			cacheIds.add(id);
+
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", id);
+			cfg.set("regionId", r.getRegionId());
+			cfg.set("playerId", r.getPlayerId().toString());
+			cfg.set("rate", r.getRate());
+			cfg.set("ratedAt", r.getRatedAt());
+
+			File out = new File(regionRatesFolder, "region_rate_" + id + ".yml");
+			cfg.save(out);
+		}
+
+		existingIds.removeAll(cacheIds);
+		for (long deletedId : existingIds) {
+			new File(regionRatesFolder, "region_rate_" + deletedId + ".yml").delete();
+		}
+	}
+
+	@Override
+	public void exportRegionInvites(List<RegionInvite> invites) throws Exception {
+		Set<Long> existingIds = scanExistingIds(regionInvitesFolder, "region_invite_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
+
+		for (RegionInvite i : invites) {
+			long id = i.getUniqueId();
+			cacheIds.add(id);
+
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", id);
+			cfg.set("regionId", i.getRegionId());
+			cfg.set("playerId", i.getPlayerId().toString());
+			cfg.set("invitedAt", i.getInvitedAt());
+
+			File out = new File(regionInvitesFolder, "region_invite_" + id + ".yml");
+			cfg.save(out);
+		}
+
+		existingIds.removeAll(cacheIds);
+		for (long deletedId : existingIds) {
+			new File(regionInvitesFolder, "region_invite_" + deletedId + ".yml").delete();
+		}
+	}
+
+	@Override
+	public void exportRegionBannedPlayers(List<RegionBannedPlayer> bannedPlayers) throws Exception {
+		Set<Long> existingIds = scanExistingIds(regionBannedPlayersFolder, "region_banned_player_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
+
+		for (RegionBannedPlayer b : bannedPlayers) {
+			long id = b.getUniqueId();
+			cacheIds.add(id);
+
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", id);
+			cfg.set("regionId", b.getRegionId());
+			cfg.set("playerId", b.getPlayerId().toString());
+			cfg.set("reason", b.getReason());
+			cfg.set("bannedAt", b.getBannedAt());
+
+			File out = new File(regionBannedPlayersFolder, "region_banned_player_" + id + ".yml");
+			cfg.save(out);
+		}
+
+		existingIds.removeAll(cacheIds);
+		for (long deletedId : existingIds) {
+			new File(regionBannedPlayersFolder, "region_banned_player_" + deletedId + ".yml").delete();
+		}
+	}
+
+	@Override
+	public void exportSubAreas(List<SubArea> subAreas) throws Exception {
+		Set<Long> existingIds = scanExistingIds(subAreasFolder, "subarea_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
+
+		for (SubArea s : subAreas) {
+			long id = s.getUniqueId();
+			cacheIds.add(id);
+
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", id);
+			cfg.set("regionId", s.getRegionId());
+			cfg.set("name", s.getName());
+			cfg.set("worldId", s.getWorldId().toString());
+			cfg.set("point1", s.getPoint1().serialize());
+			cfg.set("point2", s.getPoint2().serialize());
+			cfg.set("playerFlags", s.getPlayerFlags());
+			cfg.set("rent", s.getRent() != null ? s.getRent().serialize() : null);
+			cfg.set("createdAt", s.getCreatedAt());
+
+			File out = new File(subAreasFolder, "subarea_" + id + ".yml");
+			cfg.save(out);
+		}
+
+		existingIds.removeAll(cacheIds);
+		for (long deletedId : existingIds) {
+			new File(subAreasFolder, "subarea_" + deletedId + ".yml").delete();
 		}
 	}
 
 	@Override
 	public void exportLevels(List<Level> levels) throws Exception {
-		Set<UUID> existingFiles = new HashSet<>();
-		File[] files = levelsFolder.listFiles((d, n) -> n.startsWith("level_") && n.endsWith(".yml"));
-		if (files != null) {
-			for (File f : files) {
-				try {
-					existingFiles.add(UUID.fromString(f.getName().replace("level_", "").replace(".yml", "")));
-				} catch (IllegalArgumentException ignored) {
-				}
-			}
+		Set<Long> existingIds = scanExistingIds(levelsFolder, "level_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
+
+		for (Level l : levels) {
+			long id = l.getUniqueId();
+			cacheIds.add(id);
+
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", id);
+			cfg.set("regionId", l.getRegionId());
+			cfg.set("level", l.getLevel());
+			cfg.set("experience", l.getExperience());
+			cfg.set("totalExperience", l.getTotalExperience());
+			cfg.set("createdAt", l.getCreatedAt());
+
+			File out = new File(levelsFolder, "level_" + id + ".yml");
+			cfg.save(out);
 		}
 
-		Set<UUID> cacheIds = new HashSet<>();
-		for (Level lvl : levels) {
-			try {
-				UUID id = lvl.getUniqueId();
-				cacheIds.add(id);
-
-				YamlConfiguration cfg = new YamlConfiguration();
-				cfg.set("id", id.toString());
-				cfg.set("regionId", lvl.getRegionId().toString());
-				cfg.set("level", lvl.getLevel());
-				cfg.set("experience", lvl.getExperience());
-				cfg.set("totalExperience", lvl.getTotalExperience());
-				cfg.set("createdAt", lvl.getCreatedAt());
-
-				File out = new File(levelsFolder, "level_" + id + ".yml");
-				cfg.save(out);
-			} catch (IOException e) {
-				throw new SQLException("Failed to save level: " + e.getMessage(), e);
-			}
-		}
-
-		existingFiles.removeAll(cacheIds);
-		for (UUID deletedId : existingFiles) {
-			File toDelete = new File(levelsFolder, "level_" + deletedId + ".yml");
-			toDelete.delete();
+		existingIds.removeAll(cacheIds);
+		for (long deletedId : existingIds) {
+			new File(levelsFolder, "level_" + deletedId + ".yml").delete();
 		}
 	}
 
 	@Override
-	public void prepareTables() throws Exception {
+	public void exportWars(List<War> wars) throws Exception {
+		Set<Long> existingIds = scanExistingIds(warsFolder, "war_", ".yml");
+		Set<Long> cacheIds = new HashSet<>();
+
+		for (War w : wars) {
+			long warId = w.getUniqueId();
+			cacheIds.add(warId);
+
+			YamlConfiguration cfg = new YamlConfiguration();
+			cfg.set("id", warId);
+			cfg.set("name", w.getName());
+			cfg.set("displayName", w.getDisplayName());
+			cfg.set("description", w.getDescription());
+			cfg.set("prize", w.getPrize());
+			cfg.set("startedAt", w.getStartedAt());
+
+			File out = new File(warsFolder, "war_" + warId + ".yml");
+			cfg.save(out);
+
+
+			deleteJunctionFiles(warId);
+			for (long regionId : w.getRegionIds()) {
+				YamlConfiguration junc = new YamlConfiguration();
+				junc.set("warId", warId);
+				junc.set("regionId", regionId);
+				File juncOut = new File(warRegionsFolder, "war_region_" + warId + "_" + regionId + ".yml");
+				junc.save(juncOut);
+			}
+		}
+
+		existingIds.removeAll(cacheIds);
+		for (long staleId : existingIds) {
+			new File(warsFolder, "war_" + staleId + ".yml").delete();
+			deleteJunctionFiles(staleId);
+		}
+	}
+
+	private void deleteJunctionFiles(long warId) {
+		File[] files = warRegionsFolder.listFiles((dir, name) -> name.startsWith("war_region_" + warId + "_") && name.endsWith(".yml"));
+		if (files != null) {
+			for (File f : files) f.delete();
+		}
+	}
+
+
+	private Set<Long> scanExistingIds(File folder, String prefix, String suffix) {
+		Set<Long> ids = new HashSet<>();
+		File[] files = folder.listFiles((dir, name) -> name.startsWith(prefix) && name.endsWith(suffix));
+		if (files == null) return ids;
+		for (File file : files) {
+			try {
+				String num = file.getName().replace(prefix, "").replace(suffix, "");
+				ids.add(Long.parseLong(num));
+			} catch (NumberFormatException ignored) {
+			}
+		}
+		return ids;
 	}
 
 	@Override
 	public long getLatency() {
-		List<File> folders = List.of(regionsFolder, warsFolder, subAreasFolder, levelsFolder);
+		List<File> folders = List.of(
+				regionsFolder, regionMembersFolder, regionChunksFolder, regionLogsFolder,
+				regionRatesFolder, regionInvitesFolder, regionBannedPlayersFolder,
+				warsFolder, warRegionsFolder, subAreasFolder, levelsFolder
+		);
 
 		long startTime = System.currentTimeMillis();
-
 		for (File folder : folders) {
 			File[] files = folder.listFiles();
 			if (files != null) {
@@ -491,7 +1055,6 @@ public final class YAML implements Provider {
 				int count = files.length;
 			}
 		}
-
 		long endTime = System.currentTimeMillis();
 
 		return endTime - startTime;

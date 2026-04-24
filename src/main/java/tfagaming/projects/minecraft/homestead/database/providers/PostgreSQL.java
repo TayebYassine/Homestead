@@ -1,22 +1,15 @@
 package tfagaming.projects.minecraft.homestead.database.providers;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.structure.Level;
-import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.SubArea;
-import tfagaming.projects.minecraft.homestead.structure.War;
-import tfagaming.projects.minecraft.homestead.structure.serializable.*;
-import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
+import tfagaming.projects.minecraft.homestead.models.*;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static tfagaming.projects.minecraft.homestead.tools.minecraft.subareas.SubAreaUtility.*;
 
 public final class PostgreSQL implements Provider {
 	private static final String JDBC_URL = "jdbc:postgresql://";
@@ -43,623 +36,1268 @@ public final class PostgreSQL implements Provider {
 		}
 	}
 
-	@Override
-	public List<Region> importRegions() throws SQLException {
-		List<Region> regions = new ArrayList<>();
-		String sql = "SELECT * FROM " + TABLE_PREFIX + "regions";
-
-		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(sql)) {
-
-			while (rs.next()) {
-				UUID id = (UUID) rs.getObject("id");
-				String displayName = rs.getString("display_name");
-				String name = rs.getString("name");
-				String description = rs.getString("description");
-				OfflinePlayer owner = Homestead.getInstance()
-						.getOfflinePlayerSync((UUID) rs.getObject("owner_id"));
-				SerializableLocation location = SerializableLocation.fromString(rs.getString("location"));
-				long createdAt = rs.getLong("created_at");
-				long playerFlags = rs.getLong("player_flags");
-				long worldFlags = rs.getLong("world_flags");
-				double bank = rs.getDouble("bank");
-				int mapColor = rs.getInt("map_color");
-
-				// Handle array types
-				List<SerializableChunk> chunks = Arrays.stream((String[]) rs.getArray("chunks").getArray())
-						.map(SerializableChunk::fromString)
-						.collect(Collectors.toList());
-
-				List<SerializableMember> members = Arrays.stream((String[]) rs.getArray("members").getArray())
-						.map(SerializableMember::fromString)
-						.collect(Collectors.toList());
-
-				List<SerializableRate> rates = Arrays.stream((String[]) rs.getArray("rates").getArray())
-						.map(SerializableRate::fromString)
-						.collect(Collectors.toList());
-
-				List<OfflinePlayer> invitedPlayers = Arrays.stream((UUID[]) rs.getArray("invited_players").getArray())
-						.map(uuid -> Homestead.getInstance().getOfflinePlayerSync(uuid))
-						.collect(Collectors.toList());
-
-				List<SerializableBannedPlayer> bannedPlayers = Arrays
-						.stream((String[]) rs.getArray("banned_players").getArray())
-						.map(SerializableBannedPlayer::fromString)
-						.collect(Collectors.toList());
-
-				List<SerializableLog> logs = Arrays.stream((String[]) rs.getArray("logs").getArray())
-						.map(SerializableLog::fromString)
-						.collect(Collectors.toList());
-
-				SerializableRent rent = rs.getString("rent") != null ? SerializableRent.fromString(rs.getString("rent"))
-						: null;
-				long upkeepAt = rs.getLong("upkeep_at");
-				double taxesAmount = rs.getDouble("taxes_amount");
-				int weather = rs.getInt("weather");
-				int time = rs.getInt("time");
-				SerializableLocation welcomeSign = rs.getString("welcome_sign") != null
-						? SerializableLocation.fromString(rs.getString("welcome_sign"))
-						: null;
-				String icon = rs.getString("icon") == null ? null : rs.getString("icon");
-
-				if (owner == null) {
-					continue;
-				}
-
-				Region region = new Region(name, owner);
-
-				region.setAutoUpdate(false);
-
-				region.id = id;
-				region.displayName = displayName;
-				region.description = description;
-				region.location = location;
-				region.createdAt = createdAt;
-				region.playerFlags = playerFlags;
-				region.worldFlags = worldFlags;
-				region.bank = bank;
-				region.mapColor = mapColor;
-				region.setChunks(chunks);
-				region.setMembers(members);
-				region.setRates(rates);
-				region.setInvitedPlayers(ListUtils.removeNullElements(invitedPlayers));
-				region.setBannedPlayers(bannedPlayers);
-				region.setLogs(logs);
-				region.rent = rent;
-				region.upkeepAt = upkeepAt;
-				region.taxesAmount = taxesAmount;
-				region.weather = weather;
-				region.time = time;
-				region.welcomeSign = welcomeSign;
-				region.icon = icon;
-
-				region.setAutoUpdate(true);
-
-				regions.add(region);
-			}
-		}
-
-		return regions;
-	}
-
-	@Override
-	public List<War> importWars() throws SQLException {
-		List<War> wars = new ArrayList<>();
-		String sql = "SELECT * FROM " + TABLE_PREFIX + "wars";
-
-		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(sql)) {
-
-			while (rs.next()) {
-				UUID id = UUID.fromString(rs.getString("id"));
-				String displayName = rs.getString("displayName");
-				String name = rs.getString("name");
-				String description = rs.getString("description");
-				List<UUID> regions = Arrays.stream((String[]) rs.getArray("regions").getArray())
-						.map(UUID::fromString)
-						.collect(Collectors.toList());
-				double prize = rs.getDouble("prize");
-				long startedAt = rs.getLong("started_at");
-
-				War war = new War(name, regions);
-				war.id = id;
-				war.displayName = displayName;
-				war.description = description;
-				war.prize = prize;
-				war.startedAt = startedAt;
-
-				wars.add(war);
-			}
-		}
-
-		return wars;
-	}
-
-	@Override
-	public List<SubArea> importSubAreas() throws SQLException {
-		List<SubArea> subAreas = new ArrayList<>();
-		final String sql = "SELECT * FROM " + TABLE_PREFIX + "subareas";
-
-		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(sql)) {
-
-			while (rs.next()) {
-				UUID id = (UUID) rs.getObject("id");
-				UUID regionId = (UUID) rs.getObject("region_id");
-				String name = rs.getString("name");
-
-				World world = resolveWorld(rs.getString("world_name"));
-
-				if (world == null) {
-					continue;
-				}
-
-				Block point1 = parseBlockLocation(world, rs.getString("point1"));
-				Block point2 = parseBlockLocation(world, rs.getString("point2"));
-
-				List<SerializableMember> members =
-						Arrays.stream((String[]) rs.getArray("members").getArray())
-								.map(SerializableMember::fromString)
-								.collect(Collectors.toList());
-
-				long playerFlags = rs.getLong("playerFlags");
-
-				SerializableRent rent = SerializableRent.fromString(rs.getString("rent"));
-
-				long createdAt = rs.getLong("created_at");
-
-				SubArea subArea = new SubArea(id, regionId, name, world.getUID(),
-						point1, point2, members, playerFlags, rent, createdAt);
-
-				subAreas.add(subArea);
-			}
-		}
-
-		return subAreas;
-	}
-
-	@Override
-	public List<Level> importLevels() throws SQLException {
-		List<Level> levels = new ArrayList<>();
-		final String sql = "SELECT * FROM " + TABLE_PREFIX + "levels";
-
-		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(sql)) {
-
-			while (rs.next()) {
-				UUID id = (UUID) rs.getObject("id");
-				UUID regionId = (UUID) rs.getObject("region_id");
-				int level = rs.getInt("level");
-				long xp = rs.getLong("experience");
-				long totalXp = rs.getLong("total_experience");
-				long createdAt = rs.getLong("created_at");
-
-				Level lvl = new Level(id, regionId, level, xp, totalXp, createdAt);
-				levels.add(lvl);
-			}
-		}
-
-		return levels;
-	}
-
-	@Override
-	public void exportRegions(List<Region> regions) throws SQLException {
-		Set<UUID> dbRegionIds = new HashSet<>();
-		String selectSql = "SELECT id FROM " + TABLE_PREFIX + "regions";
-
-		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(selectSql)) {
-			while (rs.next()) {
-				dbRegionIds.add((UUID) rs.getObject("id"));
-			}
-		}
-
-		String upsertSql = "INSERT INTO " + TABLE_PREFIX + "regions (" +
-				"id, display_name, name, description, owner_id, location, created_at, " +
-				"player_flags, world_flags, bank, map_color, chunks, members, rates, " +
-				"invited_players, banned_players, logs, rent, upkeep_at, taxes_amount, weather, " +
-				"time, welcome_sign, icon" +
-				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-				"ON CONFLICT (id) DO UPDATE SET " +
-				"display_name = EXCLUDED.display_name, " +
-				"name = EXCLUDED.name, " +
-				"description = EXCLUDED.description, " +
-				"owner_id = EXCLUDED.owner_id, " +
-				"location = EXCLUDED.location, " +
-				"created_at = EXCLUDED.created_at, " +
-				"player_flags = EXCLUDED.player_flags, " +
-				"world_flags = EXCLUDED.world_flags, " +
-				"bank = EXCLUDED.bank, " +
-				"map_color = EXCLUDED.map_color, " +
-				"chunks = EXCLUDED.chunks, " +
-				"members = EXCLUDED.members, " +
-				"rates = EXCLUDED.rates, " +
-				"invited_players = EXCLUDED.invited_players, " +
-				"banned_players = EXCLUDED.banned_players, " +
-				"logs = EXCLUDED.logs, " +
-				"rent = EXCLUDED.rent, " +
-				"upkeep_at = EXCLUDED.upkeep_at, " +
-				"taxes_amount = EXCLUDED.taxes_amount, " +
-				"weather = EXCLUDED.weather, " +
-				"time = EXCLUDED.time, " +
-				"welcome_sign = EXCLUDED.welcome_sign," +
-				"icon = EXCLUDED.icon";
-
-		String deleteSql = "DELETE FROM " + TABLE_PREFIX + "regions WHERE id = ?";
-
-		connection.setAutoCommit(false);
-
-		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
-			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
-			Set<UUID> cacheRegionIds = new HashSet<>();
-
-			for (Region region : regions) {
-				UUID regionId = region.id;
-				cacheRegionIds.add(regionId);
-
-				// Convert lists to arrays for PostgreSQL
-				String[] chunksArray = region.chunks.stream()
-						.map(SerializableChunk::toString)
-						.toArray(String[]::new);
-
-				String[] membersArray = region.members.stream()
-						.map(SerializableMember::toString)
-						.toArray(String[]::new);
-
-				String[] ratesArray = region.rates.stream()
-						.map(SerializableRate::toString)
-						.toArray(String[]::new);
-
-				UUID[] invitedArray = region.getInvitedPlayers().stream()
-						.map(OfflinePlayer::getUniqueId)
-						.toArray(UUID[]::new);
-
-				String[] bannedArray = region.bannedPlayers.stream()
-						.map(SerializableBannedPlayer::toString)
-						.toArray(String[]::new);
-
-				String[] logsArray = region.logs.stream()
-						.map(SerializableLog::toString)
-						.toArray(String[]::new);
-
-				upsertStmt.setObject(1, regionId);
-				upsertStmt.setString(2, region.displayName);
-				upsertStmt.setString(3, region.name);
-				upsertStmt.setString(4, region.description);
-				upsertStmt.setObject(5, region.getOwnerId());
-				upsertStmt.setString(6, region.location != null ? region.location.toString() : null);
-				upsertStmt.setLong(7, region.createdAt);
-				upsertStmt.setLong(8, region.playerFlags);
-				upsertStmt.setLong(9, region.worldFlags);
-				upsertStmt.setDouble(10, region.bank);
-				upsertStmt.setInt(11, region.mapColor);
-				upsertStmt.setArray(12, connection.createArrayOf("text", chunksArray));
-				upsertStmt.setArray(13, connection.createArrayOf("text", membersArray));
-				upsertStmt.setArray(14, connection.createArrayOf("text", ratesArray));
-				upsertStmt.setArray(15, connection.createArrayOf("uuid", invitedArray));
-				upsertStmt.setArray(16, connection.createArrayOf("text", bannedArray));
-				upsertStmt.setArray(17, connection.createArrayOf("text", logsArray));
-				upsertStmt.setString(18, region.rent != null ? region.rent.toString() : null);
-				upsertStmt.setLong(19, region.upkeepAt);
-				upsertStmt.setDouble(20, region.taxesAmount);
-				upsertStmt.setInt(21, region.weather);
-				upsertStmt.setInt(22, region.time);
-				upsertStmt.setString(23, region.welcomeSign != null ? region.welcomeSign.toString() : null);
-				upsertStmt.setString(24, region.icon != null ? region.icon : null);
-
-				upsertStmt.addBatch();
-			}
-
-			upsertStmt.executeBatch();
-
-			dbRegionIds.removeAll(cacheRegionIds);
-			for (UUID deletedId : dbRegionIds) {
-				deleteStmt.setObject(1, deletedId);
-				deleteStmt.addBatch();
-			}
-
-			deleteStmt.executeBatch();
-
-			connection.commit();
-		} catch (SQLException e) {
-			connection.rollback();
-			throw e;
-		} finally {
-			connection.setAutoCommit(true);
-		}
-	}
-
-	@Override
-	public void exportWars(List<War> wars) throws SQLException {
-		Set<UUID> dbWarIds = new HashSet<>();
-		String selectSql = "SELECT id FROM " + TABLE_PREFIX + "wars";
-
-		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(selectSql)) {
-			while (rs.next()) {
-				dbWarIds.add(UUID.fromString(rs.getString("id")));
-			}
-		}
-
-		String upsertSql = "INSERT INTO " + TABLE_PREFIX + "wars (" +
-				"id, displayName, name, description, regions, prize, started_at" +
-				") VALUES (?, ?, ?, ?, ?, ?, ?) " +
-				"ON CONFLICT (id) DO UPDATE SET " +
-				"displayName = EXCLUDED.displayName, " +
-				"name = EXCLUDED.name, " +
-				"description = EXCLUDED.description, " +
-				"regions = EXCLUDED.regions, " +
-				"prize = EXCLUDED.prize, " +
-				"started_at = EXCLUDED.started_at";
-
-		String deleteSql = "DELETE FROM " + TABLE_PREFIX + "wars WHERE id = ?";
-
-		connection.setAutoCommit(false);
-
-		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
-			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
-			Set<UUID> cacheWarIds = new HashSet<>();
-
-			for (War war : wars) {
-				UUID warId = war.id;
-				cacheWarIds.add(warId);
-
-				String regionsStr = war.regions.stream().map(UUID::toString).collect(Collectors.joining("§"));
-
-				upsertStmt.setString(1, warId.toString());
-				upsertStmt.setString(2, war.displayName);
-				upsertStmt.setString(3, war.name);
-				upsertStmt.setString(4, war.description);
-				upsertStmt.setString(5, regionsStr);
-				upsertStmt.setDouble(6, war.prize);
-				upsertStmt.setLong(7, war.startedAt);
-
-				upsertStmt.addBatch();
-			}
-
-			upsertStmt.executeBatch();
-
-			dbWarIds.removeAll(cacheWarIds);
-			for (UUID deletedId : dbWarIds) {
-				deleteStmt.setString(1, deletedId.toString());
-				deleteStmt.addBatch();
-			}
-
-			deleteStmt.executeBatch();
-
-			connection.commit();
-		} catch (SQLException e) {
-			connection.rollback();
-			throw e;
-		} finally {
-			connection.setAutoCommit(true);
-		}
-	}
-
-	@Override
-	public void exportSubAreas(List<SubArea> subareas) throws SQLException {
-		Set<UUID> dbSubAreaIds = new HashSet<>();
-		final String selectSql = "SELECT id FROM " + TABLE_PREFIX + "subareas";
-
-		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(selectSql)) {
-			while (rs.next()) dbSubAreaIds.add((UUID) rs.getObject("id"));
-		}
-
-		final String upsertSql = """
-				INSERT INTO %ssubareas
-				    (id, region_id, name, world_name, point1, point2, members, playerFlags, rent, created_at)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-				ON CONFLICT (id) DO UPDATE SET
-				    region_id  = EXCLUDED.region_id,
-				    name       = EXCLUDED.name,
-				    world_name = EXCLUDED.world_name,
-				    point1     = EXCLUDED.point1,
-				    point2     = EXCLUDED.point2,
-				    members    = EXCLUDED.members,
-				    playerFlags      = EXCLUDED.playerFlags,
-				    rent       = EXCLUDED.rent,
-				    created_at = EXCLUDED.created_at
-				""".formatted(TABLE_PREFIX);
-
-		final String deleteSql = "DELETE FROM " + TABLE_PREFIX + "subareas WHERE id = ?";
-
-		connection.setAutoCommit(false);
-
-		try (PreparedStatement upsertStmt = connection.prepareStatement(upsertSql);
-			 PreparedStatement deleteStmt = connection.prepareStatement(deleteSql)) {
-
-			Set<UUID> cacheSubAreaIds = new HashSet<>();
-
-			for (SubArea subArea : subareas) {
-				UUID subAreaId = subArea.id;
-				cacheSubAreaIds.add(subAreaId);
-
-				String[] membersArray = subArea.members.stream()
-						.map(SerializableMember::toString)
-						.toArray(String[]::new);
-
-				upsertStmt.setObject(1, subAreaId);
-				upsertStmt.setObject(2, subArea.regionId);
-				upsertStmt.setString(3, subArea.name);
-				upsertStmt.setString(4, subArea.worldId.toString());
-				upsertStmt.setString(5, toStringBlockLocation(subArea.getWorld(), subArea.point1));
-				upsertStmt.setString(6, toStringBlockLocation(subArea.getWorld(), subArea.point2));
-				upsertStmt.setArray(7, connection.createArrayOf("text", membersArray));
-				upsertStmt.setLong(8, subArea.playerFlags);
-				upsertStmt.setString(9, subArea.rent != null ? subArea.rent.toString() : null);
-				upsertStmt.setLong(10, subArea.createdAt);
-				upsertStmt.addBatch();
-			}
-			upsertStmt.executeBatch();
-
-			dbSubAreaIds.removeAll(cacheSubAreaIds);
-			for (UUID deletedId : dbSubAreaIds) {
-				deleteStmt.setObject(1, deletedId);
-				deleteStmt.addBatch();
-			}
-			deleteStmt.executeBatch();
-
-			connection.commit();
-		} catch (SQLException e) {
-			connection.rollback();
-			throw e;
-		} finally {
-			connection.setAutoCommit(true);
-		}
-	}
-
-	@Override
-	public void exportLevels(List<Level> levels) throws SQLException {
-		Set<UUID> dbIds = new HashSet<>();
-		final String selectSql = "SELECT id FROM " + TABLE_PREFIX + "levels";
-
-		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(selectSql)) {
-			while (rs.next()) dbIds.add((UUID) rs.getObject("id"));
-		}
-
-		final String upsertSql = """
-				INSERT INTO %slevels
-				    (id, region_id, level, experience, total_experience, created_at)
-				VALUES (?, ?, ?, ?, ?, ?)
-				ON CONFLICT (id) DO UPDATE SET
-				    region_id       = EXCLUDED.region_id,
-				    level           = EXCLUDED.level,
-				    experience      = EXCLUDED.experience,
-				    total_experience = EXCLUDED.total_experience,
-				    created_at      = EXCLUDED.created_at
-				""".formatted(TABLE_PREFIX);
-
-		final String deleteSql = "DELETE FROM " + TABLE_PREFIX + "levels WHERE id = ?";
-
-		connection.setAutoCommit(false);
-
-		try (PreparedStatement upsert = connection.prepareStatement(upsertSql);
-			 PreparedStatement delete = connection.prepareStatement(deleteSql)) {
-
-			Set<UUID> cacheIds = new HashSet<>();
-
-			for (Level lvl : levels) {
-				UUID lvlId = lvl.getUniqueId();
-				cacheIds.add(lvlId);
-
-				upsert.setObject(1, lvlId);
-				upsert.setObject(2, lvl.getRegionId());
-				upsert.setInt(3, lvl.getLevel());
-				upsert.setLong(4, lvl.getExperience());
-				upsert.setLong(5, lvl.getTotalExperience());
-				upsert.setLong(6, lvl.getCreatedAt());
-				upsert.addBatch();
-			}
-
-			upsert.executeBatch();
-
-			dbIds.removeAll(cacheIds);
-			for (UUID deletedId : dbIds) {
-				delete.setObject(1, deletedId);
-				delete.addBatch();
-			}
-			delete.executeBatch();
-
-			connection.commit();
-		} catch (SQLException e) {
-			connection.rollback();
-			throw e;
-		} finally {
-			connection.setAutoCommit(true);
-		}
-	}
 
 	@Override
 	public void prepareTables() throws SQLException {
-		String sql1 = "CREATE TABLE IF NOT EXISTS " + TABLE_PREFIX + "regions (" +
-				"id UUID PRIMARY KEY, " +
-				"display_name TEXT NOT NULL, " +
-				"name TEXT NOT NULL, " +
-				"description TEXT NOT NULL, " +
-				"owner_id UUID NOT NULL, " +
-				"location TEXT, " +
-				"created_at BIGINT NOT NULL, " +
-				"player_flags BIGINT NOT NULL, " +
-				"world_flags BIGINT NOT NULL, " +
-				"bank DOUBLE PRECISION NOT NULL, " +
-				"map_color INTEGER NOT NULL, " +
-				"chunks TEXT[] NOT NULL, " +
-				"members TEXT[] NOT NULL, " +
-				"rates TEXT[] NOT NULL, " +
-				"invited_players UUID[] NOT NULL, " +
-				"banned_players TEXT[] NOT NULL, " +
-				"logs TEXT[] NOT NULL, " +
-				"rent TEXT, " +
-				"upkeep_at BIGINT NOT NULL, " +
-				"taxes_amount DOUBLE PRECISION NOT NULL, " +
-				"weather INTEGER NOT NULL, " +
-				"time INTEGER NOT NULL, " +
-				"welcome_sign TEXT," +
-				"icon TEXT" +
-				")";
+		if (legacyTablesExist()) {
+			migrateFromLegacy();
+		} else {
+			createNewTables();
+		}
+	}
 
-		String sql2 = "CREATE TABLE IF NOT EXISTS " + TABLE_PREFIX + "wars (" +
-				"id UUID PRIMARY KEY, " +
-				"displayName TEXT NOT NULL, " +
-				"name TEXT NOT NULL, " +
-				"description TEXT NOT NULL, " +
-				"regions TEXT[] NOT NULL, " +
-				"prize DOUBLE PRECISION NOT NULL, " +
-				"started_at BIGINT NOT NULL" +
-				")";
+	private boolean legacyTablesExist() throws SQLException {
+		return tableExists(TABLE_PREFIX + "regions") && columnExists(TABLE_PREFIX + "regions", "chunks");
+	}
 
-		String sql3 = """
-				CREATE TABLE IF NOT EXISTS %ssubareas (
-				    id         UUID PRIMARY KEY,
-				    region_id  UUID NOT NULL,
-				    name       TEXT NOT NULL,
-				    world_name TEXT NOT NULL,
-				    point1     TEXT NOT NULL,
-				    point2     TEXT NOT NULL,
-				    members    TEXT[] NOT NULL,
-				    playerFlags      BIGINT NOT NULL,
-				    rent       TEXT,
-				    created_at BIGINT NOT NULL
-				)
-				""".formatted(TABLE_PREFIX);
+	private boolean tableExists(String table) throws SQLException {
+		String sql = "SELECT 1 FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = ?";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			ps.setString(1, table);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next();
+			}
+		}
+	}
 
-		String sql4 = """
-				CREATE TABLE IF NOT EXISTS %slevels (
-				    id              UUID PRIMARY KEY,
-				    region_id       UUID NOT NULL,
-				    level           INTEGER NOT NULL,
-				    experience      BIGINT NOT NULL,
-				    total_experience BIGINT NOT NULL,
-				    created_at      BIGINT NOT NULL
-				)
-				""".formatted(TABLE_PREFIX);
+	private boolean columnExists(String table, String column) throws SQLException {
+		String sql = "SELECT 1 FROM information_schema.columns WHERE table_schema = current_schema() AND table_name = ? AND column_name = ?";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			ps.setString(1, table);
+			ps.setString(2, column);
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next();
+			}
+		}
+	}
+
+	private void createNewTables() throws SQLException {
+		String[] ddl = {
+				"""
+						CREATE TABLE IF NOT EXISTS "%sregions" (
+							id          BIGINT PRIMARY KEY,
+							name        TEXT    NOT NULL,
+							displayName TEXT,
+							description TEXT,
+							ownerId     UUID NOT NULL,
+							location    TEXT,
+							playerFlags BIGINT NOT NULL DEFAULT 0,
+							worldFlags  BIGINT NOT NULL DEFAULT 0,
+							taxes       DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+							bank        DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+							mapColor    INTEGER NOT NULL DEFAULT 0,
+							mapIcon     TEXT,
+							rent        TEXT,
+							weather     INTEGER NOT NULL DEFAULT 0,
+							time        INTEGER NOT NULL DEFAULT 0,
+							welcomeSign TEXT,
+							upkeepAt    BIGINT NOT NULL DEFAULT 0,
+							createdAt   BIGINT NOT NULL
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%sregion_members" (
+							id           BIGINT PRIMARY KEY,
+							playerId     UUID NOT NULL,
+							linkageType  INTEGER NOT NULL,
+							regionId     BIGINT NOT NULL DEFAULT -1,
+							subAreaId    BIGINT NOT NULL DEFAULT -1,
+							playerFlags  BIGINT NOT NULL DEFAULT 0,
+							controlFlags BIGINT NOT NULL DEFAULT 0,
+							joinedAt     BIGINT NOT NULL,
+							taxesAt      BIGINT NOT NULL DEFAULT 0
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%sregion_chunks" (
+							id          BIGINT PRIMARY KEY,
+							regionId    BIGINT NOT NULL,
+							worldId     UUID NOT NULL,
+							x           INTEGER NOT NULL,
+							z           INTEGER NOT NULL,
+							claimedAt   BIGINT NOT NULL,
+							forceLoaded SMALLINT NOT NULL DEFAULT 0
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%sregion_logs" (
+							id       BIGINT PRIMARY KEY,
+							regionId BIGINT NOT NULL,
+							author   TEXT   NOT NULL,
+							message  TEXT   NOT NULL,
+							sentAt   BIGINT NOT NULL,
+							read     SMALLINT NOT NULL DEFAULT 0
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%sregion_rates" (
+							id       BIGINT PRIMARY KEY,
+							regionId BIGINT NOT NULL,
+							playerId UUID NOT NULL,
+							rate     INTEGER NOT NULL,
+							ratedAt  BIGINT NOT NULL
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%sregion_invites" (
+							id        BIGINT PRIMARY KEY,
+							regionId  BIGINT NOT NULL,
+							playerId  UUID NOT NULL,
+							invitedAt BIGINT NOT NULL
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%sregion_banned_players" (
+							id       BIGINT PRIMARY KEY,
+							regionId BIGINT NOT NULL,
+							playerId UUID NOT NULL,
+							reason   TEXT,
+							bannedAt BIGINT NOT NULL
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%ssubareas" (
+							id          BIGINT PRIMARY KEY,
+							regionId    BIGINT NOT NULL,
+							name        TEXT   NOT NULL,
+							worldId     UUID NOT NULL,
+							point1      TEXT   NOT NULL,
+							point2      TEXT   NOT NULL,
+							playerFlags BIGINT NOT NULL DEFAULT 0,
+							rent        TEXT,
+							createdAt   BIGINT NOT NULL
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%slevels" (
+							id              BIGINT PRIMARY KEY,
+							regionId        BIGINT NOT NULL,
+							level           INTEGER NOT NULL DEFAULT 0,
+							experience      BIGINT NOT NULL DEFAULT 0,
+							totalExperience BIGINT NOT NULL DEFAULT 0,
+							createdAt       BIGINT NOT NULL
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%swars" (
+							id          BIGINT PRIMARY KEY,
+							name        TEXT   NOT NULL,
+							displayName TEXT,
+							description TEXT,
+							prize       DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+							startedAt   BIGINT NOT NULL
+						)
+						""".formatted(TABLE_PREFIX),
+				"""
+						CREATE TABLE IF NOT EXISTS "%swar_regions" (
+							warId    BIGINT NOT NULL,
+							regionId BIGINT NOT NULL,
+							PRIMARY KEY (warId, regionId)
+						)
+						""".formatted(TABLE_PREFIX)
+		};
 
 		try (Statement stmt = connection.createStatement()) {
-			stmt.executeUpdate(sql1);
-			stmt.executeUpdate(sql2);
-			stmt.executeUpdate(sql3);
-			stmt.executeUpdate(sql4);
+			for (String sql : ddl) stmt.executeUpdate(sql.strip());
+		}
+	}
+
+
+	private void migrateFromLegacy() throws SQLException {
+		Map<String, Long> regionIdMap = new HashMap<>();
+		Map<String, Long> subAreaIdMap = new HashMap<>();
+
+		List<Region> newRegions = new ArrayList<>();
+		List<RegionMember> newMembers = new ArrayList<>();
+		List<RegionChunk> newChunks = new ArrayList<>();
+		List<RegionLog> newLogs = new ArrayList<>();
+		List<RegionRate> newRates = new ArrayList<>();
+		List<RegionInvite> newInvites = new ArrayList<>();
+		List<RegionBannedPlayer> newBanned = new ArrayList<>();
+		List<SubArea> newSubAreas = new ArrayList<>();
+		List<Level> newLevels = new ArrayList<>();
+		List<War> newWars = new ArrayList<>();
+		Map<Long, List<Long>> warRegionMap = new LinkedHashMap<>();
+
+		String legacyRegions = TABLE_PREFIX + "regions";
+		String legacySubareas = TABLE_PREFIX + "subareas";
+		String legacyLevels = TABLE_PREFIX + "levels";
+		String legacyWars = TABLE_PREFIX + "wars";
+
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + legacyRegions + "\"")) {
+			while (rs.next()) {
+				String oldId = rs.getString("id");
+				try {
+					long newId = Homestead.SNOWFLAKE.nextId();
+					regionIdMap.put(oldId, newId);
+
+					UUID ownerId = UUID.fromString(rs.getString("owner_id"));
+					long createdAt = rs.getLong("created_at");
+					Region region = new Region(newId, rs.getString("name"), ownerId, createdAt);
+
+					region.setDisplayName(rs.getString("display_name"));
+					region.setDescription(rs.getString("description"));
+					region.setPlayerFlags(rs.getLong("player_flags"));
+					region.setWorldFlags(rs.getLong("world_flags"));
+					region.setBank(rs.getDouble("bank"));
+					region.setMapColor(rs.getInt("map_color"));
+					region.setUpkeepAt(rs.getLong("upkeep_at"));
+					region.setTaxes(rs.getDouble("taxes_amount"));
+					region.setWeather(rs.getInt("weather"));
+					region.setTime(rs.getInt("time"));
+					region.setMapIcon(rs.getString("icon"));
+
+					String locStr = rs.getString("location");
+					if (LegacyParsers.isNotBlank(locStr)) region.setLocation(SeLocation.deserialize(locStr));
+
+					String wsStr = rs.getString("welcome_sign");
+					if (LegacyParsers.isNotBlank(wsStr)) region.setWelcomeSign(SeLocation.deserialize(wsStr));
+
+					String rentStr = rs.getString("rent");
+					if (LegacyParsers.isNotBlank(rentStr)) region.setRent(SeRent.deserialize(rentStr));
+
+					newRegions.add(region);
+
+
+					String chunksRaw = rs.getString("chunks");
+					if (chunksRaw != null && chunksRaw.startsWith("{")) {
+
+						String[] arr = (String[]) rs.getArray("chunks").getArray();
+						for (String part : arr) {
+							RegionChunk c = LegacyParsers.parseLegacyChunk(newId, part);
+							if (c != null) newChunks.add(c);
+						}
+					} else {
+						LegacyParsers.splitAndParse(chunksRaw, "\u00A7", part -> {
+							RegionChunk c = LegacyParsers.parseLegacyChunk(newId, part);
+							if (c != null) newChunks.add(c);
+						});
+					}
+
+					String membersRaw = rs.getString("members");
+					if (membersRaw != null && membersRaw.startsWith("{")) {
+						String[] arr = (String[]) rs.getArray("members").getArray();
+						for (String part : arr) {
+							RegionMember m = LegacyParsers.parseLegacyMember(newId, RegionMember.LinkageType.REGION, part);
+							if (m != null) newMembers.add(m);
+						}
+					} else {
+						LegacyParsers.splitAndParse(membersRaw, "\u00A7", part -> {
+							RegionMember m = LegacyParsers.parseLegacyMember(newId, RegionMember.LinkageType.REGION, part);
+							if (m != null) newMembers.add(m);
+						});
+					}
+
+					String ratesRaw = rs.getString("rates");
+					if (ratesRaw != null && ratesRaw.startsWith("{")) {
+						String[] arr = (String[]) rs.getArray("rates").getArray();
+						for (String part : arr) {
+							RegionRate r = LegacyParsers.parseLegacyRate(newId, part);
+							if (r != null) newRates.add(r);
+						}
+					} else {
+						LegacyParsers.splitAndParse(ratesRaw, "\u00A7", part -> {
+							RegionRate r = LegacyParsers.parseLegacyRate(newId, part);
+							if (r != null) newRates.add(r);
+						});
+					}
+
+					String invitedRaw = rs.getString("invited_players");
+					if (invitedRaw != null && invitedRaw.startsWith("{")) {
+						UUID[] arr = (UUID[]) rs.getArray("invited_players").getArray();
+						for (UUID pid : arr) {
+							newInvites.add(new RegionInvite(Homestead.SNOWFLAKE.nextId(), newId, pid, createdAt));
+						}
+					} else {
+						LegacyParsers.splitAndParse(invitedRaw, "\u00A7", part -> {
+							try {
+								UUID pid = UUID.fromString(part.trim());
+								newInvites.add(new RegionInvite(Homestead.SNOWFLAKE.nextId(), newId, pid, createdAt));
+							} catch (IllegalArgumentException ignored) {
+							}
+						});
+					}
+
+					String bannedRaw = rs.getString("banned_players");
+					if (bannedRaw != null && bannedRaw.startsWith("{")) {
+						String[] arr = (String[]) rs.getArray("banned_players").getArray();
+						for (String part : arr) {
+							RegionBannedPlayer b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
+							if (b != null) newBanned.add(b);
+						}
+					} else {
+						LegacyParsers.splitAndParse(bannedRaw, "\u00A7", part -> {
+							RegionBannedPlayer b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
+							if (b != null) newBanned.add(b);
+						});
+					}
+
+					String logsRaw = rs.getString("logs");
+					if (logsRaw != null && logsRaw.startsWith("{")) {
+						String[] arr = (String[]) rs.getArray("logs").getArray();
+						for (String part : arr) {
+							RegionLog l = LegacyParsers.parseLegacyLog(newId, part);
+							if (l != null) newLogs.add(l);
+						}
+					} else {
+						LegacyParsers.splitAndParse(logsRaw, "\u00B5", part -> {
+							RegionLog l = LegacyParsers.parseLegacyLog(newId, part);
+							if (l != null) newLogs.add(l);
+						});
+					}
+				} catch (Exception ignored) {
+				}
+			}
 		}
 
-		TableSyncer.apply(this.connection, TABLE_PREFIX);
+		if (tableExists(legacySubareas)) {
+			try (Statement stmt = connection.createStatement();
+				 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + legacySubareas + "\"")) {
+				while (rs.next()) {
+					String oldId = rs.getString("id");
+					String oldRegionId = rs.getString("region_id");
+					try {
+						Long newRegionId = regionIdMap.get(oldRegionId);
+						if (newRegionId == null) continue;
+
+						long newSubAreaId = Homestead.SNOWFLAKE.nextId();
+						subAreaIdMap.put(oldId, newSubAreaId);
+
+						UUID worldId = LegacyParsers.resolveWorldUUID(rs.getString("world_name"));
+						if (worldId == null) continue;
+
+						var point1 = LegacyParsers.parseLegacyBlock(worldId, rs.getString("point1"));
+						var point2 = LegacyParsers.parseLegacyBlock(worldId, rs.getString("point2"));
+						if (point1 == null || point2 == null) continue;
+
+						String rentStr = rs.getString("rent");
+						SeRent rent = LegacyParsers.isNotBlank(rentStr) ? SeRent.deserialize(rentStr) : null;
+
+						SubArea subArea = new SubArea(
+								newSubAreaId,
+								newRegionId,
+								rs.getString("name"),
+								worldId,
+								point1,
+								point2,
+								rs.getLong("playerFlags"),
+								rent,
+								rs.getLong("created_at"));
+						newSubAreas.add(subArea);
+
+						String membersRaw = rs.getString("members");
+						if (membersRaw != null && membersRaw.startsWith("{")) {
+							String[] arr = (String[]) rs.getArray("members").getArray();
+							for (String part : arr) {
+								RegionMember m = LegacyParsers.parseLegacyMember(newSubAreaId, RegionMember.LinkageType.SUBAREA, part);
+								if (m != null) newMembers.add(m);
+							}
+						} else {
+							LegacyParsers.splitAndParse(membersRaw, "\u00A7", part -> {
+								RegionMember m = LegacyParsers.parseLegacyMember(newSubAreaId, RegionMember.LinkageType.SUBAREA, part);
+								if (m != null) newMembers.add(m);
+							});
+						}
+					} catch (Exception ignored) {
+					}
+				}
+			}
+		}
+
+		if (tableExists(legacyLevels)) {
+			try (Statement stmt = connection.createStatement();
+				 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + legacyLevels + "\"")) {
+				while (rs.next()) {
+					String oldRegionId = rs.getString("region_id");
+					try {
+						Long newRegionId = regionIdMap.get(oldRegionId);
+						if (newRegionId == null) continue;
+						newLevels.add(new Level(
+								Homestead.SNOWFLAKE.nextId(),
+								newRegionId,
+								rs.getInt("level"),
+								rs.getLong("experience"),
+								rs.getLong("total_experience"),
+								rs.getLong("created_at")));
+					} catch (Exception ignored) {
+					}
+				}
+			}
+		}
+
+		if (tableExists(legacyWars)) {
+			try (Statement stmt = connection.createStatement();
+				 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + legacyWars + "\"")) {
+				while (rs.next()) {
+					String oldWarId = rs.getString("id");
+					try {
+						long newWarId = Homestead.SNOWFLAKE.nextId();
+						List<Long> mappedRegionIds = new ArrayList<>();
+
+						String regionsRaw = rs.getString("regions");
+						if (regionsRaw != null && regionsRaw.startsWith("{")) {
+							String[] arr = (String[]) rs.getArray("regions").getArray();
+							for (String raw : arr) {
+								Long mapped = regionIdMap.get(raw.trim());
+								if (mapped != null) mappedRegionIds.add(mapped);
+							}
+						} else {
+							LegacyParsers.splitAndParse(regionsRaw, "\u00A7", raw -> {
+								Long mapped = regionIdMap.get(raw.trim());
+								if (mapped != null) mappedRegionIds.add(mapped);
+							});
+						}
+
+						War war = new War(
+								newWarId,
+								rs.getString("name"),
+								rs.getString("display_name"),
+								rs.getString("description"),
+								mappedRegionIds,
+								rs.getDouble("prize"),
+								rs.getLong("started_at"));
+						newWars.add(war);
+						warRegionMap.put(newWarId, mappedRegionIds);
+					} catch (Exception ignored) {
+					}
+				}
+			}
+		}
+
+		connection.setAutoCommit(false);
+		try {
+			try (Statement stmt = connection.createStatement()) {
+				stmt.executeUpdate("DROP TABLE IF EXISTS \"" + legacyRegions + "\"");
+				stmt.executeUpdate("DROP TABLE IF EXISTS \"" + legacySubareas + "\"");
+				stmt.executeUpdate("DROP TABLE IF EXISTS \"" + legacyLevels + "\"");
+				stmt.executeUpdate("DROP TABLE IF EXISTS \"" + legacyWars + "\"");
+			}
+
+			createNewTables();
+
+			batchInsertRegions(newRegions);
+			batchInsertRegionMembers(newMembers);
+			batchInsertRegionChunks(newChunks);
+			batchInsertRegionLogs(newLogs);
+			batchInsertRegionRates(newRates);
+			batchInsertRegionInvites(newInvites);
+			batchInsertRegionBannedPlayers(newBanned);
+			batchInsertSubAreas(newSubAreas);
+			batchInsertLevels(newLevels);
+			batchInsertWars(newWars);
+			batchInsertWarRegions(warRegionMap);
+
+			connection.commit();
+		} catch (SQLException e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			connection.setAutoCommit(true);
+		}
+	}
+
+
+	private void batchInsertRegions(List<Region> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "regions\" " +
+						"(id,name,displayName,description,ownerId,location,playerFlags,worldFlags," +
+						" taxes,bank,mapColor,mapIcon,rent,weather,time,welcomeSign,upkeepAt,createdAt) " +
+						"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (Region r : rows) {
+				ps.setLong(1, r.getUniqueId());
+				ps.setString(2, r.getName());
+				ps.setString(3, r.getDisplayName());
+				ps.setString(4, r.getDescription());
+				ps.setObject(5, r.getOwnerId());
+				ps.setString(6, r.getLocation() != null ? r.getLocation().serialize() : null);
+				ps.setLong(7, r.getPlayerFlags());
+				ps.setLong(8, r.getWorldFlags());
+				ps.setDouble(9, r.getTaxes());
+				ps.setDouble(10, r.getBank());
+				ps.setInt(11, r.getMapColor());
+				ps.setString(12, r.getMapIcon());
+				ps.setString(13, r.getRent() != null ? r.getRent().serialize() : null);
+				ps.setInt(14, r.getWeather());
+				ps.setInt(15, r.getTime());
+				ps.setString(16, r.getWelcomeSign() != null ? r.getWelcomeSign().serialize() : null);
+				ps.setLong(17, r.getUpkeepAt());
+				ps.setLong(18, r.getCreatedAt());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertRegionMembers(List<RegionMember> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "region_members\" " +
+						"(id,playerId,linkageType,regionId,subAreaId,playerFlags,controlFlags,joinedAt,taxesAt) " +
+						"VALUES (?,?,?,?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (RegionMember m : rows) {
+				ps.setLong(1, m.getUniqueId());
+				ps.setObject(2, m.getPlayerId());
+				ps.setInt(3, m.getLinkageType().getValue());
+				ps.setLong(4, m.getRegionId());
+				ps.setLong(5, m.getSubAreaId());
+				ps.setLong(6, m.getPlayerFlags());
+				ps.setLong(7, m.getControlFlags());
+				ps.setLong(8, m.getJoinedAt());
+				ps.setLong(9, m.getTaxesAt());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertRegionChunks(List<RegionChunk> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "region_chunks\" " +
+						"(id,regionId,worldId,x,z,claimedAt,forceLoaded) VALUES (?,?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (RegionChunk c : rows) {
+				ps.setLong(1, c.getUniqueId());
+				ps.setLong(2, c.getRegionId());
+				ps.setObject(3, c.getWorldId());
+				ps.setInt(4, c.getX());
+				ps.setInt(5, c.getZ());
+				ps.setLong(6, c.getClaimedAt());
+				ps.setInt(7, c.isForceLoaded() ? 1 : 0);
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertRegionLogs(List<RegionLog> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "region_logs\" " +
+						"(id,regionId,author,message,sentAt,read) VALUES (?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (RegionLog l : rows) {
+				ps.setLong(1, l.getUniqueId());
+				ps.setLong(2, l.getRegionId());
+				ps.setString(3, l.getAuthor());
+				ps.setString(4, l.getMessage());
+				ps.setLong(5, l.getSentAt());
+				ps.setInt(6, l.isRead() ? 1 : 0);
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertRegionRates(List<RegionRate> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "region_rates\" " +
+						"(id,regionId,playerId,rate,ratedAt) VALUES (?,?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (RegionRate r : rows) {
+				ps.setLong(1, r.getUniqueId());
+				ps.setLong(2, r.getRegionId());
+				ps.setObject(3, r.getPlayerId());
+				ps.setInt(4, r.getRate());
+				ps.setLong(5, r.getRatedAt());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertRegionInvites(List<RegionInvite> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "region_invites\" " +
+						"(id,regionId,playerId,invitedAt) VALUES (?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (RegionInvite i : rows) {
+				ps.setLong(1, i.getUniqueId());
+				ps.setLong(2, i.getRegionId());
+				ps.setObject(3, i.getPlayerId());
+				ps.setLong(4, i.getInvitedAt());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertRegionBannedPlayers(List<RegionBannedPlayer> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "region_banned_players\" " +
+						"(id,regionId,playerId,reason,bannedAt) VALUES (?,?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (RegionBannedPlayer b : rows) {
+				ps.setLong(1, b.getUniqueId());
+				ps.setLong(2, b.getRegionId());
+				ps.setObject(3, b.getPlayerId());
+				ps.setString(4, b.getReason());
+				ps.setLong(5, b.getBannedAt());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertSubAreas(List<SubArea> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "subareas\" " +
+						"(id,regionId,name,worldId,point1,point2,playerFlags,rent,createdAt) VALUES (?,?,?,?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (SubArea s : rows) {
+				ps.setLong(1, s.getUniqueId());
+				ps.setLong(2, s.getRegionId());
+				ps.setString(3, s.getName());
+				ps.setObject(4, s.getWorldId());
+				ps.setString(5, s.getPoint1().serialize());
+				ps.setString(6, s.getPoint2().serialize());
+				ps.setLong(7, s.getPlayerFlags());
+				ps.setString(8, s.getRent() != null ? s.getRent().serialize() : null);
+				ps.setLong(9, s.getCreatedAt());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertLevels(List<Level> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "levels\" " +
+						"(id,regionId,level,experience,totalExperience,createdAt) VALUES (?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (Level l : rows) {
+				ps.setLong(1, l.getUniqueId());
+				ps.setLong(2, l.getRegionId());
+				ps.setInt(3, l.getLevel());
+				ps.setLong(4, l.getExperience());
+				ps.setLong(5, l.getTotalExperience());
+				ps.setLong(6, l.getCreatedAt());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertWars(List<War> rows) throws SQLException {
+		if (rows.isEmpty()) return;
+		String sql =
+				"INSERT INTO \"" + TABLE_PREFIX + "wars\" " +
+						"(id,name,displayName,description,prize,startedAt) VALUES (?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (War w : rows) {
+				ps.setLong(1, w.getUniqueId());
+				ps.setString(2, w.getName());
+				ps.setString(3, w.getDisplayName());
+				ps.setString(4, w.getDescription());
+				ps.setDouble(5, w.getPrize());
+				ps.setLong(6, w.getStartedAt());
+				ps.addBatch();
+			}
+			ps.executeBatch();
+		}
+	}
+
+	private void batchInsertWarRegions(Map<Long, List<Long>> warRegionMap) throws SQLException {
+		if (warRegionMap.isEmpty()) return;
+		String sql = "INSERT INTO \"" + TABLE_PREFIX + "war_regions\" (warId,regionId) VALUES (?,?) " +
+				"ON CONFLICT (warId, regionId) DO NOTHING";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			for (var entry : warRegionMap.entrySet()) {
+				for (long regionId : entry.getValue()) {
+					ps.setLong(1, entry.getKey());
+					ps.setLong(2, regionId);
+					ps.addBatch();
+				}
+			}
+			ps.executeBatch();
+		}
+	}
+
+
+	@Override
+	public List<Region> importRegions() throws Exception {
+		List<Region> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "regions\"")) {
+			while (rs.next()) {
+				long id = rs.getLong("id");
+				UUID ownerId = UUID.fromString(rs.getString("ownerId"));
+				long created = rs.getLong("createdAt");
+
+				Region region = new Region(id, rs.getString("name"), ownerId, created);
+				region.setDisplayName(rs.getString("displayName"));
+				region.setDescription(rs.getString("description"));
+				region.setPlayerFlags(rs.getLong("playerFlags"));
+				region.setWorldFlags(rs.getLong("worldFlags"));
+				region.setTaxes(rs.getDouble("taxes"));
+				region.setBank(rs.getDouble("bank"));
+				region.setMapColor(rs.getInt("mapColor"));
+				region.setMapIcon(rs.getString("mapIcon"));
+				region.setWeather(rs.getInt("weather"));
+				region.setTime(rs.getInt("time"));
+				region.setUpkeepAt(rs.getLong("upkeepAt"));
+
+				String locStr = rs.getString("location");
+				if (locStr != null) region.setLocation(SeLocation.deserialize(locStr));
+				String wsStr = rs.getString("welcomeSign");
+				if (wsStr != null) region.setWelcomeSign(SeLocation.deserialize(wsStr));
+				String rentStr = rs.getString("rent");
+				if (rentStr != null) region.setRent(SeRent.deserialize(rentStr));
+
+				list.add(region);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<RegionMember> importRegionMembers() throws Exception {
+		List<RegionMember> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "region_members\"")) {
+			while (rs.next()) {
+				UUID playerId = UUID.fromString(rs.getString("playerId"));
+				int typeVal = rs.getInt("linkageType");
+				long regionId = rs.getLong("regionId");
+				long subAreaId = rs.getLong("subAreaId");
+
+				RegionMember.LinkageType type =
+						typeVal == RegionMember.LinkageType.REGION.getValue()
+								? RegionMember.LinkageType.REGION
+								: RegionMember.LinkageType.SUBAREA;
+				long linkageId = type == RegionMember.LinkageType.REGION ? regionId : subAreaId;
+
+				RegionMember member = new RegionMember(playerId, type, linkageId);
+				member.setPlayerFlags(rs.getLong("playerFlags"));
+				member.setControlFlags(rs.getLong("controlFlags"));
+				member.setJoinedAt(rs.getLong("joinedAt"));
+				member.setTaxesAt(rs.getLong("taxesAt"));
+				list.add(member);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<RegionChunk> importRegionChunks() throws Exception {
+		List<RegionChunk> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "region_chunks\"")) {
+			while (rs.next()) {
+				list.add(new RegionChunk(
+						rs.getLong("id"),
+						rs.getLong("regionId"),
+						UUID.fromString(rs.getString("worldId")),
+						rs.getInt("x"),
+						rs.getInt("z"),
+						rs.getLong("claimedAt"),
+						rs.getInt("forceLoaded") == 1));
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<RegionLog> importRegionLogs() throws Exception {
+		List<RegionLog> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "region_logs\"")) {
+			while (rs.next()) {
+				list.add(new RegionLog(
+						rs.getLong("id"),
+						rs.getLong("regionId"),
+						rs.getString("author"),
+						rs.getString("message"),
+						rs.getLong("sentAt"),
+						rs.getInt("read") == 1));
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<RegionRate> importRegionRates() throws Exception {
+		List<RegionRate> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "region_rates\"")) {
+			while (rs.next()) {
+				list.add(new RegionRate(
+						rs.getLong("id"),
+						rs.getLong("regionId"),
+						UUID.fromString(rs.getString("playerId")),
+						rs.getInt("rate"),
+						rs.getLong("ratedAt")));
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<RegionInvite> importRegionInvites() throws Exception {
+		List<RegionInvite> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "region_invites\"")) {
+			while (rs.next()) {
+				list.add(new RegionInvite(
+						rs.getLong("id"),
+						rs.getLong("regionId"),
+						UUID.fromString(rs.getString("playerId")),
+						rs.getLong("invitedAt")));
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<RegionBannedPlayer> importRegionBannedPlayers() throws Exception {
+		List<RegionBannedPlayer> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "region_banned_players\"")) {
+			while (rs.next()) {
+				list.add(new RegionBannedPlayer(
+						rs.getLong("id"),
+						rs.getLong("regionId"),
+						UUID.fromString(rs.getString("playerId")),
+						rs.getString("reason"),
+						rs.getLong("bannedAt")));
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<SubArea> importSubAreas() throws Exception {
+		List<SubArea> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "subareas\"")) {
+			while (rs.next()) {
+				UUID worldId = UUID.fromString(rs.getString("worldId"));
+				SeBlock p1 = SeBlock.deserialize(rs.getString("point1"));
+				SeBlock p2 = SeBlock.deserialize(rs.getString("point2"));
+				if (p1 == null || p2 == null) continue;
+				String rentStr = rs.getString("rent");
+				SeRent rent = rentStr != null ? SeRent.deserialize(rentStr) : null;
+				list.add(new SubArea(
+						rs.getLong("id"),
+						rs.getLong("regionId"),
+						rs.getString("name"),
+						worldId, p1, p2,
+						rs.getLong("playerFlags"),
+						rent,
+						rs.getLong("createdAt")));
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<Level> importLevels() throws Exception {
+		List<Level> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "levels\"")) {
+			while (rs.next()) {
+				list.add(new Level(
+						rs.getLong("id"),
+						rs.getLong("regionId"),
+						rs.getInt("level"),
+						rs.getLong("experience"),
+						rs.getLong("totalExperience"),
+						rs.getLong("createdAt")));
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<War> importWars() throws Exception {
+		Map<Long, List<Long>> warRegions = new HashMap<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT warId, regionId FROM \"" + TABLE_PREFIX + "war_regions\"")) {
+			while (rs.next()) {
+				warRegions.computeIfAbsent(rs.getLong("warId"), k -> new ArrayList<>()).add(rs.getLong("regionId"));
+			}
+		}
+
+		List<War> list = new ArrayList<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "wars\"")) {
+			while (rs.next()) {
+				long warId = rs.getLong("id");
+				list.add(new War(
+						warId,
+						rs.getString("name"),
+						rs.getString("displayName"),
+						rs.getString("description"),
+						warRegions.getOrDefault(warId, new ArrayList<>()),
+						rs.getDouble("prize"),
+						rs.getLong("startedAt")));
+			}
+		}
+		return list;
+	}
+
+
+	@Override
+	public void exportRegions(List<Region> regions) throws Exception {
+		upsertSimple(
+				"SELECT id FROM \"" + TABLE_PREFIX + "regions\"",
+				"INSERT INTO \"" + TABLE_PREFIX + "regions\" " +
+						"(id,name,displayName,description,ownerId,location,playerFlags,worldFlags,taxes,bank,mapColor,mapIcon,rent,weather,time,welcomeSign,upkeepAt,createdAt) " +
+						"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"name=EXCLUDED.name,displayName=EXCLUDED.displayName,description=EXCLUDED.description," +
+						"ownerId=EXCLUDED.ownerId,location=EXCLUDED.location,playerFlags=EXCLUDED.playerFlags," +
+						"worldFlags=EXCLUDED.worldFlags,taxes=EXCLUDED.taxes,bank=EXCLUDED.bank,mapColor=EXCLUDED.mapColor," +
+						"mapIcon=EXCLUDED.mapIcon,rent=EXCLUDED.rent,weather=EXCLUDED.weather,time=EXCLUDED.time," +
+						"welcomeSign=EXCLUDED.welcomeSign,upkeepAt=EXCLUDED.upkeepAt,createdAt=EXCLUDED.createdAt",
+				"DELETE FROM \"" + TABLE_PREFIX + "regions\" WHERE id=?",
+				regions,
+				(ps, r) -> {
+					ps.setLong(1, r.getUniqueId());
+					ps.setString(2, r.getName());
+					ps.setString(3, r.getDisplayName());
+					ps.setString(4, r.getDescription());
+					ps.setObject(5, r.getOwnerId());
+					ps.setString(6, r.getLocation() != null ? r.getLocation().serialize() : null);
+					ps.setLong(7, r.getPlayerFlags());
+					ps.setLong(8, r.getWorldFlags());
+					ps.setDouble(9, r.getTaxes());
+					ps.setDouble(10, r.getBank());
+					ps.setInt(11, r.getMapColor());
+					ps.setString(12, r.getMapIcon());
+					ps.setString(13, r.getRent() != null ? r.getRent().serialize() : null);
+					ps.setInt(14, r.getWeather());
+					ps.setInt(15, r.getTime());
+					ps.setString(16, r.getWelcomeSign() != null ? r.getWelcomeSign().serialize() : null);
+					ps.setLong(17, r.getUpkeepAt());
+					ps.setLong(18, r.getCreatedAt());
+				});
+	}
+
+	@Override
+	public void exportRegionMembers(List<RegionMember> members) throws Exception {
+		upsertSimple(
+				"SELECT id FROM \"" + TABLE_PREFIX + "region_members\"",
+				"INSERT INTO \"" + TABLE_PREFIX + "region_members\" " +
+						"(id,playerId,linkageType,regionId,subAreaId,playerFlags,controlFlags,joinedAt,taxesAt) VALUES (?,?,?,?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"playerId=EXCLUDED.playerId,linkageType=EXCLUDED.linkageType,regionId=EXCLUDED.regionId,subAreaId=EXCLUDED.subAreaId," +
+						"playerFlags=EXCLUDED.playerFlags,controlFlags=EXCLUDED.controlFlags,joinedAt=EXCLUDED.joinedAt,taxesAt=EXCLUDED.taxesAt",
+				"DELETE FROM \"" + TABLE_PREFIX + "region_members\" WHERE id=?",
+				members,
+				(ps, m) -> {
+					ps.setLong(1, m.getUniqueId());
+					ps.setObject(2, m.getPlayerId());
+					ps.setInt(3, m.getLinkageType().getValue());
+					ps.setLong(4, m.getRegionId());
+					ps.setLong(5, m.getSubAreaId());
+					ps.setLong(6, m.getPlayerFlags());
+					ps.setLong(7, m.getControlFlags());
+					ps.setLong(8, m.getJoinedAt());
+					ps.setLong(9, m.getTaxesAt());
+				});
+	}
+
+	@Override
+	public void exportRegionChunks(List<RegionChunk> chunks) throws Exception {
+		upsertSimple(
+				"SELECT id FROM \"" + TABLE_PREFIX + "region_chunks\"",
+				"INSERT INTO \"" + TABLE_PREFIX + "region_chunks\" " +
+						"(id,regionId,worldId,x,z,claimedAt,forceLoaded) VALUES (?,?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"regionId=EXCLUDED.regionId,worldId=EXCLUDED.worldId,x=EXCLUDED.x,z=EXCLUDED.z," +
+						"claimedAt=EXCLUDED.claimedAt,forceLoaded=EXCLUDED.forceLoaded",
+				"DELETE FROM \"" + TABLE_PREFIX + "region_chunks\" WHERE id=?",
+				chunks,
+				(ps, c) -> {
+					ps.setLong(1, c.getUniqueId());
+					ps.setLong(2, c.getRegionId());
+					ps.setObject(3, c.getWorldId());
+					ps.setInt(4, c.getX());
+					ps.setInt(5, c.getZ());
+					ps.setLong(6, c.getClaimedAt());
+					ps.setInt(7, c.isForceLoaded() ? 1 : 0);
+				});
+	}
+
+	@Override
+	public void exportRegionLogs(List<RegionLog> logs) throws Exception {
+		upsertSimple(
+				"SELECT id FROM \"" + TABLE_PREFIX + "region_logs\"",
+				"INSERT INTO \"" + TABLE_PREFIX + "region_logs\" " +
+						"(id,regionId,author,message,sentAt,read) VALUES (?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"regionId=EXCLUDED.regionId,author=EXCLUDED.author,message=EXCLUDED.message," +
+						"sentAt=EXCLUDED.sentAt,read=EXCLUDED.read",
+				"DELETE FROM \"" + TABLE_PREFIX + "region_logs\" WHERE id=?",
+				logs,
+				(ps, l) -> {
+					ps.setLong(1, l.getUniqueId());
+					ps.setLong(2, l.getRegionId());
+					ps.setString(3, l.getAuthor());
+					ps.setString(4, l.getMessage());
+					ps.setLong(5, l.getSentAt());
+					ps.setInt(6, l.isRead() ? 1 : 0);
+				});
+	}
+
+	@Override
+	public void exportRegionRates(List<RegionRate> rates) throws Exception {
+		upsertSimple(
+				"SELECT id FROM \"" + TABLE_PREFIX + "region_rates\"",
+				"INSERT INTO \"" + TABLE_PREFIX + "region_rates\" " +
+						"(id,regionId,playerId,rate,ratedAt) VALUES (?,?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"regionId=EXCLUDED.regionId,playerId=EXCLUDED.playerId,rate=EXCLUDED.rate,ratedAt=EXCLUDED.ratedAt",
+				"DELETE FROM \"" + TABLE_PREFIX + "region_rates\" WHERE id=?",
+				rates,
+				(ps, r) -> {
+					ps.setLong(1, r.getUniqueId());
+					ps.setLong(2, r.getRegionId());
+					ps.setObject(3, r.getPlayerId());
+					ps.setInt(4, r.getRate());
+					ps.setLong(5, r.getRatedAt());
+				});
+	}
+
+	@Override
+	public void exportRegionInvites(List<RegionInvite> invites) throws Exception {
+		upsertSimple(
+				"SELECT id FROM \"" + TABLE_PREFIX + "region_invites\"",
+				"INSERT INTO \"" + TABLE_PREFIX + "region_invites\" " +
+						"(id,regionId,playerId,invitedAt) VALUES (?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"regionId=EXCLUDED.regionId,playerId=EXCLUDED.playerId,invitedAt=EXCLUDED.invitedAt",
+				"DELETE FROM \"" + TABLE_PREFIX + "region_invites\" WHERE id=?",
+				invites,
+				(ps, i) -> {
+					ps.setLong(1, i.getUniqueId());
+					ps.setLong(2, i.getRegionId());
+					ps.setObject(3, i.getPlayerId());
+					ps.setLong(4, i.getInvitedAt());
+				});
+	}
+
+	@Override
+	public void exportRegionBannedPlayers(List<RegionBannedPlayer> bannedPlayers) throws Exception {
+		upsertSimple(
+				"SELECT id FROM \"" + TABLE_PREFIX + "region_banned_players\"",
+				"INSERT INTO \"" + TABLE_PREFIX + "region_banned_players\" " +
+						"(id,regionId,playerId,reason,bannedAt) VALUES (?,?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"regionId=EXCLUDED.regionId,playerId=EXCLUDED.playerId,reason=EXCLUDED.reason,bannedAt=EXCLUDED.bannedAt",
+				"DELETE FROM \"" + TABLE_PREFIX + "region_banned_players\" WHERE id=?",
+				bannedPlayers,
+				(ps, b) -> {
+					ps.setLong(1, b.getUniqueId());
+					ps.setLong(2, b.getRegionId());
+					ps.setObject(3, b.getPlayerId());
+					ps.setString(4, b.getReason());
+					ps.setLong(5, b.getBannedAt());
+				});
+	}
+
+	@Override
+	public void exportSubAreas(List<SubArea> subAreas) throws Exception {
+		upsertSimple(
+				"SELECT id FROM \"" + TABLE_PREFIX + "subareas\"",
+				"INSERT INTO \"" + TABLE_PREFIX + "subareas\" " +
+						"(id,regionId,name,worldId,point1,point2,playerFlags,rent,createdAt) VALUES (?,?,?,?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"regionId=EXCLUDED.regionId,name=EXCLUDED.name,worldId=EXCLUDED.worldId," +
+						"point1=EXCLUDED.point1,point2=EXCLUDED.point2,playerFlags=EXCLUDED.playerFlags," +
+						"rent=EXCLUDED.rent,createdAt=EXCLUDED.createdAt",
+				"DELETE FROM \"" + TABLE_PREFIX + "subareas\" WHERE id=?",
+				subAreas,
+				(ps, s) -> {
+					ps.setLong(1, s.getUniqueId());
+					ps.setLong(2, s.getRegionId());
+					ps.setString(3, s.getName());
+					ps.setObject(4, s.getWorldId());
+					ps.setString(5, s.getPoint1().serialize());
+					ps.setString(6, s.getPoint2().serialize());
+					ps.setLong(7, s.getPlayerFlags());
+					ps.setString(8, s.getRent() != null ? s.getRent().serialize() : null);
+					ps.setLong(9, s.getCreatedAt());
+				});
+	}
+
+	@Override
+	public void exportLevels(List<Level> levels) throws Exception {
+		upsertSimple(
+				"SELECT id FROM \"" + TABLE_PREFIX + "levels\"",
+				"INSERT INTO \"" + TABLE_PREFIX + "levels\" " +
+						"(id,regionId,level,experience,totalExperience,createdAt) VALUES (?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"regionId=EXCLUDED.regionId,level=EXCLUDED.level,experience=EXCLUDED.experience," +
+						"totalExperience=EXCLUDED.totalExperience,createdAt=EXCLUDED.createdAt",
+				"DELETE FROM \"" + TABLE_PREFIX + "levels\" WHERE id=?",
+				levels,
+				(ps, l) -> {
+					ps.setLong(1, l.getUniqueId());
+					ps.setLong(2, l.getRegionId());
+					ps.setInt(3, l.getLevel());
+					ps.setLong(4, l.getExperience());
+					ps.setLong(5, l.getTotalExperience());
+					ps.setLong(6, l.getCreatedAt());
+				});
+	}
+
+	@Override
+	public void exportWars(List<War> wars) throws Exception {
+		Set<Long> dbWarIds = loadLongIds("SELECT id FROM \"" + TABLE_PREFIX + "wars\"");
+
+		String upsertWar =
+				"INSERT INTO \"" + TABLE_PREFIX + "wars\" (id,name,displayName,description,prize,startedAt) VALUES (?,?,?,?,?,?) " +
+						"ON CONFLICT (id) DO UPDATE SET " +
+						"name=EXCLUDED.name,displayName=EXCLUDED.displayName,description=EXCLUDED.description," +
+						"prize=EXCLUDED.prize,startedAt=EXCLUDED.startedAt";
+		String deleteWar = "DELETE FROM \"" + TABLE_PREFIX + "wars\" WHERE id=?";
+		String deleteJunc = "DELETE FROM \"" + TABLE_PREFIX + "war_regions\" WHERE warId=?";
+		String insertJunc = "INSERT INTO \"" + TABLE_PREFIX + "war_regions\" (warId,regionId) VALUES (?,?) " +
+				"ON CONFLICT (warId, regionId) DO NOTHING";
+
+		connection.setAutoCommit(false);
+		try (PreparedStatement upsWar = connection.prepareStatement(upsertWar);
+			 PreparedStatement delWar = connection.prepareStatement(deleteWar);
+			 PreparedStatement delJunc = connection.prepareStatement(deleteJunc);
+			 PreparedStatement insJunc = connection.prepareStatement(insertJunc)) {
+
+			Set<Long> cacheIds = new HashSet<>();
+			for (War w : wars) {
+				long warId = w.getUniqueId();
+				cacheIds.add(warId);
+
+				upsWar.setLong(1, warId);
+				upsWar.setString(2, w.getName());
+				upsWar.setString(3, w.getDisplayName());
+				upsWar.setString(4, w.getDescription());
+				upsWar.setDouble(5, w.getPrize());
+				upsWar.setLong(6, w.getStartedAt());
+				upsWar.addBatch();
+
+				delJunc.setLong(1, warId);
+				delJunc.addBatch();
+
+				for (long regionId : w.getRegionIds()) {
+					insJunc.setLong(1, warId);
+					insJunc.setLong(2, regionId);
+					insJunc.addBatch();
+				}
+			}
+
+			upsWar.executeBatch();
+			delJunc.executeBatch();
+			insJunc.executeBatch();
+
+			dbWarIds.removeAll(cacheIds);
+			for (long staleId : dbWarIds) {
+				delWar.setLong(1, staleId);
+				delWar.addBatch();
+				delJunc.setLong(1, staleId);
+				delJunc.addBatch();
+			}
+			delWar.executeBatch();
+			delJunc.executeBatch();
+
+			connection.commit();
+		} catch (SQLException e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			connection.setAutoCommit(true);
+		}
+	}
+
+
+	private Set<Long> loadLongIds(String selectSql) throws SQLException {
+		Set<Long> ids = new HashSet<>();
+		try (Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(selectSql)) {
+			while (rs.next()) ids.add(rs.getLong(1));
+		}
+		return ids;
+	}
+
+	private <T> void upsertSimple(String selectIds, String upsertSql, String deleteSql, List<T> rows, Binder<T> binder) throws SQLException {
+		Set<Long> dbIds = loadLongIds(selectIds);
+		connection.setAutoCommit(false);
+		try (PreparedStatement ups = connection.prepareStatement(upsertSql);
+			 PreparedStatement del = connection.prepareStatement(deleteSql)) {
+			Set<Long> cacheIds = new HashSet<>();
+			for (T row : rows) {
+				long id = (row instanceof Region r) ? r.getUniqueId()
+						: (row instanceof RegionMember m) ? m.getUniqueId()
+						: (row instanceof RegionChunk c) ? c.getUniqueId()
+						: (row instanceof RegionLog l) ? l.getUniqueId()
+						: (row instanceof RegionRate r) ? r.getUniqueId()
+						: (row instanceof RegionInvite i) ? i.getUniqueId()
+						: (row instanceof RegionBannedPlayer b) ? b.getUniqueId()
+						: (row instanceof SubArea s) ? s.getUniqueId()
+						: (row instanceof Level l) ? l.getUniqueId()
+						: -1L;
+				cacheIds.add(id);
+				binder.bind(ups, row);
+				ups.addBatch();
+			}
+			ups.executeBatch();
+
+			dbIds.removeAll(cacheIds);
+			for (long id : dbIds) {
+				del.setLong(1, id);
+				del.addBatch();
+			}
+			del.executeBatch();
+
+			connection.commit();
+		} catch (SQLException e) {
+			connection.rollback();
+			throw e;
+		} finally {
+			connection.setAutoCommit(true);
+		}
 	}
 
 	@Override
 	public long getLatency() {
 		List<String> tables = List.of(
 				TABLE_PREFIX + "regions",
-				TABLE_PREFIX + "wars",
+				TABLE_PREFIX + "region_members",
+				TABLE_PREFIX + "region_chunks",
+				TABLE_PREFIX + "region_logs",
+				TABLE_PREFIX + "region_rates",
+				TABLE_PREFIX + "region_invites",
+				TABLE_PREFIX + "region_banned_players",
 				TABLE_PREFIX + "subareas",
-				TABLE_PREFIX + "levels"
+				TABLE_PREFIX + "levels",
+				TABLE_PREFIX + "wars",
+				TABLE_PREFIX + "war_regions"
 		);
 
 		try (Statement stmt = connection.createStatement()) {
 			long startTime = System.currentTimeMillis();
 
 			for (String table : tables) {
-				stmt.executeQuery("SELECT 1 FROM " + table + " LIMIT 1");
+				stmt.executeQuery("SELECT 1 FROM \"" + table + "\" LIMIT 1");
 			}
 
 			long endTime = System.currentTimeMillis();
@@ -677,94 +1315,8 @@ public final class PostgreSQL implements Provider {
 		}
 	}
 
-	private static final class TableSyncer {
-		public static void syncTable(Connection conn,
-									 String tableName,
-									 List<String> wantedCols,
-									 Map<String, String> colDef) throws SQLException {
-
-			Set<String> wanted = new LinkedHashSet<>(wantedCols);
-			Set<String> real = getRealColumns(conn, tableName);
-
-			for (String existing : real) {
-				if (!wanted.contains(existing)) {
-					String sql = "ALTER TABLE \"" + tableName + "\" DROP COLUMN IF EXISTS \"" + existing + "\"";
-					try (Statement st = conn.createStatement()) {
-						st.execute(sql);
-					}
-				}
-			}
-
-			for (String col : wanted) {
-				if (!real.contains(col)) {
-					String def = colDef.get(col);
-
-					if (def == null) {
-						throw new IllegalArgumentException("No definition for column " + col);
-					}
-
-					String sql = "ALTER TABLE \"" + tableName + "\" ADD COLUMN \"" + col + "\" " + def;
-
-					try (Statement st = conn.createStatement()) {
-						st.execute(sql);
-					}
-				}
-			}
-		}
-
-		private static Set<String> getRealColumns(Connection conn, String table) throws SQLException {
-			Set<String> set = new LinkedHashSet<>();
-			String sql = "SELECT column_name " +
-					"FROM information_schema.columns " +
-					"WHERE table_schema = current_schema() AND table_name = ? " +
-					"ORDER BY ordinal_position";
-			try (PreparedStatement ps = conn.prepareStatement(sql)) {
-				ps.setString(1, table);
-				try (ResultSet rs = ps.executeQuery()) {
-					while (rs.next()) set.add(rs.getString(1));
-				}
-			}
-			return set;
-		}
-
-		public static void apply(Connection conn, String prefix) throws SQLException {
-			String table = prefix + "regions";
-
-			List<String> wanted = Arrays.asList(
-					"id", "display_name", "name", "description", "owner_id", "location",
-					"created_at", "player_flags", "world_flags", "bank", "map_color",
-					"chunks", "members", "rates", "invited_players", "banned_players",
-					"logs", "rent", "upkeep_at", "taxes_amount", "weather", "time",
-					"welcome_sign", "icon"
-			);
-
-			Map<String, String> def = new HashMap<>();
-			def.put("id", "UUID PRIMARY KEY");
-			def.put("display_name", "TEXT NOT NULL");
-			def.put("name", "TEXT NOT NULL");
-			def.put("description", "TEXT NOT NULL");
-			def.put("owner_id", "UUID NOT NULL");
-			def.put("location", "TEXT");
-			def.put("created_at", "BIGINT NOT NULL");
-			def.put("player_flags", "BIGINT NOT NULL");
-			def.put("world_flags", "BIGINT NOT NULL");
-			def.put("bank", "DOUBLE PRECISION NOT NULL");
-			def.put("map_color", "INTEGER NOT NULL");
-			def.put("chunks", "TEXT[] NOT NULL");
-			def.put("members", "TEXT[] NOT NULL");
-			def.put("rates", "TEXT[] NOT NULL");
-			def.put("invited_players", "UUID[] NOT NULL");
-			def.put("banned_players", "TEXT[] NOT NULL");
-			def.put("logs", "TEXT[] NOT NULL");
-			def.put("rent", "TEXT");
-			def.put("upkeep_at", "BIGINT NOT NULL");
-			def.put("taxes_amount", "DOUBLE PRECISION NOT NULL");
-			def.put("weather", "INTEGER NOT NULL");
-			def.put("time", "INTEGER NOT NULL");
-			def.put("welcome_sign", "TEXT");
-			def.put("icon", "TEXT");
-
-			syncTable(conn, table, wanted, def);
-		}
+	@FunctionalInterface
+	private interface Binder<T> {
+		void bind(PreparedStatement ps, T value) throws SQLException;
 	}
 }
