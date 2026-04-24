@@ -88,7 +88,7 @@
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-bom</artifactId>
-				<version>5.6.3</version>
+				<version>5.6.5</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>io.papermc.paper</groupId>
 			<artifactId>paper-api</artifactId>
-			<version>1.21.9-R0.1-SNAPSHOT</version>
+			<version>1.21.10-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -149,7 +149,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.7</version>
+			<version>42.7.10</version>
 		</dependency>
 
 		<dependency>
@@ -160,7 +160,7 @@
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
-			<version>3.5.6</version>
+			<version>3.5.8</version>
 		</dependency>
 
 		<dependency>
@@ -202,14 +202,14 @@
 		<dependency>
 			<groupId>maven.modrinth</groupId>
 			<artifactId>pl3xmap</artifactId>
-			<version>1.21.4-512</version>
+			<version>1.21.10-538</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>xyz.jpenilla</groupId>
 			<artifactId>squaremap-api</artifactId>
-			<version>1.3.4</version>
+			<version>1.3.11</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -251,14 +251,14 @@
 		<dependency>
 			<groupId>com.sk89q.worldedit</groupId>
 			<artifactId>worldedit-bukkit</artifactId>
-			<version>7.3.10</version>
+			<version>7.4.0</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.sk89q.worldguard</groupId>
 			<artifactId>worldguard-bukkit</artifactId>
-			<version>7.0.9</version>
+			<version>7.0.14</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -283,7 +283,7 @@
 		<dependency>
 			<groupId>com.github.angeschossen</groupId>
 			<artifactId>LandsAPI</artifactId>
-			<version>5.27.2</version>
+			<version>7.25.4</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -297,7 +297,7 @@
 		<dependency>
 			<groupId>dev.faststats.metrics</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>0.16.0</version>
+			<version>0.22.0</version>
 		</dependency>
 
 		<dependency>
