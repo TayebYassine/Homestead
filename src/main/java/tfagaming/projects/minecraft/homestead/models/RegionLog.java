@@ -7,31 +7,29 @@ import java.util.UUID;
 public final class RegionLog {
 	private boolean autoUpdate = true;
 
-	private long id;
+	private final long id;
 	private long regionId;
-	private UUID logId;
 	private String author;
 	private String message;
 	private long sentAt;
 	private boolean read;
 
 	public RegionLog(long regionId, String author, String message) {
-		this(regionId, UUID.randomUUID(), author, message, System.currentTimeMillis(), false);
+		this(regionId, author, message, System.currentTimeMillis(), false);
 	}
 
-	public RegionLog(long regionId, UUID logId, String author, String message, long sentAt, boolean read) {
+	public RegionLog(long regionId, String author, String message, long sentAt, boolean read) {
+		this.id = Homestead.SNOWFLAKE.nextId();
 		this.regionId = regionId;
-		this.logId = logId;
 		this.author = author;
 		this.message = message;
 		this.sentAt = sentAt;
 		this.read = read;
 	}
 
-	public RegionLog(long id, long regionId, UUID logId, String author, String message, long sentAt, boolean read) {
+	public RegionLog(long id, long regionId, String author, String message, long sentAt, boolean read) {
 		this.id = id;
 		this.regionId = regionId;
-		this.logId = logId;
 		this.author = author;
 		this.message = message;
 		this.sentAt = sentAt;
@@ -57,15 +55,6 @@ public final class RegionLog {
 
 	public void setRegionId(long regionId) {
 		this.regionId = regionId;
-		update();
-	}
-
-	public UUID getLogId() {
-		return logId;
-	}
-
-	public void setLogId(UUID logId) {
-		this.logId = logId;
 		update();
 	}
 

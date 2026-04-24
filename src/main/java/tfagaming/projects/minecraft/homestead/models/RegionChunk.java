@@ -12,7 +12,7 @@ public final class RegionChunk {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private boolean autoUpdate = true;
 
-	private long id;
+	private final long id;
 	private long regionId;
 	private UUID worldId;
 	private int x;
@@ -29,6 +29,7 @@ public final class RegionChunk {
 	}
 
 	public RegionChunk(long regionId, UUID worldId, int x, int z, long claimedAt, boolean forceLoaded) {
+		this.id = Homestead.SNOWFLAKE.nextId();
 		this.regionId = regionId;
 		this.worldId = worldId;
 		this.x = x;

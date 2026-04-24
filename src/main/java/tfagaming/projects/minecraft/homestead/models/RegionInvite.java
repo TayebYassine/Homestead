@@ -9,7 +9,7 @@ public final class RegionInvite {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private boolean autoUpdate = true;
 
-	private long id;
+	private final long id;
 	private long regionId;
 	private UUID playerId;
 	private long invitedAt;
@@ -19,6 +19,7 @@ public final class RegionInvite {
 	}
 
 	public RegionInvite(long regionId, UUID playerId, long invitedAt) {
+		this.id = Homestead.SNOWFLAKE.nextId();
 		this.regionId = regionId;
 		this.playerId = playerId;
 		this.invitedAt = invitedAt;

@@ -123,7 +123,7 @@ public final class War {
 
 	public Region getWinner() {
 		if (regionIds.size() == 1) {
-			return Homestead.regionsCache.get(regionIds.get(0));
+			return Homestead.regionsCache.get(regionIds.getFirst());
 		}
 		return null;
 	}

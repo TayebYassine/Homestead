@@ -12,17 +12,14 @@ public final class Level {
 	private final long id;
 	private final long createdAt;
 	private boolean autoUpdate = true;
-	private long regionId;
-	private int level;
-	private long experience;
-	private long totalExperience;
+	private long regionId = -1L;
+	private int level = 0;
+	private long experience = 0L;
+	private long totalExperience = 0L;
 
 	public Level(long regionId) {
 		this.id = Homestead.SNOWFLAKE.nextId();
 		this.regionId = regionId;
-		this.level = 0;
-		this.experience = 0;
-		this.totalExperience = 0;
 		this.createdAt = System.currentTimeMillis();
 	}
 

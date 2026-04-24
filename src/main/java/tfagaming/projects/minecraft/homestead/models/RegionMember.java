@@ -9,13 +9,13 @@ public final class RegionMember {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private boolean autoUpdate = true;
 
-	private long id;
+	private final long id;
 	private UUID playerId;
 	private final LinkageType linkageType;
 	private long regionId = -1L;
 	private long subAreaId = -1L;
-	private long playerFlags;
-	private long controlFlags;
+	private long playerFlags = 0L;
+	private long controlFlags = 0L;
 	private long joinedAt;
 	private long taxesAt;
 
@@ -24,6 +24,7 @@ public final class RegionMember {
 	}
 
 	public RegionMember(UUID playerId, LinkageType type, long linkageId) {
+		this.id = Homestead.SNOWFLAKE.nextId();
 		this.playerId = playerId;
 		this.linkageType = type;
 

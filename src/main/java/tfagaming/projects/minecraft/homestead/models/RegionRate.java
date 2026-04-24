@@ -9,7 +9,7 @@ public final class RegionRate {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private boolean autoUpdate = true;
 
-	private long id;
+	private final long id;
 	private long regionId;
 	private UUID playerId;
 	private int rate;
@@ -20,6 +20,7 @@ public final class RegionRate {
 	}
 
 	public RegionRate(long regionId, UUID playerId, int rate, long ratedAt) {
+		this.id = Homestead.SNOWFLAKE.nextId();
 		this.regionId = regionId;
 		this.playerId = playerId;
 		this.rate = rate;

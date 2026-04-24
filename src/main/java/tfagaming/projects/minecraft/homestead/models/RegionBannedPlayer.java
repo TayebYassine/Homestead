@@ -9,7 +9,7 @@ public final class RegionBannedPlayer {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private boolean autoUpdate = true;
 
-	private long id;
+	private final long id;
 	private long regionId;
 	private UUID playerId;
 	private String reason;
@@ -20,6 +20,7 @@ public final class RegionBannedPlayer {
 	}
 
 	public RegionBannedPlayer(long regionId, UUID playerId, String reason, long bannedAt) {
+		this.id = Homestead.SNOWFLAKE.nextId();
 		this.regionId = regionId;
 		this.playerId = playerId;
 		this.reason = reason;
