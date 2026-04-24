@@ -6,14 +6,10 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
-import tfagaming.projects.minecraft.homestead.structure.Level;
-import tfagaming.projects.minecraft.homestead.structure.Region;
-import tfagaming.projects.minecraft.homestead.structure.SubArea;
-import tfagaming.projects.minecraft.homestead.structure.War;
+import tfagaming.projects.minecraft.homestead.models.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 
 public final class Database {
 	private final Driver provider;
@@ -73,34 +69,36 @@ public final class Database {
 
 	public void importToCache() throws Exception {
 		if (instance == null) {
-			throw new IllegalStateException("instance is null");
+			throw new IllegalStateException("Instance is null");
 		}
 
-		List<Region> regions = instance.importRegions();
-		List<SubArea> subAreas = instance.importSubAreas();
-		List<War> wars = instance.importWars();
-		List<Level> levels = instance.importLevels();
-
-		Homestead.regionsCache.putAll(regions);
-		Homestead.subAreasCache.putAll(subAreas);
-		Homestead.warsCache.putAll(wars);
-		Homestead.levelsCache.putAll(levels);
+		Homestead.regionsCache.putAll(instance.importRegions());
+		Homestead.regionMemberCache.putAll(instance.importRegionMembers());
+		Homestead.regionChunkCache.putAll(instance.importRegionChunks());
+		Homestead.regionLogCache.putAll(instance.importRegionLogs());
+		Homestead.regionInviteCache.putAll(instance.importRegionInvites());
+		Homestead.regionBannedPlayerCache.putAll(instance.importRegionBannedPlayers());
+		Homestead.regionRateCache.putAll(instance.importRegionRates());
+		Homestead.subAreasCache.putAll(instance.importSubAreas());
+		Homestead.warsCache.putAll(instance.importWars());
+		Homestead.levelsCache.putAll(instance.importLevels());
 	}
 
 	public void exportFromCache() throws Exception {
 		if (instance == null) {
-			throw new IllegalStateException("instance is null");
+			throw new IllegalStateException("Instance is null");
 		}
 
-		List<Region> regions = Homestead.regionsCache.getAll();
-		List<SubArea> subAreas = Homestead.subAreasCache.getAll();
-		List<War> wars = Homestead.warsCache.getAll();
-		List<Level> levels = Homestead.levelsCache.getAll();
-
-		instance.exportRegions(regions);
-		instance.exportSubAreas(subAreas);
-		instance.exportWars(wars);
-		instance.exportLevels(levels);
+		instance.exportRegions(Homestead.regionsCache.getAll());
+		instance.exportRegionMembers(Homestead.regionMemberCache.getAll());
+		instance.exportRegionChunks(Homestead.regionChunkCache.getAll());
+		instance.exportRegionLogs(Homestead.regionLogCache.getAll());
+		instance.exportRegionInvites(Homestead.regionInviteCache.getAll());
+		instance.exportRegionBannedPlayers(Homestead.regionBannedPlayerCache.getAll());
+		instance.exportRegionRates(Homestead.regionRateCache.getAll());
+		instance.exportSubAreas(Homestead.subAreasCache.getAll());
+		instance.exportWars(Homestead.warsCache.getAll());
+		instance.exportLevels(Homestead.levelsCache.getAll());
 	}
 
 	public void closeConnection() throws Exception {
@@ -112,7 +110,7 @@ public final class Database {
 
 	public long getLatency() {
 		if (instance == null) {
-			throw new IllegalStateException("instance is null");
+			throw new IllegalStateException("Instance is null");
 		}
 
 		return this.instance.getLatency();
