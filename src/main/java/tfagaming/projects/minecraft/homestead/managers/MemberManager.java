@@ -161,4 +161,46 @@ public final class MemberManager {
 			}
 		}
 	}
+
+	/**
+	 * Checks if a player is a member of a region.
+	 * @param region The region
+	 * @param player The player
+	 * @return {@code true} if the player is member, {@code false} otherwise.
+	 */
+	public static boolean isMemberOfRegion(Region region, OfflinePlayer player) {
+		return isMemberOfRegion(region.getUniqueId(), player);
+	}
+
+	/**
+	 * Checks if a player is a member of a region.
+	 * @param regionId The region ID
+	 * @param player The player
+	 * @return {@code true} if the player is member, {@code false} otherwise.
+	 */
+	public static boolean isMemberOfRegion(long regionId, OfflinePlayer player) {
+		return getMembersOfRegion(regionId).stream()
+				.anyMatch(b -> b.getPlayerId().equals(player.getUniqueId()));
+	}
+
+	/**
+	 * Checks if a player is a member of a sub-area.
+	 * @param subArea The sub-area
+	 * @param player The player
+	 * @return {@code true} if the player is member, {@code false} otherwise.
+	 */
+	public static boolean isMemberOfSubArea(SubArea subArea, OfflinePlayer player) {
+		return isMemberOfSubArea(subArea.getUniqueId(), player);
+	}
+
+	/**
+	 * Checks if a player is a member of a sub-area.
+	 * @param subAreaId The sub-area ID
+	 * @param player The player
+	 * @return {@code true} if the player is member, {@code false} otherwise.
+	 */
+	public static boolean isMemberOfSubArea(long subAreaId, OfflinePlayer player) {
+		return getMembersOfSubArea(subAreaId).stream()
+				.anyMatch(b -> b.getPlayerId().equals(player.getUniqueId()));
+	}
 }

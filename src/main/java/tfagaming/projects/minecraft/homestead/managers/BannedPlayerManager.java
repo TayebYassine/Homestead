@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.managers;
 
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionBannedPlayer;
@@ -21,7 +22,7 @@ public final class BannedPlayerManager {
 	 * @param player The player
 	 * @param reason The reason
 	 */
-	public static void banPlayer(Region region, OfflinePlayer player, String reason) {
+	public static void banPlayer(Region region, OfflinePlayer player, @Nullable String reason) {
 		banPlayer(region.getUniqueId(), player, reason);
 	}
 
@@ -31,7 +32,7 @@ public final class BannedPlayerManager {
 	 * @param player The player
 	 * @param reason The reason
 	 */
-	public static void banPlayer(long regionId, OfflinePlayer player, String reason) {
+	public static void banPlayer(long regionId, OfflinePlayer player, @Nullable String reason) {
 		RegionBannedPlayer ban = new RegionBannedPlayer(regionId, player, reason);
 		Homestead.regionBannedPlayerCache.putOrUpdate(ban);
 	}
@@ -119,5 +120,24 @@ public final class BannedPlayerManager {
 		return Homestead.regionBannedPlayerCache.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId)
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Unban all players.
+	 * @param region The region
+	 */
+	public static void unbanAllPlayers(Region region) {
+		unbanAllPlayers(region.getUniqueId());
+	}
+
+	/**
+	 * Unban all players.
+	 * @param regionId The region ID
+	 */
+	public static void unbanAllPlayers(long regionId) {
+		Homestead.regionBannedPlayerCache.getAll().stream()
+				.filter(b -> b.getRegionId() == regionId)
+				.findFirst()
+				.ifPresent(b -> Homestead.regionBannedPlayerCache.remove(b.getUniqueId()));
 	}
 }

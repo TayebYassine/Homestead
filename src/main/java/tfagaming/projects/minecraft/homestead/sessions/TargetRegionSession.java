@@ -3,10 +3,10 @@ package tfagaming.projects.minecraft.homestead.sessions;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,28 +15,30 @@ import java.util.UUID;
 
 public final class TargetRegionSession {
 	private static final Random random = new Random();
-	public static final HashMap<UUID, Region> SESSIONS = new HashMap<UUID, Region>();
+	public static final HashMap<UUID, Long> SESSIONS = new HashMap<UUID, Long>();
 
 	private TargetRegionSession() {
 
 	}
 
 	public static void newSession(Player player, Region region) {
-		SESSIONS.put(player.getUniqueId(), region);
+		SESSIONS.put(player.getUniqueId(), region.getUniqueId());
 	}
 
 	public static void newSession(Player player) {
 		List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
 		if (!regions.isEmpty()) {
-			SESSIONS.putIfAbsent(player.getUniqueId(), regions.getFirst());
+			SESSIONS.putIfAbsent(player.getUniqueId(), regions.getFirst().getUniqueId());
 		} else {
-			SESSIONS.putIfAbsent(player.getUniqueId(), null);
+			SESSIONS.putIfAbsent(player.getUniqueId(), -1L);
 		}
 	}
 
 	public static Region getRegion(OfflinePlayer player) {
-		Region region = SESSIONS.get(player.getUniqueId());
+		long regionId = SESSIONS.get(player.getUniqueId());
+
+		Region region = RegionManager.findRegion(regionId);
 
 		if (region == null && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("autoset-target-region") && player.isOnline() && !RegionManager.getRegionsOwnedByPlayer(player).isEmpty()) {
 			randomizeRegion((Player) player);
@@ -48,13 +50,15 @@ public final class TargetRegionSession {
 	}
 
 	public static void setRegion(OfflinePlayer player, Region region) {
-		SESSIONS.put(player.getUniqueId(), region);
+		SESSIONS.put(player.getUniqueId(), region.getUniqueId());
 	}
 
 	public static void setRegion(OfflinePlayer player, String regionName) {
 		Region region = RegionManager.findRegion(regionName);
 
-		SESSIONS.put(player.getUniqueId(), region);
+		if (region == null) return;
+
+		SESSIONS.put(player.getUniqueId(), region.getUniqueId());
 	}
 
 	public static void randomizeRegion(

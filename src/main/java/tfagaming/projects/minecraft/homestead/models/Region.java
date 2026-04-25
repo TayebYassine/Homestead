@@ -2,6 +2,8 @@ package tfagaming.projects.minecraft.homestead.models;
 
 import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
+import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
@@ -228,6 +230,15 @@ public final class Region {
 
 	public long getCreatedAt() {
 		return createdAt;
+	}
+
+	/**
+	 * Check if the region is public.
+	 * @return {@code true} if the flags {@code PASSTHROUGH} ({@value tfagaming.projects.minecraft.homestead.flags.PlayerFlags#PASSTHROUGH}) and
+	 * {@code TELEPORT_SPAWN} ({@value tfagaming.projects.minecraft.homestead.flags.PlayerFlags#TELEPORT_SPAWN}) are allowed to global players, {@code false} otherwise.
+	 */
+	public boolean isPublic() {
+		return FlagsCalculator.isFlagSet(playerFlags, PlayerFlags.PASSTHROUGH) && FlagsCalculator.isFlagSet(playerFlags, PlayerFlags.TELEPORT_SPAWN);
 	}
 
 	private void update() {

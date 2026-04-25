@@ -118,28 +118,22 @@ public final class RegionManager {
 
 		// Delete related members
 		for (RegionMember member : MemberManager.getMembersOfRegion(id)) {
-			MemberManager.deleteMember(member.getUniqueId());
+			MemberManager.removeMember(member.getUniqueId());
 		}
 
 		// Delete related logs
-		for (RegionLog log : LogManager.getLogsOfRegion(id)) {
+		for (RegionLog log : LogManager.getLogs(id)) {
 			LogManager.deleteLog(log.getUniqueId());
 		}
 
 		// Delete related rates
-		for (RegionRate rate : RateManager.getRatesOfRegion(id)) {
-			RateManager.deleteRate(rate.getUniqueId());
-		}
+		RateManager.deleteAll(id);
 
 		// Delete related invites
-		for (RegionInvite invite : InviteManager.getInvitesOfRegion(id)) {
-			InviteManager.deleteInvite(invite.getUniqueId());
-		}
+		InviteManager.deleteInvitesOfRegion(id);
 
 		// Delete related banned players
-		for (RegionBannedPlayer banned : BannedPlayerManager.getBannedPlayersOfRegion(id)) {
-			BannedPlayerManager.unbanPlayer(banned.getUniqueId());
-		}
+		BannedPlayerManager.unbanAllPlayers(id);
 
 		// Delete related level
 		LevelManager.deleteLevelByRegion(id);
@@ -173,45 +167,6 @@ public final class RegionManager {
 	}
 
 	/**
-	 * Appends a human-written log entry to the region's audit trail.
-	 * @param id The region ID
-	 * @param author The author
-	 * @param message The message
-	 */
-	public static void addNewLog(long id, String author, String message) {
-		Region region = findRegion(id);
-		if (region == null) return;
-
-		message = ColorTranslator.preserve(message);
-		LogManager.createLog(id, author, message);
-	}
-
-	/**
-	 * Appends a system log entry with placeholder substitution applied to the message.
-	 * @param id The region ID
-	 * @param messagePath The key under "logs." in the language file
-	 * @param placeholder Placeholder values to substitute into the message
-	 */
-	public static void addNewLog(long id, int messagePath, Placeholder placeholder) {
-		Region region = findRegion(id);
-		if (region == null) return;
-
-		String message = Resources.<LanguageFile>get(ResourceType.Language).getString("logs." + messagePath);
-		message = ColorTranslator.preserve(message);
-		String author = Resources.<LanguageFile>get(ResourceType.Language).getString("default.log-author");
-		LogManager.createLog(id, author, Formatter.applyPlaceholders(message, placeholder));
-	}
-
-	/**
-	 * Appends a system log entry to the region using a language-file message path.
-	 * @param id The region ID
-	 * @param messagePath The key under "logs." in the language file
-	 */
-	public static void addNewLog(long id, int messagePath) {
-		addNewLog(id, messagePath, new Placeholder());
-	}
-
-	/**
 	 * Merges all data from one region into another and deletes the source region.
 	 * Transfers bank balance, chunks, sub-areas, and members.
 	 * @param from The region to merge from (will be deleted)
@@ -231,17 +186,14 @@ public final class RegionManager {
 
 		for (RegionChunk chunk : chunks) {
 			chunk.setRegionId(to.getUniqueId());
-			ChunkManager.updateChunk(chunk);
 		}
 
 		for (SubArea subArea : subAreas) {
 			subArea.setRegionId(to.getUniqueId());
-			SubAreaManager.updateSubArea(subArea);
 		}
 
 		for (RegionMember member : members) {
 			member.setRegionId(to.getUniqueId());
-			MemberManager.updateMember(member);
 		}
 
 		deleteRegion(from.getUniqueId());
@@ -301,7 +253,7 @@ public final class RegionManager {
 	public static List<Region> getRegionsHasPlayerAsMember(OfflinePlayer player) {
 		List<Region> regions = new ArrayList<>();
 		for (Region region : getAll()) {
-			if (MemberManager.isPlayerMemberOfRegion(player, region.getUniqueId())) {
+			if (MemberManager.isMemberOfRegion(region, player)) {
 				regions.add(region);
 			}
 		}
