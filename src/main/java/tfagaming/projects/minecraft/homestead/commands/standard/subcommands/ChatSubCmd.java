@@ -8,6 +8,9 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionChatEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -64,7 +67,7 @@ public class ChatSubCmd extends SubCommandBuilder {
 
 		playerIds.add(region.getOwnerId());
 
-		for (SerializableMember member : region.getMembers()) {
+		for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
 			playerIds.add(member.getPlayerId());
 		}
 

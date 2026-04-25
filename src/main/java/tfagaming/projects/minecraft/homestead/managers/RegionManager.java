@@ -15,13 +15,9 @@ import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
-import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.storage.StorageManager;
-import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
-import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.UpkeepUtility;
 
 import java.util.*;
@@ -387,7 +383,7 @@ public final class RegionManager {
 			}
 
 			// Clean invalid banned players
-			for (RegionBannedPlayer banned : BannedPlayerManager.getBannedPlayersOfRegion(regionId)) {
+			for (RegionBan banned : BannedPlayerManager.getBannedPlayersOfRegion(regionId)) {
 				if (Bukkit.getOfflinePlayer(banned.getPlayerId()).getName() == null) {
 					BannedPlayerManager.unbanPlayer(banned.getUniqueId());
 					updated++;

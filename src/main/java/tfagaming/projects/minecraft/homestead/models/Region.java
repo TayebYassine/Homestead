@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.models;
 
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
@@ -124,6 +125,11 @@ public final class Region {
 		return location;
 	}
 
+	public void setLocation(Location location) {
+		this.location = new SeLocation(location);
+		update();
+	}
+
 	public void setLocation(SeLocation location) {
 		this.location = location;
 		update();
@@ -138,6 +144,10 @@ public final class Region {
 		update();
 	}
 
+	public boolean isPlayerFlagSet(long flag) {
+		return FlagsCalculator.isFlagSet(playerFlags, flag);
+	}
+
 	public long getWorldFlags() {
 		return worldFlags;
 	}
@@ -145,6 +155,10 @@ public final class Region {
 	public void setWorldFlags(long worldFlags) {
 		this.worldFlags = worldFlags;
 		update();
+	}
+
+	public boolean isWorldFlagSet(long flag) {
+		return FlagsCalculator.isFlagSet(worldFlags, flag);
 	}
 
 	public double getTaxes() {
@@ -163,6 +177,18 @@ public final class Region {
 	public void setBank(double bank) {
 		this.bank = bank;
 		update();
+	}
+
+	public void depositBank(double amount) {
+		if (amount <= 0) return;
+
+		setBank(getBank() + amount);
+	}
+
+	public void withdrawBank(double amount) {
+		setBank(getBank() - amount);
+
+		if (getBank() < 0) setBank(0);
 	}
 
 	public int getMapColor() {

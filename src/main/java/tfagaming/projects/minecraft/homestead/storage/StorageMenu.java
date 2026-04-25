@@ -26,7 +26,7 @@ import java.util.function.BiConsumer;
 public class StorageMenu implements Listener {
 	private final Homestead plugin;
 	private final Player player;
-	private final UUID regionId;
+	private final long regionId;
 	private final String title;
 	private final SharedStorage storage;
 	private final Inventory inventory;
@@ -37,7 +37,7 @@ public class StorageMenu implements Listener {
 	private boolean valid;
 	private ItemStack cursorItem;
 
-	public StorageMenu(Player player, UUID regionId, String title, int size) {
+	public StorageMenu(Player player, long regionId, String title, int size) {
 		this.plugin = Homestead.getInstance();
 		this.player = player;
 		this.regionId = regionId;
@@ -57,7 +57,7 @@ public class StorageMenu implements Listener {
 		return player;
 	}
 
-	public UUID getRegionId() {
+	public long getRegionId() {
 		return regionId;
 	}
 

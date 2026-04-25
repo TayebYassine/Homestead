@@ -68,7 +68,7 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!region.isPlayerBanned(target)) {
+		if (!BannedPlayerManager.isBanned(region, target)) {
 			Messages.send(player, 33, new Placeholder()
 					.add("{playername}", target.getName())
 			);

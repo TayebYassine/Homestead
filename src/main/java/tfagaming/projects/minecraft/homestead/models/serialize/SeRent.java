@@ -13,6 +13,10 @@ public final class SeRent {
 	private long untilAt;
 	private double price;
 
+	public SeRent(OfflinePlayer renter, long untilAt, double price) {
+		this(renter.getUniqueId(), System.currentTimeMillis(), untilAt, price);
+	}
+
 	public SeRent(OfflinePlayer renter, long startedAt, long untilAt, double price) {
 		this(renter.getUniqueId(), startedAt, untilAt, price);
 	}

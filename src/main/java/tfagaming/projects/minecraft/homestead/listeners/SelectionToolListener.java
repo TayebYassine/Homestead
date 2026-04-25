@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -89,8 +90,8 @@ public final class SelectionToolListener implements Listener {
 
 				if (selection.getSecondPosition() != null && selection.getFirstPosition() != null) {
 					sendActionBarMessage(player, "selectionDone");
-					new SelectedAreaParticlesSpawner(player, new SerializableBlock(selection.getFirstPosition()),
-							new SerializableBlock(selection.getSecondPosition()));
+					new SelectedAreaParticlesSpawner(player, new SeBlock(selection.getFirstPosition()),
+							new SeBlock(selection.getSecondPosition()));
 				}
 
 			} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -112,8 +113,8 @@ public final class SelectionToolListener implements Listener {
 
 				if (selection.getSecondPosition() != null && selection.getFirstPosition() != null) {
 					sendActionBarMessage(player, "selectionDone");
-					new SelectedAreaParticlesSpawner(player, new SerializableBlock(selection.getFirstPosition()),
-							new SerializableBlock(selection.getSecondPosition()));
+					new SelectedAreaParticlesSpawner(player, new SeBlock(selection.getFirstPosition()),
+							new SeBlock(selection.getSecondPosition()));
 				}
 			}
 		}

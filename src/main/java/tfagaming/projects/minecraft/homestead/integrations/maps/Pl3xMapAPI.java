@@ -15,178 +15,125 @@ import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-import tfagaming.projects.minecraft.homestead.resources.ResourceType;
-import tfagaming.projects.minecraft.homestead.resources.Resources;
-import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
-
-
-import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
-import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
-import java.awt.image.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-public class Pl3xMapAPI {
-	private static final Map<World, SimpleLayer> layers = new HashMap<>();
+public final class Pl3xMapAPI extends AbstractMapIntegration {
+
+	private final Map<World, SimpleLayer> layers = new HashMap<>();
 
 	public Pl3xMapAPI(Homestead plugin) {
+		super(plugin);
 		try {
 			update();
-		} catch (NoClassDefFoundError ignored) {
-
-		}
+		} catch (NoClassDefFoundError ignored) {}
 	}
 
+	@Override
 	public void clearAllMarkers() {
 		for (SimpleLayer layer : layers.values()) {
-			if (layer != null) {
-				layer.getMarkers().removeIf((__) -> true);
+			if (layer != null) layer.getMarkers().removeIf(__ -> true);
+		}
+	}
+
+	@Override
+	public void update() {
+		clearAllMarkers();
+		for (Region region : RegionManager.getAll()) {
+			for (RegionChunk chunk : ChunkManager.getChunksOfRegion(region)) {
+				addChunkMarker(region, chunk);
 			}
 		}
 	}
 
-	public void addChunkMarker(Region region, SerializableChunk chunk) {
-		Placeholder placeholder = new Placeholder()
-				.add("{region}", region.getName())
-				.add("{region-owner}", region.getOwner().getName())
-				.add("{region-members}",
-						ColorTranslator.preserve(Formatter.getMembersOfRegion(region)))
-				.add("{region-chunks}", region.getChunks().size())
-				.add("{global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
-				.add("{region-description}", region.getDescription())
-				.add("{region-size}", region.getChunks().size() * 256);
-
-		boolean isOperator = PlayerUtility.isOperator(region.getOwner());
-
-		String hoverText = Formatter
-				.applyPlaceholders(isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.operator-description")
-						: Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.description"), placeholder);
-
-		int chunkColor = region.getMapColor() == 0
-				? (isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.operator-color")
-				: Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.color"))
-				: region.getMapColor();
+	public void addChunkMarker(Region region, RegionChunk chunk) {
+		if (region.getOwner() == null) return;
 
 		World world = chunk.getWorld();
+		SimpleLayer layer = getOrCreateLayer(world);
+		if (layer == null) return;
 
-		SimpleLayer layer = layers.get(world);
-		if (layer == null) {
-			String layerId = "claims_" + world.getName();
-			Registry<net.pl3x.map.core.world.World> worldRegistry = Pl3xMap.api().getWorldRegistry();
-			net.pl3x.map.core.world.World mapWorld = worldRegistry.get(world.getName());
+		boolean isOperator = PlayerUtility.isOperator(region.getOwner());
+		String hoverText = resolveHoverText(region, isOperator);
+		int chunkColor = resolveChunkColor(region, isOperator);
 
-			if (mapWorld != null) {
-				layer = new SimpleLayer(layerId, () -> "Homestead Regions");
-				layer.setPriority(1);
-				layer.setZIndex(1);
-				layer.setLiveUpdate(true);
+		addChunkVisuals(layer, chunk, hoverText, chunkColor, region);
 
-				mapWorld.getLayerRegistry().register(layer);
-
-				layers.put(world, layer);
-			}
-		}
-
-		if (layer != null) {
-			addChunkMarkerWithOptions(layer, chunk, hoverText, chunkColor,
-					!isChunkClaimed(region, chunk, GeoDirection.NORTH),
-					!isChunkClaimed(region, chunk, GeoDirection.EAST), !isChunkClaimed(region, chunk, GeoDirection.SOUTH),
-					!isChunkClaimed(region, chunk, GeoDirection.WEST));
-		}
-
-		boolean isEnabled = Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled");
-
-		if (isEnabled) {
-			final SimpleLayer finalLayer = layer;
-
-			if (region.getLocation() != null) {
-				double locX = region.getLocation().getX();
-				double locZ = region.getLocation().getZ();
-				int regionChunkX = (int) Math.floor(locX) >> 4;
-				int regionChunkZ = (int) Math.floor(locZ) >> 4;
-
-				if (regionChunkX == chunk.getX() && regionChunkZ == chunk.getZ()
-						&& region.getLocation().getWorldId().equals(chunk.getWorldId())) {
-					Homestead.getInstance().runAsyncTask(() -> {
-						addRegionIcon(finalLayer, region, hoverText);
-					});
-				}
-			}
+		if (getConfigBoolean("icons.enabled") && isHomeChunk(region, chunk)) {
+			plugin.runAsyncTask(() -> addRegionIcon(layer, region, hoverText));
 		}
 	}
 
-	private void addChunkMarkerWithOptions(SimpleLayer targetLayer,
-										   SerializableChunk chunk,
-										   String hoverText,
-										   int chunkColor,
-										   boolean north,
-										   boolean east,
-										   boolean south,
-										   boolean west) {
+	private SimpleLayer getOrCreateLayer(World world) {
+		SimpleLayer layer = layers.get(world);
+		if (layer != null) return layer;
 
+		String layerId = "claims_" + world.getName();
+		Registry<net.pl3x.map.core.world.@org.jetbrains.annotations.NotNull World> registry = Pl3xMap.api().getWorldRegistry();
+		net.pl3x.map.core.world.World mapWorld = registry.get(world.getName());
+
+		if (mapWorld == null) return null;
+
+		layer = new SimpleLayer(layerId, () -> LAYER_LABEL);
+		layer.setPriority(1);
+		layer.setZIndex(1);
+		layer.setLiveUpdate(true);
+
+		mapWorld.getLayerRegistry().register(layer);
+		layers.put(world, layer);
+		return layer;
+	}
+
+	private void addChunkVisuals(SimpleLayer layer, RegionChunk chunk, String hoverText,
+								 int chunkColor, Region region) {
+		boolean north = !isNeighborClaimed(region, chunk, GeoDirection.NORTH);
+		boolean east  = !isNeighborClaimed(region, chunk, GeoDirection.EAST);
+		boolean south = !isNeighborClaimed(region, chunk, GeoDirection.SOUTH);
+		boolean west  = !isNeighborClaimed(region, chunk, GeoDirection.WEST);
+
+		addFillRectangle(layer, chunk, hoverText, chunkColor);
+		if (north) addBorderLine(layer, chunk, GeoDirection.NORTH, chunkColor);
+		if (east)  addBorderLine(layer, chunk, GeoDirection.EAST, chunkColor);
+		if (south) addBorderLine(layer, chunk, GeoDirection.SOUTH, chunkColor);
+		if (west)  addBorderLine(layer, chunk, GeoDirection.WEST, chunkColor);
+	}
+
+	private void addFillRectangle(SimpleLayer layer, RegionChunk chunk, String hoverText, int chunkColor) {
 		String markerId = "fill_" + chunk.getX() + "_" + chunk.getZ();
-		Point point1 = Point.of(chunk.getX() * 16, chunk.getZ() * 16);
-		Point point2 = Point.of(chunk.getX() * 16 + 16, chunk.getZ() * 16 + 16);
+		Point p1 = Point.of(chunk.getX() * 16, chunk.getZ() * 16);
+		Point p2 = Point.of(chunk.getX() * 16 + 16, chunk.getZ() * 16 + 16);
 
-		int chunkTransparencyInfill = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-fill");
-		int chunkTransparencyOutline = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-outline");
-
-		Rectangle rectangle = new Rectangle(markerId, point1, point2);
-		rectangle.setOptions(Options.builder()
+		Rectangle rect = new Rectangle(markerId, p1, p2);
+		rect.setOptions(Options.builder()
 				.tooltipContent(hoverText)
-				.fillColor(Colors.setAlpha(chunkTransparencyInfill, chunkColor))
-				.strokeColor(Colors.setAlpha(chunkTransparencyOutline, chunkColor))
+				.fillColor(Colors.setAlpha(getTransparencyFill(), chunkColor))
+				.strokeColor(Colors.setAlpha(getTransparencyOutline(), chunkColor))
 				.strokeWeight(0)
 				.fill(true)
 				.stroke(false)
 				.build());
 
-		targetLayer.addMarker(rectangle);
-
-		if (north) {
-			addBorderLine(targetLayer, chunk, GeoDirection.NORTH, chunkColor);
-		}
-
-		if (east) {
-			addBorderLine(targetLayer, chunk, GeoDirection.EAST, chunkColor);
-		}
-
-		if (south) {
-			addBorderLine(targetLayer, chunk, GeoDirection.SOUTH, chunkColor);
-		}
-
-		if (west) {
-			addBorderLine(targetLayer, chunk, GeoDirection.WEST, chunkColor);
-		}
+		layer.addMarker(rect);
 	}
 
-	private void addBorderLine(SimpleLayer layer, SerializableChunk chunk, GeoDirection side, int color) {
-		int x = chunk.getX();
-		int z = chunk.getZ();
+	private void addBorderLine(SimpleLayer layer, RegionChunk chunk, GeoDirection side, int color) {
+		int x = chunk.getX(), z = chunk.getZ();
 		String markerId = "border_" + x + "_" + z + "_" + side;
 
 		Point p1, p2;
 		switch (side) {
-			case NORTH:
-				p1 = Point.of(x * 16, z * 16);
-				p2 = Point.of(x * 16 + 16, z * 16);
-				break;
-			case EAST:
-				p1 = Point.of(x * 16 + 16, z * 16);
-				p2 = Point.of(x * 16 + 16, z * 16 + 16);
-				break;
-			case SOUTH:
-				p1 = Point.of(x * 16, z * 16 + 16);
-				p2 = Point.of(x * 16 + 16, z * 16 + 16);
-				break;
-			case WEST:
-				p1 = Point.of(x * 16, z * 16);
-				p2 = Point.of(x * 16, z * 16 + 16);
-				break;
-			default:
-				return;
+			case NORTH -> { p1 = Point.of(x * 16, z * 16);     p2 = Point.of(x * 16 + 16, z * 16); }
+			case EAST  -> { p1 = Point.of(x * 16 + 16, z * 16); p2 = Point.of(x * 16 + 16, z * 16 + 16); }
+			case SOUTH -> { p1 = Point.of(x * 16, z * 16 + 16); p2 = Point.of(x * 16 + 16, z * 16 + 16); }
+			case WEST  -> { p1 = Point.of(x * 16, z * 16);     p2 = Point.of(x * 16, z * 16 + 16); }
+			default -> { return; }
 		}
 
 		Polyline line = new Polyline(markerId, List.of(p1, p2));
@@ -198,81 +145,45 @@ public class Pl3xMapAPI {
 		layer.addMarker(line);
 	}
 
-	public boolean isChunkClaimed(Region region, SerializableChunk chunk, GeoDirection direction) {
-		int x = chunk.getX();
-		int z = chunk.getZ();
-		UUID worldId = chunk.getWorldId();
-
-		switch (direction) {
-			case NORTH: z -= 1; break;
-			case EAST:  x += 1; break;
-			case SOUTH: z += 1; break;
-			case WEST:  x -= 1; break;
-			default: return false;
-		}
-
-		final int nx = x, nz = z;
-
-		return region.getChunks().stream()
-				.anyMatch(c -> c.getWorldId().equals(worldId)
-						&& c.getX() == nx
-						&& c.getZ() == nz);
-	}
-
 	private void addRegionIcon(SimpleLayer layer, Region region, String hoverText) {
-		BufferedImage bufferedIcon = RegionIcon.getIconBufferedImage(region.getIcon());
+		if (region.getLocation() == null) return;
 
-		int iconSize = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.icons.size");
-
-		if (region.getLocation() == null) {
-			return;
-		}
+		BufferedImage icon = RegionIcon.getIconBufferedImage(region.getMapIcon());
+		if (icon == null) return;
 
 		try {
 			String iconId = "region_icon_" + region.getName().toLowerCase().replaceAll(" ", "_");
-			Location regionLocation = region.getLocation().bukkit();
-			Point iconPoint = Point.of(regionLocation.getX(), regionLocation.getZ());
+			Location loc = region.getLocation().toBukkit();
+			if (loc == null) return;
 
-			if (bufferedIcon != null) {
-				IconImage iconImage = new IconImage(iconId, bufferedIcon, "png");
+			Point point = Point.of(loc.getX(), loc.getZ());
+			IconImage iconImage = new IconImage(iconId, icon, "png");
 
-				if (Pl3xMap.api().getIconRegistry().has(iconId)
-						&& !Objects.requireNonNull(Pl3xMap.api().getIconRegistry().get(iconId)).getImage().equals(iconImage.getImage())) {
-					Pl3xMap.api().getIconRegistry().unregister(iconId);
-				}
-
-				if (!Pl3xMap.api().getIconRegistry().has(iconId)) {
-					Pl3xMap.api().getIconRegistry().register(iconId, iconImage);
-				}
-
-				Marker<?> iconMarker = Marker.icon(
-						"marker_" + iconId,
-						iconPoint,
-						iconId,
-						iconSize, iconSize);
-
-				iconMarker.setOptions(Options.builder()
-						.tooltipContent(hoverText)
-						.build());
-
-				layer.addMarker(iconMarker);
+			var iconRegistry = Pl3xMap.api().getIconRegistry();
+			if (iconRegistry.has(iconId) && !Objects.requireNonNull(iconRegistry.get(iconId)).getImage().equals(iconImage.getImage())) {
+				iconRegistry.unregister(iconId);
 			}
-		} catch (Exception ignored) {
+			if (!iconRegistry.has(iconId)) {
+				iconRegistry.register(iconId, iconImage);
+			}
 
-		}
+			Marker<?> iconMarker = Marker.icon("marker_" + iconId, point, iconId,
+					getConfigInt("icons.size"), getConfigInt("icons.size"));
+			iconMarker.setOptions(Options.builder().tooltipContent(hoverText).build());
+
+			layer.addMarker(iconMarker);
+		} catch (Exception ignored) {}
 	}
 
-	public void update() {
-		clearAllMarkers();
+	private boolean isHomeChunk(Region region, RegionChunk chunk) {
+		if (region.getLocation() == null) return false;
 
-		for (Region region : RegionManager.getAll()) {
-			for (SerializableChunk chunk : region.getChunks()) {
-				addChunkMarker(region, chunk);
-			}
-		}
-	}
+		double locX = region.getLocation().getX();
+		double locZ = region.getLocation().getZ();
+		int cx = (int) Math.floor(locX) >> 4;
+		int cz = (int) Math.floor(locZ) >> 4;
 
-	private enum GeoDirection {
-		NORTH, EAST, SOUTH, WEST
+		return cx == chunk.getX() && cz == chunk.getZ()
+				&& region.getLocation().getWorldId().equals(chunk.getWorldId());
 	}
 }

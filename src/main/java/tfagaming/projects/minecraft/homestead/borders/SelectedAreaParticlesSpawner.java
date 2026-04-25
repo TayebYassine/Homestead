@@ -7,6 +7,7 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -36,8 +37,8 @@ public class SelectedAreaParticlesSpawner {
 	private static final Map<UUID, SelectedAreaParticlesSpawner> spawners = new ConcurrentHashMap<>();
 	private final Player player;
 	private TaskHandle task;
-	private volatile SerializableBlock firstBlock;
-	private volatile SerializableBlock secondBlock;
+	private volatile SeBlock firstBlock;
+	private volatile SeBlock secondBlock;
 
 	/**
 	 * Creates or updates the particle spawner for the given player using raw
@@ -48,18 +49,18 @@ public class SelectedAreaParticlesSpawner {
 	 * @param secondBlock the opposite corner of the selected area
 	 */
 	public SelectedAreaParticlesSpawner(Player player, Block firstBlock, Block secondBlock) {
-		this(player, new SerializableBlock(firstBlock), new SerializableBlock(secondBlock));
+		this(player, new SeBlock(firstBlock), new SeBlock(secondBlock));
 	}
 
 	/**
 	 * Creates or updates the particle spawner for the given player using
-	 * {@link SerializableBlock} corners.
+	 * {@link SeBlock} corners.
 	 *
 	 * @param player The player to show the selection border for
 	 * @param firstBlock One corner of the selected area
 	 * @param secondBlock The opposite corner of the selected area
 	 */
-	public SelectedAreaParticlesSpawner(Player player, SerializableBlock firstBlock, SerializableBlock secondBlock) {
+	public SelectedAreaParticlesSpawner(Player player, SeBlock firstBlock, SeBlock secondBlock) {
 		this.player = player;
 		this.firstBlock = firstBlock;
 		this.secondBlock = secondBlock;
@@ -121,8 +122,8 @@ public class SelectedAreaParticlesSpawner {
 	 * Spawns dust particles along all twelve edges of the selected cuboid.
 	 */
 	public void spawnParticles() {
-		SerializableBlock fb = this.firstBlock;
-		SerializableBlock sb = this.secondBlock;
+		SeBlock fb = this.firstBlock;
+		SeBlock sb = this.secondBlock;
 
 		int minX = Math.min(fb.getX(), sb.getX());
 		int minY = Math.min(fb.getY(), sb.getY());

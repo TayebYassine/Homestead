@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class SubAreaMembers {
-	private List<SerializableMember> members;
+	private List<RegionMember> members;
 
 	public SubAreaMembers(Player player, Region region, SubArea subArea) {
 		members = subArea.getMembers();
@@ -46,14 +46,14 @@ public final class SubAreaMembers {
 						return;
 					}
 
-					SerializableMember member = members.get(context.getIndex());
+					RegionMember member = members.get(context.getIndex());
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
 						new PlayerInfo(player, member.bukkit(), () ->
 								new SubAreaMembers(player, region, subArea));
 
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-						if (!region.isPlayerMember(member.bukkit())
+						if (!MemberManager.isMemberOfRegion(region, member.bukkit())
 								|| !subArea.isPlayerMember(member.bukkit())) {
 							return;
 						}
@@ -105,7 +105,7 @@ public final class SubAreaMembers {
 					Messages.send(player, 30);
 					return false;
 				}
-				if (!region.isPlayerMember(target)) {
+				if (!MemberManager.isMemberOfRegion(region, target)) {
 					Messages.send(player, 171);
 					return false;
 				}
@@ -123,7 +123,7 @@ public final class SubAreaMembers {
 	private List<ItemStack> getItems(Player player, Region region, SubArea subArea) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (SerializableMember member : members) {
+		for (RegionMember member : members) {
 			OfflinePlayer memberBukkit = member.bukkit();
 
 			items.add(MenuUtility.getButton(69, new Placeholder()

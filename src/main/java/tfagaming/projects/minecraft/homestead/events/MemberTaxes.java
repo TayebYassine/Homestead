@@ -5,9 +5,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -24,27 +27,30 @@ public final class MemberTaxes {
 	 */
 	public static void trigger(Homestead instance) {
 		for (Region region : RegionManager.getAll()) {
-			double amountToPay = region.getTaxesAmount();
+			double amountToPay = region.getTaxes();
 
 			if (amountToPay == 0) {
 				continue;
 			}
 
-			for (SerializableMember member : region.getMembers()) {
+			for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
 				if (member.getTaxesAt() == 0) {
-					region.setMemberTaxesAt(member, TaxesUtility.getNewTaxesAt());
+					member.setTaxesAt(TaxesUtility.getNewTaxesAt());
 
 					continue;
 				}
 
 				if (System.currentTimeMillis() >= member.getTaxesAt()) {
-					OfflinePlayer targetPlayer = member.bukkit();
+					OfflinePlayer targetPlayer = member.getPlayer();
+
+					if (targetPlayer == null) {
+						return;
+					}
 
 					if (PlayerBank.get(targetPlayer) >= amountToPay) {
 						PlayerBank.withdraw(targetPlayer, amountToPay);
 						region.depositBank(amountToPay);
-
-						region.setMemberTaxesAt(member, TaxesUtility.getNewTaxesAt());
+						member.setTaxesAt(TaxesUtility.getNewTaxesAt());
 
 						if (targetPlayer.isOnline()) {
 							Player targetPlayerOnline = (Player) targetPlayer;
@@ -58,7 +64,7 @@ public final class MemberTaxes {
 							Messages.send(targetPlayerOnline, 107, placeholder);
 						}
 					} else {
-						region.removeMember(targetPlayer);
+						MemberManager.removeMemberFromRegion(targetPlayer, region);
 
 						if (targetPlayer.isOnline()) {
 							Player targetPlayerOnline = (Player) targetPlayer;

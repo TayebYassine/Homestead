@@ -5,106 +5,72 @@ import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.MarkerSet;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.integrations.maps.listeners.DynmapListener;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-import tfagaming.projects.minecraft.homestead.resources.ResourceType;
-import tfagaming.projects.minecraft.homestead.resources.Resources;
-import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
-
-
-import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
-import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
-public class DynmapAPI {
-	public static MarkerSet markerSet;
+public final class DynmapAPI extends AbstractMapIntegration {
+
+	private MarkerSet markerSet;
 
 	public DynmapAPI(Homestead plugin) {
+		super(plugin);
 		try {
 			DynmapCommonAPIListener.register(new DynmapListener());
-		} catch (NoClassDefFoundError ignored) {
-
-		}
+		} catch (NoClassDefFoundError ignored) {}
 	}
 
+	@Override
 	public void clearAllMarkers() {
-		if (markerSet == null) {
-			return;
-		}
-
+		if (markerSet == null) return;
 		for (AreaMarker marker : markerSet.getAreaMarkers()) {
 			marker.deleteMarker();
 		}
 	}
 
-	public void addChunkMarker(Region region, SerializableChunk chunk) {
-		if (markerSet == null) {
-			return;
-		}
-
-		double[] x = {chunk.getX() * 16, (chunk.getX() + 1) * 16};
-		double[] z = {chunk.getZ() * 16, (chunk.getZ() + 1) * 16};
-
-		String markerId = "claimed_" + chunk.getWorld().getName() + "_" + chunk.getX() + "_" + chunk.getZ();
-
-		AreaMarker existingMarker = markerSet.findAreaMarker(markerId);
-
-		if (existingMarker != null) {
-			return;
-		}
-
-		String markerLabel = region.getName();
-
-		AreaMarker areaMarker = markerSet.createAreaMarker(
-				markerId,
-				markerLabel,
-				false,
-				chunk.getWorld().getName(),
-				x,
-				z,
-				false);
-
-		if (areaMarker == null) {
-			return;
-		}
-
-		int chunkTransparencyInfill = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-fill");
-		int chunkTransparencyOutline = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-outline");
-
-		boolean isOperator = PlayerUtility.isOperator(region.getOwner());
-
-		int chunkColor = region.getMapColor() == 0
-				? (isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.operator-color")
-				: Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.color"))
-				: region.getMapColor();
-
-		areaMarker.setLineStyle(1, (double) chunkTransparencyInfill / 100, chunkColor);
-		areaMarker.setFillStyle((double) chunkTransparencyOutline / 100, chunkColor);
-
-		Placeholder placeholder = new Placeholder()
-				.add("{region}", region.getName())
-				.add("{region-owner}", region.getOwner().getName())
-				.add("{region-members}",
-						ColorTranslator.preserve(Formatter.getMembersOfRegion(region)))
-				.add("{region-chunks}", region.getChunks().size())
-				.add("{global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
-				.add("{region-description}", region.getDescription())
-				.add("{region-size}", region.getChunks().size() * 256);
-
-		String description = Formatter
-				.applyPlaceholders(isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.operator-description")
-						: Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.description"), placeholder);
-
-		areaMarker.setDescription(description);
-	}
-
+	@Override
 	public void update() {
 		clearAllMarkers();
-
 		for (Region region : RegionManager.getAll()) {
-			for (SerializableChunk chunk : region.getChunks()) {
+			for (RegionChunk chunk : ChunkManager.getChunksOfRegion(region)) {
 				addChunkMarker(region, chunk);
 			}
 		}
+	}
+
+	public void addChunkMarker(Region region, RegionChunk chunk) {
+		if (markerSet == null || region.getOwner() == null) return;
+
+		String markerId = buildMarkerId(chunk);
+		if (markerSet.findAreaMarker(markerId) != null) return;
+
+		AreaMarker areaMarker = markerSet.createAreaMarker(
+				markerId,
+				region.getName(),
+				false,
+				chunk.getWorld().getName(),
+				new double[]{chunk.getX() * 16, (chunk.getX() + 1) * 16},
+				new double[]{chunk.getZ() * 16, (chunk.getZ() + 1) * 16},
+				false
+		);
+
+		if (areaMarker == null) return;
+
+		boolean isOperator = PlayerUtility.isOperator(region.getOwner());
+		int chunkColor = resolveChunkColor(region, isOperator);
+
+		areaMarker.setLineStyle(1, (double) getTransparencyFill() / 100, chunkColor);
+		areaMarker.setFillStyle((double) getTransparencyOutline() / 100, chunkColor);
+		areaMarker.setDescription(resolveHoverText(region, isOperator));
+	}
+
+	private String buildMarkerId(RegionChunk chunk) {
+		return "claimed_" + chunk.getWorld().getName() + "_" + chunk.getX() + "_" + chunk.getZ();
+	}
+
+	public void setMarkerSet(MarkerSet markerSet) {
+		this.markerSet = markerSet;
 	}
 }

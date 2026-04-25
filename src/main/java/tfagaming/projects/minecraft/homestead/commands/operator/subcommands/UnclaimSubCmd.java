@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -121,7 +122,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 				Chunk chunk = world.getChunkAt(cx, cz);
 				Region regionOwnsChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (regionOwnsChunk != null && regionOwnsChunk.getUniqueId().equals(region.getUniqueId())) {
+				if (regionOwnsChunk != null && regionOwnsChunk.getUniqueId() == region.getUniqueId()) {
 					toUnclaim.add(chunk);
 				}
 			}

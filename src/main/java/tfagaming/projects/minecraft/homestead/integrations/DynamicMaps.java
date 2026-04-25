@@ -1,7 +1,5 @@
 package tfagaming.projects.minecraft.homestead.integrations;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.integrations.maps.BlueMapAPI;
 import tfagaming.projects.minecraft.homestead.integrations.maps.DynmapAPI;
@@ -11,10 +9,10 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationUtility;
 
 public final class DynamicMaps {
-	public static DynmapAPI dynmap;
-	public static Pl3xMapAPI pl3xmap;
-	public static SquaremapAPI squaremap;
-	public static BlueMapAPI bluemap;
+	public static DynmapAPI DYNMAP_INSTANCE;
+	public static Pl3xMapAPI PL3XMAP_INSTANCE;
+	public static SquaremapAPI SQUAREMAP_INSTANCE;
+	public static BlueMapAPI BLUEMAP_INSTANCE;
 
 	private DynamicMaps() {
 	}
@@ -26,74 +24,74 @@ public final class DynamicMaps {
 	 * @param instance Homestead's instance
 	 */
 	public static void trigger(Homestead instance) {
-		if (dynmap == null) {
+		if (DYNMAP_INSTANCE == null) {
 			try {
 				if (!isDynmapInstalled()) {
 					throw new NoClassDefFoundError("dynmap not installed");
 				}
 
-				dynmap = new DynmapAPI(instance);
+				DYNMAP_INSTANCE = new DynmapAPI(instance);
 
-				Logger.info("Successfully connected to dynmap's API.");
+				Logger.info("[Dynamic Maps] API plugin 'dynmap' connected.");
 
-				dynmap.update();
+				DYNMAP_INSTANCE.update();
 			} catch (NoClassDefFoundError ignored) {
 			}
 		} else {
-			dynmap.update();
+			DYNMAP_INSTANCE.update();
 		}
 
-		if (pl3xmap == null) {
+		if (PL3XMAP_INSTANCE == null) {
 			try {
 				if (!isPl3xMapInstalled()) {
 					throw new NoClassDefFoundError("Pl3xMap not installed");
 				}
 
-				pl3xmap = new Pl3xMapAPI(instance);
+				PL3XMAP_INSTANCE = new Pl3xMapAPI(instance);
 
-				Logger.info("Successfully connected to Pl3xMap's API.");
+				Logger.info("[Dynamic Maps] API plugin 'Pl3xMap' connected.");
 
-				pl3xmap.update();
+				PL3XMAP_INSTANCE.update();
 			} catch (NoClassDefFoundError ignored) {
 			}
 		} else {
-			pl3xmap.update();
+			PL3XMAP_INSTANCE.update();
 		}
 
-		if (squaremap == null) {
+		if (SQUAREMAP_INSTANCE == null) {
 			try {
 				if (!isSquaremapInstalled()) {
 					throw new NoClassDefFoundError("squaremap not installed");
 				}
 
-				squaremap = new SquaremapAPI(instance);
+				SQUAREMAP_INSTANCE = new SquaremapAPI(instance);
 
-				Logger.info("Successfully connected to Squaremap's API.");
+				Logger.info("[Dynamic Maps] API plugin 'Squaremap' connected.");
 
-				squaremap.update();
+				SQUAREMAP_INSTANCE.update();
 			} catch (NoClassDefFoundError ignored) {
 			}
 		} else {
-			squaremap.update();
+			SQUAREMAP_INSTANCE.update();
 		}
 
-		if (bluemap == null) {
+		if (BLUEMAP_INSTANCE == null) {
 			try {
 				if (!isBlueMapInstalled()) {
 					throw new NoClassDefFoundError("BlueMap not installed");
 				}
 
 				de.bluecolored.bluemap.api.BlueMapAPI.onEnable((api) -> {
-					bluemap = new BlueMapAPI(instance, api);
+					BLUEMAP_INSTANCE = new BlueMapAPI(instance, api);
 
-					Logger.info("Successfully connected to BlueMap's API.");
+					Logger.info("[Dynamic Maps] API plugin 'BlueMap' connected.");
 
-					bluemap.update();
+					BLUEMAP_INSTANCE.update();
 				});
 			} catch (NoClassDefFoundError ignored) {
 			}
 		} else {
-			bluemap.update();
+			BLUEMAP_INSTANCE.update();
 		}
 
 		Logger.debug("Updated dynamic map plugin markers.");

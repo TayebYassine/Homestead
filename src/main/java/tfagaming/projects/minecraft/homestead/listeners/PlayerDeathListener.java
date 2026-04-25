@@ -9,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.War;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -18,6 +20,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtility;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class PlayerDeathListener implements Listener {
 	@EventHandler
@@ -43,13 +46,17 @@ public final class PlayerDeathListener implements Listener {
 
 			Region winner = war.getWinner();
 
-			Cooldown.startCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED);
+			Cooldown.startCooldown(victim, Cooldown.Type.WAR_FLAG_DISABLED);
 
 			if (winner != null) {
 				distributePrize(war, region, winner);
 				giveHeadToWinner(winner, victim);
 
-				Cooldown.startCooldown(winner, Cooldown.Type.WAR_FLAG_DISABLED);
+				OfflinePlayer winnerOwner = winner.getOwner();
+
+				if (winnerOwner != null && winnerOwner.isOnline()) {
+					Cooldown.startCooldown(Objects.requireNonNull(winnerOwner.getPlayer()), Cooldown.Type.WAR_FLAG_DISABLED);
+				}
 			}
 
 			WarManager.tellPlayersWarEnded(warMembers, winner);

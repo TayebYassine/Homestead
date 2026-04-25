@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.sessions;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.models.Region;
 
 
 import java.util.Map;
@@ -8,49 +9,49 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class MergeRegionSession {
-	private static final Map<UUID, UUID> requests = new ConcurrentHashMap<>();
+	private static final Map<Long, Long> REQUESTS = new ConcurrentHashMap<>();
 
 	private MergeRegionSession() {
 	}
 
 	public static void newMergeRequest(Region region, Region regionToMerge) {
-		UUID from = region.getUniqueId();
-		UUID to = regionToMerge.getUniqueId();
+		Long from = region.getUniqueId();
+		Long to = regionToMerge.getUniqueId();
 
-		if (requests.containsValue(to) || requests.containsValue(from) || requests.containsKey(to) || requests.containsKey(from)) {
+		if (REQUESTS.containsValue(to) || REQUESTS.containsValue(from) || REQUESTS.containsKey(to) || REQUESTS.containsKey(from)) {
 			return;
 		}
 
-		requests.put(from, to);
+		REQUESTS.put(from, to);
 		startTimer(region);
 	}
 
 	public static boolean isFromHaveRequest(Region from) {
-		return requests.containsKey(from.getUniqueId());
+		return REQUESTS.containsKey(from.getUniqueId());
 	}
 
 	public static boolean isToHaveRequest(Region to) {
-		return requests.containsValue(to.getUniqueId());
+		return REQUESTS.containsValue(to.getUniqueId());
 	}
 
-	public static UUID getFrom(Region to) {
-		for (Map.Entry<UUID, UUID> e : requests.entrySet()) {
-			if (e.getValue().equals(to.getUniqueId())) {
+	public static long getFrom(Region to) {
+		for (Map.Entry<Long, Long> e : REQUESTS.entrySet()) {
+			if (e.getValue() == to.getUniqueId()) {
 				return e.getKey();
 			}
 		}
-		return null;
+		return -1L;
 	}
 
-	public static UUID getTo(Region from) {
-		return requests.get(from.getUniqueId());
+	public static long getTo(Region from) {
+		return REQUESTS.get(from.getUniqueId());
 	}
 
 	private static void startTimer(Region fromRegion) {
-		final UUID id = fromRegion.getUniqueId();
+		final long id = fromRegion.getUniqueId();
 
 		Homestead.getInstance().runAsyncTaskLater(() -> {
-			requests.remove(id);
+			REQUESTS.remove(id);
 		}, 60);
 	}
 }

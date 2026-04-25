@@ -3,6 +3,8 @@ package tfagaming.projects.minecraft.homestead.storage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 
 import java.util.UUID;
@@ -27,7 +29,7 @@ public class RegionStorage {
 
 	public static boolean canAccess(Region region, Player player) {
 		if (region.isOwner(player.getUniqueId())) return true;
-		if (region.isPlayerMember(player)) {
+		if (MemberManager.isMemberOfRegion(region, player)) {
 			return true;
 		}
 		return region.isPublic();
@@ -60,7 +62,7 @@ public class RegionStorage {
 	}
 
 	public static boolean upgradeStorage(Region region, int newSize) {
-		UUID regionId = region.getUniqueId();
+		long regionId = region.getUniqueId();
 		SharedStorage existing = StorageManager.getExistingStorage(regionId);
 
 		if (existing == null) {

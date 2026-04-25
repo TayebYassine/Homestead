@@ -12,9 +12,11 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
+import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -30,7 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class PlayerRegionEnterAndExitListener implements Listener {
-	private static final Map<UUID, UUID> sessions = new HashMap<UUID, UUID>();
+	private static final Map<UUID, Long> SESSIONS = new HashMap();
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
@@ -51,8 +53,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 			assert region != null;
 
-			if (sessions.containsKey(player.getUniqueId())
-					&& sessions.get(player.getUniqueId()).equals(region.getUniqueId())) {
+			if (SESSIONS.containsKey(player.getUniqueId()) && SESSIONS.get(player.getUniqueId()) == region.getUniqueId()) {
 				return;
 			} else {
 				if (!PlayerUtility.isOperator(player) && ClaimFlySession.hasSession(player)) {
@@ -65,7 +66,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				}
 			}
 
-			if (!PlayerUtility.isOperator(player) && region.isPlayerBanned(player)) {
+			if (!PlayerUtility.isOperator(player) && BannedPlayerManager.isBanned(region, player)) {
 				Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
@@ -74,14 +75,14 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 
 				Messages.send(player, 28, new Placeholder()
 						.add("{region}", region.getName())
-						.add("{ban-reason}", region.getBannedPlayer(player).getReason())
+						.add("{ban-reason}", BannedPlayerManager.getBannedPlayer(region, player).getReason())
 				);
 
 				return;
 			}
 
 			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)
-					&& !PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true) && !WarManager.isRegionInWar(region.getOwnerId())) {
+					&& !PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true) && !WarManager.isRegionInWar(region.getUniqueId())) {
 				Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
@@ -100,7 +101,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				PlayerUtility.sendMessageRegionEnter(player, placeholder);
 			}
 
-			sessions.put(player.getUniqueId(), region.getUniqueId());
+			SESSIONS.put(player.getUniqueId(), region.getUniqueId());
 
 			// Weather and Time
 			if (region.getWeather() != tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType.SERVER) {
@@ -137,11 +138,11 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 		} else {
 			// Player leaves a region
 
-			if (!sessions.containsKey(player.getUniqueId())) {
+			if (!SESSIONS.containsKey(player.getUniqueId())) {
 				return;
 			}
 
-			Region region = RegionManager.findRegion(sessions.get(player.getUniqueId()));
+			Region region = RegionManager.findRegion(SESSIONS.get(player.getUniqueId()));
 
 			if (isRegionInfoMessagesEnabled) {
 				Placeholder placeholder = new Placeholder();
@@ -155,7 +156,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				PlayerUtility.sendMessageRegionExit(player, placeholder);
 			}
 
-			sessions.remove(player.getUniqueId());
+			SESSIONS.remove(player.getUniqueId());
 
 			if (player.getPlayerWeather() != null) {
 				player.resetPlayerWeather();
@@ -184,7 +185,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 
-		sessions.remove(player.getUniqueId());
+		SESSIONS.remove(player.getUniqueId());
 	}
 
 	private boolean isWearingElytra(Player player) {

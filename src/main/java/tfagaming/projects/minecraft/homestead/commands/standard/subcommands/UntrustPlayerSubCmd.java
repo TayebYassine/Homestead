@@ -70,12 +70,12 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		if (region.isPlayerInvited(target)) {
-			region.removePlayerInvite(target);
+			InviteManager.deleteInvitesOfPlayer(region, target);
 
 			Messages.send(player, 37, new Placeholder()
 					.add("{playername}", target.getName())
 			);
-		} else if (region.isPlayerMember(target)) {
+		} else if (MemberManager.isMemberOfRegion(region, target)) {
 			region.removeMember(target);
 
 			Messages.send(player, 38, new Placeholder()
@@ -111,7 +111,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 			Region region = TargetRegionSession.getRegion(player);
 
 			if (region != null) {
-				for (SerializableMember member : region.getMembers()) {
+				for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
 					OfflinePlayer m = member.bukkit();
 
 					if (m != null) {

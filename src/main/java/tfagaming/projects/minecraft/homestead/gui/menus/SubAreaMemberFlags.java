@@ -29,7 +29,7 @@ public final class SubAreaMemberFlags {
 
 	
 
-	public SubAreaMemberFlags(Player player, Region region, SubArea subArea, SerializableMember member) {
+	public SubAreaMemberFlags(Player player, Region region, SubArea subArea, RegionMember member) {
 		OfflinePlayer memberBukkit = member.bukkit();
 
 		PaginationMenu gui = new PaginationMenu(
@@ -139,7 +139,7 @@ public final class SubAreaMemberFlags {
 		gui.open(player, MenuUtility.getEmptySlot());
 	}
 
-	private List<ItemStack> buildItemsList(SerializableMember member) {
+	private List<ItemStack> buildItemsList(RegionMember member) {
 		List<ItemStack> items = new ArrayList<>();
 		items.add(MenuUtility.getButton(65)); // bulk-toggle item
 

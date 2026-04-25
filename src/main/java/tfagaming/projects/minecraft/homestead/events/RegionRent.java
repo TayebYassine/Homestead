@@ -7,7 +7,9 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 
 
-
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -21,15 +23,15 @@ public final class RegionRent {
 	 */
 	public static void trigger(Homestead instance) {
 		for (Region region : RegionManager.getAll()) {
-			final SerializableRent rent = region.getRent();
+			final SeRent rent = region.getRent();
 
 			if (rent != null && System.currentTimeMillis() > rent.getUntilAt()) {
 				region.setRent(null);
 
-				OfflinePlayer leaser = rent.bukkit();
+				OfflinePlayer renter = rent.getRenter();
 
-				if (leaser != null && leaser.isOnline()) {
-					Player player = (Player) leaser;
+				if (renter != null && renter.isOnline()) {
+					Player player = (Player) renter;
 
 					Messages.send(player, 130, new Placeholder()
 							.add("{region}", region.getName())
@@ -39,15 +41,15 @@ public final class RegionRent {
 		}
 
 		for (SubArea subArea : SubAreaManager.getAll()) {
-			final SerializableRent rent = subArea.getRent();
+			final SeRent rent = subArea.getRent();
 
 			if (rent != null && System.currentTimeMillis() > rent.getUntilAt()) {
 				subArea.setRent(null);
 
-				OfflinePlayer leaser = rent.bukkit();
+				OfflinePlayer renter = rent.getRenter();
 
-				if (leaser != null && leaser.isOnline()) {
-					Player player = (Player) leaser;
+				if (renter != null && renter.isOnline()) {
+					Player player = (Player) renter;
 
 					Messages.send(player, 130, new Placeholder()
 							.add("{region}", subArea.getName())

@@ -73,12 +73,12 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.isPlayerBanned(target)) {
+		if (BannedPlayerManager.isBanned(region, target)) {
 			Messages.send(player, 74);
 			return true;
 		}
 
-		if (region.isPlayerMember(target)) {
+		if (MemberManager.isMemberOfRegion(region, target)) {
 			Messages.send(player, 48, new Placeholder()
 					.add("{playername}", target.getName())
 			);
@@ -97,7 +97,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		SerializableRent rent = region.getRent();
+		SeRent rent = region.getRent();
 
 		if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
 			Messages.send(player, 196);
@@ -110,9 +110,9 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
-			region.removePlayerInvite(target);
+			InviteManager.deleteInvitesOfPlayer(region, target);
 
-			region.addMember(target);
+			InviteManager.deleteInvitesOfPlayer(region, target);
 
 			Messages.send(player, 199, new Placeholder()
 					.add("{region}", region.getName())

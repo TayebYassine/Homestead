@@ -7,6 +7,8 @@ import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.War;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
@@ -32,7 +34,7 @@ public final class WarManager {
 	 * @param regionB The second participating region
 	 */
 	public static War declareWar(String name, double prize, Region regionA, Region regionB) {
-		if (regionA.getUniqueId().equals(regionB.getUniqueId())) {
+		if (regionA.getUniqueId() == regionB.getUniqueId()) {
 			throw new IllegalArgumentException("A war must involve two distinct regions.");
 		}
 
@@ -44,8 +46,8 @@ public final class WarManager {
 
 		war.setAutoUpdate(false);
 
-		war.addRegion(regionA);
-		war.addRegion(regionB);
+		war.addRegionId(regionA.getUniqueId());
+		war.addRegionId(regionB.getUniqueId());
 		war.setPrize(prize);
 
 		war.setAutoUpdate(true);
@@ -60,8 +62,8 @@ public final class WarManager {
 	}
 
 	/** Returns the war with the exact UUID, or {@code null} if none exists. */
-	public static War findWar(UUID id) {
-		return Homestead.warsCache.get(id);
+	public static War findWar(long warId) {
+		return Homestead.warsCache.get(warId);
 	}
 
 	/** Returns the war with the exact name (case-sensitive), or {@code null} if none exists. */
@@ -73,17 +75,17 @@ public final class WarManager {
 	}
 
 	/** Returns the war the given region is participating in, or {@code null}. */
-	public static War findWarByRegion(UUID regionId) {
+	public static War findWarByRegion(long regionId) {
 		return getAll().stream()
 				.filter(w -> w.getRegions().stream()
-						.anyMatch(r -> r.getUniqueId().equals(regionId)))
+						.anyMatch(r -> r.getUniqueId() == regionId))
 				.findFirst()
 				.orElse(null);
 	}
 
 	/** Ends and removes the war with the given UUID. */
-	public static void endWar(UUID id) {
-		Homestead.warsCache.remove(id);
+	public static void endWar(long warId) {
+		Homestead.warsCache.remove(warId);
 	}
 
 	/**
@@ -91,7 +93,7 @@ public final class WarManager {
 	 *
 	 * @param warId The war UUID
 	 */
-	public static List<OfflinePlayer> getMembersOfWar(UUID warId) {
+	public static List<OfflinePlayer> getMembersOfWar(long warId) {
 		War war = findWar(warId);
 		return getMembersOfWar(war);
 	}
@@ -108,7 +110,7 @@ public final class WarManager {
 
 		Set<OfflinePlayer> players = new HashSet<>();
 		for (Region region : war.getRegions()) {
-			region.getMembers().forEach(m -> players.add(m.bukkit()));
+			MemberManager.getMembersOfRegion(region).forEach(m -> players.add(m.getPlayer()));
 			players.add(region.getOwner());
 		}
 
@@ -121,7 +123,7 @@ public final class WarManager {
 		return getAll().stream().anyMatch(war ->
 				war.getRegions().stream().anyMatch(r ->
 						r.getOwner().getUniqueId().equals(pid) ||
-								r.getMembers().stream().anyMatch(m -> m.getPlayerId().equals(pid))
+								MemberManager.getMembersOfRegion(r).stream().anyMatch(m -> m.getPlayerId().equals(pid))
 				)
 		);
 	}
@@ -134,7 +136,7 @@ public final class WarManager {
 
 		return war.getRegions().stream().anyMatch(r ->
 				r.getOwner().getUniqueId().equals(pid) ||
-						r.getMembers().stream().anyMatch(m -> m.getPlayerId().equals(pid))
+						MemberManager.getMembersOfRegion(r).stream().anyMatch(m -> m.getPlayerId().equals(pid))
 		);
 	}
 
@@ -144,11 +146,11 @@ public final class WarManager {
 	 *
 	 * @param regionId The UUID of the region to remove
 	 */
-	public static War removeRegionFromWar(UUID regionId) {
+	public static War removeRegionFromWar(long regionId) {
 		for (War war : getAll()) {
 			for (Region region : war.getRegions()) {
-				if (region.getUniqueId().equals(regionId)) {
-					war.removeRegion(region);
+				if (region.getUniqueId() == regionId) {
+					war.removeRegionId(region.getUniqueId());
 					return war;
 				}
 			}
@@ -163,7 +165,7 @@ public final class WarManager {
 	}
 
 	/** Returns {@code true} if the given region is currently participating in any war. */
-	public static boolean isRegionInWar(UUID regionId) {
+	public static boolean isRegionInWar(long regionId) {
 		return findWarByRegion(regionId) != null;
 	}
 

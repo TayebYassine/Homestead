@@ -8,8 +8,10 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -104,20 +106,20 @@ public class ChunkParticlesSpawner {
 			return;
 		}
 
-		List<SerializableChunk> chunks = region.getChunks();
+		List<RegionChunk> chunks = ChunkManager.getChunksOfRegion(region);
 		World world = player.getWorld();
 		double yOffset = player.getLocation().getY() + 1;
 
 		DustOptions dustOptions;
 		if (region.isOwner(player)) {
 			dustOptions = new DustOptions(Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.OWNER), Resources.<RegionsFile>get(ResourceType.Regions).getDustSize());
-		} else if (region.isPlayerMember(player)) {
+		} else if (MemberManager.isMemberOfRegion(region, player)) {
 			dustOptions = new DustOptions(Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.MEMBER), Resources.<RegionsFile>get(ResourceType.Regions).getDustSize());
 		} else {
 			dustOptions = new DustOptions(Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.VISITOR), Resources.<RegionsFile>get(ResourceType.Regions).getDustSize());
 		}
 
-		for (SerializableChunk chunk : chunks) {
+		for (RegionChunk chunk : chunks) {
 			if (!world.getUID().equals(chunk.getWorldId())) {
 				continue;
 			}

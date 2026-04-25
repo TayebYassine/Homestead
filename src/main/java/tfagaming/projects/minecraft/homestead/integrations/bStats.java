@@ -41,7 +41,7 @@ public final class bStats {
 					int players = 0;
 
 					for (Region region : RegionManager.getAll()) {
-						players += region.getMembers().size();
+						players += MemberManager.getMembersOfRegion(region).size();
 					}
 
 					return players;
@@ -55,7 +55,7 @@ public final class bStats {
 					int chunks = 0;
 
 					for (Region region : RegionManager.getAll()) {
-						chunks += region.getChunks().size();
+						chunks += ChunkManager.getChunksOfRegion(region).size();
 					}
 
 					return chunks;
@@ -87,7 +87,7 @@ public final class bStats {
 					map.put("Dynmap", DynamicMaps.dynmap == null ? 0 : 1);
 					map.put("Squaremap", DynamicMaps.squaremap == null ? 0 : 1);
 					map.put("Pl3xMap", DynamicMaps.pl3xmap == null ? 0 : 1);
-					map.put("BlueMap", DynamicMaps.bluemap == null ? 0 : 1);
+					map.put("BlueMap", DynamicMaps.BLUEMAP_INSTANCE == null ? 0 : 1);
 
 					return map;
 				}

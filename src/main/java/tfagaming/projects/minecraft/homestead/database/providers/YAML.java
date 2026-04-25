@@ -83,7 +83,7 @@ public final class YAML implements Provider {
 		List<RegionLog> newLogs = new ArrayList<>();
 		List<RegionRate> newRates = new ArrayList<>();
 		List<RegionInvite> newInvites = new ArrayList<>();
-		List<RegionBannedPlayer> newBanned = new ArrayList<>();
+		List<RegionBan> newBanned = new ArrayList<>();
 		List<SubArea> newSubAreas = new ArrayList<>();
 		List<Level> newLevels = new ArrayList<>();
 		List<War> newWars = new ArrayList<>();
@@ -156,7 +156,7 @@ public final class YAML implements Provider {
 
 					for (String part : cfg.getStringList("bannedPlayers")) {
 						if (part == null || part.isBlank()) continue;
-						RegionBannedPlayer b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
+						RegionBan b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
 						if (b != null) newBanned.add(b);
 					}
 
@@ -406,9 +406,9 @@ public final class YAML implements Provider {
 		}
 	}
 
-	private void batchInsertRegionBannedPlayers(List<RegionBannedPlayer> rows) throws Exception {
+	private void batchInsertRegionBannedPlayers(List<RegionBan> rows) throws Exception {
 		if (rows.isEmpty()) return;
-		for (RegionBannedPlayer b : rows) {
+		for (RegionBan b : rows) {
 			YamlConfiguration cfg = new YamlConfiguration();
 			cfg.set("id", b.getUniqueId());
 			cfg.set("regionId", b.getRegionId());
@@ -628,14 +628,14 @@ public final class YAML implements Provider {
 	}
 
 	@Override
-	public List<RegionBannedPlayer> importRegionBannedPlayers() throws Exception {
-		List<RegionBannedPlayer> list = new ArrayList<>();
+	public List<RegionBan> importRegionBannedPlayers() throws Exception {
+		List<RegionBan> list = new ArrayList<>();
 		File[] files = regionBannedPlayersFolder.listFiles((dir, name) -> name.startsWith("region_banned_player_") && name.endsWith(".yml"));
 		if (files == null) return list;
 
 		for (File file : files) {
 			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-			list.add(new RegionBannedPlayer(
+			list.add(new RegionBan(
 					cfg.getLong("id"),
 					cfg.getLong("regionId"),
 					UUID.fromString(Objects.requireNonNull(cfg.getString("playerId"))),
@@ -897,11 +897,11 @@ public final class YAML implements Provider {
 	}
 
 	@Override
-	public void exportRegionBannedPlayers(List<RegionBannedPlayer> bannedPlayers) throws Exception {
+	public void exportRegionBannedPlayers(List<RegionBan> bannedPlayers) throws Exception {
 		Set<Long> existingIds = scanExistingIds(regionBannedPlayersFolder, "region_banned_player_", ".yml");
 		Set<Long> cacheIds = new HashSet<>();
 
-		for (RegionBannedPlayer b : bannedPlayers) {
+		for (RegionBan b : bannedPlayers) {
 			long id = b.getUniqueId();
 			cacheIds.add(id);
 

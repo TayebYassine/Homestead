@@ -12,8 +12,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class StorageManager {
-	private static final Map<UUID, SharedStorage> storages = new ConcurrentHashMap<>();
-	private static final Map<UUID, Set<StorageMenu>> activeMenus = new ConcurrentHashMap<>();
+	private static final Map<Long, SharedStorage> STORAGES = new ConcurrentHashMap<>();
+	private static final Map<Long, Set<StorageMenu>> ACTIVE_MENUS = new ConcurrentHashMap<>();
 	private static Homestead plugin;
 	private static File storageFile;
 	private static FileConfiguration storageConfig;
@@ -35,8 +35,8 @@ public class StorageManager {
 		storageConfig = YamlConfiguration.loadConfiguration(storageFile);
 	}
 
-	public static SharedStorage getStorage(UUID regionId) {
-		return storages.computeIfAbsent(regionId, id -> {
+	public static SharedStorage getStorage(long regionId) {
+		return STORAGES.computeIfAbsent(regionId, id -> {
 			String data = storageConfig.getString("storages." + id.toString());
 			if (data != null && !data.isEmpty()) {
 				try {
@@ -49,44 +49,44 @@ public class StorageManager {
 		});
 	}
 
-	public static SharedStorage getExistingStorage(UUID regionId) {
-		return storages.get(regionId);
+	public static SharedStorage getExistingStorage(long regionId) {
+		return STORAGES.get(regionId);
 	}
 
-	public static boolean hasStorage(UUID regionId) {
-		return storages.containsKey(regionId) || storageConfig.contains("storages." + regionId.toString());
+	public static boolean hasStorage(long regionId) {
+		return STORAGES.containsKey(regionId) || storageConfig.contains("storages." + regionId);
 	}
 
-	public static SharedStorage createStorage(UUID regionId, int size) {
+	public static SharedStorage createStorage(long regionId, int size) {
 		SharedStorage storage = new SharedStorage(regionId, size);
-		storages.put(regionId, storage);
+		STORAGES.put(regionId, storage);
 		saveStorage(regionId);
 		return storage;
 	}
 
-	public static void replaceStorage(UUID regionId, SharedStorage newStorage) {
-		storages.put(regionId, newStorage);
+	public static void replaceStorage(long regionId, SharedStorage newStorage) {
+		STORAGES.put(regionId, newStorage);
 		saveStorage(regionId);
 		updateAllMenus(regionId);
 	}
 
-	public static void deleteStorage(UUID regionId) {
-		storages.remove(regionId);
-		storageConfig.set("storages." + regionId.toString(), null);
+	public static void deleteStorage(long regionId) {
+		STORAGES.remove(regionId);
+		storageConfig.set("storages." + regionId, null);
 		saveConfig();
 		closeAllMenus(regionId);
 	}
 
-	public static void saveStorage(UUID regionId) {
-		SharedStorage storage = storages.get(regionId);
+	public static void saveStorage(long regionId) {
+		SharedStorage storage = STORAGES.get(regionId);
 		if (storage != null) {
-			storageConfig.set("storages." + regionId.toString(), storage.serialize());
+			storageConfig.set("storages." + regionId, storage.serialize());
 			plugin.runAsyncTask(StorageManager::saveConfig);
 		}
 	}
 
 	public static void saveAll() {
-		for (Map.Entry<UUID, SharedStorage> entry : storages.entrySet()) {
+		for (Map.Entry<Long, SharedStorage> entry : STORAGES.entrySet()) {
 			storageConfig.set("storages." + entry.getKey().toString(), entry.getValue().serialize());
 		}
 		saveConfig();
@@ -100,20 +100,20 @@ public class StorageManager {
 		}
 	}
 
-	public static void registerMenu(UUID regionId, StorageMenu menu) {
-		activeMenus.computeIfAbsent(regionId, k -> ConcurrentHashMap.newKeySet()).add(menu);
+	public static void registerMenu(long regionId, StorageMenu menu) {
+		ACTIVE_MENUS.computeIfAbsent(regionId, k -> ConcurrentHashMap.newKeySet()).add(menu);
 	}
 
-	public static void unregisterMenu(UUID regionId, StorageMenu menu) {
-		Set<StorageMenu> menus = activeMenus.get(regionId);
+	public static void unregisterMenu(long regionId, StorageMenu menu) {
+		Set<StorageMenu> menus = ACTIVE_MENUS.get(regionId);
 		if (menus != null) {
 			menus.remove(menu);
-			if (menus.isEmpty()) activeMenus.remove(regionId);
+			if (menus.isEmpty()) ACTIVE_MENUS.remove(regionId);
 		}
 	}
 
-	public static void updateAllMenus(UUID regionId) {
-		Set<StorageMenu> menus = activeMenus.get(regionId);
+	public static void updateAllMenus(long regionId) {
+		Set<StorageMenu> menus = ACTIVE_MENUS.get(regionId);
 		if (menus == null || menus.isEmpty()) return;
 		List<StorageMenu> snapshot = new ArrayList<>(menus);
 		plugin.runSyncTask(() -> {
@@ -123,8 +123,8 @@ public class StorageManager {
 		});
 	}
 
-	public static void updateSlot(UUID regionId, int slot) {
-		Set<StorageMenu> menus = activeMenus.get(regionId);
+	public static void updateSlot(long regionId, int slot) {
+		Set<StorageMenu> menus = ACTIVE_MENUS.get(regionId);
 		if (menus == null || menus.isEmpty()) return;
 		List<StorageMenu> snapshot = new ArrayList<>(menus);
 		plugin.runSyncTask(() -> {
@@ -136,8 +136,8 @@ public class StorageManager {
 		});
 	}
 
-	public static void closeAllMenus(UUID regionId) {
-		Set<StorageMenu> menus = activeMenus.remove(regionId);
+	public static void closeAllMenus(long regionId) {
+		Set<StorageMenu> menus = ACTIVE_MENUS.remove(regionId);
 		if (menus != null) {
 			for (StorageMenu menu : new ArrayList<>(menus)) {
 				menu.forceClose();
@@ -146,8 +146,8 @@ public class StorageManager {
 	}
 
 	public static void closePlayerMenus(Player player) {
-		for (Iterator<Map.Entry<UUID, Set<StorageMenu>>> it = activeMenus.entrySet().iterator(); it.hasNext(); ) {
-			Map.Entry<UUID, Set<StorageMenu>> entry = it.next();
+		for (Iterator<Map.Entry<Long, Set<StorageMenu>>> it = ACTIVE_MENUS.entrySet().iterator(); it.hasNext(); ) {
+			Map.Entry<Long, Set<StorageMenu>> entry = it.next();
 			Set<StorageMenu> menus = entry.getValue();
 			for (Iterator<StorageMenu> menuIt = menus.iterator(); menuIt.hasNext(); ) {
 				StorageMenu menu = menuIt.next();

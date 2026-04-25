@@ -9,19 +9,19 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SharedStorage {
-	private final UUID regionId;
+	private final long regionId;
 	private final int size;
 	private final Map<Integer, ItemStack> items;
 	private final Object lock;
 
-	public SharedStorage(UUID regionId, int size) {
+	public SharedStorage(long regionId, int size) {
 		this.regionId = regionId;
 		this.size = size;
 		this.items = new HashMap<>();
 		this.lock = new Object();
 	}
 
-	public static SharedStorage deserialize(UUID regionId, String data) {
+	public static SharedStorage deserialize(long regionId, String data) {
 		try {
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
 			DataInputStream dataInput = new DataInputStream(inputStream);
@@ -41,7 +41,7 @@ public class SharedStorage {
 		}
 	}
 
-	public static SharedStorage createEmpty(UUID regionId) {
+	public static SharedStorage createEmpty(long regionId) {
 		return new SharedStorage(regionId, 54);
 	}
 
@@ -66,7 +66,7 @@ public class SharedStorage {
 		}
 	}
 
-	public UUID getRegionId() {
+	public long getRegionId() {
 		return regionId;
 	}
 

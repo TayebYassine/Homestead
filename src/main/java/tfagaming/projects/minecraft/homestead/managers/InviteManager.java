@@ -120,4 +120,45 @@ public final class InviteManager {
 			deleteInvite(invite.getUniqueId());
 		}
 	}
+
+	/**
+	 * Deletes all invites sent by a region that invited a specific player.
+	 * @param player The player
+	 */
+	public static void deleteInvitesOfPlayer(Region region, OfflinePlayer player) {
+		deleteInvitesOfPlayer(region.getUniqueId(), player.getUniqueId());
+	}
+
+	/**
+	 * Deletes all invites sent by a region that invited a specific player.
+	 * @param playerId The player UUID
+	 */
+	public static void deleteInvitesOfPlayer(long regionId, UUID playerId) {
+		for (RegionInvite invite : getInvitesOfPlayer(playerId)) {
+			if (invite.getRegionId() == regionId) {
+				deleteInvite(invite.getUniqueId());
+			}
+		}
+	}
+
+	/**
+	 * Checks if a player is invited by a region.
+	 * @param region The region
+	 * @param player The player
+	 * @return {@code true} if the player is banned, {@code false} otherwise.
+	 */
+	public static boolean isInvited(Region region, OfflinePlayer player) {
+		return isInvited(region.getUniqueId(), player);
+	}
+
+	/**
+	 * Checks if a player is invited by a region.
+	 * @param regionId The region ID
+	 * @param player The player
+	 * @return {@code true} if the player is banned, {@code false} otherwise.
+	 */
+	public static boolean isInvited(long regionId, OfflinePlayer player) {
+		return getInvitesOfRegion(regionId).stream()
+				.anyMatch(b -> b.getPlayerId().equals(player.getUniqueId()));
+	}
 }

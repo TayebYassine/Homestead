@@ -1,5 +1,7 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.economy;
 
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -21,7 +23,7 @@ public final class UpkeepUtility {
 	public static double getAmountToPay(Region region) {
 		double amountPerChunk = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("upkeep.per-chunk");
 
-		double price = amountPerChunk * region.getChunks().size();
+		double price = amountPerChunk * ChunkManager.getChunksOfRegion(region).size();
 		int reduction = LevelRewards.getUpkeepReductionByLevel(region);
 
 		return price - (price * (reduction / 100.0));
@@ -36,7 +38,7 @@ public final class UpkeepUtility {
 		double amountToPay = 0.0;
 		int chunksToRemove = 1;
 
-		for (int i = 0; i < region.getChunks().size(); i++) {
+		for (int i = 0; i < ChunkManager.getChunksOfRegion(region).size(); i++) {
 			if (amountToPay > region.getBank()) {
 				chunksToRemove++;
 			} else {

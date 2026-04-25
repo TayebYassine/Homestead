@@ -13,6 +13,7 @@ import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener.Selection;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -200,7 +201,7 @@ public class ClaimCommand extends CommandBuilder {
 			return false;
 		}
 
-		int currentChunks = region.getChunks().size();
+		int currentChunks = ChunkManager.getChunksOfRegion(region).size();
 		int maxChunks = Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION);
 		if (currentChunks + chunksToClaim.size() > maxChunks) {
 			Messages.send(player, 116);

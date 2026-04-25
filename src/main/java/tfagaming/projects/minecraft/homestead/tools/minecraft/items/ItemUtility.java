@@ -102,7 +102,14 @@ public final class ItemUtility {
 	}
 
 	public static ItemStack getPlayerHead(String displayName, List<String> lore, String texture) {
-		ItemStack item = getCustomHeadTexture(texture);
+		ItemStack item;
+
+		if (Homestead.isPaper() || Homestead.isFolia()) {
+			item = getCustomHeadTexture(texture);
+		} else {
+			item = getCustomHeadTextureLegacy(texture);
+		}
+
 		if (item.getType() != Material.PLAYER_HEAD) {
 			throw new IllegalStateException("Failed to create a valid Player Head!");
 		}
@@ -141,13 +148,37 @@ public final class ItemUtility {
 		ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 		SkullMeta meta = (SkullMeta) head.getItemMeta();
 		if (meta != null) {
-			meta.setOwnerProfile(getProfile("https://textures.minecraft.net/texture/" + texture));
+			meta.setPlayerProfile(getProfile("https://textures.minecraft.net/texture/" + texture));
 			head.setItemMeta(meta);
 		}
 		return head;
 	}
 
-	private static PlayerProfile getProfile(String url) {
+	private static ItemStack getCustomHeadTextureLegacy(String texture) {
+		ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+		SkullMeta meta = (SkullMeta) head.getItemMeta();
+		if (meta != null) {
+			meta.setOwnerProfile(getProfileLegacy("https://textures.minecraft.net/texture/" + texture));
+			head.setItemMeta(meta);
+		}
+		return head;
+	}
+
+	private static com.destroystokyo.paper.profile.PlayerProfile getProfile(String url) {
+		com.destroystokyo.paper.profile.PlayerProfile profile =
+				Bukkit.createProfile(UUID.randomUUID());
+
+		PlayerTextures textures = profile.getTextures();
+		try {
+			textures.setSkin(URI.create(url).toURL(), PlayerTextures.SkinModel.CLASSIC);
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Invalid texture URL: " + url, e);
+		}
+		profile.setTextures(textures);
+		return profile;
+	}
+
+	private static PlayerProfile getProfileLegacy(String url) {
 		PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID());
 		PlayerTextures textures = profile.getTextures();
 		try {

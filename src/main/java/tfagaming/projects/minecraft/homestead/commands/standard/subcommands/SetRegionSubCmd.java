@@ -425,7 +425,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				}
 
 				if (!PlayerUtility.isOperator(player)
-						&& !(region.isOwner(player) || region.isPlayerMember(player))) {
+						&& !(region.isOwner(player) || MemberManager.isMemberOfRegion(region, player))) {
 					Messages.send(player, 10);
 					return true;
 				}

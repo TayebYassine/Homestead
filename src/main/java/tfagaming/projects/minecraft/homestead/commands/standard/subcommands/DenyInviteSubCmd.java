@@ -49,7 +49,7 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		region.removePlayerInvite(player);
+		InviteManager.deleteInvitesOfPlayer(region, player);
 
 		Messages.send(player, 47, new Placeholder()
 				.add("{region}", region.getName())

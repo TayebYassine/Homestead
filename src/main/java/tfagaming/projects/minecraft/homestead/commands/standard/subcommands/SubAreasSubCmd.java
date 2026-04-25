@@ -386,7 +386,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							return true;
 						}
 
-						if (!region.isPlayerMember(target)) {
+						if (!MemberManager.isMemberOfRegion(region, target)) {
 							Messages.send(player, 171);
 							return true;
 						}
@@ -447,7 +447,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							return true;
 						}
 
-						SerializableMember member = subArea.getMember(target);
+						RegionMember member = subArea.getMember(target);
 
 						long flags = member.getFlags();
 						long flag = PlayerFlags.valueOf(flagInput);
@@ -535,7 +535,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 			Region region = TargetRegionSession.getRegion(player);
 
 			if (region != null) {
-				for (SerializableMember member : region.getMembers()) {
+				for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
 					OfflinePlayer bukkitMember = member.bukkit();
 
 					if (bukkitMember != null) {

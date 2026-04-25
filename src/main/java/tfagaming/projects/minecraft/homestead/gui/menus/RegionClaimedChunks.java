@@ -35,7 +35,7 @@ public final class RegionClaimedChunks {
 	private List<SerializableChunk> chunks;
 
 	public RegionClaimedChunks(Player player, Region region) {
-		this.chunks = region.getChunks();
+		this.chunks = ChunkManager.getChunksOfRegion(region);
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtility.getTitle(11), 9 * 5,
@@ -68,7 +68,7 @@ public final class RegionClaimedChunks {
 							return;
 						}
 
-						int totalForcedLoadedChunks = region.getChunks().stream().filter(SerializableChunk::isForceLoaded).toList().size();
+						int totalForcedLoadedChunks = ChunkManager.getChunksOfRegion(region).stream().filter(SerializableChunk::isForceLoaded).toList().size();
 						int maxForceLoadedChunks = Limits.getRegionLimit(region, Limits.LimitType.MAX_FORCE_LOADED_CHUNKS);
 
 						if (totalForcedLoadedChunks >= maxForceLoadedChunks && !chunk.isForceLoaded()) {
@@ -89,7 +89,7 @@ public final class RegionClaimedChunks {
 
 						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-						chunks = region.getChunks();
+						chunks = ChunkManager.getChunksOfRegion(region);
 						context.getInstance().setItems(getItems(player, region));
 					} else {
 						if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
@@ -108,10 +108,10 @@ public final class RegionClaimedChunks {
 
 						Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
-						int before = region.getChunks().size();
+						int before = ChunkManager.getChunksOfRegion(region).size();
 						ChunkManager.unclaimChunk(region.getUniqueId(), chunk.bukkit());
 
-						if (region.getChunks().size() < before) {
+						if (ChunkManager.getChunksOfRegion(region).size() < before) {
 							double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
 							if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
 						}
@@ -120,7 +120,7 @@ public final class RegionClaimedChunks {
 
 						ChunkBorder.show(player);
 
-						chunks = region.getChunks();
+						chunks = ChunkManager.getChunksOfRegion(region);
 						context.getInstance().setItems(getItems(player, region));
 					}
 				});

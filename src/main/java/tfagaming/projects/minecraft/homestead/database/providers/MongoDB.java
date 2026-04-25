@@ -121,7 +121,7 @@ public final class MongoDB implements Provider {
 		List<RegionLog> newLogs = new ArrayList<>();
 		List<RegionRate> newRates = new ArrayList<>();
 		List<RegionInvite> newInvites = new ArrayList<>();
-		List<RegionBannedPlayer> newBanned = new ArrayList<>();
+		List<RegionBan> newBanned = new ArrayList<>();
 		List<SubArea> newSubAreas = new ArrayList<>();
 		List<Level> newLevels = new ArrayList<>();
 		List<War> newWars = new ArrayList<>();
@@ -204,7 +204,7 @@ public final class MongoDB implements Provider {
 				if (bannedRaw != null && !bannedRaw.isEmpty()) {
 					for (String part : bannedRaw.split("\u00A7")) {
 						if (part == null || part.isBlank()) continue;
-						RegionBannedPlayer b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
+						RegionBan b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
 						if (b != null) newBanned.add(b);
 					}
 				}
@@ -423,9 +423,9 @@ public final class MongoDB implements Provider {
 		}
 	}
 
-	private void batchInsertRegionBannedPlayers(List<RegionBannedPlayer> rows) {
+	private void batchInsertRegionBannedPlayers(List<RegionBan> rows) {
 		if (rows.isEmpty()) return;
-		for (RegionBannedPlayer b : rows) {
+		for (RegionBan b : rows) {
 			Document doc = new Document("id", b.getUniqueId())
 					.append("regionId", b.getRegionId())
 					.append("playerId", b.getPlayerId().toString())
@@ -608,10 +608,10 @@ public final class MongoDB implements Provider {
 	}
 
 	@Override
-	public List<RegionBannedPlayer> importRegionBannedPlayers() throws Exception {
-		List<RegionBannedPlayer> list = new ArrayList<>();
+	public List<RegionBan> importRegionBannedPlayers() throws Exception {
+		List<RegionBan> list = new ArrayList<>();
 		for (Document doc : regionBannedPlayers().find()) {
-			list.add(new RegionBannedPlayer(
+			list.add(new RegionBan(
 					doc.getLong("id"),
 					doc.getLong("regionId"),
 					UUID.fromString(doc.getString("playerId")),
@@ -864,14 +864,14 @@ public final class MongoDB implements Provider {
 	}
 
 	@Override
-	public void exportRegionBannedPlayers(List<RegionBannedPlayer> bannedPlayers) throws Exception {
+	public void exportRegionBannedPlayers(List<RegionBan> bannedPlayers) throws Exception {
 		Set<Long> dbIds = new HashSet<>();
 		for (Document doc : regionBannedPlayers().find().projection(new Document("id", 1))) {
 			dbIds.add(doc.getLong("id"));
 		}
 
 		Set<Long> cacheIds = new HashSet<>();
-		for (RegionBannedPlayer b : bannedPlayers) {
+		for (RegionBan b : bannedPlayers) {
 			long id = b.getUniqueId();
 			cacheIds.add(id);
 

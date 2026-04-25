@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -81,7 +82,7 @@ public class PlayerEnterEndExitPortalListener implements Listener {
 			return;
 		}
 
-		Location targetLocation = region.getLocation().bukkit();
+		Location targetLocation = region.getLocation().toBukkit();
 
 		PlayerUtility.teleportPlayer(player, targetLocation);
 	}

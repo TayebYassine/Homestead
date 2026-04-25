@@ -200,7 +200,7 @@ public final class MySQL implements Provider {
 		List<RegionLog> newLogs = new ArrayList<>();
 		List<RegionRate> newRates = new ArrayList<>();
 		List<RegionInvite> newInvites = new ArrayList<>();
-		List<RegionBannedPlayer> newBanned = new ArrayList<>();
+		List<RegionBan> newBanned = new ArrayList<>();
 		List<SubArea> newSubAreas = new ArrayList<>();
 		List<Level> newLevels = new ArrayList<>();
 		List<War> newWars = new ArrayList<>();
@@ -270,7 +270,7 @@ public final class MySQL implements Provider {
 					});
 
 					LegacyParsers.splitAndParse(rs.getString("bannedPlayers"), "§", part -> {
-						RegionBannedPlayer b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
+						RegionBan b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
 						if (b != null) newBanned.add(b);
 					});
 
@@ -539,13 +539,13 @@ public final class MySQL implements Provider {
 		}
 	}
 
-	private void batchInsertRegionBannedPlayers(List<RegionBannedPlayer> rows) throws SQLException {
+	private void batchInsertRegionBannedPlayers(List<RegionBan> rows) throws SQLException {
 		if (rows.isEmpty()) return;
 		String sql =
 				"INSERT IGNORE INTO `" + TABLE_PREFIX + "region_banned_players` " +
 						"(id,regionId,playerId,reason,bannedAt) VALUES (?,?,?,?,?)";
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
-			for (RegionBannedPlayer b : rows) {
+			for (RegionBan b : rows) {
 				ps.setLong(1, b.getUniqueId());
 				ps.setLong(2, b.getRegionId());
 				ps.setString(3, b.getPlayerId().toString());
@@ -767,12 +767,12 @@ public final class MySQL implements Provider {
 	}
 
 	@Override
-	public List<RegionBannedPlayer> importRegionBannedPlayers() throws Exception {
-		List<RegionBannedPlayer> list = new ArrayList<>();
+	public List<RegionBan> importRegionBannedPlayers() throws Exception {
+		List<RegionBan> list = new ArrayList<>();
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery("SELECT * FROM `" + TABLE_PREFIX + "region_banned_players`")) {
 			while (rs.next()) {
-				list.add(new RegionBannedPlayer(
+				list.add(new RegionBan(
 						rs.getLong("id"),
 						rs.getLong("regionId"),
 						UUID.fromString(rs.getString("playerId")),
@@ -992,7 +992,7 @@ public final class MySQL implements Provider {
 	}
 
 	@Override
-	public void exportRegionBannedPlayers(List<RegionBannedPlayer> bannedPlayers) throws Exception {
+	public void exportRegionBannedPlayers(List<RegionBan> bannedPlayers) throws Exception {
 		upsertSimple(
 				"SELECT id FROM `" + TABLE_PREFIX + "region_banned_players`",
 				"INSERT INTO `" + TABLE_PREFIX + "region_banned_players` " +
@@ -1140,7 +1140,7 @@ public final class MySQL implements Provider {
 						: (row instanceof RegionLog l) ? l.getUniqueId()
 						: (row instanceof RegionRate r) ? r.getUniqueId()
 						: (row instanceof RegionInvite i) ? i.getUniqueId()
-						: (row instanceof RegionBannedPlayer b) ? b.getUniqueId()
+						: (row instanceof RegionBan b) ? b.getUniqueId()
 						: (row instanceof SubArea s) ? s.getUniqueId()
 						: (row instanceof Level l) ? l.getUniqueId()
 						: -1L;

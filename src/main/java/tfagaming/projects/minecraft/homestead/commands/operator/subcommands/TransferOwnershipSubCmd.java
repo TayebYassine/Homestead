@@ -7,8 +7,12 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -53,19 +57,12 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.isPlayerBanned(target)) {
-			region.unbanPlayer(target);
-		}
+		BannedPlayerManager.unbanPlayer(region, target);
 
 		region.setOwner(target);
 
-		if (region.isPlayerMember(target)) {
-			region.removeMember(target);
-		}
-
-		if (region.isPlayerInvited(target)) {
-			region.removePlayerInvite(target);
-		}
+		MemberManager.removeMemberFromRegion(target, region);
+		InviteManager.deleteInvitesOfPlayer(region, target);
 
 		Messages.send(sender, 193, new Placeholder()
 				.add("{region}", region.getName())

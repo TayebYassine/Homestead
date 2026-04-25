@@ -37,6 +37,8 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
@@ -87,7 +89,7 @@ public final class RegionProtectionListener implements Listener {
 						if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
 							entity.remove();
 						}
-					} else if (!fromRegion.getUniqueId().equals(toRegion.getUniqueId())) {
+					} else if (fromRegion.getUniqueId() != toRegion.getUniqueId()) {
 						if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
 							entity.remove();
 						}
@@ -1545,7 +1547,7 @@ public final class RegionProtectionListener implements Listener {
 				if (toRegion != null && !toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_MINECARTS)) {
 					event.getVehicle().remove();
 				}
-			} else if (toRegion != null && !fromRegion.getUniqueId().equals(toRegion.getUniqueId())) {
+			} else if (toRegion != null && fromRegion.getUniqueId() != toRegion.getUniqueId()) {
 				if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_MINECARTS)) {
 					event.getVehicle().remove();
 				}

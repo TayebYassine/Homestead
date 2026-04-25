@@ -5,7 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -28,7 +30,7 @@ public class PlayerJoinListener implements Listener {
 		long unreadLogs = 0;
 
 		for (Region region : RegionManager.getRegionsOwnedByPlayer(player)) {
-			unreadLogs += region.getLogs().stream().filter(log -> !log.isRead()).count();
+			unreadLogs += LogManager.getLogs(region).stream().filter(log -> !log.isRead()).count();
 		}
 
 		Messages.send(player, Formatter.applyPlaceholders(message, new Placeholder()

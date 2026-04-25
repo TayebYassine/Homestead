@@ -29,7 +29,7 @@ public final class SubAreaMenu {
 		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
 		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled");
 
-		SerializableRent rent = subArea.getRent();
+		SeRent rent = subArea.getRent();
 
 		Placeholder placeholder = new Placeholder()
 				.add("{subarea}", subArea.getName())

@@ -203,4 +203,26 @@ public final class MemberManager {
 		return getMembersOfSubArea(subAreaId).stream()
 				.anyMatch(b -> b.getPlayerId().equals(player.getUniqueId()));
 	}
+
+	public static RegionMember getMemberOfRegion(Region region, OfflinePlayer player) {
+		return getMemberOfRegion(region.getUniqueId(), player);
+	}
+
+	public static RegionMember getMemberOfRegion(long regionId, OfflinePlayer player) {
+		return getMembersOfRegion(regionId).stream()
+				.filter(b -> b.getPlayerId().equals(player.getUniqueId()))
+				.findFirst()
+				.orElse(null);
+	}
+
+	public static RegionMember getMemberOfSubArea(SubArea subArea, OfflinePlayer player) {
+		return getMemberOfSubArea(subArea.getUniqueId(), player);
+	}
+
+	public static RegionMember getMemberOfSubArea(long subAreaId, OfflinePlayer player) {
+		return getMembersOfSubArea(subAreaId).stream()
+				.filter(b -> b.getPlayerId().equals(player.getUniqueId()))
+				.findFirst()
+				.orElse(null);
+	}
 }

@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.models;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,18 @@ public final class War {
 
 	public List<Long> getRegionIds() {
 		return new ArrayList<>(regionIds);
+	}
+
+	public List<Region> getRegions() {
+		List<Region> regions = new ArrayList<>();
+
+		for (long id : getRegionIds()) {
+			Region region = RegionManager.findRegion(id);
+
+			if (region != null) regions.add(region);
+		}
+
+		return regions;
 	}
 
 	public void setRegionIds(List<Long> regionIds) {

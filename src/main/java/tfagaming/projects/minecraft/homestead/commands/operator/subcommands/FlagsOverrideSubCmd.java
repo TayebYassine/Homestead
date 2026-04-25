@@ -8,9 +8,12 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -77,11 +80,11 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 		long flag = PlayerFlags.valueOf(flagInput);
 
 		for (Region region : RegionManager.getAll()) {
-			if (!region.isPlayerMember(target)) {
+			if (!MemberManager.isMemberOfRegion(region, target)) {
 				continue;
 			}
 
-			long flags = region.getMember(target).getFlags();
+			long flags = MemberManager.getMemberOfRegion(region, target).getPlayerFlags();
 			boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
 			if (args.length > 3) {
@@ -92,7 +95,8 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 					? FlagsCalculator.removeFlag(flags, flag)
 					: FlagsCalculator.addFlag(flags, flag);
 
-			region.setMemberFlags(region.getMember(target), newFlags);
+			RegionMember member = MemberManager.getMemberOfRegion(region, target);
+			member.setPlayerFlags(newFlags);
 
 			Messages.send(sender, 43, new Placeholder()
 					.add("{region}", region.getName())
@@ -198,8 +202,8 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 		} else if (args.length == 2 && args[0].equalsIgnoreCase("member")) {
 			if (player != null) {
 				for (Region region : RegionManager.getAll()) {
-					for (SerializableMember member : region.getMembers()) {
-						OfflinePlayer bukkitMember = member.bukkit();
+					for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
+						OfflinePlayer bukkitMember = member.getPlayer();
 						if (bukkitMember != null) {
 							suggestions.add(bukkitMember.getName());
 						}

@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RegionIcon {
+public final class RegionIcon {
 	private static final Map<String, BufferedImage> icons = new HashMap<>();
 	private static BufferedImage defaultIcon;
 
@@ -37,9 +37,9 @@ public class RegionIcon {
 	public static void downloadAllIcons() {
 		List<String> allIcons = getAllIcons();
 		int totalIcons = allIcons.size();
-		int downloadedCount = 0;
+		int downloaded = 0;
 
-		Logger.warning("[Dynamic Maps] Downloaded icons status: 0% (0 / " + totalIcons + ")");
+		Logger.info("[Dynamic Maps] Downloading icons... 0% (0 / " + totalIcons + ")");
 
 		defaultIcon = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.default"));
 
@@ -51,12 +51,12 @@ public class RegionIcon {
 			String url = Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.list." + icon);
 
 			if (url != null) {
-				BufferedImage downloaded = downloadIcon(url);
+				BufferedImage bufferedImage = downloadIcon(url);
 
-				icons.putIfAbsent(icon, downloaded);
+				icons.putIfAbsent(icon, bufferedImage);
 
-				downloadedCount++;
-				Logger.warning("[Dynamic Maps] Downloaded icons status: " + (int) ((downloadedCount / (float) totalIcons) * 100) + "% (" + downloadedCount + " / " + totalIcons + ")");
+				downloaded++;
+				Logger.info("[Dynamic Maps] Downloading icons... " + (int) ((downloaded / (float) totalIcons) * 100) + "% (" + downloaded + " / " + totalIcons + ")");
 			}
 		}
 	}
@@ -70,7 +70,7 @@ public class RegionIcon {
 
 			return ImageIO.read(connection.getInputStream());
 		} catch (Exception e) {
-			Logger.warning("[Dynamic Maps] Failed to download the icon! URL: " + imageUrl);
+			Logger.warning("[Dynamic Maps] Unable to download an icon, URL: " + imageUrl);
 			return null;
 		}
 	}

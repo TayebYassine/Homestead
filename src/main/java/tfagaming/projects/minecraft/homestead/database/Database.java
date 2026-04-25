@@ -6,7 +6,6 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
-import tfagaming.projects.minecraft.homestead.models.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -77,7 +76,7 @@ public final class Database {
 		Homestead.regionChunkCache.putAll(instance.importRegionChunks());
 		Homestead.regionLogCache.putAll(instance.importRegionLogs());
 		Homestead.regionInviteCache.putAll(instance.importRegionInvites());
-		Homestead.regionBannedPlayerCache.putAll(instance.importRegionBannedPlayers());
+		Homestead.regionBanCache.putAll(instance.importRegionBannedPlayers());
 		Homestead.regionRateCache.putAll(instance.importRegionRates());
 		Homestead.subAreasCache.putAll(instance.importSubAreas());
 		Homestead.warsCache.putAll(instance.importWars());
@@ -94,7 +93,7 @@ public final class Database {
 		instance.exportRegionChunks(Homestead.regionChunkCache.getAll());
 		instance.exportRegionLogs(Homestead.regionLogCache.getAll());
 		instance.exportRegionInvites(Homestead.regionInviteCache.getAll());
-		instance.exportRegionBannedPlayers(Homestead.regionBannedPlayerCache.getAll());
+		instance.exportRegionBannedPlayers(Homestead.regionBanCache.getAll());
 		instance.exportRegionRates(Homestead.regionRateCache.getAll());
 		instance.exportSubAreas(Homestead.subAreasCache.getAll());
 		instance.exportWars(Homestead.warsCache.getAll());

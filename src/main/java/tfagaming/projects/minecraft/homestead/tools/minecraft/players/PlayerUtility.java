@@ -10,10 +10,12 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
-import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
+import tfagaming.projects.minecraft.homestead.models.War;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -165,30 +167,30 @@ public final class PlayerUtility {
 	 * 2. Otherwise, if the player is a member, the member flags are used.<br>
 	 * 3. Otherwise, the region's global player flags are used.<br>
 	 *
-	 * @param regionId The region UUID
+	 * @param regionId The region ID
 	 * @param player The player to fetch
 	 * @param flag The PlayerFlags bit to fetch
 	 * @return {@code true} If the action is allowed; {@code false} otherwise
 	 */
-	public static boolean hasPermissionFlag(UUID regionId, Player player, long flag, boolean notify) {
+	public static boolean hasPermissionFlag(long regionId, Player player, long flag, boolean notify) {
 		Region region = RegionManager.findRegion(regionId);
 		if (region == null) return true;
 
 		boolean response;
 
-		SerializableRent rent = region.getRent();
+		SeRent rent = region.getRent();
 		War war = WarManager.findWarByRegion(regionId);
 
-		if (rent != null && rent.getPlayerId() != null
-				&& rent.getPlayerId().equals(player.getUniqueId())
+		if (rent != null && rent.getRenterId() != null
+				&& rent.getRenterId().equals(player.getUniqueId())
 				&& !RENT_FLAGS_SET.contains(flag)) {
 			response = true;
 		} else if (WarManager.isPlayerInWar(player, war)
 				&& WAR_FLAGS_SET.contains(flag)) {
 			response = true;
-		} else if (region.isPlayerMember(player)) {
-			SerializableMember member = region.getMember(player);
-			response = FlagsCalculator.isFlagSet(member.getFlags(), flag);
+		} else if (MemberManager.isMemberOfRegion(regionId, player)) {
+			RegionMember member = MemberManager.getMemberOfRegion(regionId, player);
+			response = FlagsCalculator.isFlagSet(member.getPlayerFlags(), flag);
 		} else {
 			response = FlagsCalculator.isFlagSet(region.getPlayerFlags(), flag);
 		}
@@ -203,27 +205,27 @@ public final class PlayerUtility {
 		return response;
 	}
 
-	public static boolean hasPermissionFlag(UUID regionId, UUID subAreaId,
+	public static boolean hasPermissionFlag(long regionId, long subAreaId,
 											Player player, long flag, boolean notify) {
 		Region region = RegionManager.findRegion(regionId);
 		if (region == null) return true;
 
-		SubArea subArea = subAreaId != null ? SubAreaManager.findSubArea(subAreaId) : null;
+		SubArea subArea = SubAreaManager.findSubArea(subAreaId);
 
 		if (subArea != null) {
-			SerializableRent subRent = subArea.getRent();
-			if (subRent != null && subRent.getPlayerId() != null
-					&& subRent.getPlayerId().equals(player.getUniqueId())
+			SeRent subRent = subArea.getRent();
+			if (subRent != null && subRent.getRenterId() != null
+					&& subRent.getRenterId().equals(player.getUniqueId())
 					&& !RENT_FLAGS_SET.contains(flag)) {
 				return true;
 			}
 
-			if (subArea.isPlayerMember(player)) {
-				SerializableMember member = subArea.getMember(player);
-				return FlagsCalculator.isFlagSet(member.getFlags(), flag);
+			if (MemberManager.isMemberOfSubArea(subAreaId, player)) {
+				RegionMember member = MemberManager.getMemberOfSubArea(subAreaId, player);
+				return FlagsCalculator.isFlagSet(member.getPlayerFlags(), flag);
 			}
 
-			return FlagsCalculator.isFlagSet(subArea.getFlags(), flag);
+			return FlagsCalculator.isFlagSet(subArea.getPlayerFlags(), flag);
 		}
 
 		return hasPermissionFlag(regionId, player, flag, notify);
@@ -240,7 +242,7 @@ public final class PlayerUtility {
 				MESSAGE_COOLDOWN_SECONDS);
 	}
 
-	public static boolean hasControlRegionPermissionFlag(UUID regionId, Player player, long flag) {
+	public static boolean hasControlRegionPermissionFlag(long regionId, Player player, long flag) {
 		Region region = RegionManager.findRegion(regionId);
 
 		if (region != null) {
@@ -248,9 +250,9 @@ public final class PlayerUtility {
 
 			boolean response = true;
 
-			if (region.isPlayerMember(player)) {
-				SerializableMember member = region.getMember(player);
-				response = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), flag);
+			if (MemberManager.isMemberOfRegion(region, player)) {
+				RegionMember member = MemberManager.getMemberOfRegion(region, player);
+				response = FlagsCalculator.isFlagSet(member.getControlFlags(), flag);
 			}
 
 			if (!response && !COOLDOWN.contains(player.getUniqueId())) {
@@ -279,9 +281,9 @@ public final class PlayerUtility {
 				return null;
 			}
 		} catch (Exception e) {
-			Logger.error("Unable to find a service provider for permissions and groups, using the default group \"default\".");
-			Logger.error("Please install a plugin that supports permissions and groups. We recommend installing the LuckPerms plugin.");
-			Logger.error("To ignore this warning, change the limits method to \"static\" in this setting: limits.method");
+			Logger.error("[Services] Unable to find a service provider for permissions and groups, using the default group \"default\".");
+			Logger.error("[Services] Please install a plugin that supports permissions and groups. We recommend installing the LuckPerms plugin.");
+			Logger.error("[Services] To ignore this warning, change the limits method to \"static\" in this setting: limits.method");
 		}
 
 		return null;

@@ -89,8 +89,8 @@ public final class TopRegionsMenu {
 					.add("{region-bank}", Formatter.getBalance(region.getBank()))
 					.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
 					.add("{region-rating}", Formatter.getRating(RegionManager.getAverageRating(region)))
-					.add("{region-members}", String.valueOf(region.getMembers().size()))
-					.add("{region-chunks}", String.valueOf(region.getChunks().size()));
+					.add("{region-members}", String.valueOf(MemberManager.getMembersOfRegion(region).size()))
+					.add("{region-chunks}", String.valueOf(ChunkManager.getChunksOfRegion(region).size()));
 
 			items.add(MenuUtility.getButton(55, placeholder));
 		}

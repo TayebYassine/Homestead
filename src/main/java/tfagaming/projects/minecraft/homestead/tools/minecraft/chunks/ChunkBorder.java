@@ -7,6 +7,8 @@ import tfagaming.projects.minecraft.homestead.borders.ChunkParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.borders.SelectedAreaParticlesSpawner;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -61,7 +63,7 @@ public final class ChunkBorder {
 					new ChunkParticlesSpawner(player);
 				} else {
 					if (subArea != null) {
-						new SelectedAreaParticlesSpawner(player, subArea.getFirstPoint(), subArea.getSecondPoint());
+						new SelectedAreaParticlesSpawner(player, subArea.getPoint1(), subArea.getPoint2());
 					} else {
 						new ChunkParticlesSpawner(player);
 					}
@@ -75,7 +77,7 @@ public final class ChunkBorder {
 
 				if (region != null) {
 					if (subArea != null) {
-						new SelectedAreaParticlesSpawner(player, subArea.getFirstPoint(), subArea.getSecondPoint());
+						new SelectedAreaParticlesSpawner(player, subArea.getPoint1(), subArea.getPoint2());
 					} else {
 						BorderBlockRenderer.show(player, region);
 					}

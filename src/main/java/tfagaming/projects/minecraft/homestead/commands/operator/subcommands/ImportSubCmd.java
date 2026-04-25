@@ -21,8 +21,10 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -89,9 +91,9 @@ public class ImportSubCmd extends SubCommandBuilder {
 
 				ClaimPermission permission = claim.getPermission(player.getUniqueId().toString());
 
-				if (!region.isPlayerMember(player) && permission != null) {
-					region.addMember(player);
-					region.setMemberFlags(region.getMember(player), region.getPlayerFlags());
+				if (!MemberManager.isMemberOfRegion(region, player) && permission != null) {
+					MemberManager.addMemberToRegion(player, region);
+					MemberManager.getMemberOfRegion(region, player).setPlayerFlags(region.getPlayerFlags());
 				}
 			}
 
@@ -138,9 +140,9 @@ public class ImportSubCmd extends SubCommandBuilder {
 					continue;
 				}
 
-				if (!region.isPlayerMember(friend)) {
-					region.addMember(friend);
-					region.setMemberFlags(region.getMember(friend), region.getPlayerFlags());
+				if (!MemberManager.isMemberOfRegion(region, friend)) {
+					MemberManager.addMemberToRegion(friend, region);
+					MemberManager.getMemberOfRegion(region, friend).setPlayerFlags(region.getPlayerFlags());
 				}
 			}
 
@@ -233,9 +235,9 @@ public class ImportSubCmd extends SubCommandBuilder {
 					continue;
 				}
 
-				if (!region.isPlayerMember(trusted)) {
-					region.addMember(trusted);
-					region.setMemberFlags(region.getMember(trusted), region.getPlayerFlags());
+				if (!MemberManager.isMemberOfRegion(region, trusted)) {
+					MemberManager.addMemberToRegion(trusted, region);
+					MemberManager.getMemberOfRegion(region, trusted).setPlayerFlags(region.getPlayerFlags());
 				}
 			}
 

@@ -1,14 +1,14 @@
 package tfagaming.projects.minecraft.homestead.borders;
 
 import com.google.common.collect.Sets;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 
 import java.util.ArrayList;
@@ -18,29 +18,29 @@ import java.util.UUID;
 
 public final class BorderBlockRenderer {
 	public static void show(Player player, Region region) {
-		removeAll(player);                                       // clean old
+		removeAll(player);
 		Set<FakeBorderRegistry.FakeBorderBlock> batch = Sets.newHashSet();
 
 		World world = player.getWorld();
-		for (SerializableChunk sc : region.getChunks()) {
+		for (RegionChunk sc : ChunkManager.getChunksOfRegion(region)) {
 			if (!world.getUID().equals(sc.getWorldId())) continue;
 
 			int cx = sc.getX();
 			int cz = sc.getZ();
 
-			if (!isChunkInRegion(region, world, cx, cz - 1)) {
+			if (isChunkNotInRegion(region, world, cx, cz - 1)) {
 				addBorderColumn(batch, player, region, world, cx, cz, Direction.NORTH);
 			}
 
-			if (!isChunkInRegion(region, world, cx, cz + 1)) {
+			if (isChunkNotInRegion(region, world, cx, cz + 1)) {
 				addBorderColumn(batch, player, region, world, cx, cz, Direction.SOUTH);
 			}
 
-			if (!isChunkInRegion(region, world, cx - 1, cz)) {
+			if (isChunkNotInRegion(region, world, cx - 1, cz)) {
 				addBorderColumn(batch, player, region, world, cx, cz, Direction.WEST);
 			}
 
-			if (!isChunkInRegion(region, world, cx + 1, cz)) {
+			if (isChunkNotInRegion(region, world, cx + 1, cz)) {
 				addBorderColumn(batch, player, region, world, cx, cz, Direction.EAST);
 			}
 		}
@@ -54,7 +54,7 @@ public final class BorderBlockRenderer {
 
 		FakeBorderRegistry.REGION_MAP.values()
 				.forEach(set -> set.forEach(b -> {
-					if (b.viewerUUID().equals(viewer)) remove.add(b);
+					if (b.viewerId().equals(viewer)) remove.add(b);
 				}));
 
 		remove.forEach(b -> player.sendBlockChange(b.loc(), b.originalData()));
@@ -62,23 +62,23 @@ public final class BorderBlockRenderer {
 		remove.forEach(b -> {
 			FakeBorderRegistry.LOC_MAP.remove(b.loc());
 			Set<FakeBorderRegistry.FakeBorderBlock> regSet =
-					FakeBorderRegistry.REGION_MAP.get(b.regionUUID());
+					FakeBorderRegistry.REGION_MAP.get(b.regionId());
 			if (regSet != null) regSet.remove(b);
 		});
 	}
 
-	public static void removeRegion(UUID regionUUID) {
+	public static void removeRegion(long regionId) {
 		Set<FakeBorderRegistry.FakeBorderBlock> blocks =
-				FakeBorderRegistry.removeRegion(regionUUID);
+				FakeBorderRegistry.removeRegion(regionId);
 		blocks.forEach(b -> {
-			Player viewer = Bukkit.getPlayer(b.viewerUUID());
+			Player viewer = Bukkit.getPlayer(b.viewerId());
 			if (viewer != null && viewer.isOnline())
 				viewer.sendBlockChange(b.loc(), b.originalData());
 		});
 	}
 
-	private static boolean isChunkInRegion(Region region, World world, int cx, int cz) {
-		return region.getChunks().contains(new SerializableChunk(world.getUID(), cx, cz));
+	private static boolean isChunkNotInRegion(Region region, World world, int cx, int cz) {
+		return !ChunkManager.isChunkClaimedByRegion(region.getUniqueId(), ChunkManager.getFromLocation(world, cx, cz));
 	}
 
 	private static void addBorderColumn(Set<FakeBorderRegistry.FakeBorderBlock> batch,

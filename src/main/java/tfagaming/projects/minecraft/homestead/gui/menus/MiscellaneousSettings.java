@@ -223,8 +223,8 @@ public final class MiscellaneousSettings {
 				Cooldown.startCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP);
 				region.setOwner(targetPlayer);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				if (region.isPlayerMember(targetPlayer)) region.removeMember(targetPlayer);
-				if (region.isPlayerInvited(targetPlayer)) region.removePlayerInvite(targetPlayer);
+				if (MemberManager.isMemberOfRegion(region, targetPlayer)) region.removeMember(targetPlayer);
+				if (region.isPlayerInvited(targetPlayer)) InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
 				RegionTransferOwnershipEvent _event = new RegionTransferOwnershipEvent(region, player, targetPlayer);
 				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -240,7 +240,7 @@ public final class MiscellaneousSettings {
 					Messages.send(player, 30);
 					return false;
 				}
-				if (region.isPlayerBanned(target)) {
+				if (BannedPlayerManager.isBanned(region, target)) {
 					Messages.send(player, 32, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}

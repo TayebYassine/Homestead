@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public final class AutoClaimSession {
-	public static final HashSet<UUID> SESSIONS = new HashSet<UUID>();
+	public static final HashSet<UUID> SESSIONS = new HashSet<>();
 
 	private AutoClaimSession() {
 

@@ -17,10 +17,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
-import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
-import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -149,7 +150,7 @@ public final class CustomSignsListener implements Listener {
 		setEventLine(event, 2, "");
 		setEventLine(event, 3, "");
 
-		region.setWelcomeSign(new SerializableLocation(event.getBlock().getLocation()));
+		region.setWelcomeSign(new SeLocation(event.getBlock().getLocation()));
 		return false;
 	}
 
@@ -247,7 +248,7 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
-			if (region.isOwner(player) || region.isPlayerBanned(player) || region.getRent() != null) {
+			if (region.isOwner(player) || BannedPlayerManager.isBanned(region, player) || region.getRent() != null) {
 				Messages.send(player, 30);
 				return;
 			}
@@ -262,7 +263,7 @@ public final class CustomSignsListener implements Listener {
 			PlayerBank.withdraw(player, price);
 			PlayerBank.deposit(region.getOwner(), price);
 
-			SerializableRent rent = new SerializableRent(player, price, rentEnd);
+			SeRent rent = new SeRent(player, rentEnd, price);
 
 			SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(signBlock.getLocation());
 
@@ -308,7 +309,7 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
-			if (region.isOwner(player) || region.isPlayerBanned(player)) {
+			if (region.isOwner(player) || BannedPlayerManager.isBanned(region, player)) {
 				Messages.send(player, 30);
 				return;
 			}
@@ -326,13 +327,8 @@ public final class CustomSignsListener implements Listener {
 			region.setOwner(player);
 			signBlock.breakNaturally();
 
-			if (region.isPlayerMember(player)) {
-				region.removeMember(player);
-			}
-
-			if (region.isPlayerInvited(player)) {
-				region.removePlayerInvite(player);
-			}
+			MemberManager.removeMemberFromRegion(region.getOwner(), region);
+			InviteManager.deleteInvitesOfPlayer(region, player);
 
 			Messages.send(player, 124, new Placeholder()
 					.add("{region}", region.getName())

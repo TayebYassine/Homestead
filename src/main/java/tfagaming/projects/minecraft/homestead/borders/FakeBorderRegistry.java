@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class FakeBorderRegistry {
-	public static final Map<UUID, Set<FakeBorderBlock>> REGION_MAP = new ConcurrentHashMap<>();
+	public static final Map<Long, Set<FakeBorderBlock>> REGION_MAP = new ConcurrentHashMap<>();
 
 	public static final Map<Location, FakeBorderBlock> LOC_MAP = new ConcurrentHashMap<>();
 
@@ -17,21 +17,21 @@ public final class FakeBorderRegistry {
 	}
 
 	public static void add(FakeBorderBlock block) {
-		REGION_MAP.computeIfAbsent(block.regionUUID(), k -> ConcurrentHashMap.newKeySet())
+		REGION_MAP.computeIfAbsent(block.regionId(), k -> ConcurrentHashMap.newKeySet())
 				.add(block);
 		LOC_MAP.put(block.loc(), block);
 	}
 
-	public static Set<FakeBorderBlock> getRegionBlocks(UUID regionUUID) {
-		return REGION_MAP.getOrDefault(regionUUID, Set.of());
+	public static Set<FakeBorderBlock> getRegionBlocks(long regionId) {
+		return REGION_MAP.getOrDefault(regionId, Set.of());
 	}
 
 	public static FakeBorderBlock getByLocation(Location loc) {
 		return LOC_MAP.get(loc);
 	}
 
-	public static Set<FakeBorderBlock> removeRegion(UUID regionUUID) {
-		Set<FakeBorderBlock> set = REGION_MAP.remove(regionUUID);
+	public static Set<FakeBorderBlock> removeRegion(long regionId) {
+		Set<FakeBorderBlock> set = REGION_MAP.remove(regionId);
 		if (set != null) {
 			set.forEach(b -> LOC_MAP.remove(b.loc()));
 		}
@@ -40,7 +40,7 @@ public final class FakeBorderRegistry {
 
 	public record FakeBorderBlock(Location loc,
 								  BlockData originalData,
-								  UUID regionUUID,
-								  UUID viewerUUID) {
+								  long regionId,
+								  UUID viewerId) {
 	}
 }

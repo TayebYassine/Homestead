@@ -33,7 +33,7 @@ public class FlySubCmd extends SubCommandBuilder {
 		Chunk chunk = player.getLocation().getChunk();
 		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-		if (region == null || (!PlayerUtility.isOperator(player) && !(region.isOwner(player) || region.isPlayerMember(player)))) {
+		if (region == null || (!PlayerUtility.isOperator(player) && !(region.isOwner(player) || MemberManager.isMemberOfRegion(region, player)))) {
 			Messages.send(player, 207);
 			return true;
 		}

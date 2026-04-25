@@ -13,7 +13,7 @@ public final class RegionPlayersManagement {
 		Menu gui = new Menu(MenuUtility.getTitle(4), 9 * 3);
 
 		Placeholder placeholder = new Placeholder()
-				.add("{region-members}", region.getMembers().size())
+				.add("{region-members}", MemberManager.getMembersOfRegion(region).size())
 				.add("{region-members-max}", Limits.getRegionLimit(region, Limits.LimitType.MEMBERS_PER_REGION))
 				.add("{region-banned-players}", region.getBannedPlayers().size())
 				.add("{region-invited-players}", region.getInvitedPlayers().size());

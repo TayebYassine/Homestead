@@ -23,7 +23,7 @@ import java.util.*;
 public final class RegionMemberControlFlags {
 	
 
-	public RegionMemberControlFlags(Player player, Region region, SerializableMember member) {
+	public RegionMemberControlFlags(Player player, Region region, RegionMember member) {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (String flagString : RegionControlFlags.getFlags()) {

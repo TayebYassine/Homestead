@@ -46,7 +46,7 @@ public final class RegionPlayersInvited {
 
 					if (!region.isPlayerInvited(invitedPlayer)) return;
 
-					region.removePlayerInvite(invitedPlayer);
+					InviteManager.deleteInvitesOfPlayer(region, invitedPlayer);
 					invitedPlayers = region.getInvitedPlayers();
 					context.getInstance().setItems(getItems(player, region));
 				});
@@ -70,8 +70,8 @@ public final class RegionPlayersInvited {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
 				if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
-					region.removePlayerInvite(targetPlayer);
-					region.addMember(targetPlayer);
+					InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
+					InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
 					RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, targetPlayer);
 					Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -106,11 +106,11 @@ public final class RegionPlayersInvited {
 						RegionControlFlags.TRUST_PLAYERS)) {
 					return false;
 				}
-				if (region.isPlayerBanned(target)) {
+				if (BannedPlayerManager.isBanned(region, target)) {
 					Messages.send(player, 74);
 					return false;
 				}
-				if (region.isPlayerMember(target)) {
+				if (MemberManager.isMemberOfRegion(region, target)) {
 					Messages.send(player, 48, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}
@@ -123,7 +123,7 @@ public final class RegionPlayersInvited {
 					return false;
 				}
 
-				SerializableRent rent = region.getRent();
+				SeRent rent = region.getRent();
 				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
 					Messages.send(player, 196);
 					return false;

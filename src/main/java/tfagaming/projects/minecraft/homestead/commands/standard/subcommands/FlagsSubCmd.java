@@ -87,7 +87,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!region.isPlayerMember(target)) {
+				if (!MemberManager.isMemberOfRegion(region, target)) {
 					Messages.send(player, 40, new Placeholder()
 							.add("{region}", region.getName())
 							.add("{playername}", target.getName())
@@ -112,7 +112,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				long flags = region.getMember(target).getFlags();
+				long flags = MemberManager.getMemberOfRegion(region, target).getFlags();
 				long flag = PlayerFlags.valueOf(flagInput);
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
@@ -146,7 +146,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					newFlags = FlagsCalculator.addFlag(flags, flag);
 				}
 
-				region.setMemberFlags(region.getMember(target), newFlags);
+				region.setMemberFlags(MemberManager.getMemberOfRegion(region, target), newFlags);
 
 				Messages.send(player, 43, new Placeholder()
 						.add("{region}", region.getName())
@@ -330,7 +330,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 			Region region = TargetRegionSession.getRegion(player);
 
 			if (region != null) {
-				for (SerializableMember member : region.getMembers()) {
+				for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
 					OfflinePlayer m = member.bukkit();
 
 					if (m != null) {

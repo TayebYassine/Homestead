@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 
 
 public final class ItemTransportingEntityValidateTargetListener implements Listener {

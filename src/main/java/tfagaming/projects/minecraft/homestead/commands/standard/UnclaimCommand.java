@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -69,7 +70,7 @@ public class UnclaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		if (!regionOwnsThisChunk.getUniqueId().equals(region.getUniqueId())) {
+		if (regionOwnsThisChunk.getUniqueId() != region.getUniqueId()) {
 			Messages.send(player, 23);
 			return true;
 		}

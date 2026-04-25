@@ -57,7 +57,7 @@ public class Homestead extends JavaPlugin {
 	// Cache
 	public static RegionCache regionsCache;
 	public static RegionMemberCache regionMemberCache;
-	public static RegionBannedPlayerCache regionBannedPlayerCache;
+	public static RegionBanCache regionBanCache;
 	public static RegionChunkCache regionChunkCache;
 	public static RegionInviteCache regionInviteCache;
 	public static RegionLogCache regionLogCache;
@@ -87,6 +87,15 @@ public class Homestead extends JavaPlugin {
 	public static boolean isFolia() {
 		try {
 			Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
+
+	public static boolean isPaper() {
+		try {
+			Class.forName("io.papermc.paper.configuration.Configuration");
 			return true;
 		} catch (ClassNotFoundException e) {
 			return false;
@@ -127,7 +136,7 @@ public class Homestead extends JavaPlugin {
 
 		Homestead.regionsCache = new RegionCache();
 		Homestead.regionMemberCache = new RegionMemberCache();
-		Homestead.regionBannedPlayerCache = new RegionBannedPlayerCache();
+		Homestead.regionBanCache = new RegionBanCache();
 		Homestead.regionChunkCache = new RegionChunkCache();
 		Homestead.regionInviteCache = new RegionInviteCache();
 		Homestead.regionLogCache = new RegionLogCache();
@@ -240,7 +249,6 @@ public class Homestead extends JavaPlugin {
 		// Download icons
 		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
 			runAsyncTask(() -> {
-				Logger.warning("[Dynamic Maps] Downloading required web map render icons... This may take a while!");
 				RegionIcon.downloadAllIcons();
 				Logger.info("[Dynamic Maps] Successfully downloaded all icons!");
 			});

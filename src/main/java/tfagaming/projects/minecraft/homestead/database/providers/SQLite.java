@@ -231,7 +231,7 @@ public final class SQLite implements Provider {
 		List<RegionLog> newLogs = new ArrayList<>();
 		List<RegionRate> newRates = new ArrayList<>();
 		List<RegionInvite> newInvites = new ArrayList<>();
-		List<RegionBannedPlayer> newBanned = new ArrayList<>();
+		List<RegionBan> newBanned = new ArrayList<>();
 		List<SubArea> newSubAreas = new ArrayList<>();
 		List<Level> newLevels = new ArrayList<>();
 		List<War> newWars = new ArrayList<>();
@@ -304,7 +304,7 @@ public final class SQLite implements Provider {
 						});
 
 						LegacyParsers.splitAndParse(rs.getString("bannedPlayers"), "§", part -> {
-							RegionBannedPlayer b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
+							RegionBan b = LegacyParsers.parseLegacyBannedPlayer(newId, part);
 							if (b != null) newBanned.add(b);
 						});
 
@@ -607,13 +607,13 @@ public final class SQLite implements Provider {
 		}
 	}
 
-	private void batchInsertRegionBannedPlayers(List<RegionBannedPlayer> rows) throws SQLException {
+	private void batchInsertRegionBannedPlayers(List<RegionBan> rows) throws SQLException {
 		if (rows.isEmpty()) return;
 		String sql =
 				"INSERT OR IGNORE INTO region_banned_players " +
 						"(id,regionId,playerId,reason,bannedAt) VALUES (?,?,?,?,?)";
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
-			for (RegionBannedPlayer b : rows) {
+			for (RegionBan b : rows) {
 				ps.setLong(1, b.getUniqueId());
 				ps.setLong(2, b.getRegionId());
 				ps.setString(3, b.getPlayerId().toString());
@@ -842,12 +842,12 @@ public final class SQLite implements Provider {
 	}
 
 	@Override
-	public List<RegionBannedPlayer> importRegionBannedPlayers() throws SQLException {
-		List<RegionBannedPlayer> list = new ArrayList<>();
+	public List<RegionBan> importRegionBannedPlayers() throws SQLException {
+		List<RegionBan> list = new ArrayList<>();
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery("SELECT * FROM region_banned_players")) {
 			while (rs.next()) {
-				list.add(new RegionBannedPlayer(
+				list.add(new RegionBan(
 						rs.getLong("id"),
 						rs.getLong("regionId"),
 						UUID.fromString(rs.getString("playerId")),
@@ -1193,7 +1193,7 @@ public final class SQLite implements Provider {
 	}
 
 	@Override
-	public void exportRegionBannedPlayers(List<RegionBannedPlayer> bannedPlayers) throws SQLException {
+	public void exportRegionBannedPlayers(List<RegionBan> bannedPlayers) throws SQLException {
 		Set<Long> dbIds = loadLongIds("SELECT id FROM region_banned_players");
 		String upsert =
 				"INSERT OR REPLACE INTO region_banned_players " +
@@ -1204,7 +1204,7 @@ public final class SQLite implements Provider {
 			 PreparedStatement del = connection.prepareStatement("DELETE FROM region_banned_players WHERE id=?")) {
 
 			Set<Long> cacheIds = new HashSet<>();
-			for (RegionBannedPlayer b : bannedPlayers) {
+			for (RegionBan b : bannedPlayers) {
 				cacheIds.add(b.getUniqueId());
 				ups.setLong(1, b.getUniqueId());
 				ups.setLong(2, b.getRegionId());

@@ -100,7 +100,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!region.isOwner(player) && region.isPlayerMember(player)) {
+				if (!region.isOwner(player) && MemberManager.isMemberOfRegion(region, player)) {
 					Messages.send(player, 149);
 					return true;
 				}

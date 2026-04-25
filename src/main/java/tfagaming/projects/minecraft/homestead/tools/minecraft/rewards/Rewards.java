@@ -2,6 +2,8 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.rewards;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -20,7 +22,7 @@ public final class Rewards {
 		}
 
 		int chunksPerMember = Resources.<RegionsFile>get(ResourceType.Regions).getRewardChunksPerMember();
-		return region.getMembers().size() * chunksPerMember;
+		return MemberManager.getMembersOfRegion(region).size() * chunksPerMember;
 	}
 
 	public static int getSubAreasByEachMember(Region region) {
@@ -29,7 +31,7 @@ public final class Rewards {
 		}
 
 		int subAreasPerMember = Resources.<RegionsFile>get(ResourceType.Regions).getRewardSubAreasPerMember();
-		return region.getMembers().size() * subAreasPerMember;
+		return MemberManager.getMembersOfRegion(region).size() * subAreasPerMember;
 	}
 
 	public static int getChunksByPlayTime(OfflinePlayer player) {

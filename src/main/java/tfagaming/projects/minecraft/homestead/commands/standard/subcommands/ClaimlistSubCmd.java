@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionClaimedChunks;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;

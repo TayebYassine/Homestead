@@ -29,9 +29,9 @@ public interface Provider {
 
 	void exportRegionInvites(List<RegionInvite> regions) throws Exception;
 
-	List<RegionBannedPlayer> importRegionBannedPlayers() throws Exception;
+	List<RegionBan> importRegionBannedPlayers() throws Exception;
 
-	void exportRegionBannedPlayers(List<RegionBannedPlayer> regions) throws Exception;
+	void exportRegionBannedPlayers(List<RegionBan> regions) throws Exception;
 
 	List<SubArea> importSubAreas() throws Exception;
 

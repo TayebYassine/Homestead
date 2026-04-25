@@ -67,13 +67,13 @@ final class LegacyParsers {
 		}
 	}
 
-	static RegionBannedPlayer parseLegacyBannedPlayer(long regionId, String s) {
+	static RegionBan parseLegacyBannedPlayer(long regionId, String s) {
 		try {
 			String[] p = s.split(",", 3);
 			UUID playerId = UUID.fromString(p[0].trim());
 			String reason = p.length > 1 ? p[1] : null;
 			long bannedAt = p.length > 2 ? Long.parseLong(p[2].trim()) : System.currentTimeMillis();
-			return new RegionBannedPlayer(Homestead.SNOWFLAKE.nextId(), regionId, playerId, reason, bannedAt);
+			return new RegionBan(Homestead.SNOWFLAKE.nextId(), regionId, playerId, reason, bannedAt);
 		} catch (Exception e) {
 			return null;
 		}

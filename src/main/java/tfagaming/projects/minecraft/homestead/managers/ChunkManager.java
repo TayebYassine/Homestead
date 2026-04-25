@@ -24,15 +24,27 @@ import java.util.*;
  * This is a utility class that helps manage chunks more easily.
  */
 public final class ChunkManager {
-	private static final Random random = new Random();
+	private static final Random RANDOM = new Random();
 
 	private ChunkManager() {
 	}
 
 	/**
-	 * Creates a new chunk entry for a region.
+	 * Creates a new chunk entry for a region.<br>
+	 * This method applies no verification and may cause two or more regions owning the same chunk, which could create a fatal exploit.
+	 * @param region The region
+	 * @param chunk The chunk
+	 * @return The created RegionChunk
+	 */
+	public static RegionChunk createChunk(Region region, Chunk chunk) {
+		return createChunk(region.getUniqueId(), chunk);
+	}
+
+	/**
+	 * Creates a new chunk entry for a region.<br>
+	 * This method applies no verification and may cause two or more regions owning the same chunk, which could create a fatal exploit.
 	 * @param regionId The region ID
-	 * @param chunk The Bukkit chunk
+	 * @param chunk The chunk
 	 * @return The created RegionChunk
 	 */
 	public static RegionChunk createChunk(long regionId, Chunk chunk) {
@@ -50,10 +62,20 @@ public final class ChunkManager {
 	}
 
 	/**
-	 * Claims a chunk for a specific region. Returns true if it was successfully claimed, otherwise false.
+	 * Claims a chunk for a specific region with normal protection checks.
+	 * @param region The region
+	 * @param chunk The chunk
+	 * @return {@link Error} if there is an error, <code>null</code> otherwise.
+	 */
+	public static Error claimChunk(Region region, Chunk chunk) {
+		return claimChunk(region.getUniqueId(), chunk);
+	}
+
+	/**
+	 * Claims a chunk for a specific region with normal protection checks.
 	 * @param regionId The region ID
 	 * @param chunk The chunk
-	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
+	 * @return {@link Error} if there is an error, <code>null</code> otherwise.
 	 */
 	public static Error claimChunk(long regionId, Chunk chunk) {
 		Region region = RegionManager.findRegion(regionId);
@@ -83,9 +105,19 @@ public final class ChunkManager {
 
 	/**
 	 * Unclaims a chunk with normal protection checks.
+	 * @param region The region
+	 * @param chunk The chunk
+	 * @return {@link Error} if there is an error, <code>null</code> otherwise.
+	 */
+	public static Error unclaimChunk(Region region, Chunk chunk) {
+		return unclaimChunk(region.getUniqueId(), chunk);
+	}
+
+	/**
+	 * Unclaims a chunk with normal protection checks.
 	 * @param regionId The region ID
 	 * @param chunk The chunk
-	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
+	 * @return {@link Error} if there is an error, <code>null</code> otherwise.
 	 */
 	public static Error unclaimChunk(long regionId, Chunk chunk) {
 		return unclaimChunkInternal(regionId, chunk, false);
@@ -93,9 +125,19 @@ public final class ChunkManager {
 
 	/**
 	 * Unclaims a chunk bypassing split/topology protection and ownership checks.
+	 * @param region The region
+	 * @param chunk The chunk
+	 * @return {@link Error} if there is an error, <code>null</code> otherwise.
+	 */
+	public static Error forceUnclaimChunk(Region region, Chunk chunk) {
+		return unclaimChunkInternal(region.getUniqueId(), chunk, true);
+	}
+
+	/**
+	 * Unclaims a chunk bypassing split/topology protection and ownership checks.
 	 * @param regionId The region ID
 	 * @param chunk The chunk
-	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
+	 * @return {@link Error} if there is an error, <code>null</code> otherwise.
 	 */
 	public static Error forceUnclaimChunk(long regionId, Chunk chunk) {
 		return unclaimChunkInternal(regionId, chunk, true);
@@ -113,7 +155,18 @@ public final class ChunkManager {
 			return Error.CHUNK_WOULD_SPLIT_REGION;
 		}
 
-		removeChunk(regionId, chunk);
+		deleteChunk(chunk);
+
+		PersistentChunkTicket.removePersistent(Homestead.getInstance(), chunk);
+
+		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(regionId)) {
+			for (Chunk subAreaChunk : ChunkUtility.getChunksInArea(subArea.getPoint1(), subArea.getPoint2())) {
+				if (ChunkUtility.areEqual(subAreaChunk, chunk)) {
+					SubAreaManager.deleteSubArea(subArea.getUniqueId());
+					break;
+				}
+			}
+		}
 
 		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithFAWE() && !Homestead.isFolia()) {
 			Homestead.getInstance().runAsyncTask(() -> {
@@ -135,38 +188,27 @@ public final class ChunkManager {
 	}
 
 	/**
-	 * Removes a claimed chunk from a region and its sub-areas.
-	 * @param regionId The region ID
+	 * Permanently deletes a chunk.
 	 * @param chunk The chunk
-	 * @return {@link Error} if there is an error, otherwise <code>null</code>.
 	 */
-	public static Error removeChunk(long regionId, Chunk chunk) {
-		Region region = RegionManager.findRegion(regionId);
-		if (region == null) {
-			return Error.REGION_NOT_FOUND;
+	public static void deleteChunk(Chunk chunk) {
+		RegionChunk chunkData = findChunk(chunk);
+
+		if (chunkData != null) {
+			deleteChunk(chunkData);
 		}
-
-		RegionChunk toRemove = findChunk(chunk);
-		if (toRemove != null) {
-			deleteChunk(toRemove.getUniqueId());
-		}
-
-		PersistentChunkTicket.removePersistent(Homestead.getInstance(), chunk);
-
-		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(regionId)) {
-			for (Chunk subAreaChunk : ChunkUtility.getChunksInArea(subArea.getPoint1(), subArea.getPoint2())) {
-				if (ChunkUtility.areEqual(subAreaChunk, chunk)) {
-					SubAreaManager.deleteSubArea(subArea.getUniqueId());
-					break;
-				}
-			}
-		}
-
-		return null;
 	}
 
 	/**
-	 * Permanently deletes a chunk by its ID.
+	 * Permanently deletes a chunk.
+	 * @param chunk The chunk
+	 */
+	public static void deleteChunk(RegionChunk chunk) {
+		deleteChunk(chunk.getUniqueId());
+	}
+
+	/**
+	 * Permanently deletes a chunk.
 	 * @param id The chunk ID
 	 */
 	public static void deleteChunk(long id) {
@@ -174,11 +216,11 @@ public final class ChunkManager {
 	}
 
 	/**
-	 * Updates a chunk in the cache.
-	 * @param chunk The chunk to update
+	 * Returns all chunks belonging to a region.
+	 * @param region The region
 	 */
-	public static void updateChunk(RegionChunk chunk) {
-		Homestead.regionChunkCache.putOrUpdate(chunk);
+	public static List<RegionChunk> getChunksOfRegion(Region region) {
+		return getChunksOfRegion(region.getUniqueId());
 	}
 
 	/**
@@ -326,7 +368,16 @@ public final class ChunkManager {
 	}
 
 	/**
-	 * Returns true if the region owns a given chunk, otherwise false.
+	 * Returns {@code true} if the region owns a given chunk, {@code false} otherwise.
+	 * @param region The region
+	 * @param chunk The chunk
+	 */
+	public static boolean isChunkClaimedByRegion(Region region, Chunk chunk) {
+		return isChunkClaimedByRegion(region.getUniqueId(), chunk);
+	}
+
+	/**
+	 * Returns {@code true} if the region owns a given chunk, {@code false} otherwise.
 	 * @param regionId The region ID
 	 * @param chunk The chunk
 	 */
@@ -422,13 +473,21 @@ public final class ChunkManager {
 
 	/**
 	 * Removes a random chunk from the region.
+	 * @param region The region
+	 */
+	public static void removeRandomChunk(Region region) {
+		removeRandomChunk(region.getUniqueId());
+	}
+
+	/**
+	 * Removes a random chunk from the region.
 	 * @param regionId The region ID
 	 */
 	public static void removeRandomChunk(long regionId) {
 		List<RegionChunk> chunks = getChunksOfRegion(regionId);
 		if (chunks.isEmpty()) return;
 
-		int index = random.nextInt(chunks.size());
+		int index = RANDOM.nextInt(chunks.size());
 		forceUnclaimChunk(regionId, chunks.get(index).toBukkit());
 	}
 
@@ -477,6 +536,7 @@ public final class ChunkManager {
 
 	public enum Error {
 		REGION_NOT_FOUND,
+		CHUNK_NOT_FOUND,
 		CHUNK_IN_DISABLED_WORLD,
 		CHUNK_NOT_ADJACENT_TO_REGION,
 		CHUNK_WOULD_SPLIT_REGION

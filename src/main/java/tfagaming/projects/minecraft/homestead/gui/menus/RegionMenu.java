@@ -35,16 +35,16 @@ public final class RegionMenu {
 		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled");
 		boolean isSubAreasEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("sub-areas.enabled");
 
-		SerializableRent rent = region.getRent();
+		SeRent rent = region.getRent();
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region}", region.getName())
 				.add("{region-owner}", region.getOwner().getName())
 				.add("{region-bank}", Formatter.getBalance(region.getBank()))
 				.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
-				.add("{region-chunks}", region.getChunks().size())
+				.add("{region-chunks}", ChunkManager.getChunksOfRegion(region).size())
 				.add("{region-chunks-max}", Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION))
-				.add("{region-members}", region.getMembers().size())
+				.add("{region-members}", MemberManager.getMembersOfRegion(region).size())
 				.add("{region-members-max}", Limits.getRegionLimit(region, Limits.LimitType.MEMBERS_PER_REGION))
 				.add("{upkeep-enabled}", Formatter.getToggle(isUpkeepEnabled))
 				.add("{upkeep-date}", isUpkeepEnabled ? Formatter.getRemainingTime(region.getUpkeepAt()) : Formatter.getNever())
@@ -215,7 +215,7 @@ public final class RegionMenu {
 			new RegionsMenu(player);
 		});
 
-		if (region.isPlayerMember(player)) {
+		if (MemberManager.isMemberOfRegion(region, player)) {
 			gui.addItem(35, MenuUtility.getButton(14, placeholder), (_player, event) -> {
 				if (RegionManager.findRegion(region.getUniqueId()) == null) {
 					player.closeInventory();

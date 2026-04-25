@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -140,11 +141,11 @@ public final class PlayerAutoClaimListener implements Listener {
 			return;
 		}
 
-		int before = region.getChunks().size();
+		int before = ChunkManager.getChunksOfRegion(region).size();
 
 		ChunkManager.Error error = ChunkManager.claimChunk(region.getUniqueId(), chunk);
 
-		int after = region.getChunks().size();
+		int after = ChunkManager.getChunksOfRegion(region).size();
 
 		if (error == null) {
 			if (after > before) {

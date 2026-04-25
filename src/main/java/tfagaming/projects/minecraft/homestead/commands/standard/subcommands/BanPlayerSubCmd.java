@@ -8,12 +8,15 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-
-
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -73,7 +76,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.isPlayerBanned(target)) {
+		if (BannedPlayerManager.isBanned(region, target)) {
 			Messages.send(player, 32, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{playername}", target.getName())
@@ -86,9 +89,9 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		SerializableRent rent = region.getRent();
+		SeRent rent = region.getRent();
 
-		if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
+		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
 			Messages.send(player, 196);
 			return true;
 		}
@@ -105,7 +108,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		region.banPlayer(target, reason);
+		BannedPlayerManager.banPlayer(region, target, reason);
 
 		Messages.send(player, 31, new Placeholder()
 				.add("{region}", region.getName())
@@ -113,12 +116,12 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 				.add("{region}", reason)
 		);
 
-		if (region.isPlayerMember(target)) {
-			region.removeMember(target);
+		if (MemberManager.isMemberOfRegion(region, target)) {
+			MemberManager.removeMemberFromRegion(target, region);
 		}
 
-		if (region.isPlayerInvited(target)) {
-			region.removePlayerInvite(target);
+		if (InviteManager.isInvited(region, target)) {
+			InviteManager.deleteInvitesOfPlayer(region, target);
 		}
 
 		RegionBanPlayerEvent _event = new RegionBanPlayerEvent(region, player, target, reason);

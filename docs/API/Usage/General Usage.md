@@ -116,12 +116,12 @@ Player player = Bukkit.getPlayer("test_account");
 
 region.addPlayerInvite(player); // Invite a player and wait until they accept it or deny it
 
-region.addMember(player); // Add a member to the region (without invitation)
+InviteManager.deleteInvitesOfPlayer(region, player); // Add a member to the region (without invitation)
 
-region.removePlayerInvite(player); // Revoke an invited player's invite
+InviteManager.deleteInvitesOfPlayer(region, player); // Revoke an invited player's invite
 
 // Check if the player is a member
-if (region.isPlayerMember(player)) {
+if (MemberManager.isMemberOfRegion(region, player)) {
 	region.removeMember(player); // Remove the player as member of the region
 }
 ```
@@ -140,8 +140,8 @@ Region region = ...;
 
 long flags = region.getPlayerFlags(); // Get global player flags
 long flags = region.getWorldFlags(); // Get world/environment flags
-long flags = region.getMember(player).getFlags(); // Get member's player flags
-long flags = region.getMember(player).getRegionControlFlags(); // Get member's region control flags
+long flags = MemberManager.getMemberOfRegion(region, player).getFlags(); // Get member's player flags
+long flags = MemberManager.getMemberOfRegion(region, player).getRegionControlFlags(); // Get member's region control flags
 
 List<String> flagNames = PlayerFlags.getAll(); // Get all player flag names in predefined format (lower-case and dashes)
 long flag = PlayerFlags.valueOf("break-blocks"); // Get the flag value of "break-blocks"

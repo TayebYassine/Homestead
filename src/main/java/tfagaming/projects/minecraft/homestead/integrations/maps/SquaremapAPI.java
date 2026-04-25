@@ -5,272 +5,196 @@ import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-import tfagaming.projects.minecraft.homestead.resources.ResourceType;
-import tfagaming.projects.minecraft.homestead.resources.Resources;
-import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
-
-
-import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
-import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 import xyz.jpenilla.squaremap.api.*;
 import xyz.jpenilla.squaremap.api.Point;
 import xyz.jpenilla.squaremap.api.marker.*;
 import xyz.jpenilla.squaremap.api.marker.Polygon;
 
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-public class SquaremapAPI {
-	private static final Map<World, SimpleLayerProvider> layers = new HashMap<>();
-	private static Squaremap api;
+public final class SquaremapAPI extends AbstractMapIntegration {
+
+	private static final String LAYER_ID_PREFIX = "claims_";
+	private final Map<World, SimpleLayerProvider> layers = new HashMap<>();
+	private Squaremap api;
 
 	public SquaremapAPI(Homestead plugin) {
+		super(plugin);
 		try {
-			api = SquaremapProvider.get();
+			this.api = SquaremapProvider.get();
 			update();
-		} catch (NoClassDefFoundError ignored) {
-		}
+		} catch (NoClassDefFoundError ignored) {}
 	}
 
+	@Override
 	public void clearAllMarkers() {
 		for (SimpleLayerProvider layer : layers.values()) {
-			if (layer != null) {
-				layer.getMarkers().removeIf((__) -> true);
+			if (layer != null) layer.getMarkers().removeIf(__ -> true);
+		}
+	}
+
+	@Override
+	public void update() {
+		clearAllMarkers();
+		for (Region region : RegionManager.getAll()) {
+			for (RegionChunk chunk : ChunkManager.getChunksOfRegion(region)) {
+				addChunkMarker(region, chunk);
 			}
 		}
 	}
 
-	public void addChunkMarker(Region region, SerializableChunk chunk) {
-		Placeholder placeholder = new Placeholder()
-				.add("{region}", region.getName())
-				.add("{region-owner}", region.getOwner().getName())
-				.add("{region-members}",
-						ColorTranslator.preserve(Formatter.getMembersOfRegion(region)))
-				.add("{region-chunks}", region.getChunks().size())
-				.add("{global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
-				.add("{region-description}", region.getDescription())
-				.add("{region-size}", region.getChunks().size() * 256);
-
-		boolean isOperator = PlayerUtility.isOperator(region.getOwner());
-
-		String hoverText = Formatter
-				.applyPlaceholders(isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.operator-description")
-						: Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.chunks.description"), placeholder);
-
-		int chunkColor = region.getMapColor() == 0
-				? (isOperator ? Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.operator-color")
-				: Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.color"))
-				: region.getMapColor();
+	public void addChunkMarker(Region region, RegionChunk chunk) {
+		if (region.getOwner() == null) return;
 
 		World world = chunk.getWorld();
-		SimpleLayerProvider targetLayer = layers.get(world);
+		SimpleLayerProvider layer = getOrCreateLayer(world);
+		if (layer == null) return;
 
-		if (targetLayer == null) {
-			String layerId = "claims_" + world.getName();
-			MapWorld mapWorld = api.getWorldIfEnabled(BukkitAdapter.worldIdentifier(world)).orElse(null);
+		boolean isOperator = PlayerUtility.isOperator(region.getOwner());
+		String hoverText = resolveHoverText(region, isOperator);
+		int chunkColor = resolveChunkColor(region, isOperator);
 
-			if (mapWorld != null) {
-				SimpleLayerProvider layer = SimpleLayerProvider.builder("Homestead Regions")
-						.showControls(true)
-						.defaultHidden(false)
-						.layerPriority(1)
-						.zIndex(250)
-						.build();
+		addChunkVisuals(layer, chunk, hoverText, chunkColor, region);
 
-				mapWorld.layerRegistry().register(Key.of(layerId), layer);
-				layers.put(world, layer);
-				targetLayer = layer;
-			}
-		}
-
-		addChunkMarkerWithOptions(targetLayer, chunk, hoverText, chunkColor,
-				!isChunkClaimed(region, chunk, GeoDirection.NORTH),
-				!isChunkClaimed(region, chunk, GeoDirection.EAST), !isChunkClaimed(region, chunk, GeoDirection.SOUTH),
-				!isChunkClaimed(region, chunk, GeoDirection.WEST));
-
-		boolean isEnabled = Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled");
-
-		if (isEnabled) {
-			final SimpleLayerProvider targetLayerFinal = targetLayer;
-
-			if (region.getLocation() != null) {
-				double locX = region.getLocation().getX();
-				double locZ = region.getLocation().getZ();
-				int regionChunkX = (int) Math.floor(locX) >> 4;
-				int regionChunkZ = (int) Math.floor(locZ) >> 4;
-
-				if (regionChunkX == chunk.getX() && regionChunkZ == chunk.getZ()
-						&& region.getLocation().getWorldId().equals(chunk.getWorldId())) {
-					Homestead.getInstance().runAsyncTask(() -> {
-						addRegionIcon(targetLayerFinal, region, hoverText);
-					});
-				}
-			}
+		if (getConfigBoolean("icons.enabled") && isHomeChunk(region, chunk)) {
+			plugin.runAsyncTask(() -> addRegionIcon(layer, region, hoverText));
 		}
 	}
 
-	private void addRegionIcon(SimpleLayerProvider targetLayer, Region region, String hoverText) {
-		BufferedImage bufferedIcon = RegionIcon.getIconBufferedImage(region.getIcon());
+	private SimpleLayerProvider getOrCreateLayer(World world) {
+		SimpleLayerProvider layer = layers.get(world);
+		if (layer != null) return layer;
 
-		int iconSize = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.icons.size");
+		MapWorld mapWorld = api.getWorldIfEnabled(BukkitAdapter.worldIdentifier(world)).orElse(null);
+		if (mapWorld == null) return null;
 
-		if (region.getLocation() == null) {
-			return;
-		}
-
-		if (bufferedIcon != null) {
-			try {
-				Key iconKey = Key.of("region_icon_" + region.getName().toLowerCase().replaceAll(" ", "_"));
-
-				Location regionLocation = region.getLocation().bukkit();
-
-				Point iconPoint = Point.of(regionLocation.getX(), regionLocation.getZ());
-
-				if (api.iconRegistry().hasEntry(iconKey) && !api.iconRegistry().get(iconKey).equals(bufferedIcon)) {
-					api.iconRegistry().unregister(iconKey);
-				}
-
-				if (!api.iconRegistry().hasEntry(iconKey)) {
-					api.iconRegistry().register(iconKey, bufferedIcon);
-				}
-
-				Icon icon = Marker.icon(iconPoint, iconKey,
-						iconSize,
-						iconSize);
-				MarkerOptions iconOptions = MarkerOptions.builder()
-						.hoverTooltip(hoverText)
-						.build();
-				icon.markerOptions(iconOptions);
-
-				targetLayer.addMarker(iconKey, icon);
-			} catch (Exception ignored) {
-
-			}
-		}
-	}
-
-	private void addChunkMarkerWithOptions(SimpleLayerProvider targetLayer,
-										   SerializableChunk chunk,
-										   String hoverText,
-										   int chunkColor,
-										   boolean north,
-										   boolean east,
-										   boolean south,
-										   boolean west) {
-		addChunkMarkerWithOptions(targetLayer, chunk, hoverText, chunkColor, north, east, south, west, 0);
-	}
-
-	private void addChunkMarkerWithOptions(SimpleLayerProvider targetLayer,
-										   SerializableChunk chunk,
-										   String hoverText,
-										   int chunkColor,
-										   boolean north,
-										   boolean east,
-										   boolean south,
-										   boolean west,
-										   double offset) {
-		double minX = chunk.getX() * 16.0;
-		double minZ = chunk.getZ() * 16.0;
-		double maxX = minX + 16.0;
-		double maxZ = minZ + 16.0;
-
-		double offsetMinX = minX + offset;
-		double offsetMinZ = minZ + offset;
-		double offsetMaxX = maxX - offset;
-		double offsetMaxZ = maxZ - offset;
-
-		Point topLeft = Point.of(offsetMinX, offsetMinZ);
-		Point topRight = Point.of(offsetMaxX, offsetMinZ);
-		Point bottomLeft = Point.of(offsetMinX, offsetMaxZ);
-		Point bottomRight = Point.of(offsetMaxX, offsetMaxZ);
-
-		Key chunkKey = Key.of("chunk_" + chunk.getX() + "_" + chunk.getZ());
-
-		Polygon fillArea = Marker.polygon(List.of(
-				topLeft, topRight, bottomRight, bottomLeft, topLeft));
-
-		int chunkTransparencyInfill = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-fill");
-		int chunkTransparencyOutline = Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.chunks.transparency-outline");
-
-		MarkerOptions fillOptions = MarkerOptions.builder()
-				.hoverTooltip(hoverText)
-				.fillColor(applyAlpha(chunkColor, chunkTransparencyInfill))
-				.strokeColor(applyAlpha(chunkColor, chunkTransparencyOutline))
-				.strokeWeight(0)
-				.fill(true)
-				.stroke(false)
+		layer = SimpleLayerProvider.builder(LAYER_LABEL)
+				.showControls(true)
+				.defaultHidden(false)
+				.layerPriority(1)
+				.zIndex(250)
 				.build();
 
-		fillArea.markerOptions(fillOptions);
-		targetLayer.addMarker(Key.of(chunkKey + "_fill"), fillArea);
+		mapWorld.layerRegistry().register(Key.of(LAYER_ID_PREFIX + world.getName()), layer);
+		layers.put(world, layer);
+		return layer;
+	}
 
-		MarkerOptions borderOptions = MarkerOptions.builder()
+	private void addChunkVisuals(SimpleLayerProvider layer, RegionChunk chunk, String hoverText,
+								 int chunkColor, Region region) {
+		boolean north = !isNeighborClaimed(region, chunk, GeoDirection.NORTH);
+		boolean east  = !isNeighborClaimed(region, chunk, GeoDirection.EAST);
+		boolean south = !isNeighborClaimed(region, chunk, GeoDirection.SOUTH);
+		boolean west  = !isNeighborClaimed(region, chunk, GeoDirection.WEST);
+
+		Key chunkKey = Key.of("chunk_" + chunk.getX() + "_" + chunk.getZ());
+		addFillPolygon(layer, chunk, chunkKey, hoverText, chunkColor);
+
+		MarkerOptions borderOpts = MarkerOptions.builder()
 				.strokeColor(applyAlpha(chunkColor, 255))
 				.strokeWeight(2)
 				.stroke(true)
 				.fill(false)
 				.build();
 
-		if (north) {
-			Polyline topBorder = Marker.polyline(List.of(topLeft, topRight));
-			topBorder.markerOptions(borderOptions);
-			targetLayer.addMarker(Key.of(chunkKey + "_north"), topBorder);
-		}
-
-		if (east) {
-			Polyline rightBorder = Marker.polyline(List.of(topRight, bottomRight));
-			rightBorder.markerOptions(borderOptions);
-			targetLayer.addMarker(Key.of(chunkKey + "_east"), rightBorder);
-		}
-
-		if (south) {
-			Polyline bottomBorder = Marker.polyline(List.of(bottomLeft, bottomRight));
-			bottomBorder.markerOptions(borderOptions);
-			targetLayer.addMarker(Key.of(chunkKey + "_south"), bottomBorder);
-		}
-
-		if (west) {
-			Polyline leftBorder = Marker.polyline(List.of(topLeft, bottomLeft));
-			leftBorder.markerOptions(borderOptions);
-			targetLayer.addMarker(Key.of(chunkKey + "_west"), leftBorder);
-		}
+		if (north) addBorderLine(layer, chunkKey, "north", buildPoints(chunk, GeoDirection.NORTH), borderOpts);
+		if (east)  addBorderLine(layer, chunkKey, "east", buildPoints(chunk, GeoDirection.EAST), borderOpts);
+		if (south) addBorderLine(layer, chunkKey, "south", buildPoints(chunk, GeoDirection.SOUTH), borderOpts);
+		if (west)  addBorderLine(layer, chunkKey, "west", buildPoints(chunk, GeoDirection.WEST), borderOpts);
 	}
 
-	public boolean isChunkClaimed(Region region, SerializableChunk chunk, GeoDirection direction) {
-		int x = chunk.getX();
-		int z = chunk.getZ();
-		UUID worldId = chunk.getWorldId();
+	private void addFillPolygon(SimpleLayerProvider layer, RegionChunk chunk, Key chunkKey,
+								String hoverText, int chunkColor) {
+		double minX = chunk.getX() * 16.0;
+		double minZ = chunk.getZ() * 16.0;
+		double maxX = minX + 16.0;
+		double maxZ = minZ + 16.0;
 
-		switch (direction) {
-			case NORTH: z -= 1; break;
-			case EAST:  x += 1; break;
-			case SOUTH: z += 1; break;
-			case WEST:  x -= 1; break;
-			default: return false;
-		}
+		Polygon fill = Marker.polygon(List.of(
+				Point.of(minX, minZ),
+				Point.of(maxX, minZ),
+				Point.of(maxX, maxZ),
+				Point.of(minX, maxZ),
+				Point.of(minX, minZ)
+		));
 
-		final int nx = x, nz = z;
+		fill.markerOptions(MarkerOptions.builder()
+				.hoverTooltip(hoverText)
+				.fillColor(applyAlpha(chunkColor, getTransparencyFill()))
+				.strokeColor(applyAlpha(chunkColor, getTransparencyOutline()))
+				.strokeWeight(0)
+				.fill(true)
+				.stroke(false)
+				.build());
 
-		return region.getChunks().stream()
-				.anyMatch(c -> c.getWorldId().equals(worldId)
-						&& c.getX() == nx
-						&& c.getZ() == nz);
+		layer.addMarker(Key.of(chunkKey + "_fill"), fill);
 	}
 
-	public void update() {
-		clearAllMarkers();
+	private List<Point> buildPoints(RegionChunk chunk, GeoDirection side) {
+		double minX = chunk.getX() * 16.0;
+		double minZ = chunk.getZ() * 16.0;
+		double maxX = minX + 16.0;
+		double maxZ = minZ + 16.0;
 
-		for (Region region : RegionManager.getAll()) {
-			for (SerializableChunk chunk : region.getChunks()) {
-				addChunkMarker(region, chunk);
+		return switch (side) {
+			case NORTH -> List.of(Point.of(minX, minZ), Point.of(maxX, minZ));
+			case EAST  -> List.of(Point.of(maxX, minZ), Point.of(maxX, maxZ));
+			case SOUTH -> List.of(Point.of(minX, maxZ), Point.of(maxX, maxZ));
+			case WEST  -> List.of(Point.of(minX, minZ), Point.of(minX, maxZ));
+		};
+	}
+
+	private void addBorderLine(SimpleLayerProvider layer, Key chunkKey, String side,
+							   List<Point> points, MarkerOptions options) {
+		Polyline line = Marker.polyline(points);
+		line.markerOptions(options);
+		layer.addMarker(Key.of(chunkKey + "_" + side), line);
+	}
+
+	private void addRegionIcon(SimpleLayerProvider layer, Region region, String hoverText) {
+		if (region.getLocation() == null) return;
+
+		BufferedImage icon = RegionIcon.getIconBufferedImage(region.getMapIcon());
+		if (icon == null) return;
+
+		try {
+			Key iconKey = Key.of("region_icon_" + region.getName().toLowerCase().replaceAll(" ", "_"));
+			Location loc = region.getLocation().toBukkit();
+			if (loc == null) return;
+
+			Point point = Point.of(loc.getX(), loc.getZ());
+
+			if (api.iconRegistry().hasEntry(iconKey) && !api.iconRegistry().get(iconKey).equals(icon)) {
+				api.iconRegistry().unregister(iconKey);
 			}
-		}
+			if (!api.iconRegistry().hasEntry(iconKey)) {
+				api.iconRegistry().register(iconKey, icon);
+			}
+
+			Icon marker = Marker.icon(point, iconKey, getConfigInt("icons.size"), getConfigInt("icons.size"));
+			marker.markerOptions(MarkerOptions.builder().hoverTooltip(hoverText).build());
+
+			layer.addMarker(iconKey, marker);
+		} catch (Exception ignored) {}
+	}
+
+	private boolean isHomeChunk(Region region, RegionChunk chunk) {
+		if (region.getLocation() == null) return false;
+
+		double locX = region.getLocation().getX();
+		double locZ = region.getLocation().getZ();
+		int cx = (int) Math.floor(locX) >> 4;
+		int cz = (int) Math.floor(locZ) >> 4;
+
+		return cx == chunk.getX() && cz == chunk.getZ()
+				&& region.getLocation().getWorldId().equals(chunk.getWorldId());
 	}
 
 	private Color applyAlpha(int color, int alpha) {
@@ -279,9 +203,5 @@ public class SquaremapAPI {
 				(color >> 8) & 0xFF,
 				color & 0xFF,
 				alpha);
-	}
-
-	private enum GeoDirection {
-		NORTH, EAST, SOUTH, WEST
 	}
 }

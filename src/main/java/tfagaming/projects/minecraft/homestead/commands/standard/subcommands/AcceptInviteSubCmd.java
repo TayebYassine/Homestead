@@ -6,8 +6,11 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
@@ -45,7 +48,7 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!region.isPlayerInvited(player)) {
+		if (!InviteManager.isInvited(region, player)) {
 			Messages.send(player, 45, new Placeholder()
 					.add("{region}", region.getName())
 			);
@@ -57,8 +60,8 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		region.removePlayerInvite(player);
-		region.addMember(player);
+		InviteManager.deleteInvitesOfPlayer(region, player);
+		MemberManager.addMemberToRegion(player, region);
 
 		Messages.send(player, 46, new Placeholder()
 				.add("{region}", region.getName())

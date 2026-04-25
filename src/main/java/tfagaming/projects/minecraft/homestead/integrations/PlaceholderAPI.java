@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -73,7 +75,7 @@ public final class PlaceholderAPI extends PlaceholderExpansion {
 					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.region_claimed_chunks");
 				}
 
-				yield String.valueOf(region.getChunks().size());
+				yield String.valueOf(ChunkManager.getChunksOfRegion(region).size());
 			}
 			case "region_max_chunks" -> {
 				if (region == null) {
@@ -87,7 +89,7 @@ public final class PlaceholderAPI extends PlaceholderExpansion {
 					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.region_trusted_members");
 				}
 
-				yield String.valueOf(region.getMembers().size());
+				yield String.valueOf(MemberManager.getMembersOfRegion(region).size());
 			}
 			case "region_max_members" -> {
 				if (region == null) {
@@ -118,18 +120,18 @@ public final class PlaceholderAPI extends PlaceholderExpansion {
 				yield Formatter.getDate(region.getUpkeepAt());
 			}
 			case "war_name" -> {
-				if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
+				if (region == null || !WarManager.isRegionInWar(region)) {
 					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.war_name");
 				}
 
-				yield WarManager.findWarByRegion(region.getUniqueId()).getName();
+				yield WarManager.findWarByRegion(region).getName();
 			}
 			case "war_prize" -> {
-				if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
+				if (region == null || !WarManager.isRegionInWar(region)) {
 					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.war_prize");
 				}
 
-				yield Formatter.getBalance(WarManager.findWarByRegion(region.getUniqueId()).getPrize());
+				yield Formatter.getBalance(WarManager.findWarByRegion(region).getPrize());
 			}
 			default -> null;
 		};

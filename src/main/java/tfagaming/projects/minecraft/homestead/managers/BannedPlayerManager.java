@@ -4,14 +4,13 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.models.Region;
-import tfagaming.projects.minecraft.homestead.models.RegionBannedPlayer;
-import tfagaming.projects.minecraft.homestead.models.RegionInvite;
+import tfagaming.projects.minecraft.homestead.models.RegionBan;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A utility class that manages {@link RegionBannedPlayer}.
+ * A utility class that manages {@link RegionBan}.
  */
 public final class BannedPlayerManager {
 	private BannedPlayerManager() {}
@@ -33,8 +32,8 @@ public final class BannedPlayerManager {
 	 * @param reason The reason
 	 */
 	public static void banPlayer(long regionId, OfflinePlayer player, @Nullable String reason) {
-		RegionBannedPlayer ban = new RegionBannedPlayer(regionId, player, reason);
-		Homestead.regionBannedPlayerCache.putOrUpdate(ban);
+		RegionBan ban = new RegionBan(regionId, player, reason);
+		Homestead.regionBanCache.putOrUpdate(ban);
 	}
 
 	/**
@@ -52,10 +51,10 @@ public final class BannedPlayerManager {
 	 * @param player The player
 	 */
 	public static void unbanPlayer(long regionId, OfflinePlayer player) {
-		Homestead.regionBannedPlayerCache.getAll().stream()
+		Homestead.regionBanCache.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId && b.getPlayerId().equals(player.getUniqueId()))
 				.findFirst()
-				.ifPresent(b -> Homestead.regionBannedPlayerCache.remove(b.getUniqueId()));
+				.ifPresent(b -> Homestead.regionBanCache.remove(b.getUniqueId()));
 	}
 
 	/**
@@ -80,22 +79,22 @@ public final class BannedPlayerManager {
 	}
 
 	/**
-	 * Returns an instance of {@link RegionBannedPlayer} of a banned player from a region.
+	 * Returns an instance of {@link RegionBan} of a banned player from a region.
 	 * @param region The region
 	 * @param player The player
-	 * @return {@link RegionBannedPlayer} if the player is banned, {@code null} otherwise.
+	 * @return {@link RegionBan} if the player is banned, {@code null} otherwise.
 	 */
-	public static RegionBannedPlayer getBannedPlayer(Region region, OfflinePlayer player) {
+	public static RegionBan getBannedPlayer(Region region, OfflinePlayer player) {
 		return getBannedPlayer(region.getUniqueId(), player);
 	}
 
 	/**
-	 * Returns an instance of {@link RegionBannedPlayer} of a banned player from a region.
+	 * Returns an instance of {@link RegionBan} of a banned player from a region.
 	 * @param regionId The region ID
 	 * @param player The player
-	 * @return {@link RegionBannedPlayer} if the player is banned, {@code null} otherwise.
+	 * @return {@link RegionBan} if the player is banned, {@code null} otherwise.
 	 */
-	public static RegionBannedPlayer getBannedPlayer(long regionId, OfflinePlayer player) {
+	public static RegionBan getBannedPlayer(long regionId, OfflinePlayer player) {
 		return getBansOfRegion(regionId).stream()
 				.filter(b -> b.getPlayerId().equals(player.getUniqueId()))
 				.findFirst()
@@ -107,7 +106,7 @@ public final class BannedPlayerManager {
 	 * @param region The region
 	 * @return List of banned players from a region.
 	 */
-	public static List<RegionBannedPlayer> getBansOfRegion(Region region) {
+	public static List<RegionBan> getBansOfRegion(Region region) {
 		return getBansOfRegion(region.getUniqueId());
 	}
 
@@ -116,8 +115,8 @@ public final class BannedPlayerManager {
 	 * @param regionId The region ID
 	 * @return List of banned players from a region.
 	 */
-	public static List<RegionBannedPlayer> getBansOfRegion(long regionId) {
-		return Homestead.regionBannedPlayerCache.getAll().stream()
+	public static List<RegionBan> getBansOfRegion(long regionId) {
+		return Homestead.regionBanCache.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId)
 				.collect(Collectors.toList());
 	}
@@ -135,9 +134,9 @@ public final class BannedPlayerManager {
 	 * @param regionId The region ID
 	 */
 	public static void unbanAllPlayers(long regionId) {
-		Homestead.regionBannedPlayerCache.getAll().stream()
+		Homestead.regionBanCache.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId)
 				.findFirst()
-				.ifPresent(b -> Homestead.regionBannedPlayerCache.remove(b.getUniqueId()));
+				.ifPresent(b -> Homestead.regionBanCache.remove(b.getUniqueId()));
 	}
 }

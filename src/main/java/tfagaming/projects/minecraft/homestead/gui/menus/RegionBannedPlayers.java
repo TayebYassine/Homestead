@@ -49,7 +49,7 @@ public final class RegionBannedPlayers {
 
 					if (!context.getEvent().isLeftClick()) return;
 
-					if (!region.isPlayerBanned(bannedPlayer.bukkit())) return;
+					if (!BannedPlayerManager.isBanned(region, bannedPlayer.bukkit())) return;
 
 					if (!player.hasPermission("homestead.region.players.unban")) {
 						Messages.send(player, 8);
@@ -85,8 +85,8 @@ public final class RegionBannedPlayers {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
 				region.banPlayer(targetPlayer);
-				if (region.isPlayerMember(targetPlayer)) region.removeMember(targetPlayer);
-				if (region.isPlayerInvited(targetPlayer)) region.removePlayerInvite(targetPlayer);
+				if (MemberManager.isMemberOfRegion(region, targetPlayer)) region.removeMember(targetPlayer);
+				if (region.isPlayerInvited(targetPlayer)) InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
@@ -105,7 +105,7 @@ public final class RegionBannedPlayers {
 						RegionControlFlags.BAN_PLAYERS)) {
 					return false;
 				}
-				if (region.isPlayerBanned(target)) {
+				if (BannedPlayerManager.isBanned(region, target)) {
 					Messages.send(player, 32, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}
@@ -113,7 +113,7 @@ public final class RegionBannedPlayers {
 					Messages.send(player, 30);
 					return false;
 				}
-				SerializableRent rent = region.getRent();
+				SeRent rent = region.getRent();
 				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
 					Messages.send(player, 196);
 				}

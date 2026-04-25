@@ -1,10 +1,12 @@
 package tfagaming.projects.minecraft.homestead.events;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -32,7 +34,9 @@ public final class RegionUpkeep {
 						}
 					}
 
-					if (region.getOwner().isOnline()) {
+					OfflinePlayer owner = region.getOwner();
+
+					if (owner != null && owner.isOnline()) {
 						Player regionOwner = (Player) region.getOwner();
 
 						Placeholder placeholder = new Placeholder()
@@ -48,7 +52,9 @@ public final class RegionUpkeep {
 
 					region.setUpkeepAt(UpkeepUtility.getNewUpkeepAt());
 
-					if (region.getOwner().isOnline()) {
+					OfflinePlayer owner = region.getOwner();
+
+					if (owner != null && owner.isOnline()) {
 						Player regionOwner = (Player) region.getOwner();
 
 						Placeholder placeholder = new Placeholder()

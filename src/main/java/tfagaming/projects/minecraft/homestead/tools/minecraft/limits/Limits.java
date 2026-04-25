@@ -3,8 +3,11 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.limits;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LimitsFile;
@@ -164,7 +167,7 @@ public final class Limits {
 			return false;
 		}
 
-		int current = region.getChunks().size();
+		int current = ChunkManager.getChunksOfRegion(region).size();
 		int max = getRegionLimit(region, LimitType.CHUNKS_PER_REGION);
 		return current >= max;
 	}
@@ -174,7 +177,7 @@ public final class Limits {
 			return false;
 		}
 
-		int current = region.getMembers().size();
+		int current = MemberManager.getMembersOfRegion(region).size();
 		int max = getRegionLimit(region, LimitType.MEMBERS_PER_REGION);
 		return current >= max;
 	}

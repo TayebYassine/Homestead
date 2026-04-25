@@ -2,7 +2,6 @@ package tfagaming.projects.minecraft.homestead.managers;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.models.Region;
-import tfagaming.projects.minecraft.homestead.models.RegionBannedPlayer;
 import tfagaming.projects.minecraft.homestead.models.RegionLog;
 
 import java.util.Comparator;

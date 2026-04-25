@@ -1,7 +1,11 @@
 package tfagaming.projects.minecraft.homestead.tools.java;
 
 import org.bukkit.*;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
+import tfagaming.projects.minecraft.homestead.models.War;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -11,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -249,7 +254,7 @@ public final class Formatter {
 	 * @param region The region
 	 */
 	public static String getMembersOfRegion(Region region) {
-		List<SerializableMember> members = region.getMembers();
+		List<RegionMember> members = MemberManager.getMembersOfRegion(region);
 
 		if (members.isEmpty()) {
 			return getNone();
@@ -259,9 +264,9 @@ public final class Formatter {
 
 		return members.stream()
 				.map((member) -> format.replace("{playername}",
-								member.bukkit() == null
+								member.getPlayer() == null
 										? "Unknown"
-										: Objects.requireNonNull(member.bukkit().getName())
+										: Objects.requireNonNull(member.getPlayer().getName())
 						)
 				)
 				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.region-members-joining")));

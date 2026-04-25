@@ -5,7 +5,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 
 import java.util.UUID;
 
-public final class RegionBannedPlayer {
+public final class RegionBan {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private boolean autoUpdate = true;
 
@@ -15,11 +15,11 @@ public final class RegionBannedPlayer {
 	private String reason;
 	private long bannedAt;
 
-	public RegionBannedPlayer(long regionId, OfflinePlayer player, String reason) {
+	public RegionBan(long regionId, OfflinePlayer player, String reason) {
 		this(regionId, player.getUniqueId(), reason, System.currentTimeMillis());
 	}
 
-	public RegionBannedPlayer(long regionId, UUID playerId, String reason, long bannedAt) {
+	public RegionBan(long regionId, UUID playerId, String reason, long bannedAt) {
 		this.id = Homestead.SNOWFLAKE.nextId();
 		this.regionId = regionId;
 		this.playerId = playerId;
@@ -27,7 +27,7 @@ public final class RegionBannedPlayer {
 		this.bannedAt = bannedAt;
 	}
 
-	public RegionBannedPlayer(long id, long regionId, UUID playerId, String reason, long bannedAt) {
+	public RegionBan(long id, long regionId, UUID playerId, String reason, long bannedAt) {
 		this.id = id;
 		this.regionId = regionId;
 		this.playerId = playerId;
@@ -98,6 +98,6 @@ public final class RegionBannedPlayer {
 	private void update() {
 		if (!autoUpdate) return;
 
-		Homestead.regionBannedPlayerCache.putOrUpdate(this);
+		Homestead.regionBanCache.putOrUpdate(this);
 	}
 }

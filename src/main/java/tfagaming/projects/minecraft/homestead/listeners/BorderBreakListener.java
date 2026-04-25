@@ -32,7 +32,7 @@ public final class BorderBreakListener implements Listener {
 		FakeBorderRegistry.FakeBorderBlock fbb = FakeBorderRegistry.getByLocation(e.getBlock().getLocation());
 		if (fbb == null) return;
 
-		BorderBlockRenderer.removeRegion(fbb.regionUUID());
+		BorderBlockRenderer.removeRegion(fbb.regionId());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

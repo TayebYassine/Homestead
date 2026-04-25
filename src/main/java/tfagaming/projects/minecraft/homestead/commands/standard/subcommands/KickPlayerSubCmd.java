@@ -70,7 +70,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.isPlayerBanned(target)) {
+		if (BannedPlayerManager.isBanned(region, target)) {
 			Messages.send(player, 32, new Placeholder()
 					.add("{playername}", target.getName())
 			);
@@ -82,7 +82,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		SerializableRent rent = region.getRent();
+		SeRent rent = region.getRent();
 
 		if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
 			Messages.send(player, 196);

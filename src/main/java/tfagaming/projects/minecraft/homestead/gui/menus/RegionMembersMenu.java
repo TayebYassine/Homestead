@@ -29,10 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class RegionMembersMenu {
-	private List<SerializableMember> members;
+	private List<RegionMember> members;
 
 	public RegionMembersMenu(Player player, Region region) {
-		members = region.getMembers();
+		members = MemberManager.getMembersOfRegion(region);
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtility.getTitle(5), 9 * 4,
@@ -48,7 +48,7 @@ public final class RegionMembersMenu {
 						return;
 					}
 
-					SerializableMember member = members.get(context.getIndex());
+					RegionMember member = members.get(context.getIndex());
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
 						new PlayerInfo(player, member.bukkit(), () -> new RegionMembersMenu(player, region));
@@ -57,7 +57,7 @@ public final class RegionMembersMenu {
 						new RegionMemberControlFlags(player, region, member);
 
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-						if (!region.isPlayerMember(member.bukkit())) return;
+						if (!MemberManager.isMemberOfRegion(region, member.bukkit())) return;
 
 						if (!player.hasPermission("homestead.region.players.untrust")) {
 							Messages.send(player, 8);
@@ -77,7 +77,7 @@ public final class RegionMembersMenu {
 						RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, member.bukkit(), RegionUntrustPlayerEvent.UntrustReason.EXECUTION);
 						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
-						members = region.getMembers();
+						members = MemberManager.getMembersOfRegion(region);
 						context.getInstance().setItems(getItems(player, region));
 
 					} else if (context.getEvent().isLeftClick()) {
@@ -99,8 +99,8 @@ public final class RegionMembersMenu {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
 				if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
-					region.removePlayerInvite(targetPlayer);
-					region.addMember(targetPlayer);
+					InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
+					InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
 					RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, targetPlayer);
 					Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -124,11 +124,11 @@ public final class RegionMembersMenu {
 						RegionControlFlags.TRUST_PLAYERS)) {
 					return false;
 				}
-				if (region.isPlayerBanned(target)) {
+				if (BannedPlayerManager.isBanned(region, target)) {
 					Messages.send(player, 74);
 					return false;
 				}
-				if (region.isPlayerMember(target)) {
+				if (MemberManager.isMemberOfRegion(region, target)) {
 					Messages.send(player, 48, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}
@@ -141,7 +141,7 @@ public final class RegionMembersMenu {
 					return false;
 				}
 
-				SerializableRent rent = region.getRent();
+				SeRent rent = region.getRent();
 				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
 					Messages.send(player, 196);
 					return false;
@@ -161,7 +161,7 @@ public final class RegionMembersMenu {
 		List<ItemStack> items = new ArrayList<>();
 		boolean taxesEnabled = Homestead.vault.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled");
 
-		for (SerializableMember member : members) {
+		for (RegionMember member : members) {
 			OfflinePlayer memberBukkit = member.bukkit();
 
 			Placeholder placeholder = new Placeholder()

@@ -14,14 +14,14 @@ public final class Rewards {
 
 		gui.addItem(12, MenuUtility.getButton(66, new Placeholder()
 				.add("{region}", region.getName())
-				.add("{members}", region.getMembers().size())
+				.add("{members}", MemberManager.getMembersOfRegion(region).size())
 				.add("{chunks}", tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getChunksByEachMember(region))
 				.add("{subareas}", tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getSubAreasByEachMember(region))
 		), null);
 
 		gui.addItem(14, MenuUtility.getButton(67, new Placeholder()
 				.add("{region}", region.getName())
-				.add("{members}", region.getMembers().size())
+				.add("{members}", MemberManager.getMembersOfRegion(region).size())
 				.add("{player-playtime}", Formatter.getPlayerPlaytime(player))
 				.add("{chunks}", tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getChunksByPlayTime(player))
 				.add("{subareas}", tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards.getSubAreasByPlayTime(player))
