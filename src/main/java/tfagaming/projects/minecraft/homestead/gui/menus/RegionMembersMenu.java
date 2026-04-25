@@ -132,7 +132,7 @@ public final class RegionMembersMenu {
 					Messages.send(player, 48, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}
-				if (region.isPlayerInvited(target)) {
+				if (InviteManager.isInvited(region, target)) {
 					Messages.send(player, 35, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}

@@ -3,8 +3,10 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -42,7 +44,7 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!region.isPlayerInvited(player)) {
+		if (!InviteManager.isInvited(region, player)) {
 			Messages.send(player, 45, new Placeholder()
 					.add("{region}", region.getName())
 			);

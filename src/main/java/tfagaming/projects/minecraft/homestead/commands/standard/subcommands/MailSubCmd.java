@@ -3,9 +3,12 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionLog;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -52,7 +55,7 @@ public class MailSubCmd extends SubCommandBuilder {
 
 		int mailsCount = 0;
 
-		for (SerializableLog log : region.getLogs()) {
+		for (RegionLog log : LogManager.getLogs(region)) {
 			if (log.getAuthor().equals(player.getName()) && !log.isRead()) {
 				mailsCount++;
 			}
@@ -71,7 +74,7 @@ public class MailSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		RegionManager.addNewLog(region.getUniqueId(), player.getName(), message);
+		//RegionManager.addNewLog(region.getUniqueId(), player.getName(), message);
 
 		Messages.send(player, 166, new Placeholder()
 				.add("{region-owner}", region.getOwner().getName())

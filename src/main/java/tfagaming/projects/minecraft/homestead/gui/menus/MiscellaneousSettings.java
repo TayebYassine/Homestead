@@ -13,8 +13,8 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnership
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
-import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class MiscellaneousSettings {
 
-	private static final Map<UUID, UUID> DELETE_CONFIRM_REGION = new ConcurrentHashMap<>();
+	private static final Map<UUID, Long> DELETE_CONFIRM_REGION = new ConcurrentHashMap<>();
 	private static final Map<UUID, Long> DELETE_CONFIRM_TIME = new ConcurrentHashMap<>();
 	private static final long DELETE_CONFIRM_WINDOW_MS = 6000L;
 
@@ -66,10 +66,10 @@ public final class MiscellaneousSettings {
 				Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
 				region.setName(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				RegionManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
+				/*RegionManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{newname}", input));
-
+				*/
 				RegionRenameEvent _event = new RegionRenameEvent(region, player, oldName, input);
 				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
@@ -112,10 +112,10 @@ public final class MiscellaneousSettings {
 				Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
 				region.setDisplayName(input);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				RegionManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
+				/*RegionManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{newdisplayname}", region.getDisplayName()));
-
+				*/
 				RegionDisplaynameUpdateEvent _event = new RegionDisplaynameUpdateEvent(region, player, oldDisplayname, input);
 				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
@@ -203,9 +203,9 @@ public final class MiscellaneousSettings {
 
 			region.setLocation(location);
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-			RegionManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
+			/*RegionManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
 					.add("{executor}", player.getName())
-					.add("{location}", Formatter.getLocation(location)));
+					.add("{location}", Formatter.getLocation(location)));*/
 		});
 
 		gui.addItem(15, MenuUtility.getButton(38, placeholder), (_player, event) -> {
@@ -223,8 +223,8 @@ public final class MiscellaneousSettings {
 				Cooldown.startCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP);
 				region.setOwner(targetPlayer);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				if (MemberManager.isMemberOfRegion(region, targetPlayer)) region.removeMember(targetPlayer);
-				if (region.isPlayerInvited(targetPlayer)) InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
+				if (MemberManager.isMemberOfRegion(region, targetPlayer)) MemberManager.removeMemberFromRegion(targetPlayer, region);
+				if (InviteManager.isInvited(region, targetPlayer)) InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
 				RegionTransferOwnershipEvent _event = new RegionTransferOwnershipEvent(region, player, targetPlayer);
 				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -263,10 +263,10 @@ public final class MiscellaneousSettings {
 
 			UUID pid = _player.getUniqueId();
 			long now = System.currentTimeMillis();
-			UUID pendingRegion = DELETE_CONFIRM_REGION.get(pid);
+			long pendingRegionId = DELETE_CONFIRM_REGION.get(pid);
 			Long ts = DELETE_CONFIRM_TIME.get(pid);
 
-			if (pendingRegion != null && pendingRegion.equals(region.getUniqueId())
+			if (pendingRegionId == region.getUniqueId()
 					&& ts != null && (now - ts) <= DELETE_CONFIRM_WINDOW_MS) {
 				DELETE_CONFIRM_REGION.remove(pid);
 				DELETE_CONFIRM_TIME.remove(pid);

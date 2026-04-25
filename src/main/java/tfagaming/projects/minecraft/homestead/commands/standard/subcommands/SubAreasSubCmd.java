@@ -14,7 +14,12 @@ import tfagaming.projects.minecraft.homestead.gui.menus.SubAreasMenu;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener.Selection;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
 
@@ -96,8 +101,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					}
 				}
 
-				if (SubAreaUtility.isIntersectingOtherSubArea(region.getUniqueId(), new SerializableBlock(firstCorner),
-						new SerializableBlock(secondCorner))) {
+				if (SubAreaUtility.isIntersectingOtherSubArea(region.getUniqueId(), new SeBlock(firstCorner),
+						new SeBlock(secondCorner))) {
 					Messages.send(player, 56);
 					return true;
 				}
@@ -250,16 +255,16 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					}
 				}
 
-				SubArea intersectedSubArea = SubAreaUtility.getIntersectedSubArea(region.getUniqueId(), new SerializableBlock(firstCorner),
-						new SerializableBlock(secondCorner));
+				SubArea intersectedSubArea = SubAreaUtility.getIntersectedSubArea(region.getUniqueId(), new SeBlock(firstCorner),
+						new SeBlock(secondCorner));
 
-				if (intersectedSubArea != null && !intersectedSubArea.getUniqueId().equals(subArea.getUniqueId())) {
+				if (intersectedSubArea != null && intersectedSubArea.getUniqueId() != subArea.getUniqueId()) {
 					Messages.send(player, 56);
 					return true;
 				}
 
-				subArea.setFirstPoint(firstCorner);
-				subArea.setSecondPoint(secondCorner);
+				subArea.setPoint1(firstCorner);
+				subArea.setPoint2(secondCorner);
 
 				Messages.send(player, 215);
 
@@ -294,7 +299,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				long flags = subArea.getFlags();
+				long flags = subArea.getPlayerFlags();
 				long flag = PlayerFlags.valueOf(flagInput);
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
@@ -328,7 +333,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					newFlags = FlagsCalculator.addFlag(flags, flag);
 				}
 
-				subArea.setFlags(newFlags);
+				subArea.setPlayerFlags(newFlags);
 
 				Messages.send(player, 63, new Placeholder()
 						.add("{region}", region.getName())
@@ -391,12 +396,12 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							return true;
 						}
 
-						if (subArea.isPlayerMember(target)) {
+						if (!MemberManager.isMemberOfSubArea(subArea, target)) {
 							Messages.send(player, 174);
 							return true;
 						}
 
-						subArea.addMember(target);
+						MemberManager.addMemberToSubArea(target, subArea);
 
 						Messages.send(player, 172, new Placeholder()
 								.add("{subarea}", subArea.getName())
@@ -407,12 +412,12 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					}
 
 					case "remove": {
-						if (!subArea.isPlayerMember(target)) {
+						if (!MemberManager.isMemberOfSubArea(subArea, target)) {
 							Messages.send(player, 175);
 							return true;
 						}
 
-						subArea.removeMember(target);
+						MemberManager.removeMemberFromSubArea(target, subArea);
 
 						Messages.send(player, 173, new Placeholder()
 								.add("{subarea}", subArea.getName())
@@ -435,7 +440,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							return true;
 						}
 
-						if (!subArea.isPlayerMember(target)) {
+						if (!MemberManager.isMemberOfSubArea(subArea, target)) {
 							Messages.send(player, 170);
 							return true;
 						}
@@ -447,9 +452,9 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							return true;
 						}
 
-						RegionMember member = subArea.getMember(target);
+						RegionMember member = MemberManager.getMemberOfSubArea(subArea, target);
 
-						long flags = member.getFlags();
+						long flags = member.getPlayerFlags();
 						long flag = PlayerFlags.valueOf(flagInput);
 
 						boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
@@ -483,7 +488,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							newFlags = FlagsCalculator.addFlag(flags, flag);
 						}
 
-						subArea.setMemberFlags(member, newFlags);
+						MemberManager.getMemberOfSubArea(subArea, target).setPlayerFlags(newFlags);
 
 						Messages.send(player, 169, new Placeholder()
 								.add("{region}", region.getName())
@@ -536,7 +541,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 			if (region != null) {
 				for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
-					OfflinePlayer bukkitMember = member.bukkit();
+					OfflinePlayer bukkitMember = member.getPlayer();
 
 					if (bukkitMember != null) {
 						suggestions.add(bukkitMember.getName());

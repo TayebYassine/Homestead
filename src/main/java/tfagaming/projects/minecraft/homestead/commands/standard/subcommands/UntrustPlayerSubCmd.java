@@ -69,7 +69,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.isPlayerInvited(target)) {
+		if (InviteManager.isInvited(region, target)) {
 			InviteManager.deleteInvitesOfPlayer(region, target);
 
 			Messages.send(player, 37, new Placeholder()
@@ -83,10 +83,10 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 					.add("{player}", target.getName())
 			);
 
-			RegionManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
+			/*RegionManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
 					.add("{executor}", player.getName())
 					.add("{playername}", target.getName())
-			);
+			);*/
 
 			RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, target, RegionUntrustPlayerEvent.UntrustReason.EXECUTION);
 			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));

@@ -44,7 +44,7 @@ public final class RegionPlayersInvited {
 
 					if (!context.getEvent().isLeftClick()) return;
 
-					if (!region.isPlayerInvited(invitedPlayer)) return;
+					if (!InviteManager.isInvited(region, invitedPlayer)) return;
 
 					InviteManager.deleteInvitesOfPlayer(region, invitedPlayer);
 					invitedPlayers = region.getInvitedPlayers();
@@ -114,7 +114,7 @@ public final class RegionPlayersInvited {
 					Messages.send(player, 48, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}
-				if (region.isPlayerInvited(target)) {
+				if (InviteManager.isInvited(region, target)) {
 					Messages.send(player, 35, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}

@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -56,7 +57,7 @@ public class HomeSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		new DelayedTeleport(player, region.getLocation().bukkit());
+		new DelayedTeleport(player, region.getLocation().toBukkit());
 
 		return true;
 	}

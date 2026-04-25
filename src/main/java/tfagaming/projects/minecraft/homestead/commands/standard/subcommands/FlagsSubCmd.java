@@ -12,6 +12,9 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.GlobalPlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionWorldFlags;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
@@ -260,7 +263,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				long flags = region.getWorldFlags();
 				long flag = WorldFlags.valueOf(flagInput);
 
-				if (Cooldown.hasCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
+				if (Cooldown.hasCooldown(player, Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
 					Cooldown.sendCooldownMessage(player);
 					return true;
 				}
@@ -331,7 +334,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 			if (region != null) {
 				for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
-					OfflinePlayer m = member.bukkit();
+					OfflinePlayer m = member.getPlayer();
 
 					if (m != null) {
 						suggestions.add(m.getName());

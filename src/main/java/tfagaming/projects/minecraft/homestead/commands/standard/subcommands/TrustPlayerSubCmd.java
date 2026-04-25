@@ -8,7 +8,12 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -85,7 +90,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.isPlayerInvited(target)) {
+		if (InviteManager.isInvited(region, target)) {
 			Messages.send(player, 35, new Placeholder()
 					.add("{playername}", target.getName())
 			);
@@ -99,7 +104,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 
 		SeRent rent = region.getRent();
 
-		if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
+		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
 			Messages.send(player, 196);
 			return true;
 		}
@@ -122,7 +127,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, target);
 			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 		} else {
-			region.addPlayerInvite(target);
+			InviteManager.invitePlayer(region, target);
 
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
@@ -135,10 +140,10 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 				Messages.send(target.getPlayer(), 139, placeholder);
 			}
 
-			RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
+			/*RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
 					.add("{executor}", player.getName())
 					.add("{playername}", target.getName())
-			);
+			);*/
 		}
 
 		return true;

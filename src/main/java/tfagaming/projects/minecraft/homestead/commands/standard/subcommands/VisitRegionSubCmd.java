@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionsWithWelcomeSigns;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -87,7 +88,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 				return true;
 			}
 
-			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().bukkit());
+			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().toBukkit());
 		} else {
 			if (args.length < 1) {
 				Messages.send(player, 0, new Placeholder()
@@ -123,7 +124,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 				return true;
 			}
 
-			new DelayedTeleport(player, region.getLocation().bukkit());
+			new DelayedTeleport(player, region.getLocation().toBukkit());
 		}
 
 		return true;

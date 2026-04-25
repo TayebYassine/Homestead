@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.gui.menus.RegionInfoMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.ArrayList;

@@ -15,7 +15,9 @@ import tfagaming.projects.minecraft.homestead.gui.menus.MiscellaneousSettings;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIcon;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -120,10 +122,10 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{newdisplayname}", region.getDisplayName())
 				);
 
-				RegionManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
+				/*RegionManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{newdisplayname}", region.getDisplayName())
-				);
+				);*/
 
 				RegionDisplaynameUpdateEvent _event = new RegionDisplaynameUpdateEvent(region, player, oldDisplayName, regionDisplayName);
 				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -277,10 +279,10 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{location}", Formatter.getLocation(location))
 				);
 
-				RegionManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
+				/*RegionManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
 						.add("{executor}", player.getName())
 						.add("{location}", Formatter.getLocation(location))
-				);
+				);*/
 
 				break;
 			}
@@ -320,7 +322,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				}
 
 				if (iconInput.equalsIgnoreCase("none") || iconInput.equalsIgnoreCase("default")) {
-					region.setIcon(iconInput);
+					region.setMapIcon(iconInput);
 
 					Messages.send(player, 100, new Placeholder()
 							.add("{region}", region.getName())
@@ -337,7 +339,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
 
-				region.setIcon(iconInput);
+				region.setMapIcon(iconInput);
 
 				Messages.send(player, 100, new Placeholder()
 						.add("{region}", region.getName())
@@ -398,7 +400,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				region.setTaxesAmount(taxAmount);
+				region.setTaxes(taxAmount);
 
 				Messages.send(player, 103, new Placeholder()
 						.add("{region}", region.getName())
@@ -431,7 +433,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				}
 
 				if (TargetRegionSession.hasSession(player)
-						&& TargetRegionSession.getRegion(player).getUniqueId().equals(region.getUniqueId())) {
+						&& TargetRegionSession.getRegion(player).getUniqueId() == region.getUniqueId()) {
 					Messages.send(player, 11);
 					return true;
 				}

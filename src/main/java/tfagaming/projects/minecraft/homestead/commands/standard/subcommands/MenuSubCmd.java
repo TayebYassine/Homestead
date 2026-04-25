@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionMenu;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionsMenu;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
 

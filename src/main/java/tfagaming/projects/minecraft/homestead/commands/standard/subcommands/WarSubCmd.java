@@ -10,8 +10,11 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.War;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
@@ -105,7 +108,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (region.getUniqueId().equals(targetRegion.getUniqueId()) || region.isOwner(targetRegion.getOwnerId())) {
+				if (region.getUniqueId() == targetRegion.getUniqueId() || region.isOwner(targetRegion.getOwnerId())) {
 					Messages.send(player, 148);
 					return true;
 				}
@@ -195,12 +198,12 @@ public class WarSubCmd extends SubCommandBuilder {
 
 						if (winner.getOwner().isOnline()) {
 							Messages.send((Player) winner.getOwner(), 155);
-						}
 
-						Cooldown.startCooldown(winner, Cooldown.Type.WAR_FLAG_DISABLED);
+							Cooldown.startCooldown((Player) winner.getOwner(), Cooldown.Type.WAR_FLAG_DISABLED);
+						}
 					}
 
-					Cooldown.startCooldown(region, Cooldown.Type.WAR_FLAG_DISABLED);
+					Cooldown.startCooldown(region.getOwner().getPlayer(), Cooldown.Type.WAR_FLAG_DISABLED);
 
 					WarManager.tellPlayersWarEnded(warMembers, winner);
 

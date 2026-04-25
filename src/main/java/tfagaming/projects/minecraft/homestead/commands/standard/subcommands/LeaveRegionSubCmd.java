@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -55,7 +57,7 @@ public class LeaveRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		region.removeMember(player);
+		MemberManager.removeMemberFromRegion(player, region);
 
 		Messages.send(player, 204, new Placeholder()
 				.add("{region}", region.getName())

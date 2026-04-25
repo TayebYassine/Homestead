@@ -8,7 +8,10 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
 
@@ -84,7 +87,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 
 		SeRent rent = region.getRent();
 
-		if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
+		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
 			Messages.send(player, 196);
 			return true;
 		}
