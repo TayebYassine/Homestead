@@ -21,7 +21,10 @@ public final class SQLite implements Provider {
 		Class.forName("org.sqlite.JDBC");
 		this.connection = DriverManager.getConnection(JDBC_URL + path);
 
-		connection.createStatement().execute("PRAGMA journal_mode=WAL");
+		try (Statement stmt = connection.createStatement()) {
+			stmt.execute("PRAGMA journal_mode=WAL");
+			stmt.execute("PRAGMA busy_timeout = 30000"); // 30s
+		}
 		prepareTables();
 	}
 
@@ -358,7 +361,7 @@ public final class SQLite implements Provider {
 						SubArea subArea = new SubArea(
 								newSubAreaId, newRegionId, rs.getString("name"),
 								worldId, point1, point2,
-								rs.getLong("playerFlags"), rent, rs.getLong("createdAt"));
+								rs.getLong("flags"), rent, rs.getLong("createdAt"));
 						newSubAreas.add(subArea);
 
 						LegacyParsers.splitAndParse(rs.getString("members"), "§", part -> {

@@ -29,7 +29,7 @@ public final class SeRent {
 	}
 
 	public static SeRent deserialize(@NotNull String serialized) {
-		String[] split = serialized.split("§");
+		String[] split = serialized.split(",");
 
 		try {
 			UUID playerId = UUID.fromString(split[0]);
@@ -89,7 +89,7 @@ public final class SeRent {
 	}
 
 	public String serialize() {
-		return String.format("%s§%s§%s§%s",
+		return String.format("%s,%s,%s,%s",
 				renterId.toString(),
 				startedAt,
 				untilAt,

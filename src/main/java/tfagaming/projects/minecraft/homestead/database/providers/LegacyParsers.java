@@ -94,10 +94,11 @@ final class LegacyParsers {
 
 	static SeBlock parseLegacyBlock(UUID worldId, String s) {
 		try {
-			String[] p = s.split(",");
-			int x = Integer.parseInt(p[0].trim());
-			int y = Integer.parseInt(p[1].trim());
-			int z = Integer.parseInt(p[2].trim());
+			String[] p = s.split(";");
+			//String worldName = p[0].trim();
+			int x = Integer.parseInt(p[1].trim());
+			int y = Integer.parseInt(p[2].trim());
+			int z = Integer.parseInt(p[3].trim());
 			return new SeBlock(worldId, x, y, z);
 		} catch (Exception e) {
 			return null;

@@ -54,7 +54,7 @@ public class StorageManager {
 	}
 
 	public static boolean hasStorage(long regionId) {
-		return STORAGES.containsKey(regionId) || storageConfig.contains("storages." + regionId);
+		return STORAGES.containsKey(regionId) || (storageConfig != null && storageConfig.contains("storages." + regionId));
 	}
 
 	public static SharedStorage createStorage(long regionId, int size) {
@@ -71,6 +71,10 @@ public class StorageManager {
 	}
 
 	public static void deleteStorage(long regionId) {
+		if (storageConfig == null) {
+			return;
+		}
+
 		STORAGES.remove(regionId);
 		storageConfig.set("storages." + regionId, null);
 		saveConfig();
@@ -78,6 +82,10 @@ public class StorageManager {
 	}
 
 	public static void saveStorage(long regionId) {
+		if (storageConfig == null) {
+			return;
+		}
+
 		SharedStorage storage = STORAGES.get(regionId);
 		if (storage != null) {
 			storageConfig.set("storages." + regionId, storage.serialize());
@@ -86,6 +94,10 @@ public class StorageManager {
 	}
 
 	public static void saveAll() {
+		if (storageConfig == null) {
+			return;
+		}
+
 		for (Map.Entry<Long, SharedStorage> entry : STORAGES.entrySet()) {
 			storageConfig.set("storages." + entry.getKey().toString(), entry.getValue().serialize());
 		}
@@ -93,6 +105,10 @@ public class StorageManager {
 	}
 
 	private static void saveConfig() {
+		if (storageConfig == null) {
+			return;
+		}
+
 		try {
 			storageConfig.save(storageFile);
 		} catch (IOException e) {

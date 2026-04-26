@@ -33,7 +33,7 @@ public final class SeLocation {
 	}
 
 	public static SeLocation deserialize(@NotNull String serialized) {
-		String[] split = serialized.split("§");
+		String[] split = serialized.split(",");
 
 		try {
 			UUID worldId = UUID.fromString(split[0]);
@@ -110,7 +110,7 @@ public final class SeLocation {
 	}
 
 	public String serialize() {
-		return String.format("%s§%s§%s§%s§%s§%s",
+		return String.format("%s,%s,%s,%s,%s,%s",
 				worldId.toString(),
 				x,
 				y,
