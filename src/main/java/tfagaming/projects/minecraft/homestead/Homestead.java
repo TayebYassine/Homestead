@@ -67,10 +67,17 @@ public class Homestead extends JavaPlugin {
 	public static LevelsCache levelsCache;
 
 	public static Vault vault;
-	public static SnowflakeGenerator SNOWFLAKE;
 	private static Homestead INSTANCE;
 	private static long STARTED_AT;
 	private static TaskHandle moveCheckTask;
+
+	private static class SnowflakeHolder {
+		static final SnowflakeGenerator INSTANCE = new SnowflakeGenerator();
+	}
+
+	public static SnowflakeGenerator getSnowflake() {
+		return SnowflakeHolder.INSTANCE;
+	}
 
 	public static String getVersion() {
 		return VERSION;
@@ -105,7 +112,6 @@ public class Homestead extends JavaPlugin {
 	public void onEnable() {
 		Homestead.INSTANCE = this;
 		Homestead.STARTED_AT = System.currentTimeMillis();
-		Homestead.SNOWFLAKE = new SnowflakeGenerator();
 
 		new Logger();
 

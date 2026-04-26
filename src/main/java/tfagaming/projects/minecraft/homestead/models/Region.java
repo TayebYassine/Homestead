@@ -42,7 +42,7 @@ public final class Region {
 	}
 
 	public Region(String name, UUID ownerId) {
-		this.id = Homestead.SNOWFLAKE.nextId();
+		this.id = Homestead.getSnowflake().nextId();
 		this.name = name;
 		this.ownerId = ownerId;
 		this.createdAt = System.currentTimeMillis();

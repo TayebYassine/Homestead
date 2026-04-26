@@ -17,7 +17,7 @@ public final class War {
 	private long startedAt;
 
 	public War(String name) {
-		this.id = Homestead.SNOWFLAKE.nextId();
+		this.id = Homestead.getSnowflake().nextId();
 		this.name = name;
 		this.displayName = name;
 		this.description = "";

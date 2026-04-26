@@ -26,7 +26,7 @@ public final class SubAreaManager {
 	 */
 	public static SubArea createSubArea(long regionId, String name, World world, Block point1, Block point2, long flags) {
 		SubArea subArea = new SubArea(
-				Homestead.SNOWFLAKE.nextId(),
+				Homestead.getSnowflake().nextId(),
 				regionId,
 				name,
 				world.getUID(),

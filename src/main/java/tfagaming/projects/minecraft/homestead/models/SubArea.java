@@ -26,7 +26,7 @@ public final class SubArea {
 	private SeRent rent;
 
 	public SubArea(long regionId, String name, World world, Block point1, Block point2, long playerFlags) {
-		this.id = Homestead.SNOWFLAKE.nextId();
+		this.id = Homestead.getSnowflake().nextId();
 		this.regionId = regionId;
 		this.name = name;
 		this.worldId = world.getUID();

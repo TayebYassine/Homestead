@@ -23,7 +23,7 @@ public final class LevelManager {
 			return null;
 		}
 
-		Level level = new Level(Homestead.SNOWFLAKE.nextId(), regionId, 0, 0, 0, System.currentTimeMillis());
+		Level level = new Level(Homestead.getSnowflake().nextId(), regionId, 0, 0, 0, System.currentTimeMillis());
 		Homestead.levelsCache.putOrUpdate(level);
 		return level;
 	}

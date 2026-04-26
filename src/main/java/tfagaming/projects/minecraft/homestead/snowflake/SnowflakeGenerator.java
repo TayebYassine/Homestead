@@ -1,5 +1,7 @@
 package tfagaming.projects.minecraft.homestead.snowflake;
 
+import tfagaming.projects.minecraft.homestead.logs.Logger;
+
 import java.net.NetworkInterface;
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -119,6 +121,7 @@ public class SnowflakeGenerator {
 				sequence = (sequence + 1) & MAX_SEQUENCE;
 
 				if (sequence == 0) {
+					Logger.error("[Snowflake] Sequence overflow, waiting for next millisecond. Worker=" + workerId);
 					currentTimestamp = waitForNextMillis(lastTimestamp);
 				}
 			} else {
@@ -126,10 +129,13 @@ public class SnowflakeGenerator {
 			}
 
 			lastTimestamp = currentTimestamp;
-
-			return ((currentTimestamp - CUSTOM_EPOCH) << TIMESTAMP_SHIFT)
+			long id = ((currentTimestamp - CUSTOM_EPOCH) << TIMESTAMP_SHIFT)
 					| (workerId << WORKER_ID_SHIFT)
 					| sequence;
+
+			Logger.debug("[Snowflake] Generated ID=" + id + " timestamp=" + currentTimestamp + " worker=" + workerId + " sequence=" + sequence + " hash=" + System.identityHashCode(this));
+
+			return id;
 		} finally {
 			lock.unlock();
 		}

@@ -229,7 +229,7 @@ public final class PostgreSQL implements Provider {
 			while (rs.next()) {
 				String oldId = rs.getString("id");
 				try {
-					long newId = Homestead.SNOWFLAKE.nextId();
+					long newId = Homestead.getSnowflake().nextId();
 					regionIdMap.put(oldId, newId);
 
 					UUID ownerId = UUID.fromString(rs.getString("owner_id"));
@@ -307,13 +307,13 @@ public final class PostgreSQL implements Provider {
 					if (invitedRaw != null && invitedRaw.startsWith("{")) {
 						UUID[] arr = (UUID[]) rs.getArray("invited_players").getArray();
 						for (UUID pid : arr) {
-							newInvites.add(new RegionInvite(Homestead.SNOWFLAKE.nextId(), newId, pid, createdAt));
+							newInvites.add(new RegionInvite(Homestead.getSnowflake().nextId(), newId, pid, createdAt));
 						}
 					} else {
 						LegacyParsers.splitAndParse(invitedRaw, "\u00A7", part -> {
 							try {
 								UUID pid = UUID.fromString(part.trim());
-								newInvites.add(new RegionInvite(Homestead.SNOWFLAKE.nextId(), newId, pid, createdAt));
+								newInvites.add(new RegionInvite(Homestead.getSnowflake().nextId(), newId, pid, createdAt));
 							} catch (IllegalArgumentException ignored) {
 							}
 						});
@@ -361,7 +361,7 @@ public final class PostgreSQL implements Provider {
 						Long newRegionId = regionIdMap.get(oldRegionId);
 						if (newRegionId == null) continue;
 
-						long newSubAreaId = Homestead.SNOWFLAKE.nextId();
+						long newSubAreaId = Homestead.getSnowflake().nextId();
 						subAreaIdMap.put(oldId, newSubAreaId);
 
 						UUID worldId = LegacyParsers.resolveWorldUUID(rs.getString("world_name"));
@@ -414,7 +414,7 @@ public final class PostgreSQL implements Provider {
 						Long newRegionId = regionIdMap.get(oldRegionId);
 						if (newRegionId == null) continue;
 						newLevels.add(new Level(
-								Homestead.SNOWFLAKE.nextId(),
+								Homestead.getSnowflake().nextId(),
 								newRegionId,
 								rs.getInt("level"),
 								rs.getLong("experience"),
@@ -432,7 +432,7 @@ public final class PostgreSQL implements Provider {
 				while (rs.next()) {
 					String oldWarId = rs.getString("id");
 					try {
-						long newWarId = Homestead.SNOWFLAKE.nextId();
+						long newWarId = Homestead.getSnowflake().nextId();
 						List<Long> mappedRegionIds = new ArrayList<>();
 
 						String regionsRaw = rs.getString("regions");
@@ -775,6 +775,7 @@ public final class PostgreSQL implements Provider {
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery("SELECT * FROM \"" + TABLE_PREFIX + "region_members\"")) {
 			while (rs.next()) {
+				long id = rs.getLong("id");
 				UUID playerId = UUID.fromString(rs.getString("playerId"));
 				int typeVal = rs.getInt("linkageType");
 				long regionId = rs.getLong("regionId");
@@ -785,12 +786,12 @@ public final class PostgreSQL implements Provider {
 								? RegionMember.LinkageType.REGION
 								: RegionMember.LinkageType.SUBAREA;
 				long linkageId = type == RegionMember.LinkageType.REGION ? regionId : subAreaId;
+				long pFlags = rs.getLong("playerFlags");
+				long cFlags = rs.getLong("controlFlags");
+				long joinedAt = rs.getLong("joinedAt");
+				long taxesAt = rs.getLong("taxesAt");
 
-				RegionMember member = new RegionMember(playerId, type, linkageId);
-				member.setPlayerFlags(rs.getLong("playerFlags"));
-				member.setControlFlags(rs.getLong("controlFlags"));
-				member.setJoinedAt(rs.getLong("joinedAt"));
-				member.setTaxesAt(rs.getLong("taxesAt"));
+				RegionMember member = new RegionMember(id, playerId, type, linkageId, pFlags, cFlags, taxesAt, joinedAt);
 				list.add(member);
 			}
 		}

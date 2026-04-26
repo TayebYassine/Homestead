@@ -22,7 +22,7 @@ public final class RegionRate {
 	}
 
 	public RegionRate(long regionId, UUID playerId, int rate, long ratedAt) {
-		this.id = Homestead.SNOWFLAKE.nextId();
+		this.id = Homestead.getSnowflake().nextId();
 		this.regionId = regionId;
 		this.playerId = playerId;
 		this.rate = rate;

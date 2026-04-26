@@ -22,7 +22,7 @@ public final class RegionBan {
 	}
 
 	public RegionBan(long regionId, UUID playerId, String reason, long bannedAt) {
-		this.id = Homestead.SNOWFLAKE.nextId();
+		this.id = Homestead.getSnowflake().nextId();
 		this.regionId = regionId;
 		this.playerId = playerId;
 		this.reason = reason;

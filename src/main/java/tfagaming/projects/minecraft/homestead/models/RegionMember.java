@@ -26,7 +26,7 @@ public final class RegionMember {
 	}
 
 	public RegionMember(UUID playerId, LinkageType type, long linkageId) {
-		this.id = Homestead.SNOWFLAKE.nextId();
+		this.id = Homestead.getSnowflake().nextId();
 		this.playerId = playerId;
 		this.linkageType = type;
 
@@ -36,6 +36,22 @@ public final class RegionMember {
 		}
 
 		this.joinedAt = System.currentTimeMillis();
+	}
+
+	public RegionMember(long id, UUID playerId, LinkageType type, long linkageId, long playerFlags, long controlFlags, long taxesAt, long joinedAt) {
+		this.id = id;
+		this.playerId = playerId;
+		this.linkageType = type;
+
+		switch (linkageType) {
+			case REGION -> this.regionId = linkageId;
+			case SUBAREA -> this.subAreaId = linkageId;
+		}
+
+		this.playerFlags = playerFlags;
+		this.controlFlags = controlFlags;
+		this.taxesAt = taxesAt;
+		this.joinedAt = joinedAt;
 	}
 
 	/**

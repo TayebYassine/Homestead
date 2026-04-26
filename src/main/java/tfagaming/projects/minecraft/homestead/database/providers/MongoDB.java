@@ -131,7 +131,7 @@ public final class MongoDB implements Provider {
 		for (Document doc : regions().find()) {
 			String oldId = doc.getString("id");
 			try {
-				long newId = Homestead.SNOWFLAKE.nextId();
+				long newId = Homestead.getSnowflake().nextId();
 				regionIdMap.put(oldId, newId);
 
 				UUID ownerId = UUID.fromString(doc.getString("ownerId"));
@@ -194,7 +194,7 @@ public final class MongoDB implements Provider {
 						if (part == null || part.isBlank()) continue;
 						try {
 							UUID pid = UUID.fromString(part.trim());
-							newInvites.add(new RegionInvite(Homestead.SNOWFLAKE.nextId(), newId, pid, createdAt));
+							newInvites.add(new RegionInvite(Homestead.getSnowflake().nextId(), newId, pid, createdAt));
 						} catch (IllegalArgumentException ignored) {
 						}
 					}
@@ -229,7 +229,7 @@ public final class MongoDB implements Provider {
 				Long newRegionId = regionIdMap.get(oldRegionId);
 				if (newRegionId == null) continue;
 
-				long newSubAreaId = Homestead.SNOWFLAKE.nextId();
+				long newSubAreaId = Homestead.getSnowflake().nextId();
 				subAreaIdMap.put(oldId, newSubAreaId);
 
 				UUID worldId = LegacyParsers.resolveWorldUUID(doc.getString("worldName"));
@@ -273,7 +273,7 @@ public final class MongoDB implements Provider {
 				Long newRegionId = regionIdMap.get(oldRegionId);
 				if (newRegionId == null) continue;
 				newLevels.add(new Level(
-						Homestead.SNOWFLAKE.nextId(),
+						Homestead.getSnowflake().nextId(),
 						newRegionId,
 						doc.getInteger("level"),
 						doc.getLong("experience"),
@@ -287,7 +287,7 @@ public final class MongoDB implements Provider {
 		for (Document doc : wars().find()) {
 			String oldWarId = doc.getString("id");
 			try {
-				long newWarId = Homestead.SNOWFLAKE.nextId();
+				long newWarId = Homestead.getSnowflake().nextId();
 				List<Long> mappedRegionIds = new ArrayList<>();
 				String regionsRaw = doc.getString("regions");
 				if (regionsRaw != null && !regionsRaw.isEmpty()) {
@@ -528,10 +528,15 @@ public final class MongoDB implements Provider {
 	public List<RegionMember> importRegionMembers() throws Exception {
 		List<RegionMember> list = new ArrayList<>();
 		for (Document doc : regionMembers().find()) {
+			long id = doc.getLong("id");
 			UUID playerId = UUID.fromString(doc.getString("playerId"));
 			int typeVal = doc.getInteger("linkageType");
 			long regionId = doc.getLong("regionId");
 			long subAreaId = doc.getLong("subAreaId");
+			long pFlags = doc.getLong("playerFlags");
+			long cFlags = doc.getLong("controlFlags");
+			long joinedAt = doc.getLong("joinedAt");
+			long taxesAt = doc.getLong("taxesAt");
 
 			RegionMember.LinkageType type =
 					typeVal == RegionMember.LinkageType.REGION.getValue()
@@ -539,11 +544,7 @@ public final class MongoDB implements Provider {
 							: RegionMember.LinkageType.SUBAREA;
 			long linkageId = type == RegionMember.LinkageType.REGION ? regionId : subAreaId;
 
-			RegionMember member = new RegionMember(playerId, type, linkageId);
-			member.setPlayerFlags(doc.getLong("playerFlags"));
-			member.setControlFlags(doc.getLong("controlFlags"));
-			member.setJoinedAt(doc.getLong("joinedAt"));
-			member.setTaxesAt(doc.getLong("taxesAt"));
+			RegionMember member = new RegionMember(id, playerId, type, linkageId, pFlags, cFlags, taxesAt, joinedAt);
 			list.add(member);
 		}
 		return list;

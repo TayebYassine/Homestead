@@ -49,7 +49,7 @@ public final class ChunkManager {
 	 */
 	public static RegionChunk createChunk(long regionId, Chunk chunk) {
 		RegionChunk regionChunk = new RegionChunk(
-				Homestead.SNOWFLAKE.nextId(),
+				Homestead.getSnowflake().nextId(),
 				regionId,
 				chunk.getWorld().getUID(),
 				chunk.getX(),

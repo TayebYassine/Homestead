@@ -31,7 +31,7 @@ public final class RegionChunk {
 	}
 
 	public RegionChunk(long regionId, UUID worldId, int x, int z, long claimedAt, boolean forceLoaded) {
-		this.id = Homestead.SNOWFLAKE.nextId();
+		this.id = Homestead.getSnowflake().nextId();
 		this.regionId = regionId;
 		this.worldId = worldId;
 		this.x = x;

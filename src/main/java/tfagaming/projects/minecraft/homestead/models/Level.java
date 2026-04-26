@@ -20,7 +20,7 @@ public final class Level {
 	private long totalExperience = 0L;
 
 	public Level(long regionId) {
-		this.id = Homestead.SNOWFLAKE.nextId();
+		this.id = Homestead.getSnowflake().nextId();
 		this.regionId = regionId;
 		this.createdAt = System.currentTimeMillis();
 	}

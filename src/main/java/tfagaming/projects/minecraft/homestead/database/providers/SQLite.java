@@ -249,7 +249,7 @@ public final class SQLite implements Provider {
 				while (rs.next()) {
 					String oldId = rs.getString("id");
 					try {
-						long newId = Homestead.SNOWFLAKE.nextId();
+						long newId = Homestead.getSnowflake().nextId();
 						regionIdMap.put(oldId, newId);
 
 						UUID ownerId = UUID.fromString(rs.getString("ownerId"));
@@ -301,7 +301,7 @@ public final class SQLite implements Provider {
 							try {
 								UUID pid = UUID.fromString(part.trim());
 								newInvites.add(new RegionInvite(
-										Homestead.SNOWFLAKE.nextId(), newId, pid, createdAt));
+										Homestead.getSnowflake().nextId(), newId, pid, createdAt));
 							} catch (IllegalArgumentException ignored) {
 							}
 						});
@@ -337,7 +337,7 @@ public final class SQLite implements Provider {
 							continue;
 						}
 
-						long newSubAreaId = Homestead.SNOWFLAKE.nextId();
+						long newSubAreaId = Homestead.getSnowflake().nextId();
 						subAreaIdMap.put(oldId, newSubAreaId);
 
 						UUID worldId = LegacyParsers.resolveWorldUUID(rs.getString("worldName"));
@@ -391,7 +391,7 @@ public final class SQLite implements Provider {
 							continue;
 						}
 						Level lvl = new Level(
-								Homestead.SNOWFLAKE.nextId(), newRegionId,
+								Homestead.getSnowflake().nextId(), newRegionId,
 								rs.getInt("level"),
 								rs.getLong("experience"),
 								rs.getLong("totalExperience"),
@@ -412,7 +412,7 @@ public final class SQLite implements Provider {
 				while (rs.next()) {
 					String oldWarId = rs.getString("id");
 					try {
-						long newWarId = Homestead.SNOWFLAKE.nextId();
+						long newWarId = Homestead.getSnowflake().nextId();
 
 
 						List<Long> mappedRegionIds = new ArrayList<>();
@@ -748,26 +748,23 @@ public final class SQLite implements Provider {
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery("SELECT * FROM region_members")) {
 			while (rs.next()) {
+				long id = rs.getLong("id");
 				UUID playerId = UUID.fromString(rs.getString("playerId"));
 				int typeVal = rs.getInt("linkageType");
 				long regionId = rs.getLong("regionId");
 				long subAreaId = rs.getLong("subAreaId");
-				long playerFlags = rs.getLong("playerFlags");
-				long ctrlFlags = rs.getLong("controlFlags");
-				long joinedAt = rs.getLong("joinedAt");
-				long taxesAt = rs.getLong("taxesAt");
 
 				RegionMember.LinkageType type =
 						typeVal == RegionMember.LinkageType.REGION.getValue()
 								? RegionMember.LinkageType.REGION
 								: RegionMember.LinkageType.SUBAREA;
-
 				long linkageId = type == RegionMember.LinkageType.REGION ? regionId : subAreaId;
-				RegionMember member = new RegionMember(playerId, type, linkageId);
-				member.setPlayerFlags(playerFlags);
-				member.setControlFlags(ctrlFlags);
-				member.setJoinedAt(joinedAt);
-				member.setTaxesAt(taxesAt);
+				long pFlags = rs.getLong("playerFlags");
+				long cFlags = rs.getLong("controlFlags");
+				long joinedAt = rs.getLong("joinedAt");
+				long taxesAt = rs.getLong("taxesAt");
+
+				RegionMember member = new RegionMember(id, playerId, type, linkageId, pFlags, cFlags, taxesAt, joinedAt);
 				list.add(member);
 			}
 		}

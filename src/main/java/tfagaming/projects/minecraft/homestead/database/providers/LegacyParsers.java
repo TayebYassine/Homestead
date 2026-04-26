@@ -29,7 +29,7 @@ final class LegacyParsers {
 			int x = Integer.parseInt(p[1].trim());
 			int z = Integer.parseInt(p[2].trim());
 			long claimedAt = p.length > 3 ? Long.parseLong(p[3].trim()) : System.currentTimeMillis();
-			return new RegionChunk(Homestead.SNOWFLAKE.nextId(), regionId, worldId, x, z, claimedAt, false);
+			return new RegionChunk(Homestead.getSnowflake().nextId(), regionId, worldId, x, z, claimedAt, false);
 		} catch (Exception e) {
 			return null;
 		}
@@ -44,12 +44,7 @@ final class LegacyParsers {
 			long joinedAt = p.length > 3 ? Long.parseLong(p[3].trim()) : System.currentTimeMillis();
 			long taxesAt = p.length > 4 ? Long.parseLong(p[4].trim()) : 0L;
 
-			RegionMember member = new RegionMember(playerId, type, linkageId);
-			member.setPlayerFlags(pFlags);
-			member.setControlFlags(cFlags);
-			member.setJoinedAt(joinedAt);
-			member.setTaxesAt(taxesAt);
-			return member;
+			return new RegionMember(Homestead.getSnowflake().nextId(), playerId, type, linkageId, pFlags, cFlags, taxesAt, joinedAt);
 		} catch (Exception e) {
 			return null;
 		}
@@ -61,7 +56,7 @@ final class LegacyParsers {
 			UUID playerId = UUID.fromString(p[0].trim());
 			int rate = Integer.parseInt(p[1].trim());
 			long ratedAt = Long.parseLong(p[2].trim());
-			return new RegionRate(Homestead.SNOWFLAKE.nextId(), regionId, playerId, rate, ratedAt);
+			return new RegionRate(Homestead.getSnowflake().nextId(), regionId, playerId, rate, ratedAt);
 		} catch (Exception e) {
 			return null;
 		}
@@ -73,7 +68,7 @@ final class LegacyParsers {
 			UUID playerId = UUID.fromString(p[0].trim());
 			String reason = p.length > 1 ? p[1] : null;
 			long bannedAt = p.length > 2 ? Long.parseLong(p[2].trim()) : System.currentTimeMillis();
-			return new RegionBan(Homestead.SNOWFLAKE.nextId(), regionId, playerId, reason, bannedAt);
+			return new RegionBan(Homestead.getSnowflake().nextId(), regionId, playerId, reason, bannedAt);
 		} catch (Exception e) {
 			return null;
 		}
@@ -86,7 +81,7 @@ final class LegacyParsers {
 			String message = p.length > 1 ? p[1] : "";
 			long sentAt = p.length > 2 ? Long.parseLong(p[2].trim()) : System.currentTimeMillis();
 			boolean read = p.length > 3 && Boolean.parseBoolean(p[3].trim());
-			return new RegionLog(Homestead.SNOWFLAKE.nextId(), regionId, author, message, sentAt, read);
+			return new RegionLog(Homestead.getSnowflake().nextId(), regionId, author, message, sentAt, read);
 		} catch (Exception e) {
 			return null;
 		}

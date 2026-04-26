@@ -21,7 +21,7 @@ public final class RegionLog {
 	}
 
 	public RegionLog(long regionId, String author, String message, long sentAt, boolean read) {
-		this.id = Homestead.SNOWFLAKE.nextId();
+		this.id = Homestead.getSnowflake().nextId();
 		this.regionId = regionId;
 		this.author = author;
 		this.message = message;
