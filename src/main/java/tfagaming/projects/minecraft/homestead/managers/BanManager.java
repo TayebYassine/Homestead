@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 /**
  * A utility class that manages {@link RegionBan}.
  */
-public final class BannedPlayerManager {
-	private BannedPlayerManager() {}
+public final class BanManager {
+	private BanManager() {}
 
 	/**
 	 * Ban a player from accessing to a region.

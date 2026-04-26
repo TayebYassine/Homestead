@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -114,7 +114,7 @@ public final class RegionPlayersInvited {
 						RegionControlFlags.TRUST_PLAYERS)) {
 					return false;
 				}
-				if (BannedPlayerManager.isBanned(region, target)) {
+				if (BanManager.isBanned(region, target)) {
 					Messages.send(player, 74);
 					return false;
 				}

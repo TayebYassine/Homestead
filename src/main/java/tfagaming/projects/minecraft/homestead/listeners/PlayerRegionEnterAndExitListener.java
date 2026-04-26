@@ -12,7 +12,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
-import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
@@ -66,7 +66,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				}
 			}
 
-			if (!PlayerUtility.isOperator(player) && BannedPlayerManager.isBanned(region, player)) {
+			if (!PlayerUtility.isOperator(player) && BanManager.isBanned(region, player)) {
 				Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
@@ -75,7 +75,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 
 				Messages.send(player, 28, new Placeholder()
 						.add("{region}", region.getName())
-						.add("{ban-reason}", BannedPlayerManager.getBannedPlayer(region, player).getReason())
+						.add("{ban-reason}", BanManager.getBannedPlayer(region, player).getReason())
 				);
 
 				return;

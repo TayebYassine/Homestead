@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
-import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionBan;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
@@ -71,14 +71,14 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!BannedPlayerManager.isBanned(region, target)) {
+		if (!BanManager.isBanned(region, target)) {
 			Messages.send(player, 33, new Placeholder()
 					.add("{playername}", target.getName())
 			);
 			return true;
 		}
 
-		BannedPlayerManager.unbanPlayer(region, target);
+		BanManager.unbanPlayer(region, target);
 
 		Messages.send(player, 34, new Placeholder()
 				.add("{region}", region.getName())
@@ -102,7 +102,7 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 			Region region = TargetRegionSession.getRegion(player);
 
 			if (region != null) {
-				for (RegionBan each : BannedPlayerManager.getBansOfRegion(region)) {
+				for (RegionBan each : BanManager.getBansOfRegion(region)) {
 					OfflinePlayer p = each.getPlayer();
 
 					if (p != null) {

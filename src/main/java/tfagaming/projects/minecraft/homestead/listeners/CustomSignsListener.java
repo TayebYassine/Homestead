@@ -248,7 +248,7 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
-			if (region.isOwner(player) || BannedPlayerManager.isBanned(region, player) || region.getRent() != null) {
+			if (region.isOwner(player) || BanManager.isBanned(region, player) || region.getRent() != null) {
 				Messages.send(player, 30);
 				return;
 			}
@@ -309,7 +309,7 @@ public final class CustomSignsListener implements Listener {
 				return;
 			}
 
-			if (region.isOwner(player) || BannedPlayerManager.isBanned(region, player)) {
+			if (region.isOwner(player) || BanManager.isBanned(region, player)) {
 				Messages.send(player, 30);
 				return;
 			}

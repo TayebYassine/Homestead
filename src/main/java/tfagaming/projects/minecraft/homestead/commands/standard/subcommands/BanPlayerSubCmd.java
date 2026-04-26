@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
-import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -76,7 +76,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (BannedPlayerManager.isBanned(region, target)) {
+		if (BanManager.isBanned(region, target)) {
 			Messages.send(player, 32, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{playername}", target.getName())
@@ -108,7 +108,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		BannedPlayerManager.banPlayer(region, target, reason);
+		BanManager.banPlayer(region, target, reason);
 
 		Messages.send(player, 31, new Placeholder()
 				.add("{region}", region.getName())

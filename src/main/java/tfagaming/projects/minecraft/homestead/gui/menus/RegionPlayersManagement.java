@@ -2,7 +2,7 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
-import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -19,7 +19,7 @@ public final class RegionPlayersManagement {
 		Placeholder placeholder = new Placeholder()
 				.add("{region-members}", MemberManager.getMembersOfRegion(region).size())
 				.add("{region-members-max}", Limits.getRegionLimit(region, Limits.LimitType.MEMBERS_PER_REGION))
-				.add("{region-banned-players}", BannedPlayerManager.getBansOfRegion(region).size())
+				.add("{region-banned-players}", BanManager.getBansOfRegion(region).size())
 				.add("{region-invited-players}", InviteManager.getInvitesOfRegion(region).size());
 
 		gui.addItem(11, MenuUtility.getButton(18, placeholder), (_player, event) -> {

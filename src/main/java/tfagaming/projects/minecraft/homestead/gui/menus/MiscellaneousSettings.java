@@ -240,7 +240,7 @@ public final class MiscellaneousSettings {
 					Messages.send(player, 30);
 					return false;
 				}
-				if (BannedPlayerManager.isBanned(region, target)) {
+				if (BanManager.isBanned(region, target)) {
 					Messages.send(player, 32, new Placeholder().add("{playername}", target.getName()));
 					return false;
 				}

@@ -129,7 +129,7 @@ public final class RegionManager {
 		InviteManager.deleteInvitesOfRegion(id);
 
 		// Delete related banned players
-		BannedPlayerManager.unbanAllPlayers(id);
+		BanManager.unbanAllPlayers(id);
 
 		// Delete related level
 		LevelManager.deleteLevelByRegion(id);

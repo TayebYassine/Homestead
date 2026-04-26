@@ -1,14 +1,18 @@
 package tfagaming.projects.minecraft.homestead.commands.operator.subcommands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.database.Driver;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
+import tfagaming.projects.minecraft.homestead.managers.LevelManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -46,7 +50,29 @@ public class ExportSubCmd extends SubCommandBuilder {
 		try {
 			Database instance = new Database(provider);
 
+			for (int i = 0; i < 5; i++) {
+				Logger.warning("THE SERVER MAY LAG DUE TO MANY DATA MODELS EXISTING ON THIS SERVER.");
+				Logger.warning("IGNORE THE FOLLOWING WARNINGS/ERRORS.");
+			}
+
 			instance.exportFromCache();
+
+			String[] headers = {"Model", "Imported"};
+
+			Object[][] data = {
+					{"Regions", Homestead.regionsCache.getAll().size()},
+					{"Members", Homestead.regionMemberCache.getAll().size()},
+					{"Chunks", Homestead.regionChunkCache.getAll().size()},
+					{"Invites", Homestead.regionInviteCache.getAll().size()},
+					{"Logs", Homestead.regionLogCache.getAll().size()},
+					{"Rates", Homestead.regionRateCache.getAll().size()},
+					{"Bans", Homestead.regionBanCache.getAll().size()},
+					{"Levels", Homestead.levelsCache.getAll().size()},
+					{"Wars", Homestead.warsCache.getAll().size()},
+					{"SubAreas", Homestead.subAreasCache.getAll().size()},
+			};
+
+			ListUtils.printTable(headers, data);
 
 			Messages.send(sender, 86, new Placeholder()
 					.add("{regions}", RegionManager.getAll().size())

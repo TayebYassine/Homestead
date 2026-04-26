@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -57,7 +57,7 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		BannedPlayerManager.unbanPlayer(region, target);
+		BanManager.unbanPlayer(region, target);
 
 		region.setOwner(target);
 
