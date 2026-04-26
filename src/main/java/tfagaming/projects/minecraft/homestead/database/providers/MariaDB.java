@@ -326,7 +326,7 @@ public final class MariaDB implements Provider {
 								worldId,
 								point1,
 								point2,
-								rs.getLong("playerFlags"),
+								rs.getLong("flags"),
 								rent,
 								rs.getLong("created_at"));
 						newSubAreas.add(subArea);
