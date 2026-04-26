@@ -120,18 +120,18 @@ public final class PlaceholderAPI extends PlaceholderExpansion {
 				yield Formatter.getDate(region.getUpkeepAt());
 			}
 			case "war_name" -> {
-				if (region == null || !WarManager.isRegionInWar(region)) {
+				if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
 					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.war_name");
 				}
 
-				yield WarManager.findWarByRegion(region).getName();
+				yield WarManager.findWarByRegion(region.getUniqueId()).getName();
 			}
 			case "war_prize" -> {
-				if (region == null || !WarManager.isRegionInWar(region)) {
+				if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
 					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.war_prize");
 				}
 
-				yield Formatter.getBalance(WarManager.findWarByRegion(region).getPrize());
+				yield Formatter.getBalance(WarManager.findWarByRegion(region.getUniqueId()).getPrize());
 			}
 			default -> null;
 		};

@@ -2,8 +2,10 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
+import tfagaming.projects.minecraft.homestead.managers.RateManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -20,8 +22,8 @@ public final class RegionRating {
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region}", region.getName())
-				.add("{player-rate}", region.isPlayerRated(player)
-						? Formatter.getRating(region.getPlayerRate(player).getRate())
+				.add("{player-rate}", RateManager.hasRatedRegion(player, region)
+						? Formatter.getRating(RateManager.getPlayerRate(player, region).getRate())
 						: Formatter.getNone());
 
 		for (int i = 0; i < RATING_SLOTS.length; i++) {
@@ -35,14 +37,15 @@ public final class RegionRating {
 
 				if (!event.isLeftClick()) return;
 
-				region.addPlayerRate(player, rating);
+				RateManager.rateRegion(region, player, rating);
+
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				Messages.send(player, 134);
 				new RegionRating(player, region, backButton);
 			});
 		}
 
-		gui.addItem(22, region.isPlayerRated(player)
+		gui.addItem(22, RateManager.hasRatedRegion(player, region)
 						? MenuUtility.getButton(54, placeholder)
 						: MenuUtility.getButton(53), null);
 

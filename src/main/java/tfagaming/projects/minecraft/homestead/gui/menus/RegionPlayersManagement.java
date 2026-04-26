@@ -2,8 +2,12 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
+import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
@@ -15,8 +19,8 @@ public final class RegionPlayersManagement {
 		Placeholder placeholder = new Placeholder()
 				.add("{region-members}", MemberManager.getMembersOfRegion(region).size())
 				.add("{region-members-max}", Limits.getRegionLimit(region, Limits.LimitType.MEMBERS_PER_REGION))
-				.add("{region-banned-players}", region.getBannedPlayers().size())
-				.add("{region-invited-players}", region.getInvitedPlayers().size());
+				.add("{region-banned-players}", BannedPlayerManager.getBansOfRegion(region).size())
+				.add("{region-invited-players}", InviteManager.getInvitesOfRegion(region).size());
 
 		gui.addItem(11, MenuUtility.getButton(18, placeholder), (_player, event) -> {
 			if (RegionManager.findRegion(region.getUniqueId()) == null) {

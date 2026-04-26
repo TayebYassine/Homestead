@@ -177,7 +177,7 @@ public final class ChunkManager {
 		Location location = region.getLocation() != null ? region.getLocation().toBukkit() : null;
 
 		if (location != null && ChunkUtility.areEqual(location.getChunk(), chunk)) {
-			region.setLocation(null);
+			region.resetLocation();
 		}
 
 		ChunkUnclaimEvent event = new ChunkUnclaimEvent(region, chunk);

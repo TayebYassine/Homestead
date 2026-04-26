@@ -69,8 +69,8 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 
 		if (args.length == 1) {
 			suggestions.addAll(
-					RegionManager.getRegionsInvitedPlayer(player).stream()
-							.map(Region::getName)
+				InviteManager.getInvitesOfPlayer(player).stream()
+							.map(p -> RegionManager.findRegion(p.getRegionId()).getName())
 							.toList()
 			);
 		}

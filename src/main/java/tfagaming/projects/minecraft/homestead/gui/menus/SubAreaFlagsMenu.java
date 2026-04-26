@@ -9,6 +9,8 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
@@ -28,7 +30,7 @@ public final class SubAreaFlagsMenu {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (String flagString : PlayerFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(subArea.getFlags(), PlayerFlags.valueOf(flagString));
+			boolean value = FlagsCalculator.isFlagSet(subArea.getPlayerFlags(), PlayerFlags.valueOf(flagString));
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
@@ -66,13 +68,13 @@ public final class SubAreaFlagsMenu {
 
 					if (!context.getEvent().isLeftClick()) return;
 
-					long flags = subArea.getFlags();
+					long flags = subArea.getPlayerFlags();
 					long flag = PlayerFlags.valueOf(flagString);
 					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
 					Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
 
-					subArea.setFlags(isSet
+					subArea.setPlayerFlags(isSet
 							? FlagsCalculator.removeFlag(flags, flag)
 							: FlagsCalculator.addFlag(flags, flag));
 

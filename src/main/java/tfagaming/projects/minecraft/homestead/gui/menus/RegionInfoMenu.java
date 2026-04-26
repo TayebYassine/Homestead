@@ -2,9 +2,11 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
+import tfagaming.projects.minecraft.homestead.managers.RateManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorting;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
@@ -18,7 +20,7 @@ public final class RegionInfoMenu {
 				.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
 				.add("{region-members}", Formatter.getMembersOfRegion(region))
 				.add("{region-bank}", Formatter.getBalance(region.getBank()))
-				.add("{region-rating}", Formatter.getRating(RegionManager.getAverageRating(region)))
+				.add("{region-rating}", Formatter.getRating(RateManager.getAverageRating(region)))
 				.add("{region-owner}", region.getOwner().getName())
 				.add("{region-global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
 				.add("{region-rank-bank}", RegionManager.getRank(RegionSorting.BANK, region.getUniqueId()))

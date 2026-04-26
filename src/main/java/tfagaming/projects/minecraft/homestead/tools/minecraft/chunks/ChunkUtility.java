@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 
 
@@ -101,8 +102,8 @@ public final class ChunkUtility {
 	 * @param player The player
 	 * @param chunk The chunk
 	 */
-	public static Location getLocation(Player player, SerializableChunk chunk) {
-		return getLocation(player, chunk.bukkit());
+	public static Location getLocation(Player player, RegionChunk chunk) {
+		return getLocation(player, chunk.toBukkit());
 	}
 
 	/**

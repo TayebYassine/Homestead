@@ -4,8 +4,12 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -33,9 +37,9 @@ public final class SubAreaMenu {
 
 		Placeholder placeholder = new Placeholder()
 				.add("{subarea}", subArea.getName())
-				.add("{subarea-players}", subArea.getMembers().size())
+				.add("{subarea-players}", MemberManager.getMembersOfRegion(region).size())
 				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
-				.add("{rent-renter}", rent != null ? rent.getPlayer().getName() : Formatter.getNone())
+				.add("{rent-renter}", rent != null ? rent.getRenter().getName() : Formatter.getNone())
 				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
 				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 

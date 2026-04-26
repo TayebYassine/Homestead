@@ -34,6 +34,10 @@ public final class SubArea {
 		this.createdAt = System.currentTimeMillis();
 	}
 
+	public SubArea(long id, long regionId, String name, UUID worldId, Block point1, Block point2, long playerFlags, SeRent rent, long createdAt) {
+		this(id, regionId, name, worldId, new SeBlock(point1), new SeBlock(point2), playerFlags, rent, createdAt);
+	}
+
 	public SubArea(long id, long regionId, String name, UUID worldId, SeBlock point1, SeBlock point2, long playerFlags, SeRent rent, long createdAt) {
 		this.id = id;
 		this.regionId = regionId;

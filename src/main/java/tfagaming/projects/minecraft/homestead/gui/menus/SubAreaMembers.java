@@ -6,8 +6,12 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 
 
@@ -25,7 +29,7 @@ public final class SubAreaMembers {
 	private List<RegionMember> members;
 
 	public SubAreaMembers(Player player, Region region, SubArea subArea) {
-		members = subArea.getMembers();
+		members = MemberManager.getMembersOfSubArea(subArea);
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtility.getTitle(24), 9 * 4,
@@ -49,12 +53,12 @@ public final class SubAreaMembers {
 					RegionMember member = members.get(context.getIndex());
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
-						new PlayerInfo(player, member.bukkit(), () ->
+						new PlayerInfo(player, member.getPlayer(), () ->
 								new SubAreaMembers(player, region, subArea));
 
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-						if (!MemberManager.isMemberOfRegion(region, member.bukkit())
-								|| !subArea.isPlayerMember(member.bukkit())) {
+						if (!MemberManager.isMemberOfRegion(region, member.getPlayer())
+								|| !MemberManager.isMemberOfSubArea(subArea, player)) {
 							return;
 						}
 
@@ -63,10 +67,11 @@ public final class SubAreaMembers {
 							return;
 						}
 
-						subArea.removeMember(member.bukkit());
+						MemberManager.removeMemberFromSubArea(player, subArea);
+
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-						members = subArea.getMembers();
+						members = MemberManager.getMembersOfSubArea(subArea);
 						context.getInstance().setItems(getItems(player, region, subArea));
 
 					} else if (context.getEvent().isLeftClick()) {
@@ -87,7 +92,8 @@ public final class SubAreaMembers {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
-				subArea.addMember(targetPlayer);
+				MemberManager.addMemberToSubArea(targetPlayer, subArea);
+
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				Homestead.getInstance().runSyncTask(() -> new SubAreaMembers(player, region, subArea));
 			}, (message) -> {
@@ -109,7 +115,7 @@ public final class SubAreaMembers {
 					Messages.send(player, 171);
 					return false;
 				}
-				if (subArea.isPlayerMember(target)) {
+				if (MemberManager.isMemberOfRegion(region, target)) {
 					Messages.send(player, 174);
 					return false;
 				}
@@ -124,13 +130,13 @@ public final class SubAreaMembers {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (RegionMember member : members) {
-			OfflinePlayer memberBukkit = member.bukkit();
+			OfflinePlayer memberBukkit = member.getPlayer();
 
 			items.add(MenuUtility.getButton(69, new Placeholder()
 							.add("{region}", region.getName())
 							.add("{subarea}", subArea.getName())
 							.add("{playername}", memberBukkit == null ? "?" : memberBukkit.getName()),
-					member.bukkit()));
+					member.getPlayer()));
 		}
 
 		return items;

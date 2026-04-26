@@ -6,9 +6,10 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorting;
-import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -54,8 +55,8 @@ public final class RegionMenu {
 				.add("{region-rank-chunks}", RegionManager.getRank(RegionSorting.CHUNKS_COUNT, region.getUniqueId()))
 				.add("{region-rank-members}", RegionManager.getRank(RegionSorting.MEMBERS_COUNT, region.getUniqueId()))
 				.add("{region-rank-rating}", RegionManager.getRank(RegionSorting.RATING, region.getUniqueId()))
-				.add("{region-logs}", region.getLogs().size())
-				.add("{region-logs-unread}", region.getLogs().stream().filter(log -> !log.isRead()).count())
+				.add("{region-logs}", LogManager.getLogs(region).size())
+				.add("{region-logs-unread}", LogManager.getLogs(region).stream().filter(log -> !log.isRead()).count())
 				.add("{region-weather}", WeatherType.from(region.getWeather()))
 				.add("{region-time}", TimeType.from(region.getTime()))
 				.add("{subareas-enabled}", Formatter.getToggle(isSubAreasEnabled))
@@ -63,7 +64,7 @@ public final class RegionMenu {
 				.add("{region-subareas-max}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))
 				// Rent placeholders
 				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
-				.add("{rent-renter}", rent != null ? rent.getPlayer().getName() : Formatter.getNone())
+				.add("{rent-renter}", rent != null ? rent.getRenter().getName() : Formatter.getNone())
 				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
 				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 
@@ -224,13 +225,13 @@ public final class RegionMenu {
 
 				if (!event.isLeftClick()) return;
 
-				region.removeMember(player);
+				MemberManager.removeMemberFromRegion(player, region);
 
 				TargetRegionSession.randomizeRegion(player);
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				RegionManager.addNewLog(region.getUniqueId(), 4, new Placeholder()
-						.add("{playername}", player.getName()));
+				/*RegionManager.addNewLog(region.getUniqueId(), 4, new Placeholder()
+						.add("{playername}", player.getName()));*/
 
 				RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, player, RegionUntrustPlayerEvent.UntrustReason.LEFT);
 				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));

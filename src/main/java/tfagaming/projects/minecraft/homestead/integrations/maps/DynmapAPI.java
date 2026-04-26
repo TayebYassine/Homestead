@@ -13,7 +13,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 public final class DynmapAPI extends AbstractMapIntegration {
 
-	private MarkerSet markerSet;
+	public static MarkerSet markerSet;
 
 	public DynmapAPI(Homestead plugin) {
 		super(plugin);

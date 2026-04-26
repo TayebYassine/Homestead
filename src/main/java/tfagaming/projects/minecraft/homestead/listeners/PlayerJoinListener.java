@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -35,7 +36,7 @@ public class PlayerJoinListener implements Listener {
 
 		Messages.send(player, Formatter.applyPlaceholders(message, new Placeholder()
 				.add("{unread-logs}", unreadLogs)
-				.add("{regions-invited}", RegionManager.getRegionsInvitedPlayer(player).size())
+				.add("{regions-invited}", InviteManager.getInvitesOfPlayer(player).size())
 		));
 	}
 }

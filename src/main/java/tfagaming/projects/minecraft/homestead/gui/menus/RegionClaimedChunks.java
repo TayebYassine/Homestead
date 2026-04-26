@@ -9,6 +9,8 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
@@ -32,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class RegionClaimedChunks {
-	private List<SerializableChunk> chunks;
+	private List<RegionChunk> chunks;
 
 	public RegionClaimedChunks(Player player, Region region) {
 		this.chunks = ChunkManager.getChunksOfRegion(region);
@@ -51,7 +53,7 @@ public final class RegionClaimedChunks {
 						return;
 					}
 
-					SerializableChunk chunk = chunks.get(context.getIndex());
+					RegionChunk chunk = chunks.get(context.getIndex());
 
 					if (context.getEvent().isRightClick()) {
 						if (!player.hasPermission("homestead.region.teleport")) {
@@ -61,14 +63,14 @@ public final class RegionClaimedChunks {
 
 						player.closeInventory();
 
-						new DelayedTeleport(player, chunk.bukkitLocation());
+						new DelayedTeleport(player, chunk.toBukkitLocation());
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
 						if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 							Messages.send(player, 30);
 							return;
 						}
 
-						int totalForcedLoadedChunks = ChunkManager.getChunksOfRegion(region).stream().filter(SerializableChunk::isForceLoaded).toList().size();
+						int totalForcedLoadedChunks = ChunkManager.getChunksOfRegion(region).stream().filter(RegionChunk::isForceLoaded).toList().size();
 						int maxForceLoadedChunks = Limits.getRegionLimit(region, Limits.LimitType.MAX_FORCE_LOADED_CHUNKS);
 
 						if (totalForcedLoadedChunks >= maxForceLoadedChunks && !chunk.isForceLoaded()) {
@@ -76,10 +78,12 @@ public final class RegionClaimedChunks {
 							return;
 						}
 
-						Chunk bukkitChunk = chunk.bukkit();
+						Chunk bukkitChunk = chunk.toBukkit();
+						assert bukkitChunk != null;
+
 						final boolean newState = !chunk.isForceLoaded();
 
-						region.setChunkForceLoaded(chunk, newState);
+						chunk.setForceLoaded(newState);
 
 						if (newState) {
 							PersistentChunkTicket.addPersistent(Homestead.getInstance(), bukkitChunk);
@@ -97,7 +101,7 @@ public final class RegionClaimedChunks {
 							return;
 						}
 
-						if (!ChunkManager.isChunkClaimed(chunk.bukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.bukkit())) {
+						if (!ChunkManager.isChunkClaimed(chunk.toBukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.toBukkit())) {
 							return;
 						}
 
@@ -109,7 +113,7 @@ public final class RegionClaimedChunks {
 						Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
 						int before = ChunkManager.getChunksOfRegion(region).size();
-						ChunkManager.unclaimChunk(region.getUniqueId(), chunk.bukkit());
+						ChunkManager.unclaimChunk(region.getUniqueId(), chunk.toBukkit());
 
 						if (ChunkManager.getChunksOfRegion(region).size() < before) {
 							double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
@@ -136,19 +140,19 @@ public final class RegionClaimedChunks {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (int i = 0; i < chunks.size(); i++) {
-			SerializableChunk chunk = chunks.get(i);
+			RegionChunk chunk = chunks.get(i);
 
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
 					.add("{index}", i + 1)
 					.add("{chunk-claimedat}", Formatter.getDate(chunk.getClaimedAt()))
-					.add("{chunk-location}", Formatter.getLocation(chunk.bukkitLocation()))
+					.add("{chunk-location}", Formatter.getLocation(chunk.toBukkitLocation()))
 					.add("{chunk-is-loaded}", Formatter.getBoolean(chunk.isForceLoaded()));
 
 			ButtonData data = MenuUtility.getButtonData(33);
 
 			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD")) {
-				data.setOriginalType(switch (chunk.bukkitLocation().getWorld().getEnvironment()) {
+				data.setOriginalType(switch (chunk.toBukkitLocation().getWorld().getEnvironment()) {
 					case NETHER -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.nether");
 					case THE_END -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.the_end");
 					default -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.overworld");

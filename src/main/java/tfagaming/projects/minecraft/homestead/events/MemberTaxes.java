@@ -74,9 +74,9 @@ public final class MemberTaxes {
 							);
 						}
 
-						RegionManager.addNewLog(region.getUniqueId(), 5, new Placeholder()
+						/*RegionManager.addNewLog(region.getUniqueId(), 5, new Placeholder()
 								.add("{playername}", targetPlayer.getName())
-						);
+						);*/
 
 						RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, targetPlayer, targetPlayer, RegionUntrustPlayerEvent.UntrustReason.TAXES);
 						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));

@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -95,7 +96,7 @@ public final class RegionsMenu {
 
 						player.closeInventory();
 
-						new DelayedTeleport(_player, region.getLocation().bukkit());
+						new DelayedTeleport(_player, region.getLocation().toBukkit());
 
 						return;
 					}
@@ -107,7 +108,7 @@ public final class RegionsMenu {
 						}
 
 						Region current = TargetRegionSession.getRegion(_player);
-						if (current != null && current.getUniqueId().equals(region.getUniqueId())) return;
+						if (current != null && current.getUniqueId() == region.getUniqueId()) return;
 
 						TargetRegionSession.newSession(_player, region);
 						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
@@ -169,7 +170,7 @@ public final class RegionsMenu {
 					.add("{region-bank}", Formatter.getBalance(region.getBank()))
 					.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
 
-			boolean isTarget = targetRegion != null && targetRegion.getUniqueId().equals(region.getUniqueId());
+			boolean isTarget = targetRegion != null && targetRegion.getUniqueId() == region.getUniqueId();
 			items.add(MenuUtility.getButton(isTarget ? 5 : 4, placeholder));
 		}
 

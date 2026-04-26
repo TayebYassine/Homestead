@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.managers;
 
 import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.gui.menus.RegionRating;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.models.RegionRate;
@@ -82,5 +83,25 @@ public final class RateManager {
 				.filter(b -> b.getRegionId() == regionId)
 				.findFirst()
 				.ifPresent(b -> Homestead.regionRateCache.remove(b.getUniqueId()));
+	}
+
+	public static boolean hasRatedRegion(OfflinePlayer player, Region region) {
+		return hasRatedRegion(player, region.getUniqueId());
+	}
+
+	public static boolean hasRatedRegion(OfflinePlayer player, long regionId) {
+		return Homestead.regionRateCache.getAll().stream()
+				.anyMatch(b -> b.getRegionId() == regionId && b.getPlayerId().equals(player.getUniqueId()));
+	}
+
+	public static RegionRate getPlayerRate(OfflinePlayer player, Region region) {
+		return getPlayerRate(player, region.getUniqueId());
+	}
+
+	public static RegionRate getPlayerRate(OfflinePlayer player, long regionId) {
+		return Homestead.regionRateCache.getAll().stream()
+				.filter(b -> b.getRegionId() == regionId && b.getPlayerId().equals(player.getUniqueId()))
+				.findFirst()
+				.orElse(null);
 	}
 }

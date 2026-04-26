@@ -105,7 +105,7 @@ public final class SubAreaManager {
 	public static void deleteSubArea(long id) {
 		// Delete related sub-area members
 		for (RegionMember member : MemberManager.getMembersOfSubArea(id)) {
-			MemberManager.deleteMember(member.getUniqueId());
+			MemberManager.removeMemberFromSubArea(member.getPlayer(), id);
 		}
 		Homestead.subAreasCache.remove(id);
 	}
@@ -145,7 +145,7 @@ public final class SubAreaManager {
 			// Clean invalid members
 			for (RegionMember member : MemberManager.getMembersOfSubArea(subArea.getUniqueId())) {
 				if (org.bukkit.Bukkit.getOfflinePlayer(member.getPlayerId()).getName() == null) {
-					MemberManager.deleteMember(member.getUniqueId());
+					MemberManager.removeMember(member.getUniqueId());
 					updated++;
 				}
 			}

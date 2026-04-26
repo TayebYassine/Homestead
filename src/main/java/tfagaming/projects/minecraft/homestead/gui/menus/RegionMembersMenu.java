@@ -9,7 +9,13 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -51,13 +57,13 @@ public final class RegionMembersMenu {
 					RegionMember member = members.get(context.getIndex());
 
 					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
-						new PlayerInfo(player, member.bukkit(), () -> new RegionMembersMenu(player, region));
+						new PlayerInfo(player, member.getPlayer(), () -> new RegionMembersMenu(player, region));
 
 					} else if (context.getEvent().isRightClick()) {
 						new RegionMemberControlFlags(player, region, member);
 
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-						if (!MemberManager.isMemberOfRegion(region, member.bukkit())) return;
+						if (!MemberManager.isMemberOfRegion(region, member.getPlayer())) return;
 
 						if (!player.hasPermission("homestead.region.players.untrust")) {
 							Messages.send(player, 8);
@@ -68,13 +74,15 @@ public final class RegionMembersMenu {
 							return;
 						}
 
-						region.removeMember(member.bukkit());
+						MemberManager.removeMemberFromRegion(member.getPlayer(), region);
+
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-						RegionManager.addNewLog(region.getUniqueId(), 3, new Placeholder()
+						/*RegionManager.addNewLog(region.getUniqueId(), 3, new Placeholder()
 								.add("{executor}", player.getName())
 								.add("{playername}", member.bukkit() == null ? "?" : member.bukkit().getName()));
+						 */
 
-						RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, member.bukkit(), RegionUntrustPlayerEvent.UntrustReason.EXECUTION);
+						RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, member.getPlayer(), RegionUntrustPlayerEvent.UntrustReason.EXECUTION);
 						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
 						members = MemberManager.getMembersOfRegion(region);
@@ -98,17 +106,20 @@ public final class RegionMembersMenu {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
+				if (targetPlayer == null) return;
+
 				if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
 					InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
-					InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
+					MemberManager.addMemberToRegion(targetPlayer, region);
 
 					RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, targetPlayer);
 					Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 				} else {
-					region.addPlayerInvite(targetPlayer);
-					RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
+					InviteManager.invitePlayer(region, targetPlayer);
+
+					/*RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
 							.add("{executor}", player.getName())
-							.add("{playername}", targetPlayer.getName()));
+							.add("{playername}", targetPlayer.getName()));*/
 				}
 
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
@@ -142,7 +153,7 @@ public final class RegionMembersMenu {
 				}
 
 				SeRent rent = region.getRent();
-				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
+				if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
 					Messages.send(player, 196);
 					return false;
 				}
@@ -162,18 +173,18 @@ public final class RegionMembersMenu {
 		boolean taxesEnabled = Homestead.vault.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled");
 
 		for (RegionMember member : members) {
-			OfflinePlayer memberBukkit = member.bukkit();
+			OfflinePlayer memberBukkit = member.getPlayer();
 
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
 					.add("{playername}", memberBukkit == null ? "?" : memberBukkit.getName())
 					.add("{member-joinedat}", Formatter.getDate(member.getJoinedAt()))
-					.add("{taxes-dueon}", taxesEnabled && region.getTaxesAmount() > 0
+					.add("{taxes-dueon}", taxesEnabled && region.getTaxes() > 0
 							? Formatter.getRemainingTime(member.getTaxesAt())
 							: Formatter.getNever())
-					.add("{tax-amount}", Formatter.getBalance(region.getTaxesAmount()));
+					.add("{tax-amount}", Formatter.getBalance(region.getTaxes()));
 
-			items.add(MenuUtility.getButton(24, placeholder, member.bukkit()));
+			items.add(MenuUtility.getButton(24, placeholder, member.getPlayer()));
 		}
 
 		return items;

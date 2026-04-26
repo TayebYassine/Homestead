@@ -8,7 +8,10 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
@@ -28,7 +31,7 @@ public final class RegionMemberFlags {
 	
 
 	public RegionMemberFlags(Player player, Region region, RegionMember member) {
-		OfflinePlayer memberBukkit = member.bukkit();
+		OfflinePlayer memberBukkit = member.getPlayer();
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtility.getTitle(6).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
@@ -43,7 +46,7 @@ public final class RegionMemberFlags {
 						return;
 					}
 
-					boolean stillMember = Objects.requireNonNull(RegionManager.findRegion(region.getUniqueId())).isPlayerMember(memberBukkit);
+					boolean stillMember = MemberManager.isMemberOfRegion(region, player);
 
 					if (!stillMember) {
 						player.closeInventory();
@@ -74,7 +77,7 @@ public final class RegionMemberFlags {
 						boolean disableAll = context.getEvent().isRightClick();
 						if (!enableAll && !disableAll) return;
 
-						long newFlags = member.getFlags();
+						long newFlags = member.getPlayerFlags();
 						int changed = 0;
 
 						for (String flagString : PlayerFlags.getFlags()) {
@@ -97,7 +100,8 @@ public final class RegionMemberFlags {
 							return;
 						}
 
-						region.setMemberFlags(member, newFlags);
+						member.setPlayerFlags(newFlags);
+
 						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 						context.getInstance().setItems(buildItemsList(member));
 
@@ -118,13 +122,13 @@ public final class RegionMemberFlags {
 
 					if (!context.getEvent().isLeftClick()) return;
 
-					long flags = member.getFlags();
+					long flags = member.getPlayerFlags();
 					long flag = PlayerFlags.valueOf(flagString);
 					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
 					Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
 
-					region.setMemberFlags(member, isSet
+					member.setPlayerFlags(isSet
 							? FlagsCalculator.removeFlag(flags, flag)
 							: FlagsCalculator.addFlag(flags, flag));
 
@@ -141,7 +145,7 @@ public final class RegionMemberFlags {
 		items.add(MenuUtility.getButton(65)); // bulk-toggle item
 
 		for (String flagString : PlayerFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(member.getFlags(), PlayerFlags.valueOf(flagString));
+			boolean value = FlagsCalculator.isFlagSet(member.getPlayerFlags(), PlayerFlags.valueOf(flagString));
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 

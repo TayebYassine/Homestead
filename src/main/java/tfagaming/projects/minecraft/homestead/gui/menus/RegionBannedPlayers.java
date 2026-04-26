@@ -16,6 +16,7 @@ import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionBan;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 
 
@@ -89,7 +90,7 @@ public final class RegionBannedPlayers {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
-				BannedPlayerManager.banPlayer(region, targetPlayer);
+				BannedPlayerManager.banPlayer(region, targetPlayer, null);
 				if (MemberManager.isMemberOfRegion(region, targetPlayer)) MemberManager.removeMemberFromRegion(targetPlayer, region);
 				if (InviteManager.isInvited(region, targetPlayer)) InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
@@ -119,7 +120,7 @@ public final class RegionBannedPlayers {
 					return false;
 				}
 				SeRent rent = region.getRent();
-				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
+				if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
 					Messages.send(player, 196);
 				}
 				return true;
@@ -137,19 +138,18 @@ public final class RegionBannedPlayers {
 					RegionControlFlags.UNBAN_PLAYERS)) {
 				return;
 			}
-			if (region.getBannedPlayers().isEmpty()) {
+
+			int bannedPlayers = BannedPlayerManager.getBansOfRegion(region).size();
+
+			if (bannedPlayers == 0) {
 				Messages.send(player, 77);
 				return;
 			}
 
-			final List<OfflinePlayer> oldBannedPlayers = region.getBannedPlayers().stream().map(SerializableBannedPlayer::bukkit).toList();
+			BannedPlayerManager.unbanAllPlayers(region);
 
-			region.setBannedPlayers(new ArrayList<>());
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 			Messages.send(player, 94);
-
-			RegionBulkUnbanPlayersEvent _event = new RegionBulkUnbanPlayersEvent(region, player, oldBannedPlayers);
-			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
 			Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region));
 		});
@@ -160,8 +160,8 @@ public final class RegionBannedPlayers {
 	private List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (SerializableBannedPlayer bannedPlayer : bannedPlayers) {
-			OfflinePlayer bannedPlayerBukkit = bannedPlayer.bukkit();
+		for (RegionBan bannedPlayer : bannedPlayers) {
+			OfflinePlayer bannedPlayerBukkit = bannedPlayer.getPlayer();
 
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
@@ -169,7 +169,7 @@ public final class RegionBannedPlayers {
 					.add("{player-bannedat}", Formatter.getDate(bannedPlayer.getBannedAt()))
 					.add("{player-banreason}", bannedPlayer.getReason());
 
-			items.add(MenuUtility.getButton(27, placeholder, bannedPlayer.bukkit()));
+			items.add(MenuUtility.getButton(27, placeholder, bannedPlayer.getPlayer()));
 		}
 
 		return items;

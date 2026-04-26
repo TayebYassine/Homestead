@@ -5,9 +5,12 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionLog;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -19,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class RegionLogs {
-	private List<SerializableLog> logs;
+	private List<RegionLog> logs;
 
 	public RegionLogs(Player player, Region region) {
-		logs = region.getLogs(true);
+		logs = LogManager.getLogs(region);
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtility.getTitle(13), 9 * 5,
@@ -43,21 +46,22 @@ public final class RegionLogs {
 						return;
 					}
 
-					SerializableLog log = logs.get(context.getIndex());
+					RegionLog log = logs.get(context.getIndex());
 
 					if (context.getEvent().isLeftClick()) {
-						region.setLogAsRead(log.getId());
-						logs = region.getLogs(true);
-						context.getInstance().setItems(getItems(player, region));
+						log.setRead(true);
 
+						logs = LogManager.getLogs(region);
+						context.getInstance().setItems(getItems(player, region));
 					} else if (context.getEvent().isRightClick()) {
 						if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 							Messages.send(player, 159);
 							return;
 						}
 
-						region.removeLog(log.getId());
-						logs = region.getLogs(true);
+						LogManager.deleteLog(log);
+
+						logs = LogManager.getLogs(region);
 						context.getInstance().setItems(getItems(player, region));
 					}
 				});
@@ -65,12 +69,13 @@ public final class RegionLogs {
 		gui.addActionButton(0, MenuUtility.getButton(46), (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
-			if (region.getLogs().isEmpty()) {
+			if (LogManager.getLogs(region).isEmpty()) {
 				Messages.send(player, 91);
 				return;
 			}
 
-			region.getLogs().forEach(log -> region.setLogAsRead(log.getId()));
+			LogManager.markAllAsRead(region);
+
 			Messages.send(player, 92);
 			Homestead.getInstance().runSyncTask(() -> new RegionLogs(player, region));
 		});
@@ -82,12 +87,13 @@ public final class RegionLogs {
 				Messages.send(player, 159);
 				return;
 			}
-			if (region.getLogs().isEmpty()) {
+			if (LogManager.getLogs(region).isEmpty()) {
 				Messages.send(player, 83);
 				return;
 			}
 
-			region.setLogs(new ArrayList<>());
+			LogManager.deleteLogsOfRegion(region);
+
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 			Messages.send(player, 93);
 			Homestead.getInstance().runSyncTask(() -> new RegionLogs(player, region));
@@ -100,7 +106,7 @@ public final class RegionLogs {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (int i = 0; i < logs.size(); i++) {
-			SerializableLog log = logs.get(i);
+			RegionLog log = logs.get(i);
 
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())

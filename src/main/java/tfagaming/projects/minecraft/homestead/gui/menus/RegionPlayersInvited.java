@@ -8,7 +8,13 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.BannedPlayerManager;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionInvite;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -26,10 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class RegionPlayersInvited {
-	private List<OfflinePlayer> invitedPlayers;
+	private List<RegionInvite> invites;
 
 	public RegionPlayersInvited(Player player, Region region) {
-		invitedPlayers = region.getInvitedPlayers();
+		invites = InviteManager.getInvitesOfRegion(region);
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtility.getTitle(10), 9 * 4,
@@ -38,16 +44,16 @@ public final class RegionPlayersInvited {
 				getItems(player, region),
 				(_player, event) -> new RegionPlayersManagement(player, region),
 				(_player, context) -> {
-					if (context.getIndex() >= invitedPlayers.size()) return;
+					if (context.getIndex() >= invites.size()) return;
 
-					OfflinePlayer invitedPlayer = invitedPlayers.get(context.getIndex());
+					RegionInvite invite = invites.get(context.getIndex());
 
 					if (!context.getEvent().isLeftClick()) return;
 
-					if (!InviteManager.isInvited(region, invitedPlayer)) return;
+					if (!InviteManager.isInvited(region, invite.getPlayer())) return;
 
-					InviteManager.deleteInvitesOfPlayer(region, invitedPlayer);
-					invitedPlayers = region.getInvitedPlayers();
+					InviteManager.deleteInvitesOfPlayer(region, invite.getPlayer());
+					invites = InviteManager.getInvitesOfRegion(region);
 					context.getInstance().setItems(getItems(player, region));
 				});
 
@@ -76,7 +82,7 @@ public final class RegionPlayersInvited {
 					RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, targetPlayer);
 					Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 				} else {
-					region.addPlayerInvite(targetPlayer);
+					InviteManager.invitePlayer(region, targetPlayer);
 
 					Placeholder placeholder = new Placeholder()
 							.add("{region}", region.getName())
@@ -90,9 +96,9 @@ public final class RegionPlayersInvited {
 					}
 				}
 
-				RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
+				/*RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
 						.add("{executor}", player.getName())
-						.add("{playername}", targetPlayer.getName()));
+						.add("{playername}", targetPlayer.getName()));*/
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 				Homestead.getInstance().runSyncTask(() -> new RegionPlayersInvited(player, region));
 			}, (message) -> {
@@ -124,7 +130,7 @@ public final class RegionPlayersInvited {
 				}
 
 				SeRent rent = region.getRent();
-				if (rent != null && rent.getPlayerId().equals(target.getUniqueId())) {
+				if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
 					Messages.send(player, 196);
 					return false;
 				}
@@ -144,12 +150,13 @@ public final class RegionPlayersInvited {
 
 			if (!event.isLeftClick()) return;
 
-			if (region.getInvitedPlayers().isEmpty()) {
+			if (InviteManager.getInvitesOfRegion(region).isEmpty()) {
 				Messages.send(player, 76);
 				return;
 			}
 
-			region.setInvitedPlayers(new ArrayList<>());
+			InviteManager.deleteInvitesOfRegion(region);
+
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 			Messages.send(player, 95);
 			Homestead.getInstance().runSyncTask(() -> new RegionPlayersInvited(player, region));
@@ -161,9 +168,9 @@ public final class RegionPlayersInvited {
 	private List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (OfflinePlayer invitedPlayer : invitedPlayers) {
+		for (RegionInvite invite : invites) {
 			items.add(MenuUtility.getButton(30, new Placeholder()
-					.add("{playername}", invitedPlayer.getName())));
+					.add("{playername}", invite.getPlayer().getName())));
 		}
 
 		return items;

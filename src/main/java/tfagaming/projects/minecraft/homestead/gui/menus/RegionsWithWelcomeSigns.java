@@ -3,8 +3,10 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.RateManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -46,7 +48,7 @@ public final class RegionsWithWelcomeSigns {
 
 						player.closeInventory();
 
-						new DelayedTeleport(player, region.getWelcomeSign().bukkit());
+						new DelayedTeleport(player, region.getWelcomeSign().toBukkit());
 					}
 				});
 
@@ -63,7 +65,7 @@ public final class RegionsWithWelcomeSigns {
 					.add("{region-owner}", region.getOwner().getName())
 					.add("{region-bank}", Formatter.getBalance(region.getBank()))
 					.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
-					.add("{region-rating}", Formatter.getRating(RegionManager.getAverageRating(region)))));
+					.add("{region-rating}", Formatter.getRating(RateManager.getAverageRating(region)))));
 		}
 
 		return items;

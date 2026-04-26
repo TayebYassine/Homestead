@@ -7,7 +7,10 @@ import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
@@ -27,11 +30,11 @@ public final class RegionMemberControlFlags {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (String flagString : RegionControlFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(member.getRegionControlFlags(), RegionControlFlags.valueOf(flagString));
+			boolean value = FlagsCalculator.isFlagSet(member.getControlFlags(), RegionControlFlags.valueOf(flagString));
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
-		OfflinePlayer memberBukkit = member.bukkit();
+		OfflinePlayer memberBukkit = member.getPlayer();
 
 		PaginationMenu gui = new PaginationMenu(
 				MenuUtility.getTitle(7).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
@@ -46,7 +49,7 @@ public final class RegionMemberControlFlags {
 						return;
 					}
 
-					boolean stillMember = Objects.requireNonNull(RegionManager.findRegion(region.getUniqueId())).isPlayerMember(memberBukkit);
+					boolean stillMember = MemberManager.isMemberOfRegion(region, player);
 
 					if (!stillMember) {
 						player.closeInventory();
@@ -75,13 +78,13 @@ public final class RegionMemberControlFlags {
 
 					if (!context.getEvent().isLeftClick()) return;
 
-					long flags = member.getRegionControlFlags();
+					long flags = member.getControlFlags();
 					long flag = RegionControlFlags.valueOf(flagString);
 					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
 					Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
 
-					region.setMemberRegionControlFlags(member, isSet
+					member.setControlFlags(isSet
 							? FlagsCalculator.removeFlag(flags, flag)
 							: FlagsCalculator.addFlag(flags, flag));
 

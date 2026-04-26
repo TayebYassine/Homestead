@@ -1,7 +1,9 @@
 package tfagaming.projects.minecraft.homestead.models;
 
+import com.mongodb.lang.NonNull;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
@@ -132,6 +134,11 @@ public final class Region {
 
 	public void setLocation(SeLocation location) {
 		this.location = location;
+		update();
+	}
+
+	public void resetLocation() {
+		this.location = null;
 		update();
 	}
 

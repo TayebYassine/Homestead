@@ -268,20 +268,6 @@ public final class RegionManager {
 	}
 
 	/**
-	 * Supplies regions that have invited the given player.
-	 * @param player The player
-	 */
-	public static List<Region> getRegionsInvitedPlayer(OfflinePlayer player) {
-		List<Region> regions = new ArrayList<>();
-		for (Region region : getAll()) {
-			if (InviteManager.isPlayerInvitedToRegion(player, region.getUniqueId())) {
-				regions.add(region);
-			}
-		}
-		return regions;
-	}
-
-	/**
 	 * Produces a list ordered by the requested metric.
 	 * Ordering is descending for numeric criteria, ascending for creation date.
 	 * @param type The sorting method
@@ -292,13 +278,13 @@ public final class RegionManager {
 					.sorted(Comparator.comparingDouble(Region::getBank).reversed())
 					.collect(Collectors.toList());
 			case CHUNKS_COUNT -> getAll().stream()
-					.sorted(Comparator.comparingInt(region -> ChunkManager.getChunksOfRegion(region.getUniqueId()).size()).reversed())
+					.sorted(Comparator.<Region>comparingInt(region -> ChunkManager.getChunksOfRegion(region.getUniqueId()).size()).reversed())
 					.collect(Collectors.toList());
 			case MEMBERS_COUNT -> getAll().stream()
-					.sorted(Comparator.comparingInt(region -> MemberManager.getMembersOfRegion(region.getUniqueId()).size()).reversed())
+					.sorted(Comparator.<Region>comparingInt(region -> MemberManager.getMembersOfRegion(region.getUniqueId()).size()).reversed())
 					.collect(Collectors.toList());
 			case RATING -> getAll().stream()
-					.sorted(Comparator.comparingDouble(RegionManager::getAverageRating).reversed())
+					.sorted(Comparator.<Region>comparingDouble(RateManager::getAverageRating).reversed())
 					.collect(Collectors.toList());
 			case CREATION_DATE -> getAll().stream()
 					.sorted(Comparator.comparingLong(Region::getCreatedAt))
@@ -351,15 +337,6 @@ public final class RegionManager {
 		return false;
 	}
 
-	/** Calculates the mean of all player-submitted ratings for the region. */
-	public static double getAverageRating(Region region) {
-		List<RegionRate> rates = RateManager.getRatesOfRegion(region.getUniqueId());
-		if (rates == null || rates.isEmpty()) {
-			return 0.0;
-		}
-		return rates.stream().mapToInt(RegionRate::getRate).average().orElse(0.0);
-	}
-
 	/**
 	 * Cleans stale references during server startup:
 	 * missing worlds, offline players, invalid chunks, sub-areas, spawn or welcome signs.
@@ -374,50 +351,10 @@ public final class RegionManager {
 		for (Region region : getAll()) {
 			long regionId = region.getUniqueId();
 
-			// Clean invalid members
-			for (RegionMember member : MemberManager.getMembersOfRegion(regionId)) {
-				if (Bukkit.getOfflinePlayer(member.getPlayerId()).getName() == null) {
-					MemberManager.deleteMember(member.getUniqueId());
-					updated++;
-				}
-			}
-
-			// Clean invalid banned players
-			for (RegionBan banned : BannedPlayerManager.getBannedPlayersOfRegion(regionId)) {
-				if (Bukkit.getOfflinePlayer(banned.getPlayerId()).getName() == null) {
-					BannedPlayerManager.unbanPlayer(banned.getUniqueId());
-					updated++;
-				}
-			}
-
-			// Clean invalid rates
-			for (RegionRate rate : RateManager.getRatesOfRegion(regionId)) {
-				if (Bukkit.getOfflinePlayer(rate.getPlayerId()).getName() == null) {
-					RateManager.deleteRate(rate.getUniqueId());
-					updated++;
-				}
-			}
-
-			// Clean invalid invites
-			for (RegionInvite invite : InviteManager.getInvitesOfRegion(regionId)) {
-				if (Bukkit.getOfflinePlayer(invite.getPlayerId()).getName() == null) {
-					InviteManager.deleteInvite(invite.getUniqueId());
-					updated++;
-				}
-			}
-
-			// Clean invalid chunks
-			for (RegionChunk chunk : ChunkManager.getChunksOfRegion(regionId)) {
-				if (Bukkit.getWorld(chunk.getWorldId()) == null) {
-					ChunkManager.deleteChunk(chunk.getUniqueId());
-					updated++;
-				}
-			}
-
 			// Clean invalid spawn location
 			SeLocation spawnLoc = region.getLocation();
 			if (spawnLoc != null && spawnLoc.getWorld() == null) {
-				region.setLocationToNull();
+				region.resetLocation();
 				updated++;
 			}
 

@@ -4,9 +4,8 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.database.Driver;
 import tfagaming.projects.minecraft.homestead.integrations.bstats.Metrics;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
-import tfagaming.projects.minecraft.homestead.managers.WarManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.models.Region;
 
 
 import java.util.HashMap;
@@ -84,9 +83,9 @@ public final class bStats {
 				public Map<String, Integer> call() {
 					Map<String, Integer> map = new HashMap<>();
 
-					map.put("Dynmap", DynamicMaps.dynmap == null ? 0 : 1);
-					map.put("Squaremap", DynamicMaps.squaremap == null ? 0 : 1);
-					map.put("Pl3xMap", DynamicMaps.pl3xmap == null ? 0 : 1);
+					map.put("Dynmap", DynamicMaps.DYNMAP_INSTANCE == null ? 0 : 1);
+					map.put("Squaremap", DynamicMaps.SQUAREMAP_INSTANCE == null ? 0 : 1);
+					map.put("Pl3xMap", DynamicMaps.PL3XMAP_INSTANCE == null ? 0 : 1);
 					map.put("BlueMap", DynamicMaps.BLUEMAP_INSTANCE == null ? 0 : 1);
 
 					return map;
