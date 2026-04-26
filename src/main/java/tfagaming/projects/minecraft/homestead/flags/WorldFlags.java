@@ -27,7 +27,7 @@ public final class WorldFlags {
 	public static final long SNOWMAN_TRAILS = 1L << 18;
 	public static final long WINDCHARGE_BURST = 1L << 19;
 	/**
-	 * @deprecated Terminally deprecated, use {@code ENTITY_GRIEFING} instead.
+	 * @deprecated Use {@code ENTITY_GRIEFING} instead.
 	 */
 	public static final long COPPER_GOLEMS_INTERACTION = 1L << 20;
 	public static final long WARS = 1L << 21;

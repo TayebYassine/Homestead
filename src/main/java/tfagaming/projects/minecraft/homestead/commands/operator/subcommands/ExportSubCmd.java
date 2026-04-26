@@ -57,7 +57,7 @@ public class ExportSubCmd extends SubCommandBuilder {
 
 			instance.exportFromCache();
 
-			String[] headers = {"Model", "Imported"};
+			String[] headers = {"Model", "Exported"};
 
 			Object[][] data = {
 					{"Regions", Homestead.regionsCache.getAll().size()},

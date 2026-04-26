@@ -4,6 +4,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 
 import java.util.UUID;
 
@@ -121,6 +122,14 @@ public final class RegionMember {
 
 	public long getSubAreaId() {
 		return subAreaId;
+	}
+
+	/**
+	 * Returns the sub-area by directly fetching with sub-area ID from cache.
+	 * @return The sub-area if found, {@code null} otherwise.
+	 */
+	public @Nullable SubArea getSubArea() {
+		return SubAreaManager.findSubArea(subAreaId);
 	}
 
 	public void setSubAreaId(long subAreaId) {

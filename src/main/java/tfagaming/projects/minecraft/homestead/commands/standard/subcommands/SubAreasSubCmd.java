@@ -135,7 +135,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				SubAreaManager.createSubArea(region.getUniqueId(), name, firstCorner.getWorld(), firstCorner, secondCorner, region.getPlayerFlags());
+				SubAreaManager.createSubArea(region, name, firstCorner.getWorld(), firstCorner, secondCorner);
 
 				SelectionToolListener.cancelPlayerSession(player);
 

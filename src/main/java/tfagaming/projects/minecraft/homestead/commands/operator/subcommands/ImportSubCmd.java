@@ -25,6 +25,7 @@ import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -53,8 +54,28 @@ public class ImportSubCmd extends SubCommandBuilder {
 			case "claimchunk" -> importFromClaimChunk(sender);
 			case "lands" -> importFromLands(sender);
 			case "huskclaims" -> importFromHuskClaims(sender);
-			default -> Messages.send(sender, 113);
+			default -> {
+				Messages.send(sender, 113);
+				return true;
+			}
 		}
+
+		String[] headers = {"Model", "Imported"};
+
+		Object[][] data = {
+				{"Regions", Homestead.regionsCache.getAll().size()},
+				{"Members", Homestead.regionMemberCache.getAll().size()},
+				{"Chunks", Homestead.regionChunkCache.getAll().size()},
+				{"Invites", Homestead.regionInviteCache.getAll().size()},
+				{"Logs", Homestead.regionLogCache.getAll().size()},
+				{"Rates", Homestead.regionRateCache.getAll().size()},
+				{"Bans", Homestead.regionBanCache.getAll().size()},
+				{"Levels", Homestead.levelsCache.getAll().size()},
+				{"Wars", Homestead.warsCache.getAll().size()},
+				{"SubAreas", Homestead.subAreasCache.getAll().size()},
+		};
+
+		ListUtils.printTable(headers, data);
 
 		return true;
 	}
@@ -75,8 +96,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 				continue;
 			}
 
-			Region region = RegionManager.createRegion(owner.getName(),
-					Bukkit.getOfflinePlayer(claim.getOwnerID()));
+			Region region = RegionManager.createRegion(owner.getName(), owner);
 
 			for (Chunk chunk : claim.getChunks()) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {

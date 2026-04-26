@@ -210,11 +210,17 @@ public class Homestead extends JavaPlugin {
 		}
 
 		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("clean-startup")) {
-			RegionManager.cleanStartup();
-			WarManager.cleanStartup();
-			SubAreaManager.cleanStartup();
-			LevelManager.cleanStartup();
-			ChunkManager.deleteInvalidChunks();
+			RegionManager.cleanupInvalidRegions();
+			SubAreaManager.cleanupInvalidSubAreas();
+			WarManager.cleanupInvalidWars();
+			LevelManager.cleanupInvalidLevels();
+
+			BanManager.cleanupInvalidBans();
+			ChunkManager.cleanupInvalidChunks();
+			InviteManager.cleanupInvalidInvites();
+			LogManager.cleanupInvalidLogs();
+			MemberManager.cleanupInvalidMembers();
+			RateManager.cleanupInvalidRatings();
 		}
 
 		ChunkManager.reregisterForceLoadedChunks();
