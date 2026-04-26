@@ -3,7 +3,9 @@ package tfagaming.projects.minecraft.homestead.models;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
@@ -65,6 +67,14 @@ public final class SubArea {
 
 	public long getRegionId() {
 		return regionId;
+	}
+
+	/**
+	 * Returns the region by directly fetching with region ID from cache.
+	 * @return The region if found, {@code null} otherwise.
+	 */
+	public @Nullable Region getRegion() {
+		return RegionManager.findRegion(regionId);
 	}
 
 	public void setRegionId(long regionId) {

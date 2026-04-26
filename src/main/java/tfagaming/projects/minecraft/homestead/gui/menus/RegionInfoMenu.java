@@ -21,7 +21,7 @@ public final class RegionInfoMenu {
 				.add("{region-members}", Formatter.getMembersOfRegion(region))
 				.add("{region-bank}", Formatter.getBalance(region.getBank()))
 				.add("{region-rating}", Formatter.getRating(RateManager.getAverageRating(region)))
-				.add("{region-owner}", region.getOwner().getName())
+				.add("{region-owner}", region.getOwnerName())
 				.add("{region-global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
 				.add("{region-rank-bank}", RegionManager.getRank(RegionSorting.BANK, region.getUniqueId()))
 				.add("{region-rank-chunks}", RegionManager.getRank(RegionSorting.CHUNKS_COUNT, region.getUniqueId()))

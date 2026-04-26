@@ -1,7 +1,9 @@
 package tfagaming.projects.minecraft.homestead.models;
 
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 import java.util.UUID;
 
@@ -52,6 +54,14 @@ public final class RegionBan {
 		return regionId;
 	}
 
+	/**
+	 * Returns the region by directly fetching with region ID from cache.
+	 * @return The region if found, {@code null} otherwise.
+	 */
+	public @Nullable Region getRegion() {
+		return RegionManager.findRegion(regionId);
+	}
+
 	public void setRegionId(long regionId) {
 		this.regionId = regionId;
 		update();
@@ -61,15 +71,26 @@ public final class RegionBan {
 		return playerId;
 	}
 
-	public void setPlayerId(UUID playerId) {
-		this.playerId = playerId;
-		update();
-	}
-
 	public OfflinePlayer getPlayer() {
 		if (INSTANCE == null) return null;
 
 		return INSTANCE.getOfflinePlayerSync(playerId);
+	}
+
+	/**
+	 * Returns the player's name safely. If the player was not found by their ID, it will
+	 * return {@code "?"} instead.
+	 * @return The player's name if found, {@code "?"} otherwise.
+	 */
+	public String getPlayerName() {
+		OfflinePlayer player = getPlayer();
+
+		return player == null ? "?" : player.getName();
+	}
+
+	public void setPlayerId(UUID playerId) {
+		this.playerId = playerId;
+		update();
 	}
 
 	public void setPlayer(OfflinePlayer player) {

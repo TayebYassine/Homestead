@@ -173,11 +173,9 @@ public final class RegionMembersMenu {
 		boolean taxesEnabled = Homestead.vault.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled");
 
 		for (RegionMember member : members) {
-			OfflinePlayer memberBukkit = member.getPlayer();
-
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
-					.add("{playername}", memberBukkit == null ? "?" : memberBukkit.getName())
+					.add("{playername}", member.getPlayerName())
 					.add("{member-joinedat}", Formatter.getDate(member.getJoinedAt()))
 					.add("{taxes-dueon}", taxesEnabled && region.getTaxes() > 0
 							? Formatter.getRemainingTime(member.getTaxesAt())

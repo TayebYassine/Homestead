@@ -34,10 +34,8 @@ public final class SubAreaMemberFlags {
 	
 
 	public SubAreaMemberFlags(Player player, Region region, SubArea subArea, RegionMember member) {
-		OfflinePlayer memberBukkit = member.getPlayer();
-
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtility.getTitle(25).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
+				MenuUtility.getTitle(25).replace("{playername}", member.getPlayerName()),
 				9 * 5,
 				MenuUtility.getNextPageButton(),
 				MenuUtility.getPreviousPageButton(),

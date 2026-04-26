@@ -40,7 +40,7 @@ public final class RegionMenu {
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region}", region.getName())
-				.add("{region-owner}", region.getOwner().getName())
+				.add("{region-owner}", region.getOwnerName())
 				.add("{region-bank}", Formatter.getBalance(region.getBank()))
 				.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
 				.add("{region-chunks}", ChunkManager.getChunksOfRegion(region).size())
@@ -64,7 +64,7 @@ public final class RegionMenu {
 				.add("{region-subareas-max}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))
 				// Rent placeholders
 				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
-				.add("{rent-renter}", rent != null ? rent.getRenter().getName() : Formatter.getNone())
+				.add("{rent-renter}", rent != null ? rent.getRenterName() : Formatter.getNone())
 				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
 				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 

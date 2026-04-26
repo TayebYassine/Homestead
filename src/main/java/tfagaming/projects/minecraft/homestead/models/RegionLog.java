@@ -1,6 +1,8 @@
 package tfagaming.projects.minecraft.homestead.models;
 
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 import java.util.UUID;
 
@@ -51,6 +53,14 @@ public final class RegionLog {
 
 	public long getRegionId() {
 		return regionId;
+	}
+
+	/**
+	 * Returns the region by directly fetching with region ID from cache.
+	 * @return The region if found, {@code null} otherwise.
+	 */
+	public @Nullable Region getRegion() {
+		return RegionManager.findRegion(regionId);
 	}
 
 	public void setRegionId(long regionId) {

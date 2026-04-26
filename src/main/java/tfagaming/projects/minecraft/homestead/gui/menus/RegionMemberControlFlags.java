@@ -34,10 +34,8 @@ public final class RegionMemberControlFlags {
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
-		OfflinePlayer memberBukkit = member.getPlayer();
-
 		PaginationMenu gui = new PaginationMenu(
-				MenuUtility.getTitle(7).replace("{playername}", memberBukkit == null ? "?" : Objects.requireNonNull(memberBukkit.getName())),
+				MenuUtility.getTitle(7).replace("{playername}", member.getPlayerName()),
 				9 * 5,
 				MenuUtility.getNextPageButton(),
 				MenuUtility.getPreviousPageButton(),

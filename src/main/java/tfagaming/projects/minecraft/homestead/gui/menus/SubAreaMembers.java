@@ -130,12 +130,10 @@ public final class SubAreaMembers {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (RegionMember member : members) {
-			OfflinePlayer memberBukkit = member.getPlayer();
-
 			items.add(MenuUtility.getButton(69, new Placeholder()
 							.add("{region}", region.getName())
 							.add("{subarea}", subArea.getName())
-							.add("{playername}", memberBukkit == null ? "?" : memberBukkit.getName()),
+							.add("{playername}", member.getPlayerName()),
 					member.getPlayer()));
 		}
 

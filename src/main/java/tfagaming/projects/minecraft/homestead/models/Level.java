@@ -1,7 +1,9 @@
 package tfagaming.projects.minecraft.homestead.models;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -53,6 +55,14 @@ public final class Level {
 
 	public long getRegionId() {
 		return regionId;
+	}
+
+	/**
+	 * Returns the region by directly fetching with region ID from cache.
+	 * @return The region if found, {@code null} otherwise.
+	 */
+	public @Nullable Region getRegion() {
+		return RegionManager.findRegion(regionId);
 	}
 
 	public void setRegionId(long regionId) {

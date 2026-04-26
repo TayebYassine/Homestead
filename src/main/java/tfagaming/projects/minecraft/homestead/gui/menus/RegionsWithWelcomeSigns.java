@@ -62,7 +62,7 @@ public final class RegionsWithWelcomeSigns {
 			items.add(MenuUtility.getButton(47, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{region-displayname}", region.getDisplayName())
-					.add("{region-owner}", region.getOwner().getName())
+					.add("{region-owner}", region.getOwnerName())
 					.add("{region-bank}", Formatter.getBalance(region.getBank()))
 					.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()))
 					.add("{region-rating}", Formatter.getRating(RateManager.getAverageRating(region)))));

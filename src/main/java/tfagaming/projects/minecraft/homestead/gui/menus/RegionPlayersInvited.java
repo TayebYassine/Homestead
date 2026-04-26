@@ -75,6 +75,8 @@ public final class RegionPlayersInvited {
 			new PlayerInputSession(Homestead.getInstance(), player, (p, input) -> {
 				OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
+				if (targetPlayer == null) return;
+
 				if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
 					InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 					InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
@@ -87,7 +89,7 @@ public final class RegionPlayersInvited {
 					Placeholder placeholder = new Placeholder()
 							.add("{region}", region.getName())
 							.add("{playername}", targetPlayer.getName())
-							.add("{ownername}", region.getOwner().getName());
+							.add("{ownername}", region.getOwnerName());
 
 					Messages.send(player, 36, placeholder);
 
@@ -170,7 +172,7 @@ public final class RegionPlayersInvited {
 
 		for (RegionInvite invite : invites) {
 			items.add(MenuUtility.getButton(30, new Placeholder()
-					.add("{playername}", invite.getPlayer().getName())));
+					.add("{playername}", invite.getPlayerName())));
 		}
 
 		return items;

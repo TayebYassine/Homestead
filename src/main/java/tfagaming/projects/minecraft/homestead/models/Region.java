@@ -104,10 +104,21 @@ public final class Region {
 		update();
 	}
 
-	public OfflinePlayer getOwner() {
+	public @Nullable OfflinePlayer getOwner() {
 		if (INSTANCE == null) return null;
 
 		return INSTANCE.getOfflinePlayerSync(ownerId);
+	}
+
+	/**
+	 * Returns the owner's name safely. If the player was not found by their ID, it will
+	 * return {@code "?"} instead.
+	 * @return The player's name if found, {@code "?"} otherwise.
+	 */
+	public String getOwnerName() {
+		OfflinePlayer player = getOwner();
+
+		return player == null ? "?" : player.getName();
 	}
 
 	public boolean isOwner(OfflinePlayer player) {

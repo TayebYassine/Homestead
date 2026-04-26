@@ -166,7 +166,7 @@ public final class RegionsMenu {
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
 					.add("{region-displayname}", region.getDisplayName())
-					.add("{region-owner}", region.getOwner().getName())
+					.add("{region-owner}", region.getOwnerName())
 					.add("{region-bank}", Formatter.getBalance(region.getBank()))
 					.add("{region-createdat}", Formatter.getDate(region.getCreatedAt()));
 

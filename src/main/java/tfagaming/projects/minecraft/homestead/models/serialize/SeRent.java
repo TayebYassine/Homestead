@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.models.serialize;
 
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 
 import java.util.UUID;
@@ -54,10 +55,21 @@ public final class SeRent {
 		this.renterId = renterId;
 	}
 
-	public OfflinePlayer getRenter() {
+	public @Nullable OfflinePlayer getRenter() {
 		if (INSTANCE == null) return null;
 
 		return INSTANCE.getOfflinePlayerSync(renterId);
+	}
+
+	/**
+	 * Returns the renter's name safely. If the player was not found by their ID, it will
+	 * return {@code "?"} instead.
+	 * @return The player's name if found, {@code "?"} otherwise.
+	 */
+	public String getRenterName() {
+		OfflinePlayer player = getRenter();
+
+		return player == null ? "?" : player.getName();
 	}
 
 	public long getStartedAt() {

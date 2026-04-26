@@ -161,11 +161,9 @@ public final class RegionBannedPlayers {
 		List<ItemStack> items = new ArrayList<>();
 
 		for (RegionBan bannedPlayer : bannedPlayers) {
-			OfflinePlayer bannedPlayerBukkit = bannedPlayer.getPlayer();
-
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
-					.add("{playername}", bannedPlayerBukkit == null ? "?" : bannedPlayerBukkit.getName())
+					.add("{playername}", bannedPlayer.getPlayerName())
 					.add("{player-bannedat}", Formatter.getDate(bannedPlayer.getBannedAt()))
 					.add("{player-banreason}", bannedPlayer.getReason());
 

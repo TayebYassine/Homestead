@@ -264,9 +264,7 @@ public final class Formatter {
 
 		return members.stream()
 				.map((member) -> format.replace("{playername}",
-								member.getPlayer() == null
-										? "Unknown"
-										: Objects.requireNonNull(member.getPlayer().getName())
+								member.getPlayerName()
 						)
 				)
 				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.region-members-joining")));

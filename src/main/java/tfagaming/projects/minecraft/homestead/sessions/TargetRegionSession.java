@@ -36,7 +36,8 @@ public final class TargetRegionSession {
 	}
 
 	public static Region getRegion(OfflinePlayer player) {
-		long regionId = SESSIONS.get(player.getUniqueId());
+		Long session = SESSIONS.get(player.getUniqueId());
+		long regionId = session == null ? -1L : session;
 
 		Region region = RegionManager.findRegion(regionId);
 

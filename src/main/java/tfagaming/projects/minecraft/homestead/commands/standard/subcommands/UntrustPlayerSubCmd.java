@@ -124,7 +124,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 					}
 				}
 
-				suggestions.addAll(InviteManager.getInvitesOfRegion(region).stream().map(p -> p.getPlayer().getName()).toList());
+				suggestions.addAll(InviteManager.getInvitesOfRegion(region).stream().map(RegionInvite::getPlayerName).toList());
 			}
 		}
 

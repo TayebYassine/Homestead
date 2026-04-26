@@ -39,7 +39,7 @@ public final class SubAreaMenu {
 				.add("{subarea}", subArea.getName())
 				.add("{subarea-players}", MemberManager.getMembersOfRegion(region).size())
 				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
-				.add("{rent-renter}", rent != null ? rent.getRenter().getName() : Formatter.getNone())
+				.add("{rent-renter}", rent != null ? rent.getRenterName() : Formatter.getNone())
 				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
 				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 
