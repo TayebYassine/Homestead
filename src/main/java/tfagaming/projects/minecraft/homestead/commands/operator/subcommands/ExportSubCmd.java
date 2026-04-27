@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.commands.operator.subcommands;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.database.Database;
@@ -43,41 +44,47 @@ public class ExportSubCmd extends SubCommandBuilder {
 		}
 
 		try {
-			Database instance = new Database(provider);
-
-			for (int i = 0; i < 5; i++) {
-				Logger.warning("[Export] THE SERVER MAY LAG DUE TO MANY DATA MODELS EXISTING ON THIS SERVER.");
-				Logger.warning("[Export] IGNORE THE FOLLOWING WARNINGS/ERRORS.");
+			if (sender instanceof Player p) {
+				Messages.send(p, 216);
 			}
 
-			instance.exportFromCache();
+			Logger.info("Please wait...");
+			Logger.warning("The data exporter is asynchronous, please do NOT shutdown your server until you see \"Done.\"!");
 
-			String[] headers = {"Model", "Exported"};
+			final Database instance = new Database(provider);
 
-			Object[][] data = {
-					{"Regions", RegionManager.getRegionCount()},
-					{"Members", MemberManager.getMemberCount()},
-					{"Chunks", ChunkManager.getChunkCount()},
-					{"Invites", InviteManager.getInviteCount()},
-					{"Logs", LogManager.getLogCount()},
-					{"Rates", RateManager.getRateCount()},
-					{"Bans", BanManager.getBanCount()},
-					{"Levels", LevelManager.getLevelCount()},
-					{"Wars", WarManager.getWarCount()},
-					{"SubAreas", SubAreaManager.getSubAreaCount()},
-			};
+			Homestead.getInstance().runAsyncTask(() -> {
+				try {
+					instance.exportFromCache();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 
-			ListUtils.printTable(headers, data);
+				String[] headers = {"Model", "Exported"};
 
-			Messages.send(sender, 86, new Placeholder()
-					.add("{regions}", RegionManager.getAll().size())
-					.add("{wars}", WarManager.getAll().size())
-					.add("{subareas}", SubAreaManager.getAll().size())
-					.add("{current-provider}", provider.toString())
-					.add("{selected-provider}", provider)
-			);
+				Object[][] data = {
+						{"Regions", RegionManager.getRegionCount()},
+						{"Members", MemberManager.getMemberCount()},
+						{"Chunks", ChunkManager.getChunkCount()},
+						{"Invites", InviteManager.getInviteCount()},
+						{"Logs", LogManager.getLogCount()},
+						{"Rates", RateManager.getRateCount()},
+						{"Bans", BanManager.getBanCount()},
+						{"Levels", LevelManager.getLevelCount()},
+						{"Wars", WarManager.getWarCount()},
+						{"SubAreas", SubAreaManager.getSubAreaCount()},
+				};
 
-			instance.closeConnection();
+				ListUtils.printTable(headers, data);
+
+				Logger.info("Done.");
+
+				try {
+					instance.closeConnection();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			});
 		} catch (Exception e) {
 			Logger.error(e);
 			Messages.send(sender, 87);

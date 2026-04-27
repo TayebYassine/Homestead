@@ -113,7 +113,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		Messages.send(player, 31, new Placeholder()
 				.add("{region}", region.getName())
 				.add("{playername}", target.getName())
-				.add("{region}", reason)
+				.add("{reason}", reason)
 		);
 
 		MemberManager.removeMemberFromRegion(target, region);

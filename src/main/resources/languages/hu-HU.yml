@@ -116,7 +116,7 @@ prefix: "&8[&6Homestead&8]&r"
 "83": "{__prefix__} &cNincs törölni való log."
 "84": "{__prefix__} &cÉrvénytelen adatbázis típus, használd az alábbiak valamelyikét: PostgreSQL, MariaDB, SQLite, MySQL, MongoDB, or YAML"
 "85": "{__prefix__} &cJelenleg is ezt a típust használod, kérlek válassz másikat."
-"86": "{__prefix__} &7Sikeresen exportálva lettek a &6{regions} &7régiók, &6{wars} &7figyelmeztetések, és az &6{subareas} &7alterületek ebből: &3{current-provider} &7ebbe: &3{selected-provider}&7."
+"86": "REMOVED"
 "87": "{__prefix__} &cVáratlan hiba lépett fel a plugin használata közben; További információért nézd meg a konzolt."
 "88": "&eAdd meg az új alterület nevét. &7Írd be, hogy 'cancel' a visszavonáshoz."
 "89": "REMOVED"
@@ -261,6 +261,7 @@ prefix: "&8[&6Homestead&8]&r"
 "213": "{__prefix__} &cTúl gyors vagy! Várj egy kicsit mielőtt újrapróbálnád."
 "214": "&eA háború véget ért. &2{region}&e tagjai nyertek!"
 "215": "{__prefix__} &7Alterület átméretezve!"
+"216": "{__prefix__} &7További részletekért tekintse meg a szerver konzolját."
 
 logs:
   "0": By {executor}, updated region name to {newname}.

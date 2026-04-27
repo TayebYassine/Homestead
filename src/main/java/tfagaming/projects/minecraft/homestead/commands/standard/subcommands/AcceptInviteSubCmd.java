@@ -52,7 +52,7 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!InviteManager.isInvited(region, player)) {
+		if (!InviteManager.isInvited(region, player) || MemberManager.isMemberOfRegion(region, player)) {
 			Messages.send(player, 45, new Placeholder()
 					.add("{region}", region.getName())
 			);

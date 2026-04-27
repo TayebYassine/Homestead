@@ -6,22 +6,24 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.database.Database;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 public class PluginSubCmd extends SubCommandBuilder {
 	public PluginSubCmd() {
-		super("plugin");
+		super("plugin", null, false);
 		setUsage("/hsadmin plugin");
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (sender instanceof Player) {
-			return true;
+		if (sender instanceof Player p) {
+			Messages.send(p, 216);
 		}
 
-		sender.sendMessage("Please wait...");
+		Logger.info("Please wait...");
 
 		String[] headers = {"Property", "Value"};
 
@@ -32,7 +34,7 @@ public class PluginSubCmd extends SubCommandBuilder {
 				{"Homestead", "v" + Homestead.getVersion()},
 				{"Database Provider", Homestead.database.getProvider().toString()},
 				{"Database Latency", Homestead.database.getLatency() + "ms"},
-				{"Data - Cache Latency", Database.getCacheLatency() + "ms"},
+				{"Cache Latency", Database.getCacheLatency() + "ms"},
 				{"Data - Regions", RegionManager.getRegionCount()},
 				{"Data - Members", MemberManager.getMemberCount()},
 				{"Data - Chunks", ChunkManager.getChunkCount()},

@@ -20,9 +20,7 @@ import org.bukkit.command.CommandSender;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
-import tfagaming.projects.minecraft.homestead.managers.MemberManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
 
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
@@ -63,16 +61,16 @@ public class ImportSubCmd extends SubCommandBuilder {
 		String[] headers = {"Model", "Imported"};
 
 		Object[][] data = {
-				{"Regions", Homestead.REGION_CACHE.getAll().size()},
-				{"Members", Homestead.MEMBER_CACHE.getAll().size()},
-				{"Chunks", Homestead.CHUNK_CACHE.getAll().size()},
-				{"Invites", Homestead.INVITE_CACHE.getAll().size()},
-				{"Logs", Homestead.LOG_CACHE.getAll().size()},
-				{"Rates", Homestead.RATE_CACHE.getAll().size()},
-				{"Bans", Homestead.BAN_CACHE.getAll().size()},
-				{"Levels", Homestead.LEVEL_CACHE.getAll().size()},
-				{"Wars", Homestead.WAR_CACHE.getAll().size()},
-				{"SubAreas", Homestead.SUBAREA_CACHE.getAll().size()},
+				{"Regions", RegionManager.getRegionCount()},
+				{"Members", MemberManager.getMemberCount()},
+				{"Chunks", ChunkManager.getChunkCount()},
+				{"Invites", InviteManager.getInviteCount()},
+				{"Logs", LogManager.getLogCount()},
+				{"Rates", RateManager.getRateCount()},
+				{"Bans", BanManager.getBanCount()},
+				{"Levels", LevelManager.getLevelCount()},
+				{"Wars", WarManager.getWarCount()},
+				{"SubAreas", SubAreaManager.getSubAreaCount()},
 		};
 
 		ListUtils.printTable(headers, data);
