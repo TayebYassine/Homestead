@@ -15,13 +15,12 @@ import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-
-
 import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -127,18 +126,45 @@ public class ChunkParticlesSpawner {
 			int chunkX = chunk.getX();
 			int chunkZ = chunk.getZ();
 
-			if (!world.isChunkLoaded(chunkX, chunkZ)) {
-				continue;
+			if (Homestead.isFolia()) {
+				CompletableFuture<Chunk> future = world.getChunkAtAsync(chunkX, chunkZ, false);
+
+				Region finalRegion = region;
+
+				future.thenAccept(loadedChunk -> {
+					if (loadedChunk == null) {
+						return;
+					}
+
+					player.getScheduler().run(
+							Homestead.getInstance(),
+							t -> spawnParticlesForChunk(world, finalRegion, chunkX, chunkZ, yOffset, dustOptions),
+							null
+					);
+				});
+			} else {
+				if (!world.isChunkLoaded(chunkX, chunkZ)) {
+					continue;
+				}
+
+				spawnParticlesForChunk(world, region, chunkX, chunkZ, yOffset, dustOptions);
 			}
-
-			int minX = chunkX * 16;
-			int minZ = chunkZ * 16;
-
-			checkAndSpawn(world, region, chunkX, chunkZ - 1, minX, minZ, yOffset, dustOptions, Direction.NORTH);
-			checkAndSpawn(world, region, chunkX, chunkZ + 1, minX, minZ + 16, yOffset, dustOptions, Direction.SOUTH);
-			checkAndSpawn(world, region, chunkX - 1, chunkZ, minX, minZ, yOffset, dustOptions, Direction.WEST);
-			checkAndSpawn(world, region, chunkX + 1, chunkZ, minX + 16, minZ, yOffset, dustOptions, Direction.EAST);
 		}
+	}
+
+	/**
+	 * Spawns particles for a single chunk's borders after the chunk is confirmed loaded.
+	 */
+	private void spawnParticlesForChunk(World world, Region region,
+										int chunkX, int chunkZ,
+										double yOffset, DustOptions dustOptions) {
+		int minX = chunkX * 16;
+		int minZ = chunkZ * 16;
+
+		checkAndSpawn(world, region, chunkX, chunkZ - 1, minX, minZ, yOffset, dustOptions, Direction.NORTH);
+		checkAndSpawn(world, region, chunkX, chunkZ + 1, minX, minZ + 16, yOffset, dustOptions, Direction.SOUTH);
+		checkAndSpawn(world, region, chunkX - 1, chunkZ, minX, minZ, yOffset, dustOptions, Direction.WEST);
+		checkAndSpawn(world, region, chunkX + 1, chunkZ, minX + 16, minZ, yOffset, dustOptions, Direction.EAST);
 	}
 
 	/**
@@ -161,16 +187,42 @@ public class ChunkParticlesSpawner {
 							   int minX, int minZ,
 							   double yOffset, DustOptions dustOptions,
 							   Direction direction) {
-		if (!world.isChunkLoaded(chunkX, chunkZ)) {
-			return;
+		if (Homestead.isFolia()) {
+			world.getChunkAtAsync(chunkX, chunkZ, false).thenAccept(neighbor -> {
+				if (neighbor == null) {
+					return;
+				}
+
+				if (ChunkManager.isChunkClaimedByRegion(region, neighbor)) {
+					return;
+				}
+
+				player.getScheduler().run(
+						Homestead.getInstance(),
+						t -> spawnEdgeParticles(minX, minZ, yOffset, dustOptions, direction),
+						null
+				);
+			});
+		} else {
+			if (!world.isChunkLoaded(chunkX, chunkZ)) {
+				return;
+			}
+
+			Chunk neighbor = world.getChunkAt(chunkX, chunkZ);
+
+			if (ChunkManager.isChunkClaimedByRegion(region, neighbor)) {
+				return;
+			}
+
+			spawnEdgeParticles(minX, minZ, yOffset, dustOptions, direction);
 		}
+	}
 
-		Chunk neighbor = world.getChunkAt(chunkX, chunkZ);
-
-		if (ChunkManager.isChunkClaimedByRegion(region, neighbor)) {
-			return;
-		}
-
+	/**
+	 * Actually spawns the particles along a chunk edge.
+	 */
+	private void spawnEdgeParticles(int minX, int minZ, double yOffset,
+									DustOptions dustOptions, Direction direction) {
 		if (direction == Direction.NORTH || direction == Direction.SOUTH) {
 			for (int x = minX; x < minX + 16; x++) {
 				player.spawnParticle(Particle.DUST, x, yOffset, minZ, 1, dustOptions);

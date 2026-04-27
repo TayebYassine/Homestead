@@ -32,6 +32,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTel
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class RegionClaimedChunks {
 	private List<RegionChunk> chunks;
@@ -63,7 +64,9 @@ public final class RegionClaimedChunks {
 
 						player.closeInventory();
 
-						new DelayedTeleport(player, chunk.toBukkitLocation());
+						Homestead.getInstance().runLocationTask(chunk.toBukkitDisplayLocation(), () -> {
+							new DelayedTeleport(player, chunk.toBukkitLocation());
+						});
 					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
 						if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 							Messages.send(player, 30);
@@ -146,13 +149,13 @@ public final class RegionClaimedChunks {
 					.add("{region}", region.getName())
 					.add("{index}", i + 1)
 					.add("{chunk-claimedat}", Formatter.getDate(chunk.getClaimedAt()))
-					.add("{chunk-location}", Formatter.getLocation(chunk.toBukkitLocation()))
+					.add("{chunk-location}", Formatter.getLocation(Objects.requireNonNull(chunk.toBukkitDisplayLocation())))
 					.add("{chunk-is-loaded}", Formatter.getBoolean(chunk.isForceLoaded()));
 
 			ButtonData data = MenuUtility.getButtonData(33);
 
 			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD")) {
-				data.setOriginalType(switch (chunk.toBukkitLocation().getWorld().getEnvironment()) {
+				data.setOriginalType(switch (chunk.getWorld().getEnvironment()) {
 					case NETHER -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.nether");
 					case THE_END -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.the_end");
 					default -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.overworld");

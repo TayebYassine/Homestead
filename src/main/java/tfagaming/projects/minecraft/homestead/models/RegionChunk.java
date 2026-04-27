@@ -147,10 +147,26 @@ public final class RegionChunk {
 
 	public Location toBukkitLocation() {
 		World world = getWorld();
+
 		if (world == null) return null;
+
 		Location location = new Location(world, x * 16 + 8, 64, z * 16 + 8);
+
 		location.setY(world.getHighestBlockYAt(location) + 2);
+
 		return location;
+	}
+
+	/**
+	 * Exactly the same as {@link RegionChunk#toBukkitLocation()}, without the highest
+	 * block Y check.
+	 */
+	public Location toBukkitDisplayLocation() {
+		World world = getWorld();
+
+		if (world == null) return null;
+
+		return new Location(world, x * 16 + 8, 64, z * 16 + 8);
 	}
 
 	@Override
