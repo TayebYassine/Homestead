@@ -1278,14 +1278,28 @@ public final class RegionProtectionListener implements Listener {
 		Chunk fromChunk = event.getBlock().getChunk();
 		Chunk toChunk = event.getToBlock().getChunk();
 
-		if (!fromChunk.equals(toChunk)) {
-			if (ChunkManager.isChunkClaimed(toChunk)) {
-				Region region = ChunkManager.getRegionOwnsTheChunk(toChunk);
+		if (fromChunk.equals(toChunk)) {
+			return;
+		}
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.LIQUID_FLOW)) {
-					event.setCancelled(true);
-				}
-			}
+		Region fromRegion = ChunkManager.getRegionOwnsTheChunk(fromChunk);
+		Region toRegion = ChunkManager.getRegionOwnsTheChunk(toChunk);
+
+		if (fromRegion == null && toRegion == null) {
+			return;
+		}
+
+		if (fromRegion != null && toRegion != null && fromRegion.getUniqueId() == toRegion.getUniqueId()) {
+			return;
+		}
+
+		if (toRegion != null && !toRegion.isWorldFlagSet(WorldFlags.LIQUID_FLOW)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (fromRegion != null && !fromRegion.isWorldFlagSet(WorldFlags.LIQUID_FLOW)) {
+			event.setCancelled(true);
 		}
 	}
 
