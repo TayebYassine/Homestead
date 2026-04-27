@@ -101,7 +101,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (region.getDisplayName().equals(regionDisplayName)) {
+				if (region.getDisplayName() != null && region.getDisplayName().equals(regionDisplayName)) {
 					Messages.send(player, 11);
 					return true;
 				}
@@ -111,7 +111,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				final String oldDisplayName = region.getDisplayName();
+				final String oldDisplayName = region.getDisplayName() == null ? Formatter.getNone() : region.getDisplayName();
 
 				Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
 

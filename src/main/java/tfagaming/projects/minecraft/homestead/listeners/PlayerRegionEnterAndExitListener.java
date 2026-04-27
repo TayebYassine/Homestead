@@ -95,7 +95,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			if (isRegionInfoMessagesEnabled) {
 				Placeholder placeholder = new Placeholder()
 						.add("{region-displayname}", region.getDisplayName())
-						.add("{region-owner}", region.getOwner().getName())
+						.add("{region-owner}", region.getOwnerName())
 						.add("{region-description}", region.getDescription().replace("%player%", player.getName()));
 
 				PlayerUtility.sendMessageRegionEnter(player, placeholder);
@@ -149,7 +149,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 
 				if (region != null) {
 					placeholder.add("{region-displayname}", region.getDisplayName());
-					placeholder.add("{region-owner}", region.getOwner().getName());
+					placeholder.add("{region-owner}", region.getOwnerName());
 					placeholder.add("{region-description}", region.getDescription());
 				}
 

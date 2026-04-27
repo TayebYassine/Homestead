@@ -51,7 +51,7 @@ public final class RegionManager {
 		}
 
 		Region region = new Region(newName, player);
-
+		region.setDisplayName(newName);
 		region.setDescription(Resources.<LanguageFile>get(ResourceType.Language).getString("default.region-description").replace("{owner}", region.getOwnerName()));
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
