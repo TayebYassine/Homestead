@@ -15,8 +15,8 @@ public final class MergeRegionSession {
 	}
 
 	public static void newMergeRequest(Region region, Region regionToMerge) {
-		Long from = region.getUniqueId();
-		Long to = regionToMerge.getUniqueId();
+		long from = region.getUniqueId();
+		long to = regionToMerge.getUniqueId();
 
 		if (REQUESTS.containsValue(to) || REQUESTS.containsValue(from) || REQUESTS.containsKey(to) || REQUESTS.containsKey(from)) {
 			return;
