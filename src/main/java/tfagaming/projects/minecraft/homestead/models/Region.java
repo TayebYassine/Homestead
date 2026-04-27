@@ -288,6 +288,6 @@ public final class Region {
 	private void update() {
 		if (!autoUpdate) return;
 
-		Homestead.regionsCache.putOrUpdate(this);
+		Homestead.REGION_CACHE.putOrUpdate(this);
 	}
 }

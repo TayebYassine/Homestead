@@ -83,7 +83,7 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 
 		Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
 
-		region.setName(regionName);
+		RegionManager.renameRegion(region, regionName);
 
 		Messages.send(player, 13, new Placeholder()
 				.add("{oldname}", oldName)

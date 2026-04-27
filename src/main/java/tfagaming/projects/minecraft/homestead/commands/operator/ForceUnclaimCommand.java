@@ -48,7 +48,7 @@ public class ForceUnclaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		ChunkManager.Error error = ChunkManager.forceUnclaimChunk(owningRegion.getUniqueId(), chunk);
+		ChunkManager.Error error = ChunkManager.forceUnclaimChunk(owningRegion, chunk);
 
 		if (error == null) {
 			Messages.send(player, 24, new Placeholder()

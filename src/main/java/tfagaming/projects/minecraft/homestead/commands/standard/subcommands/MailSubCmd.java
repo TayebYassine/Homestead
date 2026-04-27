@@ -53,13 +53,7 @@ public class MailSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		int mailsCount = 0;
-
-		for (RegionLog log : LogManager.getLogs(region)) {
-			if (log.getAuthor().equals(player.getName()) && !log.isRead()) {
-				mailsCount++;
-			}
-		}
+		int mailsCount = (int) LogManager.getUnreadLogs(region).stream().filter((l) -> l.getAuthor().equals(player.getName())).count();
 
 		if (mailsCount >= 5) {
 			Messages.send(player, 165);
@@ -77,7 +71,7 @@ public class MailSubCmd extends SubCommandBuilder {
 		//RegionManager.addNewLog(region.getUniqueId(), player.getName(), message);
 
 		Messages.send(player, 166, new Placeholder()
-				.add("{region-owner}", region.getOwner().getName())
+				.add("{region-owner}", region.getOwnerName())
 		);
 
 		return true;
@@ -91,7 +85,7 @@ public class MailSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1) {
-			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
+			suggestions.addAll(RegionManager.getRegionNames());
 		}
 
 		return suggestions;

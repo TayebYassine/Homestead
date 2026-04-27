@@ -62,7 +62,7 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (WarManager.isRegionInWar(region.getUniqueId())) {
+		if (WarManager.isRegionInWar(region)) {
 			Messages.send(player, 156);
 			return true;
 		}
@@ -75,7 +75,7 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 		String amountInput = args[0];
 
 		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput))
-				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > 2_147_483_647)) {
+				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > Integer.MAX_VALUE)) {
 			Messages.send(player, 64);
 			return true;
 		}

@@ -32,7 +32,7 @@ public final class LevelManager {
 		}
 
 		Level level = new Level(Homestead.getSnowflake().nextId(), regionId, 0, 0, 0, System.currentTimeMillis());
-		Homestead.levelsCache.putOrUpdate(level);
+		Homestead.LEVEL_CACHE.putOrUpdate(level);
 		return level;
 	}
 
@@ -41,7 +41,7 @@ public final class LevelManager {
 	 * @return List of all levels.
 	 */
 	public static List<Level> getAll() {
-		return Homestead.levelsCache.getAll();
+		return Homestead.LEVEL_CACHE.getAll();
 	}
 
 	/**
@@ -75,7 +75,7 @@ public final class LevelManager {
 	 * @return The Level, or {@code null}.
 	 */
 	public static Level findLevel(long id) {
-		return Homestead.levelsCache.get(id);
+		return Homestead.LEVEL_CACHE.get(id);
 	}
 
 	/**
@@ -92,11 +92,19 @@ public final class LevelManager {
 	}
 
 	/**
+	 * Returns the number of levels in the server.
+	 * @return The level count.
+	 */
+	public static int getLevelCount() {
+		return Homestead.LEVEL_CACHE.getAll().size();
+	}
+
+	/**
 	 * Permanently deletes the specified level.
 	 * @param id The level ID
 	 */
 	public static void deleteLevel(long id) {
-		Homestead.levelsCache.remove(id);
+		Homestead.LEVEL_CACHE.remove(id);
 	}
 
 	/**
@@ -118,7 +126,7 @@ public final class LevelManager {
 	public static void addXp(long regionId, long amount) {
 		Level level = getOrCreateLevel(regionId);
 		level.addXp(amount);
-		Homestead.levelsCache.putOrUpdate(level);
+		Homestead.LEVEL_CACHE.putOrUpdate(level);
 	}
 
 	/**
@@ -132,7 +140,7 @@ public final class LevelManager {
 		long amount = (long) Math.floor(nextLevelXp * (percentage / 100.0));
 		if (amount > 0) {
 			level.addXp(amount);
-			Homestead.levelsCache.putOrUpdate(level);
+			Homestead.LEVEL_CACHE.putOrUpdate(level);
 		}
 	}
 
@@ -147,7 +155,7 @@ public final class LevelManager {
 
 		long newXp = (long) Math.floor(level.getExperience() * factor);
 		level.setXp(newXp);
-		Homestead.levelsCache.putOrUpdate(level);
+		Homestead.LEVEL_CACHE.putOrUpdate(level);
 	}
 
 	/**
@@ -194,7 +202,7 @@ public final class LevelManager {
 		Level level = getLevelByRegion(regionId);
 		if (level != null) {
 			level.removeXp(amount);
-			Homestead.levelsCache.putOrUpdate(level);
+			Homestead.LEVEL_CACHE.putOrUpdate(level);
 		}
 	}
 
@@ -206,7 +214,7 @@ public final class LevelManager {
 	public static void setXp(long regionId, long experience) {
 		Level level = getOrCreateLevel(regionId);
 		level.setXp(experience);
-		Homestead.levelsCache.putOrUpdate(level);
+		Homestead.LEVEL_CACHE.putOrUpdate(level);
 	}
 
 	/**
@@ -217,7 +225,7 @@ public final class LevelManager {
 	public static void setLevel(long regionId, int level) {
 		Level lvl = getOrCreateLevel(regionId);
 		lvl.setLevel(level);
-		Homestead.levelsCache.putOrUpdate(lvl);
+		Homestead.LEVEL_CACHE.putOrUpdate(lvl);
 	}
 
 	/**
@@ -229,7 +237,7 @@ public final class LevelManager {
 		if (levels <= 0) return;
 		Level level = getOrCreateLevel(regionId);
 		level.setLevel(level.getLevel() + levels);
-		Homestead.levelsCache.putOrUpdate(level);
+		Homestead.LEVEL_CACHE.putOrUpdate(level);
 	}
 
 	/**
@@ -243,7 +251,7 @@ public final class LevelManager {
 		if (level == null) return;
 
 		level.setLevel(Math.max(0, level.getLevel() - levels));
-		Homestead.levelsCache.putOrUpdate(level);
+		Homestead.LEVEL_CACHE.putOrUpdate(level);
 	}
 
 	/**
@@ -254,7 +262,7 @@ public final class LevelManager {
 		Level level = getLevelByRegion(regionId);
 		if (level != null) {
 			level.reset();
-			Homestead.levelsCache.putOrUpdate(level);
+			Homestead.LEVEL_CACHE.putOrUpdate(level);
 		}
 	}
 
@@ -266,7 +274,7 @@ public final class LevelManager {
 		int count = 0;
 		for (Level level : getAll()) {
 			level.reset();
-			Homestead.levelsCache.putOrUpdate(level);
+			Homestead.LEVEL_CACHE.putOrUpdate(level);
 			count++;
 		}
 		return count;
@@ -467,7 +475,7 @@ public final class LevelManager {
 	public static int cleanupInvalidLevels() {
 		List<Long> toRemove = new ArrayList<>();
 
-		for (Level level : Homestead.levelsCache.getAll()) {
+		for (Level level : Homestead.LEVEL_CACHE.getAll()) {
 			boolean invalidRegion = level.getRegion() == null;
 
 			if (invalidRegion) {
@@ -476,7 +484,7 @@ public final class LevelManager {
 		}
 
 		for (Long id : toRemove) {
-			Homestead.levelsCache.remove(id);
+			Homestead.LEVEL_CACHE.remove(id);
 		}
 		return toRemove.size();
 	}

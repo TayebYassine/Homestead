@@ -469,7 +469,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					List.of("displayname", "target", "description", "mapcolor", "spawn", "icon", "tax"));
 		else if (args.length == 2 && args[0].equalsIgnoreCase("target")) {
 			if (PlayerUtility.isOperator(player)) {
-				suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
+				suggestions.addAll(RegionManager.getRegionNames());
 			} else {
 				suggestions.addAll(
 						RegionManager.getRegionsOwnedByPlayer(player).stream().map(Region::getName).toList());

@@ -142,8 +142,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 				suggestions.addAll(RegionManager.getPlayersWithRegionsHasWelcomeSigns().stream().map(OfflinePlayer::getName).toList());
 			} else {
 				if (PlayerUtility.isOperator(player)) {
-					suggestions.addAll(
-							RegionManager.getAll().stream().map(Region::getName).toList());
+					suggestions.addAll(RegionManager.getRegionNames());
 				} else {
 					suggestions.addAll(
 							RegionManager.getPublicRegions().stream().map(Region::getName).toList());

@@ -90,7 +90,9 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!MemberManager.isMemberOfRegion(region, target)) {
+				RegionMember member = MemberManager.getMemberOfRegion(region, target);
+
+				if (member == null) {
 					Messages.send(player, 40, new Placeholder()
 							.add("{region}", region.getName())
 							.add("{playername}", target.getName())
@@ -115,7 +117,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				long flags = MemberManager.getMemberOfRegion(region, target).getPlayerFlags();
+				long flags = member.getPlayerFlags();
 				long flag = PlayerFlags.valueOf(flagInput);
 
 				boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
@@ -149,7 +151,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 					newFlags = FlagsCalculator.addFlag(flags, flag);
 				}
 
-				MemberManager.getMemberOfRegion(region, target).setPlayerFlags(newFlags);
+				member.setPlayerFlags(newFlags);
 
 				Messages.send(player, 43, new Placeholder()
 						.add("{region}", region.getName())

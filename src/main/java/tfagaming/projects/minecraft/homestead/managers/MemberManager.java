@@ -27,7 +27,7 @@ public final class MemberManager {
 	 * @return The {@link RegionMember}, or {@code null} if not found.
 	 */
 	public static RegionMember getMember(long id) {
-		return Homestead.regionMemberCache.get(id);
+		return Homestead.MEMBER_CACHE.get(id);
 	}
 
 	/**
@@ -35,7 +35,7 @@ public final class MemberManager {
 	 * @return List of all members.
 	 */
 	public static List<RegionMember> getAllMembers() {
-		return Homestead.regionMemberCache.getAll();
+		return Homestead.MEMBER_CACHE.getAll();
 	}
 
 	/**
@@ -47,7 +47,7 @@ public final class MemberManager {
 	 */
 	public static RegionMember addMember(OfflinePlayer player, LinkageType type, long linkageId) {
 		RegionMember member = new RegionMember(player, type, linkageId);
-		Homestead.regionMemberCache.putOrUpdate(member);
+		Homestead.MEMBER_CACHE.putOrUpdate(member);
 		return member;
 	}
 
@@ -106,9 +106,17 @@ public final class MemberManager {
 	 * @return List of members of a region
 	 */
 	public static List<RegionMember> getMembersOfRegion(long regionId) {
-		return Homestead.regionMemberCache.getAll().stream()
+		return Homestead.MEMBER_CACHE.getAll().stream()
 				.filter(m -> m.getRegionId() == regionId)
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Returns the number of members in the server.
+	 * @return Member count.
+	 */
+	public static int getMemberCount() {
+		return getAllMembers().size();
 	}
 
 	/**
@@ -144,7 +152,7 @@ public final class MemberManager {
 	 * @return List of members of a sub-area
 	 */
 	public static List<RegionMember> getMembersOfSubArea(long subAreaId) {
-		return Homestead.regionMemberCache.getAll().stream()
+		return Homestead.MEMBER_CACHE.getAll().stream()
 				.filter(m -> m.getSubAreaId() == subAreaId)
 				.collect(Collectors.toList());
 	}
@@ -182,7 +190,7 @@ public final class MemberManager {
 	 * @return List of all member entries.
 	 */
 	public static List<RegionMember> getAllMembersOfPlayer(UUID playerId) {
-		return Homestead.regionMemberCache.getAll().stream()
+		return Homestead.MEMBER_CACHE.getAll().stream()
 				.filter(m -> m.getPlayerId().equals(playerId))
 				.collect(Collectors.toList());
 	}
@@ -266,7 +274,7 @@ public final class MemberManager {
 	 * @param id The member ID
 	 */
 	public static void removeMember(long id) {
-		Homestead.regionMemberCache.remove(id);
+		Homestead.MEMBER_CACHE.remove(id);
 	}
 
 	/**
@@ -602,7 +610,7 @@ public final class MemberManager {
 	public static int cleanupInvalidMembers() {
 		List<Long> toRemove = new ArrayList<>();
 
-		for (RegionMember member : Homestead.regionMemberCache.getAll()) {
+		for (RegionMember member : Homestead.MEMBER_CACHE.getAll()) {
 			OfflinePlayer player = member.getPlayer();
 
 			boolean invalidPlayer = player == null || player.getName() == null;
@@ -620,7 +628,7 @@ public final class MemberManager {
 		}
 
 		for (Long id : toRemove) {
-			Homestead.regionMemberCache.remove(id);
+			Homestead.MEMBER_CACHE.remove(id);
 		}
 		return toRemove.size();
 	}

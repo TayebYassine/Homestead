@@ -18,7 +18,7 @@ public final class UpdateChecker {
 	 * @param plugin The instance of the plugin.
 	 * @return <code>true</code> if there is an update, otherwise <code>false</code>.
 	 */
-	public static boolean fetch(Homestead plugin) {
+	public static String fetch(Homestead plugin) {
 		try {
 			Logger.warning("Looking for updates on GitHub...");
 
@@ -31,19 +31,14 @@ public final class UpdateChecker {
 				String response = reader.readLine();
 
 				if (!Homestead.getVersion().equalsIgnoreCase(response)) {
-					Logger.warning(Logger.PredefinedMessages.UPDATE_FOUND.getMessage());
-
-					return true;
+					return response;
 				} else {
-					Logger.info("You are running on the latest version of Homestead.");
-
-					return false;
+					return null;
 				}
 			}
 		} catch (Exception e) {
 			Logger.error(Logger.PredefinedMessages.UPDATE_FETCH_FAILURE.getMessage());
-
-			return false;
+			return null;
 		}
 	}
 }

@@ -82,8 +82,6 @@ public class ClaimCommand extends CommandBuilder {
 			return true;
 		}
 
-		World world = firstCorner.getWorld();
-
 		List<Chunk> chunksToClaim = new ArrayList<>();
 
 		for (Chunk chunk : ChunkUtility.getChunksInArea(firstCorner, secondCorner)) {
@@ -196,12 +194,12 @@ public class ClaimCommand extends CommandBuilder {
 		if (totalPrice > 0 && PlayerBank.get(region.getOwner()) < totalPrice) {
 			Messages.send(player, 200, new Placeholder()
 					.add("{price}", Formatter.getBalance(totalPrice))
-					.add("{player}", region.getOwner().getName())
+					.add("{player}", region.getOwnerName())
 			);
 			return false;
 		}
 
-		int currentChunks = ChunkManager.getChunksOfRegion(region).size();
+		int currentChunks = ChunkManager.getChunkCount(region);
 		int maxChunks = Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION);
 		if (currentChunks + chunksToClaim.size() > maxChunks) {
 			Messages.send(player, 116);
@@ -212,7 +210,7 @@ public class ClaimCommand extends CommandBuilder {
 		ChunkManager.Error lastError = null;
 
 		for (Chunk chunk : chunksToClaim) {
-			ChunkManager.Error error = ChunkManager.claimChunk(region.getUniqueId(), chunk);
+			ChunkManager.Error error = ChunkManager.claimChunk(region, chunk);
 
 			if (error != null) {
 				lastError = error;
@@ -224,7 +222,7 @@ public class ClaimCommand extends CommandBuilder {
 
 		if (lastError != null && claimedCount < chunksToClaim.size()) {
 			for (int i = 0; i < claimedCount; i++) {
-				ChunkManager.forceUnclaimChunk(region.getUniqueId(), chunksToClaim.get(i));
+				ChunkManager.forceUnclaimChunk(region, chunksToClaim.get(i));
 			}
 
 			switch (lastError) {

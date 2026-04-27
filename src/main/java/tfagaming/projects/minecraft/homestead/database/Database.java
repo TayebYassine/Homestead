@@ -51,7 +51,16 @@ public final class Database {
 	}
 
 	public static long getCacheLatency() {
-		return Homestead.regionsCache.getLatency() + Homestead.subAreasCache.getLatency() + Homestead.warsCache.getLatency() + Homestead.levelsCache.getLatency();
+		return Homestead.REGION_CACHE.getLatency()
+				+ Homestead.SUBAREA_CACHE.getLatency()
+				+ Homestead.WAR_CACHE.getLatency()
+				+ Homestead.LEVEL_CACHE.getLatency()
+				+ Homestead.MEMBER_CACHE.getLatency()
+				+ Homestead.CHUNK_CACHE.getLatency()
+				+ Homestead.BAN_CACHE.getLatency()
+				+ Homestead.INVITE_CACHE.getLatency()
+				+ Homestead.LOG_CACHE.getLatency()
+				+ Homestead.RATE_CACHE.getLatency();
 	}
 
 	public Driver getProvider() {
@@ -71,16 +80,16 @@ public final class Database {
 			throw new IllegalStateException("Instance is null");
 		}
 
-		Homestead.regionsCache.putAll(instance.importRegions());
-		Homestead.regionMemberCache.putAll(instance.importRegionMembers());
-		Homestead.regionChunkCache.putAll(instance.importRegionChunks());
-		Homestead.regionLogCache.putAll(instance.importRegionLogs());
-		Homestead.regionInviteCache.putAll(instance.importRegionInvites());
-		Homestead.regionBanCache.putAll(instance.importRegionBannedPlayers());
-		Homestead.regionRateCache.putAll(instance.importRegionRates());
-		Homestead.subAreasCache.putAll(instance.importSubAreas());
-		Homestead.warsCache.putAll(instance.importWars());
-		Homestead.levelsCache.putAll(instance.importLevels());
+		Homestead.REGION_CACHE.putAll(instance.importRegions());
+		Homestead.MEMBER_CACHE.putAll(instance.importRegionMembers());
+		Homestead.CHUNK_CACHE.putAll(instance.importRegionChunks());
+		Homestead.LOG_CACHE.putAll(instance.importRegionLogs());
+		Homestead.INVITE_CACHE.putAll(instance.importRegionInvites());
+		Homestead.BAN_CACHE.putAll(instance.importRegionBannedPlayers());
+		Homestead.RATE_CACHE.putAll(instance.importRegionRates());
+		Homestead.SUBAREA_CACHE.putAll(instance.importSubAreas());
+		Homestead.WAR_CACHE.putAll(instance.importWars());
+		Homestead.LEVEL_CACHE.putAll(instance.importLevels());
 	}
 
 	public void exportFromCache() throws Exception {
@@ -88,16 +97,16 @@ public final class Database {
 			throw new IllegalStateException("Instance is null");
 		}
 
-		instance.exportRegions(Homestead.regionsCache.getAll());
-		instance.exportRegionMembers(Homestead.regionMemberCache.getAll());
-		instance.exportRegionChunks(Homestead.regionChunkCache.getAll());
-		instance.exportRegionLogs(Homestead.regionLogCache.getAll());
-		instance.exportRegionInvites(Homestead.regionInviteCache.getAll());
-		instance.exportRegionBannedPlayers(Homestead.regionBanCache.getAll());
-		instance.exportRegionRates(Homestead.regionRateCache.getAll());
-		instance.exportSubAreas(Homestead.subAreasCache.getAll());
-		instance.exportWars(Homestead.warsCache.getAll());
-		instance.exportLevels(Homestead.levelsCache.getAll());
+		instance.exportRegions(Homestead.REGION_CACHE.getAll());
+		instance.exportRegionMembers(Homestead.MEMBER_CACHE.getAll());
+		instance.exportRegionChunks(Homestead.CHUNK_CACHE.getAll());
+		instance.exportRegionLogs(Homestead.LOG_CACHE.getAll());
+		instance.exportRegionInvites(Homestead.INVITE_CACHE.getAll());
+		instance.exportRegionBannedPlayers(Homestead.BAN_CACHE.getAll());
+		instance.exportRegionRates(Homestead.RATE_CACHE.getAll());
+		instance.exportSubAreas(Homestead.SUBAREA_CACHE.getAll());
+		instance.exportWars(Homestead.WAR_CACHE.getAll());
+		instance.exportLevels(Homestead.LEVEL_CACHE.getAll());
 	}
 
 	public void closeConnection() throws Exception {

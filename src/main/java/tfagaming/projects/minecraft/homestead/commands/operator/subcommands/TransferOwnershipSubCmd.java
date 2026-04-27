@@ -7,12 +7,10 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.BanManager;
-import tfagaming.projects.minecraft.homestead.managers.InviteManager;
-import tfagaming.projects.minecraft.homestead.managers.MemberManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
 
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -52,25 +50,25 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.isOwner(target.getUniqueId())) {
+		if (region.isOwner(target)) {
 			Messages.send(sender, 192);
 			return true;
 		}
 
 		BanManager.unbanPlayer(region, target);
+		InviteManager.deleteInvitesOfPlayer(region, target);
+		MemberManager.removeMemberFromRegion(target, region);
+
+		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(region)) {
+			MemberManager.removeMemberFromSubArea(target, subArea);
+		}
 
 		region.setOwner(target);
-
-		MemberManager.removeMemberFromRegion(target, region);
-		InviteManager.deleteInvitesOfPlayer(region, target);
 
 		Messages.send(sender, 193, new Placeholder()
 				.add("{region}", region.getName())
 				.add("{player}", target.getName())
 		);
-
-		RegionTransferOwnershipEvent _event = new RegionTransferOwnershipEvent(region, sender instanceof Player ? (Player) sender : target, target);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
 		return true;
 	}
@@ -81,15 +79,11 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 
 		if (args.length == 1) {
 			suggestions.addAll(
-					RegionManager.getAll().stream()
-							.map(Region::getName)
-							.toList()
+					RegionManager.getRegionNames()
 			);
 		} else if (args.length == 2) {
 			suggestions.addAll(
-					Homestead.getInstance().getOfflinePlayersSync().stream()
-							.map(OfflinePlayer::getName)
-							.toList()
+					Homestead.getInstance().getOfflinePlayerNamesSync()
 			);
 		}
 

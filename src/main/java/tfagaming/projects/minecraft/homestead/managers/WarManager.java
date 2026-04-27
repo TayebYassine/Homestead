@@ -40,7 +40,7 @@ public final class WarManager {
 	 * @return List of wars.
 	 */
 	public static List<War> getAll() {
-		return Homestead.warsCache.getAll();
+		return Homestead.WAR_CACHE.getAll();
 	}
 
 	/**
@@ -57,7 +57,7 @@ public final class WarManager {
 	 * @return The War, or {@code null}.
 	 */
 	public static War findWar(long warId) {
-		return Homestead.warsCache.get(warId);
+		return Homestead.WAR_CACHE.get(warId);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public final class WarManager {
 
 		war.setAutoUpdate(true);
 
-		Homestead.warsCache.putOrUpdate(war);
+		Homestead.WAR_CACHE.putOrUpdate(war);
 
 		return war;
 	}
@@ -189,7 +189,7 @@ public final class WarManager {
 	 * @param warId The war ID
 	 */
 	public static void endWar(long warId) {
-		Homestead.warsCache.remove(warId);
+		Homestead.WAR_CACHE.remove(warId);
 	}
 
 	/**
@@ -423,6 +423,15 @@ public final class WarManager {
 
 	/**
 	 * Returns {@code true} if the given region is currently participating in any war.
+	 * @param region The region
+	 * @return {@code true} if in a war.
+	 */
+	public static boolean isRegionInWar(Region region) {
+		return isRegionInWar(region.getUniqueId());
+	}
+
+	/**
+	 * Returns {@code true} if the given region is currently participating in any war.
 	 * @param regionId The region ID
 	 * @return {@code true} if in a war.
 	 */
@@ -535,7 +544,7 @@ public final class WarManager {
 	public static int cleanupInvalidWars() {
 		List<Long> toRemove = new ArrayList<>();
 
-		for (War war : Homestead.warsCache.getAll()) {
+		for (War war : Homestead.WAR_CACHE.getAll()) {
 			List<Long> validRegions = new ArrayList<>();
 			for (Long regionId : war.getRegionIds()) {
 				if (RegionManager.findRegion(regionId) != null) {

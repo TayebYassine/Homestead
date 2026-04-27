@@ -136,7 +136,7 @@ public final class War {
 
 	public Region getWinner() {
 		if (regionIds.size() == 1) {
-			return Homestead.regionsCache.get(regionIds.getFirst());
+			return Homestead.REGION_CACHE.get(regionIds.getFirst());
 		}
 		return null;
 	}
@@ -144,6 +144,6 @@ public final class War {
 	private void update() {
 		if (!autoUpdate) return;
 
-		Homestead.warsCache.putOrUpdate(this);
+		Homestead.WAR_CACHE.putOrUpdate(this);
 	}
 }

@@ -135,7 +135,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 
 		int success = 0;
 		for (Chunk chunk : toUnclaim) {
-			ChunkManager.Error err = ChunkManager.forceUnclaimChunk(region.getUniqueId(), chunk);
+			ChunkManager.Error err = ChunkManager.forceUnclaimChunk(region, chunk);
 			if (err == null) success++;
 		}
 
@@ -157,9 +157,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 
 		if (args.length == 1) {
 			suggestions.addAll(
-					RegionManager.getAll().stream()
-							.map(Region::getName)
-							.toList()
+					RegionManager.getRegionNames()
 			);
 		} else if (args.length == 2) {
 			suggestions.add("here");
@@ -169,7 +167,9 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 			Location loc = player.getLocation();
 			suggestions.add(String.valueOf(loc.getChunk().getZ()));
 		} else if ((args.length == 3 && args[1].equalsIgnoreCase("here")) || args.length == 4) {
-			suggestions.addAll(List.of("1", "2", "3", "4", "5"));
+			for (int i = 1; i < 6; i++) {
+				suggestions.add(String.valueOf(i));
+			}
 		}
 
 		return suggestions;

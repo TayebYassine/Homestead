@@ -1,16 +1,20 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionBan;
+import tfagaming.projects.minecraft.homestead.models.RegionInvite;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
@@ -55,6 +59,16 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		RegionBan ban = BanManager.getBannedPlayer(region, player);
+
+		if (ban != null) {
+			Messages.send(player, 28, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{ban-reason}", ban.getReason())
+			);
+			return true;
+		}
+
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
 			Messages.send(player, 116);
 			return true;
@@ -68,8 +82,10 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 				.add("{playername}", player.getName())
 		);
 
-		if (region.getOwner().isOnline()) {
-			Messages.send(region.getOwner().getPlayer(), 138, new Placeholder()
+		OfflinePlayer owner = region.getOwner();
+
+		if (owner != null && owner.isOnline()) {
+			Messages.send(owner.getPlayer(), 138, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{playername}", player.getName())
 			);
@@ -91,7 +107,7 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 		if (args.length == 1) {
 			suggestions.addAll(
 					InviteManager.getInvitesOfPlayer(player).stream()
-							.map(p -> RegionManager.findRegion(p.getRegionId()).getName())
+							.map(RegionInvite::getRegionName)
 							.toList()
 			);
 		}

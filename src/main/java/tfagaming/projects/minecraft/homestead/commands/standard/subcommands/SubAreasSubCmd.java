@@ -440,7 +440,9 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							return true;
 						}
 
-						if (!MemberManager.isMemberOfSubArea(subArea, target)) {
+						RegionMember member = MemberManager.getMemberOfSubArea(subArea, target);
+
+						if (member == null) {
 							Messages.send(player, 170);
 							return true;
 						}
@@ -451,8 +453,6 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							Messages.send(player, 41);
 							return true;
 						}
-
-						RegionMember member = MemberManager.getMemberOfSubArea(subArea, target);
 
 						long flags = member.getPlayerFlags();
 						long flag = PlayerFlags.valueOf(flagInput);
@@ -488,7 +488,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							newFlags = FlagsCalculator.addFlag(flags, flag);
 						}
 
-						MemberManager.getMemberOfSubArea(subArea, target).setPlayerFlags(newFlags);
+						member.setPlayerFlags(newFlags);
 
 						Messages.send(player, 169, new Placeholder()
 								.add("{region}", region.getName())

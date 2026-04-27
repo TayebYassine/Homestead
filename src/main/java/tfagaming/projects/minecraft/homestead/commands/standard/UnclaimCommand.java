@@ -77,7 +77,7 @@ public class UnclaimCommand extends CommandBuilder {
 
 		Cooldown.startCooldown(player,  Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
-		ChunkManager.Error error = ChunkManager.unclaimChunk(region.getUniqueId(), chunk);
+		ChunkManager.Error error = ChunkManager.unclaimChunk(region, chunk);
 
 		if (error == null) {
 			double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");

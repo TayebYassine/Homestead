@@ -103,11 +103,7 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 
 			if (region != null) {
 				for (RegionBan each : BanManager.getBansOfRegion(region)) {
-					OfflinePlayer p = each.getPlayer();
-
-					if (p != null) {
-						suggestions.add(p.getName());
-					}
+					suggestions.add(each.getPlayerName());
 				}
 			}
 		}

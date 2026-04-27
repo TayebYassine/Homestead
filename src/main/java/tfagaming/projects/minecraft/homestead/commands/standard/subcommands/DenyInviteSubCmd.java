@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionInvite;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
@@ -70,7 +71,7 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 		if (args.length == 1) {
 			suggestions.addAll(
 				InviteManager.getInvitesOfPlayer(player).stream()
-							.map(p -> RegionManager.findRegion(p.getRegionId()).getName())
+							.map(RegionInvite::getRegionName)
 							.toList()
 			);
 		}

@@ -33,7 +33,7 @@ public final class LogManager {
 	 */
 	public static void addLog(long regionId, String author, String message) {
 		RegionLog log = new RegionLog(regionId, author, message);
-		Homestead.regionLogCache.putOrUpdate(log);
+		Homestead.LOG_CACHE.putOrUpdate(log);
 	}
 
 	/**
@@ -42,7 +42,7 @@ public final class LogManager {
 	 * @return The {@link RegionLog}, or {@code null} if not found.
 	 */
 	public static RegionLog getLog(long logId) {
-		return Homestead.regionLogCache.get(logId);
+		return Homestead.LOG_CACHE.get(logId);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public final class LogManager {
 	 * @return List of logs from a region
 	 */
 	public static List<RegionLog> getLogs(long regionId) {
-		return Homestead.regionLogCache.getAll().stream()
+		return Homestead.LOG_CACHE.getAll().stream()
 				.filter(l -> l.getRegionId() == regionId)
 				.sorted(Comparator.comparingLong(RegionLog::getSentAt).reversed())
 				.collect(Collectors.toList());
@@ -107,6 +107,14 @@ public final class LogManager {
 	}
 
 	/**
+	 * Returns the total number of logs in the server.
+	 * @return Total log count.
+	 */
+	public static int getLogCount() {
+		return Homestead.LOG_CACHE.getAll().size();
+	}
+
+	/**
 	 * Returns the total number of logs in a region.
 	 * @param region The region
 	 * @return Total log count.
@@ -121,7 +129,7 @@ public final class LogManager {
 	 * @return Total log count.
 	 */
 	public static int getLogCount(long regionId) {
-		return (int) Homestead.regionLogCache.getAll().stream()
+		return (int) Homestead.LOG_CACHE.getAll().stream()
 				.filter(l -> l.getRegionId() == regionId)
 				.count();
 	}
@@ -319,7 +327,7 @@ public final class LogManager {
 	 * @param logId The log ID
 	 */
 	public static void deleteLog(long logId) {
-		Homestead.regionLogCache.remove(logId);
+		Homestead.LOG_CACHE.remove(logId);
 	}
 
 	/**
@@ -372,7 +380,7 @@ public final class LogManager {
 	 * @return The number of logs deleted.
 	 */
 	public static int deleteLogsOlderThan(long timestamp) {
-		List<Long> toRemove = Homestead.regionLogCache.getAll().stream()
+		List<Long> toRemove = Homestead.LOG_CACHE.getAll().stream()
 				.filter(l -> l.getSentAt() < timestamp)
 				.map(RegionLog::getUniqueId)
 				.toList();
@@ -388,7 +396,7 @@ public final class LogManager {
 	 * @return The number of logs deleted.
 	 */
 	public static int deleteAllLogs() {
-		List<Long> ids = Homestead.regionLogCache.getAll().stream()
+		List<Long> ids = Homestead.LOG_CACHE.getAll().stream()
 				.map(RegionLog::getUniqueId)
 				.toList();
 
@@ -406,7 +414,7 @@ public final class LogManager {
 	public static int cleanupInvalidLogs() {
 		List<Long> toRemove = new ArrayList<>();
 
-		for (RegionLog log : Homestead.regionLogCache.getAll()) {
+		for (RegionLog log : Homestead.LOG_CACHE.getAll()) {
 			boolean invalidRegion = log.getRegion() == null;
 
 			if (invalidRegion) {

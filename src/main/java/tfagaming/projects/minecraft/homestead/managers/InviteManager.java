@@ -34,7 +34,7 @@ public final class InviteManager {
 	 */
 	public static void invitePlayer(long regionId, OfflinePlayer player) {
 		RegionInvite invite = new RegionInvite(regionId, player);
-		Homestead.regionInviteCache.putOrUpdate(invite);
+		Homestead.INVITE_CACHE.putOrUpdate(invite);
 	}
 
 	/**
@@ -43,7 +43,7 @@ public final class InviteManager {
 	 * @return The {@link RegionInvite}, or {@code null} if not found.
 	 */
 	public static RegionInvite getInvite(long id) {
-		return Homestead.regionInviteCache.get(id);
+		return Homestead.INVITE_CACHE.get(id);
 	}
 
 	/**
@@ -84,9 +84,17 @@ public final class InviteManager {
 	 * @return List of invites
 	 */
 	public static List<RegionInvite> getInvitesOfRegion(long regionId) {
-		return Homestead.regionInviteCache.getAll().stream()
+		return Homestead.INVITE_CACHE.getAll().stream()
 				.filter(i -> i.getRegionId() == regionId)
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Returns the number of pending invites in the server.
+	 * @return The invite count.
+	 */
+	public static int getInviteCount() {
+		return Homestead.INVITE_CACHE.getAll().size();
 	}
 
 	/**
@@ -104,7 +112,7 @@ public final class InviteManager {
 	 * @return The invite count.
 	 */
 	public static int getInviteCount(long regionId) {
-		return (int) Homestead.regionInviteCache.getAll().stream()
+		return (int) Homestead.INVITE_CACHE.getAll().stream()
 				.filter(i -> i.getRegionId() == regionId)
 				.count();
 	}
@@ -124,7 +132,7 @@ public final class InviteManager {
 	 * @return List of invites
 	 */
 	public static List<RegionInvite> getInvitesOfPlayer(UUID playerId) {
-		return Homestead.regionInviteCache.getAll().stream()
+		return Homestead.INVITE_CACHE.getAll().stream()
 				.filter(i -> i.getPlayerId().equals(playerId))
 				.collect(Collectors.toList());
 	}
@@ -208,7 +216,7 @@ public final class InviteManager {
 	 * @param id The invite ID
 	 */
 	public static void deleteInvite(long id) {
-		Homestead.regionInviteCache.remove(id);
+		Homestead.INVITE_CACHE.remove(id);
 	}
 
 	/**
@@ -318,7 +326,7 @@ public final class InviteManager {
 	 */
 	public static int deleteExpiredInvites(long maxAge) {
 		long now = System.currentTimeMillis();
-		List<Long> toRemove = Homestead.regionInviteCache.getAll().stream()
+		List<Long> toRemove = Homestead.INVITE_CACHE.getAll().stream()
 				.filter(i -> now - i.getInvitedAt() > maxAge * 1000)
 				.map(RegionInvite::getUniqueId)
 				.toList();
@@ -334,7 +342,7 @@ public final class InviteManager {
 	 * @return The number of deleted invites.
 	 */
 	public static int deleteAllInvites() {
-		List<Long> ids = Homestead.regionInviteCache.getAll().stream()
+		List<Long> ids = Homestead.INVITE_CACHE.getAll().stream()
 				.map(RegionInvite::getUniqueId)
 				.toList();
 
@@ -353,7 +361,7 @@ public final class InviteManager {
 	public static int cleanupInvalidInvites() {
 		List<Long> toRemove = new ArrayList<>();
 
-		for (RegionInvite invite : Homestead.regionInviteCache.getAll()) {
+		for (RegionInvite invite : Homestead.INVITE_CACHE.getAll()) {
 			OfflinePlayer player = invite.getPlayer();
 
 			boolean invalidRegion = invite.getRegion() == null;

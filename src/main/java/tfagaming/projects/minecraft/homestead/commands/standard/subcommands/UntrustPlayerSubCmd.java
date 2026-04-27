@@ -11,9 +11,11 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionInvite;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
 
@@ -81,7 +83,11 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 					.add("{playername}", target.getName())
 			);
 		} else if (MemberManager.isMemberOfRegion(region, target)) {
-			MemberManager.removeMemberFromRegion(player, region);
+			MemberManager.removeMemberFromRegion(target, region);
+
+			for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(region)) {
+				MemberManager.removeMemberFromSubArea(target, subArea);
+			}
 
 			Messages.send(player, 38, new Placeholder()
 					.add("{region}", region.getName())
@@ -117,11 +123,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 
 			if (region != null) {
 				for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
-					OfflinePlayer m = member.getPlayer();
-
-					if (m != null) {
-						suggestions.add(m.getName());
-					}
+					suggestions.add(member.getPlayerName());
 				}
 
 				suggestions.addAll(InviteManager.getInvitesOfRegion(region).stream().map(RegionInvite::getPlayerName).toList());

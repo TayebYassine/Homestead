@@ -36,7 +36,7 @@ public final class BanManager {
 	 */
 	public static void banPlayer(long regionId, OfflinePlayer player, @Nullable String reason) {
 		RegionBan ban = new RegionBan(regionId, player, reason);
-		Homestead.regionBanCache.putOrUpdate(ban);
+		Homestead.BAN_CACHE.putOrUpdate(ban);
 	}
 
 	/**
@@ -54,10 +54,10 @@ public final class BanManager {
 	 * @param player The player
 	 */
 	public static void unbanPlayer(long regionId, OfflinePlayer player) {
-		Homestead.regionBanCache.getAll().stream()
+		Homestead.BAN_CACHE.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId && b.getPlayerId().equals(player.getUniqueId()))
 				.findFirst()
-				.ifPresent(b -> Homestead.regionBanCache.remove(b.getUniqueId()));
+				.ifPresent(b -> Homestead.BAN_CACHE.remove(b.getUniqueId()));
 	}
 
 	/**
@@ -66,10 +66,10 @@ public final class BanManager {
 	 * @param playerId The player UUID
 	 */
 	public static void unbanPlayer(long regionId, UUID playerId) {
-		Homestead.regionBanCache.getAll().stream()
+		Homestead.BAN_CACHE.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId && b.getPlayerId().equals(playerId))
 				.findFirst()
-				.ifPresent(b -> Homestead.regionBanCache.remove(b.getUniqueId()));
+				.ifPresent(b -> Homestead.BAN_CACHE.remove(b.getUniqueId()));
 	}
 
 	/**
@@ -222,9 +222,17 @@ public final class BanManager {
 	 * @return List of banned players from a region.
 	 */
 	public static List<RegionBan> getBansOfRegion(long regionId) {
-		return Homestead.regionBanCache.getAll().stream()
+		return Homestead.BAN_CACHE.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId)
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Returns the number of active bans in the server.
+	 * @return The ban count.
+	 */
+	public static int getBanCount() {
+		return Homestead.BAN_CACHE.getAll().size();
 	}
 
 	/**
@@ -242,7 +250,7 @@ public final class BanManager {
 	 * @return The ban count.
 	 */
 	public static int getBanCount(long regionId) {
-		return (int) Homestead.regionBanCache.getAll().stream()
+		return (int) Homestead.BAN_CACHE.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId)
 				.count();
 	}
@@ -262,7 +270,7 @@ public final class BanManager {
 	 * @return List of region IDs the player is banned from.
 	 */
 	public static List<Long> getBannedRegions(UUID playerId) {
-		return Homestead.regionBanCache.getAll().stream()
+		return Homestead.BAN_CACHE.getAll().stream()
 				.filter(b -> b.getPlayerId().equals(playerId))
 				.map(RegionBan::getRegionId)
 				.distinct()
@@ -307,7 +315,7 @@ public final class BanManager {
 	 * @return {@code true} if at least one ban exists.
 	 */
 	public static boolean hasActiveBans(long regionId) {
-		return Homestead.regionBanCache.getAll().stream()
+		return Homestead.BAN_CACHE.getAll().stream()
 				.anyMatch(b -> b.getRegionId() == regionId);
 	}
 
@@ -316,7 +324,7 @@ public final class BanManager {
 	 * @return List of all bans.
 	 */
 	public static List<RegionBan> getAllBans() {
-		return List.copyOf(Homestead.regionBanCache.getAll());
+		return List.copyOf(Homestead.BAN_CACHE.getAll());
 	}
 
 	/**
@@ -332,13 +340,13 @@ public final class BanManager {
 	 * @param regionId The region ID
 	 */
 	public static void unbanAllPlayers(long regionId) {
-		List<Long> toRemove = Homestead.regionBanCache.getAll().stream()
+		List<Long> toRemove = Homestead.BAN_CACHE.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId)
 				.map(RegionBan::getUniqueId)
 				.toList();
 
 		for (Long id : toRemove) {
-			Homestead.regionBanCache.remove(id);
+			Homestead.BAN_CACHE.remove(id);
 		}
 	}
 
@@ -351,7 +359,7 @@ public final class BanManager {
 	public static int cleanupInvalidBans() {
 		List<Long> toRemove = new ArrayList<>();
 
-		for (RegionBan ban : Homestead.regionBanCache.getAll()) {
+		for (RegionBan ban : Homestead.BAN_CACHE.getAll()) {
 			OfflinePlayer player = ban.getPlayer();
 
 			boolean invalidRegion = ban.getRegion() == null;
@@ -363,7 +371,7 @@ public final class BanManager {
 		}
 
 		for (Long id : toRemove) {
-			Homestead.regionBanCache.remove(id);
+			Homestead.BAN_CACHE.remove(id);
 		}
 		return toRemove.size();
 	}

@@ -20,7 +20,7 @@ public final class RateManager {
 	 * @return The {@link RegionRate}, or {@code null} if not found.
 	 */
 	public static RegionRate getRate(long id) {
-		return Homestead.regionRateCache.get(id);
+		return Homestead.RATE_CACHE.get(id);
 	}
 
 	/**
@@ -38,9 +38,17 @@ public final class RateManager {
 	 * @return List of ratings.
 	 */
 	public static List<RegionRate> getRatesOfRegion(long regionId) {
-		return Homestead.regionRateCache.getAll().stream()
+		return Homestead.RATE_CACHE.getAll().stream()
 				.filter(r -> r.getRegionId() == regionId)
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Returns the number of ratings in the server.
+	 * @return Rating count.
+	 */
+	public static int getRateCount() {
+		return Homestead.RATE_CACHE.getAll().size();
 	}
 
 	/**
@@ -58,7 +66,7 @@ public final class RateManager {
 	 * @return Rating count.
 	 */
 	public static int getRateCount(long regionId) {
-		return (int) Homestead.regionRateCache.getAll().stream()
+		return (int) Homestead.RATE_CACHE.getAll().stream()
 				.filter(r -> r.getRegionId() == regionId)
 				.count();
 	}
@@ -78,7 +86,7 @@ public final class RateManager {
 	 * @return Total score.
 	 */
 	public static int getTotalScore(long regionId) {
-		return Homestead.regionRateCache.getAll().stream()
+		return Homestead.RATE_CACHE.getAll().stream()
 				.filter(r -> r.getRegionId() == regionId)
 				.mapToInt(RegionRate::getRate)
 				.sum();
@@ -101,14 +109,14 @@ public final class RateManager {
 	 * @param score The score; ranging from 0 to 5
 	 */
 	public static void rateRegion(long regionId, OfflinePlayer player, int score) {
-		RegionRate rate = Homestead.regionRateCache.getAll().stream()
+		RegionRate rate = Homestead.RATE_CACHE.getAll().stream()
 				.filter(r -> r.getRegionId() == regionId && r.getPlayerId().equals(player.getUniqueId()))
 				.findFirst()
 				.orElse(new RegionRate(regionId, player, score));
 
 		rate.setRate(score);
 
-		Homestead.regionRateCache.putOrUpdate(rate);
+		Homestead.RATE_CACHE.putOrUpdate(rate);
 	}
 
 	/**
@@ -297,7 +305,7 @@ public final class RateManager {
 	 * @return Average score given, or {@code 0.0} if no ratings.
 	 */
 	public static double getPlayerAverageRating(UUID playerId) {
-		return Homestead.regionRateCache.getAll().stream()
+		return Homestead.RATE_CACHE.getAll().stream()
 				.filter(r -> r.getPlayerId().equals(playerId))
 				.mapToInt(RegionRate::getRate)
 				.average()
@@ -319,7 +327,7 @@ public final class RateManager {
 	 * @return List of region IDs.
 	 */
 	public static List<Long> getRegionsRatedByPlayer(UUID playerId) {
-		return Homestead.regionRateCache.getAll().stream()
+		return Homestead.RATE_CACHE.getAll().stream()
 				.filter(r -> r.getPlayerId().equals(playerId))
 				.map(RegionRate::getRegionId)
 				.distinct()
@@ -343,7 +351,7 @@ public final class RateManager {
 	 * @return {@code true} if the player has rated the region.
 	 */
 	public static boolean hasRatedRegion(OfflinePlayer player, long regionId) {
-		return Homestead.regionRateCache.getAll().stream()
+		return Homestead.RATE_CACHE.getAll().stream()
 				.anyMatch(b -> b.getRegionId() == regionId && b.getPlayerId().equals(player.getUniqueId()));
 	}
 
@@ -354,7 +362,7 @@ public final class RateManager {
 	 * @return {@code true} if the player has rated the region.
 	 */
 	public static boolean hasRatedRegion(UUID playerId, long regionId) {
-		return Homestead.regionRateCache.getAll().stream()
+		return Homestead.RATE_CACHE.getAll().stream()
 				.anyMatch(b -> b.getRegionId() == regionId && b.getPlayerId().equals(playerId));
 	}
 
@@ -375,7 +383,7 @@ public final class RateManager {
 	 * @return The {@link RegionRate}, or {@code null} if not found.
 	 */
 	public static RegionRate getPlayerRate(OfflinePlayer player, long regionId) {
-		return Homestead.regionRateCache.getAll().stream()
+		return Homestead.RATE_CACHE.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId && b.getPlayerId().equals(player.getUniqueId()))
 				.findFirst()
 				.orElse(null);
@@ -400,7 +408,7 @@ public final class RateManager {
 	public static boolean deletePlayerRating(OfflinePlayer player, long regionId) {
 		RegionRate rate = getPlayerRate(player, regionId);
 		if (rate == null) return false;
-		Homestead.regionRateCache.remove(rate.getUniqueId());
+		Homestead.RATE_CACHE.remove(rate.getUniqueId());
 		return true;
 	}
 
@@ -419,13 +427,13 @@ public final class RateManager {
 	 * @return The number of ratings deleted.
 	 */
 	public static int deleteAllRatingsByPlayer(UUID playerId) {
-		List<Long> toRemove = Homestead.regionRateCache.getAll().stream()
+		List<Long> toRemove = Homestead.RATE_CACHE.getAll().stream()
 				.filter(r -> r.getPlayerId().equals(playerId))
 				.map(RegionRate::getUniqueId)
 				.toList();
 
 		for (Long id : toRemove) {
-			Homestead.regionRateCache.remove(id);
+			Homestead.RATE_CACHE.remove(id);
 		}
 		return toRemove.size();
 	}
@@ -443,13 +451,13 @@ public final class RateManager {
 	 * @param regionId The region ID
 	 */
 	public static void deleteAll(long regionId) {
-		List<Long> toRemove = Homestead.regionRateCache.getAll().stream()
+		List<Long> toRemove = Homestead.RATE_CACHE.getAll().stream()
 				.filter(b -> b.getRegionId() == regionId)
 				.map(RegionRate::getUniqueId)
 				.toList();
 
 		for (Long id : toRemove) {
-			Homestead.regionRateCache.remove(id);
+			Homestead.RATE_CACHE.remove(id);
 		}
 	}
 
@@ -458,12 +466,12 @@ public final class RateManager {
 	 * @return The number of ratings deleted.
 	 */
 	public static int deleteAllRatings() {
-		List<Long> ids = Homestead.regionRateCache.getAll().stream()
+		List<Long> ids = Homestead.RATE_CACHE.getAll().stream()
 				.map(RegionRate::getUniqueId)
 				.toList();
 
 		for (Long id : ids) {
-			Homestead.regionRateCache.remove(id);
+			Homestead.RATE_CACHE.remove(id);
 		}
 		return ids.size();
 	}
@@ -477,7 +485,7 @@ public final class RateManager {
 	public static int cleanupInvalidRatings() {
 		List<Long> toRemove = new ArrayList<>();
 
-		for (RegionRate rate : Homestead.regionRateCache.getAll()) {
+		for (RegionRate rate : Homestead.RATE_CACHE.getAll()) {
 			OfflinePlayer player = rate.getPlayer();
 
 			boolean invalidRegion = rate.getRegion() == null;
@@ -489,7 +497,7 @@ public final class RateManager {
 		}
 
 		for (Long id : toRemove) {
-			Homestead.regionRateCache.remove(id);
+			Homestead.RATE_CACHE.remove(id);
 		}
 		return toRemove.size();
 	}

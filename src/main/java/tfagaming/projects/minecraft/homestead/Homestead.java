@@ -37,17 +37,20 @@ import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.snowflake.SnowflakeGenerator;
 import tfagaming.projects.minecraft.homestead.storage.StorageManager;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
+import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Homestead extends JavaPlugin {
 	private final static String VERSION = "5.1.0.1";
@@ -55,25 +58,21 @@ public class Homestead extends JavaPlugin {
 	public static Database database;
 
 	// Cache
-	public static RegionCache regionsCache;
-	public static RegionMemberCache regionMemberCache;
-	public static RegionBanCache regionBanCache;
-	public static RegionChunkCache regionChunkCache;
-	public static RegionInviteCache regionInviteCache;
-	public static RegionLogCache regionLogCache;
-	public static RegionRateCache regionRateCache;
-	public static WarsCache warsCache;
-	public static SubAreasCache subAreasCache;
-	public static LevelsCache levelsCache;
+	public static RegionCache REGION_CACHE;
+	public static RegionMemberCache MEMBER_CACHE;
+	public static RegionBanCache BAN_CACHE;
+	public static RegionChunkCache CHUNK_CACHE;
+	public static RegionInviteCache INVITE_CACHE;
+	public static RegionLogCache LOG_CACHE;
+	public static RegionRateCache RATE_CACHE;
+	public static WarsCache WAR_CACHE;
+	public static SubAreasCache SUBAREA_CACHE;
+	public static LevelsCache LEVEL_CACHE;
 
 	public static Vault vault;
 	private static Homestead INSTANCE;
 	private static long STARTED_AT;
-	private static TaskHandle moveCheckTask;
-
-	private static class SnowflakeHolder {
-		static final SnowflakeGenerator INSTANCE = new SnowflakeGenerator();
-	}
+	private static TaskHandle MOVE_CHECK_TASK;
 
 	public static SnowflakeGenerator getSnowflake() {
 		return SnowflakeHolder.INSTANCE;
@@ -140,16 +139,16 @@ public class Homestead extends JavaPlugin {
 			return;
 		}
 
-		Homestead.regionsCache = new RegionCache();
-		Homestead.regionMemberCache = new RegionMemberCache();
-		Homestead.regionBanCache = new RegionBanCache();
-		Homestead.regionChunkCache = new RegionChunkCache();
-		Homestead.regionInviteCache = new RegionInviteCache();
-		Homestead.regionLogCache = new RegionLogCache();
-		Homestead.regionRateCache = new RegionRateCache();
-		Homestead.warsCache = new WarsCache();
-		Homestead.subAreasCache = new SubAreasCache();
-		Homestead.levelsCache = new LevelsCache();
+		Homestead.REGION_CACHE = new RegionCache();
+		Homestead.MEMBER_CACHE = new RegionMemberCache();
+		Homestead.BAN_CACHE = new RegionBanCache();
+		Homestead.CHUNK_CACHE = new RegionChunkCache();
+		Homestead.INVITE_CACHE = new RegionInviteCache();
+		Homestead.LOG_CACHE = new RegionLogCache();
+		Homestead.RATE_CACHE = new RegionRateCache();
+		Homestead.WAR_CACHE = new WarsCache();
+		Homestead.SUBAREA_CACHE = new SubAreasCache();
+		Homestead.LEVEL_CACHE = new LevelsCache();
 
 		try {
 			Driver provider = Driver.parse(Resources.<ConfigFile>get(ResourceType.Config).getDatabaseProvider());
@@ -210,17 +209,34 @@ public class Homestead extends JavaPlugin {
 		}
 
 		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("clean-startup")) {
-			RegionManager.cleanupInvalidRegions();
-			SubAreaManager.cleanupInvalidSubAreas();
-			WarManager.cleanupInvalidWars();
-			LevelManager.cleanupInvalidLevels();
+			int regions = RegionManager.cleanupInvalidRegions();
+			int subareas = SubAreaManager.cleanupInvalidSubAreas();
+			int wars = WarManager.cleanupInvalidWars();
+			int levels = LevelManager.cleanupInvalidLevels();
 
-			BanManager.cleanupInvalidBans();
-			ChunkManager.cleanupInvalidChunks();
-			InviteManager.cleanupInvalidInvites();
-			LogManager.cleanupInvalidLogs();
-			MemberManager.cleanupInvalidMembers();
-			RateManager.cleanupInvalidRatings();
+			int bans = BanManager.cleanupInvalidBans();
+			int chunks = ChunkManager.cleanupInvalidChunks();
+			int invites = InviteManager.cleanupInvalidInvites();
+			int logs = LogManager.cleanupInvalidLogs();
+			int members = MemberManager.cleanupInvalidMembers();
+			int rates = RateManager.cleanupInvalidRatings();
+
+			String[] headers = {"Model", "Fixed"};
+
+			Object[][] data = {
+					{"Regions", regions},
+					{"Members", members},
+					{"Chunks", chunks},
+					{"Invites", invites},
+					{"Logs", logs},
+					{"Rates", rates},
+					{"Bans", bans},
+					{"Levels", levels},
+					{"Wars", wars},
+					{"SubAreas", subareas},
+			};
+
+			ListUtils.printTable(headers, data);
 		}
 
 		ChunkManager.reregisterForceLoadedChunks();
@@ -291,7 +307,15 @@ public class Homestead extends JavaPlugin {
 
 		// Check for updates every 24 hours
 		runAsyncTimerTask(() -> {
-			UpdateChecker.fetch(this);
+			Logger.info("[Updates] Looking for updates on GitHub...");
+
+			String newVersion = UpdateChecker.fetch(this);
+
+			if (newVersion != null) {
+				Logger.warning(Logger.PredefinedMessages.UPDATE_FOUND.getMessage());
+			} else {
+				Logger.info("[Updates] No update was found!");
+			}
 		}, 86400);
 
 		// Register external plugins
@@ -306,7 +330,7 @@ public class Homestead extends JavaPlugin {
 			Logger.debug("Event [ItemTransportingEntityValidateTargetListener] not found, using alternative method with Entities Moving listener");
 
 			if (!isFolia()) {
-				moveCheckTask = new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, () -> {
+				Homestead.MOVE_CHECK_TASK = new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, () -> {
 					for (World world : Bukkit.getWorlds()) {
 						for (Entity entity : world.getEntities()) {
 							RegionProtectionListener.onEntityMove(entity);
@@ -526,6 +550,31 @@ public class Homestead extends JavaPlugin {
 	}
 
 	/**
+	 * Get a list of online players.
+	 */
+	public List<Player> getOnlinePlayersSync() {
+		return new ArrayList<>(Bukkit.getOnlinePlayers());
+	}
+
+	/**
+	 * Get a list of offline player names.
+	 */
+	public List<String> getOfflinePlayerNamesSync() {
+		return Homestead.getInstance().getOfflinePlayersSync().stream()
+				.map(OfflinePlayer::getName)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get a list of online player names.
+	 */
+	public List<String> getOnlinePlayerNamesSync() {
+		return Homestead.getInstance().getOnlinePlayersSync().stream()
+				.map(Player::getName)
+				.collect(Collectors.toList());
+	}
+
+	/**
 	 * Get an offline player with player unique IDs, using safe method.
 	 *
 	 * @param playerId The player ID.
@@ -574,8 +623,8 @@ public class Homestead extends JavaPlugin {
 			}
 		}
 
-		if (moveCheckTask != null) {
-			moveCheckTask.cancel();
+		if (Homestead.MOVE_CHECK_TASK != null) {
+			Homestead.MOVE_CHECK_TASK.cancel();
 		}
 
 		Logger.info("Saving storage for each region...");
@@ -584,10 +633,10 @@ public class Homestead extends JavaPlugin {
 
 		Logger.info("Cleaning cache...");
 
-		Homestead.regionsCache.clear();
-		Homestead.warsCache.clear();
-		Homestead.subAreasCache.clear();
-		Homestead.levelsCache.clear();
+		Homestead.REGION_CACHE.clear();
+		Homestead.WAR_CACHE.clear();
+		Homestead.SUBAREA_CACHE.clear();
+		Homestead.LEVEL_CACHE.clear();
 		TargetRegionSession.SESSIONS.clear();
 		AutoClaimSession.SESSIONS.clear();
 		DelayedTeleport.cleanup();
@@ -624,5 +673,9 @@ public class Homestead extends JavaPlugin {
 		Logger.error(e);
 
 		endInstance();
+	}
+
+	private static class SnowflakeHolder {
+		static final SnowflakeGenerator INSTANCE = new SnowflakeGenerator();
 	}
 }

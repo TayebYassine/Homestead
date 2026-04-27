@@ -63,16 +63,16 @@ public class ImportSubCmd extends SubCommandBuilder {
 		String[] headers = {"Model", "Imported"};
 
 		Object[][] data = {
-				{"Regions", Homestead.regionsCache.getAll().size()},
-				{"Members", Homestead.regionMemberCache.getAll().size()},
-				{"Chunks", Homestead.regionChunkCache.getAll().size()},
-				{"Invites", Homestead.regionInviteCache.getAll().size()},
-				{"Logs", Homestead.regionLogCache.getAll().size()},
-				{"Rates", Homestead.regionRateCache.getAll().size()},
-				{"Bans", Homestead.regionBanCache.getAll().size()},
-				{"Levels", Homestead.levelsCache.getAll().size()},
-				{"Wars", Homestead.warsCache.getAll().size()},
-				{"SubAreas", Homestead.subAreasCache.getAll().size()},
+				{"Regions", Homestead.REGION_CACHE.getAll().size()},
+				{"Members", Homestead.MEMBER_CACHE.getAll().size()},
+				{"Chunks", Homestead.CHUNK_CACHE.getAll().size()},
+				{"Invites", Homestead.INVITE_CACHE.getAll().size()},
+				{"Logs", Homestead.LOG_CACHE.getAll().size()},
+				{"Rates", Homestead.RATE_CACHE.getAll().size()},
+				{"Bans", Homestead.BAN_CACHE.getAll().size()},
+				{"Levels", Homestead.LEVEL_CACHE.getAll().size()},
+				{"Wars", Homestead.WAR_CACHE.getAll().size()},
+				{"SubAreas", Homestead.SUBAREA_CACHE.getAll().size()},
 		};
 
 		ListUtils.printTable(headers, data);

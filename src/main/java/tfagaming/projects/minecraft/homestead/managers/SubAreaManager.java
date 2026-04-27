@@ -54,7 +54,7 @@ public final class SubAreaManager {
 				point1,
 				point2,
 				flags);
-		Homestead.subAreasCache.putOrUpdate(subArea);
+		Homestead.SUBAREA_CACHE.putOrUpdate(subArea);
 		return subArea;
 	}
 
@@ -63,14 +63,14 @@ public final class SubAreaManager {
 	 * @return List of all sub-areas.
 	 */
 	public static List<SubArea> getAll() {
-		return Homestead.subAreasCache.getAll();
+		return Homestead.SUBAREA_CACHE.getAll();
 	}
 
 	/**
-	 * Returns the total number of sub-areas.
+	 * Returns the number of sub-areas in the server.
 	 * @return Sub-area count.
 	 */
-	public static int getTotalSubAreaCount() {
+	public static int getSubAreaCount() {
 		return getAll().size();
 	}
 
@@ -108,6 +108,15 @@ public final class SubAreaManager {
 	 */
 	public static boolean hasSubAreas(long regionId) {
 		return !getSubAreasOfRegion(regionId).isEmpty();
+	}
+
+	/**
+	 * Get sub-areas of a region.
+	 * @param region The region
+	 * @return List of sub-areas.
+	 */
+	public static List<SubArea> getSubAreasOfRegion(Region region) {
+		return getSubAreasOfRegion(region.getUniqueId());
 	}
 
 	/**
@@ -175,7 +184,7 @@ public final class SubAreaManager {
 	 * @return The SubArea, or {@code null}.
 	 */
 	public static SubArea findSubArea(long id) {
-		return Homestead.subAreasCache.get(id);
+		return Homestead.SUBAREA_CACHE.get(id);
 	}
 
 	/**
@@ -502,7 +511,7 @@ public final class SubAreaManager {
 	 * @param id The sub-area ID
 	 */
 	public static void deleteSubArea(long id) {
-		Homestead.subAreasCache.remove(id);
+		Homestead.SUBAREA_CACHE.remove(id);
 	}
 
 	/**
@@ -556,7 +565,7 @@ public final class SubAreaManager {
 		List<Long> toRemove = new ArrayList<>();
 		int memberFixes = 0;
 
-		for (SubArea subArea : Homestead.subAreasCache.getAll()) {
+		for (SubArea subArea : Homestead.SUBAREA_CACHE.getAll()) {
 			boolean invalidWorld = !validWorlds.contains(subArea.getWorldId());
 
 			boolean invalidRegion = subArea.getRegion() == null;

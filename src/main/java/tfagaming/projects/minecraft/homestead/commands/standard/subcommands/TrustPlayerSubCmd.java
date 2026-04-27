@@ -115,8 +115,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
 			InviteManager.deleteInvitesOfPlayer(region, target);
-
-			InviteManager.deleteInvitesOfPlayer(region, target);
+			MemberManager.addMemberToRegion(target, region);
 
 			Messages.send(player, 199, new Placeholder()
 					.add("{region}", region.getName())
@@ -131,7 +130,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 			Placeholder placeholder = new Placeholder()
 					.add("{region}", region.getName())
 					.add("{playername}", target.getName())
-					.add("{ownername}", region.getOwner().getName());
+					.add("{ownername}", region.getOwnerName());
 
 			Messages.send(player, 36, placeholder);
 

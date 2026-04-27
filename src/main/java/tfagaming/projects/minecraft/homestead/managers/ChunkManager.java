@@ -58,7 +58,7 @@ public final class ChunkManager {
 				System.currentTimeMillis(),
 				false
 		);
-		Homestead.regionChunkCache.putOrUpdate(regionChunk);
+		Homestead.CHUNK_CACHE.putOrUpdate(regionChunk);
 		return regionChunk;
 	}
 
@@ -213,7 +213,7 @@ public final class ChunkManager {
 	 * @param id The chunk ID
 	 */
 	public static void deleteChunk(long id) {
-		Homestead.regionChunkCache.remove(id);
+		Homestead.CHUNK_CACHE.remove(id);
 	}
 
 	/**
@@ -238,6 +238,14 @@ public final class ChunkManager {
 			}
 		}
 		return chunks;
+	}
+
+	/**
+	 * Returns the number of chunks in the server.
+	 * @return The chunk count.
+	 */
+	public static int getChunkCount() {
+		return getAll().size();
 	}
 
 	/**
@@ -513,7 +521,7 @@ public final class ChunkManager {
 		List<RegionChunk> toTransfer = getChunksOfRegion(fromRegionId);
 		for (RegionChunk chunk : toTransfer) {
 			chunk.setRegionId(toRegionId);
-			Homestead.regionChunkCache.putOrUpdate(chunk);
+			Homestead.CHUNK_CACHE.putOrUpdate(chunk);
 		}
 		return toTransfer.size();
 	}
@@ -603,7 +611,7 @@ public final class ChunkManager {
 
 	/** Returns an immutable view of every loaded chunk. */
 	public static List<RegionChunk> getAll() {
-		return Homestead.regionChunkCache.getAll();
+		return Homestead.CHUNK_CACHE.getAll();
 	}
 
 	/**
@@ -612,7 +620,7 @@ public final class ChunkManager {
 	 * @return The RegionChunk, or {@code null}.
 	 */
 	public static RegionChunk findChunk(long id) {
-		return Homestead.regionChunkCache.get(id);
+		return Homestead.CHUNK_CACHE.get(id);
 	}
 
 	/**

@@ -63,20 +63,13 @@ public class ChatSubCmd extends SubCommandBuilder {
 		List<String> messageList = Arrays.asList(args).subList(0, args.length);
 		String message = String.join(" ", messageList);
 
-		List<UUID> playerIds = new ArrayList<>();
+		List<Player> receivers = MemberManager.getOnlineMembers(region);
+		OfflinePlayer owner = region.getOwner();
 
-		playerIds.add(region.getOwnerId());
+		if (owner != null && owner.isOnline()) receivers.add(owner.getPlayer());
 
-		for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
-			playerIds.add(member.getPlayerId());
-		}
-
-		for (UUID playerId : playerIds) {
-			OfflinePlayer regionPlayer = Homestead.getInstance().getOfflinePlayerSync(playerId);
-
-			if (regionPlayer != null && regionPlayer.isOnline()) {
-				Messages.send((Player) regionPlayer, Formatter.formatPrivateChat(region.getName(), player.getName(), message));
-			}
+		for (Player receiver : receivers) {
+			Messages.send(receiver, Formatter.formatPrivateChat(region.getName(), player.getName(), message));
 		}
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("log-private-chat")) {

@@ -62,6 +62,16 @@ public final class RegionBan {
 		return RegionManager.findRegion(regionId);
 	}
 
+	/**
+	 * Returns the region name safely by directly fetching with region ID from cache.
+	 * @return The region name if found, {@code "?"} otherwise.
+	 */
+	public String getRegionName() {
+		Region region = getRegion();
+
+		return region == null ? "?" : region.getName();
+	}
+
 	public void setRegionId(long regionId) {
 		this.regionId = regionId;
 		update();
@@ -119,6 +129,6 @@ public final class RegionBan {
 	private void update() {
 		if (!autoUpdate) return;
 
-		Homestead.regionBanCache.putOrUpdate(this);
+		Homestead.BAN_CACHE.putOrUpdate(this);
 	}
 }

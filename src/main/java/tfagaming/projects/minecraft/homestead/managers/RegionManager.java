@@ -59,7 +59,7 @@ public final class RegionManager {
 			region.setUpkeepAt(UpkeepUtility.getNewUpkeepAt() + (delay != 0 ? delay * 1000L : 0));
 		}
 
-		Homestead.regionsCache.putOrUpdate(region);
+		Homestead.REGION_CACHE.putOrUpdate(region);
 
 		RegionCreateEvent event = new RegionCreateEvent(region, player);
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
@@ -68,7 +68,7 @@ public final class RegionManager {
 	}
 
 	/**
-	 * Returns the total number of regions.
+	 * Returns the total number of regions in the server.
 	 * @return Region count.
 	 */
 	public static int getRegionCount() {
@@ -77,7 +77,7 @@ public final class RegionManager {
 
 	/** Returns a list of every loaded region, directly from dynamic cache. */
 	public static List<Region> getAll() {
-		return Homestead.regionsCache.getAll();
+		return Homestead.REGION_CACHE.getAll();
 	}
 
 	/**
@@ -86,7 +86,7 @@ public final class RegionManager {
 	 * @return The Region, or {@code null}.
 	 */
 	public static Region findRegion(long id) {
-		return Homestead.regionsCache.get(id);
+		return Homestead.REGION_CACHE.get(id);
 	}
 
 	/**
@@ -137,8 +137,7 @@ public final class RegionManager {
 
 	/**
 	 * Permanently deletes the specified region and all related data.
-	 * If configured, all linked chunks are regenerated via WorldEdit.
-	 * A {@link RegionDeleteEvent} is fired on the next server tick.
+	 * If configured, all linked chunks are regenerated via FastAsyncWorldEdit.
 	 * @param id The region ID
 	 * @param player Executor (optional)
 	 */
@@ -153,9 +152,7 @@ public final class RegionManager {
 		List<RegionChunk> chunksToRegen = new ArrayList<>(ChunkManager.getChunksOfRegion(id));
 
 		// Delete related sub-areas
-		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(id)) {
-			SubAreaManager.deleteSubArea(subArea.getUniqueId());
-		}
+		SubAreaManager.deleteSubAreasOfRegion(region);
 
 		// Delete related chunks
 		for (RegionChunk chunk : ChunkManager.getChunksOfRegion(id)) {
@@ -163,14 +160,10 @@ public final class RegionManager {
 		}
 
 		// Delete related members
-		for (RegionMember member : MemberManager.getMembersOfRegion(id)) {
-			MemberManager.removeMember(member.getUniqueId());
-		}
+		MemberManager.removeAllMembersOfRegion(region);
 
 		// Delete related logs
-		for (RegionLog log : LogManager.getLogs(id)) {
-			LogManager.deleteLog(log.getUniqueId());
-		}
+		LogManager.deleteLogsOfRegion(region);
 
 		// Delete related rates
 		RateManager.deleteAll(id);
@@ -191,7 +184,7 @@ public final class RegionManager {
 		if (Resources.<ConfigFile>get(ResourceType.Config).regenerateChunksWithFAWE() && !Homestead.isFolia()) {
 			Homestead.getInstance().runAsyncTask(() -> {
 				for (RegionChunk chunk : chunksToRegen) {
-					World world = Bukkit.getWorld(chunk.getWorldId());
+					World world = chunk.getWorld();
 					if (world != null) {
 						FastAsyncWorldEditAPI.regenerateChunk(world, world.getChunkAt(chunk.getX(), chunk.getZ()));
 					}
@@ -206,7 +199,7 @@ public final class RegionManager {
 			}
 		}
 
-		Homestead.regionsCache.remove(id);
+		Homestead.REGION_CACHE.remove(id);
 
 		RegionDeleteEvent event = new RegionDeleteEvent(region, player.length > 0 ? player[0] : null);
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));

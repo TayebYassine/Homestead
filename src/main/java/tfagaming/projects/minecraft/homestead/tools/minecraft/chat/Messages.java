@@ -72,7 +72,11 @@ public final class Messages {
 			placeholder = new Placeholder();
 		}
 
-		placeholder.add("{__prefix__}", Resources.<LanguageFile>get(ResourceType.Language).getPrefix());
+		if (receiver instanceof Player) {
+			placeholder.add("{__prefix__}", Resources.<LanguageFile>get(ResourceType.Language).getPrefix());
+		} else {
+			message = message.replace("{__prefix__}", "").trim();
+		}
 
 		message = Formatter.applyPlaceholders(message, placeholder);
 

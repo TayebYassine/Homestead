@@ -80,11 +80,13 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 		long flag = PlayerFlags.valueOf(flagInput);
 
 		for (Region region : RegionManager.getAll()) {
-			if (!MemberManager.isMemberOfRegion(region, target)) {
+			RegionMember member = MemberManager.getMemberOfRegion(region, target);
+
+			if (member == null) {
 				continue;
 			}
 
-			long flags = MemberManager.getMemberOfRegion(region, target).getPlayerFlags();
+			long flags = member.getPlayerFlags();
 			boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
 
 			if (args.length > 3) {
@@ -95,7 +97,6 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 					? FlagsCalculator.removeFlag(flags, flag)
 					: FlagsCalculator.addFlag(flags, flag);
 
-			RegionMember member = MemberManager.getMemberOfRegion(region, target);
 			member.setPlayerFlags(newFlags);
 
 			Messages.send(sender, 43, new Placeholder()

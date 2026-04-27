@@ -76,16 +76,16 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		if (region.isOwner(target)) {
+			Messages.send(player, 30);
+			return true;
+		}
+
 		if (BanManager.isBanned(region, target)) {
 			Messages.send(player, 32, new Placeholder()
 					.add("{region}", region.getName())
 					.add("{playername}", target.getName())
 			);
-			return true;
-		}
-
-		if (region.isOwner(target)) {
-			Messages.send(player, 30);
 			return true;
 		}
 
@@ -116,13 +116,8 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 				.add("{region}", reason)
 		);
 
-		if (MemberManager.isMemberOfRegion(region, target)) {
-			MemberManager.removeMemberFromRegion(target, region);
-		}
-
-		if (InviteManager.isInvited(region, target)) {
-			InviteManager.deleteInvitesOfPlayer(region, target);
-		}
+		MemberManager.removeMemberFromRegion(target, region);
+		InviteManager.deleteInvitesOfPlayer(region, target);
 
 		RegionBanPlayerEvent _event = new RegionBanPlayerEvent(region, player, target, reason);
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -138,7 +133,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1) {
-			suggestions.addAll(Homestead.getInstance().getOfflinePlayersSync().stream().map(OfflinePlayer::getName).toList());
+			suggestions.addAll(Homestead.getInstance().getOnlinePlayerNamesSync());
 		}
 
 		return suggestions;

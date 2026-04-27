@@ -55,6 +55,6 @@ public final class StringUtils {
 	}
 
 	public static boolean isValidRegionDescription(String description) {
-		return description.length() >= 2 && description.length() <= 128;
+		return description.length() >= 6 && description.length() <= 256;
 	}
 }

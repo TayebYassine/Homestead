@@ -67,9 +67,7 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 
 		RegionManager.deleteRegion(region.getUniqueId(), player);
 
-		if (Homestead.vault.isEconomyReady()) {
-			PlayerBank.deposit(region.getOwner(), bankAmount);
-		}
+		PlayerBank.deposit(region.getOwner(), bankAmount);
 
 		Messages.send(player, 6, new Placeholder()
 				.add("{region}", region.getName())
