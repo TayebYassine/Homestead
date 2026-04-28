@@ -778,6 +778,14 @@ buttons:
       - "&7Has seleccionado &2{selected-region} &7como región objetivo,"
       - "&7y su clasificación actual con este filtro es: &d#{selected-region-rank}&7!"
     type: PAPER
+  83:
+    name: "&#42A5F5&lInformation"
+    lore:
+      - "&7This region can have &6{max-members} &7trusted players!"
+      - "&7Upgrade to higher rank to unlock more."
+      - " "
+      - "&7Check your rewards: &e/hs rewards"
+    type: PAPER
 
 # NO modifiques estos
 button-types:

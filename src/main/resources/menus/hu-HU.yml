@@ -764,6 +764,14 @@ buttons:
       - '&7A(z) &2{selected-region} &7-et választotta ki célzott régióként,'
       - '&7 és a jelenlegi rangja ezzel a szűrővel: &d#{selected-region-rank}&7!'
     type: PAPER
+  '83':
+    name: "&#42A5F5&lInformáció"
+    lore:
+      - "&7Ez a régió maximum &6{max-members} &7megbízható játékost tud befogadni!"
+      - "&7Lépj magasabb rangra, hogy többet feloldj."
+      - " "
+      - "&7Nézd meg a jutalmaidat: &e/hs rewards"
+    type: PAPER
 
 # Do NOT modify these
 button-types:

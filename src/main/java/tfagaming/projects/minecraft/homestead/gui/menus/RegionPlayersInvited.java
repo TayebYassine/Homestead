@@ -58,7 +58,7 @@ public final class RegionPlayersInvited {
 		if (!context.getEvent().isLeftClick()) return;
 		if (!InviteManager.isInvited(region, invite.getPlayer())) return;
 
-		InviteManager.deleteInvitesOfPlayer(region, invite.getPlayer());
+		InviteManager.deleteInvite(invite.getUniqueId());
 		invites = InviteManager.getInvitesOfRegion(region);
 		context.getInstance().setItems(getItems(player, region));
 	}
