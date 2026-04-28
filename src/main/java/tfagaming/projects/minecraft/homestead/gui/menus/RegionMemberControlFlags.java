@@ -51,7 +51,7 @@ public final class RegionMemberControlFlags {
 			return;
 		}
 
-		if (!MemberManager.isMemberOfRegion(region, player)) {
+		if (!MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())) {
 			player.closeInventory();
 			return;
 		}

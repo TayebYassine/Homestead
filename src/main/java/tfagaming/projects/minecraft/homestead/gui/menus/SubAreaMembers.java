@@ -121,7 +121,7 @@ public final class SubAreaMembers {
 	}
 
 	private void handleRemoveMember(Player player, Region region, SubArea subArea, RegionMember member, PaginationMenu.ClickContext context) {
-		if (!MemberManager.isMemberOfRegion(region, member.getPlayer())
+		if (!MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())
 				|| !MemberManager.isMemberOfSubArea(subArea, player)) {
 			return;
 		}
