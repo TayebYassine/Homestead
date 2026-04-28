@@ -16,6 +16,7 @@ import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
@@ -53,6 +54,8 @@ public final class RegionManager {
 		Region region = new Region(newName, player);
 		region.setDisplayName(newName);
 		region.setDescription(Resources.<LanguageFile>get(ResourceType.Language).getString("default.region-description").replace("{owner}", region.getOwnerName()));
+		region.setPlayerFlags(Resources.<FlagsFile>get(ResourceType.Flags).getDefaultPlayerFlags());
+		region.setWorldFlags(Resources.<FlagsFile>get(ResourceType.Flags).getDefaultWorldFlags());
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
 			int delay = Resources.<RegionsFile>get(ResourceType.Regions).getInt("upkeep.start-upkeep");

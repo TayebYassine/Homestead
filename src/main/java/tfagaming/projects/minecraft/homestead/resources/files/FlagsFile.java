@@ -4,6 +4,8 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.resources.ResourceFile;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,6 +45,19 @@ public class FlagsFile extends ResourceFile {
 		return flags;
 	}
 
+	public long getAllAllowedPlayerFlagsExcludeDisabledOnes() {
+		List<String> keys = PlayerFlags.getFlags();
+		long flags = 0L;
+
+		for (String key : keys) {
+			if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(key)) continue;
+
+			flags = FlagsCalculator.addFlag(flags, PlayerFlags.valueOf(key));
+		}
+
+		return flags;
+	}
+
 	public long getDefaultWorldFlags() {
 		List<String> keys = getKeysUnderPath("default-world-flags");
 		long flags = 0L;
@@ -56,6 +71,19 @@ public class FlagsFile extends ResourceFile {
 				}
 			}
 		}
+		return flags;
+	}
+
+	public long getAllAllowedWorldFlagsExcludeDisabledOnes() {
+		List<String> keys = WorldFlags.getFlags();
+		long flags = 0L;
+
+		for (String key : keys) {
+			if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(key)) continue;
+
+			flags = FlagsCalculator.addFlag(flags, WorldFlags.valueOf(key));
+		}
+
 		return flags;
 	}
 }

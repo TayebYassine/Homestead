@@ -4,10 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.models.RegionMember.LinkageType;
 import tfagaming.projects.minecraft.homestead.models.SubArea;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +51,34 @@ public final class MemberManager {
 	 */
 	public static RegionMember addMember(OfflinePlayer player, LinkageType type, long linkageId) {
 		RegionMember member = new RegionMember(player, type, linkageId);
+
+		switch (type) {
+			case REGION -> {
+				if (getFlagsConfig().allowFlagsOnPlayerTrust()) {
+					member.setPlayerFlags(getFlagsConfig().getAllAllowedPlayerFlagsExcludeDisabledOnes());
+				} else {
+					Region region = RegionManager.findRegion(linkageId);
+
+					if (region != null) member.setPlayerFlags(region.getPlayerFlags());
+				}
+			}
+			case SUBAREA -> {
+				if (getFlagsConfig().allowFlagsOnPlayerTrust()) {
+					member.setPlayerFlags(getFlagsConfig().getAllAllowedPlayerFlagsExcludeDisabledOnes());
+				} else {
+					SubArea subArea = SubAreaManager.findSubArea(linkageId);
+
+					if (subArea != null) member.setPlayerFlags(subArea.getPlayerFlags());
+				}
+			}
+		}
+
 		Homestead.MEMBER_CACHE.putOrUpdate(member);
 		return member;
+	}
+
+	private static FlagsFile getFlagsConfig() {
+		return Resources.get(ResourceType.Flags);
 	}
 
 	/**
