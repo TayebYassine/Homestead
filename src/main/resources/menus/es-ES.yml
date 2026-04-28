@@ -770,9 +770,14 @@ buttons:
       - "&7Si está &aActivado&7, solo las regiones con permisos permitidos"
       - "&7para que todos la visiten serán listadas."
       - ""
-      - "&7Si está &cDesactivado&7, todas las regiones serán listadas"
-      - "&7aquí."
+      - "&7Si está &cDesactivado&7, todas las regiones serán listadas aquí."
     type: COMPARATOR
+  82:
+    name: "&#42A5F5&lTu rango"
+    lore:
+      - "&7Has seleccionado &2{selected-region} &7como región objetivo,"
+      - "&7y su clasificación actual con este filtro es: &d#{selected-region-rank}&7!"
+    type: PAPER
 
 # NO modifiques estos
 button-types:

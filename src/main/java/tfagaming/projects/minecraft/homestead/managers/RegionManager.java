@@ -612,7 +612,7 @@ public final class RegionManager {
 					.sorted(Comparator.<Region>comparingDouble(RateManager::getAverageRating).reversed())
 					.collect(Collectors.toList());
 			case CREATION_DATE -> getAll().stream()
-					.sorted(Comparator.comparingLong(Region::getCreatedAt))
+					.sorted(Comparator.comparingLong(Region::getCreatedAt).reversed())
 					.collect(Collectors.toList());
 			default -> new ArrayList<>();
 		};

@@ -770,9 +770,14 @@ buttons:
       - "&7If &aEnabled&7, only regions with allowed permissions"
       - "&7for everyone to visit it will be listed."
       - ""
-      - "&7If &cDisabled&7, all regions will be listed"
-      - "&7here."
+      - "&7If &cDisabled&7, all regions will be listed here."
     type: COMPARATOR
+  82:
+    name: "&#42A5F5&lYour Rank"
+    lore:
+      - "&7You have selected &2{selected-region} &7as targeted region,"
+      - "&7and its current rank with this filter is: &d#{selected-region-rank}&7!"
+    type: PAPER
 
 # Do NOT modify these
 button-types:

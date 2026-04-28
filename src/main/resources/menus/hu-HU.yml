@@ -757,8 +757,13 @@ buttons:
     - '&7Ha &abe &7van kapcsolva&7, csak azok a régiók láthatók,'
     - '&7ami a sajátod vagy hozzá vagy adva.'
     - ''
-    - '&7Ha &cki &7van kapcsolva, akkor az összes régió látható.'
-    - '&7here.'
+    - '&7Ha &cki &7van kapcsolva, akkor az összes régió látható here.'
+  '82':
+    name: '&#42A5F5&lA rangod'
+    lore:
+      - '&7A(z) &2{selected-region} &7-et választotta ki célzott régióként,'
+      - '&7 és a jelenlegi rangja ezzel a szűrővel: &d#{selected-region-rank}&7!'
+    type: PAPER
 
 # Do NOT modify these
 button-types:

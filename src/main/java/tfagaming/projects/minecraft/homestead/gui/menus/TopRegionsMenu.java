@@ -8,8 +8,8 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RateManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -34,7 +34,7 @@ public final class TopRegionsMenu {
 		this.regions = new ArrayList<>(RegionManager.sortRegions(sortMode.sorting));
 		this.regions = ListUtils.removeDuplications(regions);
 
-		PaginationMenu gui = PaginationMenu.builder(MenuUtility.getTitle(sortMode.titleId), 9 * 5)
+		PaginationMenu.Builder builder = PaginationMenu.builder(MenuUtility.getTitle(sortMode.titleId), 9 * 5)
 				.nextPageItem(MenuUtility.getNextPageButton())
 				.prevPageItem(MenuUtility.getPreviousPageButton())
 				.items(getItems(player))
@@ -43,10 +43,19 @@ public final class TopRegionsMenu {
 				.onClick((_player, context) -> handleRegionClick(player, context, sortMode))
 				.actionButton(0, MenuUtility.getButton(sortMode.buttonId), handleCycleSort(player, sortMode))
 				.actionButton(2, MenuUtility.getButton(81, new Placeholder()
-						.add("{is-public-regions}", Formatter.getToggle(this.isPublicRegionsOnly))), handleTogglePublic(player, sortMode))
-				.build();
+						.add("{is-public-regions}", Formatter.getToggle(this.isPublicRegionsOnly))), handleTogglePublic(player, sortMode));
 
-		gui.open(player);
+		Region selected = TargetRegionSession.getRegion(player);
+
+		if (selected != null) {
+			builder.actionButton(1, MenuUtility.getButton(82, new Placeholder()
+							.add("{selected-region}", selected.getName())
+							.add("{selected-region-rank}", RegionManager.getRank(sortMode.sorting, selected.getUniqueId()))),
+					null
+			);
+		}
+
+		builder.build().open(player);
 	}
 
 	private void handleRegionClick(Player player, PaginationMenu.ClickContext context, SortMode sortMode) {
