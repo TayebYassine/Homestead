@@ -779,12 +779,12 @@ buttons:
       - "&7y su clasificación actual con este filtro es: &d#{selected-region-rank}&7!"
     type: PAPER
   83:
-    name: "&#42A5F5&lInformation"
+    name: "&#42A5F5&lInformación"
     lore:
-      - "&7This region can have &6{max-members} &7trusted players!"
-      - "&7Upgrade to higher rank to unlock more."
+      - "&7¡Esta región puede tener &6{max-members} &7jugadores de confianza!"
+      - "&7Mejora a un rango superior para desbloquear más."
       - " "
-      - "&7Check your rewards: &e/hs rewards"
+      - "&7Consulta tus recompensas: &e/hs rewards"
     type: PAPER
 
 # NO modifiques estos
