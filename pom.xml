@@ -6,7 +6,7 @@
 
 	<groupId>tfagaming.projects.minecraft.homestead</groupId>
 	<artifactId>homestead</artifactId>
-	<version>5.2.0.0-26w18a</version>
+	<version>5.2.0.0-26w18b</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
