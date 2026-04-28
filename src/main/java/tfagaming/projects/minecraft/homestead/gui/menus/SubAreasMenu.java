@@ -5,8 +5,6 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
-
-
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -21,34 +19,34 @@ public final class SubAreasMenu {
 	private final List<SubArea> subAreas;
 
 	public SubAreasMenu(Player player, Region region) {
-		subAreas = SubAreaManager.getSubAreasOfRegion(region.getUniqueId());
+		this.subAreas = SubAreaManager.getSubAreasOfRegion(region.getUniqueId());
 
-		PaginationMenu gui = new PaginationMenu(
-				MenuUtility.getTitle(14), 9 * 4,
-				MenuUtility.getNextPageButton(),
-				MenuUtility.getPreviousPageButton(),
-				getItems(player, region),
-				(_player, event) -> new RegionMenu(player, region),
-				(_player, context) -> {
-					if (context.getIndex() >= subAreas.size()) return;
+		PaginationMenu.builder(14, 9 * 4)
+				.nextPageItem(MenuUtility.getNextPageButton())
+				.prevPageItem(MenuUtility.getPreviousPageButton())
+				.items(getItems(player, region))
+				.fillEmptySlots()
+				.goBack((_player, event) -> new RegionMenu(player, region))
+				.onClick((_player, context) -> handleSubAreaClick(player, region, context))
+				.actionButton(1, MenuUtility.getButton(72, new Placeholder()
+						.add("{max-subareas}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))), null)
+				.build()
+				.open(player);
+	}
 
-					if (RegionManager.findRegion(region.getUniqueId()) == null) {
-						player.closeInventory();
-						return;
-					}
+	private void handleSubAreaClick(Player player, Region region, PaginationMenu.ClickContext context) {
+		if (context.getIndex() >= subAreas.size()) return;
 
-					SubArea subArea = subAreas.get(context.getIndex());
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
 
-					if (context.getEvent().isLeftClick()) {
-						new SubAreaMenu(player, region, subArea);
-					}
-				});
+		SubArea subArea = subAreas.get(context.getIndex());
 
-		gui.addActionButton(1, MenuUtility.getButton(72, new Placeholder()
-				.add("{max-subareas}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))
-		), null);
-
-		gui.open(player, MenuUtility.getEmptySlot());
+		if (context.getEvent().isLeftClick()) {
+			new SubAreaMenu(player, region, subArea);
+		}
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {

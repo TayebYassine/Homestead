@@ -16,7 +16,6 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -40,103 +39,113 @@ public final class RegionClaimedChunks {
 	public RegionClaimedChunks(Player player, Region region) {
 		this.chunks = ChunkManager.getChunksOfRegion(region);
 
-		PaginationMenu gui = new PaginationMenu(
-				MenuUtility.getTitle(11), 9 * 5,
-				MenuUtility.getNextPageButton(),
-				MenuUtility.getPreviousPageButton(),
-				getItems(player, region),
-				(_player, event) -> new RegionMenu(player, region),
-				(_player, context) -> {
-					if (context.getIndex() >= chunks.size()) return;
+		PaginationMenu.builder(11, 9 * 5)
+				.nextPageItem(MenuUtility.getNextPageButton())
+				.prevPageItem(MenuUtility.getPreviousPageButton())
+				.items(getItems(player, region))
+				.fillEmptySlots()
+				.goBack((_player, event) -> new RegionMenu(player, region))
+				.onClick((_player, context) -> handleChunkClick(player, region, context))
+				.actionButton(1, MenuUtility.getButton(73, new Placeholder()
+						.add("{max-chunks}", Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION))), null)
+				.build()
+				.open(player);
+	}
 
-					if (RegionManager.findRegion(region.getUniqueId()) == null) {
-						player.closeInventory();
-						return;
-					}
+	private void handleChunkClick(Player player, Region region, PaginationMenu.ClickContext context) {
+		if (context.getIndex() >= chunks.size()) return;
 
-					RegionChunk chunk = chunks.get(context.getIndex());
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
 
-					if (context.getEvent().isRightClick()) {
-						if (!player.hasPermission("homestead.region.teleport")) {
-							Messages.send(player, 212);
-							return;
-						}
+		RegionChunk chunk = chunks.get(context.getIndex());
 
-						player.closeInventory();
+		if (context.getEvent().isRightClick()) {
+			handleTeleport(player, chunk);
+		} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
+			handleToggleForceLoad(player, region, chunk, context);
+		} else {
+			handleUnclaim(player, region, chunk, context);
+		}
+	}
 
-						Homestead.getInstance().runLocationTask(chunk.toBukkitDisplayLocation(), () -> {
-							new DelayedTeleport(player, chunk.toBukkitLocation());
-						});
-					} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-						if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-							Messages.send(player, 30);
-							return;
-						}
+	private void handleTeleport(Player player, RegionChunk chunk) {
+		if (!player.hasPermission("homestead.region.teleport")) {
+			Messages.send(player, 212);
+			return;
+		}
 
-						int totalForcedLoadedChunks = ChunkManager.getChunksOfRegion(region).stream().filter(RegionChunk::isForceLoaded).toList().size();
-						int maxForceLoadedChunks = Limits.getRegionLimit(region, Limits.LimitType.MAX_FORCE_LOADED_CHUNKS);
+		player.closeInventory();
 
-						if (totalForcedLoadedChunks >= maxForceLoadedChunks && !chunk.isForceLoaded()) {
-							Messages.send(player, 116);
-							return;
-						}
+		Homestead.getInstance().runLocationTask(chunk.toBukkitDisplayLocation(), () -> {
+			new DelayedTeleport(player, chunk.toBukkitLocation());
+		});
+	}
 
-						Chunk bukkitChunk = chunk.toBukkit();
-						assert bukkitChunk != null;
+	private void handleToggleForceLoad(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
+		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
+			Messages.send(player, 30);
+			return;
+		}
 
-						final boolean newState = !chunk.isForceLoaded();
+		int totalForcedLoadedChunks = ChunkManager.getChunksOfRegion(region).stream()
+				.filter(RegionChunk::isForceLoaded).toList().size();
+		int maxForceLoadedChunks = Limits.getRegionLimit(region, Limits.LimitType.MAX_FORCE_LOADED_CHUNKS);
 
-						chunk.setForceLoaded(newState);
+		if (totalForcedLoadedChunks >= maxForceLoadedChunks && !chunk.isForceLoaded()) {
+			Messages.send(player, 116);
+			return;
+		}
 
-						if (newState) {
-							PersistentChunkTicket.addPersistent(Homestead.getInstance(), bukkitChunk);
-						} else {
-							PersistentChunkTicket.removePersistent(Homestead.getInstance(), bukkitChunk);
-						}
+		Chunk bukkitChunk = chunk.toBukkit();
+		assert bukkitChunk != null;
 
-						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
+		boolean newState = !chunk.isForceLoaded();
+		chunk.setForceLoaded(newState);
 
-						chunks = ChunkManager.getChunksOfRegion(region);
-						context.getInstance().setItems(getItems(player, region));
-					} else {
-						if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
-							Cooldown.sendCooldownMessage(player);
-							return;
-						}
+		if (newState) {
+			PersistentChunkTicket.addPersistent(Homestead.getInstance(), bukkitChunk);
+		} else {
+			PersistentChunkTicket.removePersistent(Homestead.getInstance(), bukkitChunk);
+		}
 
-						if (!ChunkManager.isChunkClaimed(chunk.toBukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.toBukkit())) {
-							return;
-						}
+		PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-						if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-								RegionControlFlags.UNCLAIM_CHUNKS)) {
-							return;
-						}
+		chunks = ChunkManager.getChunksOfRegion(region);
+		context.getInstance().setItems(getItems(player, region));
+	}
 
-						Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
+	private void handleUnclaim(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
+			Cooldown.sendCooldownMessage(player);
+			return;
+		}
 
-						int before = ChunkManager.getChunksOfRegion(region).size();
-						ChunkManager.unclaimChunk(region.getUniqueId(), chunk.toBukkit());
+		if (!ChunkManager.isChunkClaimed(chunk.toBukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.toBukkit())) {
+			return;
+		}
 
-						if (ChunkManager.getChunksOfRegion(region).size() < before) {
-							double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
-							if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
-						}
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.UNCLAIM_CHUNKS)) {
+			return;
+		}
 
-						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+		Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
-						ChunkBorder.show(player);
+		int before = ChunkManager.getChunksOfRegion(region).size();
+		ChunkManager.unclaimChunk(region.getUniqueId(), chunk.toBukkit());
 
-						chunks = ChunkManager.getChunksOfRegion(region);
-						context.getInstance().setItems(getItems(player, region));
-					}
-				});
+		if (ChunkManager.getChunksOfRegion(region).size() < before) {
+			double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
+			if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
+		}
 
-		gui.addActionButton(1, MenuUtility.getButton(73, new Placeholder()
-				.add("{max-chunks}", Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION))
-		), null);
+		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+		ChunkBorder.show(player);
 
-		gui.open(player, MenuUtility.getEmptySlot());
+		chunks = ChunkManager.getChunksOfRegion(region);
+		context.getInstance().setItems(getItems(player, region));
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {

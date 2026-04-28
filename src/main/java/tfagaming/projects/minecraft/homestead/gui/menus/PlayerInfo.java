@@ -11,8 +11,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank
 
 public final class PlayerInfo {
 	public PlayerInfo(Player player, OfflinePlayer target, Runnable backButton) {
-		Menu gui = new Menu(MenuUtility.getTitle(27), 9 * 3);
-
 		Placeholder placeholder = new Placeholder()
 				.add("{regions-count}", RegionManager.getRegionsOwnedByPlayer(target).size()
 						+ RegionManager.getRegionsHasPlayerAsMember(target).size())
@@ -24,15 +22,16 @@ public final class PlayerInfo {
 				.add("{player-owned-regions}", Formatter.getPlayerOwnedRegions(target))
 				.add("{player-trusted-regions}", Formatter.getPlayerTrustedRegions(target));
 
-		gui.addItem(11, MenuUtility.getButton(21, placeholder, target), null);
-		gui.addItem(13, MenuUtility.getButton(22, placeholder), null);
-		gui.addItem(15, MenuUtility.getButton(23, placeholder), null);
-
-		gui.addItem(18, MenuUtility.getBackButton(), (_player, event) -> {
-			if (!event.isLeftClick()) return;
-			backButton.run();
-		});
-
-		gui.open(player, MenuUtility.getEmptySlot());
+		Menu.builder(27, 9 * 3)
+				.item(11, MenuUtility.getButton(21, placeholder, target))
+				.item(13, MenuUtility.getButton(22, placeholder))
+				.item(15, MenuUtility.getButton(23, placeholder))
+				.button(18, MenuUtility.getBackButton(), (_player, event) -> {
+					if (!event.isLeftClick()) return;
+					backButton.run();
+				})
+				.build()
+				.fillEmptySlots()
+				.open(player);
 	}
 }

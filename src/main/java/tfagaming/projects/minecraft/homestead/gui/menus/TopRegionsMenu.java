@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
@@ -17,6 +18,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSoun
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public final class TopRegionsMenu {
 	private final boolean isPublicRegionsOnly;
@@ -29,52 +31,56 @@ public final class TopRegionsMenu {
 	public TopRegionsMenu(Player player, boolean isPublic, SortMode sortMode) {
 		this.isPublicRegionsOnly = isPublic;
 
-		regions = new ArrayList<>(RegionManager.sortRegions(sortMode.sorting));
-		regions = ListUtils.removeDuplications(regions);
+		this.regions = new ArrayList<>(RegionManager.sortRegions(sortMode.sorting));
+		this.regions = ListUtils.removeDuplications(regions);
 
-		PaginationMenu gui = new PaginationMenu(
-				MenuUtility.getTitle(sortMode.titleId),
-				9 * 5,
-				MenuUtility.getNextPageButton(),
-				MenuUtility.getPreviousPageButton(),
-				getItems(player),
-				(_player, event) -> _player.closeInventory(),
-				(_player, context) -> {
-					if (context.getIndex() >= regions.size()) return;
+		PaginationMenu gui = PaginationMenu.builder(MenuUtility.getTitle(sortMode.titleId), 9 * 5)
+				.nextPageItem(MenuUtility.getNextPageButton())
+				.prevPageItem(MenuUtility.getPreviousPageButton())
+				.items(getItems(player))
+				.fillEmptySlots()
+				.goBack((_player, event) -> _player.closeInventory())
+				.onClick((_player, context) -> handleRegionClick(player, context, sortMode))
+				.actionButton(0, MenuUtility.getButton(sortMode.buttonId), handleCycleSort(player, sortMode))
+				.actionButton(2, MenuUtility.getButton(81, new Placeholder()
+						.add("{is-public-regions}", Formatter.getToggle(this.isPublicRegionsOnly))), handleTogglePublic(player, sortMode))
+				.build();
 
-					Region region = regions.get(context.getIndex());
+		gui.open(player);
+	}
 
-					if (RegionManager.findRegion(region.getUniqueId()) == null) {
-						player.closeInventory();
-						return;
-					}
+	private void handleRegionClick(Player player, PaginationMenu.ClickContext context, SortMode sortMode) {
+		if (context.getIndex() >= regions.size()) return;
 
-					if (context.getEvent().isLeftClick()) {
-						new RegionInfoMenu(player, region, () ->
-								new TopRegionsMenu(player, this.isPublicRegionsOnly, sortMode));
-					}
-				}
-		);
+		Region region = regions.get(context.getIndex());
 
-		gui.addActionButton(0, MenuUtility.getButton(sortMode.buttonId), (_player, event) -> {
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
+
+		if (context.getEvent().isLeftClick()) {
+			new RegionInfoMenu(player, region, () -> new TopRegionsMenu(player, this.isPublicRegionsOnly, sortMode));
+		}
+	}
+
+	private BiConsumer<Player, InventoryClickEvent> handleCycleSort(Player player, SortMode sortMode) {
+		return (_player, event) -> {
 			if (event.isLeftClick()) {
 				new TopRegionsMenu(player, this.isPublicRegionsOnly, sortMode.next());
 			} else if (event.isRightClick()) {
 				new TopRegionsMenu(player, this.isPublicRegionsOnly, sortMode.previous());
 			}
-
 			PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
-		});
+		};
+	}
 
-		gui.addActionButton(2, MenuUtility.getButton(81, new Placeholder()
-				.add("{is-public-regions}", Formatter.getToggle(this.isPublicRegionsOnly))
-		), (_player, event) -> {
+	private BiConsumer<Player, InventoryClickEvent> handleTogglePublic(Player player, SortMode sortMode) {
+		return (_player, event) -> {
 			if (event.isLeftClick()) {
 				new TopRegionsMenu(player, !this.isPublicRegionsOnly, sortMode);
 			}
-		});
-
-		gui.open(player, MenuUtility.getEmptySlot());
+		};
 	}
 
 	private List<ItemStack> getItems(Player player) {

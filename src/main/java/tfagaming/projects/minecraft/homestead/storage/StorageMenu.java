@@ -80,7 +80,7 @@ public class StorageMenu implements Listener {
 
 	public void open() {
 		player.openInventory(inventory);
-		passthroughMenu = new Menu(title, 9).setPassthrough(true);
+		passthroughMenu = Menu.builder(title, inventory.getSize()).build();
 		InventoryManager.register(player, passthroughMenu);
 	}
 

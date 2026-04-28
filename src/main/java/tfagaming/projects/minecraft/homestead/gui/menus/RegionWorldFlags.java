@@ -12,7 +12,6 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
-
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -31,61 +30,63 @@ public final class RegionWorldFlags {
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
-		PaginationMenu gui = new PaginationMenu(
-				MenuUtility.getTitle(3), 9 * 5,
-				MenuUtility.getNextPageButton(),
-				MenuUtility.getPreviousPageButton(),
-				items,
-				(_player, event) -> new RegionMenu(player, region),
-				(_player, context) -> {
-					if (RegionManager.findRegion(region.getUniqueId()) == null) {
-						player.closeInventory();
-						return;
-					}
+		PaginationMenu.builder(3, 9 * 5)
+				.nextPageItem(MenuUtility.getNextPageButton())
+				.prevPageItem(MenuUtility.getPreviousPageButton())
+				.items(items)
+				.fillEmptySlots()
+				.goBack((_player, event) -> new RegionMenu(player, region))
+				.onClick((_player, context) -> handleFlagClick(player, region, context))
+				.build()
+				.open(player);
+	}
 
-					if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
+	private void handleFlagClick(Player player, Region region, PaginationMenu.ClickContext context) {
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
 
-					if (!player.hasPermission("homestead.region.flags.world")) {
-						Messages.send(player, 8);
-						return;
-					}
+		if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
-					if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-							RegionControlFlags.SET_WORLD_FLAGS)) {
-						return;
-					}
+		if (!player.hasPermission("homestead.region.flags.world")) {
+			Messages.send(player, 8);
+			return;
+		}
 
-					String flagString = WorldFlags.getFlags().get(context.getIndex());
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				RegionControlFlags.SET_WORLD_FLAGS)) {
+			return;
+		}
 
-					if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
-						PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-						Messages.send(player, 42);
-						return;
-					}
+		String flagString = WorldFlags.getFlags().get(context.getIndex());
 
-					if (!context.getEvent().isLeftClick()) return;
+		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+			Messages.send(player, 42);
+			return;
+		}
 
-					long flags = region.getWorldFlags();
-					long flag = WorldFlags.valueOf(flagString);
+		if (!context.getEvent().isLeftClick()) return;
 
-					if (Cooldown.hasCooldown(region.getOwner().getPlayer(), Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
-						Cooldown.sendCooldownMessage(player);
-						return;
-					}
+		long flags = region.getWorldFlags();
+		long flag = WorldFlags.valueOf(flagString);
 
-					boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
+		if (Cooldown.hasCooldown(region.getOwner().getPlayer(), Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
+			Cooldown.sendCooldownMessage(player);
+			return;
+		}
 
-					Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
+		boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
-					region.setWorldFlags(isSet
-							? FlagsCalculator.removeFlag(flags, flag)
-							: FlagsCalculator.addFlag(flags, flag));
+		Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
 
-					PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
+		region.setWorldFlags(isSet
+				? FlagsCalculator.removeFlag(flags, flag)
+				: FlagsCalculator.addFlag(flags, flag));
 
-					context.getInstance().replaceSlot(context.getIndex(), MenuUtility.getFlagButton(flagString, !isSet));
-				});
+		PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
-		gui.open(player, MenuUtility.getEmptySlot());
+		context.getInstance().replaceSlot(context.getIndex(), MenuUtility.getFlagButton(flagString, !isSet));
 	}
 }

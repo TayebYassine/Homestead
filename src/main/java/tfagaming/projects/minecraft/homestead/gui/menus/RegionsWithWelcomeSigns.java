@@ -5,7 +5,6 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RateManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
@@ -21,38 +20,39 @@ public final class RegionsWithWelcomeSigns {
 	private final List<Region> regions;
 
 	public RegionsWithWelcomeSigns(Player player) {
-		regions = ListUtils.removeDuplications(
+		this.regions = ListUtils.removeDuplications(
 				new ArrayList<>(RegionManager.getRegionsWithWelcomeSigns()));
 
-		PaginationMenu gui = new PaginationMenu(
-				MenuUtility.getTitle(0), 9 * 5,
-				MenuUtility.getNextPageButton(),
-				MenuUtility.getPreviousPageButton(),
-				getItems(player),
-				(_player, event) -> _player.closeInventory(),
-				(_player, context) -> {
-					if (context.getIndex() >= regions.size()) return;
+		PaginationMenu.builder(0, 9 * 5)
+				.nextPageItem(MenuUtility.getNextPageButton())
+				.prevPageItem(MenuUtility.getPreviousPageButton())
+				.items(getItems(player))
+				.fillEmptySlots()
+				.goBack((_player, event) -> _player.closeInventory())
+				.onClick((_player, context) -> handleTeleport(player, context))
+				.build()
+				.open(player);
+	}
 
-					Region region = regions.get(context.getIndex());
+	private void handleTeleport(Player player, PaginationMenu.ClickContext context) {
+		if (context.getIndex() >= regions.size()) return;
 
-					if (context.getEvent().isLeftClick()) {
-						if (RegionManager.findRegion(region.getUniqueId()) == null) {
-							player.closeInventory();
-							return;
-						}
+		Region region = regions.get(context.getIndex());
 
-						if (!player.hasPermission("homestead.region.teleport")) {
-							Messages.send(player, 212);
-							return;
-						}
+		if (!context.getEvent().isLeftClick()) return;
 
-						player.closeInventory();
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
 
-						new DelayedTeleport(player, region.getWelcomeSign().toBukkit());
-					}
-				});
+		if (!player.hasPermission("homestead.region.teleport")) {
+			Messages.send(player, 212);
+			return;
+		}
 
-		gui.open(player, MenuUtility.getEmptySlot());
+		player.closeInventory();
+		new DelayedTeleport(player, region.getWelcomeSign().toBukkit());
 	}
 
 	private List<ItemStack> getItems(Player player) {

@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.LevelManager;
@@ -10,7 +11,6 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
-
 
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
@@ -27,60 +27,58 @@ public final class RegionLevels {
 	public RegionLevels(Player player, Region region, Runnable backButton) {
 		Level lvl = LevelManager.getLevelByRegion(region.getUniqueId());
 
-		PaginationMenu gui = new PaginationMenu(
-				MenuUtility.getTitle(26).replace("{region}", region.getName()),
-				9 * 5,
-				MenuUtility.getNextPageButton(),
-				MenuUtility.getPreviousPageButton(),
-				buildLevelButtons(region),
-				(p, e) -> backButton.run(),
-				(p, c) -> {
+		PaginationMenu gui = PaginationMenu.builder(
+						MenuUtility.getTitle(26).replace("{region}", region.getName()),
+						9 * 5)
+				.nextPageItem(MenuUtility.getNextPageButton())
+				.prevPageItem(MenuUtility.getPreviousPageButton())
+				.items(buildLevelButtons(region))
+				.itemsPerPage(9)
+				.fillEmptySlots()
+				.goBack((p, e) -> backButton.run())
+				.onClick((p, c) -> {
 					if (RegionManager.findRegion(region.getUniqueId()) == null) {
 						player.closeInventory();
 					}
-				}
-		);
+				})
+				.actionButton(1, MenuUtility.getButton(74, new Placeholder()
+						.add("{level}", lvl == null ? 0 : lvl.getLevel())
+						.add("{xp}", NumberUtils.convertToBalance(lvl == null ? 0 : lvl.getExperience()))
+						.add("{reward-chunks}", LevelRewards.getChunksByLevel(region))
+						.add("{reward-members}", LevelRewards.getMembersByLevel(region))
+						.add("{reward-subareas}", LevelRewards.getSubAreasByLevel(region))
+						.add("{reward-upkeep}", LevelRewards.getUpkeepReductionByLevel(region))), null)
+				.onOpen(inv -> buildXpBar(inv, lvl))
+				.build();
 
-		gui.setItemsPerPage(9);
+		gui.open(player);
+	}
 
-		gui.addOpenHandler(inv -> {
-			ItemStack empty = MenuUtility.getEmptySlot();
-			for (int i = 18; i < 27; i++) inv.setItem(i, empty);
+	private void buildXpBar(Inventory inv, Level lvl) {
+		ItemStack empty = MenuUtility.getEmptySlot();
+		for (int i = 18; i < 27; i++) inv.setItem(i, empty);
 
-			int current = lvl == null ? 0 : lvl.getLevel();
-			long xp = lvl == null ? 0 : lvl.getExperience();
-			double percentage = lvl == null ? 0.0 : lvl.getProgressPercentage();
-			long needed = Level.getXpForLevel(current);
-			double pct = needed == 0 ? 0 : (double) xp / needed;
+		int current = lvl == null ? 0 : lvl.getLevel();
+		long xp = lvl == null ? 0 : lvl.getExperience();
+		double percentage = lvl == null ? 0.0 : lvl.getProgressPercentage();
+		long needed = Level.getXpForLevel(current);
+		double pct = needed == 0 ? 0 : (double) xp / needed;
 
-			int blue = (int) Math.round(9 * pct);
-			int gray = 9 - blue;
+		int blue = (int) Math.round(9 * pct);
+		int gray = 9 - blue;
 
-			Placeholder placeholder = new Placeholder()
-					.add("{level}", current)
-					.add("{next-lvl}", current + 1)
-					.add("{xp}", NumberUtils.convertToBalance(xp))
-					.add("{next-lvl-xp}", NumberUtils.convertToBalance(needed))
-					.add("{next-lvl-percentage}", NumberUtils.truncate(percentage));
+		Placeholder placeholder = new Placeholder()
+				.add("{level}", current)
+				.add("{next-lvl}", current + 1)
+				.add("{xp}", NumberUtils.convertToBalance(xp))
+				.add("{next-lvl-xp}", NumberUtils.convertToBalance(needed))
+				.add("{next-lvl-percentage}", NumberUtils.truncate(percentage));
 
-			ItemStack bluePane = MenuUtility.getButton(75, placeholder);
-			ItemStack grayPane = MenuUtility.getButton(76, placeholder);
+		ItemStack bluePane = MenuUtility.getButton(75, placeholder);
+		ItemStack grayPane = MenuUtility.getButton(76, placeholder);
 
-			for (int i = 0; i < blue; i++) inv.setItem(27 + i, bluePane);
-			for (int i = 0; i < gray; i++) inv.setItem(27 + blue + i, grayPane);
-		});
-
-		gui.addActionButton(1, MenuUtility.getButton(74, new Placeholder()
-				.add("{level}", lvl == null ? 0 : lvl.getLevel())
-				.add("{xp}", NumberUtils.convertToBalance(lvl == null ? 0 : lvl.getExperience()))
-				.add("{reward-chunks}", LevelRewards.getChunksByLevel(region))
-				.add("{reward-members}", LevelRewards.getMembersByLevel(region))
-				.add("{reward-subareas}", LevelRewards.getSubAreasByLevel(region))
-				.add("{reward-upkeep}", LevelRewards.getUpkeepReductionByLevel(region))
-		), (_a, _c) -> {
-		});
-
-		gui.open(player, MenuUtility.getEmptySlot());
+		for (int i = 0; i < blue; i++) inv.setItem(27 + i, bluePane);
+		for (int i = 0; i < gray; i++) inv.setItem(27 + blue + i, grayPane);
 	}
 
 	private List<ItemStack> buildLevelButtons(Region region) {

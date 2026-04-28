@@ -7,15 +7,14 @@ import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,103 +32,16 @@ public final class RegionsMenu {
 		this.REGIONS_ADMIN = RegionManager.getAll();
 		this.regions = computeRegionList(player);
 
-		PaginationMenu gui = new PaginationMenu(
-				MenuUtility.getTitle(0), 9 * 4,
-				MenuUtility.getNextPageButton(),
-				MenuUtility.getPreviousPageButton(),
-				getItems(player),
-				(_player, event) -> _player.closeInventory(),
-				(_player, context) -> {
-					boolean hasToggle = PlayerUtility.isOperator(_player);
-					int index = context.getIndex();
+		PaginationMenu gui = PaginationMenu.builder(0, 9 * 4)
+				.nextPageItem(MenuUtility.getNextPageButton())
+				.prevPageItem(MenuUtility.getPreviousPageButton())
+				.items(getItems(player))
+				.fillEmptySlots()
+				.goBack((_player, event) -> _player.closeInventory())
+				.onClick((_player, context) -> handleRegionClick(_player, player, context))
+				.build();
 
-					if (hasToggle && index == 0) {
-						if (context.getEvent().isLeftClick()) {
-							toggleShowAll(_player);
-							new RegionsMenu(_player);
-						}
-						return;
-					}
-
-					if (hasToggle) index--;
-
-					if (index < 0 || index >= regions.size()) return;
-
-					Region region = regions.get(index);
-
-					if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
-						if (RegionManager.findRegion(region.getUniqueId()) == null) {
-							player.closeInventory();
-							return;
-						}
-
-						new RegionInfoMenu(_player, region, () -> new RegionsMenu(_player));
-						return;
-					}
-
-					if (context.getEvent().isRightClick()) {
-						if (RegionManager.findRegion(region.getUniqueId()) == null) {
-							player.closeInventory();
-							return;
-						}
-
-						if (region.getLocation() == null) {
-							Messages.send(_player, 71, new Placeholder().add("{region}", region.getName()));
-							return;
-						}
-
-						if (!player.hasPermission("homestead.region.teleport")) {
-							Messages.send(player, 212);
-							return;
-						}
-
-						boolean allowed = PlayerUtility.isOperator(_player)
-								|| region.isOwner(player)
-								|| (PlayerUtility.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.TELEPORT_SPAWN, true)
-								&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), _player, PlayerFlags.PASSTHROUGH, true))
-								&& player.hasPermission("homestead.region.teleport");
-
-						if (!allowed) {
-							Messages.send(_player, 45, new Placeholder().add("{region}", region.getName()));
-							return;
-						}
-
-						player.closeInventory();
-
-						new DelayedTeleport(_player, region.getLocation().toBukkit());
-
-						return;
-					}
-
-					if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-						if (RegionManager.findRegion(region.getUniqueId()) == null) {
-							player.closeInventory();
-							return;
-						}
-
-						Region current = TargetRegionSession.getRegion(_player);
-						if (current != null && current.getUniqueId() == region.getUniqueId()) return;
-
-						TargetRegionSession.newSession(_player, region);
-						PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
-						Messages.send(_player, 12, new Placeholder().add("{region}", region.getName()));
-
-						regions = computeRegionList(_player);
-						context.getInstance().setItems(getItems(_player));
-						return;
-					}
-
-					if (context.getEvent().isLeftClick()) {
-						if (RegionManager.findRegion(region.getUniqueId()) == null) {
-							player.closeInventory();
-							return;
-						}
-
-						new RegionMenu(_player, region);
-					}
-				});
-
-		gui.open(player, MenuUtility.getEmptySlot());
+		gui.open(player);
 	}
 
 	private static boolean isShowAllEnabled(Player p) {
@@ -138,10 +50,101 @@ public final class RegionsMenu {
 
 	private static void toggleShowAll(Player p) {
 		if (!PlayerUtility.isOperator(p)) return;
-
 		if (!ADMIN_SHOW_ALL.add(p.getUniqueId())) ADMIN_SHOW_ALL.remove(p.getUniqueId());
-
 		PlayerSound.play(p, PlayerSound.PredefinedSound.CLICK);
+	}
+
+	private void handleRegionClick(Player clicker, Player menuPlayer, PaginationMenu.ClickContext context) {
+		boolean hasToggle = PlayerUtility.isOperator(clicker);
+		int index = context.getIndex();
+
+		if (hasToggle && index == 0) {
+			if (context.getEvent().isLeftClick()) {
+				toggleShowAll(clicker);
+				new RegionsMenu(clicker);
+			}
+			return;
+		}
+
+		if (hasToggle) index--;
+
+		if (index < 0 || index >= regions.size()) return;
+
+		Region region = regions.get(index);
+
+		if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
+			handleInfo(clicker, menuPlayer, region);
+		} else if (context.getEvent().isRightClick()) {
+			handleTeleport(clicker, menuPlayer, region, context);
+		} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
+			handleSelectTarget(clicker, menuPlayer, region, context);
+		} else if (context.getEvent().isLeftClick()) {
+			handleOpenMenu(clicker, menuPlayer, region);
+		}
+	}
+
+	private void handleInfo(Player clicker, Player menuPlayer, Region region) {
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			menuPlayer.closeInventory();
+			return;
+		}
+		new RegionInfoMenu(clicker, region, () -> new RegionsMenu(clicker));
+	}
+
+	private void handleTeleport(Player clicker, Player menuPlayer, Region region, PaginationMenu.ClickContext context) {
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			menuPlayer.closeInventory();
+			return;
+		}
+
+		if (region.getLocation() == null) {
+			Messages.send(clicker, 71, new Placeholder().add("{region}", region.getName()));
+			return;
+		}
+
+		if (!menuPlayer.hasPermission("homestead.region.teleport")) {
+			Messages.send(menuPlayer, 212);
+			return;
+		}
+
+		boolean allowed = PlayerUtility.isOperator(clicker)
+				|| region.isOwner(menuPlayer)
+				|| (PlayerUtility.hasPermissionFlag(region.getUniqueId(), clicker, PlayerFlags.TELEPORT_SPAWN, true)
+				&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), clicker, PlayerFlags.PASSTHROUGH, true))
+				&& clicker.hasPermission("homestead.region.teleport");
+
+		if (!allowed) {
+			Messages.send(clicker, 45, new Placeholder().add("{region}", region.getName()));
+			return;
+		}
+
+		menuPlayer.closeInventory();
+		new DelayedTeleport(clicker, region.getLocation().toBukkit());
+	}
+
+	private void handleSelectTarget(Player clicker, Player menuPlayer, Region region, PaginationMenu.ClickContext context) {
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			menuPlayer.closeInventory();
+			return;
+		}
+
+		Region current = TargetRegionSession.getRegion(clicker);
+		if (current != null && current.getUniqueId() == region.getUniqueId()) return;
+
+		TargetRegionSession.newSession(clicker, region);
+		PlayerSound.play(menuPlayer, PlayerSound.PredefinedSound.CLICK);
+		Messages.send(clicker, 12, new Placeholder().add("{region}", region.getName()));
+
+		regions = computeRegionList(clicker);
+		context.getInstance().setItems(getItems(clicker));
+	}
+
+	private void handleOpenMenu(Player clicker, Player menuPlayer, Region region) {
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			menuPlayer.closeInventory();
+			return;
+		}
+		new RegionMenu(clicker, region);
 	}
 
 	private List<Region> computeRegionList(Player player) {

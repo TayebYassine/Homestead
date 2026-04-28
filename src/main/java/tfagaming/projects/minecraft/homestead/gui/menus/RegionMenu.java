@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -15,7 +16,6 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -27,10 +27,10 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.UpkeepUtil
 import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
 import tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType;
 
+import java.util.function.BiConsumer;
+
 public final class RegionMenu {
 	public RegionMenu(Player player, Region region) {
-		Menu gui = new Menu(MenuUtility.getTitle(1).replace("{region}", region.getName()), 9 * 4);
-
 		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
 		boolean isUpkeepEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled");
 		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled");
@@ -62,84 +62,90 @@ public final class RegionMenu {
 				.add("{subareas-enabled}", Formatter.getToggle(isSubAreasEnabled))
 				.add("{region-subareas}", SubAreaManager.getSubAreasOfRegion(region.getUniqueId()).size())
 				.add("{region-subareas-max}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))
-				// Rent placeholders
 				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
 				.add("{rent-renter}", rent != null ? rent.getRenterName() : Formatter.getNone())
 				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
 				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
 
-		gui.addItem(10, MenuUtility.getButton(6, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
+		Menu.Builder<?> builder = Menu.builder(MenuUtility.getTitle(1).replace("{region}", region.getName()), 9 * 4)
+				.button(10, MenuUtility.getButton(6, placeholder), handlePlayersManagement(player, region))
+				.button(11, MenuUtility.getButton(7, placeholder), handleClaimedChunks(player, region))
+				.button(12, MenuUtility.getButton(8, placeholder), handleFlags(player, region))
+				.button(13, MenuUtility.getButton(9, placeholder), handleMiscSettings(player, region))
+				.button(14, MenuUtility.getButton(10, placeholder), handleSubAreas(player, region))
+				.button(20, MenuUtility.getButton(79, placeholder), handleRewards(player, region))
+				.item(21, MenuUtility.getButton(11, placeholder))
+				.button(22, MenuUtility.getButton(12, placeholder), handleEndRent(player, region))
+				.button(23, MenuUtility.getButton(80, placeholder), handleLevels(player, region))
+				.item(24, MenuUtility.getButton(15, placeholder))
+				.button(15, MenuUtility.getButton(13, placeholder), handleLogs(player, region))
+				.button(16, MenuUtility.getButton(16, placeholder), handleWeatherTime(player, region))
+				.button(27, MenuUtility.getBackButton(), handleBack(player, region));
+
+		if (MemberManager.isMemberOfRegion(region, player)) {
+			builder.button(35, MenuUtility.getButton(14, placeholder), handleLeaveRegion(player, region));
+		}
+
+		builder.fillEmptySlots()
+				.build()
+				.open(player);
+	}
+
+	private static BiConsumer<Player, InventoryClickEvent> handlePlayersManagement(Player player, Region region) {
+		return (_player, event) -> {
+			if (checkRegionExists(player, region) && event.isLeftClick()) {
+				new RegionPlayersManagement(player, region);
 			}
+		};
+	}
 
-			if (!event.isLeftClick()) return;
-			new RegionPlayersManagement(player, region);
-		});
-
-		gui.addItem(11, MenuUtility.getButton(7, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
+	private static BiConsumer<Player, InventoryClickEvent> handleClaimedChunks(Player player, Region region) {
+		return (_player, event) -> {
+			if (checkRegionExists(player, region) && event.isLeftClick()) {
+				new RegionClaimedChunks(player, region);
 			}
+		};
+	}
 
-			if (!event.isLeftClick()) return;
-			new RegionClaimedChunks(player, region);
-		});
-
-		gui.addItem(12, MenuUtility.getButton(8, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
-			}
+	private static BiConsumer<Player, InventoryClickEvent> handleFlags(Player player, Region region) {
+		return (_player, event) -> {
+			if (!checkRegionExists(player, region)) return;
 
 			if (event.isLeftClick()) {
 				new GlobalPlayerFlags(player, region);
 			} else if (event.isRightClick()) {
 				new RegionWorldFlags(player, region);
 			}
-		});
+		};
+	}
 
-		gui.addItem(13, MenuUtility.getButton(9, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
+	private static BiConsumer<Player, InventoryClickEvent> handleMiscSettings(Player player, Region region) {
+		return (_player, event) -> {
+			if (checkRegionExists(player, region) && event.isLeftClick()) {
+				new MiscellaneousSettings(player, region);
 			}
+		};
+	}
 
-			if (!event.isLeftClick()) return;
-			new MiscellaneousSettings(player, region);
-		});
-
-		gui.addItem(14, MenuUtility.getButton(10, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
+	private static BiConsumer<Player, InventoryClickEvent> handleSubAreas(Player player, Region region) {
+		return (_player, event) -> {
+			if (checkRegionExists(player, region) && event.isLeftClick()) {
+				new SubAreasMenu(player, region);
 			}
+		};
+	}
 
-			if (!event.isLeftClick()) return;
-			new SubAreasMenu(player, region);
-		});
-
-		gui.addItem(20, MenuUtility.getButton(79, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
+	private static BiConsumer<Player, InventoryClickEvent> handleRewards(Player player, Region region) {
+		return (_player, event) -> {
+			if (checkRegionExists(player, region) && event.isLeftClick()) {
+				new Rewards(player, region, () -> new RegionMenu(player, region));
 			}
+		};
+	}
 
-			if (!event.isLeftClick()) return;
-			new Rewards(player, region, () -> new RegionMenu(player, region));
-		});
-
-		gui.addItem(21, MenuUtility.getButton(11, placeholder), null);
-
-		gui.addItem(22, MenuUtility.getButton(12, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
-			}
-
-			if (!event.isLeftClick()) return;
+	private static BiConsumer<Player, InventoryClickEvent> handleEndRent(Player player, Region region) {
+		return (_player, event) -> {
+			if (!checkRegionExists(player, region) || !event.isLeftClick()) return;
 
 			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 				Messages.send(player, 159);
@@ -153,36 +159,28 @@ public final class RegionMenu {
 				Messages.send(player, 127);
 				new RegionMenu(player, region);
 			}
-		});
+		};
+	}
 
-		gui.addItem(23, MenuUtility.getButton(80, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
+	private static BiConsumer<Player, InventoryClickEvent> handleLevels(Player player, Region region) {
+		return (_player, event) -> {
+			if (checkRegionExists(player, region) && event.isLeftClick()) {
+				new RegionLevels(player, region, () -> new RegionMenu(player, region));
 			}
+		};
+	}
 
-			if (!event.isLeftClick()) return;
-			new RegionLevels(player, region, () -> new RegionMenu(player, region));
-		});
-
-		gui.addItem(24, MenuUtility.getButton(15, placeholder), null);
-
-		gui.addItem(15, MenuUtility.getButton(13, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
+	private static BiConsumer<Player, InventoryClickEvent> handleLogs(Player player, Region region) {
+		return (_player, event) -> {
+			if (checkRegionExists(player, region) && event.isLeftClick()) {
+				new RegionLogs(player, region);
 			}
+		};
+	}
 
-			if (!event.isLeftClick()) return;
-			new RegionLogs(player, region);
-		});
-
-		gui.addItem(16, MenuUtility.getButton(16, placeholder), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
-			}
-
+	private static BiConsumer<Player, InventoryClickEvent> handleWeatherTime(Player player, Region region) {
+		return (_player, event) -> {
+			if (!checkRegionExists(player, region)) return;
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					RegionControlFlags.SET_WEATHER_AND_TIME)) {
 				return;
@@ -204,42 +202,39 @@ public final class RegionMenu {
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 			new RegionMenu(player, region);
-		});
+		};
+	}
 
-		gui.addItem(27, MenuUtility.getBackButton(), (_player, event) -> {
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
-			}
-
-			if (!event.isLeftClick()) return;
-			new RegionsMenu(player);
-		});
-
-		if (MemberManager.isMemberOfRegion(region, player)) {
-			gui.addItem(35, MenuUtility.getButton(14, placeholder), (_player, event) -> {
-				if (RegionManager.findRegion(region.getUniqueId()) == null) {
-					player.closeInventory();
-					return;
-				}
-
-				if (!event.isLeftClick()) return;
-
-				MemberManager.removeMemberFromRegion(player, region);
-
-				TargetRegionSession.randomizeRegion(player);
-
-				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				/*RegionManager.addNewLog(region.getUniqueId(), 4, new Placeholder()
-						.add("{playername}", player.getName()));*/
-
-				RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, player, RegionUntrustPlayerEvent.UntrustReason.LEFT);
-				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
-
+	private static BiConsumer<Player, InventoryClickEvent> handleBack(Player player, Region region) {
+		return (_player, event) -> {
+			if (checkRegionExists(player, region) && event.isLeftClick()) {
 				new RegionsMenu(player);
-			});
-		}
+			}
+		};
+	}
 
-		gui.open(player, MenuUtility.getEmptySlot());
+	private static BiConsumer<Player, InventoryClickEvent> handleLeaveRegion(Player player, Region region) {
+		return (_player, event) -> {
+			if (!checkRegionExists(player, region) || !event.isLeftClick()) return;
+
+			MemberManager.removeMemberFromRegion(player, region);
+			TargetRegionSession.randomizeRegion(player);
+
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+			RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, player,
+					RegionUntrustPlayerEvent.UntrustReason.LEFT);
+			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+
+			new RegionsMenu(player);
+		};
+	}
+
+	private static boolean checkRegionExists(Player player, Region region) {
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return false;
+		}
+		return true;
 	}
 }
