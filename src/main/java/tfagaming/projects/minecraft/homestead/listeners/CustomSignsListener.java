@@ -14,6 +14,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
@@ -25,10 +26,6 @@ import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-
-
-
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -37,45 +34,137 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformB
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 
 public final class CustomSignsListener implements Listener {
+
 	private static final boolean ADVENTURE_SUPPORTED = PlatformBridge.isAdventureClassPresent();
+	private static final long MAX_RENT_DURATION_MS = 6048000000L; // 10 weeks
+	private static final long MS_PER_WEEK = 7L * 24 * 60 * 60 * 1000;
 
-	private static String getEventLine(SignChangeEvent event, int index) {
-		return event.getLine(index) != null ? event.getLine(index) : "";
+	private static final int MSG_FEATURE_DISABLED = 105;
+	private static final int MSG_INVALID_FORMAT = 120;
+	private static final int MSG_EXTRA_LINES = 121;
+	private static final int MSG_INVALID_PRICE = 122;
+	private static final int MSG_TRANSFER_SUCCESS = 124;
+	private static final int MSG_INSUFFICIENT_FUNDS = 125;
+	private static final int MSG_RENT_SUCCESS = 126;
+	private static final int MSG_REGION_NOT_FOUND = 9;
+	private static final int MSG_NOT_OWNER_OR_BANNED = 30;
+	private static final int MSG_INVALID_DURATION = 129;
+	private static final int MSG_WELCOME_SET = 123;
+	private static final int MSG_NOT_CLAIMED_OR_OWNER = 119;
+	private static final int MSG_WAR_ACTIVE = 156;
+	private static final int MSG_SUBAREA_RENTED = 194;
+
+	private enum SignType {
+		WELCOME("[welcome]"),
+		RENT("[rent]"),
+		SELL("[sell]");
+
+		private final String identifier;
+
+		SignType(String identifier) {
+			this.identifier = identifier;
+		}
+
+		static SignType fromString(String input) {
+			String normalized = input.trim().toLowerCase();
+			for (SignType type : values()) {
+				if (type.identifier.equals(normalized)) return type;
+			}
+			return null;
+		}
 	}
 
-	private static String getSignLine(Sign sign, int index) {
-		return ChatColor.stripColor(sign.getLine(index) != null ? sign.getLine(index) : "");
+	private interface SignFormatter {
+		boolean validateAndFormat(SignChangeEvent event, Player player, Region region);
 	}
 
-	private static void setEventLine(SignChangeEvent event, int index, String legacyText) {
-		PlatformBridge.get().setSignLine(event, index, legacyText);
-	}
+	private final SignFormatter welcomeFormatter = (event, player, region) -> {
+		if (!isWelcomeSignsEnabled()) {
+			Messages.send(player, MSG_FEATURE_DISABLED);
+			return true;
+		}
+		if (hasContentInLines(event, 2, 3)) {
+			Messages.send(player, MSG_EXTRA_LINES);
+			return true;
+		}
+		formatSignLines(event,
+				colored("[Welcome]", ChatColor.GREEN, "<green>"),
+				colored(region.getName(), ChatColor.DARK_GREEN, "<dark_green>"),
+				"", ""
+		);
+		region.setWelcomeSign(new SeLocation(event.getBlock().getLocation()));
+		return false;
+	};
+
+	private final SignFormatter rentFormatter = (event, player, region) -> {
+		if (!isFeatureEnabled("renting.enabled")) {
+			Messages.send(player, MSG_FEATURE_DISABLED);
+			return true;
+		}
+
+		PriceValidation price = validatePrice(event, player, "renting.min-rent", "renting.max-rent");
+		if (price == null) return true;
+
+		long duration = parseDuration(getEventLine(event, 3));
+		if (duration <= 0 || duration > MAX_RENT_DURATION_MS) {
+			Messages.send(player, MSG_INVALID_DURATION);
+			return true;
+		}
+
+		formatSignLines(event,
+				colored("[Rent]", ChatColor.GREEN, "<green>"),
+				colored(region.getName(), ChatColor.DARK_GREEN, "<dark_green>"),
+				colored(Formatter.getBalance(price.value()), ChatColor.RED, "<red>"),
+				colored(formatMillisToReadable(duration), ChatColor.GOLD, "<gold>")
+		);
+		return false;
+	};
+
+	private final SignFormatter sellFormatter = (event, player, region) -> {
+		if (!isFeatureEnabled("selling.enabled")) {
+			Messages.send(player, MSG_FEATURE_DISABLED);
+			return true;
+		}
+
+		PriceValidation price = validatePrice(event, player, "selling.min-sell", "selling.max-sell");
+		if (price == null) return true;
+
+		if (hasContentInLines(event, 3)) {
+			Messages.send(player, MSG_EXTRA_LINES);
+			return true;
+		}
+
+		formatSignLines(event,
+				colored("[Sell]", ChatColor.GREEN, "<green>"),
+				colored(region.getName(), ChatColor.DARK_GREEN, "<dark_green>"),
+				colored(Formatter.getBalance(price.value()), ChatColor.RED, "<red>"),
+				""
+		);
+		return false;
+	};
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
+		SignType type = SignType.fromString(getEventLine(event, 0));
+		if (type == null) return;
+
 		Player player = event.getPlayer();
-
-		String firstLine = getEventLine(event, 0).trim();
-
-		boolean breakBlock;
-
-		switch (firstLine.toLowerCase()) {
-			case "[welcome]":
-				breakBlock = handleWelcomeSign(event, player);
-				break;
-			case "[rent]":
-				breakBlock = handleRentSign(event, player);
-				break;
-			case "[sell]":
-				breakBlock = handleSellSign(event, player);
-				break;
-			default:
-				return;
+		Region region = validateOwnerRegion(player, event.getBlock().getChunk());
+		if (region == null) {
+			event.getBlock().breakNaturally();
+			return;
 		}
 
-		if (breakBlock) {
+		boolean shouldBreak = switch (type) {
+			case WELCOME -> welcomeFormatter.validateAndFormat(event, player, region);
+			case RENT -> rentFormatter.validateAndFormat(event, player, region);
+			case SELL -> sellFormatter.validateAndFormat(event, player, region);
+		};
+
+		if (shouldBreak) {
 			event.getBlock().breakNaturally();
 		}
 	}
@@ -84,209 +173,66 @@ public final class CustomSignsListener implements Listener {
 	public void onPlayerRightClickSign(PlayerInteractEvent event) {
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
-		Player player = event.getPlayer();
 		Block clickedBlock = event.getClickedBlock();
-
 		if (!(clickedBlock.getState() instanceof Sign sign)) return;
 
-		String firstLine = getSignLine(sign, 0).trim();
+		SignType type = SignType.fromString(getSignLine(sign, 0));
+		if (type == null) return;
 
-		switch (firstLine.toLowerCase()) {
-			case "[welcome]": {
-				event.setCancelled(true);
-				Messages.send(player, 123);
-				break;
-			}
-			case "[rent]": {
-				event.setCancelled(true);
-				handleRentSignInteraction(player, sign, clickedBlock);
-				break;
-			}
-			case "[sell]": {
-				event.setCancelled(true);
-				handleSellSignInteraction(player, sign, clickedBlock);
-				break;
-			}
-			default:
-				break;
+		event.setCancelled(true);
+		Player player = event.getPlayer();
+
+		switch (type) {
+			case WELCOME -> Messages.send(player, MSG_WELCOME_SET);
+			case RENT -> handleRentInteraction(player, sign, clickedBlock);
+			case SELL -> handleSellInteraction(player, sign, clickedBlock);
 		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSignBreak(BlockBreakEvent event) {
-		Chunk chunk = event.getBlock().getChunk();
+		Block block = event.getBlock();
+		if (!block.getType().name().toLowerCase().contains("sign")) return;
 
-		if (ChunkManager.isChunkClaimed(chunk) && event.getBlock() != null
-				&& event.getBlock().getType().toString().toLowerCase().contains("sign")) {
+		Chunk chunk = block.getChunk();
+		if (!ChunkManager.isChunkClaimed(chunk)) return;
 
-			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-			if (region == null) return;
+		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+		if (region == null) return;
 
-			BlockState state = event.getBlock().getState();
-			Sign sign = (Sign) state;
-
-			if (getSignLine(sign, 0).equalsIgnoreCase("[Welcome]")) {
-				region.setWelcomeSign(null);
-			}
+		if (block.getState() instanceof Sign sign
+				&& getSignLine(sign, 0).equalsIgnoreCase("[Welcome]")) {
+			region.setWelcomeSign(null);
 		}
 	}
 
-	private boolean handleWelcomeSign(SignChangeEvent event, Player player) {
-		if (!Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeSignEnabled()) {
-			Messages.send(player, 105);
-			return true;
-		}
-
-		Region region = validateRegion(player, event.getBlock().getChunk());
-		if (region == null) return true;
-
-		if (!getEventLine(event, 2).trim().isEmpty() || !getEventLine(event, 3).trim().isEmpty()) {
-			Messages.send(player, 121);
-			return true;
-		}
-
-		setEventLine(event, 0, (ADVENTURE_SUPPORTED ? "<green>" : ChatColor.GREEN) + "[Welcome]");
-		setEventLine(event, 1, (ADVENTURE_SUPPORTED ? "<dark_green>" : ChatColor.DARK_GREEN) + region.getName());
-		setEventLine(event, 2, "");
-		setEventLine(event, 3, "");
-
-		region.setWelcomeSign(new SeLocation(event.getBlock().getLocation()));
-		return false;
-	}
-
-	private boolean handleRentSign(SignChangeEvent event, Player player) {
-		if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled")) {
-			Messages.send(player, 105);
-			return true;
-		}
-
-		Region region = validateRegion(player, event.getBlock().getChunk());
-		if (region == null) return true;
-
-		String priceStr = getEventLine(event, 2).trim();
-
-		if (!NumberUtils.isValidDouble(priceStr)) {
-			Messages.send(player, 122);
-			return true;
-		}
-
-		double price = Double.parseDouble(priceStr);
-		double minRent = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("renting.min-rent");
-		double maxRent = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("renting.max-rent");
-
-		if (price < minRent || price > maxRent) {
-			Messages.send(player, 122);
-			return true;
-		}
-
-		String durationStr = getEventLine(event, 3).trim();
-		long durationMs = parseDurationToMillis(durationStr);
-
-		if (durationMs <= 0 || durationMs > 6048000000L) {
-			Messages.send(player, 129);
-			return true;
-		}
-
-		setEventLine(event, 0, (ADVENTURE_SUPPORTED ? "<green>" : ChatColor.GREEN) + "[Rent]");
-		setEventLine(event, 1, (ADVENTURE_SUPPORTED ? "<dark_green>" : ChatColor.DARK_GREEN) + region.getName());
-		setEventLine(event, 2, (ADVENTURE_SUPPORTED ? "<red>" : ChatColor.RED) + Formatter.getBalance(price));
-		setEventLine(event, 3, (ADVENTURE_SUPPORTED ? "<gold>" : ChatColor.GOLD) + formatMillisToReadable(durationMs));
-
-		return false;
-	}
-
-	private boolean handleSellSign(SignChangeEvent event, Player player) {
-		if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("selling.enabled")) {
-			Messages.send(player, 105);
-			return true;
-		}
-
-		Region region = validateRegion(player, event.getBlock().getChunk());
-		if (region == null) return true;
-
-		String priceStr = getEventLine(event, 2).trim();
-
-		if (!NumberUtils.isValidDouble(priceStr)) {
-			Messages.send(player, 122);
-			return true;
-		}
-
-		double price = Double.parseDouble(priceStr);
-		double minSell = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("selling.min-sell");
-		double maxSell = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("selling.max-sell");
-
-		if (price < minSell || price > maxSell) {
-			Messages.send(player, 122);
-			return true;
-		}
-
-		if (!getEventLine(event, 3).trim().isEmpty()) {
-			Messages.send(player, 121);
-			return true;
-		}
-
-		setEventLine(event, 0, (ADVENTURE_SUPPORTED ? "<green>" : ChatColor.GREEN) + "[Sell]");
-		setEventLine(event, 1, (ADVENTURE_SUPPORTED ? "<dark_green>" : ChatColor.DARK_GREEN) + region.getName());
-		setEventLine(event, 2, (ADVENTURE_SUPPORTED ? "<red>" : ChatColor.RED) + Formatter.getBalance(price));
-		setEventLine(event, 3, "");
-
-		return false;
-	}
-
-	private void handleRentSignInteraction(Player player, Sign sign, Block signBlock) {
+	private void handleRentInteraction(Player player, Sign sign, Block signBlock) {
 		try {
 			String regionName = getSignLine(sign, 1);
-			String priceStr = getSignLine(sign, 2);
-			double price = parseFormattedPrice(priceStr);
-			String durationStr = getSignLine(sign, 3);
-			long durationMs = parseFormattedDuration(durationStr);
+			double price = parseFormattedPrice(getSignLine(sign, 2));
+			long duration = parseFormattedDuration(getSignLine(sign, 3));
 
 			Region region = RegionManager.findRegion(regionName);
-
-			if (region == null) {
-				Messages.send(player, 9);
-				return;
-			}
-
-			if (region.isOwner(player) || BanManager.isBanned(region, player) || region.getRent() != null) {
-				Messages.send(player, 30);
-				return;
-			}
+			if (!canRent(player, region)) return;
 
 			if (price > PlayerBank.get(player)) {
-				Messages.send(player, 125);
+				Messages.send(player, MSG_INSUFFICIENT_FUNDS);
 				return;
 			}
 
-			long rentEnd = System.currentTimeMillis() + durationMs;
-
-			PlayerBank.withdraw(player, price);
-			PlayerBank.deposit(region.getOwner(), price);
-
+			long rentEnd = System.currentTimeMillis() + duration;
 			SeRent rent = new SeRent(player, rentEnd, price);
-
 			SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(signBlock.getLocation());
 
-			Placeholder placeholder = new Placeholder()
-					.add("{region}", region.getName())
-					.add("{rent-end}", Formatter.getRemainingTime(rentEnd));
-
-			if (subArea != null) {
-				subArea.setRent(rent);
-				placeholder.add("{subarea}", subArea.getName());
-				Messages.send(player, 194, placeholder);
-			} else {
-				region.setRent(rent);
-				Messages.send(player, 126, placeholder);
-			}
-
+			executeRentTransaction(player, region, subArea, price, rent, rentEnd);
 			signBlock.breakNaturally();
+
 		} catch (NumberFormatException e) {
-			Messages.send(player, 120);
+			Messages.send(player, MSG_INVALID_FORMAT);
 		}
 	}
 
-	private void handleSellSignInteraction(Player player, Sign sign, Block signBlock) {
+	private void handleSellInteraction(Player player, Sign sign, Block signBlock) {
 		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP)) {
 			Cooldown.sendCooldownMessage(player);
 			return;
@@ -294,81 +240,175 @@ public final class CustomSignsListener implements Listener {
 
 		try {
 			String regionName = getSignLine(sign, 1);
-			String priceStr = getSignLine(sign, 2);
-			double price = parseFormattedPrice(priceStr);
+			double price = parseFormattedPrice(getSignLine(sign, 2));
 
 			Region region = RegionManager.findRegion(regionName);
-
-			if (region == null) {
-				Messages.send(player, 9);
-				return;
-			}
-
-			if (WarManager.isRegionInWar(region.getUniqueId())) {
-				Messages.send(player, 156);
-				return;
-			}
-
-			if (region.isOwner(player) || BanManager.isBanned(region, player)) {
-				Messages.send(player, 30);
-				return;
-			}
+			if (!canPurchase(player, region)) return;
 
 			if (price > PlayerBank.get(player)) {
-				Messages.send(player, 125);
+				Messages.send(player, MSG_INSUFFICIENT_FUNDS);
 				return;
 			}
 
-			Cooldown.startCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP);
+			executePurchase(player, region, price, signBlock);
 
-			PlayerBank.withdraw(player, price);
-			PlayerBank.deposit(region.getOwner(), price);
-
-			region.setOwner(player);
-			signBlock.breakNaturally();
-
-			MemberManager.removeMemberFromRegion(region.getOwner(), region);
-			InviteManager.deleteInvitesOfPlayer(region, player);
-
-			Messages.send(player, 124, new Placeholder()
-					.add("{region}", region.getName())
-					.add("{price}", Formatter.getBalance(price))
-			);
-
-			RegionTransferOwnershipEvent _event = new RegionTransferOwnershipEvent(region, player, player);
-			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 		} catch (NumberFormatException e) {
-			Messages.send(player, 120);
+			Messages.send(player, MSG_INVALID_FORMAT);
 		}
 	}
 
-	private Region validateRegion(Player player, Chunk chunk) {
-		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+	private void executeRentTransaction(Player player, Region region, SubArea subArea,
+										double price, SeRent rent, long rentEnd) {
+		PlayerBank.withdraw(player, price);
+		PlayerBank.deposit(region.getOwner(), price);
 
+		Placeholder placeholder = new Placeholder()
+				.add("{region}", region.getName())
+				.add("{rent-end}", Formatter.getRemainingTime(rentEnd));
+
+		if (subArea != null) {
+			subArea.setRent(rent);
+			placeholder.add("{subarea}", subArea.getName());
+			Messages.send(player, MSG_SUBAREA_RENTED, placeholder);
+		} else {
+			region.setRent(rent);
+			Messages.send(player, MSG_RENT_SUCCESS, placeholder);
+		}
+	}
+
+	private void executePurchase(Player player, Region region, double price, Block signBlock) {
+		Cooldown.startCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP);
+
+		PlayerBank.withdraw(player, price);
+		PlayerBank.deposit(region.getOwner(), price);
+
+		region.setOwner(player);
+		signBlock.breakNaturally();
+
+		MemberManager.removeMemberFromRegion(region.getOwner(), region);
+		InviteManager.deleteInvitesOfPlayer(region, player);
+
+		Messages.send(player, MSG_TRANSFER_SUCCESS, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{price}", Formatter.getBalance(price))
+		);
+
+		RegionTransferOwnershipEvent transferEvent = new RegionTransferOwnershipEvent(region, player, player);
+		Homestead.getInstance().runSyncTask(() ->
+				Bukkit.getPluginManager().callEvent(transferEvent)
+		);
+	}
+
+	private Region validateOwnerRegion(Player player, Chunk chunk) {
+		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 		if (region == null || !region.isOwner(player)) {
-			Messages.send(player, 119);
+			Messages.send(player, MSG_NOT_CLAIMED_OR_OWNER);
 			return null;
 		}
-
 		return region;
 	}
 
-	private long parseDurationToMillis(String duration) {
-		if (duration == null || duration.isEmpty()) return 0;
+	private boolean canRent(Player player, Region region) {
+		if (region == null) {
+			Messages.send(player, MSG_REGION_NOT_FOUND);
+			return false;
+		}
+		if (region.isOwner(player) || BanManager.isBanned(region, player) || region.getRent() != null) {
+			Messages.send(player, MSG_NOT_OWNER_OR_BANNED);
+			return false;
+		}
+		return true;
+	}
 
+	private boolean canPurchase(Player player, Region region) {
+		if (region == null) {
+			Messages.send(player, MSG_REGION_NOT_FOUND);
+			return false;
+		}
+		if (WarManager.isRegionInWar(region.getUniqueId())) {
+			Messages.send(player, MSG_WAR_ACTIVE);
+			return false;
+		}
+		if (region.isOwner(player) || BanManager.isBanned(region, player)) {
+			Messages.send(player, MSG_NOT_OWNER_OR_BANNED);
+			return false;
+		}
+		return true;
+	}
+
+	private PriceValidation validatePrice(SignChangeEvent event, Player player,
+										  String minPath, String maxPath) {
+		String priceStr = getEventLine(event, 2).trim();
+		if (!NumberUtils.isValidDouble(priceStr)) {
+			Messages.send(player, MSG_INVALID_PRICE);
+			return null;
+		}
+
+		double price = Double.parseDouble(priceStr);
+		double min = getRegionsConfig().getDouble(minPath);
+		double max = getRegionsConfig().getDouble(maxPath);
+
+		if (price < min || price > max) {
+			Messages.send(player, MSG_INVALID_PRICE);
+			return null;
+		}
+		return new PriceValidation(price);
+	}
+
+	private static String colored(String text, ChatColor legacy, String adventure) {
+		return (ADVENTURE_SUPPORTED ? adventure : legacy) + text;
+	}
+
+	private static void formatSignLines(SignChangeEvent event, String... lines) {
+		for (int i = 0; i < lines.length && i < 4; i++) {
+			PlatformBridge.get().setSignLine(event, i, lines[i]);
+		}
+	}
+
+	private static boolean hasContentInLines(SignChangeEvent event, int... indices) {
+		for (int index : indices) {
+			if (!getEventLine(event, index).trim().isEmpty()) return true;
+		}
+		return false;
+	}
+
+	private static String getEventLine(SignChangeEvent event, int index) {
+		return event.getLine(index) != null ? event.getLine(index) : "";
+	}
+
+	private static String getSignLine(Sign sign, int index) {
+		String line = sign.getLine(index);
+		return ChatColor.stripColor(line != null ? line : "");
+	}
+
+	private static RegionsFile getRegionsConfig() {
+		return Resources.get(ResourceType.Regions);
+	}
+
+	private static boolean isWelcomeSignsEnabled() {
+		return getRegionsConfig().isWelcomeSignEnabled();
+	}
+
+	private static boolean isFeatureEnabled(String path) {
+		return getRegionsConfig().getBoolean(path);
+	}
+
+	private long parseDuration(String duration) {
+		if (duration == null || duration.isEmpty()) return 0;
 		try {
 			String numStr = duration.replaceAll("[^0-9]", "");
 			if (numStr.isEmpty()) return 0;
 
 			long num = Long.parseLong(numStr);
-			char unit = duration.replaceAll("[0-9]", "").toLowerCase().charAt(0);
+			String units = duration.replaceAll("[0-9]", "").toLowerCase();
+			if (units.isEmpty()) return 0;
 
-			return switch (unit) {
+			return switch (units.charAt(0)) {
 				case 's' -> num * 1000;
 				case 'm' -> num * 60 * 1000;
 				case 'h' -> num * 60 * 60 * 1000;
 				case 'd' -> num * 24 * 60 * 60 * 1000;
-				case 'w' -> num * 7 * 24 * 60 * 60 * 1000;
+				case 'w' -> num * MS_PER_WEEK;
 				default -> 0;
 			};
 		} catch (Exception e) {
@@ -386,15 +426,22 @@ public final class CustomSignsListener implements Listener {
 		long weeks = TimeUnit.MILLISECONDS.toDays(millis) / 7;
 
 		StringBuilder sb = new StringBuilder();
-		if (weeks > 0) sb.append(weeks).append(weeks == 1 ? " Week " : " Weeks ");
-		if (days > 0) sb.append(days).append(days == 1 ? " Day " : " Days ");
-		if (hours > 0) sb.append(hours).append(hours == 1 ? " Hour " : " Hours ");
-		if (minutes > 0) sb.append(minutes).append(minutes == 1 ? " Minute " : " Minutes ");
-		if (seconds > 0) sb.append(seconds).append(seconds == 1 ? " Second" : " Seconds");
+		appendTimeUnit(sb, weeks, "Week");
+		appendTimeUnit(sb, days, "Day");
+		appendTimeUnit(sb, hours, "Hour");
+		appendTimeUnit(sb, minutes, "Minute");
+		appendTimeUnit(sb, seconds, "Second");
 		return sb.toString().trim();
 	}
 
-	// From DeepSeek (Thanks bro)
+	private void appendTimeUnit(StringBuilder sb, long value, String unit) {
+		if (value > 0) {
+			sb.append(value).append(' ').append(unit);
+			if (value != 1) sb.append('s');
+			sb.append(' ');
+		}
+	}
+
 	private double parseFormattedPrice(String input) throws NumberFormatException {
 		String cleanInput = input.replaceAll("[^0-9.,]", "").trim();
 
@@ -402,43 +449,37 @@ public final class CustomSignsListener implements Listener {
 			cleanInput = cleanInput.replace(".", "").replace(",", ".");
 		} else if (cleanInput.matches(".*\\.\\d{2}$")) {
 			cleanInput = cleanInput.replace(",", "");
-		} else {
-			if (cleanInput.chars().filter(c -> c == ',' || c == '.').count() == 1) {
-				cleanInput = cleanInput.replace(",", "").replace(".", "");
-			}
+		} else if (cleanInput.chars().filter(c -> c == ',' || c == '.').count() == 1) {
+			cleanInput = cleanInput.replace(",", "").replace(".", "");
 		}
 
-		if (input.toLowerCase().contains("k")) {
-			return Double.parseDouble(cleanInput) * 1000;
-		} else if (input.toLowerCase().contains("m")) {
-			return Double.parseDouble(cleanInput) * 1000000;
-		} else if (input.toLowerCase().contains("b")) {
-			return Double.parseDouble(cleanInput) * 1000000000;
-		}
+		double multiplier = switch (lastCharLower(input)) {
+			case 'k' -> 1_000;
+			case 'm' -> 1_000_000;
+			case 'b' -> 1_000_000_000;
+			default -> 1;
+		};
 
-		return Double.parseDouble(cleanInput);
+		return Double.parseDouble(cleanInput) * multiplier;
 	}
 
 	private long parseFormattedDuration(String input) throws NumberFormatException {
 		input = input.toLowerCase();
+		double num = Double.parseDouble(input.replaceAll("[^0-9.]", ""));
 
-		if (input.contains("second")) {
-			double seconds = Double.parseDouble(input.replaceAll("[^0-9.]", ""));
-			return (long) (seconds * 1000);
-		} else if (input.contains("minute")) {
-			double minutes = Double.parseDouble(input.replaceAll("[^0-9.]", ""));
-			return (long) (minutes * 60 * 1000);
-		} else if (input.contains("hour")) {
-			double hours = Double.parseDouble(input.replaceAll("[^0-9.]", ""));
-			return (long) (hours * 60 * 60 * 1000);
-		} else if (input.contains("day")) {
-			double days = Double.parseDouble(input.replaceAll("[^0-9.]", ""));
-			return (long) (days * 24 * 60 * 60 * 1000);
-		} else if (input.contains("week")) {
-			double weeks = Double.parseDouble(input.replaceAll("[^0-9.]", ""));
-			return (long) (weeks * 7 * 24 * 60 * 60 * 1000);
-		}
+		if (input.contains("second")) return (long) (num * 1000);
+		if (input.contains("minute")) return (long) (num * 60 * 1000);
+		if (input.contains("hour"))   return (long) (num * 60 * 60 * 1000);
+		if (input.contains("day"))    return (long) (num * 24 * 60 * 60 * 1000);
+		if (input.contains("week"))   return (long) (num * MS_PER_WEEK);
 
-		return parseDurationToMillis(input);
+		return parseDuration(input);
 	}
+
+	private char lastCharLower(String input) {
+		if (input == null || input.isEmpty()) return 0;
+		return Character.toLowerCase(input.charAt(input.length() - 1));
+	}
+
+	private record PriceValidation(double value) {}
 }
