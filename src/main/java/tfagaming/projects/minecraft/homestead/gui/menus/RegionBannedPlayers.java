@@ -10,10 +10,7 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.BanManager;
-import tfagaming.projects.minecraft.homestead.managers.InviteManager;
-import tfagaming.projects.minecraft.homestead.managers.MemberManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionBan;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
@@ -21,6 +18,7 @@ import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -75,6 +73,8 @@ public final class RegionBannedPlayers {
 		BanManager.unbanPlayer(region, bannedPlayer.getPlayer());
 		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, bannedPlayer.getPlayerName());
+
 		RegionUnbanPlayerEvent _event = new RegionUnbanPlayerEvent(region, player, bannedPlayer.getPlayer());
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 
@@ -99,11 +99,15 @@ public final class RegionBannedPlayers {
 					.callback((p, input) -> {
 						OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
+						if (targetPlayer == null) return;
+
 						BanManager.banPlayer(region, targetPlayer, null);
 						if (MemberManager.isMemberOfRegion(region, targetPlayer)) MemberManager.removeMemberFromRegion(targetPlayer, region);
 						if (InviteManager.isInvited(region, targetPlayer)) InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+						LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, targetPlayer.getName());
 
 						RegionBanPlayerEvent _event = new RegionBanPlayerEvent(region, player, targetPlayer, null);
 						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -134,6 +138,9 @@ public final class RegionBannedPlayers {
 			}
 
 			BanManager.unbanAllPlayers(region);
+
+			LogManager.addLog(region, player, LogManager.PredefinedLog.PURGE_BANS);
+
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 			Messages.send(player, 94);
 
@@ -175,11 +182,25 @@ public final class RegionBannedPlayers {
 					.add("{region}", region.getName())
 					.add("{playername}", bannedPlayer.getPlayerName())
 					.add("{player-bannedat}", Formatter.getDate(bannedPlayer.getBannedAt()))
-					.add("{player-banreason}", bannedPlayer.getReason());
+					.add("{player-banreason}", wrapMessage(bannedPlayer.getReason()));
 
 			items.add(MenuUtility.getButton(27, placeholder, bannedPlayer.getPlayer()));
 		}
 
 		return items;
+	}
+
+	private String wrapMessage(String message) {
+		message = ColorTranslator.preserve(message);
+
+		int wrapLength = 40;
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < message.length(); i++) {
+			if (i > 0 && i % wrapLength == 0) sb.append("\n");
+			sb.append(message.charAt(i));
+		}
+
+		return sb.toString();
 	}
 }

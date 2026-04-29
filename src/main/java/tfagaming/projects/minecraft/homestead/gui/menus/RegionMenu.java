@@ -191,13 +191,19 @@ public final class RegionMenu {
 					Messages.send(player, 210);
 					return;
 				}
+
 				region.setWeather(WeatherType.next(region.getWeather()));
+
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER);
 			} else if (event.isRightClick()) {
 				if (!player.hasPermission("homestead.region.time")) {
 					Messages.send(player, 211);
 					return;
 				}
+
 				region.setTime(TimeType.next(region.getTime()));
+
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME);
 			}
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
@@ -221,6 +227,8 @@ public final class RegionMenu {
 			TargetRegionSession.randomizeRegion(player);
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+			LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, player.getName());
 
 			RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, player,
 					RegionUntrustPlayerEvent.UntrustReason.LEFT);

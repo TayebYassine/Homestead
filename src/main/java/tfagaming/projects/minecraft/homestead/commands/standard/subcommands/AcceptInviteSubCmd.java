@@ -7,10 +7,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.BanManager;
-import tfagaming.projects.minecraft.homestead.managers.InviteManager;
-import tfagaming.projects.minecraft.homestead.managers.MemberManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
 
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionBan;
@@ -81,6 +78,8 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 				.add("{region}", region.getName())
 				.add("{playername}", player.getName())
 		);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.JOIN_REGION);
 
 		OfflinePlayer owner = region.getOwner();
 

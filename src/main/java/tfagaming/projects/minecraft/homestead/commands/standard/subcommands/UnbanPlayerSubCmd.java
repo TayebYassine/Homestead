@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionUnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.BanManager;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionBan;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
@@ -79,6 +80,8 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		BanManager.unbanPlayer(region, target);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, target.getName());
 
 		Messages.send(player, 34, new Placeholder()
 				.add("{region}", region.getName())

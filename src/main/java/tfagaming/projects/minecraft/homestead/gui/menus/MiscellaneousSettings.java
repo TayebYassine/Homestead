@@ -76,8 +76,10 @@ public final class MiscellaneousSettings {
 					.callback((p, input) -> {
 						String oldName = region.getName();
 						Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
-						region.setName(input);
+						RegionManager.renameRegion(region, input);
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+						LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_NAME, input);
 
 						RegionRenameEvent _event = new RegionRenameEvent(region, player, oldName, input);
 						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -104,6 +106,8 @@ public final class MiscellaneousSettings {
 						region.setDisplayName(input);
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
+						LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DISPLAYNAME, input);
+
 						RegionDisplaynameUpdateEvent _event = new RegionDisplaynameUpdateEvent(region, player, oldDisplayname, input);
 						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 						Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
@@ -128,6 +132,8 @@ public final class MiscellaneousSettings {
 						Cooldown.startCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE);
 						region.setDescription(input);
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+						LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DESCRIPTION, input);
 
 						RegionDescriptionUpdateEvent _event = new RegionDescriptionUpdateEvent(region, player, oldDescription, input);
 						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -154,7 +160,11 @@ public final class MiscellaneousSettings {
 			}
 
 			Cooldown.startCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE);
+
 			region.setLocation(location);
+
+			LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_SPAWN);
+
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 		};
 	}

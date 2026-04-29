@@ -9,10 +9,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.BanManager;
-import tfagaming.projects.minecraft.homestead.managers.InviteManager;
-import tfagaming.projects.minecraft.homestead.managers.MemberManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionInvite;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
@@ -89,6 +86,8 @@ public final class RegionPlayersInvited {
 							InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 							MemberManager.addMemberToRegion(targetPlayer, region);
 
+							LogManager.addLog(region, targetPlayer, LogManager.PredefinedLog.JOIN_REGION);
+
 							RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, targetPlayer);
 							Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 						} else {
@@ -104,6 +103,8 @@ public final class RegionPlayersInvited {
 							if (targetPlayer.isOnline()) {
 								Messages.send(targetPlayer.getPlayer(), 139, placeholder);
 							}
+
+							LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, targetPlayer.getName());
 						}
 
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
@@ -128,6 +129,8 @@ public final class RegionPlayersInvited {
 			}
 
 			InviteManager.deleteInvitesOfRegion(region);
+
+			LogManager.addLog(region, player, LogManager.PredefinedLog.PURGE_INVITES);
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 			Messages.send(player, 95);

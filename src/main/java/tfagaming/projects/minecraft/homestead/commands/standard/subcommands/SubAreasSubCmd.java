@@ -14,6 +14,7 @@ import tfagaming.projects.minecraft.homestead.gui.menus.SubAreasMenu;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener.Selection;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -144,6 +145,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 						.add("{subarea-volume}", volume)
 				);
 
+				LogManager.addLog(region, player, LogManager.PredefinedLog.CREATE_SUBAREA);
+
 				break;
 			}
 			case "rename": {
@@ -220,6 +223,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				Messages.send(player, 62, new Placeholder()
 						.add("{subarea}", subArea.getName())
 				);
+
+				LogManager.addLog(region, player, LogManager.PredefinedLog.DELETE_SUBAREA);
 
 				return true;
 			}
@@ -342,6 +347,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 						.add("{state}", Formatter.getFlagState(!currentState))
 				);
 
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, subArea.getName(), Formatter.getFlagState(!currentState));
+
 				return true;
 			}
 			case "players": {
@@ -408,6 +415,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								.add("{player}", target.getName())
 						);
 
+						LogManager.addLog(region, player, LogManager.PredefinedLog.ADD_PLAYER_SUBAREA, target.getName(), subArea.getName());
+
 						return true;
 					}
 
@@ -423,6 +432,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								.add("{subarea}", subArea.getName())
 								.add("{player}", target.getName())
 						);
+
+						LogManager.addLog(region, player, LogManager.PredefinedLog.REMOVE_PLAYER_SUBAREA, target.getName(), subArea.getName());
 
 						return true;
 					}
@@ -497,6 +508,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								.add("{subarea}", subArea.getName())
 								.add("{player}", target.getName())
 						);
+
+						LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, member.getPlayerName(), Formatter.getFlagState(!currentState));
 
 						return true;
 					}

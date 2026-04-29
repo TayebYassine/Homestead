@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.gui.menus.MiscellaneousSettings;
 import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIcon;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -122,10 +123,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{newdisplayname}", region.getDisplayName())
 				);
 
-				/*RegionManager.addNewLog(region.getUniqueId(), 6, new Placeholder()
-						.add("{executor}", player.getName())
-						.add("{newdisplayname}", region.getDisplayName())
-				);*/
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DISPLAYNAME, regionDisplayName);
 
 				RegionDisplaynameUpdateEvent _event = new RegionDisplaynameUpdateEvent(region, player, oldDisplayName, regionDisplayName);
 				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -185,6 +183,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{olddescription}", oldDescription)
 						.add("{newdescription}", region.getDescription())
 				);
+
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DESCRIPTION, description);
 
 				RegionDescriptionUpdateEvent _event = new RegionDescriptionUpdateEvent(region, player, oldDescription, description);
 				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
@@ -279,10 +279,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 						.add("{location}", Formatter.getLocation(location))
 				);
 
-				/*RegionManager.addNewLog(region.getUniqueId(), 1, new Placeholder()
-						.add("{executor}", player.getName())
-						.add("{location}", Formatter.getLocation(location))
-				);*/
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_SPAWN);
 
 				break;
 			}

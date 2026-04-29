@@ -10,10 +10,7 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
-import tfagaming.projects.minecraft.homestead.managers.BanManager;
-import tfagaming.projects.minecraft.homestead.managers.InviteManager;
-import tfagaming.projects.minecraft.homestead.managers.MemberManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
@@ -92,6 +89,8 @@ public final class RegionMembersMenu {
 		MemberManager.removeMemberFromRegion(member.getPlayer(), region);
 
 		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, member.getPlayerName());
 
 		RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, member.getPlayer(),
 				RegionUntrustPlayerEvent.UntrustReason.EXECUTION);

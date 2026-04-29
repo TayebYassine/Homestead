@@ -73,6 +73,7 @@ public final class BrigadierCommands {
 
 				.literalSub("ban")
 				.stringArg("player")
+				.greedyStringArg("reason")
 				.end()
 
 				.literalSub("kick")

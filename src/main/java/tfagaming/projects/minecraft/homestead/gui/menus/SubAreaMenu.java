@@ -5,6 +5,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
@@ -126,7 +127,11 @@ public final class SubAreaMenu {
 			}
 
 			SubAreaManager.deleteSubArea(subArea.getUniqueId());
+			
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+			LogManager.addLog(region, player, LogManager.PredefinedLog.DELETE_SUBAREA);
+
 			new SubAreasMenu(player, region);
 		};
 	}

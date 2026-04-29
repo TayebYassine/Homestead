@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener.Selection;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -248,6 +249,8 @@ public class ClaimCommand extends CommandBuilder {
 						.add("{total}", chunksToClaim.size())
 				);
 			}
+
+			LogManager.addLog(region, player, LogManager.PredefinedLog.CLAIM_CHUNK);
 
 			if (region.getLocation() == null) {
 				region.setLocation(player.getLocation());

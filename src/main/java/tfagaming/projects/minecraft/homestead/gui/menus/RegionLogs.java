@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionLog;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -133,6 +134,8 @@ public final class RegionLogs {
 	}
 
 	private String wrapMessage(String message) {
+		message = ColorTranslator.preserve(message);
+
 		int wrapLength = 40;
 		StringBuilder sb = new StringBuilder();
 

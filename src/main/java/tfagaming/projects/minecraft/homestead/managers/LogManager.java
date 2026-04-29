@@ -1,8 +1,16 @@
 package tfagaming.projects.minecraft.homestead.managers;
 
+import net.pl3x.map.core.configuration.Lang;
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionLog;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,7 +21,8 @@ import java.util.stream.Collectors;
  * A utility class that manages {@link RegionLog}.
  */
 public final class LogManager {
-	private LogManager() {}
+	private LogManager() {
+	}
 
 	/**
 	 * Add a new log to a region.
@@ -34,6 +43,26 @@ public final class LogManager {
 	public static void addLog(long regionId, String author, String message) {
 		RegionLog log = new RegionLog(regionId, author, message);
 		Homestead.LOG_CACHE.putOrUpdate(log);
+	}
+
+	public static void addLog(Region region, @Nullable OfflinePlayer player, PredefinedLog log, Object... data) {
+		addLog(region.getUniqueId(), player, log, data);
+	}
+
+	public static void addLog(long regionId, @Nullable OfflinePlayer player, PredefinedLog log, Object... data) {
+		String message = Resources.<LanguageFile>get(ResourceType.Language).getString("logs." + log.id);
+
+		if (log.args == data.length) {
+			for (int i = 0; i < log.args; i++) {
+				message = Formatter.applyPlaceholders(message, new Placeholder()
+						.add("{" + i + "}", data[i])
+				);
+			}
+		}
+
+		String author = player != null ? player.getName() : Resources.<LanguageFile>get(ResourceType.Language).getString("default.log-author");
+
+		addLog(regionId, author, message);
 	}
 
 	/**
@@ -426,5 +455,36 @@ public final class LogManager {
 			deleteLog(id);
 		}
 		return toRemove.size();
+	}
+
+	public enum PredefinedLog {
+		UPDATE_REGION_NAME(0, 1),
+		UPDATE_REGION_DISPLAYNAME(1, 1),
+		UPDATE_REGION_DESCRIPTION(2, 1),
+		BAN_PLAYER(3, 1),
+		UNBAN_PLAYER(4, 1),
+		INVITE_PLAYER(5, 1),
+		UNTRUST_PLAYER(6, 1),
+		ADD_PLAYER_SUBAREA(7, 2),
+		REMOVE_PLAYER_SUBAREA(8, 2),
+		UPDATE_FLAG_STATE(9, 3),
+		CLAIM_CHUNK(10, 0),
+		UNCLAIM_CHUNK(11, 0),
+		PURGE_BANS(12, 0),
+		UPDATE_WEATHER(13, 1),
+		UPDATE_TIME(14, 1),
+		UPDATE_REGION_SPAWN(15, 0),
+		CREATE_SUBAREA(16, 0),
+		DELETE_SUBAREA(17, 0),
+		PURGE_INVITES(18, 0),
+		JOIN_REGION(19, 0);
+
+		public final int id;
+		public final int args;
+
+		PredefinedLog(int id, int args) {
+			this.id = id;
+			this.args = args;
+		}
 	}
 }

@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
@@ -64,6 +65,8 @@ public class LeaveRegionSubCmd extends SubCommandBuilder {
 		);
 
 		TargetRegionSession.randomizeRegion(player);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, player.getName());
 
 		RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, player, RegionUntrustPlayerEvent.UntrustReason.LEFT);
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));

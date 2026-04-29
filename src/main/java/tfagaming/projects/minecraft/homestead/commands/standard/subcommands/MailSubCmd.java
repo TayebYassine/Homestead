@@ -68,7 +68,7 @@ public class MailSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		//RegionManager.addNewLog(region.getUniqueId(), player.getName(), message);
+		LogManager.addLog(region, player.getName(), message);
 
 		Messages.send(player, 166, new Placeholder()
 				.add("{region-owner}", region.getOwnerName())

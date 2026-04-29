@@ -8,10 +8,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
-import tfagaming.projects.minecraft.homestead.managers.InviteManager;
-import tfagaming.projects.minecraft.homestead.managers.MemberManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionInvite;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
@@ -94,10 +91,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 					.add("{player}", target.getName())
 			);
 
-			/*RegionManager.addNewLog(region.getUniqueId(), 0, new Placeholder()
-					.add("{executor}", player.getName())
-					.add("{playername}", target.getName())
-			);*/
+			LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, target.getName());
 
 			RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, target, RegionUntrustPlayerEvent.UntrustReason.EXECUTION);
 			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));

@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
@@ -16,6 +17,7 @@ import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
@@ -76,7 +78,7 @@ public final class SubAreaMemberFlags {
 			return;
 		}
 
-		handleSingleToggle(player, member, context, index);
+		handleSingleToggle(player, region, subArea, member, context, index);
 	}
 
 	private void handleBulkToggle(Player player, RegionMember member, PaginationMenu.ClickContext context) {
@@ -114,7 +116,7 @@ public final class SubAreaMemberFlags {
 		context.getInstance().setItems(buildItemsList(member));
 	}
 
-	private void handleSingleToggle(Player player, RegionMember member, PaginationMenu.ClickContext context, int index) {
+	private void handleSingleToggle(Player player, Region region, SubArea subArea, RegionMember member, PaginationMenu.ClickContext context, int index) {
 		int flagListIndex = index - 1;
 		if (flagListIndex < 0 || flagListIndex >= PlayerFlags.getFlags().size()) return;
 
@@ -137,6 +139,8 @@ public final class SubAreaMemberFlags {
 		member.setPlayerFlags(isSet
 				? FlagsCalculator.removeFlag(flags, flag)
 				: FlagsCalculator.addFlag(flags, flag));
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagString, subArea.getName(), Formatter.getFlagState(!isSet));
 
 		PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 		context.getInstance().replaceSlot(index, MenuUtility.getFlagButton(flagString, !isSet));

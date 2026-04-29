@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
@@ -122,6 +123,8 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 					.add("{playername}", target.getName())
 			);
 
+			LogManager.addLog(region, target, LogManager.PredefinedLog.JOIN_REGION);
+
 			RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, target);
 			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
 		} else {
@@ -138,10 +141,8 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 				Messages.send(target.getPlayer(), 139, placeholder);
 			}
 
-			/*RegionManager.addNewLog(region.getUniqueId(), 2, new Placeholder()
-					.add("{executor}", player.getName())
-					.add("{playername}", target.getName())
-			);*/
+
+			LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, target.getName());
 		}
 
 		return true;

@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
@@ -118,6 +119,8 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 
 		MemberManager.removeMemberFromRegion(target, region);
 		InviteManager.deleteInvitesOfPlayer(region, target);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, target.getName());
 
 		RegionBanPlayerEvent _event = new RegionBanPlayerEvent(region, player, target, reason);
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));

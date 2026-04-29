@@ -7,6 +7,7 @@ import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -88,6 +89,8 @@ public class UnclaimCommand extends CommandBuilder {
 			Messages.send(player, 24, new Placeholder()
 					.add("{region}", region.getName())
 			);
+
+			LogManager.addLog(region, player, LogManager.PredefinedLog.UNCLAIM_CHUNK);
 
 			ChunkBorder.show(player);
 		} else {

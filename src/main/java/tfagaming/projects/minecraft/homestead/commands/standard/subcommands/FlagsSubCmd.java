@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.GlobalPlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionWorldFlags;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
@@ -160,6 +161,8 @@ public class FlagsSubCmd extends SubCommandBuilder {
 						.add("{state}", Formatter.getFlagState(!currentState))
 				);
 
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, member.getPlayerName(), Formatter.getFlagState(!currentState));
+
 				break;
 			}
 			case "global": {
@@ -231,6 +234,8 @@ public class FlagsSubCmd extends SubCommandBuilder {
 						.add("{flag}", flagInput)
 						.add("{state}", Formatter.getFlagState(!currentState))
 				);
+
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, region.getName(), Formatter.getFlagState(!currentState));
 
 				break;
 			}
@@ -308,6 +313,8 @@ public class FlagsSubCmd extends SubCommandBuilder {
 						.add("{flag}", flagInput)
 						.add("{state}", Formatter.getFlagState(!currentState))
 				);
+
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, region.getName(), Formatter.getFlagState(!currentState));
 
 				break;
 			}
