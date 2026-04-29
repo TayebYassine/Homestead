@@ -24,7 +24,7 @@ public final class RegionLog {
 		this.id = Homestead.getSnowflake().nextId();
 		this.regionId = regionId;
 		this.author = author;
-		this.message = message;
+		this.message = message.substring(0, 256);
 		this.sentAt = sentAt;
 		this.read = read;
 	}
@@ -33,7 +33,7 @@ public final class RegionLog {
 		this.id = id;
 		this.regionId = regionId;
 		this.author = author;
-		this.message = message;
+		this.message = message.substring(0, 256);
 		this.sentAt = sentAt;
 		this.read = read;
 	}
@@ -92,7 +92,7 @@ public final class RegionLog {
 	}
 
 	public void setMessage(String message) {
-		this.message = message;
+		this.message = message.substring(0, 256);
 		update();
 	}
 

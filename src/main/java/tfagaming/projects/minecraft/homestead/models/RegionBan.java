@@ -25,7 +25,7 @@ public final class RegionBan {
 		this.id = Homestead.getSnowflake().nextId();
 		this.regionId = regionId;
 		this.playerId = playerId;
-		this.reason = reason;
+		this.reason = reason.substring(0, 256);
 		this.bannedAt = bannedAt;
 	}
 
@@ -33,7 +33,7 @@ public final class RegionBan {
 		this.id = id;
 		this.regionId = regionId;
 		this.playerId = playerId;
-		this.reason = reason;
+		this.reason = reason.substring(0, 256);
 		this.bannedAt = bannedAt;
 	}
 
@@ -113,7 +113,7 @@ public final class RegionBan {
 	}
 
 	public void setReason(String reason) {
-		this.reason = reason;
+		this.reason = reason.substring(0, 256);
 		update();
 	}
 
