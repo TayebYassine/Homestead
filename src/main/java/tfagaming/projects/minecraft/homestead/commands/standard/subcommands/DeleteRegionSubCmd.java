@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -75,6 +76,8 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 		);
 
 		TargetRegionSession.randomizeRegion(player);
+
+		Homestead.callEvent(new RegionDeleteEvent(region));
 
 		return true;
 	}

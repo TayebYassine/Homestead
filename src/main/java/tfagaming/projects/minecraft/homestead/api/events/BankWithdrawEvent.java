@@ -1,24 +1,23 @@
 package tfagaming.projects.minecraft.homestead.api.events;
 
-import org.bukkit.Chunk;
 import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.models.Region;
 
 
-public class ChunkUnclaimEvent extends APIEvent {
+public class BankWithdrawEvent extends APIEvent {
 	private final Region region;
-	private final Chunk chunk;
+	private final double amount;
 
-	public ChunkUnclaimEvent(@NotNull Region region, @NotNull Chunk chunk) {
+	public BankWithdrawEvent(@NotNull Region region, double amount) {
 		this.region = region;
-		this.chunk = chunk;
-	}
-
-	public @NotNull Chunk getChunk() {
-		return chunk;
+		this.amount = amount;
 	}
 
 	public @NotNull Region getRegion() {
 		return region;
+	}
+
+	public double getAmount() {
+		return amount;
 	}
 }

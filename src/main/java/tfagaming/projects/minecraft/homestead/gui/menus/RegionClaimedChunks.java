@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
@@ -123,7 +124,10 @@ public final class RegionClaimedChunks {
 			return;
 		}
 
-		if (!ChunkManager.isChunkClaimed(chunk.toBukkit()) || !ChunkManager.isChunkClaimedByRegion(region, chunk.toBukkit())) {
+		Chunk bukkitChunk = chunk.toBukkit();
+		if (bukkitChunk == null) return;
+
+		if (!ChunkManager.isChunkClaimed(bukkitChunk) || !ChunkManager.isChunkClaimedByRegion(region, bukkitChunk)) {
 			return;
 		}
 
@@ -134,7 +138,7 @@ public final class RegionClaimedChunks {
 		Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
 		int before = ChunkManager.getChunksOfRegion(region).size();
-		ChunkManager.unclaimChunk(region.getUniqueId(), chunk.toBukkit());
+		ChunkManager.unclaimChunk(region.getUniqueId(), bukkitChunk);
 
 		if (ChunkManager.getChunksOfRegion(region).size() < before) {
 			double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
@@ -143,6 +147,8 @@ public final class RegionClaimedChunks {
 
 		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 		ChunkBorder.show(player);
+
+		Homestead.callEvent(new ChunkUnclaimEvent(region, bukkitChunk));
 
 		chunks = ChunkManager.getChunksOfRegion(region);
 		context.getInstance().setItems(getItems(player, region));

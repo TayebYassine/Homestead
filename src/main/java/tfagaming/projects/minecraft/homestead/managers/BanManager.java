@@ -3,8 +3,12 @@ package tfagaming.projects.minecraft.homestead.managers;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.BanPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.BulkUnbanPlayersEvent;
+import tfagaming.projects.minecraft.homestead.api.events.UnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionBan;
+import tfagaming.projects.minecraft.homestead.models.SubArea;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,7 +20,8 @@ import java.util.stream.Collectors;
  * A utility class that manages {@link RegionBan}.
  */
 public final class BanManager {
-	private BanManager() {}
+	private BanManager() {
+	}
 
 	/**
 	 * Ban a player from accessing to a region.
@@ -37,6 +42,13 @@ public final class BanManager {
 	public static void banPlayer(long regionId, OfflinePlayer player, @Nullable String reason) {
 		RegionBan ban = new RegionBan(regionId, player, reason);
 		Homestead.BAN_CACHE.putOrUpdate(ban);
+
+		InviteManager.deleteInvitesOfPlayer(regionId, player);
+		MemberManager.removeMemberFromRegion(player, regionId);
+
+		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(regionId)) {
+			MemberManager.removeMemberFromSubArea(player, subArea);
+		}
 	}
 
 	/**
@@ -89,8 +101,7 @@ public final class BanManager {
 	 * @return {@code true} if the player is banned, {@code false} otherwise.
 	 */
 	public static boolean isBanned(long regionId, OfflinePlayer player) {
-		return getBansOfRegion(regionId).stream()
-				.anyMatch(b -> b.getPlayerId().equals(player.getUniqueId()));
+		return isBanned(regionId, player.getUniqueId());
 	}
 
 	/**
@@ -121,10 +132,7 @@ public final class BanManager {
 	 * @return {@link RegionBan} if the player is banned, {@code null} otherwise.
 	 */
 	public static RegionBan getBannedPlayer(long regionId, OfflinePlayer player) {
-		return getBansOfRegion(regionId).stream()
-				.filter(b -> b.getPlayerId().equals(player.getUniqueId()))
-				.findFirst()
-				.orElse(null);
+		return getBannedPlayer(regionId, player.getUniqueId());
 	}
 
 	/**

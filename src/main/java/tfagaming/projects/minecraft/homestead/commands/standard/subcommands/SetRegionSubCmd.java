@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDescriptionUpdateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDisplaynameUpdateEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RegionLocationUpdateEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -120,13 +121,12 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				Messages.send(player, 15, new Placeholder()
 						.add("{olddisplayname}", oldDisplayName)
-						.add("{newdisplayname}", region.getDisplayName())
+						.add("{newdisplayname}", regionDisplayName)
 				);
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DISPLAYNAME, regionDisplayName);
 
-				RegionDisplaynameUpdateEvent _event = new RegionDisplaynameUpdateEvent(region, player, oldDisplayName, regionDisplayName);
-				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+				Homestead.callEvent(new RegionDisplaynameUpdateEvent(region, oldDisplayName, regionDisplayName));
 
 				break;
 			}
@@ -186,8 +186,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DESCRIPTION, description);
 
-				RegionDescriptionUpdateEvent _event = new RegionDescriptionUpdateEvent(region, player, oldDescription, description);
-				Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+				Homestead.callEvent(new RegionDescriptionUpdateEvent(region, oldDescription, description));
 
 				break;
 			}
@@ -272,6 +271,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 
 				Cooldown.startCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE);
 
+				final Location oldLocation = region.getLocation() == null ? null : region.getLocation().toBukkit();
+
 				region.setLocation(location);
 
 				Messages.send(player, 72, new Placeholder()
@@ -280,6 +281,8 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				);
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_SPAWN);
+
+				Homestead.callEvent(new RegionLocationUpdateEvent(region, oldLocation, location));
 
 				break;
 			}
@@ -352,7 +355,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 					return true;
 				}
 
-				if (!Homestead.vault.isEconomyReady()) {
+				if (!Homestead.VAULT.isEconomyReady()) {
 					Messages.send(player, 69);
 
 					Logger.warning(Logger.PredefinedMessages.ECONOMY_INTEGRATION_DISABLED.getMessage());

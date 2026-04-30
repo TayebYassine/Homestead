@@ -3,8 +3,8 @@ package tfagaming.projects.minecraft.homestead.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +16,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RegionOwnerUpdateEvent;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -34,7 +34,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformB
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 
 public final class CustomSignsListener implements Listener {
 
@@ -282,7 +281,10 @@ public final class CustomSignsListener implements Listener {
 		PlayerBank.withdraw(player, price);
 		PlayerBank.deposit(region.getOwner(), price);
 
+		final OfflinePlayer oldOwner = region.getOwner();
+
 		region.setOwner(player);
+
 		signBlock.breakNaturally();
 
 		MemberManager.removeMemberFromRegion(region.getOwner(), region);
@@ -293,10 +295,7 @@ public final class CustomSignsListener implements Listener {
 				.add("{price}", Formatter.getBalance(price))
 		);
 
-		RegionTransferOwnershipEvent transferEvent = new RegionTransferOwnershipEvent(region, player, player);
-		Homestead.getInstance().runSyncTask(() ->
-				Bukkit.getPluginManager().callEvent(transferEvent)
-		);
+		Homestead.callEvent(new RegionOwnerUpdateEvent(region, oldOwner, player));
 	}
 
 	private Region validateOwnerRegion(Player player, Chunk chunk) {

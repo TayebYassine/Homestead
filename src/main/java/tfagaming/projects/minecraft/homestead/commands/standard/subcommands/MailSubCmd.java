@@ -2,6 +2,8 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerMailEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -73,6 +75,8 @@ public class MailSubCmd extends SubCommandBuilder {
 		Messages.send(player, 166, new Placeholder()
 				.add("{region-owner}", region.getOwnerName())
 		);
+
+		Homestead.callEvent(new PlayerMailEvent(region, player, message));
 
 		return true;
 	}

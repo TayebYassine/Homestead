@@ -149,6 +149,21 @@ dynamic-maps:
     transparency-fill: 40
     transparency-outline: 125
 
+# Discord Integration - Send update messages via Discord, recommended for staff members
+discord:
+  enabled: false
+
+  # The Discord Webhook URL, not your Discord bot token!
+  # PLEASE KEEP THIS WEBHOOK URL A SECRET! DO NOT SHARE WITH ANY OTHER PERSON!
+  webhook_url: "YOUR DISCORD WEBHOOK URL"
+
+  events:
+    region_create: true
+    region_delete: true
+    region_rename: true
+    region_description_update: true
+    region_private_chat: true
+
 # ============================================================================
 # MISCELLANEOUS SETTINGS
 # ============================================================================

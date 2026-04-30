@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionChatEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -63,21 +64,9 @@ public class ChatSubCmd extends SubCommandBuilder {
 		List<String> messageList = Arrays.asList(args).subList(0, args.length);
 		String message = String.join(" ", messageList);
 
-		List<Player> receivers = MemberManager.getOnlineMembers(region);
-		OfflinePlayer owner = region.getOwner();
+		RegionManager.sendPrivateChat(region, player, message);
 
-		if (owner != null && owner.isOnline()) receivers.add(owner.getPlayer());
-
-		for (Player receiver : receivers) {
-			Messages.send(receiver, Formatter.formatPrivateChat(region.getName(), player.getName(), message));
-		}
-
-		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("log-private-chat")) {
-			Logger.info(String.format("[Chat] %s (UUID: %s) -> %s: %s", player.getName(), player.getUniqueId(), region.getName(), message));
-		}
-
-		RegionChatEvent _event = new RegionChatEvent(region, player, message);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+		Homestead.callEvent(new RegionChatEvent(region, player, message));
 
 		return true;
 	}

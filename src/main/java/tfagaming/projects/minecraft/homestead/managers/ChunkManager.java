@@ -37,7 +37,7 @@ public final class ChunkManager {
 	 * @param chunk The chunk
 	 * @return The created RegionChunk
 	 */
-	public static RegionChunk createChunk(Region region, Chunk chunk) {
+	private static RegionChunk createChunk(Region region, Chunk chunk) {
 		return createChunk(region.getUniqueId(), chunk);
 	}
 
@@ -48,7 +48,7 @@ public final class ChunkManager {
 	 * @param chunk The chunk
 	 * @return The created RegionChunk
 	 */
-	public static RegionChunk createChunk(long regionId, Chunk chunk) {
+	private static RegionChunk createChunk(long regionId, Chunk chunk) {
 		RegionChunk regionChunk = new RegionChunk(
 				Homestead.getSnowflake().nextId(),
 				regionId,
@@ -95,11 +95,7 @@ public final class ChunkManager {
 			return Error.CHUNK_NOT_ADJACENT_TO_REGION;
 		}
 
-		RegionChunk regionChunk = createChunk(regionId, chunk);
-
-		ChunkClaimEvent event = new ChunkClaimEvent(region, chunk);
-		Location chunkLoc = new Location(chunk.getWorld(), chunk.getX() * 16 + 8, 64, chunk.getZ() * 16 + 8);
-		Homestead.getInstance().runLocationTask(chunkLoc, () -> Bukkit.getPluginManager().callEvent(event));
+		createChunk(regionId, chunk);
 
 		return null;
 	}
@@ -181,10 +177,6 @@ public final class ChunkManager {
 			region.resetLocation();
 		}
 
-		ChunkUnclaimEvent event = new ChunkUnclaimEvent(region, chunk);
-		Location chunkLoc = new Location(chunk.getWorld(), chunk.getX() * 16 + 8, 64, chunk.getZ() * 16 + 8);
-		Homestead.getInstance().runLocationTask(chunkLoc, () -> Bukkit.getPluginManager().callEvent(event));
-
 		return null;
 	}
 
@@ -192,7 +184,7 @@ public final class ChunkManager {
 	 * Permanently deletes a chunk.
 	 * @param chunk The chunk
 	 */
-	public static void deleteChunk(Chunk chunk) {
+	private static void deleteChunk(Chunk chunk) {
 		RegionChunk chunkData = findChunk(chunk);
 
 		if (chunkData != null) {
@@ -204,7 +196,7 @@ public final class ChunkManager {
 	 * Permanently deletes a chunk.
 	 * @param chunk The chunk
 	 */
-	public static void deleteChunk(RegionChunk chunk) {
+	private static void deleteChunk(RegionChunk chunk) {
 		deleteChunk(chunk.getUniqueId());
 	}
 
@@ -212,7 +204,7 @@ public final class ChunkManager {
 	 * Permanently deletes a chunk.
 	 * @param id The chunk ID
 	 */
-	public static void deleteChunk(long id) {
+	private static void deleteChunk(long id) {
 		Homestead.CHUNK_CACHE.remove(id);
 	}
 

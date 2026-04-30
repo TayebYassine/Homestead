@@ -176,7 +176,7 @@ region.setPlayerFlags(newFlags); // Update global player flags
 Example usage of events, list of Homestead events: [Region Events](../Events/Region%20Events.md), [Chunk Events](../Events/Chunk%20Events.md)
 
 ```java
-import org.bukkit.Chunk;
+
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -207,15 +207,15 @@ public class HomesteadCustomEvents implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerBanPlayerFromRegion(RegionBanPlayerEvent event) {
+	public void onPlayerBanPlayerFromRegion(BanPlayerEvent event) {
         ...
 	}
 
 	@EventHandler
-	public void onPlayerUntrustFromRegion(RegionUntrustPlayerEvent event) {
+	public void onPlayerUntrustFromRegion(PlayerLeftRegionEvent event) {
 		OfflinePlayer untrustedPlayer = event.getUntrustedPlayer();
-		RegionUntrustPlayerEvent.UntrustReason reason = event.getReason();
-		
+		PlayerLeftRegionEvent.UntrustReason reason = event.getReason();
+
 		switch (reason) {
 			case EXECUTION -> {
 				// A player (region owner for example) untrusted that player

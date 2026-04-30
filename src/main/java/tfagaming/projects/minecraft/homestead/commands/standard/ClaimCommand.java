@@ -5,6 +5,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -257,6 +260,8 @@ public class ClaimCommand extends CommandBuilder {
 			}
 
 			ChunkBorder.show(player);
+
+			Homestead.callEvent(new ChunkClaimEvent(region, chunksToClaim.getFirst()));
 		}
 
 		return true;
@@ -281,6 +286,9 @@ public class ClaimCommand extends CommandBuilder {
 				}
 
 				region = RegionManager.createRegion(player.getName(), player);
+
+				Homestead.callEvent(new RegionCreateEvent(region, player));
+
 				TargetRegionSession.newSession(player, region);
 			}
 		}

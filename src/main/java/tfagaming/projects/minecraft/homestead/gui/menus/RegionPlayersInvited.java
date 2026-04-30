@@ -1,12 +1,13 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.BulkDeleteInvitesEvent;
+import tfagaming.projects.minecraft.homestead.api.events.InvitePlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerJoinRegionEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.*;
@@ -83,13 +84,11 @@ public final class RegionPlayersInvited {
 						if (targetPlayer == null) return;
 
 						if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
-							InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 							MemberManager.addMemberToRegion(targetPlayer, region);
 
 							LogManager.addLog(region, targetPlayer, LogManager.PredefinedLog.JOIN_REGION);
 
-							RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, targetPlayer);
-							Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+							Homestead.callEvent(new PlayerJoinRegionEvent(region, targetPlayer));
 						} else {
 							InviteManager.invitePlayer(region, targetPlayer);
 
@@ -100,11 +99,13 @@ public final class RegionPlayersInvited {
 
 							Messages.send(player, 36, placeholder);
 
+							LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, targetPlayer.getName());
+
 							if (targetPlayer.isOnline()) {
 								Messages.send(targetPlayer.getPlayer(), 139, placeholder);
 							}
 
-							LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, targetPlayer.getName());
+							Homestead.callEvent(new InvitePlayerEvent(region, targetPlayer));
 						}
 
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
@@ -130,9 +131,12 @@ public final class RegionPlayersInvited {
 
 			InviteManager.deleteInvitesOfRegion(region);
 
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
 			LogManager.addLog(region, player, LogManager.PredefinedLog.PURGE_INVITES);
 
-			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+			Homestead.callEvent(new BulkDeleteInvitesEvent(region));
+
 			Messages.send(player, 95);
 			Homestead.getInstance().runSyncTask(() -> new RegionPlayersInvited(player, region));
 		};

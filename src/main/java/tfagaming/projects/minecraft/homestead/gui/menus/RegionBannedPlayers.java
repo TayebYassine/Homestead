@@ -1,13 +1,13 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionUnbanPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.BanPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.BulkUnbanPlayersEvent;
+import tfagaming.projects.minecraft.homestead.api.events.UnbanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.*;
@@ -75,8 +75,7 @@ public final class RegionBannedPlayers {
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, bannedPlayer.getPlayerName());
 
-		RegionUnbanPlayerEvent _event = new RegionUnbanPlayerEvent(region, player, bannedPlayer.getPlayer());
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+		Homestead.callEvent(new UnbanPlayerEvent(region, player));
 
 		bannedPlayers = BanManager.getBansOfRegion(region);
 		context.getInstance().setItems(getItems(player, region));
@@ -109,8 +108,8 @@ public final class RegionBannedPlayers {
 
 						LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, targetPlayer.getName());
 
-						RegionBanPlayerEvent _event = new RegionBanPlayerEvent(region, player, targetPlayer, null);
-						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+						Homestead.callEvent(new BanPlayerEvent(region, player, null));
+
 						Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region));
 					})
 					.onCancel(p -> Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region)))
@@ -143,6 +142,8 @@ public final class RegionBannedPlayers {
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 			Messages.send(player, 94);
+
+			Homestead.callEvent(new BulkUnbanPlayersEvent(region));
 
 			Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region));
 		};

@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.BankDepositEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
@@ -48,7 +49,7 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!Homestead.vault.isEconomyReady()) {
+		if (!Homestead.VAULT.isEconomyReady()) {
 			Messages.send(player, 69);
 
 			Logger.warning(Logger.PredefinedMessages.ECONOMY_INTEGRATION_DISABLED.getMessage());
@@ -104,6 +105,8 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 				.add("{region}", region.getName())
 				.add("{amount}", Formatter.getBalance(amount))
 		);
+
+		Homestead.callEvent(new BankDepositEvent(region, amount));
 
 		return true;
 	}

@@ -1,21 +1,16 @@
 package tfagaming.projects.minecraft.homestead.api.events;
 
-import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.models.Region;
 
+import java.util.List;
 
-public class ChunkUnclaimEvent extends APIEvent {
+public class BulkDeleteInvitesEvent extends APIEvent {
 	private final Region region;
-	private final Chunk chunk;
 
-	public ChunkUnclaimEvent(@NotNull Region region, @NotNull Chunk chunk) {
+	public BulkDeleteInvitesEvent(@NotNull Region region) {
 		this.region = region;
-		this.chunk = chunk;
-	}
-
-	public @NotNull Chunk getChunk() {
-		return chunk;
 	}
 
 	public @NotNull Region getRegion() {

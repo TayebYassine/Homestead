@@ -8,11 +8,11 @@ public final class PlayerBank {
 	}
 
 	public static double get(OfflinePlayer player) {
-		if (!Homestead.vault.isEconomyReady()) {
+		if (!Homestead.VAULT.isEconomyReady()) {
 			return 0.0;
 		}
 
-		return Homestead.vault.getEconomy().getBalance(player);
+		return Homestead.VAULT.getEconomy().getBalance(player);
 	}
 
 	public static boolean has(OfflinePlayer player, double amount) {
@@ -20,18 +20,18 @@ public final class PlayerBank {
 	}
 
 	public static void deposit(OfflinePlayer player, double amount) {
-		if (!Homestead.vault.isEconomyReady()) {
+		if (!Homestead.VAULT.isEconomyReady()) {
 			return;
 		}
 
-		Homestead.vault.getEconomy().deposit(player, amount);
+		Homestead.VAULT.getEconomy().deposit(player, amount);
 	}
 
 	public static void withdraw(OfflinePlayer player, double amount) {
-		if (!Homestead.vault.isEconomyReady() || amount <= 0) {
+		if (!Homestead.VAULT.isEconomyReady() || amount <= 0) {
 			return;
 		}
 
-		Homestead.vault.getEconomy().withdraw(player, amount);
+		Homestead.VAULT.getEconomy().withdraw(player, amount);
 	}
 }

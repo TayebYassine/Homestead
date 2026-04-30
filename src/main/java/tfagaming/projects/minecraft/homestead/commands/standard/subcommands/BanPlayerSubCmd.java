@@ -1,17 +1,14 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionBanPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.BanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.BanManager;
-import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
-import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -117,13 +114,9 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 				.add("{reason}", reason)
 		);
 
-		MemberManager.removeMemberFromRegion(target, region);
-		InviteManager.deleteInvitesOfPlayer(region, target);
-
 		LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, target.getName());
 
-		RegionBanPlayerEvent _event = new RegionBanPlayerEvent(region, player, target, reason);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+		Homestead.callEvent(new BanPlayerEvent(region, target, reason));
 
 		return true;
 	}

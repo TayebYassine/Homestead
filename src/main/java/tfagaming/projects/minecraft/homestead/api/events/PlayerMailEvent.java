@@ -5,12 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.models.Region;
 
 
-public class RegionChatEvent extends APIEvent {
+public class PlayerMailEvent extends APIEvent {
 	private final Region region;
 	private final OfflinePlayer player;
 	private final String message;
 
-	public RegionChatEvent(@NotNull Region region, @NotNull OfflinePlayer player, @NotNull String message) {
+	public PlayerMailEvent(@NotNull Region region, @NotNull OfflinePlayer player, @NotNull String message) {
 		this.region = region;
 		this.player = player;
 		this.message = message;

@@ -1,11 +1,10 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerJoinRegionEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.*;
 
@@ -71,7 +70,6 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		InviteManager.deleteInvitesOfPlayer(region, player);
 		MemberManager.addMemberToRegion(player, region);
 
 		Messages.send(player, 46, new Placeholder()
@@ -90,8 +88,7 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 			);
 		}
 
-		RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, player);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+		Homestead.callEvent(new PlayerJoinRegionEvent(region, player));
 
 		return true;
 	}

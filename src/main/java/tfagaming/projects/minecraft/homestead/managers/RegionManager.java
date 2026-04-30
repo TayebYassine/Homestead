@@ -7,6 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionChatEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
 import tfagaming.projects.minecraft.homestead.integrations.FastAsyncWorldEditAPI;
@@ -21,6 +22,8 @@ import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.storage.StorageManager;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.UpkeepUtility;
 
 import java.util.*;
@@ -63,9 +66,6 @@ public final class RegionManager {
 		}
 
 		Homestead.REGION_CACHE.putOrUpdate(region);
-
-		RegionCreateEvent event = new RegionCreateEvent(region, player);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 
 		return region;
 	}
@@ -155,11 +155,14 @@ public final class RegionManager {
 		List<RegionChunk> chunksToRegen = new ArrayList<>(ChunkManager.getChunksOfRegion(id));
 
 		// Delete related sub-areas
-		SubAreaManager.deleteSubAreasOfRegion(region);
+		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(region)) {
+			MemberManager.removeAllMembersOfSubArea(subArea);
+			SubAreaManager.deleteSubArea(region.getUniqueId());
+		}
 
 		// Delete related chunks
 		for (RegionChunk chunk : ChunkManager.getChunksOfRegion(id)) {
-			ChunkManager.deleteChunk(chunk.getUniqueId());
+			ChunkManager.forceUnclaimChunk(id, chunk.toBukkit());
 		}
 
 		// Delete related members
@@ -203,9 +206,6 @@ public final class RegionManager {
 		}
 
 		Homestead.REGION_CACHE.remove(id);
-
-		RegionDeleteEvent event = new RegionDeleteEvent(region, player.length > 0 ? player[0] : null);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 	}
 
 	/**
@@ -258,6 +258,21 @@ public final class RegionManager {
 
 		region.setName(actualName);
 		return actualName;
+	}
+
+	public static void sendPrivateChat(Region region, Player author, String message) {
+		List<Player> receivers = MemberManager.getOnlineMembers(region);
+		OfflinePlayer owner = region.getOwner();
+
+		if (owner != null && owner.isOnline()) receivers.add(owner.getPlayer());
+
+		for (Player receiver : receivers) {
+			Messages.send(receiver, Formatter.formatPrivateChat(region.getName(), author.getName(), message));
+		}
+
+		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("log-private-chat")) {
+			Logger.info(String.format("[Chat] %s (UUID: %s) -> %s: %s", author.getName(), author.getUniqueId(), region.getName(), message));
+		}
 	}
 
 	/**

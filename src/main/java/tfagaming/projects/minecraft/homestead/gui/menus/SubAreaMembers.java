@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerJoinSubAreaEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftSubAreaEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
@@ -64,9 +66,11 @@ public final class SubAreaMembers {
 
 						MemberManager.addMemberToSubArea(targetPlayer, subArea);
 
+						LogManager.addLog(region, player, LogManager.PredefinedLog.ADD_PLAYER_SUBAREA, targetPlayer.getName(), subArea.getName());
+
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-						LogManager.addLog(region, player, LogManager.PredefinedLog.ADD_PLAYER_SUBAREA, targetPlayer.getName(), subArea.getName());
+						Homestead.callEvent(new PlayerJoinSubAreaEvent(subArea, targetPlayer));
 
 						Homestead.getInstance().runSyncTask(() -> new SubAreaMembers(player, region, subArea));
 					})
@@ -140,9 +144,11 @@ public final class SubAreaMembers {
 
 		MemberManager.removeMemberFromSubArea(member.getPlayer(), subArea);
 
+		LogManager.addLog(region, player, LogManager.PredefinedLog.REMOVE_PLAYER_SUBAREA, member.getPlayerName(), subArea.getName());
+
 		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-		LogManager.addLog(region, player, LogManager.PredefinedLog.REMOVE_PLAYER_SUBAREA, member.getPlayerName(), subArea.getName());
+		Homestead.callEvent(new PlayerLeftSubAreaEvent(subArea, player));
 
 		members = MemberManager.getMembersOfSubArea(subArea);
 		context.getInstance().setItems(getItems(player, region, subArea));

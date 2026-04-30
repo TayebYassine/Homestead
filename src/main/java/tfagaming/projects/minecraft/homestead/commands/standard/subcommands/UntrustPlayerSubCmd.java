@@ -1,11 +1,11 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftRegionEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RevokePlayerInviteEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.*;
@@ -79,12 +79,10 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 			Messages.send(player, 37, new Placeholder()
 					.add("{playername}", target.getName())
 			);
+
+			Homestead.callEvent(new RevokePlayerInviteEvent(region, target));
 		} else if (MemberManager.isMemberOfRegion(region, target)) {
 			MemberManager.removeMemberFromRegion(target, region);
-
-			for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(region)) {
-				MemberManager.removeMemberFromSubArea(target, subArea);
-			}
 
 			Messages.send(player, 38, new Placeholder()
 					.add("{region}", region.getName())
@@ -93,8 +91,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, target.getName());
 
-			RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, target, RegionUntrustPlayerEvent.UntrustReason.EXECUTION);
-			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+			Homestead.callEvent(new PlayerLeftRegionEvent(region, target));
 		} else {
 			Messages.send(player, 39, new Placeholder()
 					.add("{region}", region.getName())

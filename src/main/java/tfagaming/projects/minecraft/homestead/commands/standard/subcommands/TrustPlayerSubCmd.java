@@ -1,11 +1,11 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.InvitePlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerJoinRegionEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.BanManager;
@@ -115,7 +115,6 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
-			InviteManager.deleteInvitesOfPlayer(region, target);
 			MemberManager.addMemberToRegion(target, region);
 
 			Messages.send(player, 199, new Placeholder()
@@ -125,8 +124,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 
 			LogManager.addLog(region, target, LogManager.PredefinedLog.JOIN_REGION);
 
-			RegionTrustPlayerEvent _event = new RegionTrustPlayerEvent(region, player, target);
-			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+			Homestead.callEvent(new PlayerJoinRegionEvent(region, target));
 		} else {
 			InviteManager.invitePlayer(region, target);
 
@@ -141,8 +139,9 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 				Messages.send(target.getPlayer(), 139, placeholder);
 			}
 
-
 			LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, target.getName());
+
+			Homestead.callEvent(new InvitePlayerEvent(region, target));
 		}
 
 		return true;

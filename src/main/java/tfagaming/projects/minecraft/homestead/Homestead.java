@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import tfagaming.projects.minecraft.homestead.api.events.APIEvent;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.commands.brigadier.BrigadierCommands;
 import tfagaming.projects.minecraft.homestead.commands.operator.ForceUnclaimCommand;
@@ -21,6 +22,7 @@ import tfagaming.projects.minecraft.homestead.commands.standard.UnclaimCommand;
 import tfagaming.projects.minecraft.homestead.database.Database;
 import tfagaming.projects.minecraft.homestead.database.Driver;
 import tfagaming.projects.minecraft.homestead.database.cache.*;
+import tfagaming.projects.minecraft.homestead.discord.DiscordWebhookClient;
 import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
 import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
@@ -69,8 +71,9 @@ public class Homestead extends JavaPlugin {
 	public static SubAreasCache SUBAREA_CACHE;
 	public static LevelsCache LEVEL_CACHE;
 
-	public static Vault vault;
+	public static Vault VAULT;
 	private static Homestead INSTANCE;
+	private static DiscordWebhookClient DISCORD_WEBHOOK;
 	private static long STARTED_AT;
 	private static TaskHandle MOVE_CHECK_TASK;
 
@@ -185,16 +188,16 @@ public class Homestead extends JavaPlugin {
 
 		StorageManager.init(this);
 
-		Homestead.vault = new Vault(this);
+		Homestead.VAULT = new Vault(this);
 
-		if (!Homestead.vault.setupEconomy()) {
+		if (!Homestead.VAULT.setupEconomy()) {
 			Logger.warning("No Economy service provider found.");
 			Logger.warning("Any feature requiring an Economy service will be skipped.");
 		} else {
-			Logger.info("Loaded service provider: Economy [" + Homestead.vault.getEconomy().getName() + "]");
+			Logger.info("Loaded service provider: Economy [" + Homestead.VAULT.getEconomy().getName() + "]");
 		}
 
-		if (!Homestead.vault.setupPermissions()) {
+		if (!Homestead.VAULT.setupPermissions()) {
 			if (Limits.getLimitsMethod() == Limits.LimitMethod.GROUPS) {
 				Logger.error("No Permissions service provider found.");
 				Logger.error("You are using groups as a limit method, and permission services are required for Homestead to run. Shutting down plugin instance...");
@@ -205,7 +208,7 @@ public class Homestead extends JavaPlugin {
 				Logger.warning("The plugin is using static permissions; operator and non-operator.");
 			}
 		} else {
-			Logger.info("Loaded service provider: Permissions [" + Homestead.vault.getPermissions().getPermissionsName() + "]");
+			Logger.info("Loaded service provider: Permissions [" + Homestead.VAULT.getPermissions().getPermissionsName() + "]");
 		}
 
 		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("clean-startup")) {
@@ -221,7 +224,9 @@ public class Homestead extends JavaPlugin {
 			int members = MemberManager.cleanupInvalidMembers();
 			int rates = RateManager.cleanupInvalidRatings();
 
-			String[] headers = {"Model", "Fixed"};
+			ChunkManager.cleanupOrphanedForceLoadedChunks();
+
+			String[] headers = {"Model", "Fixed/Removed"};
 
 			Object[][] data = {
 					{"Regions", regions},
@@ -263,6 +268,15 @@ public class Homestead extends JavaPlugin {
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
 
+		// Prepare Discord webhook client
+		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("discord.enabled")) {
+			Logger.info("[Discord Webhook] Initializing new Discord webhook client...");
+
+			Homestead.DISCORD_WEBHOOK = new DiscordWebhookClient(Resources.<ConfigFile>get(ResourceType.Config).getString("discord.webhook_url"));
+
+			Logger.info("[Discord Webhook] Done.");
+		}
+
 		// Cache interval
 		int cacheInterval = Resources.<ConfigFile>get(ResourceType.Config).getCacheInterval();
 
@@ -287,19 +301,19 @@ public class Homestead extends JavaPlugin {
 			DynamicMaps.trigger(this);
 		}, Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.update-interval"));
 
-		if (Homestead.vault.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("taxes.enabled")) {
+		if (Homestead.VAULT.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("taxes.enabled")) {
 			runAsyncTimerTask(() -> {
 				MemberTaxes.trigger(this);
 			}, 10);
 		}
 
-		if (Homestead.vault.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("upkeep.enabled")) {
+		if (Homestead.VAULT.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("upkeep.enabled")) {
 			runAsyncTimerTask(() -> {
 				RegionUpkeep.trigger(this);
 			}, 10);
 		}
 
-		if (Homestead.vault.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("renting.enabled")) {
+		if (Homestead.VAULT.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("renting.enabled")) {
 			runAsyncTimerTask(() -> {
 				RegionRent.trigger(this);
 			}, 10);
@@ -384,6 +398,10 @@ public class Homestead extends JavaPlugin {
 		} catch (NoClassDefFoundError e) {
 			Logger.warning("Commodore/Brigadier classes not present. Skipping Brigadier command registration.");
 		}
+	}
+
+	public static void callEvent(APIEvent event) {
+		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 	}
 
 	/**

@@ -276,7 +276,7 @@ public final class PlayerUtility {
 
 		try {
 			if (player.isOnline()) {
-				return Homestead.vault.getPermissions().getPrimaryGroup(player);
+				return Homestead.VAULT.getPermissions().getPrimaryGroup(player);
 			} else {
 				return null;
 			}

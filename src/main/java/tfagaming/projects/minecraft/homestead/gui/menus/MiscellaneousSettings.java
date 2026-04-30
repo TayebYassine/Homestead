@@ -1,16 +1,12 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionDescriptionUpdateEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionDisplaynameUpdateEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionRenameEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionTransferOwnershipEvent;
+import tfagaming.projects.minecraft.homestead.api.events.*;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
@@ -81,8 +77,8 @@ public final class MiscellaneousSettings {
 
 						LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_NAME, input);
 
-						RegionRenameEvent _event = new RegionRenameEvent(region, player, oldName, input);
-						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+						Homestead.callEvent(new RegionNameUpdateEvent(region, oldName, input));
+
 						Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 					})
 					.onCancel(p -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)))
@@ -108,8 +104,8 @@ public final class MiscellaneousSettings {
 
 						LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DISPLAYNAME, input);
 
-						RegionDisplaynameUpdateEvent _event = new RegionDisplaynameUpdateEvent(region, player, oldDisplayname, input);
-						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+						Homestead.callEvent(new RegionDisplaynameUpdateEvent(region, oldDisplayname, input));
+
 						Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 					})
 					.onCancel(p -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)))
@@ -135,8 +131,8 @@ public final class MiscellaneousSettings {
 
 						LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DESCRIPTION, input);
 
-						RegionDescriptionUpdateEvent _event = new RegionDescriptionUpdateEvent(region, player, oldDescription, input);
-						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+						Homestead.callEvent(new RegionDescriptionUpdateEvent(region, oldDescription, input));
+
 						Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 					})
 					.onCancel(p -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)))
@@ -161,11 +157,15 @@ public final class MiscellaneousSettings {
 
 			Cooldown.startCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE);
 
+			final Location oldLocation = region.getLocation() == null ? null : region.getLocation().toBukkit();
+
 			region.setLocation(location);
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_SPAWN);
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+			Homestead.callEvent(new RegionLocationUpdateEvent(region, oldLocation, location));
 		};
 	}
 
@@ -184,6 +184,8 @@ public final class MiscellaneousSettings {
 
 						if (targetPlayer == null) return;
 
+						final OfflinePlayer oldOwner = region.getOwner();
+
 						Cooldown.startCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP);
 						region.setOwner(targetPlayer);
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
@@ -191,8 +193,8 @@ public final class MiscellaneousSettings {
 						if (MemberManager.isMemberOfRegion(region, targetPlayer)) MemberManager.removeMemberFromRegion(targetPlayer, region);
 						if (InviteManager.isInvited(region, targetPlayer)) InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
-						RegionTransferOwnershipEvent _event = new RegionTransferOwnershipEvent(region, player, targetPlayer);
-						Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+						Homestead.callEvent(new RegionOwnerUpdateEvent(region, oldOwner, targetPlayer));
+
 						Homestead.getInstance().runSyncTask(() -> new RegionsMenu(player));
 					})
 					.onCancel(p -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)))
@@ -230,7 +232,11 @@ public final class MiscellaneousSettings {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				TargetRegionSession.randomizeRegion(player);
+
+				Homestead.callEvent(new RegionDeleteEvent(region));
+
 				new RegionsMenu(_player);
+
 				return;
 			}
 

@@ -2,6 +2,8 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RevokePlayerInviteEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -57,6 +59,8 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 		Messages.send(player, 47, new Placeholder()
 				.add("{region}", region.getName())
 		);
+
+		Homestead.callEvent(new RevokePlayerInviteEvent(region, player));
 
 		return true;
 	}

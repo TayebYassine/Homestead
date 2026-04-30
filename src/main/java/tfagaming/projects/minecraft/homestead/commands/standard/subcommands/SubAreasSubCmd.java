@@ -6,6 +6,8 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerJoinSubAreaEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftSubAreaEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
@@ -417,6 +419,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 						LogManager.addLog(region, player, LogManager.PredefinedLog.ADD_PLAYER_SUBAREA, target.getName(), subArea.getName());
 
+						Homestead.callEvent(new PlayerJoinSubAreaEvent(subArea, target));
+
 						return true;
 					}
 
@@ -434,6 +438,8 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 						);
 
 						LogManager.addLog(region, player, LogManager.PredefinedLog.REMOVE_PLAYER_SUBAREA, target.getName(), subArea.getName());
+
+						Homestead.callEvent(new PlayerLeftSubAreaEvent(subArea, player));
 
 						return true;
 					}

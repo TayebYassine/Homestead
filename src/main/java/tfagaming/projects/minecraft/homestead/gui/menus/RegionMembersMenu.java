@@ -1,23 +1,17 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionTrustPlayerEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftRegionEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
-import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -29,7 +23,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtil
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public final class RegionMembersMenu {
 	private List<RegionMember> members;
@@ -92,9 +85,7 @@ public final class RegionMembersMenu {
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, member.getPlayerName());
 
-		RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, member.getPlayer(),
-				RegionUntrustPlayerEvent.UntrustReason.EXECUTION);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+		Homestead.callEvent(new PlayerLeftRegionEvent(region, player));
 
 		members = MemberManager.getMembersOfRegion(region);
 		context.getInstance().setItems(getItems(player, region));
@@ -102,7 +93,7 @@ public final class RegionMembersMenu {
 
 	private List<ItemStack> getItems(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
-		boolean taxesEnabled = Homestead.vault.isEconomyReady()
+		boolean taxesEnabled = Homestead.VAULT.isEconomyReady()
 				&& Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled");
 
 		for (RegionMember member : members) {

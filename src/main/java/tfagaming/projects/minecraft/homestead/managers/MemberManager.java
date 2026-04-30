@@ -4,6 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerJoinRegionEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerJoinSubAreaEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftRegionEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftSubAreaEvent;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
@@ -54,6 +58,8 @@ public final class MemberManager {
 
 		switch (type) {
 			case REGION -> {
+				InviteManager.deleteInvitesOfPlayer(linkageId, player);
+
 				if (getFlagsConfig().allowFlagsOnPlayerTrust()) {
 					member.setPlayerFlags(getFlagsConfig().getAllAllowedPlayerFlagsExcludeDisabledOnes());
 				} else {
@@ -74,6 +80,7 @@ public final class MemberManager {
 		}
 
 		Homestead.MEMBER_CACHE.putOrUpdate(member);
+
 		return member;
 	}
 
@@ -326,6 +333,10 @@ public final class MemberManager {
 			if (member.getPlayerId().equals(player.getUniqueId())) {
 				removeMember(member.getUniqueId());
 			}
+		}
+
+		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(regionId)) {
+			removeMemberFromSubArea(player, subArea.getUniqueId());
 		}
 	}
 

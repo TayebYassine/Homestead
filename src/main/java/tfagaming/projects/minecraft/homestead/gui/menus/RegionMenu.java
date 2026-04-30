@@ -1,10 +1,9 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionUntrustPlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftRegionEvent;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.*;
@@ -31,7 +30,7 @@ import java.util.function.BiConsumer;
 
 public final class RegionMenu {
 	public RegionMenu(Player player, Region region) {
-		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
+		boolean isEconomyEnabled = Homestead.VAULT.isEconomyReady();
 		boolean isUpkeepEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled");
 		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled");
 		boolean isSubAreasEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("sub-areas.enabled");
@@ -224,15 +223,14 @@ public final class RegionMenu {
 			if (!checkRegionExists(player, region) || !event.isLeftClick()) return;
 
 			MemberManager.removeMemberFromRegion(player, region);
-			TargetRegionSession.randomizeRegion(player);
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, player.getName());
 
-			RegionUntrustPlayerEvent _event = new RegionUntrustPlayerEvent(region, player, player,
-					RegionUntrustPlayerEvent.UntrustReason.LEFT);
-			Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+			TargetRegionSession.randomizeRegion(player);
+
+			Homestead.callEvent(new PlayerLeftRegionEvent(region, player));
 
 			new RegionsMenu(player);
 		};

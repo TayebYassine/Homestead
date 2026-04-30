@@ -29,7 +29,7 @@ import java.util.function.BiConsumer;
 
 public final class SubAreaMenu {
 	public SubAreaMenu(Player player, Region region, SubArea subArea) {
-		boolean isEconomyEnabled = Homestead.vault.isEconomyReady();
+		boolean isEconomyEnabled = Homestead.VAULT.isEconomyReady();
 		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled");
 
 		SeRent rent = subArea.getRent();
@@ -127,10 +127,10 @@ public final class SubAreaMenu {
 			}
 
 			SubAreaManager.deleteSubArea(subArea.getUniqueId());
-			
-			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.DELETE_SUBAREA);
+			
+			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			new SubAreasMenu(player, region);
 		};

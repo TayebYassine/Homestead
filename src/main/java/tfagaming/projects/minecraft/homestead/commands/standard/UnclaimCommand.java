@@ -3,6 +3,8 @@ package tfagaming.projects.minecraft.homestead.commands.standard;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -93,6 +95,8 @@ public class UnclaimCommand extends CommandBuilder {
 			LogManager.addLog(region, player, LogManager.PredefinedLog.UNCLAIM_CHUNK);
 
 			ChunkBorder.show(player);
+
+			Homestead.callEvent(new ChunkUnclaimEvent(region, chunk));
 		} else {
 			switch (error) {
 				case REGION_NOT_FOUND -> Messages.send(player, 9);

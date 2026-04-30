@@ -1,10 +1,9 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionRenameEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RegionNameUpdateEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
@@ -93,8 +92,7 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_NAME, regionName);
 
-		RegionRenameEvent _event = new RegionRenameEvent(region, player, oldName, regionName);
-		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(_event));
+		Homestead.callEvent(new RegionNameUpdateEvent(region, oldName, regionName));
 
 		return true;
 	}

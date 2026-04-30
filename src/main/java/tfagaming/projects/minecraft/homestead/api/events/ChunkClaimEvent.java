@@ -1,15 +1,11 @@
 package tfagaming.projects.minecraft.homestead.api.events;
 
 import org.bukkit.Chunk;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.models.Region;
 
 
-public class ChunkClaimEvent extends Event {
-	private static final HandlerList HANDLERS = new HandlerList();
-
+public class ChunkClaimEvent extends APIEvent {
 	private final Region region;
 	private final Chunk chunk;
 
@@ -18,20 +14,11 @@ public class ChunkClaimEvent extends Event {
 		this.chunk = chunk;
 	}
 
-	public static HandlerList getHandlerList() {
-		return HANDLERS;
-	}
-
 	public @NotNull Chunk getChunk() {
 		return chunk;
 	}
 
 	public @NotNull Region getRegion() {
 		return region;
-	}
-
-	@Override
-	public @NotNull HandlerList getHandlers() {
-		return HANDLERS;
 	}
 }

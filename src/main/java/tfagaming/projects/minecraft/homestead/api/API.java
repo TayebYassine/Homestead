@@ -6,4 +6,8 @@ public class API implements HomesteadAPI {
 	public String getVersion() {
 		return Homestead.getVersion();
 	}
+
+	public Homestead getInstance() {
+		return Homestead.getInstance();
+	}
 }

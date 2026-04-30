@@ -2,6 +2,9 @@ package tfagaming.projects.minecraft.homestead.managers;
 
 import org.bukkit.OfflinePlayer;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.BulkDeleteInvitesEvent;
+import tfagaming.projects.minecraft.homestead.api.events.InvitePlayerEvent;
+import tfagaming.projects.minecraft.homestead.api.events.RevokePlayerInviteEvent;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionInvite;
 
@@ -261,16 +264,16 @@ public final class InviteManager {
 	 * @param player The player
 	 */
 	public static void deleteInvitesOfPlayer(Region region, OfflinePlayer player) {
-		deleteInvitesOfPlayer(region.getUniqueId(), player.getUniqueId());
+		deleteInvitesOfPlayer(region.getUniqueId(), player);
 	}
 
 	/**
 	 * Deletes all invites sent by a region that invited a specific player.
 	 * @param regionId The region ID
-	 * @param playerId The player UUID
+	 * @param player The player
 	 */
-	public static void deleteInvitesOfPlayer(long regionId, UUID playerId) {
-		for (RegionInvite invite : getInvitesOfPlayer(playerId)) {
+	public static void deleteInvitesOfPlayer(long regionId, OfflinePlayer player) {
+		for (RegionInvite invite : getInvitesOfPlayer(player)) {
 			if (invite.getRegionId() == regionId) {
 				deleteInvite(invite.getUniqueId());
 			}

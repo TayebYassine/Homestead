@@ -2,23 +2,24 @@ package tfagaming.projects.minecraft.homestead.api.events;
 
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.models.Region;
 
 
-public class RegionCreateEvent extends APIEvent {
+public class UnbanPlayerEvent extends APIEvent {
 	private final Region region;
-	private final OfflinePlayer player;
+	private final OfflinePlayer target;
 
-	public RegionCreateEvent(@NotNull Region region, @NotNull OfflinePlayer player) {
+	public UnbanPlayerEvent(@NotNull Region region, @NotNull OfflinePlayer target) {
 		this.region = region;
-		this.player = player;
+		this.target = target;
 	}
 
 	public @NotNull Region getRegion() {
 		return region;
 	}
 
-	public @NotNull OfflinePlayer getPlayer() {
-		return player;
+	public @NotNull OfflinePlayer getUnbannedPlayer() {
+		return target;
 	}
 }
