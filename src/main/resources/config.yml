@@ -158,11 +158,33 @@ discord:
   webhook_url: "YOUR DISCORD WEBHOOK URL"
 
   events:
-    region_create: true
-    region_delete: true
-    region_rename: true
-    region_description_update: true
-    region_private_chat: true
+    region_create:
+      enabled: true
+      message: "**[REGIONS]** Region created: {0}"
+    region_delete:
+      enabled: true
+      message: "**[REGIONS]** Region deleted: {0}"
+    region_rename:
+      enabled: true
+      message: "**[REGIONS]** Region name update: {0} -> {1}"
+    region_description_update:
+      enabled: true
+      message: "**[REGIONS]** Region description update: {0} -> {1}"
+    region_private_chat:
+      enabled: true
+      message: "**[CHAT]** Player {0} (`{1}`) -> {2}: *{3}*"
+    region_owner_transfer:
+      enabled: true
+      message: "**[REGIONS]** Region owner changed: {0} -> {1} (Region: {2})"
+    player_send_mail:
+      enabled: true
+      message: "**[MAILS]** Player {0} (`{1}`) -> {2}: *{3}*"
+    player_join_region:
+      enabled: true
+      message: "**[MEMBERS]** Player {0} (`{1}`) joined region: {2}"
+    player_left_region:
+      enabled: true
+      message: "**[MEMBERS]** Player {0} (`{1}`) left region: {2}"
 
 # ============================================================================
 # MISCELLANEOUS SETTINGS

@@ -2,6 +2,11 @@ package tfagaming.projects.minecraft.homestead.discord;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -16,11 +21,21 @@ public class DiscordWebhookClient {
 		this.webhookUrl = url;
 	}
 
-	public void sendContent(@NotNull String message) {
+	public void sendContent(@NotNull String message, Object... data) throws Exception {
+		for (int i = 0; i < data.length; i++) {
+			message = Formatter.applyPlaceholders(message, new Placeholder()
+					.add("{" + i + "}", data[i])
+			);
+		}
+
 		executePost("{\"content\": \"" + escapeJson(message) + "\"}");
 	}
 
-	public void sendEmbed(@Nullable String title, @NotNull String description, int color, String[][] fields) {
+	public void sendContent(@NotNull String message) throws Exception {
+		executePost("{\"content\": \"" + escapeJson(message) + "\"}");
+	}
+
+	public void sendEmbed(@Nullable String title, @NotNull String description, int color, String[][] fields) throws Exception {
 		StringBuilder embedBuilder = new StringBuilder();
 		embedBuilder.append("{");
 
@@ -55,24 +70,21 @@ public class DiscordWebhookClient {
 		executePost(payload);
 	}
 
-	private void executePost(String jsonPayload) {
-		try {
-			URL url = new URI(webhookUrl).toURL();
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	private void executePost(String jsonPayload) throws Exception {
+		URL url = new URI(webhookUrl).toURL();
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setDoOutput(true);
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setDoOutput(true);
 
-			try (OutputStream os = connection.getOutputStream()) {
-				byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
-				os.write(input, 0, input.length);
-			}
-
-			int responseCode = connection.getResponseCode();
-			connection.disconnect();
-		} catch (Exception ignored) {
+		try (OutputStream os = connection.getOutputStream()) {
+			byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
+			os.write(input, 0, input.length);
 		}
+
+		int responseCode = connection.getResponseCode();
+		connection.disconnect();
 	}
 
 	private String escapeJson(String input) {
@@ -83,5 +95,13 @@ public class DiscordWebhookClient {
 				.replace("\n", "\\n")
 				.replace("\r", "\\r")
 				.replace("\t", "\\t");
+	}
+
+	public boolean getEventEnabled(String eventName) {
+		return Resources.<ConfigFile>get(ResourceType.Config).getBoolean("discord.events." + eventName + ".enabled");
+	}
+
+	public String getEventMessage(String eventName) {
+		return Resources.<ConfigFile>get(ResourceType.Config).getString("discord.events." + eventName + ".message");
 	}
 }

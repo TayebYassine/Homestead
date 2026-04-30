@@ -6,12 +6,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import tfagaming.projects.minecraft.homestead.api.events.APIEvent;
+import tfagaming.projects.minecraft.homestead.api.events.*;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.commands.brigadier.BrigadierCommands;
 import tfagaming.projects.minecraft.homestead.commands.operator.ForceUnclaimCommand;
@@ -31,6 +33,7 @@ import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIcon;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -402,6 +405,85 @@ public class Homestead extends JavaPlugin {
 
 	public static void callEvent(APIEvent event) {
 		Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
+
+		callEventDiscordWebhook(event);
+	}
+
+	public static void callEventDiscordWebhook(APIEvent event) {
+		if (Homestead.DISCORD_WEBHOOK == null) return;
+
+		try {
+			switch (event) {
+				case RegionCreateEvent e -> {
+					if (DISCORD_WEBHOOK.getEventEnabled("region_create")) {
+						Region region = e.getRegion();
+
+						DISCORD_WEBHOOK.sendContent(DISCORD_WEBHOOK.getEventMessage("region_create"), region == null ? "?" : region.getName());
+					}
+				}
+				case RegionDeleteEvent e -> {
+					if (DISCORD_WEBHOOK.getEventEnabled("region_delete")) {
+						Region region = e.getRegion();
+
+						DISCORD_WEBHOOK.sendContent(DISCORD_WEBHOOK.getEventMessage("region_delete"), region == null ? "?" : region.getName());
+					}
+				}
+				case RegionNameUpdateEvent e -> {
+					if (DISCORD_WEBHOOK.getEventEnabled("region_rename")) {
+						DISCORD_WEBHOOK.sendContent(DISCORD_WEBHOOK.getEventMessage("region_rename"), e.getOldName(), e.getNewName());
+					}
+				}
+				case RegionDescriptionUpdateEvent e -> {
+					if (DISCORD_WEBHOOK.getEventEnabled("region_description_update")) {
+						DISCORD_WEBHOOK.sendContent(DISCORD_WEBHOOK.getEventMessage("region_description_update"), e.getOldDescription(), e.getNewDescription());
+					}
+				}
+				case RegionChatEvent e -> {
+					if (DISCORD_WEBHOOK.getEventEnabled("region_private_chat")) {
+						Region region = e.getRegion();
+						OfflinePlayer player = e.getPlayer();
+
+						DISCORD_WEBHOOK.sendContent(DISCORD_WEBHOOK.getEventMessage("region_private_chat"),  player.getName(), player.getUniqueId(), region == null ? "?" : region.getName(), e.getMessage());
+					}
+				}
+				case RegionOwnerUpdateEvent e -> {
+					if (DISCORD_WEBHOOK.getEventEnabled("region_owner_transfer")) {
+						Region region = e.getRegion();
+						OfflinePlayer oldOwner = e.getOldOwner();
+						OfflinePlayer newOwner = e.getNewOwner();
+
+						DISCORD_WEBHOOK.sendContent(DISCORD_WEBHOOK.getEventMessage("region_owner_transfer"), oldOwner == null ? "?" : oldOwner.getName(), newOwner == null ? "?" : newOwner.getName(), region == null ? "?" : region.getName());
+					}
+				}
+				case PlayerMailEvent e -> {
+					if (DISCORD_WEBHOOK.getEventEnabled("player_send_mail")) {
+						Region region = e.getRegion();
+						OfflinePlayer player = e.getPlayer();
+
+						DISCORD_WEBHOOK.sendContent(DISCORD_WEBHOOK.getEventMessage("player_send_mail"),  player.getName(), player.getUniqueId(), region == null ? "?" : region.getName(), e.getMessage());
+					}
+				}
+				case PlayerJoinRegionEvent e -> {
+					if (DISCORD_WEBHOOK.getEventEnabled("player_join_region")) {
+						Region region = e.getRegion();
+						OfflinePlayer player = e.getPlayer();
+
+						DISCORD_WEBHOOK.sendContent(DISCORD_WEBHOOK.getEventMessage("player_join_region"), player.getName(), player.getUniqueId(), region == null ? "?" : region.getName());
+					}
+				}
+				case PlayerLeftRegionEvent e -> {
+					if (DISCORD_WEBHOOK.getEventEnabled("player_left_region")) {
+						Region region = e.getRegion();
+						OfflinePlayer player = e.getPlayer();
+
+						DISCORD_WEBHOOK.sendContent(DISCORD_WEBHOOK.getEventMessage("player_left_region"), player.getName(), player.getUniqueId(), region == null ? "?" : region.getName());
+					}
+				}
+				default -> throw new IllegalStateException("Unexpected value: " + event);
+			}
+		} catch (Exception e) {
+			Logger.error(e);
+		}
 	}
 
 	/**
