@@ -97,7 +97,7 @@ public final class DynamicMaps {
 		Logger.debug("Updated dynamic map plugin markers.");
 	}
 
-	private static boolean isDynmapInstalled() {
+	public static boolean isDynmapInstalled() {
 		try {
 			Class.forName("org.dynmap.markers.MarkerSet");
 
@@ -107,7 +107,7 @@ public final class DynamicMaps {
 		}
 	}
 
-	private static boolean isPl3xMapInstalled() {
+	public static boolean isPl3xMapInstalled() {
 		try {
 			Class.forName("net.pl3x.map.core.Pl3xMap");
 
@@ -117,7 +117,7 @@ public final class DynamicMaps {
 		}
 	}
 
-	private static boolean isSquaremapInstalled() {
+	public static boolean isSquaremapInstalled() {
 		try {
 			Class.forName("xyz.jpenilla.squaremap.api.Point");
 
@@ -127,7 +127,7 @@ public final class DynamicMaps {
 		}
 	}
 
-	private static boolean isBlueMapInstalled() {
+	public static boolean isBlueMapInstalled() {
 		try {
 			Class.forName("de.bluecolored.bluemap.api.BlueMapAPI");
 

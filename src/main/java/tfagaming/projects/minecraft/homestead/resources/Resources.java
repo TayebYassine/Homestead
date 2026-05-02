@@ -45,13 +45,13 @@ public final class Resources {
 		File configFile = new File(plugin.getDataFolder(), RESOURCE_CONFIG);
 
 		if (!configFile.exists()) {
-			throw new FileNotFoundException("config.yml is missing. Cannot start without it.");
+			throw new FileNotFoundException("[Resources] config.yml is missing. Cannot start without it.");
 		}
 
 		validateAndFix(plugin, RESOURCE_CONFIG, configFile, Collections.emptySet());
 
 		REGISTRY.put(ResourceType.Config, new ConfigFile(configFile));
-		Logger.info("config.yml loaded.");
+		Logger.info("[Resources] config.yml loaded.");
 
 		ConfigFile config = get(ResourceType.Config);
 
@@ -64,7 +64,7 @@ public final class Resources {
 		validateAndFixDirectory(plugin, langDir, RESOURCE_LANGUAGE_CODES, Collections.emptySet());
 
 		REGISTRY.put(ResourceType.Language, new LanguageFile(langFile));
-		Logger.info("Language file '" + langFile.getName() + "' loaded.");
+		Logger.info("[Resources] Language file '" + langFile.getName() + "' loaded.");
 
 		File menusDir = new File(plugin.getDataFolder(), RESOURCE_MENUS_DIR);
 		ensureDirectoryWithDefault(plugin, menusDir, RESOURCE_LANGUAGE_CODES);
@@ -75,7 +75,7 @@ public final class Resources {
 		validateAndFixDirectory(plugin, menusDir, RESOURCE_LANGUAGE_CODES, Collections.emptySet());
 
 		REGISTRY.put(ResourceType.Menus, new MenusFile(menusFile));
-		Logger.info("Menus file '" + menusFile.getName() + "' loaded.");
+		Logger.info("[Resources] Menus file '" + menusFile.getName() + "' loaded.");
 
 		loadStandaloneResource(plugin, RESOURCE_FLAGS, ResourceType.Flags, FlagsFile::new, Collections.emptySet());
 		loadStandaloneResource(plugin, RESOURCE_LEVELS, ResourceType.Levels, LevelsFile::new, Collections.emptySet());
@@ -97,7 +97,7 @@ public final class Resources {
 				Resources.load(plugin);
 			}
 		} catch (IOException e) {
-			Logger.error("[Migrator] Something went terribly wrong, unable to migrate from old 'config.yml' to the new resource files!");
+			Logger.error("[Resources - Migrator] Something went terribly wrong, unable to migrate from old 'config.yml' to the new resource files!");
 			Logger.error(e);
 		}
 
@@ -116,14 +116,14 @@ public final class Resources {
 		validateAndFix(plugin, resourceName, file, filteredSubtrees);
 
 		REGISTRY.put(type, factory.create(file));
-		Logger.info(resourceName + " loaded.");
+		Logger.info("[Resources] " + resourceName + " loaded.");
 	}
 
 	private static File resolveLocaleFile(File dir, String setting, String fallbackName) {
 		String name = setting.endsWith(".yml") ? setting : setting + ".yml";
 		File file = new File(dir, name);
 		if (!file.exists()) {
-			Logger.warning("Locale file '" + name + "' not found – falling back to " + fallbackName);
+			Logger.warning("[Resources] Locale file '" + name + "' not found – falling back to " + fallbackName);
 			file = new File(dir, fallbackName);
 		}
 		return file;
@@ -150,7 +150,7 @@ public final class Resources {
 
 		InputStream stream = plugin.getResource(resourceName);
 		if (stream == null) {
-			Logger.warning("Bundled resource '" + resourceName + "' not found in JAR.");
+			Logger.warning("[Resources] Bundled resource '" + resourceName + "' not found in JAR.");
 			return;
 		}
 		FileUtils.copyInputStreamToFile(stream, file);
@@ -165,9 +165,9 @@ public final class Resources {
 		ResourceValidator validator = new ResourceValidator(referenceResource, targetFile, filteredSubtrees);
 
 		if (!validator.validate()) {
-			Logger.warning("'" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
+			Logger.warning("[Resources] '" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
 			validator.fix();
-			Logger.info("'" + targetFile.getName() + "' has been repaired.");
+			Logger.info("[Resources] '" + targetFile.getName() + "' has been repaired.");
 		}
 	}
 
@@ -190,9 +190,9 @@ public final class Resources {
 			ResourceValidator validator = new ResourceValidator(resourcePath, targetFile, filteredSubtrees);
 
 			if (!validator.validate()) {
-				Logger.warning("'" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
+				Logger.warning("[Resources] '" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
 				validator.fix();
-				Logger.info("'" + targetFile.getName() + "' has been repaired.");
+				Logger.info("[Resources] '" + targetFile.getName() + "' has been repaired.");
 			}
 		}
 	}
