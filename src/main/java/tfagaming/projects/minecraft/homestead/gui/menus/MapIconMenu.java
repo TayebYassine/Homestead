@@ -69,8 +69,6 @@ public final class MapIconMenu {
             return;
         }
 
-        final String oldIcon = region.getMapIcon();
-
         Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
 
         String icon = icons.get(context.getIndex());
@@ -78,9 +76,8 @@ public final class MapIconMenu {
 
         PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-        Messages.send(player, 20, new Placeholder()
-                .add("{oldicon}", oldIcon == null ? "None" : oldIcon)
-                .add("{newicon}", icon)
+        Messages.send(player, 100, new Placeholder()
+                .add("{region}", region.getName())
         );
 
         Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
