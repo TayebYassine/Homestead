@@ -56,6 +56,9 @@ public final class SquaremapAPI extends AbstractMapIntegration {
 		if (region.getOwner() == null) return;
 
 		World world = chunk.getWorld();
+
+		if (world == null) return;
+
 		SimpleLayerProvider layer = getOrCreateLayer(world);
 		if (layer == null) return;
 
@@ -71,6 +74,8 @@ public final class SquaremapAPI extends AbstractMapIntegration {
 	}
 
 	private SimpleLayerProvider getOrCreateLayer(World world) {
+		if (world == null) return null;
+
 		SimpleLayerProvider layer = layers.get(world);
 		if (layer != null) return layer;
 

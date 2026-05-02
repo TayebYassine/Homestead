@@ -59,6 +59,7 @@ public final class Pl3xMapAPI extends AbstractMapIntegration {
 		if (region.getOwner() == null) return;
 
 		World world = chunk.getWorld();
+		if (world == null) return;
 		SimpleLayer layer = getOrCreateLayer(world);
 		if (layer == null) return;
 
@@ -74,6 +75,8 @@ public final class Pl3xMapAPI extends AbstractMapIntegration {
 	}
 
 	private SimpleLayer getOrCreateLayer(World world) {
+		if (world == null) return null;
+
 		SimpleLayer layer = layers.get(world);
 		if (layer != null) return layer;
 

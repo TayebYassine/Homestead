@@ -27,7 +27,6 @@ import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
 import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
 import tfagaming.projects.minecraft.homestead.integrations.*;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapIcon;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.*;
@@ -43,6 +42,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.IntegrationUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapIcon;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 
 import java.io.File;
@@ -297,7 +297,7 @@ public class Homestead extends JavaPlugin {
 		}, 10, cacheInterval);
 
 		// Download icons
-		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
+		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled") && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
 			if (DynamicMaps.isPl3xMapInstalled() || DynamicMaps.isSquaremapInstalled()) {
 				runAsyncTask(() -> {
 					MapIcon.downloadAllIcons();
@@ -309,9 +309,11 @@ public class Homestead extends JavaPlugin {
 		}
 
 		// Triggers
-		runAsyncTimerTask(() -> {
-			DynamicMaps.trigger(this);
-		}, Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.update-interval"));
+		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
+			runAsyncTimerTask(() -> {
+				DynamicMaps.trigger(this);
+			}, Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.update-interval"));
+		}
 
 		if (Homestead.VAULT.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("taxes.enabled")) {
 			runAsyncTimerTask(() -> {

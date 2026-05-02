@@ -32,6 +32,7 @@ titles:
   '27': Játékos Információ
   '28': Storage - &2{region}
   '29': Map Color - &2{region}
+  '30': "Map Icon - &2{region}"
 
 # Menu buttons
 # Each button has its own unique index, which you cannot change or add/remove buttons.

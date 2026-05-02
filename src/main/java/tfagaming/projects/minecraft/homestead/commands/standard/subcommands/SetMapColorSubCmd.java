@@ -6,6 +6,9 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.gui.menus.MapColorMenu;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -38,14 +41,20 @@ public class SetMapColorSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (args.length < 1) {
-			new MapColorMenu(player, region);
+		if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
+			Messages.send(player, 105);
 
 			return true;
 		}
 
 		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
 			Cooldown.sendCooldownMessage(player);
+			return true;
+		}
+
+		if (args.length < 1) {
+			new MapColorMenu(player, region);
+
 			return true;
 		}
 

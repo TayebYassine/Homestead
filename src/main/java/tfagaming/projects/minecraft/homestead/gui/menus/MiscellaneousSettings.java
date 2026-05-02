@@ -12,6 +12,9 @@ import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
@@ -238,8 +241,20 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
+			if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
+				Messages.send(player, 105);
+				return;
+			}
+
 			if (event.isRightClick()) {
 				new MapColorMenu(player, region);
+			} else if (event.isLeftClick()) {
+				if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
+					Messages.send(player, 105);
+					return;
+				}
+
+				new MapIconMenu(player, region);
 			}
 		};
 	}

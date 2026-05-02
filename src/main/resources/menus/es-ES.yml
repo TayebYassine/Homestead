@@ -32,6 +32,7 @@ titles:
   27: "Información del Jugador"
   28: "Almacenamiento - &2{region}"
   29: "Map Color - &2{region}"
+  30: "Map Icon - &2{region}"
 
 # Botones de menú
 # Cada botón tiene su propio índice único, que no puedes cambiar ni agregar/eliminar botones.

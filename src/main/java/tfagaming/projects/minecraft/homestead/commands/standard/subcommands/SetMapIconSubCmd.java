@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapIcon;
+import tfagaming.projects.minecraft.homestead.gui.menus.MapIconMenu;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -12,6 +12,7 @@ import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapIcon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,22 +41,19 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		if (!(Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled") && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled"))) {
+			Messages.send(player, 105);
+
+			return true;
+		}
+
 		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
 			Cooldown.sendCooldownMessage(player);
 			return true;
 		}
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
-			return true;
-		}
-
-		boolean isEnabled = Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled");
-
-		if (!isEnabled) {
-			Messages.send(player, 105);
+			new MapIconMenu(player, region);
 
 			return true;
 		}
