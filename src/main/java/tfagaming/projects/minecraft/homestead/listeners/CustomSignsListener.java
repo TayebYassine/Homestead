@@ -39,27 +39,13 @@ public final class CustomSignsListener implements Listener {
 	private static final long MAX_RENT_DURATION_MS = 6048000000L; // 10 weeks
 	private static final long MS_PER_WEEK = 7L * 24 * 60 * 60 * 1000;
 
-	private static final int MSG_FEATURE_DISABLED = 105;
-	private static final int MSG_INVALID_FORMAT = 120;
-	private static final int MSG_EXTRA_LINES = 121;
-	private static final int MSG_INVALID_PRICE = 122;
-	private static final int MSG_TRANSFER_SUCCESS = 124;
-	private static final int MSG_INSUFFICIENT_FUNDS = 125;
-	private static final int MSG_RENT_SUCCESS = 126;
-	private static final int MSG_REGION_NOT_FOUND = 9;
-	private static final int MSG_NOT_OWNER_OR_BANNED = 30;
-	private static final int MSG_INVALID_DURATION = 129;
-	private static final int MSG_WELCOME_SET = 123;
-	private static final int MSG_NOT_CLAIMED_OR_OWNER = 119;
-	private static final int MSG_WAR_ACTIVE = 156;
-	private static final int MSG_SUBAREA_RENTED = 194;
 	private final SignFormatter welcomeFormatter = (event, player, region) -> {
 		if (!isWelcomeSignsEnabled()) {
-			Messages.send(player, MSG_FEATURE_DISABLED);
+			Messages.send(player, 105);
 			return true;
 		}
 		if (hasContentInLines(event, 2, 3)) {
-			Messages.send(player, MSG_EXTRA_LINES);
+			Messages.send(player, 121);
 			return true;
 		}
 		formatSignLines(event,
@@ -72,7 +58,7 @@ public final class CustomSignsListener implements Listener {
 	};
 	private final SignFormatter rentFormatter = (event, player, region) -> {
 		if (!isFeatureEnabled("renting.enabled")) {
-			Messages.send(player, MSG_FEATURE_DISABLED);
+			Messages.send(player, 105);
 			return true;
 		}
 
@@ -81,7 +67,7 @@ public final class CustomSignsListener implements Listener {
 
 		long duration = parseDuration(getEventLine(event, 3));
 		if (duration <= 0 || duration > MAX_RENT_DURATION_MS) {
-			Messages.send(player, MSG_INVALID_DURATION);
+			Messages.send(player, 129);
 			return true;
 		}
 
@@ -95,7 +81,7 @@ public final class CustomSignsListener implements Listener {
 	};
 	private final SignFormatter sellFormatter = (event, player, region) -> {
 		if (!isFeatureEnabled("selling.enabled")) {
-			Messages.send(player, MSG_FEATURE_DISABLED);
+			Messages.send(player, 105);
 			return true;
 		}
 
@@ -103,7 +89,7 @@ public final class CustomSignsListener implements Listener {
 		if (price == null) return true;
 
 		if (hasContentInLines(event, 3)) {
-			Messages.send(player, MSG_EXTRA_LINES);
+			Messages.send(player, 121);
 			return true;
 		}
 
@@ -191,7 +177,7 @@ public final class CustomSignsListener implements Listener {
 		Player player = event.getPlayer();
 
 		switch (type) {
-			case WELCOME -> Messages.send(player, MSG_WELCOME_SET);
+			case WELCOME -> Messages.send(player, 123);
 			case RENT -> handleRentInteraction(player, sign, clickedBlock);
 			case SELL -> handleSellInteraction(player, sign, clickedBlock);
 		}
@@ -224,7 +210,7 @@ public final class CustomSignsListener implements Listener {
 			if (!canRent(player, region)) return;
 
 			if (price > PlayerBank.get(player)) {
-				Messages.send(player, MSG_INSUFFICIENT_FUNDS);
+				Messages.send(player, 125);
 				return;
 			}
 
@@ -236,7 +222,7 @@ public final class CustomSignsListener implements Listener {
 			signBlock.breakNaturally();
 
 		} catch (NumberFormatException e) {
-			Messages.send(player, MSG_INVALID_FORMAT);
+			Messages.send(player, 120);
 		}
 	}
 
@@ -254,14 +240,14 @@ public final class CustomSignsListener implements Listener {
 			if (!canPurchase(player, region)) return;
 
 			if (price > PlayerBank.get(player)) {
-				Messages.send(player, MSG_INSUFFICIENT_FUNDS);
+				Messages.send(player, 125);
 				return;
 			}
 
 			executePurchase(player, region, price, signBlock);
 
 		} catch (NumberFormatException e) {
-			Messages.send(player, MSG_INVALID_FORMAT);
+			Messages.send(player, 120);
 		}
 	}
 
@@ -277,10 +263,10 @@ public final class CustomSignsListener implements Listener {
 		if (subArea != null) {
 			subArea.setRent(rent);
 			placeholder.add("{subarea}", subArea.getName());
-			Messages.send(player, MSG_SUBAREA_RENTED, placeholder);
+			Messages.send(player, 194, placeholder);
 		} else {
 			region.setRent(rent);
-			Messages.send(player, MSG_RENT_SUCCESS, placeholder);
+			Messages.send(player, 126, placeholder);
 		}
 	}
 
@@ -299,7 +285,7 @@ public final class CustomSignsListener implements Listener {
 		MemberManager.removeMemberFromRegion(region.getOwner(), region);
 		InviteManager.deleteInvitesOfPlayer(region, player);
 
-		Messages.send(player, MSG_TRANSFER_SUCCESS, new Placeholder()
+		Messages.send(player, 124, new Placeholder()
 				.add("{region}", region.getName())
 				.add("{price}", Formatter.getBalance(price))
 		);
@@ -310,7 +296,7 @@ public final class CustomSignsListener implements Listener {
 	private Region validateOwnerRegion(Player player, Chunk chunk) {
 		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 		if (region == null || !region.isOwner(player)) {
-			Messages.send(player, MSG_NOT_CLAIMED_OR_OWNER);
+			Messages.send(player, 119);
 			return null;
 		}
 		return region;
@@ -318,11 +304,15 @@ public final class CustomSignsListener implements Listener {
 
 	private boolean canRent(Player player, Region region) {
 		if (region == null) {
-			Messages.send(player, MSG_REGION_NOT_FOUND);
+			Messages.send(player, 9);
 			return false;
 		}
-		if (region.isOwner(player) || BanManager.isBanned(region, player) || region.getRent() != null) {
-			Messages.send(player, MSG_NOT_OWNER_OR_BANNED);
+		if (WarManager.isRegionInWar(region.getUniqueId())) {
+			Messages.send(player, 156);
+			return false;
+		}
+		if (region.isOwner(player) || MemberManager.isMemberOfRegion(region, player) || BanManager.isBanned(region, player) || region.getRent() != null) {
+			Messages.send(player, 30);
 			return false;
 		}
 		return true;
@@ -330,15 +320,20 @@ public final class CustomSignsListener implements Listener {
 
 	private boolean canPurchase(Player player, Region region) {
 		if (region == null) {
-			Messages.send(player, MSG_REGION_NOT_FOUND);
+			Messages.send(player, 9);
 			return false;
 		}
 		if (WarManager.isRegionInWar(region.getUniqueId())) {
-			Messages.send(player, MSG_WAR_ACTIVE);
+			Messages.send(player, 156);
 			return false;
 		}
-		if (region.isOwner(player) || BanManager.isBanned(region, player)) {
-			Messages.send(player, MSG_NOT_OWNER_OR_BANNED);
+		if (region.isOwner(player) || MemberManager.isMemberOfRegion(region, player) || BanManager.isBanned(region, player)) {
+			Messages.send(player, 30);
+			return false;
+		}
+		SeRent rent = region.getRent();
+		if (rent != null && rent.getRenterId().equals(player.getUniqueId())) {
+			Messages.send(player, 30);
 			return false;
 		}
 		return true;
@@ -348,7 +343,7 @@ public final class CustomSignsListener implements Listener {
 										  String minPath, String maxPath) {
 		String priceStr = getEventLine(event, 2).trim();
 		if (!NumberUtils.isValidDouble(priceStr)) {
-			Messages.send(player, MSG_INVALID_PRICE);
+			Messages.send(player, 122);
 			return null;
 		}
 
@@ -357,7 +352,7 @@ public final class CustomSignsListener implements Listener {
 		double max = getRegionsConfig().getDouble(maxPath);
 
 		if (price < min || price > max) {
-			Messages.send(player, MSG_INVALID_PRICE);
+			Messages.send(player, 122);
 			return null;
 		}
 		return new PriceValidation(price);

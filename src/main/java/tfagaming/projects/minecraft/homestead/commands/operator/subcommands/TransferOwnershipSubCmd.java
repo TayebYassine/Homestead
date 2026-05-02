@@ -16,6 +16,10 @@ import java.util.List;
 public class TransferOwnershipSubCmd extends SubCommandBuilder {
 	public TransferOwnershipSubCmd() {
 		super("transfer");
+		setPermission(List.of(
+				"homestead.commands.homesteadadmin",
+				"homestead.commands.homesteadadmin." + getName()
+		));
 		setUsage("/hsadmin transfer [region] [new-owner]");
 		setPlayerOnly();
 	}

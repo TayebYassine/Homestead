@@ -7,9 +7,15 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
+import java.util.List;
+
 public class ReloadSubCmd extends SubCommandBuilder {
 	public ReloadSubCmd() {
 		super("reload");
+		setPermission(List.of(
+				"homestead.commands.homesteadadmin",
+				"homestead.commands.homesteadadmin." + getName()
+		));
 		setUsage("/hsadmin reload");
 		setConsoleOnly();
 	}

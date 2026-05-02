@@ -22,6 +22,10 @@ import java.util.List;
 public class FlagsOverrideSubCmd extends SubCommandBuilder {
 	public FlagsOverrideSubCmd() {
 		super("flagsoverride");
+		setPermission(List.of(
+				"homestead.commands.homesteadadmin",
+				"homestead.commands.homesteadadmin." + getName()
+		));
 		setUsage("/hsadmin flagsoverride [global/world/member] {member} [flag] (allow/deny)");
 		setPlayerOnly();
 	}

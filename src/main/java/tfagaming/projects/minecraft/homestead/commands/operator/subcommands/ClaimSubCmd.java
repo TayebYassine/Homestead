@@ -18,6 +18,10 @@ import java.util.List;
 public class ClaimSubCmd extends SubCommandBuilder {
 	public ClaimSubCmd() {
 		super("claim");
+		setPermission(List.of(
+				"homestead.commands.homesteadadmin",
+				"homestead.commands.homesteadadmin." + getName()
+		));
 		setUsage("/hsadmin claim [region] [location] [radius]");
 		setPlayerOnly();
 	}

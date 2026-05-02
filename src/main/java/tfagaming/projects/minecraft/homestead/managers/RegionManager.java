@@ -47,7 +47,7 @@ public final class RegionManager {
 
 		Region region = new Region(newName, player);
 		region.setDisplayName(newName);
-		region.setDescription(Resources.<LanguageFile>get(ResourceType.Language).getString("default.region-description").replace("{owner}", region.getOwnerName()));
+		region.setDescription(Resources.<LanguageFile>get(ResourceType.Language).getString("default.region-description"));
 		region.setPlayerFlags(Resources.<FlagsFile>get(ResourceType.Flags).getDefaultPlayerFlags());
 		region.setWorldFlags(Resources.<FlagsFile>get(ResourceType.Flags).getDefaultWorldFlags());
 

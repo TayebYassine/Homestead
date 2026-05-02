@@ -11,9 +11,15 @@ import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
+import java.util.List;
+
 public class PluginSubCmd extends SubCommandBuilder {
 	public PluginSubCmd() {
 		super("plugin");
+		setPermission(List.of(
+				"homestead.commands.homesteadadmin",
+				"homestead.commands.homesteadadmin." + getName()
+		));
 		setUsage("/hsadmin plugin");
 		setConsoleOnly();
 	}

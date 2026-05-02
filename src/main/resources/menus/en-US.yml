@@ -374,6 +374,7 @@ buttons:
       - ""
       - "&7Custom variables:"
       - "&7• &a%player%&7: The player that entered the region"
+      - "&7• &a%owner%&7: The owner of the region"
       - ""
       - "&7Example variable usage: &aWelcome, %player%!"
       - "&#81C784&n➥ Left-click to set the description."

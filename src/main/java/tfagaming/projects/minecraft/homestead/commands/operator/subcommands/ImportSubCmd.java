@@ -31,6 +31,10 @@ import java.util.*;
 public class ImportSubCmd extends SubCommandBuilder {
 	public ImportSubCmd() {
 		super("import");
+		setPermission(List.of(
+				"homestead.commands.homesteadadmin",
+				"homestead.commands.homesteadadmin." + getName()
+		));
 		setUsage("/hsadmin import [plugin]");
 		setConsoleOnly();
 	}

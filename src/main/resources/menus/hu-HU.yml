@@ -366,6 +366,7 @@ buttons:
     - ''
     - '&7Egyedi változók:'
     - '&7• &a%player%&7: A régióba belépő játékos neve'
+    - '&7• &a%owner%&7: A régió tulajdonosa'
     - ''
     - '&7Példa: &aÜdv, %player%!'
     - '&#81C784&n➥ Bal-Klikk a leírás szerkesztéséhez.'

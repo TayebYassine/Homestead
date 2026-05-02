@@ -18,6 +18,10 @@ import java.util.List;
 public class UnclaimSubCmd extends SubCommandBuilder {
 	public UnclaimSubCmd() {
 		super("unclaim");
+		setPermission(List.of(
+				"homestead.commands.homesteadadmin",
+				"homestead.commands.homesteadadmin." + getName()
+		));
 		setUsage("/hsadmin unclaim [region] [location] [radius]");
 		setPlayerOnly();
 	}

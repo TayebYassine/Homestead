@@ -18,6 +18,10 @@ import java.util.List;
 public class ExportSubCmd extends SubCommandBuilder {
 	public ExportSubCmd() {
 		super("export");
+		setPermission(List.of(
+				"homestead.commands.homesteadadmin",
+				"homestead.commands.homesteadadmin." + getName()
+		));
 		setUsage("/hsadmin export [provider]");
 		setConsoleOnly();
 	}

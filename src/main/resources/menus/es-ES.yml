@@ -374,6 +374,7 @@ buttons:
       - ""
       - "&7Variables personalizadas:"
       - "&7• &a%player%&7: El jugador que entró a la región"
+      - "&7• &a%owner%&7: El propietario de la región"
       - ""
       - "&7Ejemplo de uso de variable: &a¡Bienvenido, %player%!"
       - "&#81C784&n➥ Clic-izquierdo para establecer la descripción."

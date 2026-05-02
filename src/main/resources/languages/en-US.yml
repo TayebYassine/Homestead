@@ -6,7 +6,7 @@
 # Legacy color formats and MiniMessage formats are supported for PaperMC and its forks (Folia, Purpur...).
 
 default:
-  region-description: "Owned by {owner}"
+  region-description: "Owned by %owner%"
   war-description: "No description provided"
   reason: "No reason provided"
   none: "&cNone"
