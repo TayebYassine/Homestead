@@ -151,8 +151,6 @@ public final class ChunkManager {
 			return Error.CHUNK_WOULD_SPLIT_REGION;
 		}
 
-		deleteChunk(chunk);
-
 		PersistentChunkTicket.removePersistent(Homestead.getInstance(), chunk);
 
 		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(regionId)) {
@@ -175,6 +173,8 @@ public final class ChunkManager {
 		if (location != null && ChunkUtility.areEqual(location.getChunk(), chunk)) {
 			region.resetLocation();
 		}
+
+		deleteChunk(chunk);
 
 		return null;
 	}
@@ -633,6 +633,8 @@ public final class ChunkManager {
 	 * @return The RegionChunk, or {@code null}.
 	 */
 	public static RegionChunk findChunk(Chunk chunk) {
+		if (chunk == null) return null;
+
 		return findChunk(chunk.getWorld().getUID(), chunk.getX(), chunk.getZ());
 	}
 

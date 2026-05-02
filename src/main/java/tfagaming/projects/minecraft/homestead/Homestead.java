@@ -33,6 +33,7 @@ import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.snowflake.SnowflakeGenerator;
@@ -219,7 +220,9 @@ public class Homestead extends JavaPlugin {
 			Logger.info("Loaded service provider: Permissions [" + Homestead.VAULT.getPermissions().getPermissionsName() + "]");
 		}
 
-		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("clean-startup")) {
+		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("clean-startup")) {
+			Logger.warning("Cleaning up corrupted data...");
+
 			int regions = RegionManager.cleanupInvalidRegions();
 			int subareas = SubAreaManager.cleanupInvalidSubAreas();
 			int wars = WarManager.cleanupInvalidWars();
@@ -233,6 +236,8 @@ public class Homestead extends JavaPlugin {
 			int rates = RateManager.cleanupInvalidRatings();
 
 			ChunkManager.cleanupOrphanedForceLoadedChunks();
+
+			Logger.info("Done cleaning up corrupted data. Table of changes:");
 
 			String[] headers = {"Model", "Fixed/Removed"};
 

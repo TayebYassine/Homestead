@@ -203,6 +203,11 @@ public class PaginationMenu implements Listener {
 		Inventory topInventory = event.getView().getTopInventory();
 		if (topInventory.getSize() != size) return;
 
+		if (!InventoryManager.recordAndCheckClick(player)) {
+			event.setCancelled(true);
+			return;
+		}
+
 		if (InventoryManager.isOnCooldown(player)) {
 			event.setCancelled(true);
 			return;

@@ -15,6 +15,8 @@ public final class PersistentChunkTicket {
 	}
 
 	public static void addPersistent(Homestead plugin, Chunk chunk) {
+		if (chunk == null) return;
+
 		World world = chunk.getWorld();
 
 		if (world == null) {
@@ -29,6 +31,8 @@ public final class PersistentChunkTicket {
 	}
 
 	public static void removePersistent(Homestead plugin, Chunk chunk) {
+		if (chunk == null) return;
+
 		World world = chunk.getWorld();
 
 		if (world == null) {

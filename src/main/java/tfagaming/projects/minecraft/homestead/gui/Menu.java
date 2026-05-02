@@ -108,6 +108,11 @@ public class Menu implements Listener {
 		if (InventoryManager.getMenu(player) != this) return;
 		if (!event.getInventory().equals(this.inventory)) return;
 
+		if (!InventoryManager.recordAndCheckClick(player)) {
+			event.setCancelled(true);
+			return;
+		}
+
 		if (InventoryManager.isOnCooldown(player)) {
 			event.setCancelled(true);
 			return;

@@ -207,12 +207,10 @@ formatters:
   chunk: "&6{world} &7(X: &6{x} &7Z: &6{z}&7)"
 
   player-regions: "&7• &2{region}"
-  player-regions-joining: "
-"
+  player-regions-joining: "\n"
 
   region-members: "&7• &3{playername}"
-  region-members-joining: "
-"
+  region-members-joining: "\n"
 
   gui-pagination-title: "&r{title} &r| &3{current-page}&r/&c{total-pages}"
 
