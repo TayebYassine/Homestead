@@ -6,6 +6,10 @@ import tfagaming.projects.minecraft.homestead.integrations.bstats.Metrics;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -98,6 +102,12 @@ public final class bStats {
 					return WarManager.getAll().size();
 				}
 			}));
+
+			// Region Storage
+			metrics.addCustomChart(new Metrics.SimplePie("region_storage", () -> Resources.<RegionsFile>get(ResourceType.Regions).isRegionStorageEnabled() ? "Enabled" : "Disabled"));
+
+			// Discord Webhook
+			metrics.addCustomChart(new Metrics.SimplePie("discord_webhook", () -> Resources.<ConfigFile>get(ResourceType.Config).getBoolean("discord.enabled") ? "Enabled" : "Disabled"));
 
 		} catch (NoClassDefFoundError | IllegalStateException e) {
 			Logger.error("Unable to communicate with bStats servers.");
