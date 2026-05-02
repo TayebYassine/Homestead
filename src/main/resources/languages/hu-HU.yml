@@ -262,6 +262,10 @@ prefix: "&8[&6Homestead&8]&r"
 "214": "&eA háború véget ért. &2{region}&e tagjai nyertek!"
 "215": "{__prefix__} &7Alterület átméretezve!"
 "216": "{__prefix__} &7További részletekért tekintse meg a szerver konzolját."
+"217": "{__prefix__} &cÉrvénytelen idő megadva."
+"218": "{__prefix__} &7A régió ideje beállítva: &b{time-name}&7."
+"219": "{__prefix__} &cÉrvénytelen időjárás megadva."
+"220": "{__prefix__} &7A régió időjárása beállítva: &b{weather-name}&7."
 
 logs:
   0: "A régió neve frissítve: '{0}'."

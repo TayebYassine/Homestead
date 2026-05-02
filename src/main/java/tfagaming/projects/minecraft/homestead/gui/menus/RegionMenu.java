@@ -22,8 +22,8 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
-import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
-import tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType;
+import tfagaming.projects.minecraft.homestead.weatherandtime.RegionTime;
+import tfagaming.projects.minecraft.homestead.weatherandtime.RegionWeather;
 
 import java.util.function.BiConsumer;
 
@@ -55,8 +55,8 @@ public final class RegionMenu {
 				.add("{region-rank-rating}", RegionManager.getRank(RegionSorting.RATING, region.getUniqueId()))
 				.add("{region-logs}", LogManager.getLogs(region).size())
 				.add("{region-logs-unread}", LogManager.getLogs(region).stream().filter(log -> !log.isRead()).count())
-				.add("{region-weather}", WeatherType.from(region.getWeather()))
-				.add("{region-time}", TimeType.from(region.getTime()))
+				.add("{region-weather}", RegionWeather.from(region.getWeather()))
+				.add("{region-time}", RegionTime.from(region.getTime()))
 				.add("{subareas-enabled}", Formatter.getToggle(isSubAreasEnabled))
 				.add("{region-subareas}", SubAreaManager.getSubAreasOfRegion(region.getUniqueId()).size())
 				.add("{region-subareas-max}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))
@@ -190,7 +190,7 @@ public final class RegionMenu {
 					return;
 				}
 
-				region.setWeather(WeatherType.next(region.getWeather()));
+				region.setWeather(RegionWeather.next(region.getWeather()));
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER);
 			} else if (event.isRightClick()) {
@@ -199,7 +199,7 @@ public final class RegionMenu {
 					return;
 				}
 
-				region.setTime(TimeType.next(region.getTime()));
+				region.setTime(RegionTime.next(region.getTime()));
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME);
 			}

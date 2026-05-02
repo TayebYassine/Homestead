@@ -262,6 +262,10 @@ prefix: "&8[&6Homestead&8]&r"
 214: "&eLa guerra ha terminado, ¡y los miembros de &2{region}&e son los ganadores!"
 215: "{__prefix__} &7¡Se ha redimensionado la sub-área!"
 216: "{__prefix__} &7Consulta la consola del servidor para obtener más detalles."
+217: "{__prefix__} &cHora proporcionada no válida."
+218: "{__prefix__} &7Hora de la región establecida en &b{time-name}&7."
+219: "{__prefix__} &cClima proporcionado no válido."
+220: "{__prefix__} &7Clima de la región establecido en &b{weather-name}&7."
 
 logs:
   0: "Nombre de la región actualizado a '{0}'."

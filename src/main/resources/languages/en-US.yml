@@ -262,6 +262,10 @@ prefix: "&8[&6Homestead&8]&r"
 214: "&eThe war has ended, and &2{region}&e's members are the winners!"
 215: "{__prefix__} &7Resized the sub-area!"
 216: "{__prefix__} &7Check the server console for more details."
+217: "{__prefix__} &cInvalid time provided."
+218: "{__prefix__} &7Region time set to &b{time-name}&7."
+219: "{__prefix__} &cInvalid weather provided."
+220: "{__prefix__} &7Region weather set to &b{weather-name}&7."
 
 logs:
   0: "Updated region name to '{0}'."

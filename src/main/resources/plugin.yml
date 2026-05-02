@@ -185,6 +185,10 @@ permissions:
     default: true
   homestead.commands.region.set:
     default: true
+  homestead.commands.region.settime:
+    default: true
+  homestead.commands.region.setweather:
+    default: true
   homestead.commands.region.subareas:
     default: true
   homestead.commands.region.storage:
@@ -235,6 +239,8 @@ permissions:
       homestead.commands.region.rename: true
       homestead.commands.region.rewards: true
       homestead.commands.region.set: true
+      homestead.commands.region.settime: true
+      homestead.commands.region.setweather: true
       homestead.commands.region.subareas: true
       homestead.commands.region.storage: true
       homestead.commands.region.top: true

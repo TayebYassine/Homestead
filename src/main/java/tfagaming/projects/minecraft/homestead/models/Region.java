@@ -9,8 +9,8 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
-import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
-import tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType;
+import tfagaming.projects.minecraft.homestead.weatherandtime.RegionTime;
+import tfagaming.projects.minecraft.homestead.weatherandtime.RegionWeather;
 
 import java.util.UUID;
 
@@ -31,8 +31,8 @@ public final class Region {
 	private int mapColor = MapColor.DEFAULT;
 	private String mapIcon;
 	private SeRent rent;
-	private int weather = WeatherType.SERVER;
-	private int time = TimeType.SERVER;
+	private int weather = RegionWeather.SERVER;
+	private int time = RegionTime.SERVER;
 	private SeLocation welcomeSign;
 	private long upkeepAt = 0L;
 

@@ -24,7 +24,8 @@ import tfagaming.projects.minecraft.homestead.sessions.ClaimFlySession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
-import tfagaming.projects.minecraft.homestead.weatherandtime.TimeType;
+import tfagaming.projects.minecraft.homestead.weatherandtime.RegionTime;
+import tfagaming.projects.minecraft.homestead.weatherandtime.RegionWeather;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,19 +104,19 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			SESSIONS.put(player.getUniqueId(), region.getUniqueId());
 
 			// Weather and Time
-			if (region.getWeather() != tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType.SERVER) {
+			if (region.getWeather() != RegionWeather.SERVER) {
 				switch (region.getWeather()) {
-					case tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType.CLEAR:
+					case RegionWeather.CLEAR:
 						player.setPlayerWeather(WeatherType.CLEAR);
 						break;
-					case tfagaming.projects.minecraft.homestead.weatherandtime.WeatherType.RAIN:
+					case RegionWeather.RAIN:
 						player.setPlayerWeather(WeatherType.DOWNFALL);
 					default:
 						break;
 				}
 			}
 
-			if (region.getTime() != TimeType.SERVER) {
+			if (region.getTime() != RegionTime.SERVER) {
 				player.setPlayerTime(region.getTime(), false);
 			}
 

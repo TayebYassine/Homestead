@@ -93,10 +93,10 @@ public final class BrigadierCommands {
 				.end()
 
 				.literalSub("deposit")
-				.intArg("amount", 0, 1000000000)
+				.intArg("amount", 0, Integer.MAX_VALUE)
 				.end()
 				.literalSub("withdraw")
-				.intArg("amount", 0, 1000000000)
+				.intArg("amount", 0, Integer.MAX_VALUE)
 				.end()
 
 				.literalSub("mail")
@@ -111,6 +111,14 @@ public final class BrigadierCommands {
 
 				.literalSub("kick")
 				.stringArg("player")
+				.end()
+
+				.literalSub("settime")
+				.stringArg("time")
+				.end()
+
+				.literalSub("setweather")
+				.stringArg("weather")
 				.end()
 
 				.literalSub("borders")
@@ -153,7 +161,7 @@ public final class BrigadierCommands {
 				.stringArg("region")
 				.endNested()
 				.literalSub("tax")
-				.intArg("amount", 0, 1000000000)
+				.intArg("amount", 0, Integer.MAX_VALUE)
 				.endNested()
 				.end()
 
@@ -193,7 +201,7 @@ public final class BrigadierCommands {
 				.literalSub("war")
 				.literalSub("declare")
 				.stringArg("region")
-				.intArg("prize", 0, 1000000000)
+				.intArg("prize", 0, Integer.MAX_VALUE)
 				.greedyStringArg("name")
 				.endNested()
 				.literalSub("surrender")
