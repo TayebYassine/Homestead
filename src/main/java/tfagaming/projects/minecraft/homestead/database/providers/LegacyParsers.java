@@ -66,8 +66,8 @@ final class LegacyParsers {
 		try {
 			String[] p = s.split(",", 3);
 			UUID playerId = UUID.fromString(p[0].trim());
-			String reason = p.length > 1 ? p[1] : null;
-			long bannedAt = p.length > 2 ? Long.parseLong(p[2].trim()) : System.currentTimeMillis();
+			long bannedAt = p.length > 1 ? Long.parseLong(p[1].trim()) : System.currentTimeMillis();
+			String reason = p.length > 2 ? p[2] : null;
 			return new RegionBan(Homestead.getSnowflake().nextId(), regionId, playerId, reason, bannedAt);
 		} catch (Exception e) {
 			return null;
@@ -78,9 +78,9 @@ final class LegacyParsers {
 		try {
 			String[] p = s.split(",", 5);
 			String author = p[1];
-			String message = p.length > 3 ? p[4] : "";
 			long sentAt = p.length > 2 ? Long.parseLong(p[2].trim()) : System.currentTimeMillis();
 			boolean read = p.length > 3 && Boolean.parseBoolean(p[3].trim());
+			String message = p.length > 4 ? p[4] : "";
 			return new RegionLog(Homestead.getSnowflake().nextId(), regionId, author, message, sentAt, read);
 		} catch (Exception e) {
 			return null;
