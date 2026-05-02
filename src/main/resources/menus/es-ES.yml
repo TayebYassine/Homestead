@@ -31,6 +31,7 @@ titles:
   26: "Niveles y Rango - &2{region}"
   27: "Información del Jugador"
   28: "Almacenamiento - &2{region}"
+  29: "Map Color - &2{region}"
 
 # Botones de menú
 # Cada botón tiene su propio índice único, que no puedes cambiar ni agregar/eliminar botones.
@@ -788,18 +789,18 @@ buttons:
       - "&7Consulta tus recompensas: &e/hs rewards"
     type: PAPER
   84:
-    name: "&9&lDynamic Map"
+    name: "&9&lMapa Dinámico"
     lore:
-      - "&7Configure how your region should be shown on"
-      - "&7Pl3xMap, Squaremap, dynmap, or BlueMap! Edit the"
-      - "&7chunks color and your region icon."
+      - "&7Configura cómo se debe mostrar tu región en"
+      - "&7¡Pl3xMap, Squaremap, dynmap o BlueMap! Edita el"
+      - "&7color de los chunks y el icono de tu región."
       - ""
-      - "&e&lNote:"
-      - "&eMap Icons are only available for Pl3xMap and"
+      - "&e&lNota:"
+      - "&e¡Los iconos del mapa solo están disponibles para Pl3xMap y"
       - "&eSquaremap!"
       - ""
-      - "&9&l➥ Left-click to change region icon."
-      - "&9&l➥ Right-click to change the map color."
+      - "&9&n➥ Clic izquierdo para cambiar el icono de la región."
+      - "&9&n➥ Clic derecho para cambiar el color del mapa."
     type: FILLED_MAP
 
 # NO modifiques estos

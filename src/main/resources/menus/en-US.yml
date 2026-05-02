@@ -31,6 +31,7 @@ titles:
   26: "Levels and Rank - &2{region}"
   27: "Player Information"
   28: "Storage - &2{region}"
+  29: "Map Color - &2{region}"
 
 # Menu buttons
 # Each button has its own unique index, which you cannot change or add/remove buttons.
@@ -798,8 +799,8 @@ buttons:
       - "&eMap Icons are only available for Pl3xMap and"
       - "&eSquaremap!"
       - ""
-      - "&9&l➥ Left-click to change region icon."
-      - "&9&l➥ Right-click to change the map color."
+      - "&9&n➥ Left-click to change region icon."
+      - "&9&n➥ Right-click to change the map color."
     type: FILLED_MAP
 
 # Do NOT modify these

@@ -3,12 +3,11 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -46,7 +45,7 @@ public final class MapColorMenu {
 		COLOR_TO_GLASS_PANE.put("BROWN", Material.BROWN_STAINED_GLASS_PANE);
 		COLOR_TO_GLASS_PANE.put("LIME", Material.LIME_STAINED_GLASS_PANE);
 		COLOR_TO_GLASS_PANE.put("LIGHT_BLUE", Material.LIGHT_BLUE_STAINED_GLASS_PANE);
-		COLOR_TO_GLASS_PANE.put("DEFAULT", Material.GLASS_PANE);
+		COLOR_TO_GLASS_PANE.put("DEFAULT", Material.BARRIER);
 
 		// Similar color mappings
 		COLOR_TO_GLASS_PANE.put("DARK_GRAY", Material.GRAY_STAINED_GLASS_PANE);
@@ -92,7 +91,7 @@ public final class MapColorMenu {
 	public MapColorMenu(Player player, Region region) {
 		this.colorEntries = getColorEntries();
 
-		PaginationMenu.builder(13, 9 * 5)
+		PaginationMenu.builder(MenuUtility.getTitle(29).replace("{region}", region.getName()), 9 * 5)
 				.nextPageItem(MenuUtility.getNextPageButton())
 				.prevPageItem(MenuUtility.getPreviousPageButton())
 				.items(getItems(player, region))
@@ -106,8 +105,15 @@ public final class MapColorMenu {
 	private void handleMapColorClick(Player player, Region region, PaginationMenu.ClickContext context) {
 		if (context.getIndex() >= colorEntries.size()) return;
 
+		if (!context.getEvent().isLeftClick()) return;
+
 		if (RegionManager.findRegion(region.getUniqueId()) == null) {
 			player.closeInventory();
+			return;
+		}
+
+		if (!player.hasPermission("homestead.actions.regions.update.map_color")) {
+			Messages.send(player, 8);
 			return;
 		}
 
@@ -117,10 +123,26 @@ public final class MapColorMenu {
 			return;
 		}
 
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
+			Cooldown.sendCooldownMessage(player);
+			return;
+		}
+
+		final int oldColor = region.getMapColor();
+
+		Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
+
 		MapColorEntry entry = colorEntries.get(context.getIndex());
 		region.setMapColor(entry.colorValue);
 
-		Homestead.getInstance().runSyncTask(() -> new MapColorMenu(player, region));
+		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+		Messages.send(player, 19, new Placeholder()
+				.add("{oldcolor}", MapColor.toString(oldColor))
+				.add("{newcolor}", MapColor.toString(region.getMapColor()))
+		);
+
+		Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {
@@ -140,8 +162,11 @@ public final class MapColorMenu {
 
 		if (meta != null) {
 			meta.setDisplayName(ColorTranslator.translate(entry.hexCode + entry.displayName));
-			item.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
-			meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+			if (isSelected) {
+				meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+				meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+			}
 
 			item.setItemMeta(meta);
 		}
@@ -152,16 +177,29 @@ public final class MapColorMenu {
 	private List<MapColorEntry> getColorEntries() {
 		List<MapColorEntry> entries = new ArrayList<>();
 
-		List<String> colorNames = MapColor.getAll();
+		String[] orderedNames = {
+				"DARK_RED", "RED", "CRIMSON", "MAROON",
+				"CORAL", "SALMON", "ORANGE", "BRIGHT_ORANGE", "GOLD",
+				"YELLOW", "NEON_YELLOW", "LIGHT_YELLOW", "KHAKI",
+				"LIME", "NEON_GREEN", "GREEN", "DARK_GREEN", "LIGHT_GREEN", "MINT", "OLIVE",
+				"TEAL", "TURQUOISE", "CYAN", "LIGHT_CYAN",
+				"SKY_BLUE", "LIGHT_BLUE", "ELECTRIC_BLUE", "BLUE", "DARK_BLUE", "NAVY",
+				"INDIGO", "VIOLET", "PURPLE", "NEON_PURPLE", "PLUM", "LAVENDER", "MAGENTA", "THISTLE",
+				"HOT_PINK", "PINK", "LIGHT_PINK",
+				"BROWN", "CHOCOLATE", "PERU", "TAN",
+				"WHITE", "BEIGE",
+				"LIGHT_GRAY", "SILVER",
+				"GRAY", "SLATE_GRAY", "DARK_GRAY", "DARK_SLATE_GRAY",
+				"DEFAULT"
+		};
 
-		for (String colorName : colorNames) {
-			String upperName = colorName.toUpperCase().replace("-", "_");
-			int colorValue = MapColor.parseFromString(colorName);
-			Material glassPane = COLOR_TO_GLASS_PANE.getOrDefault(upperName, Material.GLASS_PANE);
+		for (String colorName : orderedNames) {
+			String lookupName = colorName.toLowerCase().replace("_", "-");
+			int colorValue = MapColor.parseFromString(lookupName);
+			Material glassPane = COLOR_TO_GLASS_PANE.getOrDefault(colorName, Material.BARRIER);
 			String displayName = MapColor.fromInt(colorValue);
 			String hexCode = "&#" + String.format("%06X", colorValue & 0x00FFFFFF);
-
-			entries.add(new MapColorEntry(colorName, colorValue, glassPane, displayName, hexCode));
+			entries.add(new MapColorEntry(lookupName, colorValue, glassPane, displayName, hexCode));
 		}
 
 		return entries;
