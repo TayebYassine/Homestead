@@ -256,7 +256,7 @@ public final class MiscellaneousSettings {
 
 			UUID pid = _player.getUniqueId();
 			long now = System.currentTimeMillis();
-			long pendingRegionId = DELETE_CONFIRM_REGION.get(pid);
+			long pendingRegionId = (DELETE_CONFIRM_REGION.get(pid) == null ? -1L : DELETE_CONFIRM_REGION.get(pid));
 			Long ts = DELETE_CONFIRM_TIME.get(pid);
 
 			if (pendingRegionId == region.getUniqueId()
