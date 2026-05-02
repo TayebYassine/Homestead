@@ -178,6 +178,7 @@ public class DiscordWebhookClient {
 						sendContent(getEventMessage("player_left_region"), player.getName(), player.getUniqueId(), region == null ? "?" : region.getName());
 					}
 				}
+				default -> { /* do nothing */ }
 			}
 		} catch (Exception e) {
 			Logger.error(e);
