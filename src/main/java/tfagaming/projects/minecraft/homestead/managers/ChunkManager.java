@@ -6,6 +6,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.integrations.FastAsyncWorldEditAPI;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;
+import tfagaming.projects.minecraft.homestead.models.RegionLog;
 import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -221,13 +222,10 @@ public final class ChunkManager {
 	 * @return List of region chunks.
 	 */
 	public static List<RegionChunk> getChunksOfRegion(long regionId) {
-		List<RegionChunk> chunks = new ArrayList<>();
-		for (RegionChunk chunk : getAll()) {
-			if (chunk.getRegionId() == regionId) {
-				chunks.add(chunk);
-			}
-		}
-		return chunks;
+		return Homestead.CHUNK_CACHE.getAll().stream()
+				.filter(l -> l.getRegionId() == regionId)
+				.sorted(Comparator.comparingLong(RegionChunk::getClaimedAt).reversed())
+				.collect(Collectors.toList());
 	}
 
 	/**

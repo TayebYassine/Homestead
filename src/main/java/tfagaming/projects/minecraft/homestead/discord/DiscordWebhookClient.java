@@ -178,7 +178,6 @@ public class DiscordWebhookClient {
 						sendContent(getEventMessage("player_left_region"), player.getName(), player.getUniqueId(), region == null ? "?" : region.getName());
 					}
 				}
-				default -> throw new IllegalStateException("Unexpected value: " + event);
 			}
 		} catch (Exception e) {
 			Logger.error(e);
