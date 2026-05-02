@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -60,6 +61,8 @@ public class SetWeatherSubCmd extends SubCommandBuilder {
 		Messages.send(player, 220, new Placeholder()
 				.add("{weather-name}", weatherInput)
 		);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER);
 
 		return true;
 	}

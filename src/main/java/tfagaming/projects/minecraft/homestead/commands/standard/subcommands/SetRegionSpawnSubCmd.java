@@ -1,0 +1,79 @@
+package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
+
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.api.events.RegionLocationUpdateEvent;
+import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
+import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.managers.LogManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
+import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
+
+public class SetRegionSpawnSubCmd extends SubCommandBuilder {
+	public SetRegionSpawnSubCmd() {
+		super("setspawn");
+		setUsage("/region setspawn");
+	}
+
+	@Override
+	public boolean onExecution(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+
+		if (player == null) {
+			sender.sendMessage("This command can only be used by players.");
+			return true;
+		}
+
+		Region region = TargetRegionSession.getRegion(player);
+
+		if (region == null) {
+			Messages.send(player, 4);
+			return true;
+		}
+
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE)) {
+			Cooldown.sendCooldownMessage(player);
+			return true;
+		}
+
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				RegionControlFlags.SET_SPAWN)) {
+			return true;
+		}
+
+		Location location = player.getLocation();
+
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
+			Messages.send(player, 142);
+			return true;
+		}
+
+		Cooldown.startCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE);
+
+		final Location oldLocation = region.getLocation() == null ? null : region.getLocation().toBukkit();
+
+		region.setLocation(location);
+
+		Messages.send(player, 72, new Placeholder()
+				.add("{region}", region.getName())
+				.add("{location}", Formatter.getLocation(location))
+		);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_SPAWN);
+
+		Homestead.callEvent(new RegionLocationUpdateEvent(region, oldLocation, location));
+
+		return true;
+	}
+}

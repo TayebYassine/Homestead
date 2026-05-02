@@ -3,21 +3,20 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.managers.LogManager;
-import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.weatherandtime.RegionTime;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetTimeSubCmd extends SubCommandBuilder {
-	public SetTimeSubCmd() {
-		super("settime");
-		setUsage("/region settime [time]");
+public class SetMapColorSubCmd extends SubCommandBuilder {
+	public SetMapColorSubCmd() {
+		super("setmapcolor");
+		setUsage("/region setmapcolor [color]");
 	}
 
 	@Override
@@ -29,8 +28,8 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!player.hasPermission("homestead.region.time")) {
-			Messages.send(player, 211);
+		if (!player.hasPermission("homestead.region.dynamicmaps.color")) {
+			Messages.send(player, 8);
 			return true;
 		}
 
@@ -48,21 +47,35 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		String timeInput = args[0];
-		int time = RegionTime.parse(timeInput);
-
-		if (time == -1) {
-			Messages.send(player, 217);
+		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
+			Cooldown.sendCooldownMessage(player);
 			return true;
 		}
 
-		region.setTime(time);
+		String colorInput = args[0].toLowerCase();
 
-		Messages.send(player, 218, new Placeholder()
-				.add("{time-name}", timeInput)
+		if (!MapColor.getAll().contains(colorInput)) {
+			Messages.send(player, 18);
+			return true;
+		}
+
+		int color = MapColor.parseFromString(colorInput);
+
+		if (region.getMapColor() == color) {
+			Messages.send(player, 11);
+			return true;
+		}
+
+		final int oldColor = region.getMapColor();
+
+		Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
+
+		region.setMapColor(color);
+
+		Messages.send(player, 19, new Placeholder()
+				.add("{oldcolor}", MapColor.toString(oldColor))
+				.add("{newcolor}", MapColor.toString(region.getMapColor()))
 		);
-
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME);
 
 		return true;
 	}
@@ -74,9 +87,8 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 
 		List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 1) {
-			suggestions.addAll(RegionTime.getAll());
-		}
+		if (args.length == 1)
+			suggestions.addAll(MapColor.getAll());
 
 		return suggestions;
 	}

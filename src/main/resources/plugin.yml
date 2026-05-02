@@ -189,6 +189,18 @@ permissions:
     default: true
   homestead.commands.region.setweather:
     default: true
+  homestead.commands.region.setdescription:
+    default: true
+  homestead.commands.region.setdisplayname:
+    default: true
+  homestead.commands.region.setmapcolor:
+    default: true
+  homestead.commands.region.setmapicon:
+    default: true
+  homestead.commands.region.setmembertax:
+    default: true
+  homestead.commands.region.setspawn:
+    default: true
   homestead.commands.region.subareas:
     default: true
   homestead.commands.region.storage:
@@ -241,6 +253,12 @@ permissions:
       homestead.commands.region.set: true
       homestead.commands.region.settime: true
       homestead.commands.region.setweather: true
+      homestead.commands.region.setdescription: true
+      homestead.commands.region.setdisplayname: true
+      homestead.commands.region.setmapcolor: true
+      homestead.commands.region.setmapicon: true
+      homestead.commands.region.setmembertax: true
+      homestead.commands.region.setspawn: true
       homestead.commands.region.subareas: true
       homestead.commands.region.storage: true
       homestead.commands.region.top: true

@@ -58,6 +58,12 @@ public class RegionCommand extends CommandBuilder {
 		registerSubCommand(new StorageSubCmd());
 		registerSubCommand(new SetTimeSubCmd());
 		registerSubCommand(new SetWeatherSubCmd());
+		registerSubCommand(new SetDescriptionSubCmd());
+		registerSubCommand(new SetDisplayNameSubCmd());
+		registerSubCommand(new SetMapColorSubCmd());
+		registerSubCommand(new SetMapIconSubCmd());
+		registerSubCommand(new SetMemberTaxSubCmd());
+		registerSubCommand(new SetRegionSpawnSubCmd());
 	}
 
 	@Override

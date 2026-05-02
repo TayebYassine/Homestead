@@ -121,6 +121,33 @@ public final class BrigadierCommands {
 				.stringArg("weather")
 				.end()
 
+				.literalSub("setdescription")
+				.greedyStringArg("description")
+				.end()
+
+				.literalSub("setdisplayname")
+				.greedyStringArg("displayname")
+				.end()
+
+				.literalSub("setmapcolor")
+				.stringArg("color")
+				.end()
+
+				.literalSub("setmapicon")
+				.stringArg("icon")
+				.end()
+
+				.literalSub("setmembertax")
+				.intArg("amount", 0, Integer.MAX_VALUE)
+				.end()
+
+				.literalSub("setspawn")
+				.end()
+
+				.literalSub("set")
+				.stringArg("region")
+				.end()
+
 				.literalSub("borders")
 				.literalSub("stop")
 				.endNested()
@@ -139,29 +166,6 @@ public final class BrigadierCommands {
 				.stringArg("player")
 				.stringArg("flag")
 				.stringArg("state")
-				.endNested()
-				.end()
-
-				.literalSub("set")
-				.literalSub("description")
-				.greedyStringArg("description")
-				.endNested()
-				.literalSub("displayname")
-				.greedyStringArg("displayname")
-				.endNested()
-				.literalSub("icon")
-				.stringArg("icon")
-				.endNested()
-				.literalSub("mapcolor")
-				.stringArg("color")
-				.endNested()
-				.literalSub("spawn")
-				.endNested()
-				.literalSub("target")
-				.stringArg("region")
-				.endNested()
-				.literalSub("tax")
-				.intArg("amount", 0, Integer.MAX_VALUE)
 				.endNested()
 				.end()
 
