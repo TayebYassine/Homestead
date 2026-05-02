@@ -96,6 +96,10 @@ public final class MiscellaneousSettings {
 
 	private static BiConsumer<Player, InventoryClickEvent> handleDisplayName(Player player, Region region) {
 		return (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
 			if (!event.isLeftClick()) return;
 			if (onCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) return;
 
@@ -128,6 +132,10 @@ public final class MiscellaneousSettings {
 
 	private static BiConsumer<Player, InventoryClickEvent> handleDescription(Player player, Region region) {
 		return (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
 			if (!event.isLeftClick()) return;
 			if (onCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE)) return;
 
@@ -160,6 +168,10 @@ public final class MiscellaneousSettings {
 
 	private static BiConsumer<Player, InventoryClickEvent> handleSetSpawn(Player player, Region region) {
 		return (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
 			if (!event.isLeftClick()) return;
 			if (onCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE)) return;
 
@@ -200,6 +212,10 @@ public final class MiscellaneousSettings {
 
 	private static BiConsumer<Player, InventoryClickEvent> handleTransferOwnership(Player player, Region region) {
 		return (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
 			if (!event.isLeftClick()) return;
 			if (onCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP)) return;
 
@@ -240,6 +256,10 @@ public final class MiscellaneousSettings {
 
 	private static BiConsumer<Player, InventoryClickEvent> handleDynamicMapConfig(Player player, Region region) {
 		return (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
 			if (!PlayerUtility.isOperator(_player) && !region.isOwner(_player)) {
 				Messages.send(_player, 159);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
@@ -266,6 +286,10 @@ public final class MiscellaneousSettings {
 
 	private static BiConsumer<Player, InventoryClickEvent> handleDeleteRegion(Player player, Region region) {
 		return (_player, event) -> {
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
 			if (!(event.isRightClick() && event.isShiftClick())) return;
 
 			if (!PlayerUtility.isOperator(_player) && !region.isOwner(_player)) {

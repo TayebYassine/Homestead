@@ -9,7 +9,7 @@ public final class InventoryManager {
 	private static final Map<Player, Object> playerMenus = new HashMap<>();
 	private static final Map<Player, Long> clickCooldowns = new HashMap<>();
 
-	private static final long CLICK_COOLDOWN_MS = 800L;
+	private static final long CLICK_COOLDOWN_MS = 1200L;
 
 	public static void register(Player player, Menu menu) {
 		playerMenus.put(player, menu);
