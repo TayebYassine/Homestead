@@ -195,16 +195,19 @@ public final class YAML implements Provider {
 					String rentStr = cfg.getString("rent");
 					SeRent rent = LegacyParsers.isNotBlank(rentStr) ? SeRent.deserialize(rentStr) : null;
 
+					String name = cfg.getString("name");
+
 					SubArea subArea = new SubArea(
 							newSubAreaId,
 							newRegionId,
-							cfg.getString("name"),
+							name,
 							worldId,
 							point1,
 							point2,
 							cfg.getLong("flags"),
 							rent,
 							cfg.getLong("createdAt"));
+					subArea.setName(name);
 					newSubAreas.add(subArea);
 
 					for (String part : cfg.getStringList("members")) {

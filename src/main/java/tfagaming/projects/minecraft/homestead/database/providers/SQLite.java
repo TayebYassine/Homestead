@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.database.providers;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.models.*;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
@@ -8,12 +9,10 @@ import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 
 import java.sql.*;
 import java.util.*;
-import java.util.logging.Logger;
 
 public final class SQLite implements Provider {
 
 	private static final String JDBC_URL = "jdbc:sqlite:";
-	private static final Logger LOG = Logger.getLogger("Homestead");
 
 	private final Connection connection;
 
@@ -31,12 +30,12 @@ public final class SQLite implements Provider {
 	@Override
 	public void prepareTables() throws SQLException {
 		if (legacyTablesExist()) {
-			LOG.warning("[Database] Legacy database structure detected, running one-time migration...");
+			Logger.warning("[Database] Legacy database structure detected, running one-time migration...");
 			try {
 				migrateFromLegacy();
-				LOG.info("[Database] Database migration completed successfully.");
+				Logger.info("[Database] Database migration completed successfully.");
 			} catch (SQLException e) {
-				LOG.severe("[Database] Migration failed, old tables have not been dropped. Error: " + e.getMessage());
+				Logger.error("[Database] Migration failed, old tables have not been dropped. Error: " + e.getMessage());
 				throw e;
 			}
 		} else {
@@ -316,7 +315,7 @@ public final class SQLite implements Provider {
 							if (l != null) newLogs.add(l);
 						});
 					} catch (Exception e) {
-						LOG.warning("[Database] Skipping region " + oldId + " during migration: " + e.getMessage());
+						Logger.warning("[Database] Skipping region " + oldId + " during migration: " + e.getMessage());
 					}
 				}
 			}
@@ -332,7 +331,7 @@ public final class SQLite implements Provider {
 					try {
 						Long newRegionId = regionIdMap.get(oldRegionId);
 						if (newRegionId == null) {
-							LOG.warning("[Database] SubArea " + oldId
+							Logger.warning("[Database] SubArea " + oldId
 									+ " references unknown region " + oldRegionId + ", skipping.");
 							continue;
 						}
@@ -342,7 +341,7 @@ public final class SQLite implements Provider {
 
 						UUID worldId = LegacyParsers.resolveWorldUUID(rs.getString("worldName"));
 						if (worldId == null) {
-							LOG.warning("[Database] SubArea " + oldId
+							Logger.warning("[Database] SubArea " + oldId
 									+ " references an unresolvable world, skipping.");
 							continue;
 						}
@@ -350,7 +349,7 @@ public final class SQLite implements Provider {
 						SeBlock point1 = LegacyParsers.parseLegacyBlock(worldId, rs.getString("point1"));
 						SeBlock point2 = LegacyParsers.parseLegacyBlock(worldId, rs.getString("point2"));
 						if (point1 == null || point2 == null) {
-							LOG.warning("[Database] SubArea " + oldId
+							Logger.warning("[Database] SubArea " + oldId
 									+ " has invalid block coordinates, skipping.");
 							continue;
 						}
@@ -358,10 +357,13 @@ public final class SQLite implements Provider {
 						String rentStr = rs.getString("rent");
 						SeRent rent = LegacyParsers.isNotBlank(rentStr) ? SeRent.deserialize(rentStr) : null;
 
+						String name = rs.getString("name");
+
 						SubArea subArea = new SubArea(
-								newSubAreaId, newRegionId, rs.getString("name"),
+								newSubAreaId, newRegionId, name,
 								worldId, point1, point2,
 								rs.getLong("flags"), rent, rs.getLong("createdAt"));
+						subArea.setName(name);
 						newSubAreas.add(subArea);
 
 						LegacyParsers.splitAndParse(rs.getString("members"), "§", part -> {
@@ -371,7 +373,7 @@ public final class SQLite implements Provider {
 						});
 
 					} catch (Exception e) {
-						LOG.warning("[Database] Skipping subarea " + oldId + " during migration: " + e.getMessage());
+						Logger.warning("[Database] Skipping subarea " + oldId + " during migration: " + e.getMessage());
 					}
 				}
 			}
@@ -386,7 +388,7 @@ public final class SQLite implements Provider {
 					try {
 						Long newRegionId = regionIdMap.get(oldRegionId);
 						if (newRegionId == null) {
-							LOG.warning("[Database] Level references unknown region "
+							Logger.warning("[Database] Level references unknown region "
 									+ oldRegionId + ", skipping.");
 							continue;
 						}
@@ -398,7 +400,7 @@ public final class SQLite implements Provider {
 								rs.getLong("createdAt"));
 						newLevels.add(lvl);
 					} catch (Exception e) {
-						LOG.warning("[Database] Skipping level for region "
+						Logger.warning("[Database] Skipping level for region "
 								+ oldRegionId + ": " + e.getMessage());
 					}
 				}
@@ -433,7 +435,7 @@ public final class SQLite implements Provider {
 						warRegionMap.put(newWarId, mappedRegionIds);
 
 					} catch (Exception e) {
-						LOG.warning("[Database] Skipping war " + oldWarId
+						Logger.warning("[Database] Skipping war " + oldWarId
 								+ " during migration: " + e.getMessage());
 					}
 				}
@@ -465,7 +467,7 @@ public final class SQLite implements Provider {
 
 			connection.commit();
 
-			LOG.info(String.format(
+			Logger.info(String.format(
 					"[Database] Migrated: %d regions, %d members, %d chunks, %d logs, " +
 							"%d rates, %d invites, %d bans, %d subareas, %d levels, %d wars.",
 					newRegions.size(), newMembers.size(), newChunks.size(), newLogs.size(),

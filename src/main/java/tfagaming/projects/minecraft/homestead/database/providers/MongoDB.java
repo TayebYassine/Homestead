@@ -242,16 +242,19 @@ public final class MongoDB implements Provider {
 				String rentStr = str(doc, "rent");
 				SeRent rent = LegacyParsers.isNotBlank(rentStr) ? SeRent.deserialize(rentStr) : null;
 
+				String name = doc.getString("name");
+
 				SubArea subArea = new SubArea(
 						newSubAreaId,
 						newRegionId,
-						doc.getString("name"),
+						name,
 						worldId,
 						point1,
 						point2,
 						doc.getLong("flags"),
 						rent,
 						doc.getLong("createdAt"));
+				subArea.setName(name);
 				newSubAreas.add(subArea);
 
 				String membersRaw = doc.getString("members");

@@ -374,16 +374,19 @@ public final class PostgreSQL implements Provider {
 						String rentStr = rs.getString("rent");
 						SeRent rent = LegacyParsers.isNotBlank(rentStr) ? SeRent.deserialize(rentStr) : null;
 
+						String name = rs.getString("name");
+
 						SubArea subArea = new SubArea(
 								newSubAreaId,
 								newRegionId,
-								rs.getString("name"),
+								name,
 								worldId,
 								point1,
 								point2,
 								rs.getLong("flags"),
 								rent,
 								rs.getLong("created_at"));
+						subArea.setName(name);
 						newSubAreas.add(subArea);
 
 						String membersRaw = rs.getString("members");
