@@ -22,10 +22,10 @@ public final class MapColor {
 	public static final int PURPLE = 0x800080;
 	public static final int BROWN = 0xA52A2A;
 	public static final int GOLD = 0xFFD700;
-	public static final int SILVER = 0xC0C0C0;
+	public static final int SILVER = 0xB0B0B0;
 	public static final int NAVY = 0x000080;
 	public static final int TEAL = 0x008080;
-	public static final int LIME = 0x00FF00;
+	public static final int LIME = 0x32CD32;
 	public static final int MAROON = 0x800000;
 	public static final int OLIVE = 0x808000;
 	// Extended colors
@@ -51,7 +51,7 @@ public final class MapColor {
 	public static final int NEON_GREEN = 0x39FF14;
 	public static final int ELECTRIC_BLUE = 0x7DF9FF;
 	public static final int HOT_PINK = 0xFF69B4;
-	public static final int BRIGHT_ORANGE = 0xFFA500;
+	public static final int BRIGHT_ORANGE = 0xFF8C00;
 	public static final int NEON_YELLOW = 0xFFFF33;
 	public static final int NEON_PURPLE = 0x9D00FF;
 	// Dark/Light variants
