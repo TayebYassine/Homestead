@@ -19,22 +19,19 @@ import java.util.List;
 public class MailSubCmd extends SubCommandBuilder {
 	public MailSubCmd() {
 		super("mail");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.mail"
+		));
 		setUsage("/region mail [region] [message]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.mail")) {
-			Messages.send(player, 8);
-			return true;
-		}
+		if (player == null) return false;
 
 		if (args.length < 2) {
 			Messages.send(player, 0, new Placeholder()

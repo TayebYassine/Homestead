@@ -17,22 +17,19 @@ import java.util.List;
 public class ChatSubCmd extends SubCommandBuilder {
 	public ChatSubCmd() {
 		super("chat");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.chat"
+		));
 		setUsage("/region chat [message]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.chat")) {
-			Messages.send(player, 8);
-			return true;
-		}
+		if (player == null) return false;
 
 		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()

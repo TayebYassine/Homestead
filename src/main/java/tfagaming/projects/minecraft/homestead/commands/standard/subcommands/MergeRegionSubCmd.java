@@ -17,17 +17,18 @@ import java.util.List;
 public class MergeRegionSubCmd extends SubCommandBuilder {
 	public MergeRegionSubCmd() {
 		super("merge");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
 		setUsage("/region merge [region]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		Region region = TargetRegionSession.getRegion(player);
 

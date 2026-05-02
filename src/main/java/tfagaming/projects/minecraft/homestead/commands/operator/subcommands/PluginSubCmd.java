@@ -13,16 +13,13 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 public class PluginSubCmd extends SubCommandBuilder {
 	public PluginSubCmd() {
-		super("plugin", null, false);
+		super("plugin");
 		setUsage("/hsadmin plugin");
+		setConsoleOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		if (sender instanceof Player p) {
-			Messages.send(p, 216);
-		}
-
 		Logger.info("Please wait...");
 
 		String[] headers = {"Property", "Value"};

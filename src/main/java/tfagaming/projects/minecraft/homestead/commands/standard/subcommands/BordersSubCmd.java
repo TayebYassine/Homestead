@@ -15,17 +15,18 @@ import java.util.List;
 public class BordersSubCmd extends SubCommandBuilder {
 	public BordersSubCmd() {
 		super("borders");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
 		setUsage("/region borders (stop)");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled();
 

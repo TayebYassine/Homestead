@@ -13,25 +13,24 @@ import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 
+import java.util.List;
+
 public class CreateRegionSubCmd extends SubCommandBuilder {
 	public CreateRegionSubCmd() {
 		super("create");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.create"
+		));
 		setUsage("/region create [name]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.create")) {
-			Messages.send(player, 8);
-			return true;
-		}
+		if (player == null) return false;
 
 		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()

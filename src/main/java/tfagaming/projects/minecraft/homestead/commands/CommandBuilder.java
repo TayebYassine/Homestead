@@ -14,6 +14,9 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 	private final String[] aliases;
 	private final Map<String, SubCommandBuilder> subCommands = new HashMap<>();
 	private String usage = "";
+	private List<String> permissions = new ArrayList<>();
+	private boolean playerOnly = false;
+	private boolean consoleOnly = false;
 
 	public CommandBuilder(String name) {
 		this.name = name;
@@ -51,16 +54,6 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	public String getUsage() {
-		return usage;
-	}
-
-	public CommandBuilder setUsage(String usage) {
-		this.usage = usage;
-
-		return this;
-	}
-
 	protected SubCommandBuilder getSubCommand(String name) {
 		return subCommands.get(name.toLowerCase());
 	}
@@ -76,11 +69,38 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 				.collect(Collectors.toList());
 	}
 
+	public CommandBuilder setPermission(String permission) {
+		this.permissions = Collections.singletonList(permission);
+		return this;
+	}
+
+	public CommandBuilder setPermission(List<String> permissions) {
+		this.permissions = new ArrayList<>(permissions);
+		return this;
+	}
+
+	public CommandBuilder setPlayerOnly() {
+		this.playerOnly = true;
+		this.consoleOnly = false;
+		return this;
+	}
+
+	public CommandBuilder setConsoleOnly() {
+		this.consoleOnly = true;
+		this.playerOnly = false;
+		return this;
+	}
+
+	public boolean hasPermission(CommandSender sender) {
+		if (permissions.isEmpty()) return true;
+		return permissions.stream().allMatch(sender::hasPermission);
+	}
+
 	public abstract boolean onDefaultExecution(CommandSender sender, String[] args);
 
 	public List<String> onDefaultTabComplete(CommandSender sender, String[] args) {
 		return getAllSubCommands().stream()
-				.filter(sub -> sub.hasPermission(sender, name))
+				.filter(sub -> sub.hasPermission(sender))
 				.map(SubCommandBuilder::getName)
 				.sorted()
 				.collect(Collectors.toList());
@@ -88,6 +108,20 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 
 	@Override
 	public final boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (!hasPermission(sender)) {
+			return onDefaultExecution(sender, args);
+		}
+
+		if (playerOnly && !(sender instanceof Player)) {
+			sender.sendMessage("This command can only be used by players.");
+			return true;
+		}
+
+		if (consoleOnly && sender instanceof Player) {
+			sender.sendMessage("This command can only be used from the console.");
+			return true;
+		}
+
 		if (args.length == 0) {
 			return onDefaultExecution(sender, args);
 		}
@@ -98,25 +132,32 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 			return onDefaultExecution(sender, args);
 		}
 
-		if (subCommand.isPlayerOnly() && !(sender instanceof org.bukkit.entity.Player)) {
+		if (subCommand.isPlayerOnly() && !(sender instanceof Player)) {
 			sender.sendMessage("This command can only be used by players.");
 			return true;
 		}
 
-		if (!subCommand.hasPermission(sender, name)) {
+		if (subCommand.isConsoleOnly() && sender instanceof Player) {
+			sender.sendMessage("This command can only be used from the console.");
+			return true;
+		}
+
+		if (!subCommand.hasPermission(sender)) {
 			return onDefaultExecution(sender, args);
 		}
 
 		String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
-
 		return subCommand.onExecution(sender, subArgs);
 	}
 
 	@Override
 	public final List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
+		if (!hasPermission(sender)) {
+			return new ArrayList<>();
+		}
+
 		if (args.length == 1) {
 			List<String> suggestions = onDefaultTabComplete(sender, args);
-
 			return AutoCompleteFilter.filter(suggestions, args);
 		}
 
@@ -126,14 +167,12 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 			return new ArrayList<>();
 		}
 
-		if (!subCommand.hasPermission(sender, name)) {
+		if (!subCommand.hasPermission(sender)) {
 			return new ArrayList<>();
 		}
 
 		String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
-
 		List<String> suggestions = subCommand.onTabComplete(sender, subArgs);
-
 		return AutoCompleteFilter.filter(suggestions, subArgs);
 	}
 
@@ -143,6 +182,27 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 
 	public String[] getAliases() {
 		return aliases;
+	}
+
+	public String getUsage() {
+		return usage;
+	}
+
+	public CommandBuilder setUsage(String usage) {
+		this.usage = usage;
+		return this;
+	}
+
+	public List<String> getPermissions() {
+		return Collections.unmodifiableList(permissions);
+	}
+
+	public boolean isPlayerOnly() {
+		return playerOnly;
+	}
+
+	public boolean isConsoleOnly() {
+		return consoleOnly;
 	}
 
 	protected Player asPlayer(CommandSender sender) {

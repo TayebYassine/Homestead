@@ -11,20 +11,23 @@ import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
+import java.util.List;
+
 public class RewardsSubCmd extends SubCommandBuilder {
 	public RewardsSubCmd() {
 		super("rewards");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
 		setUsage("/region rewards");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		if (!Resources.<RegionsFile>get(ResourceType.Regions).isRewardsEnabled()) {
 			Messages.send(player, 168);

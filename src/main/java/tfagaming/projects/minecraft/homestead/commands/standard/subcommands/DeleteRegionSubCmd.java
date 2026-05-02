@@ -20,22 +20,19 @@ import java.util.List;
 public class DeleteRegionSubCmd extends SubCommandBuilder {
 	public DeleteRegionSubCmd() {
 		super("delete");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.delete"
+		));
 		setUsage("/region delete [confirm]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.delete")) {
-			Messages.send(player, 8);
-			return true;
-		}
+		if (player == null) return false;
 
 		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()

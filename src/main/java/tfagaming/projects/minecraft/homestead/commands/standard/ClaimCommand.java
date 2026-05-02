@@ -37,17 +37,19 @@ import java.util.List;
 public class ClaimCommand extends CommandBuilder {
 	public ClaimCommand() {
 		super("claim");
+		setPermission(List.of(
+				"homestead.commands.claim",
+				"homestead.actions.regions.create",
+				"homestead.actions.regions.chunks.claim"
+		));
 		setUsage("/claim radius [radius]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onDefaultExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_CLAIM)) {
 			Cooldown.sendCooldownMessage(player);

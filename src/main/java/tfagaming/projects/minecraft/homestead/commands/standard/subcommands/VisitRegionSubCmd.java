@@ -24,22 +24,19 @@ import java.util.List;
 public class VisitRegionSubCmd extends SubCommandBuilder {
 	public VisitRegionSubCmd() {
 		super("visit");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.teleport"
+		));
 		setUsage("/region visit [region/playername] (index)");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.teleport")) {
-			Messages.send(player, 212);
-			return true;
-		}
+		if (player == null) return false;
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeSignEnabled()) {
 			if (args.length < 1) {
@@ -115,8 +112,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			if (!PlayerUtility.isOperator(player)
 					&& !region.isOwner(player)
 					&& !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
-					&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true)
-					&& player.hasPermission("homestead.region.teleport"))) {
+					&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
 				Messages.send(player, 131, new Placeholder()
 						.add("{region}", region.getName())
 				);

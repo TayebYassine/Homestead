@@ -17,17 +17,18 @@ import java.util.List;
 public class SetRegionSubCmd extends SubCommandBuilder {
 	public SetRegionSubCmd() {
 		super("set");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
 		setUsage("/region set [region]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()

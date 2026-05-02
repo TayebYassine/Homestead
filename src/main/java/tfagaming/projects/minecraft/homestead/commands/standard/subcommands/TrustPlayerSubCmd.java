@@ -29,22 +29,19 @@ import java.util.List;
 public class TrustPlayerSubCmd extends SubCommandBuilder {
 	public TrustPlayerSubCmd() {
 		super("trust");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.players.trust"
+		));
 		setUsage("/region trust [player]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.players.trust")) {
-			Messages.send(player, 8);
-			return true;
-		}
+		if (player == null) return false;
 
 		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()

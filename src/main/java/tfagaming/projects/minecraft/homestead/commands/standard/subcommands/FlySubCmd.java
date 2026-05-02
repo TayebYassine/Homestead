@@ -11,25 +11,24 @@ import tfagaming.projects.minecraft.homestead.sessions.ClaimFlySession;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
+import java.util.List;
+
 public class FlySubCmd extends SubCommandBuilder {
 	public FlySubCmd() {
 		super("fly");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.fly"
+		));
 		setUsage("/region fly");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.fly")) {
-			Messages.send(player, 8);
-			return true;
-		}
+		if (player == null) return false;
 
 		Chunk chunk = player.getLocation().getChunk();
 		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);

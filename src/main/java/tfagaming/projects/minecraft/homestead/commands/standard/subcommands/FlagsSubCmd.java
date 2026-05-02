@@ -31,17 +31,18 @@ import java.util.List;
 public class FlagsSubCmd extends SubCommandBuilder {
 	public FlagsSubCmd() {
 		super("flags");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
 		setUsage("/region flags [global/world/member] {member} [flag] (allow/deny)");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()
@@ -61,7 +62,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 		switch (setType) {
 			case "member": {
-				if (!player.hasPermission("homestead.region.flags.members")) {
+				if (!player.hasPermission("homestead.actions.regions.update.flags.members")) {
 					Messages.send(player, 8);
 					return true;
 				}
@@ -164,7 +165,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				break;
 			}
 			case "global": {
-				if (!player.hasPermission("homestead.region.flags.global")) {
+				if (!player.hasPermission("homestead.actions.regions.update.flags.global")) {
 					Messages.send(player, 8);
 					return true;
 				}
@@ -238,7 +239,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				break;
 			}
 			case "world": {
-				if (!player.hasPermission("homestead.region.flags.world")) {
+				if (!player.hasPermission("homestead.actions.regions.update.flags.world")) {
 					Messages.send(player, 8);
 					return true;
 				}

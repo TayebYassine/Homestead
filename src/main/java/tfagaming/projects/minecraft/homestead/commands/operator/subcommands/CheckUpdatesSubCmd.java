@@ -8,8 +8,9 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 public class CheckUpdatesSubCmd extends SubCommandBuilder {
 	public CheckUpdatesSubCmd() {
-		super("updates", null, false);
+		super("updates");
 		setUsage("/hsadmin updates");
+		setConsoleOnly();
 	}
 
 	@Override

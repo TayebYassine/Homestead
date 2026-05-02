@@ -17,22 +17,19 @@ import java.util.List;
 public class SetWeatherSubCmd extends SubCommandBuilder {
 	public SetWeatherSubCmd() {
 		super("setweather");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.update.weather"
+		));
 		setUsage("/region setweather [weather]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.weather")) {
-			Messages.send(player, 210);
-			return true;
-		}
+		if (player == null) return false;
 
 		Region region = TargetRegionSession.getRegion(player);
 

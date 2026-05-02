@@ -19,6 +19,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 	public UnclaimSubCmd() {
 		super("unclaim");
 		setUsage("/hsadmin unclaim [region] [location] [radius]");
+		setPlayerOnly();
 	}
 
 	@Override

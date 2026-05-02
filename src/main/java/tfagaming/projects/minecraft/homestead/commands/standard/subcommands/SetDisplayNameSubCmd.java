@@ -27,17 +27,19 @@ import java.util.List;
 public class SetDisplayNameSubCmd extends SubCommandBuilder {
 	public SetDisplayNameSubCmd() {
 		super("setdisplayname");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.update.displayname"
+		));
 		setUsage("/region setdisplayname [name]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		Region region = TargetRegionSession.getRegion(player);
 

@@ -18,17 +18,18 @@ import java.util.List;
 public class BalanceSubCmd extends SubCommandBuilder {
 	public BalanceSubCmd() {
 		super("balance");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
 		setUsage("/region balance (region)");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		if (!Homestead.VAULT.isEconomyReady()) {
 			Messages.send(player, 69);

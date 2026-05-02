@@ -17,8 +17,9 @@ import java.util.List;
 
 public class ExportSubCmd extends SubCommandBuilder {
 	public ExportSubCmd() {
-		super("export", null, false);
+		super("export");
 		setUsage("/hsadmin export [provider]");
+		setConsoleOnly();
 	}
 
 	@Override

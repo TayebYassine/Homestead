@@ -6,20 +6,23 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
+import java.util.List;
+
 public class AutoSubCmd extends SubCommandBuilder {
 	public AutoSubCmd() {
 		super("auto");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
 		setUsage("/region auto");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		if (AutoClaimSession.hasSession(player)) {
 			AutoClaimSession.removeSession(player);

@@ -40,17 +40,18 @@ import java.util.List;
 public class SubAreasSubCmd extends SubCommandBuilder {
 	public SubAreasSubCmd() {
 		super("subareas");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
 		setUsage("/region subareas [action] [subarea] (params)");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		Region region = TargetRegionSession.getRegion(player);
 
@@ -78,7 +79,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 		switch (args[0]) {
 			case "create": {
-				if (!player.hasPermission("homestead.region.subareas.create")) {
+				if (!player.hasPermission("homestead.actions.regions.subareas.create")) {
 					Messages.send(player, 8);
 					return true;
 				}
@@ -148,7 +149,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				break;
 			}
 			case "rename": {
-				if (!player.hasPermission("homestead.region.subareas.rename")) {
+				if (!player.hasPermission("homestead.actions.regions.subareas.update.name")) {
 					Messages.send(player, 8);
 					return true;
 				}
@@ -202,7 +203,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				return true;
 			}
 			case "delete": {
-				if (!player.hasPermission("homestead.region.subareas.delete")) {
+				if (!player.hasPermission("homestead.actions.regions.subareas.delete")) {
 					Messages.send(player, 8);
 					return true;
 				}
@@ -227,7 +228,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				return true;
 			}
 			case "resize": {
-				if (!player.hasPermission("homestead.region.subareas.resize")) {
+				if (!player.hasPermission("homestead.actions.regions.subareas.resize")) {
 					Messages.send(player, 8);
 					return true;
 				}
@@ -274,7 +275,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				return true;
 			}
 			case "flags": {
-				if (!player.hasPermission("homestead.region.subareas.flags")) {
+				if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.global")) {
 					Messages.send(player, 8);
 					return true;
 				}
@@ -350,11 +351,6 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				return true;
 			}
 			case "players": {
-				if (!player.hasPermission("homestead.region.subareas.players")) {
-					Messages.send(player, 8);
-					return true;
-				}
-
 				if (args.length < 4) {
 					Messages.send(player, 0, new Placeholder()
 							.add("{usage}", getUsage())
@@ -391,6 +387,11 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				switch (action.toLowerCase()) {
 					case "add": {
+						if (!player.hasPermission("homestead.actions.regions.subareas.players.add")) {
+							Messages.send(player, 8);
+							return true;
+						}
+
 						if (region.isOwner(target)) {
 							Messages.send(player, 30);
 							return true;
@@ -421,6 +422,11 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					}
 
 					case "remove": {
+						if (!player.hasPermission("homestead.actions.regions.subareas.players.remove")) {
+							Messages.send(player, 8);
+							return true;
+						}
+
 						if (!MemberManager.isMemberOfSubArea(subArea, target)) {
 							Messages.send(player, 175);
 							return true;
@@ -441,7 +447,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 					}
 
 					case "flags": {
-						if (!player.hasPermission("homestead.region.subareas.players.flags")) {
+						if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.members")) {
 							Messages.send(player, 8);
 							return true;
 						}

@@ -17,20 +17,24 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslat
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
+import java.util.List;
+
 public class RenameRegionSubCmd extends SubCommandBuilder {
 	public RenameRegionSubCmd() {
 		super("rename");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.update.name"
+		));
 		setUsage("/region rename [new-name]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		if (args.length < 1) {
 			Messages.send(player, 0, new Placeholder()

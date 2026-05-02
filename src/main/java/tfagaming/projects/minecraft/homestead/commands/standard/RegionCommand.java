@@ -14,7 +14,9 @@ import java.util.List;
 public class RegionCommand extends CommandBuilder {
 	public RegionCommand() {
 		super("region", "rg", "hs", "homestead");
+		setPermission("homestead.commands.region");
 		setUsage("/region [sub-command]");
+		setPlayerOnly();
 
 		registerSubCommand(new CreateRegionSubCmd());
 		registerSubCommand(new DeleteRegionSubCmd());
@@ -63,17 +65,13 @@ public class RegionCommand extends CommandBuilder {
 		registerSubCommand(new SetMapColorSubCmd());
 		registerSubCommand(new SetMapIconSubCmd());
 		registerSubCommand(new SetMemberTaxSubCmd());
-		registerSubCommand(new SetRegionSpawnSubCmd());
+		registerSubCommand(new SetSpawnSubCmd());
 	}
 
 	@Override
 	public boolean onDefaultExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		if (args.length == 0) {
 			new RegionsMenu(player);

@@ -12,20 +12,23 @@ import tfagaming.projects.minecraft.homestead.resources.files.LevelsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
+import java.util.List;
+
 public class LevelsSubCmd extends SubCommandBuilder {
 	public LevelsSubCmd() {
 		super("levels");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
 		setUsage("/region levels");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		boolean levelsEnabled = Resources.<LevelsFile>get(ResourceType.Levels).isEnabled();
 

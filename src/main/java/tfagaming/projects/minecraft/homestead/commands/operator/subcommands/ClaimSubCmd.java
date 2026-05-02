@@ -19,16 +19,13 @@ public class ClaimSubCmd extends SubCommandBuilder {
 	public ClaimSubCmd() {
 		super("claim");
 		setUsage("/hsadmin claim [region] [location] [radius]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return false;
-		}
+		if (player == null) return false;
 
 		if (args.length < 2) {
 			Messages.send(player, 0, new Placeholder()

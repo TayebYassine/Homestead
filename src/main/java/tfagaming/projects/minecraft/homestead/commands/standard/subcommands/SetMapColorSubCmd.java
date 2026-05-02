@@ -16,22 +16,19 @@ import java.util.List;
 public class SetMapColorSubCmd extends SubCommandBuilder {
 	public SetMapColorSubCmd() {
 		super("setmapcolor");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.update.map_color"
+		));
 		setUsage("/region setmapcolor [color]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.dynamicmaps.color")) {
-			Messages.send(player, 8);
-			return true;
-		}
+		if (player == null) return false;
 
 		Region region = TargetRegionSession.getRegion(player);
 

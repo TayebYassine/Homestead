@@ -9,8 +9,9 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 public class ReloadSubCmd extends SubCommandBuilder {
 	public ReloadSubCmd() {
-		super("reload", null, false);
+		super("reload");
 		setUsage("/hsadmin reload");
+		setConsoleOnly();
 	}
 
 	@Override

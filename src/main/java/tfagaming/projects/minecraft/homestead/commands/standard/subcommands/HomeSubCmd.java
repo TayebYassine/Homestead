@@ -11,25 +11,24 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
+import java.util.List;
+
 public class HomeSubCmd extends SubCommandBuilder {
 	public HomeSubCmd() {
 		super("home");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.teleport"
+		));
 		setUsage("/region home");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.teleport")) {
-			Messages.send(player, 212);
-			return true;
-		}
+		if (player == null) return false;
 
 		Region region = TargetRegionSession.getRegion(player);
 
@@ -48,8 +47,7 @@ public class HomeSubCmd extends SubCommandBuilder {
 		if (!PlayerUtility.isOperator(player)
 				&& !region.isOwner(player)
 				&& !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
-				&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true)
-				&& player.hasPermission("homestead.region.teleport"))) {
+				&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
 			Messages.send(player, 45, new Placeholder()
 					.add("{region}", region.getName())
 			);

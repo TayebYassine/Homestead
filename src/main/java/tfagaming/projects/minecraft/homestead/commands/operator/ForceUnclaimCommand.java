@@ -19,6 +19,7 @@ public class ForceUnclaimCommand extends CommandBuilder {
 	public ForceUnclaimCommand() {
 		super("forceunclaim");
 		setUsage("/forceunclaim");
+		setPlayerOnly();
 	}
 
 	@Override

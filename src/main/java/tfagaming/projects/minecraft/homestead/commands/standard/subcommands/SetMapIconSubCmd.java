@@ -20,22 +20,19 @@ import java.util.List;
 public class SetMapIconSubCmd extends SubCommandBuilder {
 	public SetMapIconSubCmd() {
 		super("setmapicon");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.update.map_icon"
+		));
 		setUsage("/region setmapicon [icon]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.dynamicmaps.icon")) {
-			Messages.send(player, 8);
-			return true;
-		}
+		if (player == null) return false;
 
 		Region region = TargetRegionSession.getRegion(player);
 

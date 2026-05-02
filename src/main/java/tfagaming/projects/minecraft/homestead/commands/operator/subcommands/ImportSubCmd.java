@@ -30,8 +30,9 @@ import java.util.*;
 
 public class ImportSubCmd extends SubCommandBuilder {
 	public ImportSubCmd() {
-		super("import", null, false);
+		super("import");
 		setUsage("/hsadmin import [plugin]");
+		setConsoleOnly();
 	}
 
 	@Override

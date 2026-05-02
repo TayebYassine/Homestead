@@ -23,10 +23,14 @@ public class FlagsOverrideSubCmd extends SubCommandBuilder {
 	public FlagsOverrideSubCmd() {
 		super("flagsoverride");
 		setUsage("/hsadmin flagsoverride [global/world/member] {member} [flag] (allow/deny)");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return false;
+
 		if (args.length < 1) {
 			Messages.send(sender, 0, new Placeholder()
 					.add("{usage}", getUsage())

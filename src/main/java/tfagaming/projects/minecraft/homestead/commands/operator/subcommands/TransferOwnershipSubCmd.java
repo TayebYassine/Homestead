@@ -15,8 +15,9 @@ import java.util.List;
 
 public class TransferOwnershipSubCmd extends SubCommandBuilder {
 	public TransferOwnershipSubCmd() {
-		super("transfer", null, false);
+		super("transfer");
 		setUsage("/hsadmin transfer [region] [new-owner]");
+		setPlayerOnly();
 	}
 
 	@Override

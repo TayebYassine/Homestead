@@ -27,17 +27,18 @@ import java.util.List;
 public class UnclaimCommand extends CommandBuilder {
 	public UnclaimCommand() {
 		super("unclaim");
+		setPermission(List.of(
+				"homestead.commands.unclaim",
+				"homestead.actions.regions.chunks.unclaim"
+		));
 		setUsage("/unclaim");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onDefaultExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
+		if (player == null) return false;
 
 		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
 			Cooldown.sendCooldownMessage(player);

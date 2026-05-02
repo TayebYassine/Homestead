@@ -17,22 +17,19 @@ import java.util.List;
 public class SetTimeSubCmd extends SubCommandBuilder {
 	public SetTimeSubCmd() {
 		super("settime");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.update.time"
+		));
 		setUsage("/region settime [time]");
+		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return true;
-		}
-
-		if (!player.hasPermission("homestead.region.time")) {
-			Messages.send(player, 211);
-			return true;
-		}
+		if (player == null) return false;
 
 		Region region = TargetRegionSession.getRegion(player);
 
