@@ -385,7 +385,7 @@ buttons:
       - "&7Set the region's location to your current position."
       - ""
       - "&#9575CD&n➥ Left-click to update the location."
-    type: ENDER_PEARL
+    type: COMPASS
   38:
     name: "&#FF8A65&lTransfer Ownership"
     lore:

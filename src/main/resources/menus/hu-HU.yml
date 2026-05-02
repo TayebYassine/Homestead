@@ -377,7 +377,7 @@ buttons:
     - '&7Állítsd a régió helyzetét a jelenlegi pozíciódra.'
     - ''
     - '&#9575CD&n➥ Bal-Klikk a helyzet frissítéséhez.'
-    type: ENDER_PEARL
+    type: COMPASS
   '38':
     name: '&#FF8A65&lTulajdon Jog Átadása'
     lore:

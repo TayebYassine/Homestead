@@ -76,9 +76,9 @@ final class LegacyParsers {
 
 	static RegionLog parseLegacyLog(long regionId, String s) {
 		try {
-			String[] p = s.split("§", 4);
-			String author = p[0];
-			String message = p.length > 1 ? p[1] : "";
+			String[] p = s.split(",", 5);
+			String author = p[1];
+			String message = p.length > 3 ? p[4] : "";
 			long sentAt = p.length > 2 ? Long.parseLong(p[2].trim()) : System.currentTimeMillis();
 			boolean read = p.length > 3 && Boolean.parseBoolean(p[3].trim());
 			return new RegionLog(Homestead.getSnowflake().nextId(), regionId, author, message, sentAt, read);
