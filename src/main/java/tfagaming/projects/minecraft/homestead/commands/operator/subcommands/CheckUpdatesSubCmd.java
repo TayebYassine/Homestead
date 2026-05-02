@@ -1,10 +1,8 @@
 package tfagaming.projects.minecraft.homestead.commands.operator.subcommands;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.tools.https.UpdateChecker;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 

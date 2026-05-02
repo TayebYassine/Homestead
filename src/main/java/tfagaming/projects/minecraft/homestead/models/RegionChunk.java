@@ -12,9 +12,8 @@ import java.util.UUID;
 
 public final class RegionChunk {
 	private static final Homestead INSTANCE = Homestead.getInstance();
-	private boolean autoUpdate = true;
-
 	private final long id;
+	private boolean autoUpdate = true;
 	private long regionId;
 	private UUID worldId;
 	private int x;
@@ -67,6 +66,11 @@ public final class RegionChunk {
 		return regionId;
 	}
 
+	public void setRegionId(long regionId) {
+		this.regionId = regionId;
+		update();
+	}
+
 	/**
 	 * Returns the region by directly fetching with region ID from cache.
 	 * @return The region if found, {@code null} otherwise.
@@ -83,11 +87,6 @@ public final class RegionChunk {
 		Region region = getRegion();
 
 		return region == null ? "?" : region.getName();
-	}
-
-	public void setRegionId(long regionId) {
-		this.regionId = regionId;
-		update();
 	}
 
 	public UUID getWorldId() {

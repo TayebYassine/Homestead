@@ -8,7 +8,6 @@ import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 
-
 import java.util.List;
 import java.util.Map;
 

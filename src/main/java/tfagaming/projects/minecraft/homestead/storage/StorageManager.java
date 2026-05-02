@@ -37,7 +37,7 @@ public class StorageManager {
 
 	public static SharedStorage getStorage(long regionId) {
 		return STORAGES.computeIfAbsent(regionId, id -> {
-			String data = storageConfig.getString("storages." + id.toString());
+			String data = storageConfig.getString("storages." + id);
 			if (data != null && !data.isEmpty()) {
 				try {
 					return SharedStorage.deserialize(id, data);

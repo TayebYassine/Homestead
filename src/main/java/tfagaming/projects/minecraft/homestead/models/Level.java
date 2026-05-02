@@ -57,6 +57,11 @@ public final class Level {
 		return regionId;
 	}
 
+	public void setRegionId(long regionId) {
+		this.regionId = regionId;
+		update();
+	}
+
 	/**
 	 * Returns the region by directly fetching with region ID from cache.
 	 * @return The region if found, {@code null} otherwise.
@@ -73,11 +78,6 @@ public final class Level {
 		Region region = getRegion();
 
 		return region == null ? "?" : region.getName();
-	}
-
-	public void setRegionId(long regionId) {
-		this.regionId = regionId;
-		update();
 	}
 
 	public int getLevel() {

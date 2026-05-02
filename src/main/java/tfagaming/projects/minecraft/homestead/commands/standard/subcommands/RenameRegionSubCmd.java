@@ -11,7 +11,6 @@ import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;

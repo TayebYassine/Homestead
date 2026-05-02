@@ -14,8 +14,8 @@ import java.util.Random;
 import java.util.UUID;
 
 public final class TargetRegionSession {
-	private static final Random random = new Random();
 	public static final HashMap<UUID, Long> SESSIONS = new HashMap<UUID, Long>();
+	private static final Random random = new Random();
 
 	private TargetRegionSession() {
 

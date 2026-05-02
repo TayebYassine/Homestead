@@ -15,9 +15,8 @@ import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-
-import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 
 import java.util.Map;
 import java.util.Set;

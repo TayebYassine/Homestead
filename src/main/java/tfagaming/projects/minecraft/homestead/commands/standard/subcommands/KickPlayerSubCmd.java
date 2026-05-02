@@ -2,7 +2,6 @@ package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -13,8 +12,6 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-
-
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtility;

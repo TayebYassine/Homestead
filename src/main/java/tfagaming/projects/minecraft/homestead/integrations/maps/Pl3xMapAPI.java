@@ -19,7 +19,7 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,8 @@ public final class Pl3xMapAPI extends AbstractMapIntegration {
 		super(plugin);
 		try {
 			update();
-		} catch (NoClassDefFoundError ignored) {}
+		} catch (NoClassDefFoundError ignored) {
+		}
 	}
 
 	@Override
@@ -94,15 +95,15 @@ public final class Pl3xMapAPI extends AbstractMapIntegration {
 	private void addChunkVisuals(SimpleLayer layer, RegionChunk chunk, String hoverText,
 								 int chunkColor, Region region) {
 		boolean north = !isNeighborClaimed(region, chunk, GeoDirection.NORTH);
-		boolean east  = !isNeighborClaimed(region, chunk, GeoDirection.EAST);
+		boolean east = !isNeighborClaimed(region, chunk, GeoDirection.EAST);
 		boolean south = !isNeighborClaimed(region, chunk, GeoDirection.SOUTH);
-		boolean west  = !isNeighborClaimed(region, chunk, GeoDirection.WEST);
+		boolean west = !isNeighborClaimed(region, chunk, GeoDirection.WEST);
 
 		addFillRectangle(layer, chunk, hoverText, chunkColor);
 		if (north) addBorderLine(layer, chunk, GeoDirection.NORTH, chunkColor);
-		if (east)  addBorderLine(layer, chunk, GeoDirection.EAST, chunkColor);
+		if (east) addBorderLine(layer, chunk, GeoDirection.EAST, chunkColor);
 		if (south) addBorderLine(layer, chunk, GeoDirection.SOUTH, chunkColor);
-		if (west)  addBorderLine(layer, chunk, GeoDirection.WEST, chunkColor);
+		if (west) addBorderLine(layer, chunk, GeoDirection.WEST, chunkColor);
 	}
 
 	private void addFillRectangle(SimpleLayer layer, RegionChunk chunk, String hoverText, int chunkColor) {
@@ -129,11 +130,25 @@ public final class Pl3xMapAPI extends AbstractMapIntegration {
 
 		Point p1, p2;
 		switch (side) {
-			case NORTH -> { p1 = Point.of(x * 16, z * 16);     p2 = Point.of(x * 16 + 16, z * 16); }
-			case EAST  -> { p1 = Point.of(x * 16 + 16, z * 16); p2 = Point.of(x * 16 + 16, z * 16 + 16); }
-			case SOUTH -> { p1 = Point.of(x * 16, z * 16 + 16); p2 = Point.of(x * 16 + 16, z * 16 + 16); }
-			case WEST  -> { p1 = Point.of(x * 16, z * 16);     p2 = Point.of(x * 16, z * 16 + 16); }
-			default -> { return; }
+			case NORTH -> {
+				p1 = Point.of(x * 16, z * 16);
+				p2 = Point.of(x * 16 + 16, z * 16);
+			}
+			case EAST -> {
+				p1 = Point.of(x * 16 + 16, z * 16);
+				p2 = Point.of(x * 16 + 16, z * 16 + 16);
+			}
+			case SOUTH -> {
+				p1 = Point.of(x * 16, z * 16 + 16);
+				p2 = Point.of(x * 16 + 16, z * 16 + 16);
+			}
+			case WEST -> {
+				p1 = Point.of(x * 16, z * 16);
+				p2 = Point.of(x * 16, z * 16 + 16);
+			}
+			default -> {
+				return;
+			}
 		}
 
 		Polyline line = new Polyline(markerId, List.of(p1, p2));
@@ -172,7 +187,8 @@ public final class Pl3xMapAPI extends AbstractMapIntegration {
 			iconMarker.setOptions(Options.builder().tooltipContent(hoverText).build());
 
 			layer.addMarker(iconMarker);
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) {
+		}
 	}
 
 	private boolean isHomeChunk(Region region, RegionChunk chunk) {

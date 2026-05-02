@@ -66,7 +66,7 @@ public class DiscordWebhookClient {
 
 		embedBuilder.append("}");
 
-		String payload = "{\"embeds\":[" + embedBuilder.toString() + "]}";
+		String payload = "{\"embeds\":[" + embedBuilder + "]}";
 		executePost(payload);
 	}
 

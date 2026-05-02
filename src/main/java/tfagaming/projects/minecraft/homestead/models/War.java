@@ -85,6 +85,12 @@ public final class War {
 		return new ArrayList<>(regionIds);
 	}
 
+	public void setRegionIds(List<Long> regionIds) {
+		this.regionIds.clear();
+		this.regionIds.addAll(regionIds);
+		update();
+	}
+
 	public List<Region> getRegions() {
 		List<Region> regions = new ArrayList<>();
 
@@ -95,12 +101,6 @@ public final class War {
 		}
 
 		return regions;
-	}
-
-	public void setRegionIds(List<Long> regionIds) {
-		this.regionIds.clear();
-		this.regionIds.addAll(regionIds);
-		update();
 	}
 
 	public void addRegionId(long regionId) {

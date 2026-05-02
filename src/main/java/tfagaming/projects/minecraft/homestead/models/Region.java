@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.models;
 
-import com.mongodb.lang.NonNull;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
@@ -110,6 +109,11 @@ public final class Region {
 		return INSTANCE.getOfflinePlayerSync(ownerId);
 	}
 
+	public void setOwner(OfflinePlayer owner) {
+		this.ownerId = owner.getUniqueId();
+		update();
+	}
+
 	/**
 	 * Returns the owner's name safely. If the player was not found by their ID, it will
 	 * return {@code "?"} instead.
@@ -127,11 +131,6 @@ public final class Region {
 
 	public boolean isOwner(UUID id) {
 		return this.ownerId.equals(id);
-	}
-
-	public void setOwner(OfflinePlayer owner) {
-		this.ownerId = owner.getUniqueId();
-		update();
 	}
 
 	public SeLocation getLocation() {

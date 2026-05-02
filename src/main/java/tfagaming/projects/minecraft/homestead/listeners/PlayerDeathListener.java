@@ -14,8 +14,6 @@ import tfagaming.projects.minecraft.homestead.models.War;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-
-
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.items.ItemUtility;
 

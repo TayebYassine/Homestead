@@ -3,9 +3,6 @@ package tfagaming.projects.minecraft.homestead.flags;
 import java.util.*;
 
 public final class WorldFlags {
-	private WorldFlags() {
-	}
-
 	public static final long PASSIVE_ENTITY_SPAWN = 1L;
 	public static final long HOSTILE_ENTITY_SPAWN = 1L << 1;
 	public static final long ENTITY_GRIEFING = 1L << 2;
@@ -33,7 +30,6 @@ public final class WorldFlags {
 	public static final long WARS = 1L << 21;
 	public static final long PROJECTILES = 1L << 22;
 	public static final long WEATHER_SNOW = 1L << 23;
-
 	private static final Map<String, Long> MAPPED_FLAGS = new LinkedHashMap<>();
 
 	static {
@@ -61,6 +57,9 @@ public final class WorldFlags {
 		MAPPED_FLAGS.put("wars", WARS);
 		MAPPED_FLAGS.put("projectiles", PROJECTILES);
 		MAPPED_FLAGS.put("weather-snow", WEATHER_SNOW);
+	}
+
+	private WorldFlags() {
 	}
 
 	/**

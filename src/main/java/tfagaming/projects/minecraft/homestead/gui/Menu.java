@@ -11,7 +11,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
@@ -49,6 +48,14 @@ public class Menu implements Listener {
 		}
 
 		Bukkit.getPluginManager().registerEvents(this, plugin);
+	}
+
+	public static Builder<?> builder(int pathTitle, int size) {
+		return new Builder<>(pathTitle, size);
+	}
+
+	public static Builder<?> builder(String title, int size) {
+		return new Builder<>(title, size);
 	}
 
 	public Menu setPassthrough(boolean passthrough) {
@@ -132,20 +139,12 @@ public class Menu implements Listener {
 		return slot >= 0 && slot < inventory.getSize();
 	}
 
-	public static Builder<?> builder(int pathTitle, int size) {
-		return new Builder<>(pathTitle, size);
-	}
-
-	public static Builder<?> builder(String title, int size) {
-		return new Builder<>(title, size);
-	}
-
 	public static class Builder<T extends Builder<T>> {
 		protected final String title;
 		protected final int size;
-		protected boolean passthrough = false;
 		protected final Map<Integer, ItemStack> items = new HashMap<>();
 		protected final Map<Integer, BiConsumer<Player, InventoryClickEvent>> buttons = new HashMap<>();
+		protected boolean passthrough = false;
 		protected ItemStack filler;
 
 		protected Builder(int pathTitle, int size) {

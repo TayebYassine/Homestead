@@ -3,9 +3,6 @@ package tfagaming.projects.minecraft.homestead.flags;
 import java.util.*;
 
 public final class RegionControlFlags {
-	private RegionControlFlags() {
-	}
-
 	public static final long TRUST_PLAYERS = 1L;
 	public static final long UNTRUST_PLAYERS = 1L << 1;
 	public static final long BAN_PLAYERS = 1L << 2;
@@ -24,7 +21,6 @@ public final class RegionControlFlags {
 	public static final long MANAGE_LOGS = 1L << 15;
 	public static final long KICK_PLAYERS = 1L << 16;
 	public static final long SET_WEATHER_AND_TIME = 1L << 17;
-
 	private static final Map<String, Long> MAPPED_FLAGS = new LinkedHashMap<>();
 
 	static {
@@ -46,6 +42,9 @@ public final class RegionControlFlags {
 		MAPPED_FLAGS.put("manage-logs", MANAGE_LOGS);
 		MAPPED_FLAGS.put("kick-players", KICK_PLAYERS);
 		MAPPED_FLAGS.put("set-weather-and-time", SET_WEATHER_AND_TIME);
+	}
+
+	private RegionControlFlags() {
 	}
 
 	/**

@@ -18,7 +18,6 @@ import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
-
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
@@ -47,18 +46,6 @@ public final class RegionPlayersInvited {
 				.actionButton(2, MenuUtility.getButton(31), handleClearInvites(player, region))
 				.build()
 				.open(player);
-	}
-
-	private void handleInviteClick(Player player, Region region, PaginationMenu.ClickContext context) {
-		if (context.getIndex() >= invites.size()) return;
-
-		RegionInvite invite = invites.get(context.getIndex());
-		if (!context.getEvent().isLeftClick()) return;
-		if (!InviteManager.isInvited(region, invite.getPlayer())) return;
-
-		InviteManager.deleteInvite(invite.getUniqueId());
-		invites = InviteManager.getInvitesOfRegion(region);
-		context.getInstance().setItems(getItems(player, region));
 	}
 
 	private static BiConsumer<Player, InventoryClickEvent> handleInvitePlayer(Player player, Region region) {
@@ -180,6 +167,18 @@ public final class RegionPlayersInvited {
 			return false;
 		}
 		return true;
+	}
+
+	private void handleInviteClick(Player player, Region region, PaginationMenu.ClickContext context) {
+		if (context.getIndex() >= invites.size()) return;
+
+		RegionInvite invite = invites.get(context.getIndex());
+		if (!context.getEvent().isLeftClick()) return;
+		if (!InviteManager.isInvited(region, invite.getPlayer())) return;
+
+		InviteManager.deleteInvite(invite.getUniqueId());
+		invites = InviteManager.getInvitesOfRegion(region);
+		context.getInstance().setItems(getItems(player, region));
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {

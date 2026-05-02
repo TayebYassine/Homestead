@@ -12,12 +12,11 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;

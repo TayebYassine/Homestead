@@ -21,7 +21,6 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.*;
-
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;

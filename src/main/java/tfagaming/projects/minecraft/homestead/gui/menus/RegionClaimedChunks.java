@@ -16,7 +16,6 @@ import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -25,10 +24,10 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.PersistentC
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility.ButtonData;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 
 import java.util.ArrayList;
 import java.util.List;

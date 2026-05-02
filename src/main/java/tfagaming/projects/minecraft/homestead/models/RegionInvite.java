@@ -9,9 +9,8 @@ import java.util.UUID;
 
 public final class RegionInvite {
 	private static final Homestead INSTANCE = Homestead.getInstance();
-	private boolean autoUpdate = true;
-
 	private final long id;
+	private boolean autoUpdate = true;
 	private long regionId;
 	private UUID playerId;
 	private long invitedAt;
@@ -51,6 +50,11 @@ public final class RegionInvite {
 		return regionId;
 	}
 
+	public void setRegionId(long regionId) {
+		this.regionId = regionId;
+		update();
+	}
+
 	/**
 	 * Returns the region by directly fetching with region ID from cache.
 	 * @return The region if found, {@code null} otherwise.
@@ -69,19 +73,24 @@ public final class RegionInvite {
 		return region == null ? "?" : region.getName();
 	}
 
-	public void setRegionId(long regionId) {
-		this.regionId = regionId;
-		update();
-	}
-
 	public UUID getPlayerId() {
 		return playerId;
+	}
+
+	public void setPlayerId(UUID playerId) {
+		this.playerId = playerId;
+		update();
 	}
 
 	public OfflinePlayer getPlayer() {
 		if (INSTANCE == null) return null;
 
 		return INSTANCE.getOfflinePlayerSync(playerId);
+	}
+
+	public void setPlayer(OfflinePlayer player) {
+		this.playerId = player.getUniqueId();
+		update();
 	}
 
 	/**
@@ -93,16 +102,6 @@ public final class RegionInvite {
 		OfflinePlayer player = getPlayer();
 
 		return player == null ? "?" : player.getName();
-	}
-
-	public void setPlayerId(UUID playerId) {
-		this.playerId = playerId;
-		update();
-	}
-
-	public void setPlayer(OfflinePlayer player) {
-		this.playerId = player.getUniqueId();
-		update();
 	}
 
 	public long getInvitedAt() {

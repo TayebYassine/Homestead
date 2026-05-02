@@ -3,8 +3,6 @@ package tfagaming.projects.minecraft.homestead.managers;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
-import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
 import tfagaming.projects.minecraft.homestead.integrations.FastAsyncWorldEditAPI;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;

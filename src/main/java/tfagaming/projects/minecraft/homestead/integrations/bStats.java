@@ -7,7 +7,6 @@ import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;

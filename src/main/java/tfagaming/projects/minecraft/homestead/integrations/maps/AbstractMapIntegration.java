@@ -92,10 +92,12 @@ public abstract class AbstractMapIntegration {
 
 		switch (direction) {
 			case NORTH -> z -= 1;
-			case EAST  -> x += 1;
+			case EAST -> x += 1;
 			case SOUTH -> z += 1;
-			case WEST  -> x -= 1;
-			default -> { return false; }
+			case WEST -> x -= 1;
+			default -> {
+				return false;
+			}
 		}
 
 		final int nx = x, nz = z;

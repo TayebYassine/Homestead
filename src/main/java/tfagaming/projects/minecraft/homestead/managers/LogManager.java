@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.managers;
 
-import net.pl3x.map.core.configuration.Lang;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;

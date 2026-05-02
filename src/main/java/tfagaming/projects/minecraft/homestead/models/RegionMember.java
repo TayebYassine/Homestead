@@ -10,11 +10,10 @@ import java.util.UUID;
 
 public final class RegionMember {
 	private static final Homestead INSTANCE = Homestead.getInstance();
-	private boolean autoUpdate = true;
-
 	private final long id;
-	private UUID playerId;
 	private final LinkageType linkageType;
+	private boolean autoUpdate = true;
+	private UUID playerId;
 	private long regionId = -1L;
 	private long subAreaId = -1L;
 	private long playerFlags = 0L;
@@ -83,6 +82,11 @@ public final class RegionMember {
 		return INSTANCE.getOfflinePlayerSync(playerId);
 	}
 
+	public void setPlayer(OfflinePlayer player) {
+		this.playerId = player.getUniqueId();
+		update();
+	}
+
 	/**
 	 * Returns the player's name safely. If the player was not found by their ID, it will
 	 * return {@code "?"} instead.
@@ -94,17 +98,17 @@ public final class RegionMember {
 		return player == null ? "?" : player.getName();
 	}
 
-	public void setPlayer(OfflinePlayer player) {
-		this.playerId = player.getUniqueId();
-		update();
-	}
-
 	public LinkageType getLinkageType() {
 		return linkageType;
 	}
 
 	public long getRegionId() {
 		return regionId;
+	}
+
+	public void setRegionId(long regionId) {
+		this.regionId = regionId;
+		update();
 	}
 
 	/**
@@ -125,13 +129,13 @@ public final class RegionMember {
 		return region == null ? "?" : region.getName();
 	}
 
-	public void setRegionId(long regionId) {
-		this.regionId = regionId;
-		update();
-	}
-
 	public long getSubAreaId() {
 		return subAreaId;
+	}
+
+	public void setSubAreaId(long subAreaId) {
+		this.subAreaId = subAreaId;
+		update();
 	}
 
 	/**
@@ -150,11 +154,6 @@ public final class RegionMember {
 		SubArea subArea = getSubArea();
 
 		return subArea == null ? "?" : subArea.getName();
-	}
-
-	public void setSubAreaId(long subAreaId) {
-		this.subAreaId = subAreaId;
-		update();
 	}
 
 	public long getPlayerFlags() {

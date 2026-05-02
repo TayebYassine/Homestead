@@ -1,31 +1,18 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionChatEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
-import tfagaming.projects.minecraft.homestead.models.RegionMember;
-import tfagaming.projects.minecraft.homestead.resources.ResourceType;
-import tfagaming.projects.minecraft.homestead.resources.Resources;
-import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-
-
-import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class ChatSubCmd extends SubCommandBuilder {
 	public ChatSubCmd() {

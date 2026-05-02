@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
  * A utility class that manages {@link RegionRate}.
  */
 public final class RateManager {
-	private RateManager() {}
+	private RateManager() {
+	}
 
 	/**
 	 * Retrieves a specific rating by its unique ID.

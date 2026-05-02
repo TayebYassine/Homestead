@@ -2,12 +2,9 @@ package tfagaming.projects.minecraft.homestead.storage;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
-
-import java.util.UUID;
 
 public class RegionStorage {
 

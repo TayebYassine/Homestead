@@ -7,7 +7,6 @@ import tfagaming.projects.minecraft.homestead.api.events.RevokePlayerInviteEvent
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionInvite;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -74,7 +73,7 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 
 		if (args.length == 1) {
 			suggestions.addAll(
-				InviteManager.getInvitesOfPlayer(player).stream()
+					InviteManager.getInvitesOfPlayer(player).stream()
 							.map(RegionInvite::getRegionName)
 							.toList()
 			);

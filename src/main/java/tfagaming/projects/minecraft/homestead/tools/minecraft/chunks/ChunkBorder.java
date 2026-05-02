@@ -14,7 +14,6 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 
 
-
 public final class ChunkBorder {
 	private ChunkBorder() {
 	}

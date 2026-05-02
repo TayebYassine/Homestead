@@ -1,6 +1,5 @@
 package tfagaming.projects.minecraft.homestead.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
@@ -14,7 +13,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionOwnerUpdateEvent;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
@@ -55,31 +53,6 @@ public final class CustomSignsListener implements Listener {
 	private static final int MSG_NOT_CLAIMED_OR_OWNER = 119;
 	private static final int MSG_WAR_ACTIVE = 156;
 	private static final int MSG_SUBAREA_RENTED = 194;
-
-	private enum SignType {
-		WELCOME("[welcome]"),
-		RENT("[rent]"),
-		SELL("[sell]");
-
-		private final String identifier;
-
-		SignType(String identifier) {
-			this.identifier = identifier;
-		}
-
-		static SignType fromString(String input) {
-			String normalized = input.trim().toLowerCase();
-			for (SignType type : values()) {
-				if (type.identifier.equals(normalized)) return type;
-			}
-			return null;
-		}
-	}
-
-	private interface SignFormatter {
-		boolean validateAndFormat(SignChangeEvent event, Player player, Region region);
-	}
-
 	private final SignFormatter welcomeFormatter = (event, player, region) -> {
 		if (!isWelcomeSignsEnabled()) {
 			Messages.send(player, MSG_FEATURE_DISABLED);
@@ -97,7 +70,6 @@ public final class CustomSignsListener implements Listener {
 		region.setWelcomeSign(new SeLocation(event.getBlock().getLocation()));
 		return false;
 	};
-
 	private final SignFormatter rentFormatter = (event, player, region) -> {
 		if (!isFeatureEnabled("renting.enabled")) {
 			Messages.send(player, MSG_FEATURE_DISABLED);
@@ -121,7 +93,6 @@ public final class CustomSignsListener implements Listener {
 		);
 		return false;
 	};
-
 	private final SignFormatter sellFormatter = (event, player, region) -> {
 		if (!isFeatureEnabled("selling.enabled")) {
 			Messages.send(player, MSG_FEATURE_DISABLED);
@@ -144,6 +115,44 @@ public final class CustomSignsListener implements Listener {
 		);
 		return false;
 	};
+
+	private static String colored(String text, ChatColor legacy, String adventure) {
+		return (ADVENTURE_SUPPORTED ? adventure : legacy) + text;
+	}
+
+	private static void formatSignLines(SignChangeEvent event, String... lines) {
+		for (int i = 0; i < lines.length && i < 4; i++) {
+			PlatformBridge.get().setSignLine(event, i, lines[i]);
+		}
+	}
+
+	private static boolean hasContentInLines(SignChangeEvent event, int... indices) {
+		for (int index : indices) {
+			if (!getEventLine(event, index).trim().isEmpty()) return true;
+		}
+		return false;
+	}
+
+	private static String getEventLine(SignChangeEvent event, int index) {
+		return event.getLine(index) != null ? event.getLine(index) : "";
+	}
+
+	private static String getSignLine(Sign sign, int index) {
+		String line = sign.getLine(index);
+		return ChatColor.stripColor(line != null ? line : "");
+	}
+
+	private static RegionsFile getRegionsConfig() {
+		return Resources.get(ResourceType.Regions);
+	}
+
+	private static boolean isWelcomeSignsEnabled() {
+		return getRegionsConfig().isWelcomeSignEnabled();
+	}
+
+	private static boolean isFeatureEnabled(String path) {
+		return getRegionsConfig().getBoolean(path);
+	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
@@ -354,44 +363,6 @@ public final class CustomSignsListener implements Listener {
 		return new PriceValidation(price);
 	}
 
-	private static String colored(String text, ChatColor legacy, String adventure) {
-		return (ADVENTURE_SUPPORTED ? adventure : legacy) + text;
-	}
-
-	private static void formatSignLines(SignChangeEvent event, String... lines) {
-		for (int i = 0; i < lines.length && i < 4; i++) {
-			PlatformBridge.get().setSignLine(event, i, lines[i]);
-		}
-	}
-
-	private static boolean hasContentInLines(SignChangeEvent event, int... indices) {
-		for (int index : indices) {
-			if (!getEventLine(event, index).trim().isEmpty()) return true;
-		}
-		return false;
-	}
-
-	private static String getEventLine(SignChangeEvent event, int index) {
-		return event.getLine(index) != null ? event.getLine(index) : "";
-	}
-
-	private static String getSignLine(Sign sign, int index) {
-		String line = sign.getLine(index);
-		return ChatColor.stripColor(line != null ? line : "");
-	}
-
-	private static RegionsFile getRegionsConfig() {
-		return Resources.get(ResourceType.Regions);
-	}
-
-	private static boolean isWelcomeSignsEnabled() {
-		return getRegionsConfig().isWelcomeSignEnabled();
-	}
-
-	private static boolean isFeatureEnabled(String path) {
-		return getRegionsConfig().getBoolean(path);
-	}
-
 	private long parseDuration(String duration) {
 		if (duration == null || duration.isEmpty()) return 0;
 		try {
@@ -468,9 +439,9 @@ public final class CustomSignsListener implements Listener {
 
 		if (input.contains("second")) return (long) (num * 1000);
 		if (input.contains("minute")) return (long) (num * 60 * 1000);
-		if (input.contains("hour"))   return (long) (num * 60 * 60 * 1000);
-		if (input.contains("day"))    return (long) (num * 24 * 60 * 60 * 1000);
-		if (input.contains("week"))   return (long) (num * MS_PER_WEEK);
+		if (input.contains("hour")) return (long) (num * 60 * 60 * 1000);
+		if (input.contains("day")) return (long) (num * 24 * 60 * 60 * 1000);
+		if (input.contains("week")) return (long) (num * MS_PER_WEEK);
 
 		return parseDuration(input);
 	}
@@ -480,5 +451,30 @@ public final class CustomSignsListener implements Listener {
 		return Character.toLowerCase(input.charAt(input.length() - 1));
 	}
 
-	private record PriceValidation(double value) {}
+	private enum SignType {
+		WELCOME("[welcome]"),
+		RENT("[rent]"),
+		SELL("[sell]");
+
+		private final String identifier;
+
+		SignType(String identifier) {
+			this.identifier = identifier;
+		}
+
+		static SignType fromString(String input) {
+			String normalized = input.trim().toLowerCase();
+			for (SignType type : values()) {
+				if (type.identifier.equals(normalized)) return type;
+			}
+			return null;
+		}
+	}
+
+	private interface SignFormatter {
+		boolean validateAndFormat(SignChangeEvent event, Player player, Region region);
+	}
+
+	private record PriceValidation(double value) {
+	}
 }

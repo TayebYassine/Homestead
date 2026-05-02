@@ -14,7 +14,6 @@ import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
@@ -190,8 +189,10 @@ public final class MiscellaneousSettings {
 						region.setOwner(targetPlayer);
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-						if (MemberManager.isMemberOfRegion(region, targetPlayer)) MemberManager.removeMemberFromRegion(targetPlayer, region);
-						if (InviteManager.isInvited(region, targetPlayer)) InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
+						if (MemberManager.isMemberOfRegion(region, targetPlayer))
+							MemberManager.removeMemberFromRegion(targetPlayer, region);
+						if (InviteManager.isInvited(region, targetPlayer))
+							InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
 						Homestead.callEvent(new RegionOwnerUpdateEvent(region, oldOwner, targetPlayer));
 

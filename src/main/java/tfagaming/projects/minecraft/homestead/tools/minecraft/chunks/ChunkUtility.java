@@ -10,7 +10,6 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 
-
 import java.util.ArrayList;
 import java.util.List;
 

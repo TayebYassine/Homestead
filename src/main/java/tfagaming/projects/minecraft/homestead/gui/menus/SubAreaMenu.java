@@ -129,7 +129,7 @@ public final class SubAreaMenu {
 			SubAreaManager.deleteSubArea(subArea.getUniqueId());
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.DELETE_SUBAREA);
-			
+
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 			new SubAreasMenu(player, region);

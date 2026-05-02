@@ -24,10 +24,6 @@ import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-
-
-
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;

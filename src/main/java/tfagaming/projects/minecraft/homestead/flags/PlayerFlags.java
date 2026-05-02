@@ -3,9 +3,6 @@ package tfagaming.projects.minecraft.homestead.flags;
 import java.util.*;
 
 public final class PlayerFlags {
-	private PlayerFlags() {
-	}
-
 	public static final long BREAK_BLOCKS = 1L;
 	public static final long PLACE_BLOCKS = 1L << 1;
 	public static final long CONTAINERS = 1L << 2;
@@ -42,7 +39,6 @@ public final class PlayerFlags {
 	public static final long TRIGGER_RAID = 1L << 33;
 	public static final long ELYTRA = 1L << 34;
 	public static final long SPAWN_ENTITIES = 1L << 35;
-
 	private static final Map<String, Long> MAPPED_FLAGS = new HashMap<>();
 
 	static {
@@ -82,6 +78,9 @@ public final class PlayerFlags {
 		MAPPED_FLAGS.put("trigger-raid", TRIGGER_RAID);
 		MAPPED_FLAGS.put("elytra", ELYTRA);
 		MAPPED_FLAGS.put("spawn-entities", SPAWN_ENTITIES);
+	}
+
+	private PlayerFlags() {
 	}
 
 	/**

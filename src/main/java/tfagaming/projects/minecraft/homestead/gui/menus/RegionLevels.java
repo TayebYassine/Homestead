@@ -11,7 +11,6 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.MenusFile;
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.NumberUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;

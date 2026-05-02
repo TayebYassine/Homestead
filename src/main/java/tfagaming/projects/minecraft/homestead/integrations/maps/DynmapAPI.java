@@ -19,7 +19,8 @@ public final class DynmapAPI extends AbstractMapIntegration {
 		super(plugin);
 		try {
 			DynmapCommonAPIListener.register(new DynmapListener());
-		} catch (NoClassDefFoundError ignored) {}
+		} catch (NoClassDefFoundError ignored) {
+		}
 	}
 
 	@Override
@@ -71,6 +72,6 @@ public final class DynmapAPI extends AbstractMapIntegration {
 	}
 
 	public void setMarkerSet(MarkerSet markerSet) {
-		this.markerSet = markerSet;
+		DynmapAPI.markerSet = markerSet;
 	}
 }

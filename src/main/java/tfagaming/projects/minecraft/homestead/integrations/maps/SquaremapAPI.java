@@ -13,8 +13,8 @@ import xyz.jpenilla.squaremap.api.Point;
 import xyz.jpenilla.squaremap.api.marker.*;
 import xyz.jpenilla.squaremap.api.marker.Polygon;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
+import java.awt.*;
+import java.awt.image.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,8 @@ public final class SquaremapAPI extends AbstractMapIntegration {
 		try {
 			this.api = SquaremapProvider.get();
 			update();
-		} catch (NoClassDefFoundError ignored) {}
+		} catch (NoClassDefFoundError ignored) {
+		}
 	}
 
 	@Override
@@ -90,9 +91,9 @@ public final class SquaremapAPI extends AbstractMapIntegration {
 	private void addChunkVisuals(SimpleLayerProvider layer, RegionChunk chunk, String hoverText,
 								 int chunkColor, Region region) {
 		boolean north = !isNeighborClaimed(region, chunk, GeoDirection.NORTH);
-		boolean east  = !isNeighborClaimed(region, chunk, GeoDirection.EAST);
+		boolean east = !isNeighborClaimed(region, chunk, GeoDirection.EAST);
 		boolean south = !isNeighborClaimed(region, chunk, GeoDirection.SOUTH);
-		boolean west  = !isNeighborClaimed(region, chunk, GeoDirection.WEST);
+		boolean west = !isNeighborClaimed(region, chunk, GeoDirection.WEST);
 
 		Key chunkKey = Key.of("chunk_" + chunk.getX() + "_" + chunk.getZ());
 		addFillPolygon(layer, chunk, chunkKey, hoverText, chunkColor);
@@ -105,9 +106,9 @@ public final class SquaremapAPI extends AbstractMapIntegration {
 				.build();
 
 		if (north) addBorderLine(layer, chunkKey, "north", buildPoints(chunk, GeoDirection.NORTH), borderOpts);
-		if (east)  addBorderLine(layer, chunkKey, "east", buildPoints(chunk, GeoDirection.EAST), borderOpts);
+		if (east) addBorderLine(layer, chunkKey, "east", buildPoints(chunk, GeoDirection.EAST), borderOpts);
 		if (south) addBorderLine(layer, chunkKey, "south", buildPoints(chunk, GeoDirection.SOUTH), borderOpts);
-		if (west)  addBorderLine(layer, chunkKey, "west", buildPoints(chunk, GeoDirection.WEST), borderOpts);
+		if (west) addBorderLine(layer, chunkKey, "west", buildPoints(chunk, GeoDirection.WEST), borderOpts);
 	}
 
 	private void addFillPolygon(SimpleLayerProvider layer, RegionChunk chunk, Key chunkKey,
@@ -145,9 +146,9 @@ public final class SquaremapAPI extends AbstractMapIntegration {
 
 		return switch (side) {
 			case NORTH -> List.of(Point.of(minX, minZ), Point.of(maxX, minZ));
-			case EAST  -> List.of(Point.of(maxX, minZ), Point.of(maxX, maxZ));
+			case EAST -> List.of(Point.of(maxX, minZ), Point.of(maxX, maxZ));
 			case SOUTH -> List.of(Point.of(minX, maxZ), Point.of(maxX, maxZ));
-			case WEST  -> List.of(Point.of(minX, minZ), Point.of(minX, maxZ));
+			case WEST -> List.of(Point.of(minX, minZ), Point.of(minX, maxZ));
 		};
 	}
 
@@ -182,7 +183,8 @@ public final class SquaremapAPI extends AbstractMapIntegration {
 			marker.markerOptions(MarkerOptions.builder().hoverTooltip(hoverText).build());
 
 			layer.addMarker(iconKey, marker);
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) {
+		}
 	}
 
 	private boolean isHomeChunk(Region region, RegionChunk chunk) {

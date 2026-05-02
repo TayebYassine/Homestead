@@ -3,12 +3,11 @@ package tfagaming.projects.minecraft.homestead.weatherandtime;
 import java.util.List;
 
 public final class WeatherType {
-	private WeatherType() {
-	}
-
 	public final static int SERVER = 0;
 	public final static int CLEAR = 1;
 	public final static int RAIN = 2;
+	private WeatherType() {
+	}
 
 	public static List<String> getAll() {
 		return List.of("server", "clear", "rain");

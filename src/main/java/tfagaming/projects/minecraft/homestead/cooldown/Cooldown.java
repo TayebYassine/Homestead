@@ -1,9 +1,7 @@
 package tfagaming.projects.minecraft.homestead.cooldown;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -85,24 +83,6 @@ public final class Cooldown {
 		);
 	}
 
-	private static class CooldownData {
-		private final Type type;
-		private final long endTime;
-
-		public CooldownData(Type type, long endTime) {
-			this.type = type;
-			this.endTime = endTime;
-		}
-
-		public Type getType() {
-			return type;
-		}
-
-		public long getEndTime() {
-			return endTime;
-		}
-	}
-
 	public enum Type {
 		FLAG_CHANGE_STATE("flag-change-state"),
 		REGION_SPAWN_CHANGE("region-spawn-change"),
@@ -127,6 +107,24 @@ public final class Cooldown {
 
 		public int getCooldown() {
 			return Resources.<RegionsFile>get(ResourceType.Regions).getInt("cooldown." + key + ".value", 0);
+		}
+	}
+
+	private static class CooldownData {
+		private final Type type;
+		private final long endTime;
+
+		public CooldownData(Type type, long endTime) {
+			this.type = type;
+			this.endTime = endTime;
+		}
+
+		public Type getType() {
+			return type;
+		}
+
+		public long getEndTime() {
+			return endTime;
 		}
 	}
 }

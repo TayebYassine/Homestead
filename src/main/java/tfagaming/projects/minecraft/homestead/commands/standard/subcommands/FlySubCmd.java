@@ -8,7 +8,6 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.ClaimFlySession;
-
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 

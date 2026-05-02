@@ -9,7 +9,6 @@ import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 public class RewardsSubCmd extends SubCommandBuilder {

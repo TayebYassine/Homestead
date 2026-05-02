@@ -6,7 +6,6 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionBannedPlayers;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
-
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 public class BanlistSubCmd extends SubCommandBuilder {

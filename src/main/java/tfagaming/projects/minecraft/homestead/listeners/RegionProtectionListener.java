@@ -43,8 +43,6 @@ import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-
-
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.*;
@@ -494,7 +492,7 @@ public final class RegionProtectionListener implements Listener {
 	private boolean isArchaeologyBlock(Material type) {
 		return (type == Material.SUSPICIOUS_GRAVEL || type == Material.SUSPICIOUS_SAND);
 	}
-	
+
 	/**
 	 * Returns true for archaeology brushing blocks when the player holds a brush.
 	 */

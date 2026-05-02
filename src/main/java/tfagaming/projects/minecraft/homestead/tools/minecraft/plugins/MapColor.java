@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 public final class MapColor {
-	private MapColor() {
-	}
-
 	// Most used colors
 	public static final int RED = 0xFF0000;
 	public static final int GREEN = 0x00FF00;
@@ -31,7 +28,6 @@ public final class MapColor {
 	public static final int LIME = 0x00FF00;
 	public static final int MAROON = 0x800000;
 	public static final int OLIVE = 0x808000;
-
 	// Extended colors
 	public static final int CRIMSON = 0xDC143C;
 	public static final int CORAL = 0xFF7F50;
@@ -51,7 +47,6 @@ public final class MapColor {
 	public static final int PERU = 0xCD853F;
 	public static final int KHAKI = 0xF0E68C;
 	public static final int THISTLE = 0xD8BFD8;
-
 	// Neon/bright colors
 	public static final int NEON_GREEN = 0x39FF14;
 	public static final int ELECTRIC_BLUE = 0x7DF9FF;
@@ -59,7 +54,6 @@ public final class MapColor {
 	public static final int BRIGHT_ORANGE = 0xFFA500;
 	public static final int NEON_YELLOW = 0xFFFF33;
 	public static final int NEON_PURPLE = 0x9D00FF;
-
 	// Dark/Light variants
 	public static final int DARK_RED = 0x8B0000;
 	public static final int DARK_GREEN = 0x006400;
@@ -69,9 +63,7 @@ public final class MapColor {
 	public static final int LIGHT_PINK = 0xFFB6C1;
 	public static final int LIGHT_YELLOW = 0xFFFFE0;
 	public static final int LIGHT_CYAN = 0xE0FFFF;
-
 	public static final int DEFAULT = 0;
-
 	private static final Map<String, Integer> COLOR_MAP = new HashMap<>();
 	private static final Map<Integer, String> COLOR_CODE_TO_NAME = new HashMap<>();
 
@@ -134,6 +126,9 @@ public final class MapColor {
 
 	static {
 		COLOR_MAP.forEach((name, code) -> COLOR_CODE_TO_NAME.put(code, name));
+	}
+
+	private MapColor() {
 	}
 
 	public static List<String> getAll() {

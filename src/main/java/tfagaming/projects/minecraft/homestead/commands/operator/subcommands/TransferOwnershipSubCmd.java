@@ -5,7 +5,6 @@ import org.bukkit.command.CommandSender;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.*;
-
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;

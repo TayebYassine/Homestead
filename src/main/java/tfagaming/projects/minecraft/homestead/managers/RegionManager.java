@@ -1,15 +1,8 @@
 package tfagaming.projects.minecraft.homestead.managers;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.api.events.RegionChatEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionDeleteEvent;
 import tfagaming.projects.minecraft.homestead.integrations.FastAsyncWorldEditAPI;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.models.*;
@@ -28,8 +21,6 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.economy.UpkeepUtil
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorting.*;
 
 /**
  * Handles creating, deleting, and updating regions.<br>

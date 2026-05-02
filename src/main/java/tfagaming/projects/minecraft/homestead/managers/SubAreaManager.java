@@ -7,7 +7,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;

@@ -11,7 +11,6 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LimitsFile;
-
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.LevelRewards;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.rewards.Rewards;
@@ -54,7 +53,8 @@ public final class Limits {
 					+ Rewards.getSubAreasByEachMember(region)
 					+ Rewards.getSubAreasByPlayTime(owner)
 					+ LevelRewards.getSubAreasByLevel(region);
-			case MAX_SUBAREA_VOLUME, MAX_BANK_DEPOSIT, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN -> getBaseLimitValue(owner, limit);
+			case MAX_SUBAREA_VOLUME, MAX_BANK_DEPOSIT, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN ->
+					getBaseLimitValue(owner, limit);
 			default -> 0;
 		};
 	}
@@ -130,8 +130,8 @@ public final class Limits {
 
 		if (priorityGroups.isEmpty()) {
 			priorityGroups = Objects.requireNonNull(Resources.<LimitsFile>get(ResourceType.Limits)
-                            .getConfig()
-                            .getConfigurationSection("limits.permissions"))
+							.getConfig()
+							.getConfigurationSection("limits.permissions"))
 					.getKeys(false)
 					.stream()
 					.toList();

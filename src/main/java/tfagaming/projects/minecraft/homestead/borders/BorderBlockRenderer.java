@@ -1,11 +1,12 @@
 package tfagaming.projects.minecraft.homestead.borders;
 
 import com.google.common.collect.Sets;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-
-
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;

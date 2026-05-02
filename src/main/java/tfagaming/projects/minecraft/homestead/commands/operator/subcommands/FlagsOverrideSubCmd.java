@@ -10,8 +10,6 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
-
-
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;

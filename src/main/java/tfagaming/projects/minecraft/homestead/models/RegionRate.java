@@ -9,9 +9,8 @@ import java.util.UUID;
 
 public final class RegionRate {
 	private static final Homestead INSTANCE = Homestead.getInstance();
-	private boolean autoUpdate = true;
-
 	private final long id;
+	private boolean autoUpdate = true;
 	private long regionId;
 	private UUID playerId;
 	private int rate;
@@ -54,6 +53,11 @@ public final class RegionRate {
 		return regionId;
 	}
 
+	public void setRegionId(long regionId) {
+		this.regionId = regionId;
+		update();
+	}
+
 	/**
 	 * Returns the region by directly fetching with region ID from cache.
 	 * @return The region if found, {@code null} otherwise.
@@ -72,19 +76,24 @@ public final class RegionRate {
 		return region == null ? "?" : region.getName();
 	}
 
-	public void setRegionId(long regionId) {
-		this.regionId = regionId;
-		update();
-	}
-
 	public UUID getPlayerId() {
 		return playerId;
+	}
+
+	public void setPlayerId(UUID playerId) {
+		this.playerId = playerId;
+		update();
 	}
 
 	public OfflinePlayer getPlayer() {
 		if (INSTANCE == null) return null;
 
 		return INSTANCE.getOfflinePlayerSync(playerId);
+	}
+
+	public void setPlayer(OfflinePlayer player) {
+		this.playerId = player.getUniqueId();
+		update();
 	}
 
 	/**
@@ -96,16 +105,6 @@ public final class RegionRate {
 		OfflinePlayer player = getPlayer();
 
 		return player == null ? "?" : player.getName();
-	}
-
-	public void setPlayerId(UUID playerId) {
-		this.playerId = playerId;
-		update();
-	}
-
-	public void setPlayer(OfflinePlayer player) {
-		this.playerId = player.getUniqueId();
-		update();
 	}
 
 	public int getRate() {

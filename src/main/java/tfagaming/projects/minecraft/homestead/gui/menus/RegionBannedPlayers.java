@@ -15,7 +15,6 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionBan;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.sessions.PlayerInputSession;
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
@@ -49,38 +48,6 @@ public final class RegionBannedPlayers {
 		gui.open(player);
 	}
 
-	private void handleUnban(Player player, Region region, PaginationMenu.ClickContext context) {
-		if (context.getIndex() >= bannedPlayers.size()) return;
-
-		if (RegionManager.findRegion(region.getUniqueId()) == null) {
-			player.closeInventory();
-			return;
-		}
-
-		RegionBan bannedPlayer = bannedPlayers.get(context.getIndex());
-		if (!context.getEvent().isLeftClick()) return;
-		if (!BanManager.isBanned(region, bannedPlayer.getPlayer())) return;
-
-		if (!player.hasPermission("homestead.region.players.unban")) {
-			Messages.send(player, 8);
-			return;
-		}
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.UNBAN_PLAYERS)) {
-			return;
-		}
-
-		BanManager.unbanPlayer(region, bannedPlayer.getPlayer());
-		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, bannedPlayer.getPlayerName());
-
-		Homestead.callEvent(new UnbanPlayerEvent(region, player));
-
-		bannedPlayers = BanManager.getBansOfRegion(region);
-		context.getInstance().setItems(getItems(player, region));
-	}
-
 	private static BiConsumer<Player, InventoryClickEvent> handleBanPlayer(Player player, Region region) {
 		return (_player, event) -> {
 			if (!event.isLeftClick()) return;
@@ -101,8 +68,10 @@ public final class RegionBannedPlayers {
 						if (targetPlayer == null) return;
 
 						BanManager.banPlayer(region, targetPlayer, null);
-						if (MemberManager.isMemberOfRegion(region, targetPlayer)) MemberManager.removeMemberFromRegion(targetPlayer, region);
-						if (InviteManager.isInvited(region, targetPlayer)) InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
+						if (MemberManager.isMemberOfRegion(region, targetPlayer))
+							MemberManager.removeMemberFromRegion(targetPlayer, region);
+						if (InviteManager.isInvited(region, targetPlayer))
+							InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
@@ -173,6 +142,38 @@ public final class RegionBannedPlayers {
 			Messages.send(player, 196);
 		}
 		return true;
+	}
+
+	private void handleUnban(Player player, Region region, PaginationMenu.ClickContext context) {
+		if (context.getIndex() >= bannedPlayers.size()) return;
+
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
+
+		RegionBan bannedPlayer = bannedPlayers.get(context.getIndex());
+		if (!context.getEvent().isLeftClick()) return;
+		if (!BanManager.isBanned(region, bannedPlayer.getPlayer())) return;
+
+		if (!player.hasPermission("homestead.region.players.unban")) {
+			Messages.send(player, 8);
+			return;
+		}
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				RegionControlFlags.UNBAN_PLAYERS)) {
+			return;
+		}
+
+		BanManager.unbanPlayer(region, bannedPlayer.getPlayer());
+		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, bannedPlayer.getPlayerName());
+
+		Homestead.callEvent(new UnbanPlayerEvent(region, player));
+
+		bannedPlayers = BanManager.getBansOfRegion(region);
+		context.getInstance().setItems(getItems(player, region));
 	}
 
 	private List<ItemStack> getItems(Player player, Region region) {

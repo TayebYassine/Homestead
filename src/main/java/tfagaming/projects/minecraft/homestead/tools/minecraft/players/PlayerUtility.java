@@ -10,7 +10,10 @@ import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
-import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.managers.MemberManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
+import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionMember;
 import tfagaming.projects.minecraft.homestead.models.SubArea;
@@ -19,11 +22,6 @@ import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-
-
-
-
-
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -38,9 +36,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class PlayerUtility {
-	private PlayerUtility() {
-	}
-
 	public static final Set<Long> RENT_FLAGS_SET = Set.of(
 			PlayerFlags.PVP
 	);
@@ -57,6 +52,8 @@ public final class PlayerUtility {
 	);
 	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
 	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
+	private PlayerUtility() {
+	}
 
 	public static void sendMessageRegionEnter(Player player, Placeholder placeholder) {
 		String type = Resources.<RegionsFile>get(ResourceType.Regions).getString("enter-exit-region-message.type").toLowerCase();

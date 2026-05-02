@@ -14,8 +14,8 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.threads.TaskHandle;
 
 import java.util.Map;
 import java.util.UUID;
@@ -60,6 +60,10 @@ public final class PlayerInputSession implements Listener {
 		return SESSIONS.containsKey(player.getUniqueId());
 	}
 
+	public static Builder builder(Homestead plugin, Player player) {
+		return new Builder(plugin, player);
+	}
+
 	private void internalDestroy() {
 		SESSIONS.remove(player.getUniqueId(), this);
 		HandlerList.unregisterAll(this);
@@ -101,10 +105,6 @@ public final class PlayerInputSession implements Listener {
 		if (e.getPlayer().equals(player)) {
 			internalDestroy();
 		}
-	}
-
-	public static Builder builder(Homestead plugin, Player player) {
-		return new Builder(plugin, player);
 	}
 
 	public static final class Builder {

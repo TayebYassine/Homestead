@@ -11,14 +11,9 @@ import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
 
-
-
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class Formatter {

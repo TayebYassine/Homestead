@@ -4,12 +4,9 @@ import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
-import java.util.UUID;
-
 public final class RegionLog {
-	private boolean autoUpdate = true;
-
 	private final long id;
+	private boolean autoUpdate = true;
 	private long regionId;
 	private String author;
 	private String message;
@@ -55,6 +52,11 @@ public final class RegionLog {
 		return regionId;
 	}
 
+	public void setRegionId(long regionId) {
+		this.regionId = regionId;
+		update();
+	}
+
 	/**
 	 * Returns the region by directly fetching with region ID from cache.
 	 * @return The region if found, {@code null} otherwise.
@@ -71,11 +73,6 @@ public final class RegionLog {
 		Region region = getRegion();
 
 		return region == null ? "?" : region.getName();
-	}
-
-	public void setRegionId(long regionId) {
-		this.regionId = regionId;
-		update();
 	}
 
 	public String getAuthor() {
