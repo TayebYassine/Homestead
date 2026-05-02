@@ -185,6 +185,11 @@ public final class MiscellaneousSettings {
 
 			region.setLocation(location);
 
+			Messages.send(player, 72, new Placeholder()
+					.add("{region}", region.getName())
+					.add("{location}", Formatter.getLocation(location))
+			);
+
 			LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_SPAWN);
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);

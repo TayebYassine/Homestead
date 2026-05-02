@@ -9,18 +9,103 @@ levels:
   # XP per entity type (kill must happen IN your region, except Ender Dragon)
   # Format: ENTITY_NAME: [ min_xp, max_xp ]
   on-kill-entity:
-    ENDER_DRAGON: [ 1000, 3000 ]
-    WARDEN: [ 500, 1000 ]
-    WITHER: [ 200, 500 ]
+    # Boss tier
+    ENDER_DRAGON: [ 5000, 10000 ]
+    WARDEN: [ 5000, 7500 ]
+    WITHER: [ 2500, 5000 ]
+
+    # Mini-boss / Elite tier
+    ELDER_GUARDIAN: [ 150, 300 ]
+    RAVAGER: [ 100, 200 ]
+    EVOKER: [ 80, 150 ]
+    VINDICATOR: [ 60, 120 ]
+    ILLUSIONER: [ 60, 120 ]
+    PIGLIN_BRUTE: [ 50, 100 ]
+
+    # Dangerous hostile tier
     WITHER_SKELETON: [ 50, 100 ]
     GHAST: [ 25, 50 ]
+    BLAZE: [ 30, 60 ]
+    MAGMA_CUBE: [ 15, 30 ]
+    SHULKER: [ 40, 80 ]
+    GUARDIAN: [ 30, 60 ]
+
+    # Standard hostile tier
+    CREEPER: [ 15, 30 ]
+    ZOMBIE_VILLAGER: [ 12, 25 ]
+    DROWNED: [ 12, 25 ]
+    HUSK: [ 10, 20 ]
     ZOMBIE: [ 10, 20 ]
     SKELETON: [ 10, 20 ]
-    HUSK: [ 10, 20 ]
+    STRAY: [ 10, 20 ]
+    SPIDER: [ 10, 20 ]
+    CAVE_SPIDER: [ 12, 25 ]
+    SLIME: [ 8, 15 ]
+    ENDERMAN: [ 20, 40 ]
+    PHANTOM: [ 15, 30 ]
+    WITCH: [ 25, 50 ]
+    PILLAGER: [ 15, 30 ]
+    VEX: [ 10, 20 ]
+    SILVERFISH: [ 5, 10 ]
+    ENDERMITE: [ 5, 10 ]
+
+    # Nether hostile tier
+    ZOMBIFIED_PIGLIN: [ 12, 25 ]
+    PIGLIN: [ 10, 20 ]
+    HOGLIN: [ 15, 30 ]
+    ZOGLIN: [ 15, 30 ]
+
+    # Overworld neutral tier
+    WOLF: [ 8, 15 ]
+    POLAR_BEAR: [ 15, 30 ]
+    PANDA: [ 10, 20 ]
+    BEE: [ 5, 10 ]
+    DOLPHIN: [ 10, 20 ]
+    IRON_GOLEM: [ 30, 60 ]
+
+    # Passive animal tier
+    COW: [ 10, 20 ]
+    MOOSHROOM: [ 12, 25 ]
     PIG: [ 10, 20 ]
     SHEEP: [ 10, 20 ]
-    COW: [ 10, 20 ]
     CHICKEN: [ 10, 20 ]
+    RABBIT: [ 5, 10 ]
+    HORSE: [ 10, 20 ]
+    DONKEY: [ 10, 20 ]
+    MULE: [ 10, 20 ]
+    LLAMA: [ 10, 20 ]
+    TRADER_LLAMA: [ 10, 20 ]
+    OCELOT: [ 5, 10 ]
+    CAT: [ 5, 10 ]
+
+    # Aquatic tier
+    SQUID: [ 5, 10 ]
+    GLOW_SQUID: [ 8, 15 ]
+    COD: [ 3, 8 ]
+    SALMON: [ 3, 8 ]
+    TROPICAL_FISH: [ 3, 8 ]
+    PUFFERFISH: [ 5, 10 ]
+    TURTLE: [ 8, 15 ]
+    AXOLOTL: [ 5, 10 ]
+
+    # Ambient tier
+    BAT: [ 1, 3 ]
+    PARROT: [ 3, 8 ]
+    FOX: [ 5, 10 ]
+    STRIDER: [ 5, 10 ]
+    SNOW_GOLEM: [ 5, 10 ]
+    VILLAGER: [ 15, 30 ]
+    WANDERING_TRADER: [ 15, 30 ]
+    ALLAY: [ 5, 10 ]
+    FROG: [ 3, 8 ]
+    TADPOLE: [ 1, 3 ]
+    CAMEL: [ 10, 20 ]
+    SNIFFER: [ 10, 20 ]
+    ARMADILLO: [ 5, 10 ]
+    BOGGED: [ 12, 25 ]
+    BREEZE: [ 40, 80 ]
+    CREAKING: [ 30, 60 ]
+    HAPPY_GHAST: [ 20, 40 ]
 
   # Level-Based Rewards (keep levels and rewards in ASCENDING order)
   # Rewards stack.

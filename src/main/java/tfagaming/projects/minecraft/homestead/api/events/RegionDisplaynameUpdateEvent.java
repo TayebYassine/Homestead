@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.api.events;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.models.Region;
 
 
@@ -9,7 +10,7 @@ public class RegionDisplaynameUpdateEvent extends APIEvent {
 	private final String oldDisplayname;
 	private final String newDisplayname;
 
-	public RegionDisplaynameUpdateEvent(@NotNull Region region, @NotNull String oldDisplayname, @NotNull String newDisplayname) {
+	public RegionDisplaynameUpdateEvent(@NotNull Region region, @Nullable String oldDisplayname, @Nullable String newDisplayname) {
 		this.region = region;
 		this.oldDisplayname = oldDisplayname;
 		this.newDisplayname = newDisplayname;
@@ -19,11 +20,11 @@ public class RegionDisplaynameUpdateEvent extends APIEvent {
 		return region;
 	}
 
-	public @NotNull String getOldDisplayname() {
+	public @Nullable String getOldDisplayname() {
 		return oldDisplayname;
 	}
 
-	public @NotNull String getNewDisplayname() {
+	public @Nullable String getNewDisplayname() {
 		return newDisplayname;
 	}
 }
