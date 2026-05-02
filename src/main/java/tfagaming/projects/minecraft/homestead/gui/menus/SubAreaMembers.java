@@ -49,7 +49,7 @@ public final class SubAreaMembers {
 		return (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
-			if (!player.hasPermission("homestead.region.subareas.players")) {
+			if (!player.hasPermission("homestead.actions.regions.subareas.players.add")) {
 				Messages.send(player, 8);
 				return;
 			}
@@ -113,11 +113,6 @@ public final class SubAreaMembers {
 			return;
 		}
 
-		if (!player.hasPermission("homestead.region.subareas.players.flags")) {
-			Messages.send(player, 8);
-			return;
-		}
-
 		RegionMember member = members.get(context.getIndex());
 
 		if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
@@ -134,6 +129,11 @@ public final class SubAreaMembers {
 	private void handleRemoveMember(Player player, Region region, SubArea subArea, RegionMember member, PaginationMenu.ClickContext context) {
 		if (!MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())
 				|| !MemberManager.isMemberOfSubArea(subArea, player)) {
+			return;
+		}
+
+		if (!player.hasPermission("homestead.actions.regions.subareas.players.remove")) {
+			Messages.send(player, 8);
 			return;
 		}
 

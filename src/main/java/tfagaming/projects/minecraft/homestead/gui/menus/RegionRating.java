@@ -48,6 +48,12 @@ public final class RegionRating {
 				player.closeInventory();
 				return;
 			}
+
+			if (!player.hasPermission("homestead.actions.regions.rate")) {
+				Messages.send(player, 8);
+				return;
+			}
+
 			if (!event.isLeftClick()) return;
 
 			RateManager.rateRegion(region, player, rating);

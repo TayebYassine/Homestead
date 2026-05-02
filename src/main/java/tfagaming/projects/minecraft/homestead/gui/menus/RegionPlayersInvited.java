@@ -56,7 +56,7 @@ public final class RegionPlayersInvited {
 			}
 			if (!event.isLeftClick()) return;
 
-			if (!player.hasPermission("homestead.region.players.trust")) {
+			if (!player.hasPermission("homestead.actions.regions.players.trust")) {
 				Messages.send(player, 8);
 				return;
 			}

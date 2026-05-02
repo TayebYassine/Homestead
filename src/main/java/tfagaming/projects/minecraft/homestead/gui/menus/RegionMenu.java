@@ -185,7 +185,7 @@ public final class RegionMenu {
 			}
 
 			if (event.isLeftClick()) {
-				if (!player.hasPermission("homestead.region.weather")) {
+				if (!player.hasPermission("homestead.actions.regions.update.weather")) {
 					Messages.send(player, 210);
 					return;
 				}
@@ -194,7 +194,7 @@ public final class RegionMenu {
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER);
 			} else if (event.isRightClick()) {
-				if (!player.hasPermission("homestead.region.time")) {
+				if (!player.hasPermission("homestead.actions.regions.update.time")) {
 					Messages.send(player, 211);
 					return;
 				}

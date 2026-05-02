@@ -58,7 +58,7 @@ public final class SubAreaMenu {
 		return (_player, event) -> {
 			if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
-			if (!player.hasPermission("homestead.region.subareas.rename")) {
+			if (!player.hasPermission("homestead.actions.regions.subareas.update.name")) {
 				Messages.send(player, 8);
 				return;
 			}
@@ -117,7 +117,7 @@ public final class SubAreaMenu {
 		return (_player, event) -> {
 			if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
-			if (!player.hasPermission("homestead.region.subareas.delete")) {
+			if (!player.hasPermission("homestead.actions.regions.subareas.delete")) {
 				Messages.send(player, 8);
 				return;
 			}

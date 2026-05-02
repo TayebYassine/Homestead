@@ -107,7 +107,7 @@ public final class PlayerAutoClaimListener implements Listener {
 				TargetRegionSession.randomizeRegion(player);
 				region = TargetRegionSession.getRegion(player);
 			} else {
-				if (!player.hasPermission("homestead.region.create")) {
+				if (!player.hasPermission("homestead.actions.regions.create")) {
 					Messages.send(player, 8);
 					return;
 				}

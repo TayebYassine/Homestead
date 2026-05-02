@@ -72,7 +72,7 @@ public final class RegionClaimedChunks {
 	}
 
 	private void handleTeleport(Player player, RegionChunk chunk) {
-		if (!player.hasPermission("homestead.region.teleport")) {
+		if (!player.hasPermission("homestead.actions.regions.teleport")) {
 			Messages.send(player, 212);
 			return;
 		}
@@ -123,6 +123,11 @@ public final class RegionClaimedChunks {
 	private void handleUnclaim(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
 		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
 			Cooldown.sendCooldownMessage(player);
+			return;
+		}
+
+		if (!player.hasPermission("homestead.actions.regions.chunks.unclaim")) {
+			Messages.send(player, 212);
 			return;
 		}
 

@@ -63,6 +63,11 @@ public final class MiscellaneousSettings {
 			if (!event.isLeftClick()) return;
 			if (onCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) return;
 
+			if (!player.hasPermission("homestead.actions.regions.update.name")) {
+				Messages.send(player, 8);
+				return;
+			}
+
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
@@ -89,6 +94,11 @@ public final class MiscellaneousSettings {
 		return (_player, event) -> {
 			if (!event.isLeftClick()) return;
 			if (onCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) return;
+
+			if (!player.hasPermission("homestead.actions.regions.update.displayname")) {
+				Messages.send(player, 8);
+				return;
+			}
 
 			player.closeInventory();
 
@@ -117,6 +127,11 @@ public final class MiscellaneousSettings {
 			if (!event.isLeftClick()) return;
 			if (onCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE)) return;
 
+			if (!player.hasPermission("homestead.actions.regions.update.description")) {
+				Messages.send(player, 8);
+				return;
+			}
+
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
@@ -143,6 +158,12 @@ public final class MiscellaneousSettings {
 		return (_player, event) -> {
 			if (!event.isLeftClick()) return;
 			if (onCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE)) return;
+
+			if (!player.hasPermission("homestead.actions.regions.update.spawn")) {
+				Messages.send(player, 8);
+				return;
+			}
+
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_SPAWN))
 				return;
 
@@ -172,6 +193,11 @@ public final class MiscellaneousSettings {
 		return (_player, event) -> {
 			if (!event.isLeftClick()) return;
 			if (onCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP)) return;
+
+			if (!player.hasPermission("homestead.actions.regions.change_owner")) {
+				Messages.send(player, 8);
+				return;
+			}
 
 			player.closeInventory();
 

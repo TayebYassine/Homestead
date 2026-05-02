@@ -54,6 +54,9 @@ permissions:
     default: true
   homestead.actions.regions.kick:
     default: true
+  homestead.actions.regions.rate:
+    default: true
+
   homestead.actions.regions.players.ban:
     default: true
   homestead.actions.regions.players.unban:
@@ -62,6 +65,7 @@ permissions:
     default: true
   homestead.actions.regions.players.untrust:
     default: true
+
   homestead.actions.regions.chat:
     default: true
   homestead.actions.regions.mail:
@@ -73,6 +77,8 @@ permissions:
   homestead.actions.regions.deposit_bank:
     default: true
   homestead.actions.regions.withdraw_bank:
+    default: true
+  homestead.actions.regions.change_owner:
     default: true
 
   homestead.actions.regions.chunks.claim:

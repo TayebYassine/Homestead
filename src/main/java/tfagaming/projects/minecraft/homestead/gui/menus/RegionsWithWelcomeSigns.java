@@ -46,7 +46,7 @@ public final class RegionsWithWelcomeSigns {
 			return;
 		}
 
-		if (!player.hasPermission("homestead.region.teleport")) {
+		if (!player.hasPermission("homestead.actions.regions.teleport")) {
 			Messages.send(player, 212);
 			return;
 		}

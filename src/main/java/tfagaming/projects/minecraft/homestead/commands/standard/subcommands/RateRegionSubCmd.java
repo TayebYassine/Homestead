@@ -17,7 +17,8 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 		super("rate");
 		setPermission(List.of(
 				"homestead.commands.region",
-				"homestead.commands.region." + getName()
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.rate"
 		));
 		setUsage("/region rate [region]");
 		setPlayerOnly();

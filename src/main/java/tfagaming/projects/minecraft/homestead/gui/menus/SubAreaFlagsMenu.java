@@ -53,7 +53,7 @@ public final class SubAreaFlagsMenu {
 
 		if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
-		if (!player.hasPermission("homestead.region.subareas.flags")) {
+		if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.global")) {
 			Messages.send(player, 8);
 			return;
 		}

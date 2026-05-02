@@ -71,7 +71,7 @@ public final class RegionMembersMenu {
 	private void handleUntrust(Player player, Region region, RegionMember member, PaginationMenu.ClickContext context) {
 		if (!MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())) return;
 
-		if (!player.hasPermission("homestead.region.players.untrust")) {
+		if (!player.hasPermission("homestead.actions.regions.players.untrust")) {
 			Messages.send(player, 8);
 			return;
 		}

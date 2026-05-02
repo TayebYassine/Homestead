@@ -50,7 +50,7 @@ public final class GlobalPlayerFlags {
 
 		if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
-		if (!player.hasPermission("homestead.region.flags.global")) {
+		if (!player.hasPermission("homestead.actions.regions.update.flags.global")) {
 			Messages.send(player, 8);
 			return;
 		}

@@ -52,7 +52,7 @@ public final class RegionBannedPlayers {
 		return (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
-			if (!player.hasPermission("homestead.region.players.ban")) {
+			if (!player.hasPermission("homestead.actions.regions.players.ban")) {
 				Messages.send(player, 8);
 				return;
 			}
@@ -90,7 +90,7 @@ public final class RegionBannedPlayers {
 		return (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
-			if (!player.hasPermission("homestead.region.players.unban")) {
+			if (!player.hasPermission("homestead.actions.regions.players.unban")) {
 				Messages.send(player, 8);
 				return;
 			}
@@ -152,14 +152,15 @@ public final class RegionBannedPlayers {
 			return;
 		}
 
+		if (!player.hasPermission("homestead.actions.regions.players.unban")) {
+			Messages.send(player, 8);
+			return;
+		}
+
 		RegionBan bannedPlayer = bannedPlayers.get(context.getIndex());
 		if (!context.getEvent().isLeftClick()) return;
 		if (!BanManager.isBanned(region, bannedPlayer.getPlayer())) return;
 
-		if (!player.hasPermission("homestead.region.players.unban")) {
-			Messages.send(player, 8);
-			return;
-		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				RegionControlFlags.UNBAN_PLAYERS)) {
 			return;

@@ -57,13 +57,13 @@ public final class RegionMemberControlFlags {
 
 		if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
-		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			Messages.send(player, 159);
+		if (!player.hasPermission("homestead.actions.regions.update.flags.members")) {
+			Messages.send(player, 8);
 			return;
 		}
 
-		if (!player.hasPermission("homestead.region.flags.members")) {
-			Messages.send(player, 8);
+		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
+			Messages.send(player, 159);
 			return;
 		}
 
