@@ -42,12 +42,13 @@ public final class MiscellaneousSettings {
 				.add("{region-description}", region.getDescription());
 
 		Menu.builder(12, 9 * 3)
-				.button(11, MenuUtility.getButton(34, placeholder), handleRename(player, region))
-				.button(12, MenuUtility.getButton(35, placeholder), handleDisplayName(player, region))
-				.button(13, MenuUtility.getButton(36, placeholder), handleDescription(player, region))
-				.button(14, MenuUtility.getButton(37, placeholder), handleSetSpawn(player, region))
-				.button(15, MenuUtility.getButton(38, placeholder), handleTransferOwnership(player, region))
-				.button(22, MenuUtility.getButton(64, placeholder), handleDeleteRegion(player, region))
+				.button(10, MenuUtility.getButton(34, placeholder), handleRename(player, region))
+				.button(11, MenuUtility.getButton(35, placeholder), handleDisplayName(player, region))
+				.button(12, MenuUtility.getButton(36, placeholder), handleDescription(player, region))
+				.button(13, MenuUtility.getButton(37, placeholder), handleSetSpawn(player, region))
+				.button(14, MenuUtility.getButton(38, placeholder), handleTransferOwnership(player, region))
+				.button(15, MenuUtility.getButton(84, placeholder), handleDynamicMapConfig(player, region))
+				.button(16, MenuUtility.getButton(64, placeholder), handleDeleteRegion(player, region))
 				.button(18, MenuUtility.getBackButton(), handleBack(player, region))
 				.fillEmptySlots()
 				.build()
@@ -226,6 +227,20 @@ public final class MiscellaneousSettings {
 					})
 					.onCancel(p -> Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region)))
 					.build();
+		};
+	}
+
+	private static BiConsumer<Player, InventoryClickEvent> handleDynamicMapConfig(Player player, Region region) {
+		return (_player, event) -> {
+			if (!PlayerUtility.isOperator(_player) && !region.isOwner(_player)) {
+				Messages.send(_player, 159);
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+				return;
+			}
+
+			if (event.isRightClick()) {
+				new MapColorMenu(player, region);
+			}
 		};
 	}
 

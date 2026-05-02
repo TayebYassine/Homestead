@@ -27,7 +27,7 @@ import tfagaming.projects.minecraft.homestead.events.MemberTaxes;
 import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
 import tfagaming.projects.minecraft.homestead.integrations.*;
-import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIcon;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapIcon;
 import tfagaming.projects.minecraft.homestead.listeners.*;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.*;
@@ -300,7 +300,7 @@ public class Homestead extends JavaPlugin {
 		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
 			if (DynamicMaps.isPl3xMapInstalled() || DynamicMaps.isSquaremapInstalled()) {
 				runAsyncTask(() -> {
-					RegionIcon.downloadAllIcons();
+					MapIcon.downloadAllIcons();
 					Logger.info("[Dynamic Maps] Successfully downloaded all icons!");
 				});
 			} else {

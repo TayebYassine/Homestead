@@ -1,4 +1,4 @@
-package tfagaming.projects.minecraft.homestead.integrations.maps;
+package tfagaming.projects.minecraft.homestead.tools.minecraft.plugins;
 
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class RegionIcon {
-	private static final Map<String, BufferedImage> icons = new HashMap<>();
-	private static BufferedImage defaultIcon;
+public final class MapIcon {
+	private static final Map<String, BufferedImage> ICONS = new HashMap<>();
+	private static BufferedImage DEFAULT_ICON;
 
 	public static List<String> getAllIcons() {
 		return Resources.<ConfigFile>get(ResourceType.Config).getKeysUnderPath("dynamic-maps.icons.list");
@@ -28,10 +28,10 @@ public final class RegionIcon {
 
 	public static BufferedImage getIconBufferedImage(String icon) {
 		if (icon == null) {
-			return defaultIcon;
+			return DEFAULT_ICON;
 		}
 
-		return icons.getOrDefault(icon, defaultIcon);
+		return ICONS.getOrDefault(icon, DEFAULT_ICON);
 	}
 
 	public static void downloadAllIcons() {
@@ -41,10 +41,10 @@ public final class RegionIcon {
 
 		Logger.info("[Dynamic Maps] Downloading icons... 0% (0 / " + totalIcons + ")");
 
-		defaultIcon = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.default"));
+		DEFAULT_ICON = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.default"));
 
 		for (String icon : getAllIcons()) {
-			if (icons.containsKey(icon)) {
+			if (ICONS.containsKey(icon)) {
 				continue;
 			}
 
@@ -53,7 +53,7 @@ public final class RegionIcon {
 			if (url != null) {
 				BufferedImage bufferedImage = downloadIcon(url);
 
-				icons.putIfAbsent(icon, bufferedImage);
+				ICONS.putIfAbsent(icon, bufferedImage);
 
 				downloaded++;
 				Logger.info("[Dynamic Maps] Downloading icons... " + (int) ((downloaded / (float) totalIcons) * 100) + "% (" + downloaded + " / " + totalIcons + ")");

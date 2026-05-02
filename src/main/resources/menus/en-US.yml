@@ -787,6 +787,20 @@ buttons:
       - " "
       - "&7Check your rewards: &e/hs rewards"
     type: PAPER
+  84:
+    name: "&9&lDynamic Map"
+    lore:
+      - "&7Configure how your region should be shown on"
+      - "&7Pl3xMap, Squaremap, dynmap, or BlueMap! Edit the"
+      - "&7chunks color and your region icon."
+      - ""
+      - "&e&lNote:"
+      - "&eMap Icons are only available for Pl3xMap and"
+      - "&eSquaremap!"
+      - ""
+      - "&9&l➥ Left-click to change region icon."
+      - "&9&l➥ Right-click to change the map color."
+    type: FILLED_MAP
 
 # Do NOT modify these
 button-types:

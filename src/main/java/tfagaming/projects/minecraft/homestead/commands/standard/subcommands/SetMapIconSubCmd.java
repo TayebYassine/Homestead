@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
-import tfagaming.projects.minecraft.homestead.integrations.maps.RegionIcon;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapIcon;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -12,7 +12,6 @@ import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +72,7 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (!RegionIcon.isValidIcon(iconInput)) {
+		if (!MapIcon.isValidIcon(iconInput)) {
 			Messages.send(player, 99);
 
 			return true;
@@ -98,7 +97,7 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 		List<String> suggestions = new ArrayList<>();
 
 		if (args.length == 1) {
-			suggestions.addAll(RegionIcon.getAllIcons());
+			suggestions.addAll(MapIcon.getAllIcons());
 			suggestions.add("Default");
 			suggestions.add("None");
 		}

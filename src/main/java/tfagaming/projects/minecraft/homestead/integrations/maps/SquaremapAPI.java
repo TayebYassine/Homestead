@@ -8,6 +8,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapIcon;
 import xyz.jpenilla.squaremap.api.*;
 import xyz.jpenilla.squaremap.api.Point;
 import xyz.jpenilla.squaremap.api.marker.*;
@@ -162,7 +163,7 @@ public final class SquaremapAPI extends AbstractMapIntegration {
 	private void addRegionIcon(SimpleLayerProvider layer, Region region, String hoverText) {
 		if (region.getLocation() == null) return;
 
-		BufferedImage icon = RegionIcon.getIconBufferedImage(region.getMapIcon());
+		BufferedImage icon = MapIcon.getIconBufferedImage(region.getMapIcon());
 		if (icon == null) return;
 
 		try {

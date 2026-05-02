@@ -18,6 +18,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.plugins.MapIcon;
 
 import java.awt.image.*;
 import java.util.HashMap;
@@ -163,7 +164,7 @@ public final class Pl3xMapAPI extends AbstractMapIntegration {
 	private void addRegionIcon(SimpleLayer layer, Region region, String hoverText) {
 		if (region.getLocation() == null) return;
 
-		BufferedImage icon = RegionIcon.getIconBufferedImage(region.getMapIcon());
+		BufferedImage icon = MapIcon.getIconBufferedImage(region.getMapIcon());
 		if (icon == null) return;
 
 		try {
