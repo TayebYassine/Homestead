@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.models;
 
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -70,28 +71,28 @@ public final class RegionBan {
 	 * Returns the region name safely by directly fetching with region ID from cache.
 	 * @return The region name if found, {@code "?"} otherwise.
 	 */
-	public String getRegionName() {
+	public @NotNull String getRegionName() {
 		Region region = getRegion();
 
 		return region == null ? "?" : region.getName();
 	}
 
-	public UUID getPlayerId() {
+	public @NotNull UUID getPlayerId() {
 		return playerId;
 	}
 
-	public void setPlayerId(UUID playerId) {
+	public void setPlayerId(@NotNull UUID playerId) {
 		this.playerId = playerId;
 		update();
 	}
 
-	public OfflinePlayer getPlayer() {
+	public @Nullable OfflinePlayer getPlayer() {
 		if (INSTANCE == null) return null;
 
 		return INSTANCE.getOfflinePlayerSync(playerId);
 	}
 
-	public void setPlayer(OfflinePlayer player) {
+	public void setPlayer(@NotNull OfflinePlayer player) {
 		this.playerId = player.getUniqueId();
 		update();
 	}
@@ -101,18 +102,23 @@ public final class RegionBan {
 	 * return {@code "?"} instead.
 	 * @return The player's name if found, {@code "?"} otherwise.
 	 */
-	public String getPlayerName() {
+	public @NotNull String getPlayerName() {
 		OfflinePlayer player = getPlayer();
 
-		return player == null ? "?" : player.getName();
+		return player == null || player.getName() == null ? "?" : player.getName();
 	}
 
-	public String getReason() {
+	public @Nullable String getReason() {
 		return reason;
 	}
 
-	public void setReason(String reason) {
-		this.reason = reason.length() > 256 ? reason.substring(0, 256) : reason;
+	public void setReason(@Nullable String reason) {
+		if (reason != null) {
+			this.reason = reason.length() > 256 ? reason.substring(0, 256) : reason;
+		} else {
+			this.reason = null;
+		}
+
 		update();
 	}
 

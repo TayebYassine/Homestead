@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.models;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -86,58 +87,58 @@ public final class SubArea {
 	 * Returns the region name safely by directly fetching with region ID from cache.
 	 * @return The region name if found, {@code "?"} otherwise.
 	 */
-	public String getRegionName() {
+	public @NotNull String getRegionName() {
 		Region region = getRegion();
 
 		return region == null ? "?" : region.getName();
 	}
 
-	public String getName() {
+	public @NotNull String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(@NotNull String name) {
 		this.name = name;
 		update();
 	}
 
-	public UUID getWorldId() {
+	public @NotNull UUID getWorldId() {
 		return worldId;
 	}
 
-	public void setWorldId(UUID worldId) {
+	public void setWorldId(@NotNull UUID worldId) {
 		this.worldId = worldId;
 		update();
 	}
 
-	public World getWorld() {
+	public @Nullable World getWorld() {
 		return Bukkit.getWorld(worldId);
 	}
 
-	public SeBlock getPoint1() {
+	public @NotNull SeBlock getPoint1() {
 		return point1;
 	}
 
-	public void setPoint1(SeBlock point1) {
+	public void setPoint1(@NotNull SeBlock point1) {
 		this.point1 = point1;
 		update();
 	}
 
-	public void setPoint1(Block block) {
+	public void setPoint1(@NotNull Block block) {
 		this.point1 = new SeBlock(block);
 		update();
 	}
 
-	public SeBlock getPoint2() {
+	public @NotNull SeBlock getPoint2() {
 		return point2;
 	}
 
-	public void setPoint2(SeBlock point2) {
+	public void setPoint2(@NotNull SeBlock point2) {
 		this.point2 = point2;
 		update();
 	}
 
-	public void setPoint2(Block block) {
+	public void setPoint2(@NotNull Block block) {
 		this.point2 = new SeBlock(block);
 		update();
 	}
@@ -151,11 +152,11 @@ public final class SubArea {
 		update();
 	}
 
-	public SeRent getRent() {
+	public @Nullable SeRent getRent() {
 		return rent;
 	}
 
-	public void setRent(SeRent rent) {
+	public void setRent(@Nullable SeRent rent) {
 		this.rent = rent;
 		update();
 	}

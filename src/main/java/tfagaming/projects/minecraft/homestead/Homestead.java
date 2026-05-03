@@ -619,7 +619,9 @@ public class Homestead extends JavaPlugin {
 			return onlinePlayer;
 		}
 
-		return Bukkit.getOfflinePlayer(playerId);
+		OfflinePlayer player = Bukkit.getOfflinePlayer(playerId);
+
+		return player.getName() != null && (player.hasPlayedBefore() || player.isOnline()) ? player : null;
 	}
 
 	/**
@@ -640,10 +642,12 @@ public class Homestead extends JavaPlugin {
 			return cached;
 		}
 
-		return Arrays.stream(Bukkit.getOfflinePlayers())
+		OfflinePlayer player = Arrays.stream(Bukkit.getOfflinePlayers())
 				.filter(offlinePlayer -> playerName.equals(offlinePlayer.getName()))
 				.findFirst()
 				.orElse(null);
+
+		return player != null && player.getName() != null && (player.hasPlayedBefore() || player.isOnline()) ? player : null;
 	}
 
 	public void onDisable() {

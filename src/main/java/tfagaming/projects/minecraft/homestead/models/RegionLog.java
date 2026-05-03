@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.models;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -69,26 +70,26 @@ public final class RegionLog {
 	 * Returns the region name safely by directly fetching with region ID from cache.
 	 * @return The region name if found, {@code "?"} otherwise.
 	 */
-	public String getRegionName() {
+	public @NotNull String getRegionName() {
 		Region region = getRegion();
 
 		return region == null ? "?" : region.getName();
 	}
 
-	public String getAuthor() {
+	public @NotNull String getAuthor() {
 		return author;
 	}
 
-	public void setAuthor(String author) {
+	public void setAuthor(@NotNull String author) {
 		this.author = author;
 		update();
 	}
 
-	public String getMessage() {
+	public @NotNull String getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(@NotNull String message) {
 		this.message = message.length() > 256 ? message.substring(0, 256) : message;
 		update();
 	}

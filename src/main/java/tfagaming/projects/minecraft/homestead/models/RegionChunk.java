@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -83,22 +84,22 @@ public final class RegionChunk {
 	 * Returns the region name safely by directly fetching with region ID from cache.
 	 * @return The region name if found, {@code "?"} otherwise.
 	 */
-	public String getRegionName() {
+	public @NotNull String getRegionName() {
 		Region region = getRegion();
 
 		return region == null ? "?" : region.getName();
 	}
 
-	public UUID getWorldId() {
+	public @NotNull UUID getWorldId() {
 		return worldId;
 	}
 
-	public void setWorldId(UUID worldId) {
+	public void setWorldId(@NotNull UUID worldId) {
 		this.worldId = worldId;
 		update();
 	}
 
-	public World getWorld() {
+	public @Nullable World getWorld() {
 		return Bukkit.getWorld(worldId);
 	}
 
@@ -138,13 +139,13 @@ public final class RegionChunk {
 		update();
 	}
 
-	public Chunk toBukkit() {
+	public @Nullable Chunk toBukkit() {
 		World world = getWorld();
 		if (world == null) return null;
 		return world.getChunkAt(x, z);
 	}
 
-	public Location toBukkitLocation() {
+	public @Nullable Location toBukkitLocation() {
 		World world = getWorld();
 
 		if (world == null) return null;
@@ -160,7 +161,7 @@ public final class RegionChunk {
 	 * Exactly the same as {@link RegionChunk#toBukkitLocation()}, without the highest
 	 * block Y check.
 	 */
-	public Location toBukkitDisplayLocation() {
+	public @Nullable Location toBukkitDisplayLocation() {
 		World world = getWorld();
 
 		if (world == null) return null;

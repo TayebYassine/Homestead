@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.models;
 
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
@@ -67,38 +68,38 @@ public final class Region {
 		return id;
 	}
 
-	public String getName() {
+	public @NotNull String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(@NotNull String name) {
+        this.name = name;
 		update();
 	}
 
-	public String getDisplayName() {
-		return displayName;
+	public @NotNull String getDisplayName() {
+		return displayName == null ? name : displayName;
 	}
 
-	public void setDisplayName(String displayName) {
+	public void setDisplayName(@Nullable String displayName) {
 		this.displayName = displayName;
 		update();
 	}
 
-	public String getDescription() {
+	public @Nullable String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(@Nullable String description) {
 		this.description = description;
 		update();
 	}
 
-	public UUID getOwnerId() {
+	public @NotNull UUID getOwnerId() {
 		return ownerId;
 	}
 
-	public void setOwnerId(UUID ownerId) {
+	public void setOwnerId(@NotNull UUID ownerId) {
 		this.ownerId = ownerId;
 		update();
 	}
@@ -109,7 +110,7 @@ public final class Region {
 		return INSTANCE.getOfflinePlayerSync(ownerId);
 	}
 
-	public void setOwner(OfflinePlayer owner) {
+	public void setOwner(@NotNull OfflinePlayer owner) {
 		this.ownerId = owner.getUniqueId();
 		update();
 	}
@@ -119,10 +120,10 @@ public final class Region {
 	 * return {@code "?"} instead.
 	 * @return The player's name if found, {@code "?"} otherwise.
 	 */
-	public String getOwnerName() {
+	public @NotNull String getOwnerName() {
 		OfflinePlayer player = getOwner();
 
-		return player == null ? "?" : player.getName();
+		return player == null || player.getName() == null ? "?" : player.getName();
 	}
 
 	public boolean isOwner(OfflinePlayer player) {
@@ -133,16 +134,16 @@ public final class Region {
 		return this.ownerId.equals(id);
 	}
 
-	public SeLocation getLocation() {
+	public @Nullable SeLocation getLocation() {
 		return location;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(@NotNull Location location) {
 		this.location = new SeLocation(location);
 		update();
 	}
 
-	public void setLocation(SeLocation location) {
+	public void setLocation(@NotNull SeLocation location) {
 		this.location = location;
 		update();
 	}
@@ -217,20 +218,20 @@ public final class Region {
 		update();
 	}
 
-	public String getMapIcon() {
+	public @Nullable String getMapIcon() {
 		return mapIcon;
 	}
 
-	public void setMapIcon(String mapIcon) {
+	public void setMapIcon(@Nullable String mapIcon) {
 		this.mapIcon = mapIcon;
 		update();
 	}
 
-	public SeRent getRent() {
+	public @Nullable SeRent getRent() {
 		return rent;
 	}
 
-	public void setRent(SeRent rent) {
+	public void setRent(@Nullable SeRent rent) {
 		this.rent = rent;
 		update();
 	}
@@ -253,11 +254,11 @@ public final class Region {
 		update();
 	}
 
-	public SeLocation getWelcomeSign() {
+	public @Nullable SeLocation getWelcomeSign() {
 		return welcomeSign;
 	}
 
-	public void setWelcomeSign(SeLocation welcomeSign) {
+	public void setWelcomeSign(@Nullable SeLocation welcomeSign) {
 		this.welcomeSign = welcomeSign;
 		update();
 	}

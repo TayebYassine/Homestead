@@ -1,5 +1,7 @@
 package tfagaming.projects.minecraft.homestead.models;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
@@ -54,29 +56,29 @@ public final class War {
 		return id;
 	}
 
-	public String getName() {
+	public @NotNull String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(@NotNull String name) {
 		this.name = name;
 		update();
 	}
 
-	public String getDisplayName() {
-		return displayName;
+	public @NotNull String getDisplayName() {
+		return displayName == null ? name : displayName;
 	}
 
-	public void setDisplayName(String displayName) {
+	public void setDisplayName(@Nullable String displayName) {
 		this.displayName = displayName;
 		update();
 	}
 
-	public String getDescription() {
+	public @Nullable String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(@Nullable String description) {
 		this.description = description;
 		update();
 	}
@@ -134,7 +136,7 @@ public final class War {
 		update();
 	}
 
-	public Region getWinner() {
+	public @Nullable Region getWinner() {
 		if (regionIds.size() == 1) {
 			return Homestead.REGION_CACHE.get(regionIds.getFirst());
 		}
