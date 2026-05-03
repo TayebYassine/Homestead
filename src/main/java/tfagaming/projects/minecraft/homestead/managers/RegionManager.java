@@ -579,7 +579,7 @@ public final class RegionManager {
 	}
 
 	/**
-	 * Returns regions whose upkeep is due (upkeepAt <= current time + buffer).
+	 * Returns regions whose upkeep is due (upkeepAt &lt;= current time + buffer).
 	 * @param bufferMillis Buffer time in milliseconds
 	 * @return List of regions needing upkeep.
 	 */

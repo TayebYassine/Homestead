@@ -321,7 +321,7 @@ public final class LevelManager {
 	 * Calculates the level difference between two regions.
 	 * @param regionIdA First region ID
 	 * @param regionIdB Second region ID
-	 * @return Positive if A > B, negative if A < B, 0 if equal or missing.
+	 * @return Positive if A &gt; B, negative if A &lt; B, 0 if equal or missing.
 	 */
 	public static int getLevelDifference(long regionIdA, long regionIdB) {
 		Level a = getLevelByRegion(regionIdA);
