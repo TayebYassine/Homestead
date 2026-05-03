@@ -15,8 +15,8 @@ public final class InventoryManager {
 	private static final Map<Player, List<Long>> clickTimestamps = new HashMap<>();
 	private static final Map<Player, Long> banExpiry = new HashMap<>();
 
-	private static final long CLICK_COOLDOWN_MS = 1200L;
-	private static final int CLICK_THRESHOLD = 12;
+	private static final long CLICK_COOLDOWN_MS = 500L;
+	private static final int CLICK_THRESHOLD = 20;
 	private static final long DETECTION_WINDOW_MS = 1000L;
 	private static final long BAN_DURATION_MS = 300_000L;
 
