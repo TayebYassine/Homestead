@@ -36,3 +36,7 @@ You can develop a third-party plugin to implement more features using the API!
     ```
 
 All versions are available in [GitHub Packages](https://github.com/TayebYassine/Homestead/packages/2787077/versions).
+
+## JavaDoc
+
+Check JavaDoc right here: https://tayebyassine.github.io/Homestead/javadoc/
