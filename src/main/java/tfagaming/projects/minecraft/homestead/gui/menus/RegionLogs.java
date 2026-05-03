@@ -45,6 +45,11 @@ public final class RegionLogs {
 		return (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (LogManager.getLogs(region).isEmpty()) {
 				Messages.send(player, 91);
 				return;
@@ -64,8 +69,14 @@ public final class RegionLogs {
 				Messages.send(player, 159);
 				return;
 			}
+
 			if (LogManager.getLogs(region).isEmpty()) {
 				Messages.send(player, 83);
+				return;
+			}
+
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
 				return;
 			}
 
@@ -102,6 +113,11 @@ public final class RegionLogs {
 	private void handleDeleteLog(Player player, Region region, RegionLog log, PaginationMenu.ClickContext context) {
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 			Messages.send(player, 159);
+			return;
+		}
+
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
 			return;
 		}
 

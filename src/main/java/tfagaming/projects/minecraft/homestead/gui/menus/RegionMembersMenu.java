@@ -54,6 +54,11 @@ public final class RegionMembersMenu {
 
 		RegionMember member = members.get(context.getIndex());
 
+		if (member.getPlayer() == null || !MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())) {
+			player.closeInventory();
+			return;
+		}
+
 		if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
 			new PlayerInfo(player, member.getPlayer(), () -> new RegionMembersMenu(player, region));
 
@@ -69,7 +74,15 @@ public final class RegionMembersMenu {
 	}
 
 	private void handleUntrust(Player player, Region region, RegionMember member, PaginationMenu.ClickContext context) {
-		if (!MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())) return;
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
+
+		if (!MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())) {
+			player.closeInventory();
+			return;
+		}
 
 		if (!player.hasPermission("homestead.actions.regions.players.untrust")) {
 			Messages.send(player, 8);

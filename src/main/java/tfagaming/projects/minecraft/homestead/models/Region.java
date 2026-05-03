@@ -138,12 +138,12 @@ public final class Region {
 		return location;
 	}
 
-	public void setLocation(@NotNull Location location) {
-		this.location = new SeLocation(location);
+	public void setLocation(@Nullable Location location) {
+		this.location = location == null ? null : new SeLocation(location);
 		update();
 	}
 
-	public void setLocation(@NotNull SeLocation location) {
+	public void setLocation(@Nullable SeLocation location) {
 		this.location = location;
 		update();
 	}

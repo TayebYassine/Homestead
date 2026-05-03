@@ -30,9 +30,10 @@ import tfagaming.projects.minecraft.homestead.weatherandtime.RegionWeather;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class PlayerRegionEnterAndExitListener implements Listener {
-	private static final Map<UUID, Long> SESSIONS = new HashMap();
+	private static final Map<UUID, Long> SESSIONS = new ConcurrentHashMap<>();
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
@@ -150,9 +151,11 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				Placeholder placeholder = new Placeholder();
 
 				if (region != null) {
+					String regionDescription = region.getDescription() == null ? "?" : region.getDescription().replace("%player%", player.getName()).replace("%owner%", region.getOwnerName());
+
 					placeholder.add("{region-displayname}", region.getDisplayName());
 					placeholder.add("{region-owner}", region.getOwnerName());
-					placeholder.add("{region-description}", region.getDescription());
+					placeholder.add("{region-description}", regionDescription);
 				}
 
 				PlayerUtility.sendMessageRegionExit(player, placeholder);

@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.api.events;
 
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.models.Region;
 
 
@@ -10,7 +11,7 @@ public class RegionOwnerUpdateEvent extends APIEvent {
 	private final OfflinePlayer oldOwner;
 	private final OfflinePlayer newOwner;
 
-	public RegionOwnerUpdateEvent(@NotNull Region region, @NotNull OfflinePlayer oldOwner, @NotNull OfflinePlayer newOwner) {
+	public RegionOwnerUpdateEvent(@NotNull Region region, @Nullable OfflinePlayer oldOwner, @NotNull OfflinePlayer newOwner) {
 		this.region = region;
 		this.oldOwner = oldOwner;
 		this.newOwner = newOwner;
@@ -20,7 +21,7 @@ public class RegionOwnerUpdateEvent extends APIEvent {
 		return region;
 	}
 
-	public @NotNull OfflinePlayer getOldOwner() {
+	public @Nullable OfflinePlayer getOldOwner() {
 		return oldOwner;
 	}
 

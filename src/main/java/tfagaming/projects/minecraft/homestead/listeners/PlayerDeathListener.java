@@ -95,8 +95,11 @@ public final class PlayerDeathListener implements Listener {
 			winner.depositBank(available);
 		}
 
-		if (winner.getOwner().isOnline()) {
-			Messages.send((Player) winner.getOwner(), 155);
+		OfflinePlayer offlineOwner = winner.getOwner();
+		Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
+
+		if (owner != null) {
+			Messages.send(owner, 155);
 		}
 	}
 
@@ -105,17 +108,19 @@ public final class PlayerDeathListener implements Listener {
 			return;
 		}
 
-		if (!winner.getOwner().isOnline()) {
+		OfflinePlayer offlineOwner = winner.getOwner();
+		Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
+
+		if (owner == null) {
 			return;
 		}
 
-		Player winnerOwner = (Player) winner.getOwner();
 		ItemStack head = ItemUtility.getPlayerHead(victim);
 
-		if (winnerOwner.getInventory().firstEmpty() == -1) {
-			winnerOwner.getWorld().dropItemNaturally(winnerOwner.getLocation(), head);
+		if (owner.getInventory().firstEmpty() == -1) {
+			owner.getWorld().dropItemNaturally(owner.getLocation(), head);
 		} else {
-			winnerOwner.getInventory().addItem(head);
+			owner.getInventory().addItem(head);
 		}
 	}
 }

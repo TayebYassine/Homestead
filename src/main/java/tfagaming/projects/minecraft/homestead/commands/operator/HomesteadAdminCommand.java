@@ -13,6 +13,7 @@ public class HomesteadAdminCommand extends CommandBuilder {
 	public HomesteadAdminCommand() {
 		super("homesteadadmin", "hsadmin");
 
+		setPermission("homestead.commands.homesteadadmin");
 		setUsage("/hsadmin [sub-command]");
 
 		registerSubCommand(new ExportSubCmd());

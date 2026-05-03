@@ -188,14 +188,22 @@ public class WarSubCmd extends SubCommandBuilder {
 						region.withdrawBank(prize);
 						winner.depositBank(prize);
 
-						if (winner.getOwner().isOnline()) {
-							Messages.send((Player) winner.getOwner(), 155);
+						OfflinePlayer offlineOwner = winner.getOwner();
+						Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
 
-							Cooldown.startCooldown((Player) winner.getOwner(), Cooldown.Type.WAR_FLAG_DISABLED);
+						if (owner != null) {
+							Messages.send(owner, 155);
+
+							Cooldown.startCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED);
 						}
 					}
 
-					Cooldown.startCooldown(region.getOwner().getPlayer(), Cooldown.Type.WAR_FLAG_DISABLED);
+					OfflinePlayer offlineOwner = region.getOwner();
+					Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
+
+					if (owner != null) {
+						Cooldown.startCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED);
+					}
 
 					WarManager.tellPlayersWarEnded(warMembers, winner);
 

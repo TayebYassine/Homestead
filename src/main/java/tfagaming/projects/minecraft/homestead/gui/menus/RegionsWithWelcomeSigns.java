@@ -1,11 +1,13 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.RateManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
 import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
@@ -51,8 +53,13 @@ public final class RegionsWithWelcomeSigns {
 			return;
 		}
 
+		SeLocation location = region.getWelcomeSign();
+		if (location == null) return;
+		Location bukkitLocation = location.toBukkit();
+		if (bukkitLocation == null) return;
+
 		player.closeInventory();
-		new DelayedTeleport(player, region.getWelcomeSign().toBukkit());
+		new DelayedTeleport(player, bukkitLocation);
 	}
 
 	private List<ItemStack> getItems(Player player) {

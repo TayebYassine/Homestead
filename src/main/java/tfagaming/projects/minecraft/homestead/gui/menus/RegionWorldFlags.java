@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
@@ -74,7 +75,10 @@ public final class RegionWorldFlags {
 		long flags = region.getWorldFlags();
 		long flag = WorldFlags.valueOf(flagString);
 
-		if (Cooldown.hasCooldown(region.getOwner().getPlayer(), Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
+		OfflinePlayer offlineOwner = region.getOwner();
+		Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
+
+		if (owner != null && Cooldown.hasCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
 			Cooldown.sendCooldownMessage(player);
 			return;
 		}

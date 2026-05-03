@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -63,7 +64,7 @@ public final class RegionClaimedChunks {
 		RegionChunk chunk = chunks.get(context.getIndex());
 
 		if (context.getEvent().isRightClick()) {
-			handleTeleport(player, chunk);
+			handleTeleport(player, region, chunk);
 		} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
 			handleToggleForceLoad(player, region, chunk, context);
 		} else {
@@ -71,9 +72,14 @@ public final class RegionClaimedChunks {
 		}
 	}
 
-	private void handleTeleport(Player player, RegionChunk chunk) {
+	private void handleTeleport(Player player, Region region, RegionChunk chunk) {
 		if (!player.hasPermission("homestead.actions.regions.teleport")) {
 			Messages.send(player, 212);
+			return;
+		}
+
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
 			return;
 		}
 
@@ -87,6 +93,11 @@ public final class RegionClaimedChunks {
 	private void handleToggleForceLoad(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 			Messages.send(player, 30);
+			return;
+		}
+
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
 			return;
 		}
 
@@ -128,6 +139,11 @@ public final class RegionClaimedChunks {
 
 		if (!player.hasPermission("homestead.actions.regions.chunks.unclaim")) {
 			Messages.send(player, 212);
+			return;
+		}
+
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
 			return;
 		}
 
@@ -182,8 +198,10 @@ public final class RegionClaimedChunks {
 
 			ButtonData data = MenuUtility.getButtonData(33);
 
-			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD")) {
-				data.setOriginalType(switch (chunk.getWorld().getEnvironment()) {
+			World world = chunk.getWorld();
+
+			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD") && world != null) {
+				data.setOriginalType(switch (world.getEnvironment()) {
 					case NETHER -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.nether");
 					case THE_END -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.the_end");
 					default -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.overworld");

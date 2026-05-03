@@ -35,9 +35,7 @@ public class Menu implements Listener {
 			inventory.setItem(entry.getKey(), entry.getValue());
 		}
 
-		for (Map.Entry<Integer, BiConsumer<Player, InventoryClickEvent>> entry : builder.buttons.entrySet()) {
-			callbacks.put(entry.getKey(), entry.getValue());
-		}
+        callbacks.putAll(builder.buttons);
 
 		if (builder.filler != null) {
 			for (int i = 0; i < inventory.getSize(); i++) {

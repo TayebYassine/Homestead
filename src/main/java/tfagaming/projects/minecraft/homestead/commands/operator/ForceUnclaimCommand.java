@@ -18,6 +18,7 @@ public class ForceUnclaimCommand extends CommandBuilder {
 
 	public ForceUnclaimCommand() {
 		super("forceunclaim");
+		setPermission("homestead.admin.forceunclaim");
 		setUsage("/forceunclaim");
 		setPlayerOnly();
 	}

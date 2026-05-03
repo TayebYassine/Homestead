@@ -100,7 +100,7 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 
 	public List<String> onDefaultTabComplete(CommandSender sender, String[] args) {
 		return getAllSubCommands().stream()
-				.filter(sub -> sub.hasPermission(sender))
+				.filter(sub -> sub.hasPermission(sender) && sub.isPlayerOnly())
 				.map(SubCommandBuilder::getName)
 				.sorted()
 				.collect(Collectors.toList());

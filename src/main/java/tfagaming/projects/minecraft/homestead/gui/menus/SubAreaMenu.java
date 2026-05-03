@@ -58,6 +58,11 @@ public final class SubAreaMenu {
 		return (_player, event) -> {
 			if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!player.hasPermission("homestead.actions.regions.subareas.update.name")) {
 				Messages.send(player, 8);
 				return;

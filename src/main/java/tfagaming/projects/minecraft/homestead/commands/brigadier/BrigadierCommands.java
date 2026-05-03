@@ -230,16 +230,16 @@ public final class BrigadierCommands {
 
 	private void registerAdminCommand() {
 		BrigadierCommandBuilder.create("homesteadadmin")
-				.literalSub("plugin").end()
-				.literalSub("reload").end()
-				.literalSub("updates").end()
+				//.literalSub("plugin").end() // Console only
+				//.literalSub("reload").end() // Console only
+				//.literalSub("updates").end() // Console only
 
-				.literalSub("import")
+				/*.literalSub("import") // Console only
 				.stringArg("plugin")
 				.end()
 				.literalSub("export")
 				.stringArg("provider")
-				.end()
+				.end()*/
 
 				.literalSub("transfer")
 				.stringArg("region")

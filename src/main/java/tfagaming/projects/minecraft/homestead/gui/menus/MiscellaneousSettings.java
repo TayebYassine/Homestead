@@ -386,7 +386,7 @@ public final class MiscellaneousSettings {
 			Messages.send(player, 16);
 			return false;
 		}
-		if (region.getDescription().equals(message)) {
+		if (region.getDescription() != null && region.getDescription().equals(message)) {
 			Messages.send(player, 11);
 			return false;
 		}

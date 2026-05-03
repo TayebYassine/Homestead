@@ -43,10 +43,8 @@ public abstract class AbstractMapIntegration {
 			World world = chunk.getWorld();
 			if (world != null) return world;
 
-			if (chunk.getWorldId() != null) {
-				World byName = org.bukkit.Bukkit.getWorld(chunk.getWorldId());
-				if (byName != null) return byName;
-			}
+			World byName = org.bukkit.Bukkit.getWorld(chunk.getWorldId());
+			if (byName != null) return byName;
 		}
 		return null;
 	}

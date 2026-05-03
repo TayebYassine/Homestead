@@ -1,5 +1,7 @@
 package tfagaming.projects.minecraft.homestead.tools.java;
 
+import tfagaming.projects.minecraft.homestead.logs.Logger;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,21 +32,25 @@ public final class ListUtils {
 			}
 		}
 
-		for (int i = 0; i < headers.length; i++) {
-			System.out.printf("%-" + (widths[i] + 2) + "s", headers[i]);
-		}
-		System.out.println();
+		StringBuilder output = new StringBuilder();
 
-		for (int width : widths) {
-			System.out.print(String.format("%-" + (width + 2) + "s", "").replace(' ', '-'));
+		for (int i = 0; i < headers.length; i++) {
+			output.append(String.format("%-" + (widths[i] + 2) + "s", headers[i]));
 		}
-		System.out.println();
+		Logger.info(output.toString());
+
+		output = new StringBuilder();
+		for (int width : widths) {
+			output.append(String.format("%-" + (width + 2) + "s", "").replace(' ', '-'));
+		}
+		Logger.info(output.toString());
 
 		for (Object[] row : data) {
+			output = new StringBuilder();
 			for (int i = 0; i < row.length; i++) {
-				System.out.printf("%-" + (widths[i] + 2) + "s", row[i]);
+				output.append(String.format("%-" + (widths[i] + 2) + "s", row[i]));
 			}
-			System.out.println();
+			Logger.info(output.toString());
 		}
 	}
 }

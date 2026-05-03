@@ -49,6 +49,11 @@ public final class SubAreaMembers {
 		return (_player, event) -> {
 			if (!event.isLeftClick()) return;
 
+			if (RegionManager.findRegion(region.getUniqueId()) == null) {
+				player.closeInventory();
+				return;
+			}
+
 			if (!player.hasPermission("homestead.actions.regions.subareas.players.add")) {
 				Messages.send(player, 8);
 				return;
@@ -127,6 +132,11 @@ public final class SubAreaMembers {
 	}
 
 	private void handleRemoveMember(Player player, Region region, SubArea subArea, RegionMember member, PaginationMenu.ClickContext context) {
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
+
 		if (!MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())
 				|| !MemberManager.isMemberOfSubArea(subArea, player)) {
 			return;

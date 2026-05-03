@@ -207,7 +207,7 @@ public final class CustomSignsListener implements Listener {
 			long duration = parseFormattedDuration(getSignLine(sign, 3));
 
 			Region region = RegionManager.findRegion(regionName);
-			if (!canRent(player, region)) return;
+			if (region == null || !canRent(player, region)) return;
 
 			if (price > PlayerBank.get(player)) {
 				Messages.send(player, 125);
@@ -237,7 +237,7 @@ public final class CustomSignsListener implements Listener {
 			double price = parseFormattedPrice(getSignLine(sign, 2));
 
 			Region region = RegionManager.findRegion(regionName);
-			if (!canPurchase(player, region)) return;
+			if (region == null || !canPurchase(player, region)) return;
 
 			if (price > PlayerBank.get(player)) {
 				Messages.send(player, 125);
