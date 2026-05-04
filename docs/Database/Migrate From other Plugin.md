@@ -1,4 +1,4 @@
-# Migration
+# Migrate from another plugin
 
 Switching from another land claiming plugin to Homestead? The built-in migration system makes it easy to transfer all your existing claims without losing data.
 
@@ -6,13 +6,13 @@ Switching from another land claiming plugin to Homestead? The built-in migration
 
 Homestead can import data from these popular claiming plugins:
 
-| Plugin          | Status               | Notes                                       |
-|-----------------|----------------------|---------------------------------------------|
-| GriefPrevention | :material-check:     | Fully supported, can import trusted players |
-| ClaimChunk      | :material-check:     | Fully supported                             |
-| LandLord4       | :material-check:     | Fully supported                             |
-| Lands           | :material-check:     | Fully supported, can import trusted players |
-| HuskClaims      | :material-check:     | Fully supported                             |
+| Plugin          | Available?       | Notes                                       |
+|-----------------|------------------|---------------------------------------------|
+| GriefPrevention | :material-check: | Fully supported, can import trusted players |
+| ClaimChunk      | :material-check: | Fully supported                             |
+| LandLord4       | :material-check: | Fully supported                             |
+| Lands           | :material-check: | Fully supported, can import trusted players |
+| HuskClaims      | :material-check: | Fully supported                             |
 
 !!! info "Need Support for Another Plugin?"
 
@@ -67,7 +67,7 @@ After the migration completes:
 
 1. Check if all regions were imported:
    ```
-   /region top
+   /hs
    ```
 
 2. Visit a few claim locations and verify:
@@ -91,8 +91,6 @@ Only after confirming everything works:
 ✓ Claimed chunk locations  
 ✓ Region owners  
 ✓ Trusted members/players (not for all plugins)
-
-✗ Permissions, groups, roles... 
 
 !!! question "Why Not Everything?"
 

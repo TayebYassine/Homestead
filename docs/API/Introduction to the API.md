@@ -39,4 +39,4 @@ All versions are available in [GitHub Packages](https://github.com/TayebYassine/
 
 ## JavaDoc
 
-Check JavaDoc right here: https://tayebyassine.github.io/Homestead/javadoc/
+Documentation for every class and methods are located right [here](https://tayebyassine.github.io/Homestead/javadoc/).

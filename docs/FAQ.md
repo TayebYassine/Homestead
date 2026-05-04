@@ -1,4 +1,4 @@
-# FAQ - Frequently Asked Question
+# Frequently Asked Question
 
 Search for something in the FAQ first; if none of the searches are what you wanted to see, then read the entire documentation by searching the keywords alternative to your issue.
 
@@ -35,7 +35,7 @@ homestead.commands.claim
 homestead.commands.unclaim
 ```
 
-More permissions are located right [here](./Configuration/Permissions.md).
+More permissions are located right [here](Language%20and%20Menus/Permissions.md).
 
 ## WorldGuard replaces /region command
 
@@ -43,7 +43,7 @@ You can use `/homestead`, `/hs`, `/rg` as an alternative to the command `/region
 
 ## Always reached the limit?
 
-This depends on how you set up Homestead; there are two methods for limits, either static or by groups (read more right [here](./Configuration/Ranks%20and%20Limits.md)).
+This depends on how you set up Homestead; there are two methods for limits, either static or by groups (read more right [here](Language%20and%20Menus/Ranks%20and%20Limits.md)).
 
 - If you are using static, then this is OP permission-based, which means non-OP players will all have the same limits, while OP players (operators) will have different limits.
 - If you have groups, you need to install a permissions plugin that supports groups.

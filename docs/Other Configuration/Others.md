@@ -1,4 +1,4 @@
-# Other Configuration
+# Others
 
 This page covers additional Homestead settings that don't fit into other categories but are still important for customizing your server.
 

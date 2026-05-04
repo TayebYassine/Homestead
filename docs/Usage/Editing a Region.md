@@ -231,7 +231,7 @@ Both commands show lists in chat or open a GUI depending on server configuration
 
 ## Managing Flags
 
-Flags control what players can do in your region. See the [Flags](../Configuration/Flags.md) documentation for details on all available flags.
+Flags control what players can do in your region. See the [Flags](../Language%20and%20Menus/Flags.md) documentation for details on all available flags.
 
 ### Viewing Flags
 

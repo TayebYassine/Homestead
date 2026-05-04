@@ -61,7 +61,7 @@ Each claimed region includes 50+ customizable flags, enabling owners to configur
 
 **Installation**: [Requirements](./Installation/Prerequisites.md), [Installing Homestead](./Installation/Installation.md)
 
-**Configuration**: [Database Setup](./Configuration/Database.md), [Language Settings](./Configuration/Language.md), [Plugin Integrations](./Configuration/Integrations%20and%20Plugins.md), [Ranks and Limits](./Configuration/Ranks%20and%20Limits.md), [Permissions](./Configuration/Permissions.md), [Flags](./Configuration/Flags.md), [Economy](./Configuration/Economy.md), [Rewards](./Configuration/Rewards.md), [Menus](./Configuration/Menus.md), [Other Settings](./Configuration/Other%20Configuration.md), [Migration from Other Plugins](./Configuration/Migration.md)
+**Configuration**: [Database Setup](Language%20and%20Menus/Database.md), [Language Settings](Language%20and%20Menus/Language.md), [Plugin Integrations](Language%20and%20Menus/Integrations%20and%20Plugins.md), [Ranks and Limits](Language%20and%20Menus/Ranks%20and%20Limits.md), [Permissions](Language%20and%20Menus/Permissions.md), [Flags](Language%20and%20Menus/Flags.md), [Economy](Language%20and%20Menus/Economy.md), [Rewards](Language%20and%20Menus/Rewards.md), [Menus](Language%20and%20Menus/Menus.md), [Other Settings](Language%20and%20Menus/Other%20Configuration.md), [Migration from Other Plugins](Language%20and%20Menus/Migration.md)
 
 **Usage Guides**: [Creating Your First Region](./Usage/Creating%20a%20new%20Region.md), [Managing Your Region](./Usage/Editing%20a%20Region.md), [Working with Sub-Areas](./Usage/Sub-Areas.md), [Understanding Upkeep](./Usage/Upkeep.md), [Managing Member Taxes](./Usage/Taxes.md), [Setting Up Welcome Signs](./Usage/Welcome%20Signs.md)
 
