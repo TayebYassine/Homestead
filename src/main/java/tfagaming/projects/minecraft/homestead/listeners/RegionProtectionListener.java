@@ -35,6 +35,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
+import tfagaming.projects.minecraft.homestead.flags.WorldRules;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -74,8 +75,8 @@ public final class RegionProtectionListener implements Listener {
 				return;
 			}
 
-			if (ChunkManager.isChunkClaimed(toChunk)) {
-				if (entity instanceof CopperGolem) {
+			if (entity instanceof CopperGolem) {
+				if (ChunkManager.isChunkClaimed(toChunk)) {
 					Region fromRegion = ChunkManager.getRegionOwnsTheChunk(fromChunk);
 					Region toRegion = ChunkManager.getRegionOwnsTheChunk(toChunk);
 
@@ -91,6 +92,10 @@ public final class RegionProtectionListener implements Listener {
 						if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
 							entity.remove();
 						}
+					}
+				} else {
+					if (!WorldRules.isWorldFlagAllowed(toChunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+						entity.remove();
 					}
 				}
 			}
@@ -111,6 +116,13 @@ public final class RegionProtectionListener implements Listener {
 		Location location = block.getLocation();
 		Chunk chunk = block.getChunk();
 
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
 			event.setCancelled(true);
 		});
@@ -123,6 +135,13 @@ public final class RegionProtectionListener implements Listener {
 		Block block = event.getBlock();
 		Location location = block.getLocation();
 		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
 
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 			event.setCancelled(true);
@@ -140,6 +159,13 @@ public final class RegionProtectionListener implements Listener {
 				Location location = villager.getLocation();
 				Chunk chunk = location.getChunk();
 
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRADE_VILLAGERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -150,6 +176,13 @@ public final class RegionProtectionListener implements Listener {
 				Player player = (Player) event.getPlayer();
 				Location location = entity.getLocation();
 				Chunk chunk = location.getChunk();
+
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
 
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
 					event.setCancelled(true);
@@ -167,6 +200,13 @@ public final class RegionProtectionListener implements Listener {
 		Location location = blockRelative.getLocation();
 		Chunk chunk = location.getChunk();
 
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
 			event.setCancelled(true);
 		});
@@ -180,6 +220,13 @@ public final class RegionProtectionListener implements Listener {
 		Block blockRelative = blockClicked.getRelative(blockFace);
 		Location location = blockRelative.getLocation();
 		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
 
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 			event.setCancelled(true);
@@ -199,6 +246,13 @@ public final class RegionProtectionListener implements Listener {
 		if (targetBlock.getType() == Material.FIRE) {
 			Location location = targetBlock.getLocation();
 			Chunk chunk = location.getChunk();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.IGNITE)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
 
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.IGNITE, null, () -> {
 				event.setCancelled(true);
@@ -220,6 +274,13 @@ public final class RegionProtectionListener implements Listener {
 			Location location = blockClicked.getLocation();
 			Chunk chunk = location.getChunk();
 
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BLOCK_TRAMPLING)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BLOCK_TRAMPLING, null, () -> {
 				event.setCancelled(true);
 			});
@@ -238,6 +299,13 @@ public final class RegionProtectionListener implements Listener {
 		if (isCropBlock(blockClicked)) {
 			Location location = blockClicked.getLocation();
 			Chunk chunk = location.getChunk();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.HARVEST_CROPS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
 
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.HARVEST_CROPS, null, () -> {
 				event.setCancelled(true);
@@ -259,6 +327,13 @@ public final class RegionProtectionListener implements Listener {
 		if (item.getType().name().endsWith("_SPAWN_EGG")) {
 			Location location = blockClicked.getLocation();
 			Chunk chunk = location.getChunk();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.SPAWN_ENTITIES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
 
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.SPAWN_ENTITIES, null, () -> {
 				event.setCancelled(true);
@@ -291,6 +366,13 @@ public final class RegionProtectionListener implements Listener {
 							itemType == Material.GLOW_ITEM_FRAME;
 
 			if (placeSpawnItem) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -302,6 +384,13 @@ public final class RegionProtectionListener implements Listener {
 			final Material type = clicked.getType();
 
 			if (isShulkerBox(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -309,6 +398,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (isAnySign(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -316,6 +412,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (isContainerLike(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -323,6 +426,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (isAnvil(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.USE_ANVIL)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_ANVIL, null, () -> {
 					event.setCancelled(true);
 				});
@@ -330,6 +440,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (Tag.TRAPDOORS.isTagged(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRAP_DOORS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRAP_DOORS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -337,6 +454,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (Tag.DOORS.isTagged(type) || type.name().contains("DOOR")) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DOORS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DOORS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -344,6 +468,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (isArchaeologyBlockWithBrush(type, player)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -351,6 +482,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (Tag.BUTTONS.isTagged(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BUTTONS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BUTTONS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -358,6 +496,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (type.name().contains("FENCE_GATE")) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.FENCE_GATES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.FENCE_GATES, null, () -> {
 					event.setCancelled(true);
 				});
@@ -365,6 +510,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (isSmallInteractable(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.GENERAL_INTERACTION)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.GENERAL_INTERACTION, null, () -> {
 					event.setCancelled(true);
 				});
@@ -372,6 +524,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (isLecternOrVaultWithKey(type, player)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -379,6 +538,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (type.name().endsWith("_BED")) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.SLEEP)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.SLEEP, null, () -> {
 					event.setCancelled(true);
 				});
@@ -386,6 +552,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (type == Material.LEVER) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.LEVERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.LEVERS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -393,6 +566,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (type == Material.BELL) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.USE_BELLS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_BELLS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -400,6 +580,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (isRedstoneInteraction(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.REDSTONE)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.REDSTONE, null, () -> {
 					event.setCancelled(true);
 				});
@@ -412,6 +599,13 @@ public final class RegionProtectionListener implements Listener {
 			final Material type = clicked.getType();
 
 			if (Tag.PRESSURE_PLATES.isTagged(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PRESSURE_PLATES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PRESSURE_PLATES, null, () -> {
 					event.setCancelled(true);
 				});
@@ -419,6 +613,13 @@ public final class RegionProtectionListener implements Listener {
 			}
 
 			if (type == Material.TRIPWIRE) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRIGGER_TRIPWIRE)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRIGGER_TRIPWIRE, null, () -> {
 					event.setCancelled(true);
 				});
@@ -548,6 +749,13 @@ public final class RegionProtectionListener implements Listener {
 			Location location = block.getLocation();
 			Chunk chunk = location.getChunk();
 
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 				event.setCancelled(true);
 			});
@@ -563,6 +771,13 @@ public final class RegionProtectionListener implements Listener {
 				Location location = entity.getLocation();
 				Chunk chunk = location.getChunk();
 
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -576,6 +791,13 @@ public final class RegionProtectionListener implements Listener {
 		Lectern lectern = event.getLectern();
 		Location location = lectern.getLocation();
 		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
 
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
 			event.setCancelled(true);
@@ -599,6 +821,13 @@ public final class RegionProtectionListener implements Listener {
 
 			ItemStack boots = equipment.getBoots();
 
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.FROST_WALKER)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			if (boots != null && boots.getEnchantments().containsKey(Enchantment.FROST_WALKER)) {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.FROST_WALKER, null, () -> {
 					event.setCancelled(true);
@@ -614,14 +843,27 @@ public final class RegionProtectionListener implements Listener {
 		Location location = block.getLocation();
 		Chunk chunk = location.getChunk();
 
-		if (player == null && ChunkManager.isChunkClaimed(chunk)) {
-			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+		if (player == null) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
-				event.setCancelled(true);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.FIRE_SPREAD)) {
+					event.setCancelled(true);
+				}
 			}
 
 			return;
+		}
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.IGNITE)) {
+				event.setCancelled(true);
+				return;
+			}
 		}
 
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.IGNITE, null, () -> {
@@ -639,6 +881,13 @@ public final class RegionProtectionListener implements Listener {
 				Location location = entity.getLocation();
 				Chunk chunk = location.getChunk();
 
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -651,7 +900,26 @@ public final class RegionProtectionListener implements Listener {
 
 					if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
 						event.setCancelled(true);
+						return;
 					}
+				} else {
+					if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+						event.setCancelled(true);
+					}
+				}
+			}
+		} else {
+			Location location = entity.getLocation();
+			Chunk chunk = location.getChunk();
+
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+					event.setCancelled(true);
 				}
 			}
 		}
@@ -677,6 +945,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (source instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 				event.setCancelled(true);
 			});
@@ -688,12 +963,23 @@ public final class RegionProtectionListener implements Listener {
 					event.getEntity().remove();
 					event.setCancelled(true);
 				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WITHER_DAMAGE)) {
+					event.getEntity().remove();
+					event.setCancelled(true);
+				}
 			}
-		} else if (ChunkManager.isChunkClaimed(chunk)) {
-			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
-				event.setCancelled(true);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
@@ -718,18 +1004,46 @@ public final class RegionProtectionListener implements Listener {
 
 		if (effectiveDamager != null) {
 			if (entity instanceof ArmorStand) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof Player) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PVP)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.PVP, null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof Monster || entity instanceof IronGolem) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_HOSTILE_ENTITIES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.DAMAGE_HOSTILE_ENTITIES, null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof Mob) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_PASSIVE_ENTITIES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
 					event.setCancelled(true);
 				});
@@ -740,6 +1054,10 @@ public final class RegionProtectionListener implements Listener {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
 					event.setCancelled(true);
 				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
 			}
 		} else if (Explosives.isExplosive(damager)) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
@@ -747,11 +1065,19 @@ public final class RegionProtectionListener implements Listener {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
 					event.setCancelled(true);
 				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+					event.setCancelled(true);
+				}
 			}
 		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_DAMAGE)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_DAMAGE)) {
 					event.setCancelled(true);
 				}
 			}
@@ -764,6 +1090,13 @@ public final class RegionProtectionListener implements Listener {
 		Entity entity = event.getEntity();
 		Location location = entity.getLocation();
 		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
 
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
 			event.setCancelled(true);
@@ -797,6 +1130,13 @@ public final class RegionProtectionListener implements Listener {
 		Location launchLoc = player.getLocation();
 		Chunk chunk = launchLoc.getChunk();
 
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), flag)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
 		RegionProtection.hasPermission(player, chunk, launchLoc, flag, null, () -> {
 			event.setCancelled(true);
 		});
@@ -810,6 +1150,13 @@ public final class RegionProtectionListener implements Listener {
 		ItemStack item = event.getItem();
 
 		if (item.getType().equals(Material.CHORUS_FRUIT)) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TELEPORT)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TELEPORT, null, () -> {
 				event.setCancelled(true);
 			});
@@ -824,14 +1171,27 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (shooter instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.THROW_POTIONS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.THROW_POTIONS, null, () -> {
 				event.setCancelled(true);
 			});
-		} else if (ChunkManager.isChunkClaimed(chunk)) {
-			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
-				event.setCancelled(true);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
@@ -844,14 +1204,27 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (shooter instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.THROW_POTIONS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.THROW_POTIONS, null, () -> {
 				event.setCancelled(true);
 			});
-		} else if (ChunkManager.isChunkClaimed(chunk)) {
-			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
-				event.setCancelled(true);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
@@ -875,18 +1248,46 @@ public final class RegionProtectionListener implements Listener {
 
 		if (shooter instanceof Player player) {
 			if (entityHit instanceof Player) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PVP)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PVP, null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entityHit instanceof Monster || entityHit instanceof IronGolem) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_HOSTILE_ENTITIES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_HOSTILE_ENTITIES, null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entityHit instanceof Mob) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_PASSIVE_ENTITIES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entityHit instanceof ArmorStand) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
 					event.setCancelled(true);
 				});
@@ -895,6 +1296,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+					return;
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
 					event.setCancelled(true);
 				}
 			}
@@ -907,6 +1313,13 @@ public final class RegionProtectionListener implements Listener {
 
 		Location location = player.getLocation();
 		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PICKUP_ITEMS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
 
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PICKUP_ITEMS, null, () -> {
 			event.setCancelled(true);
@@ -921,8 +1334,15 @@ public final class RegionProtectionListener implements Listener {
 			return;
 		}
 
-		Location location = player.getLocation();
+		Location location = event.getItem().getLocation();
 		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PICKUP_ITEMS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
 
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PICKUP_ITEMS, null, () -> {
 			event.setCancelled(true);
@@ -937,6 +1357,13 @@ public final class RegionProtectionListener implements Listener {
 		Entity entity = event.getEntered();
 
 		if (entity instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.VEHICLES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.VEHICLES, null, () -> {
 				event.setCancelled(true);
 			});
@@ -951,6 +1378,13 @@ public final class RegionProtectionListener implements Listener {
 		Entity entity = event.getAttacker();
 
 		if (entity instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.VEHICLES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.VEHICLES, null, () -> {
 				event.setCancelled(true);
 			});
@@ -963,6 +1397,13 @@ public final class RegionProtectionListener implements Listener {
 		Entity entity = event.getEntity();
 		Location location = entity.getLocation();
 		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
 
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
 			event.setCancelled(true);
@@ -978,6 +1419,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (block.getBlockData() instanceof Fence) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
 				event.setCancelled(true);
 			});
@@ -993,6 +1441,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (block.getBlockData() instanceof Fence) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
 				event.setCancelled(true);
 			});
@@ -1008,18 +1463,46 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (entity instanceof Villager) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRADE_VILLAGERS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ArmorStand) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ARMOR_STANDS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ItemFrame) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ITEM_FRAME_INTERACTION)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (!(entity instanceof Player)) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
 				event.setCancelled(true);
 			});
@@ -1035,18 +1518,46 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (entity instanceof Villager) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRADE_VILLAGERS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ArmorStand) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ARMOR_STANDS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ItemFrame) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ITEM_FRAME_INTERACTION)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (!(entity instanceof Player)) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
 				event.setCancelled(true);
 			});
@@ -1062,6 +1573,13 @@ public final class RegionProtectionListener implements Listener {
 			Chunk chunk = location.getChunk();
 
 			if (event.isGliding() && isWearingElytra(player)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ELYTRA)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ELYTRA, null, () -> {
 					event.setCancelled(true);
 				});
@@ -1083,6 +1601,13 @@ public final class RegionProtectionListener implements Listener {
 			Location location = player.getLocation();
 			Chunk chunk = location.getChunk();
 
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TAKE_FALL_DAMAGE)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
 			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TAKE_FALL_DAMAGE, null, () -> {
 				event.setCancelled(true);
 			});
@@ -1103,19 +1628,23 @@ public final class RegionProtectionListener implements Listener {
 					entity.remove();
 					event.setCancelled(true);
 				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WINDCHARGE_BURST)) {
+					entity.remove();
+					event.setCancelled(true);
+				}
 			}
 		} else if (entity instanceof Wither || entity instanceof WitherSkull) {
 			event.blockList().removeIf((block) -> {
 				Chunk chunk = block.getChunk();
 
-				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-
-				return region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE);
+				if (ChunkManager.isChunkClaimed(chunk)) {
+					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+					return region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE);
+				} else {
+					return !WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WITHER_DAMAGE);
+				}
 			});
-
-			//if (updated) {
-			//	event.setCancelled(true);
-			//}
 		} else if (Explosives.isExplosive(entity)) {
 			Chunk chunk = event.getLocation().getChunk();
 
@@ -1165,11 +1694,15 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				}
 			} else {
-				List<Block> allowedBlocks = new ArrayList<Block>();
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+					event.setCancelled(true);
+					return;
+				}
+
+				List<Block> allowedBlocks = new ArrayList<>();
 
 				for (Block b : event.blockList()) {
-					Location blockLocation = b.getLocation();
-					Chunk blockChunk = blockLocation.getChunk();
+					Chunk blockChunk = b.getLocation().getChunk();
 
 					if (!ChunkManager.isChunkClaimed(blockChunk)) {
 						allowedBlocks.add(b);
@@ -1198,12 +1731,20 @@ public final class RegionProtectionListener implements Listener {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
 					event.setCancelled(true);
 				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.FIRE_SPREAD)) {
+					event.setCancelled(true);
+				}
 			}
 		} else if (source.getType() == Material.GRASS_BLOCK || source.getType() == Material.MYCELIUM) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.GRASS_GROWTH)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.GRASS_GROWTH)) {
 					event.setCancelled(true);
 				}
 			}
@@ -1214,12 +1755,20 @@ public final class RegionProtectionListener implements Listener {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.SCULK_SPREAD)) {
 					event.setCancelled(true);
 				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.SCULK_SPREAD)) {
+					event.setCancelled(true);
+				}
 			}
 		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PLANT_GROWTH)) {
 					event.setCancelled(true);
 				}
 			}
@@ -1238,6 +1787,10 @@ public final class RegionProtectionListener implements Listener {
 			if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
 				event.setCancelled(true);
 			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PLANT_GROWTH)) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -1253,6 +1806,10 @@ public final class RegionProtectionListener implements Listener {
 			if (region != null && !region.isWorldFlagSet(WorldFlags.LEAVES_DECAY)) {
 				event.setCancelled(true);
 			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.LEAVES_DECAY)) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -1266,6 +1823,10 @@ public final class RegionProtectionListener implements Listener {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
+				event.setCancelled(true);
+			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.FIRE_SPREAD)) {
 				event.setCancelled(true);
 			}
 		}
@@ -1440,12 +2001,20 @@ public final class RegionProtectionListener implements Listener {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
 					event.setCancelled(true);
 				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WITHER_DAMAGE)) {
+					event.setCancelled(true);
+				}
 			}
 		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
 					event.setCancelled(true);
 				}
 			}
@@ -1477,6 +2046,16 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				}
 			}
+		} else {
+			if (entity instanceof Monster || entity instanceof IronGolem) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.HOSTILE_ENTITY_SPAWN)) {
+					event.setCancelled(true);
+				}
+			} else if (entity instanceof Mob) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PASSIVE_ENTITY_SPAWN)) {
+					event.setCancelled(true);
+				}
+			}
 		}
 	}
 
@@ -1493,6 +2072,10 @@ public final class RegionProtectionListener implements Listener {
 					event.setCancelled(true);
 				}
 			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -1502,6 +2085,20 @@ public final class RegionProtectionListener implements Listener {
 		Raid raid = event.getRaid();
 		Location location = raid.getLocation();
 		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRIGGER_RAID)) {
+				event.setCancelled(true);
+
+				PotionEffect effect = event.getPlayer().getPotionEffect(PotionEffectType.RAID_OMEN);
+
+				if (effect != null) {
+					event.getPlayer().removePotionEffect(PotionEffectType.RAID_OMEN);
+				}
+
+				return;
+			}
+		}
 
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRIGGER_RAID, null, () -> {
 			event.setCancelled(true);
@@ -1528,6 +2125,16 @@ public final class RegionProtectionListener implements Listener {
 				}
 			} else if (blockType == Material.ICE) {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.ICE_MELTING)) {
+					event.setCancelled(true);
+				}
+			}
+		} else {
+			if (blockType == Material.SNOW) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.SNOW_MELTING)) {
+					event.setCancelled(true);
+				}
+			} else if (blockType == Material.ICE) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ICE_MELTING)) {
 					event.setCancelled(true);
 				}
 			}
@@ -1581,6 +2188,10 @@ public final class RegionProtectionListener implements Listener {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.SNOWMAN_TRAILS)) {
 					event.setCancelled(true);
 				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.SNOWMAN_TRAILS)) {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
@@ -1600,6 +2211,10 @@ public final class RegionProtectionListener implements Listener {
 				if (region != null && !region.isWorldFlagSet(WorldFlags.WEATHER_SNOW)) {
 					event.setCancelled(true);
 				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WEATHER_SNOW)) {
+					event.setCancelled(true);
+				}
 			}
 		}
 	}
@@ -1612,6 +2227,10 @@ public final class RegionProtectionListener implements Listener {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
+				event.setCancelled(true);
+			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PLANT_GROWTH)) {
 				event.setCancelled(true);
 			}
 		}

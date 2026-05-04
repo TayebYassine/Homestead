@@ -88,3 +88,16 @@ default-world-flags:
   projectiles: false                # Any kind of projectile from any source except players
   weather-snow: true                # Snow form during weather storm (in cold biomes)
 
+# Apply player flags (global) and world flags for unclaimed chunks for each specific world
+# Flags that are ignored from the rules: liquid-flow, wilderness-dispensers, wilderness-pistons, wilderness-minecarts
+world-rules:
+  enabled: false
+
+  # World names
+  worlds:
+    world_the_end:
+      player_flags: 68719474687 # Everything allowed except for 'use-bells'
+      world_flags: 13631487 # Everything allowed except for 'wars'
+    pvp_arena:
+      player_flags: 68719474687
+      world_flags: 13631487

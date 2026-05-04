@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
+import tfagaming.projects.minecraft.homestead.flags.WorldRules;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 
@@ -37,6 +38,10 @@ public final class ItemTransportingEntityValidateTargetListener implements Liste
 
 				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
 					event.setAllowed(false);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+					entity.remove();
 				}
 			}
 		}
