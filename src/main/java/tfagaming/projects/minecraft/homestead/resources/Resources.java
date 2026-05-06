@@ -51,7 +51,7 @@ public final class Resources {
 		validateAndFix(plugin, RESOURCE_CONFIG, configFile, Collections.emptySet());
 
 		REGISTRY.put(ResourceType.Config, new ConfigFile(configFile));
-		Logger.info("[Resources] config.yml loaded.");
+		Logger.debug("[Resources] config.yml loaded.");
 
 		ConfigFile config = get(ResourceType.Config);
 
@@ -64,7 +64,7 @@ public final class Resources {
 		validateAndFixDirectory(plugin, langDir, RESOURCE_LANGUAGE_CODES, Collections.emptySet());
 
 		REGISTRY.put(ResourceType.Language, new LanguageFile(langFile));
-		Logger.info("[Resources] Language file '" + langFile.getName() + "' loaded.");
+		Logger.debug("[Resources] Language file '" + langFile.getName() + "' loaded.");
 
 		File menusDir = new File(plugin.getDataFolder(), RESOURCE_MENUS_DIR);
 		ensureDirectoryWithDefault(plugin, menusDir, RESOURCE_LANGUAGE_CODES);
@@ -75,7 +75,7 @@ public final class Resources {
 		validateAndFixDirectory(plugin, menusDir, RESOURCE_LANGUAGE_CODES, Collections.emptySet());
 
 		REGISTRY.put(ResourceType.Menus, new MenusFile(menusFile));
-		Logger.info("[Resources] Menus file '" + menusFile.getName() + "' loaded.");
+		Logger.debug("[Resources] Menus file '" + menusFile.getName() + "' loaded.");
 
 		loadStandaloneResource(plugin, RESOURCE_FLAGS, ResourceType.Flags, FlagsFile::new, Collections.emptySet());
 		loadStandaloneResource(plugin, RESOURCE_LEVELS, ResourceType.Levels, LevelsFile::new, Collections.emptySet());
@@ -116,14 +116,14 @@ public final class Resources {
 		validateAndFix(plugin, resourceName, file, filteredSubtrees);
 
 		REGISTRY.put(type, factory.create(file));
-		Logger.info("[Resources] " + resourceName + " loaded.");
+		Logger.debug("[Resources] " + resourceName + " loaded.");
 	}
 
 	private static File resolveLocaleFile(File dir, String setting, String fallbackName) {
 		String name = setting.endsWith(".yml") ? setting : setting + ".yml";
 		File file = new File(dir, name);
 		if (!file.exists()) {
-			Logger.warning("[Resources] Locale file '" + name + "' not found – falling back to " + fallbackName);
+			Logger.debug("[Resources] Locale file '" + name + "' not found – falling back to " + fallbackName);
 			file = new File(dir, fallbackName);
 		}
 		return file;
@@ -150,7 +150,7 @@ public final class Resources {
 
 		InputStream stream = plugin.getResource(resourceName);
 		if (stream == null) {
-			Logger.warning("[Resources] Bundled resource '" + resourceName + "' not found in JAR.");
+			Logger.debug("[Resources] Bundled resource '" + resourceName + "' not found in JAR.");
 			return;
 		}
 		FileUtils.copyInputStreamToFile(stream, file);
@@ -165,9 +165,9 @@ public final class Resources {
 		ResourceValidator validator = new ResourceValidator(referenceResource, targetFile, filteredSubtrees);
 
 		if (!validator.validate()) {
-			Logger.warning("[Resources] '" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
+			Logger.debug("[Resources] '" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
 			validator.fix();
-			Logger.info("[Resources] '" + targetFile.getName() + "' has been repaired.");
+			Logger.debug("[Resources] '" + targetFile.getName() + "' has been repaired.");
 		}
 	}
 
@@ -190,9 +190,9 @@ public final class Resources {
 			ResourceValidator validator = new ResourceValidator(resourcePath, targetFile, filteredSubtrees);
 
 			if (!validator.validate()) {
-				Logger.warning("[Resources] '" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
+				Logger.debug("[Resources] '" + targetFile.getName() + "' has missing keys – auto-fixing from defaults...");
 				validator.fix();
-				Logger.info("[Resources] '" + targetFile.getName() + "' has been repaired.");
+				Logger.debug("[Resources] '" + targetFile.getName() + "' has been repaired.");
 			}
 		}
 	}

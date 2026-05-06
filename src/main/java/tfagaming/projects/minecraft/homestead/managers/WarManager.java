@@ -512,7 +512,7 @@ public final class WarManager {
 					sendBroadcastMessage(p, war, war.getRegions().get(0), war.getRegions().get(1));
 				}
 
-				Logger.info("[Broadcast - War] Declaration of War: Name = " + war.getName() + ", Regions = " + war.getRegions().get(0).getName() + " & " + war.getRegions().get(1).getName());
+				Logger.debug("[Broadcast - War] Declaration of War: Name = " + war.getName() + ", Regions = " + war.getRegions().get(0).getName() + " & " + war.getRegions().get(1).getName());
 
 				break;
 			}

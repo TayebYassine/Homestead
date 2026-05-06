@@ -39,7 +39,7 @@ public final class MapIcon {
 		int totalIcons = allIcons.size();
 		int downloaded = 0;
 
-		Logger.info("[Dynamic Maps] Downloading icons... 0% (0 / " + totalIcons + ")");
+		Logger.info("Downloading icons... 0% (0 / " + totalIcons + ")");
 
 		DEFAULT_ICON = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.default"));
 
@@ -56,7 +56,7 @@ public final class MapIcon {
 				ICONS.putIfAbsent(icon, bufferedImage);
 
 				downloaded++;
-				Logger.info("[Dynamic Maps] Downloading icons... " + (int) ((downloaded / (float) totalIcons) * 100) + "% (" + downloaded + " / " + totalIcons + ")");
+				Logger.info("Downloading icons... " + (int) ((downloaded / (float) totalIcons) * 100) + "% (" + downloaded + " / " + totalIcons + ")");
 			}
 		}
 	}
@@ -70,7 +70,7 @@ public final class MapIcon {
 
 			return ImageIO.read(connection.getInputStream());
 		} catch (Exception e) {
-			Logger.warning("[Dynamic Maps] Unable to download an icon, URL: " + imageUrl);
+			Logger.warning("Unable to download an icon, URL: " + imageUrl);
 			return null;
 		}
 	}

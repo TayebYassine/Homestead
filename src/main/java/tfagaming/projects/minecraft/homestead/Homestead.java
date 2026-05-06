@@ -151,6 +151,8 @@ public class Homestead extends JavaPlugin {
 			return;
 		}
 
+		Logger.debug("Debug mode is enabled.");
+
 		Homestead.REGION_CACHE = new RegionCache();
 		Homestead.MEMBER_CACHE = new RegionMemberCache();
 		Homestead.BAN_CACHE = new RegionBanCache();
@@ -192,7 +194,7 @@ public class Homestead extends JavaPlugin {
 			endInstance();
 			return;
 		} else {
-			Logger.warning("Loading service providers with Vault... (Using " + (!isFolia() ? "Legacy Vault" : "VaultUnlocked") + ")");
+			Logger.info("Loading service providers with Vault... (Using " + (!isFolia() ? "Legacy Vault" : "VaultUnlocked") + ")");
 		}
 
 		StorageManager.init(this);
@@ -221,7 +223,7 @@ public class Homestead extends JavaPlugin {
 		}
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("clean-startup")) {
-			Logger.warning("Cleaning up corrupted data...");
+			Logger.info("Cleaning up corrupted data...");
 
 			int regions = RegionManager.cleanupInvalidRegions();
 			int subareas = SubAreaManager.cleanupInvalidSubAreas();
@@ -237,24 +239,26 @@ public class Homestead extends JavaPlugin {
 
 			ChunkManager.cleanupOrphanedForceLoadedChunks();
 
-			Logger.info("Done cleaning up corrupted data. Table of changes:");
+			Logger.info("Done repairing corrupted data.");
 
-			String[] headers = {"Model", "Fixed/Removed"};
+			if (Resources.<ConfigFile>get(ResourceType.Config).isDebugEnabled()) {
+				String[] headers = {"Model", "Fixed/Removed"};
 
-			Object[][] data = {
-					{"Regions", regions},
-					{"Members", members},
-					{"Chunks", chunks},
-					{"Invites", invites},
-					{"Logs", logs},
-					{"Rates", rates},
-					{"Bans", bans},
-					{"Levels", levels},
-					{"Wars", wars},
-					{"SubAreas", subareas},
-			};
+				Object[][] data = {
+						{"Regions", regions},
+						{"Members", members},
+						{"Chunks", chunks},
+						{"Invites", invites},
+						{"Logs", logs},
+						{"Rates", rates},
+						{"Bans", bans},
+						{"Levels", levels},
+						{"Wars", wars},
+						{"SubAreas", subareas},
+				};
 
-			ListUtils.printTable(headers, data);
+				ListUtils.printTable(headers, data);
+			}
 		}
 
 		ChunkManager.reregisterForceLoadedChunks();
@@ -277,17 +281,15 @@ public class Homestead extends JavaPlugin {
 			}
 		}
 
-		Logger.debug("Debug mode is enabled in config.yml; logs.txt may be flooded with warnings.");
-
 		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
 
 		// Prepare Discord webhook client
 		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("discord.enabled")) {
-			Logger.info("[Discord Webhook] Initializing new Discord webhook client...");
+			Logger.info("Initializing new Discord webhook client...");
 
 			Homestead.DISCORD_WEBHOOK = new DiscordWebhookClient(Resources.<ConfigFile>get(ResourceType.Config).getString("discord.webhook_url"));
 
-			Logger.info("[Discord Webhook] Done.");
+			Logger.info("Discord webhook instance is ready.");
 		}
 
 		// Cache interval
@@ -306,16 +308,18 @@ public class Homestead extends JavaPlugin {
 			if (DynamicMaps.isPl3xMapInstalled() || DynamicMaps.isSquaremapInstalled()) {
 				runAsyncTask(() -> {
 					MapIcon.downloadAllIcons();
-					Logger.info("[Dynamic Maps] Successfully downloaded all icons!");
+					Logger.info("Successfully downloaded all icons!");
 				});
 			} else {
-				Logger.warning("[Dynamic Maps] Cannot download region icons due to 'Pl3xMap' or 'Squaremap' plugins not being installed/enabled on the server.");
+				Logger.warning("Cannot download region icons due to 'Pl3xMap' or 'Squaremap' plugins not being installed/enabled on the server.");
 			}
 		}
 
 		// Triggers
 		if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
 			runAsyncTimerTask(() -> {
+				Logger.debug("Updating web-rendering plugin markers...");
+
 				DynamicMaps.trigger(this);
 			}, Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.update-interval"));
 		}
@@ -340,14 +344,12 @@ public class Homestead extends JavaPlugin {
 
 		// Check for updates every 24 hours
 		runAsyncTimerTask(() -> {
-			Logger.info("[Updates] Looking for updates on GitHub...");
-
 			String newVersion = UpdateChecker.fetch(this);
 
 			if (newVersion != null) {
-				Logger.warning(Logger.PredefinedMessages.UPDATE_FOUND.getMessage());
+				Logger.warning(Logger.PredefinedMessage.UPDATE_FOUND);
 			} else {
-				Logger.info("[Updates] No update was found!");
+				Logger.info(Logger.PredefinedMessage.UPDATE_NOT_FOUND);
 			}
 		}, 86400);
 

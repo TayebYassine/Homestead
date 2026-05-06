@@ -30,13 +30,13 @@ public final class SQLite implements Provider {
 	@Override
 	public void prepareTables() throws SQLException {
 		if (legacyTablesExist()) {
-			Logger.warning("[Database] Legacy database structure detected, running one-time migration...");
+			Logger.warning("Legacy database structure detected, running one-time migration...");
 			try {
 				migrateFromLegacy();
-				Logger.info("[Database] Database migration completed successfully.");
+				Logger.info("Database migration completed successfully.");
 			} catch (SQLException e) {
-				Logger.error("[Database] Migration failed, old tables have not been dropped. Error: " + e.getMessage());
-				throw e;
+				Logger.error("Migration failed, old tables have not been dropped.");
+				Logger.error(e);
 			}
 		} else {
 
@@ -315,7 +315,6 @@ public final class SQLite implements Provider {
 							if (l != null) newLogs.add(l);
 						});
 					} catch (Exception e) {
-						Logger.warning("[Database] Skipping region " + oldId + " during migration: " + e.getMessage());
 					}
 				}
 			}
@@ -331,8 +330,6 @@ public final class SQLite implements Provider {
 					try {
 						Long newRegionId = regionIdMap.get(oldRegionId);
 						if (newRegionId == null) {
-							Logger.warning("[Database] SubArea " + oldId
-									+ " references unknown region " + oldRegionId + ", skipping.");
 							continue;
 						}
 
@@ -341,16 +338,12 @@ public final class SQLite implements Provider {
 
 						UUID worldId = LegacyParsers.resolveWorldUUID(rs.getString("worldName"));
 						if (worldId == null) {
-							Logger.warning("[Database] SubArea " + oldId
-									+ " references an unresolvable world, skipping.");
 							continue;
 						}
 
 						SeBlock point1 = LegacyParsers.parseLegacyBlock(worldId, rs.getString("point1"));
 						SeBlock point2 = LegacyParsers.parseLegacyBlock(worldId, rs.getString("point2"));
 						if (point1 == null || point2 == null) {
-							Logger.warning("[Database] SubArea " + oldId
-									+ " has invalid block coordinates, skipping.");
 							continue;
 						}
 
@@ -373,7 +366,6 @@ public final class SQLite implements Provider {
 						});
 
 					} catch (Exception e) {
-						Logger.warning("[Database] Skipping subarea " + oldId + " during migration: " + e.getMessage());
 					}
 				}
 			}
@@ -388,8 +380,6 @@ public final class SQLite implements Provider {
 					try {
 						Long newRegionId = regionIdMap.get(oldRegionId);
 						if (newRegionId == null) {
-							Logger.warning("[Database] Level references unknown region "
-									+ oldRegionId + ", skipping.");
 							continue;
 						}
 						Level lvl = new Level(
@@ -400,8 +390,6 @@ public final class SQLite implements Provider {
 								rs.getLong("createdAt"));
 						newLevels.add(lvl);
 					} catch (Exception e) {
-						Logger.warning("[Database] Skipping level for region "
-								+ oldRegionId + ": " + e.getMessage());
 					}
 				}
 			}
@@ -435,8 +423,6 @@ public final class SQLite implements Provider {
 						warRegionMap.put(newWarId, mappedRegionIds);
 
 					} catch (Exception e) {
-						Logger.warning("[Database] Skipping war " + oldWarId
-								+ " during migration: " + e.getMessage());
 					}
 				}
 			}

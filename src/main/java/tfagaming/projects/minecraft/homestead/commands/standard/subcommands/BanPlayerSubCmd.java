@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
+import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -9,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -18,6 +20,7 @@ import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
@@ -101,6 +104,16 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		if (ColorTranslator.containsMiniMessageTag(reason)) {
 			Messages.send(player, 30);
 			return true;
+		}
+
+		Player targetOnline = target.isOnline() ? target.getPlayer() : null;
+
+		if (targetOnline != null && RegionManager.isPlayerInsideRegion(targetOnline, region)) {
+			Chunk chunk = ChunkUtility.findNearbyUnclaimedChunk(targetOnline.getLocation(), 64);
+
+			if (chunk != null) {
+				PlayerUtility.teleportPlayerToChunk(targetOnline, chunk);
+			}
 		}
 
 		BanManager.banPlayer(region, target, reason);

@@ -32,7 +32,7 @@ public final class DynamicMaps {
 
 				DYNMAP_INSTANCE = new DynmapAPI(instance);
 
-				Logger.info("[Dynamic Maps] API plugin 'dynmap' connected.");
+				Logger.info("Dynamic Map API plugin 'dynmap' connected.");
 
 				DYNMAP_INSTANCE.update();
 			} catch (NoClassDefFoundError ignored) {
@@ -49,7 +49,7 @@ public final class DynamicMaps {
 
 				PL3XMAP_INSTANCE = new Pl3xMapAPI(instance);
 
-				Logger.info("[Dynamic Maps] API plugin 'Pl3xMap' connected.");
+				Logger.info("Dynamic Map API plugin 'Pl3xMap' connected.");
 
 				PL3XMAP_INSTANCE.update();
 			} catch (NoClassDefFoundError ignored) {
@@ -66,7 +66,7 @@ public final class DynamicMaps {
 
 				SQUAREMAP_INSTANCE = new SquaremapAPI(instance);
 
-				Logger.info("[Dynamic Maps] API plugin 'Squaremap' connected.");
+				Logger.info("Dynamic Map API plugin 'Squaremap' connected.");
 
 				SQUAREMAP_INSTANCE.update();
 			} catch (NoClassDefFoundError ignored) {
@@ -84,7 +84,7 @@ public final class DynamicMaps {
 				de.bluecolored.bluemap.api.BlueMapAPI.onEnable((api) -> {
 					BLUEMAP_INSTANCE = new BlueMapAPI(instance, api);
 
-					Logger.info("[Dynamic Maps] API plugin 'BlueMap' connected.");
+					Logger.info("Dynamic Map API plugin 'BlueMap' connected.");
 
 					BLUEMAP_INSTANCE.update();
 				});

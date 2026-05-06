@@ -37,7 +37,7 @@ public final class UpdateChecker {
 				}
 			}
 		} catch (Exception e) {
-			Logger.error(Logger.PredefinedMessages.UPDATE_FETCH_FAILURE.getMessage());
+			Logger.error(Logger.PredefinedMessage.UPDATE_FETCH_FAILURE);
 			return null;
 		}
 	}

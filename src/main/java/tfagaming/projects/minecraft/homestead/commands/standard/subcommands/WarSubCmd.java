@@ -61,7 +61,7 @@ public class WarSubCmd extends SubCommandBuilder {
 		if (!Homestead.VAULT.isEconomyReady()) {
 			Messages.send(player, 69);
 
-			Logger.warning(Logger.PredefinedMessages.ECONOMY_INTEGRATION_DISABLED.getMessage());
+			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
 			return true;
 		}

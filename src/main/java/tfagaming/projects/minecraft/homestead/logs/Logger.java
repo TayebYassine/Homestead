@@ -19,14 +19,32 @@ public class Logger {
 		sendPluginBanner();
 	}
 
+	public static void info(PredefinedMessage message) {
+		for (String each : message.getStrings()) {
+			info(each);
+		}
+	}
+
 	public static void info(String... message) {
 		logger.info("INFO » " + String.join(" ", message));
 		logs.save("[INFO] " + String.join(" ", message));
 	}
 
+	public static void warning(PredefinedMessage message) {
+		for (String each : message.getStrings()) {
+			warning(each);
+		}
+	}
+
 	public static void warning(String... message) {
 		logger.warning("WARN » " + String.join(" ", message));
 		logs.save("[WARN] " + String.join(" ", message));
+	}
+
+	public static void debug(PredefinedMessage message) {
+		for (String each : message.getStrings()) {
+			debug(each);
+		}
 	}
 
 	public static void debug(String... message) {
@@ -46,6 +64,12 @@ public class Logger {
 
 			logger.warning("DEBUG » " + messageStr);
 			logs.save("[DEBUG] " + messageStr);
+		}
+	}
+
+	public static void error(PredefinedMessage message) {
+		for (String each : message.getStrings()) {
+			error(each);
 		}
 	}
 
@@ -93,7 +117,7 @@ public class Logger {
 		}
 	}
 
-	public enum PredefinedMessages {
+	public enum PredefinedMessage {
 		WORLDGUARD_PLUGIN_NOT_FOUND(new String[]{
 				"Unable to find the plugin 'WorldGuard' or execute API methods for its class.",
 				"Please install the plugin, or disable any feature that requires the API of that extension."
@@ -109,23 +133,26 @@ public class Logger {
 				"https://modrinth.com/plugin/homestead-plugin, ",
 				"https://hangar.papermc.io/TayebYassine/Homestead"
 		}),
+		UPDATE_NOT_FOUND(new String[]{
+				"You are currently on the latest version!"
+		}),
 		UPDATE_FETCH_FAILURE(new String[]{
 				"Failed to fetch for updates, maybe GitHub is down or you are not connected to the internet.",
 				"You can manually look for updates on SpigotMC, Modrinth, or Hangar!"
 		});
 
-		private final String[] message;
+		private final String[] strings;
 
-		PredefinedMessages(String[] message) {
-			this.message = message;
+		PredefinedMessage(String[] strings) {
+			this.strings = strings;
 		}
 
-		PredefinedMessages(String message) {
-			this.message = new String[]{message};
+		PredefinedMessage(String string) {
+			this.strings = new String[]{string};
 		}
 
-		public String[] getMessage() {
-			return message;
+		public String[] getStrings() {
+			return strings;
 		}
 	}
 

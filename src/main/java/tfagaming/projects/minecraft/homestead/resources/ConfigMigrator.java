@@ -69,13 +69,13 @@ public final class ConfigMigrator {
 
 			if (!migratedIntoThisFile.isEmpty()) {
 				target.save(targetFile);
-				Logger.warning("[Resources - Migrator] Migrated '" + migratedIntoThisFile + "' to '" + targetFile.getName() + "'.");
+				Logger.debug("[Resources - Migrator] Migrated '" + migratedIntoThisFile + "' to '" + targetFile.getName() + "'.");
 				globalMigratedKeys.addAll(migratedIntoThisFile);
 			}
 		}
 
 		if (globalMigratedKeys.isEmpty()) {
-			Logger.info("[Resources - Migrator] No legacy keys found in 'config.yml', nothing to migrate.");
+			Logger.debug("[Resources - Migrator] No legacy keys found in 'config.yml', nothing to migrate.");
 			return false;
 		}
 
@@ -84,7 +84,7 @@ public final class ConfigMigrator {
 		}
 
 		config.save(configFile);
-		Logger.info("[Resources - Migrator] Removed migrated key(s) from config.yml: " + globalMigratedKeys);
+		Logger.debug("[Resources - Migrator] Removed migrated key(s) from config.yml: " + globalMigratedKeys);
 
 		return true;
 	}

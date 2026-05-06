@@ -278,9 +278,9 @@ public final class PlayerUtility {
 				return null;
 			}
 		} catch (Exception e) {
-			Logger.error("[Services] Unable to find a service provider for permissions and groups, using the default group \"default\".");
-			Logger.error("[Services] Please install a plugin that supports permissions and groups. We recommend installing the LuckPerms plugin.");
-			Logger.error("[Services] To ignore this warning, change the limits method to \"static\" in this setting: limits.method");
+			Logger.error("Unable to find a service provider for permissions and groups, using the default group \"default\".");
+			Logger.error("Please install a plugin that supports permissions and groups. We recommend installing the LuckPerms plugin.");
+			Logger.error("To ignore this warning, change the limits method to \"static\" in this setting: limits.method");
 		}
 
 		return null;
