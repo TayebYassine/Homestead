@@ -13,7 +13,8 @@ You can change the interval in **config.yml**:
 cache-interval: 30 # 30 seconds
 ```
 
-## When do I change this interval?
+## FAQs
+### When do I change this interval?
 
 If you have a lot of regions on your server, like over 1,000, increase the interval up to 1 minute (60 seconds).
 

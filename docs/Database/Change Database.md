@@ -1,4 +1,4 @@
-# Migrate to new Database
+# Change Database
 
 Already have an active server with regions? Follow these steps to safely migrate your data.
 

@@ -1,4 +1,4 @@
-# Migrate from another plugin
+# Migration
 
 Switching from another land claiming plugin to Homestead? The built-in migration system makes it easy to transfer all your existing claims without losing data.
 
@@ -69,6 +69,7 @@ After the migration completes:
    ```
    /hs
    ```
+   If you are a server operator, click on "Show All Regions".
 
 2. Visit a few claim locations and verify:
     - Boundaries are correct

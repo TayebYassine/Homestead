@@ -35,12 +35,3 @@ First release: **January 11th, 2025**
 | 5.0.0.2 |  5.x   |   1.21.9    | :material-close: |
 | 5.0.0.1 |  5.x   |   1.21.9    | :material-close: |
 | 5.0.0.0 |  5.x   |   1.21.9    | :material-close: |
-
-### Obsolete Releases
-
-| Release | Series | Spigot API |
-|:-------:|:------:|:----------:|
-|  4.3.1  |  4.x   |   1.21.9   |
-|  3.6.1  |  3.x   |    1.21    |
-|  2.6.2  |  2.x   |    1.21    |
-|  1.3.1  |  1.x   |    1.21    |

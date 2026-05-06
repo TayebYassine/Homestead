@@ -21,11 +21,17 @@ Each flag can be set to:
 
 To manage control flags for a specific trusted plater, you must navigate the GUI from: **Region Menu** -> **Players Management** -> **Trusted players** -> Right-click on Player head
 
-## Setting Default Flag Values
+## Calculator
+
+There is an available site specifically made for Homestead which you can use to calculate all flag bits and get a bitwise value!
+
+Homestead Flags Calculator: [Click here](https://tayebyassine.github.io/HomesteadFlagsCalculator)
+
+## Default Flag Values
 
 Default flags apply to all newly created regions. Players can change these later for their own regions.
 
-In **flags.yml**:
+Edit the values in **flags.yml**:
 
 ```yaml
 default-players-flags:
@@ -41,3 +47,5 @@ default-world-flags:
   entity-grief: false          # Deny by default
   # ... more flags
 ```
+
+Control flags default values cannot be modified, and they're always in Deny state by default.

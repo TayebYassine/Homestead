@@ -16,11 +16,11 @@ All menu customization is done in the `menus/(LANGUAGE CODE).yml` file located i
 
 By default, the menus file is `menus/en-US.yml`.
 
-## Changing the Menu language
+## Changing the language
 
 Same configuration as [Language](./Language.md), but the directory is `menus` instead of `languages`.
 
-## Customizing Menu Titles
+## Customizing Titles
 
 Menu titles appear at the top of the chest inventory interface.
 

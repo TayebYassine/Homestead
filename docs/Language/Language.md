@@ -2,9 +2,9 @@
 
 Homestead includes an English (US) language file by default. You can translate it to any language or customize the messages to match your server's style.
 
-Available languages: **en-US**, **es-ES**, **hu-HU**.
+Available languages: English (**en-US**), Spanish (**es-ES**), Hungarian (**hu-HU**).
 
-## Changing the Language
+## Changing the language
 
 The language setting is in `config.yml`:
 
@@ -19,9 +19,13 @@ To use a different language:
 3. Rename it to your language code (e.g., `fr-FR.yml`, `es-ES.yml`, `de-DE.yml`)
 4. Translate the messages in the new file
 5. Update `config.yml` to use your new language file
-6. Reload or restart the server
+6. Reload the configuration via:
 
-## Language File Location
+   ```
+   /hsadmin reload
+   ```
+
+## Location
 
 Language files are stored in:
 ```
@@ -33,9 +37,9 @@ Default file:
 plugins/Homestead/languages/en-US.yml
 ```
 
-## Translating the Language File
+## Translation
 
-### Using AI Translation Tools
+### Using AI Tools
 
 You can use AI tools like ChatGPT, Claude, or Google Translate to translate the language file:
 
@@ -50,7 +54,7 @@ You can use AI tools like ChatGPT, Claude, or Google Translate to translate the 
 4. **Save the translation** to a new file with your language code
 5. **Review the translation** to ensure it sounds natural
 
-### Manual Translation
+### Manual
 
 If you prefer to translate manually:
 
@@ -59,7 +63,7 @@ If you prefer to translate manually:
 3. Copy each line and translate only the message part
 4. **Do not translate variable names** (see below)
 
-## Important Translation Rules
+## Important Rules
 
 ### DO NOT Change Variable Names
 
@@ -92,28 +96,3 @@ info-message: "&7Region: &2{region-name}"
 ```
 
 MiniMessage tags are supported and do not translate the tag names!
-
-## Common Issues
-
-**Variables don't work (showing {region-name} instead of actual name):**
-
-- Check that you didn't modify the variable name
-- Make sure curly braces `{}` are still present
-- Verify the variable spelling is exact
-
-**Missing translations:**
-
-- Compare your file with `en-US.yml` to find missing keys
-- Every message key must be present even if not translated
-
-**Colors don't work:**
-
-- Ensure color codes start with `&` not `§`
-- Check that you didn't accidentally delete the `&`
-
-**Plugin won't load language file:**
-
-- Verify the filename matches what's in `config.yml`
-- Check that the file is in `plugins/Homestead/languages/`
-- Make sure the file extension is `.yml`
-- Validate YAML syntax using an online YAML validator

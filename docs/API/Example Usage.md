@@ -1,17 +1,16 @@
-# General Usage
+# Example Usage
 
-For `Region` and `War` structures, any set method is directly updating the cache. Some methods are also used externally from both of these structures, called managers.
+!!! warning "Model IDs Changed"
 
-There are 3 available managers: `RegionsManager`, `ChunksManager`, and `WarsManager`.
+    As of release 5.2.0.0, all model IDs have been changed from UUID v4 to
+    [Twitter Snowflake IDs](https://en.wikipedia.org/wiki/Snowflake_ID).
 
-## Samples
-### Creating a Region:
+### Creating a Region
 
 ```java
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.managers.*;
-
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 // The owner of the region
 Player player = Bukkit.getPlayer("TFA_Gaming");
@@ -19,50 +18,43 @@ Player player = Bukkit.getPlayer("TFA_Gaming");
 Region region = RegionManager.createRegion("ExampleRegion", player);
 ```
 
-### Fetching a region:
+### Fetching a region
 
 ```java
-import tfagaming.projects.minecraft.homestead.managers.*;
-
-import java.util.UUID;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 Region region;
 
 String name = "ExampleRegion";
-UUID regionId = UUID.fromString("31c0eb1d-6df9-407d-937f-de6101dd0134");
+long regionId = 309031393541763072L;
 
 // Find a region by name (case is ignored)
 RegionManager.findRegion(name);
 
-// Find a region by UUID
+// Find a region by ID
 RegionManager.findRegion(regionId);
 ```
 
-### Delete a Region:
+### Delete a Region
 
 ```java
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import tfagaming.projects.minecraft.homestead.managers.*;
+import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
-
-// The player is the executor of the deletion (optional)
-Player player = Bukkit.getPlayer("TFA_Gaming");
-
-UUID regionId = UUID.fromString("31c0eb1d-6df9-407d-937f-de6101dd0134");
+long regionId = 309031393541763072L;
 
 // If the region exist (not null)
 if (region != null) {
-    RegionManager.deleteRegion(regionId, player);
+    RegionManager.deleteRegion(regionId);
 }
 ```
 
-### Claiming a Chunk:
+### Claiming a Chunk
 
 ```java
 import org.bukkit.*;
-import tfagaming.projects.minecraft.homestead.managers.*;
-
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 
 // The chunk to claim
 Chunk chunk = ...;
@@ -80,12 +72,11 @@ if (error == null) {
 }
 ```
 
-### Unclaiming a Chunk:
+### Unclaiming a Chunk
 
 ```java
 import org.bukkit.*;
-import tfagaming.projects.minecraft.homestead.managers.*;
-
+import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 
 // The chunk to unclaim
 Chunk chunk = ...;
@@ -103,30 +94,32 @@ if (error == null) {
 }
 ```
 
-### Managing Members:
+### Managing Members
 
 ```java
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 
-
+Player target = Bukkit.getPlayer("test_account");
 Region region = ...;
 
-Player player = Bukkit.getPlayer("test_account");
+// Invite a player
+InviteManager.invitePlayer(region, target);
 
-region.addPlayerInvite(player); // Invite a player and wait until they accept it or deny it
+// Delete invites
+InviteManager.deleteInvitesOfPlayer(player); // All invites that invited the player
+InviteManager.deleteInvitesOfRegion(region); // All invites that created by the region
 
-InviteManager.deleteInvitesOfPlayer(region, player); // Add a member to the region (without invitation)
+// Get invites
+InviteManager.getInvitesOfPlayer(player);
+InviteManager.getInvitesOfRegion(region);
 
-InviteManager.deleteInvitesOfPlayer(region, player); // Revoke an invited player's invite
-
-// Check if the player is a member
-if (MemberManager.isMemberOfRegion(region, player)) {
-	region.removeMember(player); // Remove the player as member of the region
-}
+// Returns 'true' if the player is invited by that region
+boolean res = InviteManager.isInvited(region, player);
 ```
 
-### Getting and parsing flags:
+### Getting and parsing flags
 
 !!! success "Same Method for other Flag Classes"
 
@@ -140,8 +133,6 @@ Region region = ...;
 
 long flags = region.getPlayerFlags(); // Get global player flags
 long flags = region.getWorldFlags(); // Get world/environment flags
-long flags = MemberManager.getMemberOfRegion(region, player).getFlags(); // Get member's player flags
-long flags = MemberManager.getMemberOfRegion(region, player).getRegionControlFlags(); // Get member's region control flags
 
 List<String> flagNames = PlayerFlags.getAll(); // Get all player flag names in predefined format (lower-case and dashes)
 long flag = PlayerFlags.valueOf("break-blocks"); // Get the flag value of "break-blocks"
@@ -213,20 +204,7 @@ public class HomesteadCustomEvents implements Listener {
 
 	@EventHandler
 	public void onPlayerUntrustFromRegion(PlayerLeftRegionEvent event) {
-		OfflinePlayer untrustedPlayer = event.getUntrustedPlayer();
-		PlayerLeftRegionEvent.UntrustReason reason = event.getReason();
-
-		switch (reason) {
-			case EXECUTION -> {
-				// A player (region owner for example) untrusted that player
-			}
-			case LEFT -> {
-				// The player left the region, manually
-			}
-			case TAXES -> {
-				// The player didn't pay taxes, left automatically
-			}
-		}
+        ...
 	}
 }
 ```

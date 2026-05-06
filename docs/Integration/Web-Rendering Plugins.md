@@ -20,7 +20,7 @@ These plugins create interactive web-based maps of your server, similar to Googl
 
 No additional configuration needed in Homestead, it just works.
 
-## Configuration Options
+## Configuration
 
 Customize how regions appear on web maps:
 
@@ -57,7 +57,7 @@ list:
   Portal: https://i.imgur.com/portal789.png
 ```
 
-Players can then select these icons for their regions using the command `/region set icon [name]`.
+Players can then select these icons for their regions using the command `/region setmapicon [name]`.
 
 ## Update Interval
 

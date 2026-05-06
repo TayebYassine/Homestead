@@ -4,7 +4,7 @@ The rewards system gives players bonus chunks and sub-areas based on their activ
 
 ## How Rewards Work
 
-Rewards are **added on top** of base limits from [Ranks and Limits](./Ranks%20and%20Limits.md).
+Rewards are **added on top** of base limits from [Ranks and Limits](Language/Ranks%20and%20Limits.md).
 
 **Example:**
 

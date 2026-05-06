@@ -4,66 +4,13 @@
 
 Each claimed region includes 50+ customizable flags, enabling owners to configure gameplay settings, from PvP and mob spawning to block interaction and environmental effects. Whether you're building a town, managing a private base, or running a faction server, Homestead provides the tools for a secure and customized experience.
 
-## Key Features
-
-### **Land Management**
-
-- Claim chunks in any world with configurable limits
-- Create multiple regions per player
-- Define sub-areas within regions for granular control
-- Visual region borders using particles or blocks
-
-### **Advanced Permissions**
-
-- 35+ player flags for control
-- 20+ world flags for environmental management
-- Separate permissions for global players, members, and nature
-- Rank-based claiming limits through permission groups
-
-### **Economy Integration**
-
-- Regional banking system for secure money storage
-- Rent regions to other players for passive income
-- Sell regions to other players, secure region transferring
-- Upkeep system to maintain active claims
-- Member taxes for trusted players
-
-### **Player Management**
-
-- Trust system to add members to your region
-- Ban unwanted players from your land
-- View logs of region activities
-- Region chat for private communication
-- Mail system for region announcements or from any player
-
-### **Database Support**
-
-- **SQLite**, **YAML** for small servers
-- **MySQL**, **MariaDB**, **PostgreSQL** for large servers
-- Easy migration between database providers
-
-### **Plugin Integrations**
-
-- WorldGuard for spawn protection compatibility
-- WorldEdit for chunk regeneration
-- PlaceholderAPI for displaying info by placeholders
-- Dynamic map rendering (BlueMap, Squaremap, Pl3xMap, dynmap)
-
-### **Rewards System**
-
-- Bonus chunks and sub-areas for each trusted member
-- Playtime-based rewards to encourage activity
-- Customizable reward tiers!
-
 ## Getting Started
 
 ### Quick Links
 
-**Installation**: [Requirements](./Installation/Prerequisites.md), [Installing Homestead](./Installation/Installation.md)
+**Installation**: [Requirements](./Installation/Prerequisites.md), [Installing Homestead](./Installation/How%20to%20Install.md)
 
-**Configuration**: [Database Setup](Language%20and%20Menus/Database.md), [Language Settings](Language%20and%20Menus/Language.md), [Plugin Integrations](Language%20and%20Menus/Integrations%20and%20Plugins.md), [Ranks and Limits](Language%20and%20Menus/Ranks%20and%20Limits.md), [Permissions](Language%20and%20Menus/Permissions.md), [Flags](Language%20and%20Menus/Flags.md), [Economy](Language%20and%20Menus/Economy.md), [Rewards](Language%20and%20Menus/Rewards.md), [Menus](Language%20and%20Menus/Menus.md), [Other Settings](Language%20and%20Menus/Other%20Configuration.md), [Migration from Other Plugins](Language%20and%20Menus/Migration.md)
-
-**Usage Guides**: [Creating Your First Region](./Usage/Creating%20a%20new%20Region.md), [Managing Your Region](./Usage/Editing%20a%20Region.md), [Working with Sub-Areas](./Usage/Sub-Areas.md), [Understanding Upkeep](./Usage/Upkeep.md), [Managing Member Taxes](./Usage/Taxes.md), [Setting Up Welcome Signs](./Usage/Welcome%20Signs.md)
+**Configuration**: [Database Setup](./Database/Setup.md), [Language Settings](Language/Language.md), [Plugin Integrations](./Integration), [Ranks and Limits](./Ranks%20and%20Limits.md), [Permissions](./Permissions/Quick%20Setup.md), [Flags](./Flags/Flags%20Def.md),
 
 **Support**: [Changelog](./Changelog.md), [Get Help](./Support.md)
 
@@ -84,20 +31,15 @@ Regular updates bring new features, bug fixes, and compatibility with the latest
 **5. Easy Migration**  
 Switching from GriefPrevention, ClaimChunk, LandLord4, Lands, or HuskClaims? Homestead includes built-in migration tools to transfer your existing claims.
 
-## Support the Project
-
-!!! donating "Donating"
-
-    Homestead is released as a free and open-source land claiming plugin for everyone. If you enjoy using Homestead, please consider [donating to the author](./Donating.md). Every contribution helps keep the project alive! 😊
-
 ## Community and Support
 
 Need help? Found a bug? Have a feature request?
 
 - Check the [Support](./Support.md) page for help resources
 - Review the [Changelog](./Changelog.md) for recent updates
-- Read through the documentation for detailed guides
+- GitHub Repository: [Click here](https://github.com/TayebYassine/Homestead)
+- Discord server: [Click here](https://discord.gg/uh7gqDY6sz)
 
 ---
 
-Ready to get started? Head to the [Installation Guide](./Installation/Installation.md) to set up Homestead on your server!
+Ready to get started? Head to the [Installation Guide](./Installation/How%20to%20Install.md) to set up Homestead on your server!

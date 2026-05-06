@@ -9,6 +9,4 @@ Every region has its own bank account where owners can securely store money. The
 - Safe storage that can't be lost on death (depends on your server's style)
 - Useful for saving up for upkeep or member taxes
 
-!!! info
-
-    This feature cannot be disabled as it's essential for other economy features.
+This feature cannot be disabled as it's essential for other economy features.

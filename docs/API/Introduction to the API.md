@@ -40,3 +40,8 @@ All versions are available in [GitHub Packages](https://github.com/TayebYassine/
 ## JavaDoc
 
 Documentation for every class and methods are located right [here](https://tayebyassine.github.io/Homestead/javadoc/).
+
+### Quick References
+- Events: [Click here](https://tayebyassine.github.io/Homestead/javadoc/tfagaming/projects/minecraft/homestead/api/events/package-summary.html)
+- Managers: [Click here](https://tayebyassine.github.io/Homestead/javadoc/tfagaming/projects/minecraft/homestead/managers/package-summary.html)
+- Models: [Click here](https://tayebyassine.github.io/Homestead/javadoc/tfagaming/projects/minecraft/homestead/models/package-summary.html)

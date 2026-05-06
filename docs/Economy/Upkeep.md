@@ -38,8 +38,15 @@ upkeep:
 
     If you change any upkeep settings, you **must restart** your server for changes to take effect.
 
-## What happens if I don't pay the upkeep?
+## FAQs
+### What happens if I don't pay the upkeep?
 
 Any chunk that cannot be paid for will be automatically unclaimed.
 
 For example, if you have 10 chunks claimed, and you can only afford 6 chunks, the plugin will automatically unclaim 4 random chunks.
+
+### What is `start-upkeep`, or Grace period?
+
+It's a period where region owners receive a short period to grind and earn more money before the actual upkeep starts.
+
+It is useful for beginners and new joined players!

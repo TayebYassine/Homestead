@@ -13,6 +13,8 @@ Member taxes require trusted players to pay a fee to maintain their membership i
 
 ## Configuration
 
+Location: **regions.yml**
+
 ```yaml
 # Member Taxes System
 # Require members to pay fees to stay in region
