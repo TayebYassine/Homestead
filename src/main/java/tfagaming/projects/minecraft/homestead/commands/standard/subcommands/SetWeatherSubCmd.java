@@ -53,13 +53,15 @@ public class SetWeatherSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		region.setWeather(weather);
+		int newWeather = RegionWeather.next(region.getWeather());
+
+		region.setWeather(newWeather);
 
 		Messages.send(player, 220, new Placeholder()
 				.add("{weather-name}", weatherInput)
 		);
 
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER);
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER, RegionWeather.from(newWeather));
 
 		return true;
 	}

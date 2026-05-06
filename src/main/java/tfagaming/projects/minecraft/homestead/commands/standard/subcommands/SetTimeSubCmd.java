@@ -53,13 +53,15 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		region.setTime(time);
+		int newTime = RegionTime.next(region.getTime());
+
+		region.setTime(newTime);
 
 		Messages.send(player, 218, new Placeholder()
 				.add("{time-name}", timeInput)
 		);
 
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME);
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME, RegionTime.from(newTime));
 
 		return true;
 	}

@@ -190,18 +190,22 @@ public final class RegionMenu {
 					return;
 				}
 
-				region.setWeather(RegionWeather.next(region.getWeather()));
+				int newWeather = RegionWeather.next(region.getWeather());
 
-				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER);
+				region.setWeather(newWeather);
+
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER, RegionWeather.from(newWeather));
 			} else if (event.isRightClick()) {
 				if (!player.hasPermission("homestead.actions.regions.update.time")) {
 					Messages.send(player, 211);
 					return;
 				}
 
-				region.setTime(RegionTime.next(region.getTime()));
+				int newTime = RegionTime.next(region.getTime());
 
-				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME);
+				region.setTime(newTime);
+
+				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME, RegionTime.from(newTime));
 			}
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);

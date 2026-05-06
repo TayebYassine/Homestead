@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.gui.menus;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +22,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.PersistentChunkTicket;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
@@ -86,7 +88,10 @@ public final class RegionClaimedChunks {
 		player.closeInventory();
 
 		Homestead.getInstance().runLocationTask(chunk.toBukkitDisplayLocation(), () -> {
-			new DelayedTeleport(player, chunk.toBukkitLocation());
+			Location loc = ChunkUtility.getLocation(player, chunk);
+			if (loc == null) return;
+
+			new DelayedTeleport(player, loc);
 		});
 	}
 

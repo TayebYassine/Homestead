@@ -102,6 +102,8 @@ public final class ChunkUtility {
 	 * @param chunk The chunk
 	 */
 	public static Location getLocation(Player player, RegionChunk chunk) {
+		if (chunk == null) return null;
+
 		return getLocation(player, chunk.toBukkit());
 	}
 
@@ -111,6 +113,8 @@ public final class ChunkUtility {
 	 * @param chunk The chunk
 	 */
 	public static Location getLocation(Player player, Chunk chunk) {
+		if (chunk == null) return null;
+
 		World world = chunk.getWorld();
 		if (world == null) return null;
 
@@ -118,6 +122,7 @@ public final class ChunkUtility {
 		int z = chunk.getZ() * 16 + 8;
 
 		Location loc;
+
 		if (world.getEnvironment() == World.Environment.NETHER) {
 			loc = ChunkUtility.findSafeNetherLocation(world, x, z);
 		} else {
