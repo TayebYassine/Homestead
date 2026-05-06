@@ -438,6 +438,39 @@ public class Homestead extends JavaPlugin {
 	}
 
 	/**
+	 * Run a task on the region thread that owns the given player after a delay in seconds.
+	 *
+	 * @param player   The player whose region thread to run on.
+	 * @param callable The task to run.
+	 * @param delay    The delay, in seconds.
+	 */
+	public TaskHandle runPlayerTaskLater(Player player, Runnable callable, int delay) {
+		if (isFolia()) {
+			long delayTicks = delay * 20L;
+			return new TaskHandle(player.getScheduler().runDelayed(this, task -> callable.run(), null, delayTicks));
+		}
+
+		long delayTicks = delay * 20L;
+		return new TaskHandle(Bukkit.getScheduler().runTaskLater(this, callable, delayTicks));
+	}
+
+	/**
+	 * Run a repeating task on the region thread that owns the given player.
+	 *
+	 * @param player   The player whose region thread to run on.
+	 * @param callable The task to run.
+	 * @param delay    Ticks to wait before first execution.
+	 * @param period   Ticks between executions.
+	 */
+	public TaskHandle runPlayerTaskTimer(Player player, Runnable callable, long delay, long period) {
+		if (isFolia()) {
+			return new TaskHandle(player.getScheduler().runAtFixedRate(this, task -> callable.run(), null, delay, period));
+		}
+
+		return new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, callable, delay, period));
+	}
+
+	/**
 	 * Run a repeating task asynchronously with interval in seconds.
 	 *
 	 * @param callable The task to run.

@@ -87,12 +87,7 @@ public final class RegionClaimedChunks {
 
 		player.closeInventory();
 
-		Homestead.getInstance().runLocationTask(chunk.toBukkitDisplayLocation(), () -> {
-			Location loc = ChunkUtility.getLocation(player, chunk);
-			if (loc == null) return;
-
-			new DelayedTeleport(player, loc);
-		});
+		PlayerUtility.teleportPlayerToChunkSafely(player, chunk, null);
 	}
 
 	private void handleToggleForceLoad(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {

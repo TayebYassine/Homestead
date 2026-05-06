@@ -6,9 +6,12 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
+import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +22,6 @@ public final class ChunkUtility {
 
 	public static List<Chunk> getChunksInArea(SeBlock corner1, SeBlock corner2) {
 		if (corner1 == null || corner2 == null) return new ArrayList<>();
-
 		return getChunksInArea(corner1.toBukkit(), corner2.toBukkit());
 	}
 
@@ -49,11 +51,6 @@ public final class ChunkUtility {
 		return chunks;
 	}
 
-	/**
-	 * Find nearby unclaimed chunk by a location.
-	 * @param location The location
-	 * @param maxRadius The maximum radius
-	 */
 	public static Chunk findNearbyUnclaimedChunk(Location location, int maxRadius) {
 		Chunk startChunk = location.getChunk();
 		World world = location.getWorld();
@@ -61,25 +58,19 @@ public final class ChunkUtility {
 		int startZ = startChunk.getZ();
 
 		int radius = 1;
-
 		while (radius <= maxRadius) {
 			for (int x = -radius; x <= radius; x++) {
 				for (int z = -radius; z <= radius; z++) {
-					if (Math.abs(x) != radius && Math.abs(z) != radius) {
-						continue;
-					}
+					if (Math.abs(x) != radius && Math.abs(z) != radius) continue;
 
 					Chunk currentChunk = world.getChunkAt(startX + x, startZ + z);
-
 					if (!ChunkManager.isChunkClaimed(currentChunk)) {
 						return currentChunk;
 					}
 				}
 			}
-
 			radius++;
 		}
-
 		return null;
 	}
 
@@ -87,30 +78,51 @@ public final class ChunkUtility {
 		return String.format("%s,%s,%s", chunk.getWorld().getUID(), chunk.getX(), chunk.getZ());
 	}
 
-	/**
-	 * Returns {@code true} if two chunks are equal; same X, Z, and world ID.
-	 * @param chunk1 Chunk 1
-	 * @param chunk2 Chunk 2
-	 */
 	public static boolean areEqual(Chunk chunk1, Chunk chunk2) {
 		return getIdentifierString(chunk1).equals(getIdentifierString(chunk2));
 	}
 
 	/**
-	 * Returns a safe location inside the given chunk (overworld/end).
-	 * @param player The player
-	 * @param chunk The chunk
+	 * Returns a safe teleport location inside the given chunk.
 	 */
 	public static Location getLocation(Player player, RegionChunk chunk) {
 		if (chunk == null) return null;
-
 		return getLocation(player, chunk.toBukkit());
 	}
 
 	/**
-	 * Returns a safe location inside the given chunk (overworld/end).
-	 * @param player The player
-	 * @param chunk The chunk
+	 * Returns a safe teleport location inside the given chunk without yaw and pitch angles.
+	 */
+	public static Location getLocationWithoutYawPitch(RegionChunk chunk) {
+		return getLocationWithoutYawPitch(chunk.toBukkit());
+	}
+
+	/**
+	 * Returns a safe teleport location inside the given chunk without yaw and pitch angles.
+	 */
+	public static Location getLocationWithoutYawPitch(Chunk chunk) {
+		if (chunk == null) return null;
+
+		World world = chunk.getWorld();
+		if (world == null) return null;
+
+		int x = chunk.getX() * 16 + 8;
+		int z = chunk.getZ() * 16 + 8;
+
+		Location loc;
+
+		if (world.getEnvironment() == World.Environment.NETHER) {
+			loc = findSafeNetherLocation(world, x, z);
+		} else {
+			int highest = world.getHighestBlockYAt(x, z);
+			loc = new Location(world, x, highest + 2, z);
+		}
+
+		return loc;
+	}
+
+	/**
+	 * Returns a safe teleport location inside the given chunk.
 	 */
 	public static Location getLocation(Player player, Chunk chunk) {
 		if (chunk == null) return null;
@@ -124,7 +136,7 @@ public final class ChunkUtility {
 		Location loc;
 
 		if (world.getEnvironment() == World.Environment.NETHER) {
-			loc = ChunkUtility.findSafeNetherLocation(world, x, z);
+			loc = findSafeNetherLocation(world, x, z);
 		} else {
 			int highest = world.getHighestBlockYAt(x, z);
 			loc = new Location(world, x, highest + 2, z);
@@ -139,9 +151,6 @@ public final class ChunkUtility {
 
 	/**
 	 * Finds a safe standable location in the Nether near (x, z).
-	 * @param world The world
-	 * @param x The location (X axis)
-	 * @param z    The location (Z axis)
 	 */
 	public static Location findSafeNetherLocation(World world, int x, int z) {
 		int minY = 32;
@@ -158,7 +167,6 @@ public final class ChunkUtility {
 				return new Location(world, x + 0.5, y + 1, z + 0.5);
 			}
 		}
-
 		return null;
 	}
 }

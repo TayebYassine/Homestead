@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
@@ -14,10 +15,7 @@ import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
-import tfagaming.projects.minecraft.homestead.models.Region;
-import tfagaming.projects.minecraft.homestead.models.RegionMember;
-import tfagaming.projects.minecraft.homestead.models.SubArea;
-import tfagaming.projects.minecraft.homestead.models.War;
+import tfagaming.projects.minecraft.homestead.models.*;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -127,6 +125,33 @@ public final class PlayerUtility {
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Teleport a player to a chunk safely, thread-safe for Folia.
+	 */
+	public static void teleportPlayerToChunkSafely(Player player, RegionChunk chunk, @Nullable Runnable after) {
+		if (chunk == null) return;
+
+		Location chunkLoc = chunk.toBukkitDisplayLocation();
+		if (chunkLoc == null) return;
+
+		float yaw = player.getLocation().getYaw();
+		float pitch = player.getLocation().getPitch();
+
+		Homestead.getInstance().runLocationTask(chunkLoc, () -> {
+			Location loc = ChunkUtility.getLocationWithoutYawPitch(chunk);
+			if (loc == null) return;
+
+			loc.setYaw(yaw);
+			loc.setPitch(pitch);
+
+			Homestead.getInstance().runPlayerTask(player, () -> {
+				if (after != null) after.run();
+
+				new DelayedTeleport(player, loc);
+			});
+		});
 	}
 
 	public static void teleportPlayerToChunk(Player player, Chunk chunk) {

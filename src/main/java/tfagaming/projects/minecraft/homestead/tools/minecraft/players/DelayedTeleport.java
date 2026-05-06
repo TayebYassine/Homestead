@@ -6,7 +6,6 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -28,7 +27,6 @@ public final class DelayedTeleport {
 	public static final Map<UUID, Location> initialLocations = new ConcurrentHashMap<>();
 	public static final Map<UUID, BossBar> activeBossBars = new ConcurrentHashMap<>();
 	public static final Map<UUID, TaskHandle> bossBarTaskHandles = new ConcurrentHashMap<>();
-	public static Map<UUID, BukkitRunnable> bossBarTasks = new ConcurrentHashMap<>();
 
 	public DelayedTeleport(Player player, Location location) {
 		UUID playerId = player.getUniqueId();
@@ -68,7 +66,7 @@ public final class DelayedTeleport {
 			setupBossBar(player, delay);
 		}
 
-		TaskHandle task = Homestead.getInstance().runSyncTaskLater(() -> {
+		TaskHandle task = Homestead.getInstance().runPlayerTaskLater(player, () -> {
 			tasks.remove(playerId);
 			initialLocations.remove(playerId);
 			removeBossBar(playerId);
@@ -90,13 +88,14 @@ public final class DelayedTeleport {
 	}
 
 	public static void cancelTeleport(UUID playerId) {
-		TaskHandle task = tasks.get(playerId);
+		TaskHandle task = tasks.remove(playerId);
+
 		if (task != null) {
 			task.cancel();
-			tasks.remove(playerId);
-			initialLocations.remove(playerId);
-			removeBossBar(playerId);
 		}
+
+		initialLocations.remove(playerId);
+		removeBossBar(playerId);
 	}
 
 	private static void removeBossBar(UUID playerId) {
@@ -151,39 +150,34 @@ public final class DelayedTeleport {
 
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 		int totalTicks = totalSeconds * 20;
-		Location playerLocation = player.getLocation();
 
-		TaskHandle countdownTask = Homestead.getInstance().runLocationTaskTimer(
-				playerLocation,
-				() -> {
-					int elapsed = ticksElapsed.incrementAndGet();
+		TaskHandle countdownTask = Homestead.getInstance().runPlayerTaskTimer(player, () -> {
+			int elapsed = ticksElapsed.incrementAndGet();
 
-					if (elapsed >= totalTicks) {
-						TaskHandle handle = bossBarTaskHandles.remove(playerId);
-						if (handle != null) handle.cancel();
-						return;
-					}
+			if (elapsed >= totalTicks) {
+				TaskHandle handle = bossBarTaskHandles.remove(playerId);
+				if (handle != null) handle.cancel();
+				return;
+			}
 
-					int remainingSeconds = (int) Math.ceil((totalTicks - elapsed) / 20.0);
+			int remainingSeconds = (int) Math.ceil((totalTicks - elapsed) / 20.0);
 
-					String updatedTitle = ColorTranslator.translate(titleTemplate.replace("{seconds}", String.valueOf(remainingSeconds)));
-					bossBar.setTitle(updatedTitle);
+			String updatedTitle = ColorTranslator.translate(titleTemplate.replace("{seconds}", String.valueOf(remainingSeconds)));
+			bossBar.setTitle(updatedTitle);
 
-					double progress = (double) (totalTicks - elapsed) / totalTicks;
-					if (countdownMode.equalsIgnoreCase("FILL")) {
-						progress = 1.0 - progress;
-					}
-					bossBar.setProgress(Math.max(0.0, Math.min(1.0, progress)));
-				},
-				1L,
-				1L
-		);
+			double progress = (double) (totalTicks - elapsed) / totalTicks;
+			if (countdownMode.equalsIgnoreCase("FILL")) {
+				progress = 1.0 - progress;
+			}
+			bossBar.setProgress(Math.max(0.0, Math.min(1.0, progress)));
+		}, 1L, 1L);
 
 		bossBarTaskHandles.put(playerId, countdownTask);
 	}
 
 	private void teleportPlayer(Player player, Location location) {
-		removeBossBar(player.getUniqueId());
+		UUID playerId = player.getUniqueId();
+		removeBossBar(playerId);
 
 		if (location == null) {
 			Messages.send(player, 52);
