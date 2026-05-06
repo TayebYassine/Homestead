@@ -41,8 +41,8 @@ public final class MiscellaneousSettings {
 	public MiscellaneousSettings(Player player, Region region) {
 		Placeholder placeholder = new Placeholder()
 				.add("{region}", region.getName())
-				.add("{region-displayname}", region.getDisplayName())
-				.add("{region-description}", region.getDescription());
+				.add("{region-displayname}", region.getDisplayName() == null ? Formatter.getNone() : region.getDisplayName())
+				.add("{region-description}", region.getDescription() == null ? Formatter.getNone() : region.getDescription());
 
 		Menu.builder(12, 9 * 3)
 				.button(10, MenuUtility.getButton(34, placeholder), handleRename(player, region))

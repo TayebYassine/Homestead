@@ -117,19 +117,24 @@ public class DiscordWebhookClient {
 					if (getEventEnabled("region_create")) {
 						Region region = e.getRegion();
 
-						sendContent(getEventMessage("region_create"), region == null ? "?" : region.getName());
+						sendContent(getEventMessage("region_create"), region.getName());
 					}
 				}
 				case RegionDeleteEvent e -> {
 					if (getEventEnabled("region_delete")) {
 						Region region = e.getRegion();
 
-						sendContent(getEventMessage("region_delete"), region == null ? "?" : region.getName());
+						sendContent(getEventMessage("region_delete"), region.getName());
 					}
 				}
 				case RegionNameUpdateEvent e -> {
 					if (getEventEnabled("region_rename")) {
 						sendContent(getEventMessage("region_rename"), e.getOldName(), e.getNewName());
+					}
+				}
+				case RegionDisplaynameUpdateEvent e -> {
+					if (getEventEnabled("region_displayname_update")) {
+						sendContent(getEventMessage("region_displayname_update"), e.getOldDisplayname(), e.getNewDisplayname());
 					}
 				}
 				case RegionDescriptionUpdateEvent e -> {
@@ -142,7 +147,7 @@ public class DiscordWebhookClient {
 						Region region = e.getRegion();
 						OfflinePlayer player = e.getPlayer();
 
-						sendContent(getEventMessage("region_private_chat"), player.getName(), player.getUniqueId(), region == null ? "?" : region.getName(), e.getMessage());
+						sendContent(getEventMessage("region_private_chat"), player.getName(), player.getUniqueId(), region.getName(), e.getMessage());
 					}
 				}
 				case RegionOwnerUpdateEvent e -> {
@@ -151,7 +156,7 @@ public class DiscordWebhookClient {
 						OfflinePlayer oldOwner = e.getOldOwner();
 						OfflinePlayer newOwner = e.getNewOwner();
 
-						sendContent(getEventMessage("region_owner_transfer"), oldOwner == null ? "?" : oldOwner.getName(), newOwner == null ? "?" : newOwner.getName(), region == null ? "?" : region.getName());
+						sendContent(getEventMessage("region_owner_transfer"), oldOwner == null ? "?" : oldOwner.getName(), newOwner.getName(), region.getName());
 					}
 				}
 				case PlayerMailEvent e -> {
@@ -159,7 +164,7 @@ public class DiscordWebhookClient {
 						Region region = e.getRegion();
 						OfflinePlayer player = e.getPlayer();
 
-						sendContent(getEventMessage("player_send_mail"), player.getName(), player.getUniqueId(), region == null ? "?" : region.getName(), e.getMessage());
+						sendContent(getEventMessage("player_send_mail"), player.getName(), player.getUniqueId(), region.getName(), e.getMessage());
 					}
 				}
 				case PlayerJoinRegionEvent e -> {
@@ -167,7 +172,7 @@ public class DiscordWebhookClient {
 						Region region = e.getRegion();
 						OfflinePlayer player = e.getPlayer();
 
-						sendContent(getEventMessage("player_join_region"), player.getName(), player.getUniqueId(), region == null ? "?" : region.getName());
+						sendContent(getEventMessage("player_join_region"), player.getName(), player.getUniqueId(), region.getName());
 					}
 				}
 				case PlayerLeftRegionEvent e -> {
@@ -175,7 +180,7 @@ public class DiscordWebhookClient {
 						Region region = e.getRegion();
 						OfflinePlayer player = e.getPlayer();
 
-						sendContent(getEventMessage("player_left_region"), player.getName(), player.getUniqueId(), region == null ? "?" : region.getName());
+						sendContent(getEventMessage("player_left_region"), player.getName(), player.getUniqueId(), region.getName());
 					}
 				}
 				default -> { /* do nothing */ }

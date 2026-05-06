@@ -77,8 +77,8 @@ public final class Region {
 		update();
 	}
 
-	public @NotNull String getDisplayName() {
-		return displayName == null ? name : displayName;
+	public @Nullable String getDisplayName() {
+		return displayName;
 	}
 
 	public void setDisplayName(@Nullable String displayName) {

@@ -167,6 +167,9 @@ discord:
     region_rename:
       enabled: true
       message: "**[REGIONS]** Region name update: {0} -> {1}"
+    region_displayname_update:
+      enabled: true
+      message: "**[REGIONS]** Region display-name update: {0} -> {1}"
     region_description_update:
       enabled: true
       message: "**[REGIONS]** Region description update: {0} -> {1}"
