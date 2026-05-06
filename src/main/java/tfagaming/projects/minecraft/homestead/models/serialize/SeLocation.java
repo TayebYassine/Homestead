@@ -127,7 +127,7 @@ public final class SeLocation {
 			return null;
 		}
 
-		return new Location(world, x, y, z, pitch, yaw);
+		return new Location(world, x, y, z, yaw, pitch);
 	}
 
 	@Override
