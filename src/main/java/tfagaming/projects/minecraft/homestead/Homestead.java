@@ -705,7 +705,7 @@ public class Homestead extends JavaPlugin {
 
 		Logger.info("Cleaning cache...");
 
-		Homestead.REGION_CACHE.clear();
+		if (Homestead.REGION_CACHE != null) Homestead.REGION_CACHE.clear();
 		Homestead.WAR_CACHE.clear();
 		Homestead.SUBAREA_CACHE.clear();
 		Homestead.LEVEL_CACHE.clear();

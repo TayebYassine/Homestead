@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ChunkParticlesSpawner {
 	private static final Map<UUID, TaskHandle> TASKS = new ConcurrentHashMap<>();
+	private static final boolean IS_FOLIA = Homestead.isFolia();
 	private final Player player;
 
 	/**
@@ -39,10 +40,7 @@ public class ChunkParticlesSpawner {
 		this.player = player;
 
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled();
-
-		if (!isEnabled) {
-			return;
-		}
+		if (!isEnabled) return;
 
 		if (!TASKS.containsKey(player.getUniqueId())) {
 			startRepeatingEffect();
@@ -69,9 +67,7 @@ public class ChunkParticlesSpawner {
 	 */
 	public static void cancelTask(Player player) {
 		TaskHandle task = TASKS.remove(player.getUniqueId());
-		if (task != null) {
-			task.cancel();
-		}
+		if (task != null) task.cancel();
 	}
 
 	/**
@@ -89,9 +85,18 @@ public class ChunkParticlesSpawner {
 	 * particles for each one.
 	 */
 	public void spawnParticles() {
-		for (Region region : RegionManager.getAll()) {
-			spawnParticlesForRegion(region);
-		}
+		Homestead.getInstance().runAsyncTask(() -> {
+			for (Region region : RegionManager.getAll()) {
+				if (!isRegionInPlayerWorld(region)) continue;
+				spawnParticlesForRegionAsync(region);
+			}
+		});
+	}
+
+	private boolean isRegionInPlayerWorld(Region region) {
+		List<RegionChunk> chunks = ChunkManager.getChunksOfRegion(region);
+		if (chunks.isEmpty()) return false;
+		return player.getWorld().getUID().equals(chunks.getFirst().getWorldId());
 	}
 
 	/**
@@ -99,62 +104,60 @@ public class ChunkParticlesSpawner {
 	 *
 	 * @param region The region whose chunk borders should be visualised
 	 */
-	public void spawnParticlesForRegion(Region region) {
+	private void spawnParticlesForRegionAsync(Region region) {
 		region = RegionManager.findRegion(region.getUniqueId());
-		if (region == null) {
-			return;
-		}
+		if (region == null) return;
 
 		List<RegionChunk> chunks = ChunkManager.getChunksOfRegion(region);
 		World world = player.getWorld();
 		double yOffset = player.getLocation().getY() + 1;
 
-		DustOptions dustOptions;
-		if (region.isOwner(player)) {
-			dustOptions = new DustOptions(Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.OWNER), Resources.<RegionsFile>get(ResourceType.Regions).getDustSize());
-		} else if (MemberManager.isMemberOfRegion(region, player)) {
-			dustOptions = new DustOptions(Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.MEMBER), Resources.<RegionsFile>get(ResourceType.Regions).getDustSize());
-		} else {
-			dustOptions = new DustOptions(Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.VISITOR), Resources.<RegionsFile>get(ResourceType.Regions).getDustSize());
-		}
+		DustOptions dustOptions = resolveDustOptions(region);
 
 		for (RegionChunk chunk : chunks) {
-			if (!world.getUID().equals(chunk.getWorldId())) {
-				continue;
-			}
+			if (!world.getUID().equals(chunk.getWorldId())) continue;
 
 			int chunkX = chunk.getX();
 			int chunkZ = chunk.getZ();
 
-			if (Homestead.isFolia()) {
-				CompletableFuture<Chunk> future = world.getChunkAtAsync(chunkX, chunkZ, false);
-
+			if (IS_FOLIA) {
 				Region finalRegion = region;
 
-				future.thenAccept(loadedChunk -> {
-					if (loadedChunk == null) {
-						return;
-					}
-
-					player.getScheduler().run(
-							Homestead.getInstance(),
-							t -> spawnParticlesForChunk(world, finalRegion, chunkX, chunkZ, yOffset, dustOptions),
-							null
-					);
-				});
+				world.getChunkAtAsync(chunkX, chunkZ, false)
+						.thenAccept(loadedChunk -> {
+							if (loadedChunk == null) return;
+							player.getScheduler().run(
+									Homestead.getInstance(),
+									t -> spawnParticlesForChunk(world, finalRegion, chunkX, chunkZ, yOffset, dustOptions),
+									null
+							);
+						});
 			} else {
-				if (!world.isChunkLoaded(chunkX, chunkZ)) {
-					continue;
-				}
-
+				if (!world.isChunkLoaded(chunkX, chunkZ)) continue;
 				spawnParticlesForChunk(world, region, chunkX, chunkZ, yOffset, dustOptions);
 			}
 		}
 	}
 
-	/**
-	 * Spawns particles for a single chunk's borders after the chunk is confirmed loaded.
-	 */
+	private DustOptions resolveDustOptions(Region region) {
+		if (region.isOwner(player)) {
+			return new DustOptions(
+					Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.OWNER),
+					Resources.<RegionsFile>get(ResourceType.Regions).getDustSize()
+			);
+		} else if (MemberManager.isMemberOfRegion(region, player)) {
+			return new DustOptions(
+					Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.MEMBER),
+					Resources.<RegionsFile>get(ResourceType.Regions).getDustSize()
+			);
+		} else {
+			return new DustOptions(
+					Resources.<RegionsFile>get(ResourceType.Regions).getDustColor(RegionsFile.DustColorType.VISITOR),
+					Resources.<RegionsFile>get(ResourceType.Regions).getDustSize()
+			);
+		}
+	}
+
 	private void spawnParticlesForChunk(World world, Region region,
 										int chunkX, int chunkZ,
 										double yOffset, DustOptions dustOptions) {
@@ -187,15 +190,10 @@ public class ChunkParticlesSpawner {
 							   int minX, int minZ,
 							   double yOffset, DustOptions dustOptions,
 							   Direction direction) {
-		if (Homestead.isFolia()) {
+		if (IS_FOLIA) {
 			world.getChunkAtAsync(chunkX, chunkZ, false).thenAccept(neighbor -> {
-				if (neighbor == null) {
-					return;
-				}
-
-				if (ChunkManager.isChunkClaimedByRegion(region, neighbor)) {
-					return;
-				}
+				if (neighbor == null) return;
+				if (ChunkManager.isChunkClaimedByRegion(region, neighbor)) return;
 
 				player.getScheduler().run(
 						Homestead.getInstance(),
@@ -204,15 +202,10 @@ public class ChunkParticlesSpawner {
 				);
 			});
 		} else {
-			if (!world.isChunkLoaded(chunkX, chunkZ)) {
-				return;
-			}
+			if (!world.isChunkLoaded(chunkX, chunkZ)) return;
 
 			Chunk neighbor = world.getChunkAt(chunkX, chunkZ);
-
-			if (ChunkManager.isChunkClaimedByRegion(region, neighbor)) {
-				return;
-			}
+			if (ChunkManager.isChunkClaimedByRegion(region, neighbor)) return;
 
 			spawnEdgeParticles(minX, minZ, yOffset, dustOptions, direction);
 		}
@@ -241,7 +234,7 @@ public class ChunkParticlesSpawner {
 		Homestead instance = Homestead.getInstance();
 		final TaskHandle task;
 
-		if (Homestead.isFolia()) {
+		if (IS_FOLIA) {
 			var foliaTask = player.getScheduler().runAtFixedRate(
 					instance,
 					t -> spawnParticles(),
@@ -256,16 +249,12 @@ public class ChunkParticlesSpawner {
 			);
 		}
 
-		if (task == null) {
-			return;
-		}
+		if (task == null) return;
 
 		TASKS.put(player.getUniqueId(), task);
 
 		instance.runAsyncTaskLater(() -> cancelTask(task, player), 60 * 3);
 	}
 
-	private enum Direction {
-		NORTH, SOUTH, EAST, WEST
-	}
+	private enum Direction { NORTH, SOUTH, EAST, WEST }
 }
