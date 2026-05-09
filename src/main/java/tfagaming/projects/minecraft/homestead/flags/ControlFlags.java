@@ -2,7 +2,7 @@ package tfagaming.projects.minecraft.homestead.flags;
 
 import java.util.*;
 
-public final class RegionControlFlags {
+public final class ControlFlags {
 	public static final long TRUST_PLAYERS = 1L;
 	public static final long UNTRUST_PLAYERS = 1L << 1;
 	public static final long BAN_PLAYERS = 1L << 2;
@@ -44,7 +44,7 @@ public final class RegionControlFlags {
 		MAPPED_FLAGS.put("set-weather-and-time", SET_WEATHER_AND_TIME);
 	}
 
-	private RegionControlFlags() {
+	private ControlFlags() {
 	}
 
 	/**

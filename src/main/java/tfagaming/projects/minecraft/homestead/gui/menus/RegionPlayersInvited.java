@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.BulkDeleteInvitesEvent;
 import tfagaming.projects.minecraft.homestead.api.events.InvitePlayerEvent;
 import tfagaming.projects.minecraft.homestead.api.events.PlayerJoinRegionEvent;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -137,7 +137,7 @@ public final class RegionPlayersInvited {
 			return false;
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.TRUST_PLAYERS)) {
+				ControlFlags.TRUST_PLAYERS)) {
 			return false;
 		}
 		if (BanManager.isBanned(region, target)) {

@@ -1,16 +1,12 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
-import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.RegionDisplaynameUpdateEvent;
-import tfagaming.projects.minecraft.homestead.api.events.RegionLocationUpdateEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
-import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
@@ -64,7 +60,7 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 		String regionDisplayName = String.join(" ", regionDisplayNameList);
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.RENAME_REGION)) {
+				ControlFlags.RENAME_REGION)) {
 			return true;
 		}
 

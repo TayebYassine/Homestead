@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -26,8 +26,8 @@ public final class RegionMemberControlFlags {
 	public RegionMemberControlFlags(Player player, Region region, RegionMember member) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (String flagString : RegionControlFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(member.getControlFlags(), RegionControlFlags.valueOf(flagString));
+		for (String flagString : ControlFlags.getFlags()) {
+			boolean value = FlagsCalculator.isFlagSet(member.getControlFlags(), ControlFlags.valueOf(flagString));
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
@@ -67,7 +67,7 @@ public final class RegionMemberControlFlags {
 			return;
 		}
 
-		String flagString = RegionControlFlags.getFlags().get(context.getIndex());
+		String flagString = ControlFlags.getFlags().get(context.getIndex());
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
@@ -78,7 +78,7 @@ public final class RegionMemberControlFlags {
 		if (!context.getEvent().isLeftClick()) return;
 
 		long flags = member.getControlFlags();
-		long flag = RegionControlFlags.valueOf(flagString);
+		long flag = ControlFlags.valueOf(flagString);
 		boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
 
 		Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);

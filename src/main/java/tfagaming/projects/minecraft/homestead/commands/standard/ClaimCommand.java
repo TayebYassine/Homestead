@@ -9,7 +9,7 @@ import tfagaming.projects.minecraft.homestead.api.events.ChunkClaimEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RegionCreateEvent;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.integrations.WorldGuardAPI;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener.Selection;
@@ -74,7 +74,7 @@ public class ClaimCommand extends CommandBuilder {
 		if (!PlayerUtility.hasControlRegionPermissionFlag(
 				region.getUniqueId(),
 				player,
-				RegionControlFlags.CLAIM_CHUNKS)) {
+				ControlFlags.CLAIM_CHUNKS)) {
 			return true;
 		}
 
@@ -180,7 +180,7 @@ public class ClaimCommand extends CommandBuilder {
 		if (!PlayerUtility.hasControlRegionPermissionFlag(
 				region.getUniqueId(),
 				player,
-				RegionControlFlags.CLAIM_CHUNKS)) {
+				ControlFlags.CLAIM_CHUNKS)) {
 			return true;
 		}
 

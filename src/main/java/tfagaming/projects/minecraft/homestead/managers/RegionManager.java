@@ -23,8 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Handles creating, deleting, and updating regions.<br>
- * This is a utility class that helps manage regions more easily. Updating and setting data to regions is generally done to the {@link Region} object.
+ * A utility class that manages {@link Region}.
  */
 public final class RegionManager {
 	private RegionManager() {
@@ -146,10 +145,7 @@ public final class RegionManager {
 		List<RegionChunk> chunksToRegen = new ArrayList<>(ChunkManager.getChunksOfRegion(id));
 
 		// Delete related sub-areas
-		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(region)) {
-			MemberManager.removeAllMembersOfSubArea(subArea);
-			SubAreaManager.deleteSubArea(region.getUniqueId());
-		}
+		SubAreaManager.deleteSubAreasOfRegion(id);
 
 		// Delete related chunks
 		for (RegionChunk chunk : ChunkManager.getChunksOfRegion(id)) {
@@ -157,10 +153,10 @@ public final class RegionManager {
 		}
 
 		// Delete related members
-		MemberManager.removeAllMembersOfRegion(region);
+		MemberManager.removeAllMembersOfRegion(id);
 
 		// Delete related logs
-		LogManager.deleteLogsOfRegion(region);
+		LogManager.deleteLogsOfRegion(id);
 
 		// Delete related rates
 		RateManager.deleteAll(id);

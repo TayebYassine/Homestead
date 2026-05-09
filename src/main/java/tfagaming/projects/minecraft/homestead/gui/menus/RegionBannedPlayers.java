@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.BanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.api.events.BulkUnbanPlayersEvent;
 import tfagaming.projects.minecraft.homestead.api.events.UnbanPlayerEvent;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -106,7 +106,7 @@ public final class RegionBannedPlayers {
 			}
 
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					RegionControlFlags.UNBAN_PLAYERS)) {
+					ControlFlags.UNBAN_PLAYERS)) {
 				return;
 			}
 
@@ -137,7 +137,7 @@ public final class RegionBannedPlayers {
 			return false;
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.BAN_PLAYERS)) {
+				ControlFlags.BAN_PLAYERS)) {
 			return false;
 		}
 		if (BanManager.isBanned(region, target)) {
@@ -173,7 +173,7 @@ public final class RegionBannedPlayers {
 		if (!BanManager.isBanned(region, bannedPlayer.getPlayer())) return;
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.UNBAN_PLAYERS)) {
+				ControlFlags.UNBAN_PLAYERS)) {
 			return;
 		}
 

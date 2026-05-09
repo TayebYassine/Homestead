@@ -7,11 +7,12 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.BanPlayerEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.BanManager;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionBan;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeRent;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -45,21 +46,20 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "ban.0", getUsage());
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "ban.1");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.BAN_PLAYERS)) {
+				ControlFlags.BAN_PLAYERS)) {
+			reply(player, "ban.2");
 			return true;
 		}
 
@@ -68,29 +68,26 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			Messages.send(player, 29, new Placeholder()
-					.add("{playername}", targetName)
-			);
+			reply(player, "ban.3", targetName);
 			return true;
 		}
 
 		if (region.isOwner(target)) {
-			Messages.send(player, 30);
+			reply(player, "ban.4");
 			return true;
 		}
 
-		if (BanManager.isBanned(region, target)) {
-			Messages.send(player, 32, new Placeholder()
-					.add("{region}", region.getName())
-					.add("{playername}", target.getName())
-			);
+		RegionBan ban = BanManager.getBannedPlayer(region, target);
+
+		if (ban != null) {
+			reply(player, "ban.5", targetName, ban.getReason());
 			return true;
 		}
 
 		SeRent rent = region.getRent();
 
 		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
-			Messages.send(player, 196);
+			reply(player, "ban.6");
 			return true;
 		}
 
@@ -102,7 +99,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		if (ColorTranslator.containsMiniMessageTag(reason)) {
-			Messages.send(player, 30);
+			reply(player, "ban.7");
 			return true;
 		}
 
@@ -117,14 +114,9 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		BanManager.banPlayer(region, target, reason);
-
-		Messages.send(player, 31, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{playername}", target.getName())
-				.add("{reason}", reason)
-		);
-
 		LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, target.getName());
+
+		reply(player, "ban.8", targetName, region.getName(), reason);
 
 		Homestead.callEvent(new BanPlayerEvent(region, target, reason));
 

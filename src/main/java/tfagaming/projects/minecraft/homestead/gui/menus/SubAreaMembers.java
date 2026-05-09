@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.PlayerJoinSubAreaEvent;
 import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftSubAreaEvent;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.PaginationMenu;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
@@ -92,7 +92,7 @@ public final class SubAreaMembers {
 			return false;
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.MANAGE_SUBAREAS)) {
+				ControlFlags.MANAGE_SUBAREAS)) {
 			return false;
 		}
 		if (region.isOwner(target)) {
@@ -148,7 +148,7 @@ public final class SubAreaMembers {
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.MANAGE_SUBAREAS)) {
+				ControlFlags.MANAGE_SUBAREAS)) {
 			return;
 		}
 

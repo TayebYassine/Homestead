@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.BankWithdrawEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -65,7 +65,7 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.WITHDRAW_MONEY)) {
+				ControlFlags.WITHDRAW_MONEY)) {
 			return true;
 		}
 

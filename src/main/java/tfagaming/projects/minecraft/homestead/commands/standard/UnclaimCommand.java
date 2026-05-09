@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.ChunkUnclaimEvent;
 import tfagaming.projects.minecraft.homestead.commands.CommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -62,7 +62,7 @@ public class UnclaimCommand extends CommandBuilder {
 		if (!PlayerUtility.hasControlRegionPermissionFlag(
 				region.getUniqueId(),
 				player,
-				RegionControlFlags.UNCLAIM_CHUNKS)) {
+				ControlFlags.UNCLAIM_CHUNKS)) {
 			return true;
 		}
 

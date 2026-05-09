@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -279,7 +279,7 @@ public final class PlayerUtility {
 
 			if (!response && !COOLDOWN.contains(player.getUniqueId())) {
 				Messages.send(player, 70, new Placeholder()
-						.add("{flag}", RegionControlFlags.from(flag))
+						.add("{flag}", ControlFlags.from(flag))
 						.add("{region}", region.getName())
 				);
 

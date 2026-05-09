@@ -6,7 +6,7 @@ public final class FlagsCalculator {
 
 	/**
 	 * Add Bitwise flags with other flags.<br>
-	 * <b>Warning</b>: Do not mix {@link PlayerFlags}, {@link WorldFlags}, and {@link RegionControlFlags}.
+	 * <b>Warning</b>: Do not mix {@link PlayerFlags}, {@link WorldFlags}, and {@link ControlFlags}.
 	 * @param flags The flags
 	 */
 	public static long addFlag(long... flags) {
@@ -21,7 +21,7 @@ public final class FlagsCalculator {
 
 	/**
 	 * Remove a Bitwise flag from a list of flags.<br>
-	 * <b>Warning</b>: Do not mix {@link PlayerFlags}, {@link WorldFlags}, and {@link RegionControlFlags}.
+	 * <b>Warning</b>: Do not mix {@link PlayerFlags}, {@link WorldFlags}, and {@link ControlFlags}.
 	 * @param flags The flags
 	 * @param flag The flag to remove
 	 */
@@ -31,7 +31,7 @@ public final class FlagsCalculator {
 
 	/**
 	 * Return {@code true} when a bitwise flag exist in a list of flags, otherwise {@code false}.<br>
-	 * <b>Warning</b>: Do not mix {@link PlayerFlags}, {@link WorldFlags}, and {@link RegionControlFlags}.
+	 * <b>Warning</b>: Do not mix {@link PlayerFlags}, {@link WorldFlags}, and {@link ControlFlags}.
 	 * @param flags The flags
 	 * @param flag The flag to check
 	 */

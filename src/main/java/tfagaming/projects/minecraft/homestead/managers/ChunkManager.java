@@ -4,10 +4,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.integrations.FastAsyncWorldEditAPI;
-import tfagaming.projects.minecraft.homestead.models.Region;
-import tfagaming.projects.minecraft.homestead.models.RegionChunk;
-import tfagaming.projects.minecraft.homestead.models.RegionLog;
-import tfagaming.projects.minecraft.homestead.models.SubArea;
+import tfagaming.projects.minecraft.homestead.models.*;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -19,9 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Handles claiming, unclaiming, and managing chunks in regions.
- * Includes adjacency enforcement, anti-split protection, and data handling.<br>
- * This is a utility class that helps manage chunks more easily.
+ * A utility class that manages {@link RegionChunk}.
  */
 public final class ChunkManager {
 	private static final Random RANDOM = new Random();

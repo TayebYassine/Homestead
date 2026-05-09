@@ -11,7 +11,7 @@ import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftSubAreaEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.SubAreasMenu;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener;
 import tfagaming.projects.minecraft.homestead.listeners.SelectionToolListener.Selection;
@@ -66,7 +66,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.MANAGE_SUBAREAS)) {
+				ControlFlags.MANAGE_SUBAREAS)) {
 			return true;
 		}
 

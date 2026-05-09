@@ -3,7 +3,7 @@ package tfagaming.projects.minecraft.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
@@ -127,7 +127,7 @@ public final class SubAreaMenu {
 				return;
 			}
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					RegionControlFlags.MANAGE_SUBAREAS)) {
+					ControlFlags.MANAGE_SUBAREAS)) {
 				return;
 			}
 
@@ -151,7 +151,7 @@ public final class SubAreaMenu {
 
 	private static boolean validateRename(Player player, Region region, SubArea subArea, String message) {
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.MANAGE_SUBAREAS)) {
+				ControlFlags.MANAGE_SUBAREAS)) {
 			return false;
 		}
 		if (!StringUtils.isValidSubAreaName(message)) {

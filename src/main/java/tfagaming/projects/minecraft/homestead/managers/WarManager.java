@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * A utility class that manages {@link War} declaration, participation, and lifecycle.
+ * A utility class that manages {@link War}.
  */
 public final class WarManager {
 	private WarManager() {

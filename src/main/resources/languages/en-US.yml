@@ -29,6 +29,46 @@ default:
     4: "&a"
     5: "&a"
 
+commands:
+  accept_invite:
+    0: "Insufficient arguments. Usage: {0}"
+    1: "The name '{0}' doesn't match any of available regions."
+    2: "You are already trusted in the region."
+    3: "You are not invited to the region."
+    4: "You are banned from the region."
+    5: "The region has reached its maximum limit for trusted players."
+    6: "You have accepted the invitation, and you are now trusted in the region '{0}'."
+  auto_claim:
+    0:
+      - "Auto-claim has been toggled On."
+      - "Any unclaimed chunk will be claimed for the region '{0}'."
+    1: "Auto-claim has been toggled Off."
+  balance:
+    0: "Economy integration is currently disabled."
+    1: "The name '{0}' doesn't match any of available regions."
+    2: "You do not have a selected region, use: /hs set [region]"
+    3: "Balance for '{0}': {1}"
+  banlist:
+    0: "You do not have a selected region, use: /hs set [region]"
+    1:
+      - "The region '{0}' have banned {1} players."
+      - "<click:run_command:/hs banlist gui>Click here</click> to view them."
+  ban:
+    0: "Insufficient arguments. Usage: {0}"
+    1: "You do not have a selected region, use: /hs set [region]"
+    2: "You do not have enough permission to ban players for this region."
+    3: "Invalid player name '{0}', probably a typo?"
+    4: "Why?"
+    5: "The player '{0}' is already banned with the following reason: {1}"
+    6: "The player '{0}' rented the region, you cannot ban them."
+    7: "Any kind of MiniMessage tags are strictly forbidden."
+    8: "The player '{0}' has been permanently banned from the region '{1}' with the reason: {2}"
+  borders:
+    0: "This feature is disabled by server administrators."
+    1: "You will no longer view regions' borders."
+    2: "Borders viewer has been enabled for 3 minutes. Wander around and you will see particles spawning around any region borders."
+
+
 prefix: "&8[&6Homestead&8]&r"
 0: "{__prefix__} &7Insufficient arguments. Usage: &e{usage}"
 1: "{__prefix__} &cThe region name must be alphanumerical, other characters are prohibited."

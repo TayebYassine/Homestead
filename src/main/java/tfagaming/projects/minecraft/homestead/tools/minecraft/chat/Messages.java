@@ -9,67 +9,63 @@ import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 
-import java.util.List;
-
 public final class Messages {
 	private Messages() {
 	}
 
-	public static void send(Player player, String... message) {
-		sendFormatted(player, String.join(" ", message), null);
-	}
-
+	// Player
 	public static void send(Player player, String message) {
-		sendFormatted(player, message, null);
-	}
-
-	public static void send(Player player, int path) {
-		sendFormatted(player, path, null);
+		sendFormatted(player, message);
 	}
 
 	public static void send(Player player, String message, Placeholder placeholder) {
 		sendFormatted(player, message, placeholder);
 	}
 
-	public static void send(Player player, int path, Placeholder placeholder) {
-		sendFormatted(player, path, placeholder);
+	public static void send(Player player, String message, Object... args) {
+		sendFormatted(player, message, args);
 	}
 
-	public static void send(CommandSender sender, String... message) {
-		sendFormatted(sender, String.join(" ", message), null);
-	}
-
+	// Console
 	public static void send(CommandSender sender, String message) {
-		sendFormatted(sender, message, null);
+		sendFormatted(sender, message);
 	}
 
-	public static void send(CommandSender sender, int path) {
-		sendFormatted(sender, path, null);
-	}
 
 	public static void send(CommandSender sender, String message, Placeholder placeholder) {
 		sendFormatted(sender, message, placeholder);
 	}
 
-	public static void send(CommandSender sender, int path, Placeholder placeholder) {
-		sendFormatted(sender, path, placeholder);
+	public static void send(CommandSender sender, String message, Object... args) {
+		sendFormatted(sender, message, args);
 	}
 
-	private static void sendFormatted(Object receiver, int path, Placeholder placeholder) {
-		Object object = Resources.<LanguageFile>get(ResourceType.Language).getRaw(String.valueOf(path));
-
-		if (object instanceof String string) {
-			sendFormatted(receiver, string, placeholder);
-		} else if (object instanceof List<?> list) {
-			for (Object e : list) {
-				sendFormatted(receiver, String.valueOf(e), placeholder);
-			}
-		}
-	}
-
+	// Utility
 	private static void sendFormatted(Object receiver, String message, Placeholder placeholder) {
 		if (placeholder == null) {
 			placeholder = new Placeholder();
+		}
+
+		if (receiver instanceof Player) {
+			placeholder.add("{__prefix__}", Resources.<LanguageFile>get(ResourceType.Language).getPrefix());
+		} else {
+			message = message.replace("{__prefix__}", "").trim();
+		}
+
+		message = Formatter.applyPlaceholders(message, placeholder);
+
+		if (receiver instanceof Player player) {
+			PlatformBridge.get().sendMessage(player, message);
+		} else if (receiver instanceof CommandSender sender) {
+			sender.sendMessage(ColorTranslator.stripForConsole(message));
+		}
+	}
+
+	private static void sendFormatted(Object receiver, String message, Object... args) {
+		Placeholder placeholder = new Placeholder();
+
+		for (int i = 0; i < args.length; i++) {
+			placeholder.add("{" + i + "}", args[i]);
 		}
 
 		if (receiver instanceof Player) {

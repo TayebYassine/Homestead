@@ -8,7 +8,7 @@ import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
 import tfagaming.projects.minecraft.homestead.flags.FlagsCalculator;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.GlobalPlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionWorldFlags;
@@ -68,7 +68,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				}
 
 				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-						RegionControlFlags.SET_MEMBER_FLAGS)) {
+						ControlFlags.SET_MEMBER_FLAGS)) {
 					return true;
 				}
 
@@ -171,7 +171,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				}
 
 				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-						RegionControlFlags.SET_GLOBAL_FLAGS)) {
+						ControlFlags.SET_GLOBAL_FLAGS)) {
 					return true;
 				}
 
@@ -245,7 +245,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				}
 
 				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-						RegionControlFlags.SET_WORLD_FLAGS)) {
+						ControlFlags.SET_WORLD_FLAGS)) {
 					return true;
 				}
 

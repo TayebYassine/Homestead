@@ -8,7 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.*;
 import tfagaming.projects.minecraft.homestead.cooldown.Cooldown;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -180,7 +180,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_SPAWN))
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_SPAWN))
 				return;
 
 			Location location = player.getLocation();
@@ -340,7 +340,7 @@ public final class MiscellaneousSettings {
 	}
 
 	private static boolean validateRename(Player player, Region region, String message) {
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION))
 			return false;
 		if (!StringUtils.isValidRegionName(message)) {
 			Messages.send(player, 1);
@@ -362,7 +362,7 @@ public final class MiscellaneousSettings {
 	}
 
 	private static boolean validateDisplayName(Player player, Region region, String message) {
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.RENAME_REGION))
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION))
 			return false;
 		if (!StringUtils.isValidRegionDisplayName(message)) {
 			Messages.send(player, 14);
@@ -380,7 +380,7 @@ public final class MiscellaneousSettings {
 	}
 
 	private static boolean validateDescription(Player player, Region region, String message) {
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, RegionControlFlags.SET_DESCRIPTION))
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_DESCRIPTION))
 			return false;
 		if (!StringUtils.isValidRegionDescription(message)) {
 			Messages.send(player, 16);

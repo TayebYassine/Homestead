@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * A utility class that manages {@link Level} progression for regions.
+ * A utility class that manages {@link Level}.
  */
 public final class LevelManager {
 	private static final Random random = new Random();

@@ -7,7 +7,7 @@ import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftRegionEvent;
 import tfagaming.projects.minecraft.homestead.api.events.RevokePlayerInviteEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.InviteManager;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.MemberManager;
@@ -54,7 +54,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				RegionControlFlags.UNTRUST_PLAYERS)) {
+				ControlFlags.UNTRUST_PLAYERS)) {
 			return true;
 		}
 

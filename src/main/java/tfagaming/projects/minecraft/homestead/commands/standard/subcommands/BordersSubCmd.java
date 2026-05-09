@@ -31,21 +31,21 @@ public class BordersSubCmd extends SubCommandBuilder {
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled();
 
 		if (!isEnabled) {
-			Messages.send(player, 105);
+			reply(player, "borders.0");
 			return true;
 		}
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("stop")) {
 			ChunkBorder.stop(player);
 
-			Messages.send(player, 26);
+			reply(player, "borders.1");
 
 			return true;
 		}
 
 		ChunkBorder.show(player);
 
-		Messages.send(player, 27);
+		reply(player, "borders.2");
 
 		return true;
 	}

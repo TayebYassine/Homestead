@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * A utility class that manages {@link SubArea} creation, deletion, and queries.
+ * A utility class that manages {@link SubArea}.
  */
 public final class SubAreaManager {
 	private SubAreaManager() {
@@ -533,8 +533,11 @@ public final class SubAreaManager {
 				.toList();
 
 		for (Long id : toRemove) {
+			MemberManager.removeAllMembersOfSubArea(id);
+
 			deleteSubArea(id);
 		}
+
 		return toRemove.size();
 	}
 

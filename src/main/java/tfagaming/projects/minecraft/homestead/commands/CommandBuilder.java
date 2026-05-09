@@ -3,6 +3,10 @@ package tfagaming.projects.minecraft.homestead.commands;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.LanguageFile;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.commands.AutoCompleteFilter;
 
 import java.util.*;
@@ -207,5 +211,11 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 
 	protected Player asPlayer(CommandSender sender) {
 		return sender instanceof Player ? (Player) sender : null;
+	}
+
+	public void reply(CommandSender sender, String path, Object... args) {
+		String message = Resources.<LanguageFile>get(ResourceType.Language).getString("commands." + path, "NULL");
+
+		Messages.send(sender, message, args);
 	}
 }

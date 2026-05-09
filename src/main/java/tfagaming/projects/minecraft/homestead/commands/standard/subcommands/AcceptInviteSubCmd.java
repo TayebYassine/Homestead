@@ -34,9 +34,8 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "accept_invite.0", getUsage());
+
 			return true;
 		}
 
@@ -44,49 +43,34 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			Messages.send(player, 9);
+			reply(player, "accept_invite.1", regionName);
 			return true;
 		}
 
-		if (!InviteManager.isInvited(region, player) || MemberManager.isMemberOfRegion(region, player)) {
-			Messages.send(player, 45, new Placeholder()
-					.add("{region}", region.getName())
-			);
+		if (MemberManager.isMemberOfRegion(region, player)) {
+			reply(player, "accept_invite.2");
 			return true;
 		}
 
-		RegionBan ban = BanManager.getBannedPlayer(region, player);
+		if (!InviteManager.isInvited(region, player)) {
+			reply(player, "accept_invite.3");
+			return true;
+		}
 
-		if (ban != null) {
-			Messages.send(player, 28, new Placeholder()
-					.add("{region}", region.getName())
-					.add("{ban-reason}", ban.getReason())
-			);
+		if (BanManager.isBanned(region, player)) {
+			reply(player, "accept_invite.4");
 			return true;
 		}
 
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-			Messages.send(player, 116);
+			reply(player, "accept_invite.5");
 			return true;
 		}
 
 		MemberManager.addMemberToRegion(player, region);
-
-		Messages.send(player, 46, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{playername}", player.getName())
-		);
-
 		LogManager.addLog(region, player, LogManager.PredefinedLog.JOIN_REGION);
 
-		OfflinePlayer owner = region.getOwner();
-
-		if (owner != null && owner.isOnline()) {
-			Messages.send(owner.getPlayer(), 138, new Placeholder()
-					.add("{region}", region.getName())
-					.add("{playername}", player.getName())
-			);
-		}
+		reply(player, "accept_invite.6", regionName);
 
 		Homestead.callEvent(new PlayerJoinRegionEvent(region, player));
 

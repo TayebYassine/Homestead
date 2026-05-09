@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.api.events.PlayerLeftRegionEvent;
-import tfagaming.projects.minecraft.homestead.flags.RegionControlFlags;
+import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.gui.Menu;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager.RegionSorting;
@@ -180,7 +180,7 @@ public final class RegionMenu {
 		return (_player, event) -> {
 			if (!checkRegionExists(player, region)) return;
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					RegionControlFlags.SET_WEATHER_AND_TIME)) {
+					ControlFlags.SET_WEATHER_AND_TIME)) {
 				return;
 			}
 
