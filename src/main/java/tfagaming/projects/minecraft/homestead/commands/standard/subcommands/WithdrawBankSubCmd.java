@@ -38,14 +38,12 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "withdraw.0");
 			return true;
 		}
 
 		if (!Homestead.VAULT.isEconomyReady()) {
-			Messages.send(player, 69);
+			reply(player, "withdraw.1");
 
 			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
@@ -55,17 +53,18 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "withdraw.2");
 			return true;
 		}
 
 		if (WarManager.isRegionInWar(region)) {
-			Messages.send(player, 156);
+			reply(player, "withdraw.3");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.WITHDRAW_MONEY)) {
+			reply(player, "withdraw.4");
 			return true;
 		}
 
@@ -73,7 +72,7 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 
 		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput))
 				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > Integer.MAX_VALUE)) {
-			Messages.send(player, 64);
+			reply(player, "withdraw.5");
 			return true;
 		}
 
@@ -81,22 +80,19 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 				: Double.parseDouble(amountInput);
 
 		if (amount <= 0) {
-			Messages.send(player, 64);
+			reply(player, "withdraw.6");
 			return true;
 		}
 
 		if (amount > region.getBank()) {
-			Messages.send(player, 67);
+			reply(player, "withdraw.7");
 			return true;
 		}
 
 		PlayerBank.deposit(player, amount);
 		region.withdrawBank(amount);
 
-		Messages.send(player, 68, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{amount}", Formatter.getBalance(amount))
-		);
+		reply(player, "withdraw.8", Formatter.getBalance(amount), region.getName());
 
 		Homestead.callEvent(new BankWithdrawEvent(region, amount));
 

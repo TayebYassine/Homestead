@@ -44,21 +44,20 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "trust.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "trust.1");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.TRUST_PLAYERS)) {
+			reply(player, "trust.12");
 			return true;
 		}
 
@@ -67,55 +66,46 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			Messages.send(player, 29, new Placeholder()
-					.add("{playername}", targetName)
-			);
+			reply(player, "trust.2");
 			return true;
 		}
 
 		if (BanManager.isBanned(region, target)) {
-			Messages.send(player, 74);
+			reply(player, "trust.3");
 			return true;
 		}
 
 		if (MemberManager.isMemberOfRegion(region, target)) {
-			Messages.send(player, 48, new Placeholder()
-					.add("{playername}", target.getName())
-			);
+			reply(player, "trust.4");
 			return true;
 		}
 
 		if (InviteManager.isInvited(region, target)) {
-			Messages.send(player, 35, new Placeholder()
-					.add("{playername}", target.getName())
-			);
+			reply(player, "trust.5");
 			return true;
 		}
 
 		if (region.isOwner(target)) {
-			Messages.send(player, 30);
+			reply(player, "trust.6");
 			return true;
 		}
 
 		SeRent rent = region.getRent();
 
 		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
-			Messages.send(player, 196);
+			reply(player, "trust.7");
 			return true;
 		}
 
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-			Messages.send(player, 116);
+			reply(player, "trust.8");
 			return true;
 		}
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
 			MemberManager.addMemberToRegion(target, region);
 
-			Messages.send(player, 199, new Placeholder()
-					.add("{region}", region.getName())
-					.add("{playername}", target.getName())
-			);
+			reply(player, "trust.9");
 
 			LogManager.addLog(region, target, LogManager.PredefinedLog.JOIN_REGION);
 
@@ -123,15 +113,10 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 		} else {
 			InviteManager.invitePlayer(region, target);
 
-			Placeholder placeholder = new Placeholder()
-					.add("{region}", region.getName())
-					.add("{playername}", target.getName())
-					.add("{ownername}", region.getOwnerName());
-
-			Messages.send(player, 36, placeholder);
+			reply(player, "trust.10");
 
 			if (target.isOnline()) {
-				Messages.send(target.getPlayer(), 139, placeholder);
+				reply(target.getPlayer(), "trust.11");
 			}
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, target.getName());

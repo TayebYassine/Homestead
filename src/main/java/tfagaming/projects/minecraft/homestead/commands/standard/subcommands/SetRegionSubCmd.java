@@ -31,9 +31,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "set.0");
 			return true;
 		}
 
@@ -42,27 +40,25 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			Messages.send(player, 9);
+			reply(player, "set.1", regionName);
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player)
 				&& !(region.isOwner(player) || MemberManager.isMemberOfRegion(region, player))) {
-			Messages.send(player, 10);
+			reply(player, "set.2");
 			return true;
 		}
 
 		if (TargetRegionSession.hasSession(player)
 				&& TargetRegionSession.getRegion(player).getUniqueId() == region.getUniqueId()) {
-			Messages.send(player, 11);
+			reply(player, "set.3");
 			return true;
 		}
 
 		TargetRegionSession.newSession(player, region);
 
-		Messages.send(player, 12, new Placeholder()
-				.add("{region}", region.getName())
-		);
+		reply(player, "set.4", regionName);
 
 		return true;
 	}

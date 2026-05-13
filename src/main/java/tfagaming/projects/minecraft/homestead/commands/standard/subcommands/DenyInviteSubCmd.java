@@ -28,13 +28,13 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
+		// TODO settings to disable invitation
+
 		Player player = asPlayer(sender);
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "deny.0");
 			return true;
 		}
 
@@ -43,22 +43,18 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			Messages.send(player, 9);
+			reply(player, "deny.1");
 			return true;
 		}
 
 		if (!InviteManager.isInvited(region, player)) {
-			Messages.send(player, 45, new Placeholder()
-					.add("{region}", region.getName())
-			);
+			reply(player, "deny.2");
 			return true;
 		}
 
 		InviteManager.deleteInvitesOfPlayer(region, player);
 
-		Messages.send(player, 47, new Placeholder()
-				.add("{region}", region.getName())
-		);
+		reply(player, "deny.3");
 
 		Homestead.callEvent(new RevokePlayerInviteEvent(region, player));
 

@@ -34,14 +34,12 @@ public class SetWeatherSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "setweather.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "setweather.1");
 			return true;
 		}
 
@@ -49,7 +47,7 @@ public class SetWeatherSubCmd extends SubCommandBuilder {
 		int weather = RegionWeather.parse(weatherInput);
 
 		if (weather == -1) {
-			Messages.send(player, 219);
+			reply(player, "setweather.2");
 			return true;
 		}
 
@@ -57,9 +55,7 @@ public class SetWeatherSubCmd extends SubCommandBuilder {
 
 		region.setWeather(newWeather);
 
-		Messages.send(player, 220, new Placeholder()
-				.add("{weather-name}", weatherInput)
-		);
+		reply(player, "setweather.3", weatherInput);
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER, RegionWeather.from(newWeather));
 

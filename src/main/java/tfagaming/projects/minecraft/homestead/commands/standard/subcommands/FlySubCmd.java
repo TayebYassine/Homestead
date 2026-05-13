@@ -34,7 +34,7 @@ public class FlySubCmd extends SubCommandBuilder {
 		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 		if (region == null || (!PlayerUtility.isOperator(player) && !(region.isOwner(player) || MemberManager.isMemberOfRegion(region, player)))) {
-			Messages.send(player, 207);
+			reply(player, "fly.0");
 			return true;
 		}
 
@@ -44,14 +44,14 @@ public class FlySubCmd extends SubCommandBuilder {
 			player.setAllowFlight(false);
 			player.setFlying(false);
 
-			Messages.send(player, 206);
+			reply(player, "fly.2");
 		} else {
 			ClaimFlySession.newSession(player);
 
 			player.setAllowFlight(true);
 			player.setFlying(true);
 
-			Messages.send(player, 205);
+			reply(player, "fly.1");
 		}
 
 		return true;

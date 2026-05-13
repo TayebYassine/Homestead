@@ -27,11 +27,11 @@ public class AutoSubCmd extends SubCommandBuilder {
 		if (AutoClaimSession.hasSession(player)) {
 			AutoClaimSession.removeSession(player);
 
-			reply(player, "auto_claim.1");
+			reply(player, "autoclaim.1");
 		} else {
 			AutoClaimSession.newSession(player);
 
-			reply(player, "auto_claim.0");
+			reply(player, "autoclaim.0");
 		}
 
 		return true;

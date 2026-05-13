@@ -33,14 +33,12 @@ public class HomeSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "home.0");
 			return true;
 		}
 
 		if (region.getLocation() == null) {
-			Messages.send(player, 71, new Placeholder()
-					.add("{region}", region.getName())
-			);
+			reply(player, "home.1");
 			return true;
 		}
 
@@ -48,9 +46,7 @@ public class HomeSubCmd extends SubCommandBuilder {
 				&& !region.isOwner(player)
 				&& !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
 				&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
-			Messages.send(player, 45, new Placeholder()
-					.add("{region}", region.getName())
-			);
+			reply(player, "home.2");
 			return true;
 		}
 

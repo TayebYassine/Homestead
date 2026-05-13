@@ -30,14 +30,14 @@ public class RewardsSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (!Resources.<RegionsFile>get(ResourceType.Regions).isRewardsEnabled()) {
-			Messages.send(player, 168);
+			reply(player, "rewards.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "rewards.1");
 			return true;
 		}
 

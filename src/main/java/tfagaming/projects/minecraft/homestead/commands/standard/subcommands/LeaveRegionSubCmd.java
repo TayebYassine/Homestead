@@ -32,36 +32,37 @@ public class LeaveRegionSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "leave.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "leave.1");
 			return true;
 		}
 
 		String confirmInput = args[0];
 
 		if (!confirmInput.equalsIgnoreCase("confirm")) {
-			Messages.send(player, 5);
+			reply(player, "leave.0");
 			return true;
 		}
 
-		if (region.isOwner(player) || !MemberManager.isMemberOfRegion(region, player)) {
-			Messages.send(player, 30);
+		if (region.isOwner(player)) {
+			reply(player, "leave.3");
+			return true;
+		}
+
+		if (!MemberManager.isMemberOfRegion(region, player)) {
+			reply(player, "leave.2");
 			return true;
 		}
 
 		MemberManager.removeMemberFromRegion(player, region);
 
-		Messages.send(player, 204, new Placeholder()
-				.add("{region}", region.getName())
-		);
+		reply(player, "leave.4", region.getName());
 
 		TargetRegionSession.randomizeRegion(player);
 

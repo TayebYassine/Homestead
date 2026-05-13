@@ -35,19 +35,19 @@ public class StorageSubCmd extends SubCommandBuilder {
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isRegionStorageEnabled();
 
 		if (!isEnabled) {
-			Messages.send(player, 105);
+			reply(player, "storage.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "storage.1");
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player) && !MemberManager.isMemberOfRegion(region, player)) {
-			Messages.send(player, 30);
+			reply(player, "storage.2");
 			return true;
 		}
 

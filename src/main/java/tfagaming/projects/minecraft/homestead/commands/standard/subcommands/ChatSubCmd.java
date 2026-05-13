@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 
 import java.util.Arrays;
@@ -28,25 +29,25 @@ public class ChatSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
+		// TODO added toggle
+
 		Player player = asPlayer(sender);
 		if (player == null) return false;
-
-		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
-			return true;
-		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "chat.0");
 			return true;
 		}
 
 		List<String> messageList = Arrays.asList(args).subList(0, args.length);
 		String message = String.join(" ", messageList);
+
+		if (ColorTranslator.containsMiniMessageTag(message)) {
+			reply(player, "chat.3");
+			return true;
+		}
 
 		RegionManager.sendPrivateChat(region, player, message);
 

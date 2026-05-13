@@ -36,9 +36,7 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 			OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 			if (target == null) {
-				Messages.send(player, 29, new Placeholder()
-						.add("{playername}", playerName)
-				);
+				reply(player, "player.0");
 				return true;
 			}
 

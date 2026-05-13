@@ -33,34 +33,30 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "create.0");
 			return true;
 		}
 
 		String regionName = args[0];
 
 		if (!StringUtils.isValidRegionName(regionName)) {
-			Messages.send(player, 1);
+			reply(player, "create.1");
 			return true;
 		}
 
 		if (RegionManager.isNameUsed(regionName)) {
-			Messages.send(player, 2);
+			reply(player, "create.2");
 			return true;
 		}
 
 		if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
-			Messages.send(player, 116);
+			reply(player, "create.3");
 			return true;
 		}
 
 		Region region = RegionManager.createRegion(regionName, player);
 
-		Messages.send(player, 3, new Placeholder()
-				.add("{name}", region.getName())
-		);
+		reply(player, "create.4", regionName);
 
 		TargetRegionSession.newSession(player, region);
 

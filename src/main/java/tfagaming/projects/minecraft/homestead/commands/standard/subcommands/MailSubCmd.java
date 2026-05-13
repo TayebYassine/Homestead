@@ -34,9 +34,7 @@ public class MailSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 2) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "mail.0");
 			return true;
 		}
 
@@ -45,14 +43,14 @@ public class MailSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			Messages.send(player, 9);
+			reply(player, "mail.1", regionName);
 			return true;
 		}
 
 		int mailsCount = (int) LogManager.getUnreadLogs(region).stream().filter((l) -> l.getAuthor().equals(player.getName())).count();
 
-		if (mailsCount >= 5) {
-			Messages.send(player, 165);
+		if (mailsCount >= 10) {
+			reply(player, "mail.2");
 			return true;
 		}
 
@@ -60,15 +58,13 @@ public class MailSubCmd extends SubCommandBuilder {
 		String message = String.join(" ", messageList);
 
 		if (ColorTranslator.containsMiniMessageTag(message)) {
-			Messages.send(player, 30);
+			reply(player, "mail.3");
 			return true;
 		}
 
 		LogManager.addLog(region, player.getName(), message);
 
-		Messages.send(player, 166, new Placeholder()
-				.add("{region-owner}", region.getOwnerName())
-		);
+		reply(player, "mail.4");
 
 		Homestead.callEvent(new PlayerMailEvent(region, player, message));
 

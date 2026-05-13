@@ -50,16 +50,14 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 			if (target == null) {
-				Messages.send(player, 29, new Placeholder()
-						.add("{playername}", playerName)
-				);
+				reply(player, "visit.0");
 				return true;
 			}
 
 			String indexInput = args.length >= 2 ? args[1] : "0";
 
 			if (!NumberUtils.isValidInteger(indexInput)) {
-				Messages.send(player, 137);
+				reply(player, "visit.1");
 				return true;
 			}
 
@@ -75,21 +73,19 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			}
 
 			if (filteredRegions.isEmpty()) {
-				Messages.send(player, 137);
+				reply(player, "visit.2");
 				return true;
 			}
 
 			if (index < 0 || index > filteredRegions.size() - 1) {
-				Messages.send(player, 137);
+				reply(player, "visit.3");
 				return true;
 			}
 
 			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().toBukkit());
 		} else {
 			if (args.length < 1) {
-				Messages.send(player, 0, new Placeholder()
-						.add("{usage}", getUsage())
-				);
+				reply(player, "visit.4");
 				return true;
 			}
 
@@ -98,14 +94,12 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			Region region = RegionManager.findRegion(regionName);
 
 			if (region == null) {
-				Messages.send(player, 9);
+				reply(player, "visit.5", regionName);
 				return true;
 			}
 
 			if (region.getLocation() == null) {
-				Messages.send(player, 71, new Placeholder()
-						.add("{region}", region.getName())
-				);
+				reply(player, "visit.6");
 				return true;
 			}
 
@@ -113,9 +107,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 					&& !region.isOwner(player)
 					&& !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
 					&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
-				Messages.send(player, 131, new Placeholder()
-						.add("{region}", region.getName())
-				);
+				reply(player, "visit.7");
 				return true;
 			}
 

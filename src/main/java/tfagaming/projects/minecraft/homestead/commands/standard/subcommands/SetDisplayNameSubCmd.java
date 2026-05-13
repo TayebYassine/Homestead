@@ -40,14 +40,12 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "setdisplayname.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "setdisplayname.1");
 			return true;
 		}
 
@@ -61,21 +59,22 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.RENAME_REGION)) {
+			reply(player, "setdisplayname.2");
 			return true;
 		}
 
 		if (!StringUtils.isValidRegionDisplayName(regionDisplayName)) {
-			Messages.send(player, 14);
+			reply(player, "setdisplayname.3");
 			return true;
 		}
 
 		if (region.getDisplayName() != null && region.getDisplayName().equals(regionDisplayName)) {
-			Messages.send(player, 11);
+			reply(player, "setdisplayname.4");
 			return true;
 		}
 
 		if (ColorTranslator.containsMiniMessageTag(regionDisplayName)) {
-			Messages.send(player, 30);
+			reply(player, "setdisplayname.5");
 			return true;
 		}
 
@@ -85,10 +84,7 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 
 		region.setDisplayName(regionDisplayName);
 
-		Messages.send(player, 15, new Placeholder()
-				.add("{olddisplayname}", oldDisplayName)
-				.add("{newdisplayname}", regionDisplayName)
-		);
+		reply(player, "setdisplayname.6", oldDisplayName, regionDisplayName);
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DISPLAYNAME, regionDisplayName);
 

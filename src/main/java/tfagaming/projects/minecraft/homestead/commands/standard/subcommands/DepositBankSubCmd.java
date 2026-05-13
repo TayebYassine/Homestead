@@ -39,14 +39,12 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "deposit.0");
 			return true;
 		}
 
 		if (!Homestead.VAULT.isEconomyReady()) {
-			Messages.send(player, 69);
+			reply(player, "deposit.1");
 
 			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
@@ -56,51 +54,49 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "deposit.2");
 			return true;
 		}
 
 		if (WarManager.isRegionInWar(region)) {
-			Messages.send(player, 156);
+			reply(player, "deposit.3");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.DEPOSIT_MONEY)) {
+			reply(player, "deposit.4");
 			return true;
 		}
 
 		String amountInput = args[0];
 
 		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput)) || (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > Integer.MAX_VALUE)) {
-			Messages.send(player, 64);
+			reply(player, "deposit.5");
 			return true;
 		}
 
 		double amount = amountInput.equalsIgnoreCase("all") ? PlayerBank.get(player) : Double.parseDouble(amountInput);
 
 		if (amount <= 0) {
-			Messages.send(player, 64);
+			reply(player, "deposit.6");
 			return true;
 		}
 
 		if (amount > PlayerBank.get(player)) {
-			Messages.send(player, 65);
+			reply(player, "deposit.7");
 			return true;
 		}
 
 		if ((amount + region.getBank()) >= Limits.getRegionLimit(region, Limits.LimitType.MAX_BANK_DEPOSIT)) {
-			Messages.send(player, 116);
+			reply(player, "deposit.8");
 			return true;
 		}
 
 		PlayerBank.withdraw(player, amount);
 		region.depositBank(amount);
 
-		Messages.send(player, 66, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{amount}", Formatter.getBalance(amount))
-		);
+		reply(player, "deposit.9", Formatter.getBalance(amount), region.getName());
 
 		Homestead.callEvent(new BankDepositEvent(region, amount));
 

@@ -34,7 +34,7 @@ public class RegionInfoSubCmd extends SubCommandBuilder {
 			Region region = RegionManager.findRegion(regionName);
 
 			if (region == null) {
-				Messages.send(player, 9);
+				reply(player, "info.0", regionName);
 				return true;
 			}
 
@@ -43,7 +43,7 @@ public class RegionInfoSubCmd extends SubCommandBuilder {
 			Region region = ChunkManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
 
 			if (region == null) {
-				Messages.send(player, 4);
+				reply(player, "info.1");
 				return true;
 			}
 

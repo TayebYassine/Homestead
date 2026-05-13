@@ -40,7 +40,7 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "setspawn.0");
 			return true;
 		}
 
@@ -51,6 +51,7 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.SET_SPAWN)) {
+			reply(player, "setspawn.1");
 			return true;
 		}
 
@@ -59,7 +60,7 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
-			Messages.send(player, 142);
+			reply(player, "setspawn.2", region.getName());
 			return true;
 		}
 
@@ -69,10 +70,7 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 
 		region.setLocation(location);
 
-		Messages.send(player, 72, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{location}", Formatter.getLocation(location))
-		);
+		reply(player, "setspawn.3");
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_SPAWN);
 

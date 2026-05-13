@@ -29,7 +29,7 @@ public class MembersSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "members.0");
 			return true;
 		}
 

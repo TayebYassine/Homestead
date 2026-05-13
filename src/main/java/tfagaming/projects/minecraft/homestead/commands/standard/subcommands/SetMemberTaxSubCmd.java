@@ -38,15 +38,18 @@ public class SetMemberTaxSubCmd extends SubCommandBuilder {
 
 		Region region = TargetRegionSession.getRegion(player);
 
+		if (region == null) {
+			reply(player, "setmembertax.0");
+			return true;
+		}
+
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "setmembertax.1");
 			return true;
 		}
 
 		if (!Homestead.VAULT.isEconomyReady()) {
-			Messages.send(player, 69);
+			reply(player, "setmembertax.2");
 
 			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
@@ -56,7 +59,7 @@ public class SetMemberTaxSubCmd extends SubCommandBuilder {
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled");
 
 		if (!isEnabled) {
-			Messages.send(player, 105);
+			reply(player, "setmembertax.3");
 
 			return true;
 		}
@@ -64,8 +67,7 @@ public class SetMemberTaxSubCmd extends SubCommandBuilder {
 		String taxInput = args[0];
 
 		if (!NumberUtils.isValidDouble(taxInput)) {
-			Messages.send(player, 102);
-
+			reply(player, "setmembertax.4");
 			return true;
 		}
 
@@ -75,20 +77,14 @@ public class SetMemberTaxSubCmd extends SubCommandBuilder {
 		double maxTax = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("taxes.max-tax");
 
 		if (taxAmount <= minTax || taxAmount > maxTax) {
-			Messages.send(player, 104, new Placeholder()
-					.add("{min}", Formatter.getBalance(minTax))
-					.add("{max}", Formatter.getBalance(maxTax))
-			);
+			reply(player, "setmembertax.5", Formatter.getBalance(maxTax), Formatter.getBalance(maxTax));
 
 			return true;
 		}
 
 		region.setTaxes(taxAmount);
 
-		Messages.send(player, 103, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{tax-amount}", Formatter.getBalance(taxAmount))
-		);
+		reply(player, "setmembertax.6");
 
 		return true;
 	}

@@ -37,13 +37,12 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "setmapicon.0");
 			return true;
 		}
 
 		if (!(Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled") && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled"))) {
-			Messages.send(player, 105);
-
+			reply(player, "setmapicon.1");
 			return true;
 		}
 
@@ -60,19 +59,21 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 
 		String iconInput = args[0];
 
-		if (iconInput.equals("None") || iconInput.equals("Default")) {
+		if (iconInput.equals("Default")) {
 			region.setMapIcon(iconInput);
 
-			Messages.send(player, 100, new Placeholder()
-					.add("{region}", region.getName())
-			);
+			reply(player, "setmapicon.4");
 
 			return true;
 		}
 
 		if (!MapIcon.isValidIcon(iconInput)) {
-			Messages.send(player, 99);
+			reply(player, "setmapicon.2");
+			return true;
+		}
 
+		if (region.getMapIcon() != null && region.getMapIcon().equals(iconInput)) {
+			reply(player, "setmapicon.3");
 			return true;
 		}
 
@@ -80,9 +81,7 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 
 		region.setMapIcon(iconInput);
 
-		Messages.send(player, 100, new Placeholder()
-				.add("{region}", region.getName())
-		);
+		reply(player, "setmapicon.5");
 
 		return true;
 	}
@@ -97,7 +96,6 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 		if (args.length == 1) {
 			suggestions.addAll(MapIcon.getAllIcons());
 			suggestions.add("Default");
-			suggestions.add("None");
 		}
 
 		return suggestions;

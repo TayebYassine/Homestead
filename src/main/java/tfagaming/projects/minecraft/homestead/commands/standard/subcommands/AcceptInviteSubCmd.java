@@ -34,7 +34,7 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "accept_invite.0", getUsage());
+			reply(player, "accept.0", getUsage());
 
 			return true;
 		}
@@ -43,34 +43,34 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			reply(player, "accept_invite.1", regionName);
+			reply(player, "accept.1", regionName);
 			return true;
 		}
 
 		if (MemberManager.isMemberOfRegion(region, player)) {
-			reply(player, "accept_invite.2");
+			reply(player, "accept.2");
 			return true;
 		}
 
 		if (!InviteManager.isInvited(region, player)) {
-			reply(player, "accept_invite.3");
+			reply(player, "accept.3");
 			return true;
 		}
 
 		if (BanManager.isBanned(region, player)) {
-			reply(player, "accept_invite.4");
+			reply(player, "accept.4");
 			return true;
 		}
 
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-			reply(player, "accept_invite.5");
+			reply(player, "accept.5");
 			return true;
 		}
 
 		MemberManager.addMemberToRegion(player, region);
 		LogManager.addLog(region, player, LogManager.PredefinedLog.JOIN_REGION);
 
-		reply(player, "accept_invite.6", regionName);
+		reply(player, "accept.6", regionName);
 
 		Homestead.callEvent(new PlayerJoinRegionEvent(region, player));
 

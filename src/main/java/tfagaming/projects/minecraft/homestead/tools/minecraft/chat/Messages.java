@@ -52,7 +52,7 @@ public final class Messages {
 			message = message.replace("{__prefix__}", "").trim();
 		}
 
-		message = Formatter.applyPlaceholders(message, placeholder);
+		message = Formatter.applyPlaceholders(message, placeholder).trim();
 
 		if (receiver instanceof Player player) {
 			PlatformBridge.get().sendMessage(player, message);
@@ -74,7 +74,7 @@ public final class Messages {
 			message = message.replace("{__prefix__}", "").trim();
 		}
 
-		message = Formatter.applyPlaceholders(message, placeholder);
+		message = Formatter.applyPlaceholders(message, placeholder).trim();
 
 		if (receiver instanceof Player player) {
 			PlatformBridge.get().sendMessage(player, message);

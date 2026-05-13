@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.commands.standard.subcommands;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
@@ -33,14 +34,12 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "merge.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "merge.1");
 			return true;
 		}
 
@@ -49,46 +48,42 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 		Region targetRegion = RegionManager.findRegion(regionName);
 
 		if (targetRegion == null) {
-			Messages.send(player, 9);
+			reply(player, "merge.2", regionName);
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			Messages.send(player, 30);
+			reply(player, "merge.3");
 			return true;
 		}
 
 		if (region.getUniqueId() == targetRegion.getUniqueId()) {
-			Messages.send(player, 176);
+			reply(player, "merge.4");
 			return true;
 		}
 
-		if (targetRegion.getOwner() != null && !targetRegion.getOwner().isOnline()) {
-			Messages.send(player, 179);
+		OfflinePlayer targetOfflineOwner = targetRegion.getOwner();
+		Player targetOwner = targetOfflineOwner != null && targetOfflineOwner.isOnline() ? targetOfflineOwner.getPlayer() : null;
+
+		if (targetOwner == null) {
+			reply(player, "merge.5");
 			return true;
 		}
 
 		if (MergeRegionSession.isFromHaveRequest(region)) {
-			Messages.send(player, 177);
+			reply(player, "merge.6");
 			return true;
 		}
 
 		if (MergeRegionSession.isToHaveRequest(targetRegion)) {
-			Messages.send(player, 178);
+			reply(player, "merge.6");
 			return true;
 		}
 
 		MergeRegionSession.newMergeRequest(region, targetRegion);
 
-		Messages.send(player, 180);
-
-		if (targetRegion.getOwner() != null && targetRegion.getOwner().isOnline()) {
-			Messages.send((Player) targetRegion.getOwner(), 181, new Placeholder()
-					.add("{region}", region.getName())
-					.add("{targetregion}", targetRegion.getName())
-					.add("{player}", player.getName())
-			);
-		}
+		reply(player, "merge.7");
+		reply(targetOwner, "merge.8", player.getName(), region.getName());
 
 		return true;
 	}

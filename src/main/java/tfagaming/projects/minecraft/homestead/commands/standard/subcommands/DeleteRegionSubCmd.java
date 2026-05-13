@@ -34,42 +34,38 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 		Player player = asPlayer(sender);
 		if (player == null) return false;
 
-		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
-			return true;
-		}
-
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "delete.0");
+			return true;
+		}
+
+		if (args.length < 1) {
+			reply(player, "delete.1");
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			Messages.send(player, 159);
+			reply(player, "delete.2");
 			return true;
 		}
 
 		String confirmInput = args[0];
 
 		if (!confirmInput.equalsIgnoreCase("confirm")) {
-			Messages.send(player, 5);
+			reply(player, "delete.1");
 			return true;
 		}
 
 		final double bankAmount = region.getBank();
+		final String regionName = region.getName();
 
 		RegionManager.deleteRegion(region.getUniqueId(), player);
 
 		PlayerBank.deposit(region.getOwner(), bankAmount);
 
-		Messages.send(player, 6, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{region-bank}", Formatter.getBalance(bankAmount))
-		);
+		reply(player, "delete.3", regionName);
 
 		TargetRegionSession.randomizeRegion(player);
 

@@ -34,14 +34,12 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "settime.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "settime.1");
 			return true;
 		}
 
@@ -49,7 +47,7 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 		int time = RegionTime.parse(timeInput);
 
 		if (time == -1) {
-			Messages.send(player, 217);
+			reply(player, "settime.2");
 			return true;
 		}
 
@@ -57,9 +55,7 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 
 		region.setTime(newTime);
 
-		Messages.send(player, 218, new Placeholder()
-				.add("{time-name}", timeInput)
-		);
+		reply(player, "settime.3", timeInput);
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME, RegionTime.from(newTime));
 

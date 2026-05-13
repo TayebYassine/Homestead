@@ -39,14 +39,12 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "setdescription.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "setdescription.1");
 			return true;
 		}
 
@@ -60,21 +58,22 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.SET_DESCRIPTION)) {
+			reply(player, "setdescription.2");
 			return true;
 		}
 
 		if (!StringUtils.isValidRegionDescription(description)) {
-			Messages.send(player, 16);
+			reply(player, "setdescription.3");
 			return true;
 		}
 
-		if (region.getDescription().equals(description)) {
-			Messages.send(player, 11);
+		if (region.getDescription() != null && region.getDescription().equals(description)) {
+			reply(player, "setdescription.4");
 			return true;
 		}
 
 		if (ColorTranslator.containsMiniMessageTag(description)) {
-			Messages.send(player, 30);
+			reply(player, "setdescription.5");
 			return true;
 		}
 
@@ -84,10 +83,7 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 
 		region.setDescription(description);
 
-		Messages.send(player, 17, new Placeholder()
-				.add("{olddescription}", oldDescription)
-				.add("{newdescription}", region.getDescription())
-		);
+		reply(player, "setdescription.6");
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DESCRIPTION, description);
 

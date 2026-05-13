@@ -30,9 +30,7 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "rate.0");
 			return true;
 		}
 
@@ -41,7 +39,7 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			Messages.send(player, 9);
+			reply(player, "rate.1", regionName);
 			return true;
 		}
 

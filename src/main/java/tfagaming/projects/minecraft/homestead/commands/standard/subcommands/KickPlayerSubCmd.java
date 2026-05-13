@@ -38,21 +38,20 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			reply(player, "kick.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "kick.1");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.KICK_PLAYERS)) {
+			reply(player, "kick.2");
 			return true;
 		}
 
@@ -61,33 +60,29 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 		Player target = Bukkit.getPlayer(targetName);
 
 		if (target == null) {
-			Messages.send(player, 29, new Placeholder()
-					.add("{playername}", targetName)
-			);
+			reply(player, "kick.3");
 			return true;
 		}
 
 		if (BanManager.isBanned(region, target)) {
-			Messages.send(player, 32, new Placeholder()
-					.add("{playername}", target.getName())
-			);
+			reply(player, "kick.4");
 			return true;
 		}
 
-		if (region.isOwner(target)) {
-			Messages.send(player, 30);
+		if (region.isOwner(target) || target.getUniqueId().equals(player.getUniqueId())) {
+			reply(player, "kick.5");
 			return true;
 		}
 
 		SeRent rent = region.getRent();
 
 		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
-			Messages.send(player, 196);
+			reply(player, "kick.6");
 			return true;
 		}
 
 		if (!RegionManager.isPlayerInsideRegion(target, region)) {
-			Messages.send(player, 143);
+			reply(player, "kick.7");
 			return true;
 		}
 
@@ -97,10 +92,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 			PlayerUtility.teleportPlayerToChunk(target, chunk);
 		}
 
-		Messages.send(player, 144, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{playername}", target.getName())
-		);
+		reply(player, "kick.8", targetName);
 
 		return true;
 	}

@@ -33,14 +33,14 @@ public class LevelsSubCmd extends SubCommandBuilder {
 		boolean levelsEnabled = Resources.<LevelsFile>get(ResourceType.Levels).isEnabled();
 
 		if (!levelsEnabled) {
-			Messages.send(player, 197);
+			reply(player, "levels.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "levels.1");
 			return true;
 		}
 

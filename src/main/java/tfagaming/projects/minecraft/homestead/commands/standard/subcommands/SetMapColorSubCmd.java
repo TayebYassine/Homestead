@@ -37,13 +37,12 @@ public class SetMapColorSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "setmapcolor.0");
 			return true;
 		}
 
 		if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
-			Messages.send(player, 105);
-
+			reply(player, "setmapcolor.1");
 			return true;
 		}
 
@@ -61,14 +60,14 @@ public class SetMapColorSubCmd extends SubCommandBuilder {
 		String colorInput = args[0].toLowerCase();
 
 		if (!MapColor.getAll().contains(colorInput)) {
-			Messages.send(player, 18);
+			reply(player, "setmapcolor.2");
 			return true;
 		}
 
 		int color = MapColor.parseFromString(colorInput);
 
 		if (region.getMapColor() == color) {
-			Messages.send(player, 11);
+			reply(player, "setmapcolor.3");
 			return true;
 		}
 
@@ -78,10 +77,7 @@ public class SetMapColorSubCmd extends SubCommandBuilder {
 
 		region.setMapColor(color);
 
-		Messages.send(player, 19, new Placeholder()
-				.add("{oldcolor}", MapColor.toString(oldColor))
-				.add("{newcolor}", MapColor.toString(region.getMapColor()))
-		);
+		reply(player, "setmapcolor.4", MapColor.toString(oldColor), MapColor.toString(color));
 
 		return true;
 	}

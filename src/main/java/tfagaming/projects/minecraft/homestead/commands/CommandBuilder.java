@@ -214,8 +214,16 @@ public abstract class CommandBuilder implements CommandExecutor, TabCompleter {
 	}
 
 	public void reply(CommandSender sender, String path, Object... args) {
-		String message = Resources.<LanguageFile>get(ResourceType.Language).getString("commands." + path, "NULL");
+		Object obj = Resources.<LanguageFile>get(ResourceType.Language).getRaw("commands." + path);
 
-		Messages.send(sender, message, args);
+		if (obj == null) obj = "NULL";
+
+		if (obj instanceof String message) {
+			Messages.send(sender, message, args);
+		} else if (obj instanceof List<?> list) {
+			String message = list.stream().map(String::valueOf).collect(Collectors.joining("\n"));
+
+			Messages.send(sender, message, args);
+		}
 	}
 }

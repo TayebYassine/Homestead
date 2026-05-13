@@ -32,32 +32,30 @@ public class MergeAcceptRegionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			reply(player, "mergeaccept.0");
 			return true;
 		}
 
 		if (!MergeRegionSession.isToHaveRequest(region)) {
-			Messages.send(player, 182);
+			reply(player, "mergeaccept.1");
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			Messages.send(player, 30);
+			reply(player, "mergeaccept.2");
 			return true;
 		}
 
 		Region from = RegionManager.findRegion(MergeRegionSession.getFrom(region));
 
 		if (from == null) {
-			Messages.send(player, 182);
+			reply(player, "mergeaccept.3");
 			return true;
 		}
 
 		RegionManager.mergeRegions(from, region);
 
-		Messages.send(player, 183, new Placeholder()
-				.add("{region}", from.getName())
-		);
+		reply(player, "mergeaccept.4");
 
 		return true;
 	}
