@@ -43,8 +43,7 @@ public final class RegionUpkeep {
 								.add("{region}", region.getName())
 								.add("{chunks}", String.valueOf(chunksToRemove));
 
-						Messages.send(regionOwner, 111, placeholder);
-						Messages.send(regionOwner, 112, placeholder);
+						Messages.send(regionOwner, "common.upkeep_error_cannot_pay", placeholder);
 					}
 				} else {
 					region.withdrawBank(amountToPay);
@@ -61,8 +60,7 @@ public final class RegionUpkeep {
 								.add("{region}", region.getName())
 								.add("{bank}", Formatter.getBalance(region.getBank()));
 
-						Messages.send(regionOwner, 109, placeholder);
-						Messages.send(regionOwner, 110, placeholder);
+						Messages.send(regionOwner, "common.upkeep_success", placeholder);
 					}
 				}
 			}

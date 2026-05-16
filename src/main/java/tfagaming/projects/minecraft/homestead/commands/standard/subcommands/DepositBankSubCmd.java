@@ -29,7 +29,7 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.deposit_bank"
 		));
-		setUsage("/region deposit [amount/all]");
+		setUsage("/hs deposit [amount/all]");
 		setPlayerOnly();
 	}
 
@@ -39,12 +39,12 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "deposit.0");
+			Messages.send(player, "commands.deposit.0");
 			return true;
 		}
 
 		if (!Homestead.VAULT.isEconomyReady()) {
-			reply(player, "deposit.1");
+			Messages.send(player, "commands.deposit.1");
 
 			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
@@ -54,49 +54,49 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "deposit.2");
+			Messages.send(player, "commands.deposit.2");
 			return true;
 		}
 
 		if (WarManager.isRegionInWar(region)) {
-			reply(player, "deposit.3");
+			Messages.send(player, "commands.deposit.3");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.DEPOSIT_MONEY)) {
-			reply(player, "deposit.4");
+			Messages.send(player, "commands.deposit.4");
 			return true;
 		}
 
 		String amountInput = args[0];
 
 		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput)) || (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > Integer.MAX_VALUE)) {
-			reply(player, "deposit.5");
+			Messages.send(player, "commands.deposit.5");
 			return true;
 		}
 
 		double amount = amountInput.equalsIgnoreCase("all") ? PlayerBank.get(player) : Double.parseDouble(amountInput);
 
 		if (amount <= 0) {
-			reply(player, "deposit.6");
+			Messages.send(player, "commands.deposit.6");
 			return true;
 		}
 
 		if (amount > PlayerBank.get(player)) {
-			reply(player, "deposit.7");
+			Messages.send(player, "commands.deposit.7");
 			return true;
 		}
 
 		if ((amount + region.getBank()) >= Limits.getRegionLimit(region, Limits.LimitType.MAX_BANK_DEPOSIT)) {
-			reply(player, "deposit.8");
+			Messages.send(player, "commands.deposit.8");
 			return true;
 		}
 
 		PlayerBank.withdraw(player, amount);
 		region.depositBank(amount);
 
-		reply(player, "deposit.9", Formatter.getBalance(amount), region.getName());
+		Messages.send(player, "commands.deposit.9", Formatter.getBalance(amount), region.getName());
 
 		Homestead.callEvent(new BankDepositEvent(region, amount));
 

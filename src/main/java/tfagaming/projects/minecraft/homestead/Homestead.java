@@ -398,6 +398,7 @@ public class Homestead extends JavaPlugin {
 		registerEvent(new SelectionToolListener());
 		registerEvent(new RegionProtectionListener());
 		registerEvent(new PlayerRegionEnterAndExitListener());
+		registerEvent(new PrivateRegionChatListener());
 	}
 
 	private void registerEvent(Listener listener) {

@@ -29,16 +29,10 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Player player = asPlayer(sender);
-
-		if (player == null) {
-			sender.sendMessage("This command can only be used by players.");
-			return false;
-		}
+		if (player == null) return false;
 
 		if (args.length < 2) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			Messages.send(player, "commands.op_unclaim.0", getUsage());
 			return true;
 		}
 
@@ -46,7 +40,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			Messages.send(player, 9);
+			Messages.send(player, "commands.op_unclaim.1");
 			return true;
 		}
 
@@ -64,20 +58,18 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 				try {
 					radius = Integer.parseInt(args[2]);
 				} catch (NumberFormatException e) {
-					Messages.send(player, 185);
+					Messages.send(player, "commands.op_unclaim.2");
 					return true;
 				}
 
 				if (radius < 1 || radius > 20) {
-					Messages.send(player, 189);
+					Messages.send(player, "commands.op_unclaim.3");
 					return true;
 				}
 			}
 		} else {
 			if (args.length < 3) {
-				Messages.send(player, 0, new Placeholder()
-						.add("{usage}", getUsage())
-				);
+				Messages.send(player, "commands.op_unclaim.0", getUsage());
 				return true;
 			}
 
@@ -87,7 +79,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 				centreChunkX = Integer.parseInt(args[1]);
 				centreChunkZ = Integer.parseInt(args[2]);
 			} catch (NumberFormatException e) {
-				Messages.send(player, 184);
+				Messages.send(player, "commands.op_unclaim.2");
 				return true;
 			}
 
@@ -95,19 +87,19 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 				try {
 					radius = Integer.parseInt(args[3]);
 				} catch (NumberFormatException e) {
-					Messages.send(player, 185);
+					Messages.send(player, "commands.op_unclaim.2");
 					return true;
 				}
 
 				if (radius < 1 || radius > 20) {
-					Messages.send(player, 189);
+					Messages.send(player, "commands.op_unclaim.3");
 					return true;
 				}
 			}
 		}
 
 		if (world == null) {
-			Messages.send(player, 188);
+			Messages.send(player, "commands.op_unclaim.4");
 			return true;
 		}
 
@@ -133,7 +125,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 		}
 
 		if (toUnclaim.isEmpty()) {
-			Messages.send(player, 190);
+			Messages.send(player, "commands.op_unclaim.5");
 			return true;
 		}
 
@@ -143,11 +135,7 @@ public class UnclaimSubCmd extends SubCommandBuilder {
 			if (err == null) success++;
 		}
 
-		Messages.send(player, 191, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{chunks}", success)
-				.add("{total}", toUnclaim.size())
-		);
+		Messages.send(player, "commands.op_unclaim.6");
 
 		return true;
 	}

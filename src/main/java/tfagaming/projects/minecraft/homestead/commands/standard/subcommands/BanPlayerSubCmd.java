@@ -36,7 +36,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.players.ban"
 		));
-		setUsage("/region ban [player] (reason)");
+		setUsage("/hs ban [player] (reason)");
 		setPlayerOnly();
 	}
 
@@ -46,20 +46,20 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "ban.0", getUsage());
+			Messages.send(player, "commands.ban.0", getUsage());
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "ban.1");
+			Messages.send(player, "commands.ban.1");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.BAN_PLAYERS)) {
-			reply(player, "ban.2");
+			Messages.send(player, "commands.ban.2");
 			return true;
 		}
 
@@ -68,26 +68,26 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			reply(player, "ban.3", targetName);
+			Messages.send(player, "commands.ban.3", targetName);
 			return true;
 		}
 
-		if (region.isOwner(target)) {
-			reply(player, "ban.4");
+		if (region.isOwner(target) || player.getUniqueId().equals(target.getUniqueId())) {
+			Messages.send(player, "commands.ban.4");
 			return true;
 		}
 
 		RegionBan ban = BanManager.getBannedPlayer(region, target);
 
 		if (ban != null) {
-			reply(player, "ban.5", targetName, ban.getReason());
+			Messages.send(player, "commands.ban.5", targetName, ban.getReason());
 			return true;
 		}
 
 		SeRent rent = region.getRent();
 
 		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
-			reply(player, "ban.6");
+			Messages.send(player, "commands.ban.6");
 			return true;
 		}
 
@@ -99,7 +99,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		}
 
 		if (ColorTranslator.containsMiniMessageTag(reason)) {
-			reply(player, "ban.7");
+			Messages.send(player, "commands.ban.7");
 			return true;
 		}
 
@@ -116,7 +116,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		BanManager.banPlayer(region, target, reason);
 		LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, target.getName());
 
-		reply(player, "ban.8", targetName, region.getName(), reason);
+		Messages.send(player, "commands.ban.8", targetName, region.getName(), reason);
 
 		Homestead.callEvent(new BanPlayerEvent(region, target, reason));
 

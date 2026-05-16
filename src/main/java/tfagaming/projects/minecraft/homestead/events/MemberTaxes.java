@@ -57,8 +57,7 @@ public final class MemberTaxes {
 									.add("{region}", region.getName())
 									.add("{balance}", Formatter.getBalance(PlayerBank.get(targetPlayer)));
 
-							Messages.send(targetPlayerOnline, 106, placeholder);
-							Messages.send(targetPlayerOnline, 107, placeholder);
+							Messages.send(targetPlayerOnline, "common.member_tax_success", placeholder);
 						}
 					} else {
 						MemberManager.removeMemberFromRegion(targetPlayer, region);
@@ -66,9 +65,7 @@ public final class MemberTaxes {
 						if (targetPlayer.isOnline()) {
 							Player targetPlayerOnline = (Player) targetPlayer;
 
-							Messages.send(targetPlayerOnline, 108, new Placeholder()
-									.add("{region}", region.getName())
-							);
+							Messages.send(targetPlayerOnline, "common.member_tax_error_cannot_pay", region.getName());
 						}
 
 						LogManager.addLog(region, null, LogManager.PredefinedLog.UNTRUST_PLAYER, targetPlayer.getName());

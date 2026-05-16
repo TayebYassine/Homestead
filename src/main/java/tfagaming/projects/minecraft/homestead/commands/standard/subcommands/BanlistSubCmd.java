@@ -18,7 +18,7 @@ public class BanlistSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region banlist");
+		setUsage("/hs banlist");
 		setPlayerOnly();
 	}
 
@@ -30,7 +30,7 @@ public class BanlistSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "banlist.0");
+			Messages.send(player, "commands.banlist.0");
 			return true;
 		}
 
@@ -39,7 +39,7 @@ public class BanlistSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		reply(player, "banlist.1", region.getName(), BanManager.getBanCount(region));
+		Messages.send(player, "commands.banlist.1", region.getName(), BanManager.getBanCount(region));
 
 		return true;
 	}

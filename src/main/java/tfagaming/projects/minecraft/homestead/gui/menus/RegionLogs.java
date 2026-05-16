@@ -51,12 +51,14 @@ public final class RegionLogs {
 			}
 
 			if (LogManager.getLogs(region).isEmpty()) {
-				Messages.send(player, 91);
+				Messages.send(player, "commands.logs.1");
 				return;
 			}
 
 			LogManager.markAllAsRead(region);
-			Messages.send(player, 92);
+
+
+
 			Homestead.getInstance().runSyncTask(() -> new RegionLogs(player, region));
 		};
 	}
@@ -66,12 +68,12 @@ public final class RegionLogs {
 			if (!event.isLeftClick()) return;
 
 			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-				Messages.send(player, 159);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
 			if (LogManager.getLogs(region).isEmpty()) {
-				Messages.send(player, 83);
+				Messages.send(player, "commands.logs.1");
 				return;
 			}
 
@@ -83,7 +85,7 @@ public final class RegionLogs {
 			LogManager.deleteLogsOfRegion(region);
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-			Messages.send(player, 93);
+
 			Homestead.getInstance().runSyncTask(() -> new RegionLogs(player, region));
 		};
 	}
@@ -112,7 +114,7 @@ public final class RegionLogs {
 
 	private void handleDeleteLog(Player player, Region region, RegionLog log, PaginationMenu.ClickContext context) {
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			Messages.send(player, 159);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 

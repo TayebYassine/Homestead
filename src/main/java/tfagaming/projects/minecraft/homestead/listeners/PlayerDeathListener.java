@@ -61,7 +61,7 @@ public final class PlayerDeathListener implements Listener {
 
 			WarManager.endWar(war.getUniqueId());
 
-			Messages.send(victim, 163);
+			Messages.send(victim, "common.war_player_death");
 
 			boolean keepInventory = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("wars.keep-inventory");
 
@@ -99,7 +99,7 @@ public final class PlayerDeathListener implements Listener {
 		Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
 
 		if (owner != null) {
-			Messages.send(owner, 155);
+			Messages.send(owner, "common.war_player_winner");
 		}
 	}
 

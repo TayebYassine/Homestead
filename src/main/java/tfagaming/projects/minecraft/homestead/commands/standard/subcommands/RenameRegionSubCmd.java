@@ -27,7 +27,7 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.update.name"
 		));
-		setUsage("/region rename [new-name]");
+		setUsage("/hs rename [new-name]");
 		setPlayerOnly();
 	}
 
@@ -37,7 +37,7 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "rename.0");
+			Messages.send(player, "commands.rename.0");
 			return true;
 		}
 
@@ -49,35 +49,35 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "rename.1");
+			Messages.send(player, "commands.rename.1");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.RENAME_REGION)) {
-			reply(player, "rename.2");
+			Messages.send(player, "commands.rename.2");
 			return true;
 		}
 
 		String regionName = args[0];
 
 		if (!StringUtils.isValidRegionName(regionName)) {
-			reply(player, "rename.3");
+			Messages.send(player, "commands.rename.3");
 			return true;
 		}
 
 		if (regionName.equalsIgnoreCase(region.getName())) {
-			reply(player, "rename.4");
+			Messages.send(player, "commands.rename.4");
 			return true;
 		}
 
 		if (RegionManager.isNameUsed(regionName)) {
-			reply(player, "rename.5");
+			Messages.send(player, "commands.rename.5");
 			return true;
 		}
 
 		if (ColorTranslator.containsMiniMessageTag(regionName)) {
-			reply(player, "rename.6");
+			Messages.send(player, "commands.rename.6");
 			return true;
 		}
 
@@ -87,7 +87,7 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 
 		RegionManager.renameRegion(region, regionName);
 
-		reply(player, "rename.7", oldName, regionName);
+		Messages.send(player, "commands.rename.7", oldName, regionName);
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_NAME, regionName);
 

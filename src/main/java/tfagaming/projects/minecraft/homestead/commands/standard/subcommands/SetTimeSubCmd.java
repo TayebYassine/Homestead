@@ -22,7 +22,7 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.update.time"
 		));
-		setUsage("/region settime [time]");
+		setUsage("/hs settime [time]");
 		setPlayerOnly();
 	}
 
@@ -34,12 +34,12 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "settime.0");
+			Messages.send(player, "commands.settime.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			reply(player, "settime.1");
+			Messages.send(player, "commands.settime.1");
 			return true;
 		}
 
@@ -47,7 +47,7 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 		int time = RegionTime.parse(timeInput);
 
 		if (time == -1) {
-			reply(player, "settime.2");
+			Messages.send(player, "commands.settime.2");
 			return true;
 		}
 
@@ -55,7 +55,7 @@ public class SetTimeSubCmd extends SubCommandBuilder {
 
 		region.setTime(newTime);
 
-		reply(player, "settime.3", timeInput);
+		Messages.send(player, "commands.settime.3", timeInput);
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME, RegionTime.from(newTime));
 

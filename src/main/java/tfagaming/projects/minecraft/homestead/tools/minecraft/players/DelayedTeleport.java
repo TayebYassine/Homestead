@@ -55,7 +55,7 @@ public final class DelayedTeleport {
 			return;
 		}
 
-		Messages.send(player, 53);
+		Messages.send(player, "common.teleport_started");
 
 		int delay = Resources.<RegionsFile>get(ResourceType.Regions).getInt("delayed-teleport.delay");
 
@@ -73,9 +73,7 @@ public final class DelayedTeleport {
 
 			double price = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("delayed-teleport.price");
 			if (price > 0 && PlayerBank.get(player) < price) {
-				Messages.send(player, 203, new Placeholder()
-						.add("{price}", Formatter.getBalance(price))
-				);
+				Messages.send(player, "common.teleport_error_cannot_pay", Formatter.getBalance(price));
 				return;
 			}
 
@@ -180,7 +178,7 @@ public final class DelayedTeleport {
 		removeBossBar(playerId);
 
 		if (location == null) {
-			Messages.send(player, 52);
+			Messages.send(player, "common.teleport_error.null");
 			return;
 		}
 
@@ -190,8 +188,6 @@ public final class DelayedTeleport {
 
 		PlayerSound.play(player, PlayerSound.PredefinedSound.TELEPORT);
 
-		Messages.send(player, 51, new Placeholder()
-				.add("{location}", Formatter.getLocation(location))
-		);
+		Messages.send(player, "common.teleport_success", Formatter.getLocation(location));
 	}
 }

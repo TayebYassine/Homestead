@@ -17,7 +17,7 @@ public class HelpSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region help");
+		setUsage("/hs help");
 		setPlayerOnly();
 	}
 

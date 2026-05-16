@@ -22,7 +22,7 @@ public class BalanceSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region balance (region)");
+		setUsage("/hs balance (region)");
 		setPlayerOnly();
 	}
 
@@ -32,7 +32,7 @@ public class BalanceSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (!Homestead.VAULT.isEconomyReady()) {
-			reply(player, "balance.0");
+			Messages.send(player, "commands.balance.0");
 
 			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
@@ -47,19 +47,19 @@ public class BalanceSubCmd extends SubCommandBuilder {
 			region = RegionManager.findRegion(regionName);
 
 			if (region == null) {
-				reply(player, "balance.1", regionName);
+				Messages.send(player, "commands.balance.1", regionName);
 				return true;
 			}
 		} else {
 			region = TargetRegionSession.getRegion(player);
 
 			if (region == null) {
-				reply(player, "balance.2");
+				Messages.send(player, "commands.balance.2");
 				return true;
 			}
 		}
 
-		reply(player, "balance.3", region.getName(), Formatter.getBalance(region.getBank()));
+		Messages.send(player, "commands.balance.3", region.getName(), Formatter.getBalance(region.getBank()));
 
 		return true;
 	}

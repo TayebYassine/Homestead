@@ -27,7 +27,7 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.update.description"
 		));
-		setUsage("/region setdescription [description]");
+		setUsage("/hs setdescription [description]");
 		setPlayerOnly();
 	}
 
@@ -39,12 +39,12 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "setdescription.0");
+			Messages.send(player, "commands.setdescription.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			reply(player, "setdescription.1");
+			Messages.send(player, "commands.setdescription.1");
 			return true;
 		}
 
@@ -58,22 +58,22 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.SET_DESCRIPTION)) {
-			reply(player, "setdescription.2");
+			Messages.send(player, "commands.setdescription.2");
 			return true;
 		}
 
 		if (!StringUtils.isValidRegionDescription(description)) {
-			reply(player, "setdescription.3");
+			Messages.send(player, "commands.setdescription.3");
 			return true;
 		}
 
 		if (region.getDescription() != null && region.getDescription().equals(description)) {
-			reply(player, "setdescription.4");
+			Messages.send(player, "commands.setdescription.4");
 			return true;
 		}
 
 		if (ColorTranslator.containsMiniMessageTag(description)) {
-			reply(player, "setdescription.5");
+			Messages.send(player, "commands.setdescription.5");
 			return true;
 		}
 
@@ -83,7 +83,7 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 
 		region.setDescription(description);
 
-		reply(player, "setdescription.6");
+		Messages.send(player, "commands.setdescription.6");
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DESCRIPTION, description);
 

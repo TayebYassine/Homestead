@@ -30,16 +30,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * and near the Exit Portal, and the last location's block is {@code END_PORTAL} ({@link Material}), it will teleport them
  * back to their region spawn (depending on the server settings).
  */
-public class PlayerEnterEndExitPortalListener implements Listener {
+public final class PlayerEnterEndExitPortalListener implements Listener {
 
-	private static final Map<UUID, Location> lastLocations = new ConcurrentHashMap<>();
+	private static final Map<UUID, Location> LAST_LOCATIONS = new ConcurrentHashMap<>();
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
 
 		if (player.getWorld().getEnvironment() != World.Environment.THE_END) {
-			lastLocations.remove(player.getUniqueId());
+			LAST_LOCATIONS.remove(player.getUniqueId());
 			return;
 		}
 
@@ -47,9 +47,9 @@ public class PlayerEnterEndExitPortalListener implements Listener {
 
 		double distanceSquared = loc.getX() * loc.getX() + loc.getZ() * loc.getZ();
 		if (distanceSquared <= 64.0) {
-			lastLocations.put(player.getUniqueId(), loc.clone());
+			LAST_LOCATIONS.put(player.getUniqueId(), loc.clone());
 		} else {
-			lastLocations.remove(player.getUniqueId());
+			LAST_LOCATIONS.remove(player.getUniqueId());
 		}
 	}
 
@@ -61,7 +61,7 @@ public class PlayerEnterEndExitPortalListener implements Listener {
 			return;
 		}
 
-		Location lastLoc = lastLocations.remove(player.getUniqueId());
+		Location lastLoc = LAST_LOCATIONS.remove(player.getUniqueId());
 
 		if (lastLoc == null) {
 			return;
@@ -91,6 +91,6 @@ public class PlayerEnterEndExitPortalListener implements Listener {
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		lastLocations.remove(event.getPlayer().getUniqueId());
+		LAST_LOCATIONS.remove(event.getPlayer().getUniqueId());
 	}
 }

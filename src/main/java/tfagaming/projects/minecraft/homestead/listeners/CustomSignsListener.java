@@ -41,11 +41,11 @@ public final class CustomSignsListener implements Listener {
 
 	private final SignFormatter welcomeFormatter = (event, player, region) -> {
 		if (!isWelcomeSignsEnabled()) {
-			Messages.send(player, 105);
+			Messages.send(player, "signs.0");
 			return true;
 		}
 		if (hasContentInLines(event, 2, 3)) {
-			Messages.send(player, 121);
+			Messages.send(player, "signs.1");
 			return true;
 		}
 		formatSignLines(event,
@@ -58,7 +58,7 @@ public final class CustomSignsListener implements Listener {
 	};
 	private final SignFormatter rentFormatter = (event, player, region) -> {
 		if (!isFeatureEnabled("renting.enabled")) {
-			Messages.send(player, 105);
+			Messages.send(player, "signs.0");
 			return true;
 		}
 
@@ -67,7 +67,7 @@ public final class CustomSignsListener implements Listener {
 
 		long duration = parseDuration(getEventLine(event, 3));
 		if (duration <= 0 || duration > MAX_RENT_DURATION_MS) {
-			Messages.send(player, 129);
+			Messages.send(player, "signs.2");
 			return true;
 		}
 
@@ -81,7 +81,7 @@ public final class CustomSignsListener implements Listener {
 	};
 	private final SignFormatter sellFormatter = (event, player, region) -> {
 		if (!isFeatureEnabled("selling.enabled")) {
-			Messages.send(player, 105);
+			Messages.send(player, "signs.0");
 			return true;
 		}
 
@@ -89,7 +89,7 @@ public final class CustomSignsListener implements Listener {
 		if (price == null) return true;
 
 		if (hasContentInLines(event, 3)) {
-			Messages.send(player, 121);
+			Messages.send(player, "signs.1");
 			return true;
 		}
 
@@ -160,6 +160,8 @@ public final class CustomSignsListener implements Listener {
 
 		if (shouldBreak) {
 			event.getBlock().breakNaturally();
+		} else {
+			Messages.send(player, "signs.7");
 		}
 	}
 
@@ -177,7 +179,7 @@ public final class CustomSignsListener implements Listener {
 		Player player = event.getPlayer();
 
 		switch (type) {
-			case WELCOME -> Messages.send(player, 123);
+			case WELCOME -> Messages.send(player, "signs.3");
 			case RENT -> handleRentInteraction(player, sign, clickedBlock);
 			case SELL -> handleSellInteraction(player, sign, clickedBlock);
 		}
@@ -210,7 +212,7 @@ public final class CustomSignsListener implements Listener {
 			if (region == null || !canRent(player, region)) return;
 
 			if (price > PlayerBank.get(player)) {
-				Messages.send(player, 125);
+				Messages.send(player, "signs.4");
 				return;
 			}
 
@@ -222,7 +224,7 @@ public final class CustomSignsListener implements Listener {
 			signBlock.breakNaturally();
 
 		} catch (NumberFormatException e) {
-			Messages.send(player, 120);
+			Messages.send(player, "signs.5");
 		}
 	}
 
@@ -240,14 +242,14 @@ public final class CustomSignsListener implements Listener {
 			if (region == null || !canPurchase(player, region)) return;
 
 			if (price > PlayerBank.get(player)) {
-				Messages.send(player, 125);
+				Messages.send(player, "signs.6");
 				return;
 			}
 
 			executePurchase(player, region, price, signBlock);
 
 		} catch (NumberFormatException e) {
-			Messages.send(player, 120);
+			Messages.send(player, "signs.5");
 		}
 	}
 
@@ -256,17 +258,12 @@ public final class CustomSignsListener implements Listener {
 		PlayerBank.withdraw(player, price);
 		PlayerBank.deposit(region.getOwner(), price);
 
-		Placeholder placeholder = new Placeholder()
-				.add("{region}", region.getName())
-				.add("{rent-end}", Formatter.getRemainingTime(rentEnd));
-
 		if (subArea != null) {
 			subArea.setRent(rent);
-			placeholder.add("{subarea}", subArea.getName());
-			Messages.send(player, 194, placeholder);
+			Messages.send(player, "signs.9", Formatter.getRemainingTime(rentEnd));
 		} else {
 			region.setRent(rent);
-			Messages.send(player, 126, placeholder);
+			Messages.send(player, "signs.8", Formatter.getRemainingTime(rentEnd));
 		}
 	}
 
@@ -285,10 +282,7 @@ public final class CustomSignsListener implements Listener {
 		MemberManager.removeMemberFromRegion(region.getOwner(), region);
 		InviteManager.deleteInvitesOfPlayer(region, player);
 
-		Messages.send(player, 124, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{price}", Formatter.getBalance(price))
-		);
+		Messages.send(player, "signs.10");
 
 		Homestead.callEvent(new RegionOwnerUpdateEvent(region, oldOwner, player));
 	}
@@ -296,7 +290,7 @@ public final class CustomSignsListener implements Listener {
 	private Region validateOwnerRegion(Player player, Chunk chunk) {
 		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 		if (region == null || !region.isOwner(player)) {
-			Messages.send(player, 119);
+			Messages.send(player, "signs.11");
 			return null;
 		}
 		return region;
@@ -304,15 +298,15 @@ public final class CustomSignsListener implements Listener {
 
 	private boolean canRent(Player player, Region region) {
 		if (region == null) {
-			Messages.send(player, 9);
+			Messages.send(player, "signs.12");
 			return false;
 		}
 		if (WarManager.isRegionInWar(region.getUniqueId())) {
-			Messages.send(player, 156);
+			Messages.send(player, "signs.13");
 			return false;
 		}
 		if (region.isOwner(player) || MemberManager.isMemberOfRegion(region, player) || BanManager.isBanned(region, player) || region.getRent() != null) {
-			Messages.send(player, 30);
+			Messages.send(player, "signs.14");
 			return false;
 		}
 		return true;
@@ -320,20 +314,20 @@ public final class CustomSignsListener implements Listener {
 
 	private boolean canPurchase(Player player, Region region) {
 		if (region == null) {
-			Messages.send(player, 9);
+			Messages.send(player, "signs.12");
 			return false;
 		}
 		if (WarManager.isRegionInWar(region.getUniqueId())) {
-			Messages.send(player, 156);
+			Messages.send(player, "signs.13");
 			return false;
 		}
 		if (region.isOwner(player) || MemberManager.isMemberOfRegion(region, player) || BanManager.isBanned(region, player)) {
-			Messages.send(player, 30);
+			Messages.send(player, "signs.14");
 			return false;
 		}
 		SeRent rent = region.getRent();
 		if (rent != null && rent.getRenterId().equals(player.getUniqueId())) {
-			Messages.send(player, 30);
+			Messages.send(player, "signs.15");
 			return false;
 		}
 		return true;
@@ -343,7 +337,7 @@ public final class CustomSignsListener implements Listener {
 										  String minPath, String maxPath) {
 		String priceStr = getEventLine(event, 2).trim();
 		if (!NumberUtils.isValidDouble(priceStr)) {
-			Messages.send(player, 122);
+			Messages.send(player, "signs.13");
 			return null;
 		}
 
@@ -352,7 +346,7 @@ public final class CustomSignsListener implements Listener {
 		double max = getRegionsConfig().getDouble(maxPath);
 
 		if (price < min || price > max) {
-			Messages.send(player, 122);
+			Messages.send(player, "signs.5");
 			return null;
 		}
 		return new PriceValidation(price);

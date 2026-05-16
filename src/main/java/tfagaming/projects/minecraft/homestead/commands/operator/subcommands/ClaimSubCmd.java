@@ -32,9 +32,7 @@ public class ClaimSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 2) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			Messages.send(player, "commands.op_claim.0", getUsage());
 			return true;
 		}
 
@@ -42,7 +40,7 @@ public class ClaimSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			Messages.send(player, 9);
+			Messages.send(player, "commands.op_claim.1");
 			return true;
 		}
 
@@ -60,20 +58,18 @@ public class ClaimSubCmd extends SubCommandBuilder {
 				try {
 					radius = Integer.parseInt(args[2]);
 				} catch (NumberFormatException e) {
-					Messages.send(player, 185);
+					Messages.send(player, "commands.op_claim.2");
 					return true;
 				}
 
 				if (radius < 1 || radius > 20) {
-					Messages.send(player, 189);
+					Messages.send(player, "commands.op_claim.3");
 					return true;
 				}
 			}
 		} else {
 			if (args.length < 3) {
-				Messages.send(player, 0, new Placeholder()
-						.add("{usage}", getUsage())
-				);
+				Messages.send(player, "commands.op_claim.0", getUsage());
 				return true;
 			}
 
@@ -83,7 +79,7 @@ public class ClaimSubCmd extends SubCommandBuilder {
 				centreChunkX = Integer.parseInt(args[1]);
 				centreChunkZ = Integer.parseInt(args[2]);
 			} catch (NumberFormatException e) {
-				Messages.send(player, 184);
+				Messages.send(player, "commands.op_claim.2");
 				return true;
 			}
 
@@ -91,19 +87,19 @@ public class ClaimSubCmd extends SubCommandBuilder {
 				try {
 					radius = Integer.parseInt(args[3]);
 				} catch (NumberFormatException e) {
-					Messages.send(player, 185);
+					Messages.send(player, "commands.op_claim.2");
 					return true;
 				}
 
 				if (radius < 1 || radius > 20) {
-					Messages.send(player, 189);
+					Messages.send(player, "commands.op_claim.3");
 					return true;
 				}
 			}
 		}
 
 		if (world == null) {
-			Messages.send(player, 188);
+			Messages.send(player, "commands.op_claim.4");
 			return true;
 		}
 
@@ -128,7 +124,7 @@ public class ClaimSubCmd extends SubCommandBuilder {
 		}
 
 		if (toClaim.isEmpty()) {
-			Messages.send(player, 186);
+			Messages.send(player, "commands.op_claim.5");
 			return true;
 		}
 
@@ -138,11 +134,7 @@ public class ClaimSubCmd extends SubCommandBuilder {
 			if (err == null) success++;
 		}
 
-		Messages.send(player, 187, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{chunks}", success)
-				.add("{total}", toClaim.size())
-		);
+		Messages.send(player, "commands.op_claim.6");
 
 		return true;
 	}

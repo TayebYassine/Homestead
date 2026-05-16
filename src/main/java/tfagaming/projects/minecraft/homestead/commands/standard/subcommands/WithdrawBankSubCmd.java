@@ -28,7 +28,7 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.withdraw_bank"
 		));
-		setUsage("/region withdraw [amount/all]");
+		setUsage("/hs withdraw [amount/all]");
 		setPlayerOnly();
 	}
 
@@ -38,12 +38,12 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "withdraw.0");
+			Messages.send(player, "commands.withdraw.0");
 			return true;
 		}
 
 		if (!Homestead.VAULT.isEconomyReady()) {
-			reply(player, "withdraw.1");
+			Messages.send(player, "commands.withdraw.1");
 
 			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
@@ -53,18 +53,18 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "withdraw.2");
+			Messages.send(player, "commands.withdraw.2");
 			return true;
 		}
 
 		if (WarManager.isRegionInWar(region)) {
-			reply(player, "withdraw.3");
+			Messages.send(player, "commands.withdraw.3");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.WITHDRAW_MONEY)) {
-			reply(player, "withdraw.4");
+			Messages.send(player, "commands.withdraw.4");
 			return true;
 		}
 
@@ -72,7 +72,7 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 
 		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput))
 				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > Integer.MAX_VALUE)) {
-			reply(player, "withdraw.5");
+			Messages.send(player, "commands.withdraw.5");
 			return true;
 		}
 
@@ -80,19 +80,19 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 				: Double.parseDouble(amountInput);
 
 		if (amount <= 0) {
-			reply(player, "withdraw.6");
+			Messages.send(player, "commands.withdraw.6");
 			return true;
 		}
 
 		if (amount > region.getBank()) {
-			reply(player, "withdraw.7");
+			Messages.send(player, "commands.withdraw.7");
 			return true;
 		}
 
 		PlayerBank.deposit(player, amount);
 		region.withdrawBank(amount);
 
-		reply(player, "withdraw.8", Formatter.getBalance(amount), region.getName());
+		Messages.send(player, "commands.withdraw.8", Formatter.getBalance(amount), region.getName());
 
 		Homestead.callEvent(new BankWithdrawEvent(region, amount));
 

@@ -37,7 +37,7 @@ public final class DelayedTeleportListener implements Listener {
 
 		if (fromX != toX || fromZ != toZ) {
 			DelayedTeleport.cancelTeleport(player.getUniqueId());
-			Messages.send(player, 201);
+			Messages.send(player, "common.teleport_error_player_moved");
 		}
 	}
 

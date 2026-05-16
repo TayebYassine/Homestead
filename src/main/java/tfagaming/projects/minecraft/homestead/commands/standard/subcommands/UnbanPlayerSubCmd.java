@@ -27,7 +27,7 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.players.unban"
 		));
-		setUsage("/region unban [player]");
+		setUsage("/hs unban [player]");
 		setPlayerOnly();
 	}
 
@@ -37,14 +37,14 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "unban.0");
+			Messages.send(player, "commands.unban.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "unban.1");
+			Messages.send(player, "commands.unban.1");
 			return true;
 		}
 
@@ -58,18 +58,18 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			reply(player, "unban.2");
+			Messages.send(player, "commands.unban.2");
 			return true;
 		}
 
 		if (!BanManager.isBanned(region, target)) {
-			reply(player, "unban.3");
+			Messages.send(player, "commands.unban.3");
 			return true;
 		}
 
 		BanManager.unbanPlayer(region, target);
 
-		reply(player, "unban.4");
+		Messages.send(player, "commands.unban.4");
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, target.getName());
 

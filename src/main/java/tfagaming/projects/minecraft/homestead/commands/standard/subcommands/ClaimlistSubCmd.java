@@ -17,7 +17,7 @@ public class ClaimlistSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region claimlist");
+		setUsage("/hs claimlist");
 		setPlayerOnly();
 	}
 
@@ -29,7 +29,7 @@ public class ClaimlistSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "claimlist.0");
+			Messages.send(player, "commands.claimlist.0");
 			return true;
 		}
 

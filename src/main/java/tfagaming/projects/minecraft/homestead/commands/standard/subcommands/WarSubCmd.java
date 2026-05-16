@@ -35,7 +35,7 @@ public class WarSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.war"
 		));
-		setUsage("/region war [action] (params)");
+		setUsage("/hs war [action] (params)");
 		setPlayerOnly();
 	}
 
@@ -47,19 +47,17 @@ public class WarSubCmd extends SubCommandBuilder {
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("wars.enabled");
 
 		if (!isEnabled) {
-			Messages.send(player, 105);
+			Messages.send(player, "commands.war.1");
 			return true;
 		}
 
 		if (args.length < 1) {
-			Messages.send(player, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			Messages.send(player, "commands.war.2", getUsage());
 			return true;
 		}
 
 		if (!Homestead.VAULT.isEconomyReady()) {
-			Messages.send(player, 69);
+			Messages.send(player, "commands.war.3");
 
 			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
@@ -70,20 +68,18 @@ public class WarSubCmd extends SubCommandBuilder {
 			case "declare": {
 				Region region = TargetRegionSession.getRegion(player);
 
-				if (region != null && WarManager.isRegionInWar(region.getUniqueId())) {
-					Messages.send(player, 151);
+				if (region == null) {
+					Messages.send(player, "commands.war.4");
+					return true;
+				}
+
+				if (WarManager.isRegionInWar(region.getUniqueId())) {
+					Messages.send(player, "commands.war.5");
 					return true;
 				}
 
 				if (args.length < 4) {
-					Messages.send(player, 0, new Placeholder()
-							.add("{usage}", getUsage())
-					);
-					return true;
-				}
-
-				if (region == null) {
-					Messages.send(player, 4);
+					Messages.send(player, "commands.war.2", "/hs war declare [target] [prize] (war name)");
 					return true;
 				}
 
@@ -91,27 +87,27 @@ public class WarSubCmd extends SubCommandBuilder {
 				Region targetRegion = RegionManager.findRegion(targetRegionName);
 
 				if (targetRegion == null) {
-					Messages.send(player, 9);
+					Messages.send(player, "commands.war.6");
 					return true;
 				}
 
 				if (!region.isOwner(player) && MemberManager.isMemberOfRegion(region, player)) {
-					Messages.send(player, 149);
+					Messages.send(player, "commands.war.7");
 					return true;
 				}
 
 				if (region.getUniqueId() == targetRegion.getUniqueId() || region.isOwner(targetRegion.getOwnerId())) {
-					Messages.send(player, 148);
+					Messages.send(player, "commands.war.8");
 					return true;
 				}
 
 				if (!(region.isWorldFlagSet(WorldFlags.WARS) && targetRegion.isWorldFlagSet(WorldFlags.WARS))) {
-					Messages.send(player, 164);
+					Messages.send(player, "commands.war.9");
 					return true;
 				}
 
 				if (WarManager.isRegionInWar(targetRegion.getUniqueId())) {
-					Messages.send(player, 150);
+					Messages.send(player, "commands.war.10");
 					return true;
 				}
 
@@ -119,7 +115,7 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				if ((!NumberUtils.isValidDouble(prizeInput))
 						|| (NumberUtils.isValidDouble(prizeInput) && Double.parseDouble(prizeInput) > Integer.MAX_VALUE)) {
-					Messages.send(player, 146);
+					Messages.send(player, "commands.war.11");
 					return true;
 				}
 
@@ -129,12 +125,12 @@ public class WarSubCmd extends SubCommandBuilder {
 				double maxPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.max-prize");
 
 				if (prize < minPrize || prize > maxPrize) {
-					Messages.send(player, 160);
+					Messages.send(player, "commands.war.12", Formatter.getBalance(minPrize), Formatter.getBalance(maxPrize));
 					return true;
 				}
 
 				if (!(targetRegion.getBank() >= prize && region.getBank() >= prize)) {
-					Messages.send(player, 157);
+					Messages.send(player, "commands.war.13");
 					return true;
 				}
 
@@ -143,13 +139,13 @@ public class WarSubCmd extends SubCommandBuilder {
 
 				if (name.isEmpty()) name = "War";
 
-				if (name.length() > 512) {
-					Messages.send(player, 145);
+				if (name.length() > 128) {
+					Messages.send(player, "commands.war.14");
 					return true;
 				}
 
 				if (ColorTranslator.containsMiniMessageTag(name)) {
-					Messages.send(player, 30);
+					Messages.send(player, "commands.war.14");
 					return true;
 				}
 
@@ -164,12 +160,12 @@ public class WarSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					Messages.send(player, 4);
+					Messages.send(player, "commands.war.4");
 					return true;
 				}
 
 				if (!WarManager.isRegionInWar(region.getUniqueId())) {
-					Messages.send(player, 152);
+					Messages.send(player, "commands.war.15");
 					return true;
 				}
 
@@ -192,7 +188,7 @@ public class WarSubCmd extends SubCommandBuilder {
 						Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
 
 						if (owner != null) {
-							Messages.send(owner, 155);
+							Messages.send(owner, "common.war_player_winner");
 
 							Cooldown.startCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED);
 						}
@@ -210,7 +206,7 @@ public class WarSubCmd extends SubCommandBuilder {
 					WarManager.endWar(war.getUniqueId());
 				}
 
-				Messages.send(player, 153);
+				Messages.send(player, "commands.war.16");
 
 				break;
 			}
@@ -219,21 +215,18 @@ public class WarSubCmd extends SubCommandBuilder {
 				Region region = TargetRegionSession.getRegion(player);
 
 				if (region == null) {
-					Messages.send(player, 4);
+					Messages.send(player, "commands.war.4");
 					return true;
 				}
 
 				War war = WarManager.findWarByRegion(region.getUniqueId());
 
-				if (!WarManager.isRegionInWar(region.getUniqueId()) || war == null) {
-					Messages.send(player, 152);
+				if (war == null) {
+					Messages.send(player, "commands.war.15");
 					return true;
 				}
 
-				Messages.send(player, 154, new Placeholder()
-						.add("{regions}", Formatter.getRegionsOfWar(war))
-						.add("{prize}", Formatter.getBalance(war.getPrize()))
-				);
+				Messages.send(player, "commands.war.17", Formatter.getRegionsOfWar(war), Formatter.getBalance(war.getPrize()));
 			}
 		}
 

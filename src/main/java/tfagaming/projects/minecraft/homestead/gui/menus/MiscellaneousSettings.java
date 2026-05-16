@@ -68,7 +68,7 @@ public final class MiscellaneousSettings {
 			if (onCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) return;
 
 			if (!player.hasPermission("homestead.actions.regions.update.name")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -104,7 +104,7 @@ public final class MiscellaneousSettings {
 			if (onCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) return;
 
 			if (!player.hasPermission("homestead.actions.regions.update.displayname")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -140,7 +140,7 @@ public final class MiscellaneousSettings {
 			if (onCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE)) return;
 
 			if (!player.hasPermission("homestead.actions.regions.update.description")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -176,7 +176,7 @@ public final class MiscellaneousSettings {
 			if (onCooldown(player, Cooldown.Type.REGION_SPAWN_CHANGE)) return;
 
 			if (!player.hasPermission("homestead.actions.regions.update.spawn")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -187,7 +187,7 @@ public final class MiscellaneousSettings {
 			Chunk chunk = location.getChunk();
 
 			if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
-				Messages.send(player, 142);
+				Messages.send(player, "commands.setspawn.2");
 				return;
 			}
 
@@ -196,11 +196,6 @@ public final class MiscellaneousSettings {
 			final Location oldLocation = region.getLocation() == null ? null : region.getLocation().toBukkit();
 
 			region.setLocation(location);
-
-			Messages.send(player, 72, new Placeholder()
-					.add("{region}", region.getName())
-					.add("{location}", Formatter.getLocation(location))
-			);
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_SPAWN);
 
@@ -220,7 +215,7 @@ public final class MiscellaneousSettings {
 			if (onCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP)) return;
 
 			if (!player.hasPermission("homestead.actions.regions.change_owner")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -261,13 +256,13 @@ public final class MiscellaneousSettings {
 				return;
 			}
 			if (!PlayerUtility.isOperator(_player) && !region.isOwner(_player)) {
-				Messages.send(_player, 159);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
 			if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
-				Messages.send(player, 105);
+				Messages.send(player, "commands.setmapcolor.1");
 				return;
 			}
 
@@ -275,7 +270,7 @@ public final class MiscellaneousSettings {
 				new MapColorMenu(player, region);
 			} else if (event.isLeftClick()) {
 				if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
-					Messages.send(player, 105);
+					Messages.send(player, "commands.setmapicon.1");
 					return;
 				}
 
@@ -293,8 +288,8 @@ public final class MiscellaneousSettings {
 			if (!(event.isRightClick() && event.isShiftClick())) return;
 
 			if (!PlayerUtility.isOperator(_player) && !region.isOwner(_player)) {
-				Messages.send(_player, 159);
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -312,9 +307,6 @@ public final class MiscellaneousSettings {
 				RegionManager.deleteRegion(region.getUniqueId(), player);
 				PlayerBank.deposit(region.getOwner(), amountToGive);
 
-				Messages.send(player, 6, new Placeholder()
-						.add("{region}", region.getDisplayName())
-						.add("{region-bank}", Formatter.getBalance(amountToGive)));
 				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
 				TargetRegionSession.randomizeRegion(player);
@@ -328,7 +320,6 @@ public final class MiscellaneousSettings {
 
 			DELETE_CONFIRM_REGION.put(pid, region.getUniqueId());
 			DELETE_CONFIRM_TIME.put(pid, now);
-			Messages.send(player, 158);
 		};
 	}
 
@@ -343,19 +334,19 @@ public final class MiscellaneousSettings {
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION))
 			return false;
 		if (!StringUtils.isValidRegionName(message)) {
-			Messages.send(player, 1);
+			Messages.send(player, "commands.rename.3");
 			return false;
 		}
 		if (message.equalsIgnoreCase(region.getName())) {
-			Messages.send(player, 11);
+			Messages.send(player, "commands.rename.4");
 			return false;
 		}
 		if (RegionManager.isNameUsed(message)) {
-			Messages.send(player, 2);
+			Messages.send(player, "commands.rename.5");
 			return false;
 		}
 		if (ColorTranslator.containsMiniMessageTag(message)) {
-			Messages.send(player, 30);
+			Messages.send(player, "commands.rename.6");
 			return false;
 		}
 		return true;
@@ -365,15 +356,15 @@ public final class MiscellaneousSettings {
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION))
 			return false;
 		if (!StringUtils.isValidRegionDisplayName(message)) {
-			Messages.send(player, 14);
+			Messages.send(player, "commands.setdisplayname.3");
 			return false;
 		}
-		if (region.getDisplayName().equals(message)) {
-			Messages.send(player, 11);
+		if (region.getDisplayName() != null && region.getDisplayName().equals(message)) {
+			Messages.send(player, "commands.setdisplayname.4");
 			return false;
 		}
 		if (ColorTranslator.containsMiniMessageTag(message)) {
-			Messages.send(player, 30);
+			Messages.send(player, "commands.setdisplayname.5");
 			return false;
 		}
 		return true;
@@ -383,36 +374,38 @@ public final class MiscellaneousSettings {
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_DESCRIPTION))
 			return false;
 		if (!StringUtils.isValidRegionDescription(message)) {
-			Messages.send(player, 16);
+			Messages.send(player, "commands.setdescription.3");
 			return false;
 		}
 		if (region.getDescription() != null && region.getDescription().equals(message)) {
-			Messages.send(player, 11);
+			Messages.send(player, "commands.setdescription.4");
 			return false;
 		}
 		if (ColorTranslator.containsMiniMessageTag(message)) {
-			Messages.send(player, 30);
+			Messages.send(player, "commands.setdescription.5");
 			return false;
 		}
 		return true;
 	}
 
 	private static boolean validateTransferOwnership(Player player, Region region, String message) {
+		// TODO fix this
+
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 		if (target == null) {
-			Messages.send(player, 29, new Placeholder().add("{playername}", message));
+			//Messages.send(player, 29, new Placeholder().add("{playername}", message));
 			return false;
 		}
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			Messages.send(player, 30);
+			//Messages.send(player, 30);
 			return false;
 		}
 		if (BanManager.isBanned(region, target)) {
-			Messages.send(player, 32, new Placeholder().add("{playername}", target.getName()));
+			//Messages.send(player, 32, new Placeholder().add("{playername}", target.getName()));
 			return false;
 		}
 		if (region.isOwner(target)) {
-			Messages.send(player, 30);
+			//Messages.send(player, 30);
 			return false;
 		}
 		return true;

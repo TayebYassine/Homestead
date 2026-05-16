@@ -28,7 +28,7 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.update.spawn"
 		));
-		setUsage("/region setspawn");
+		setUsage("/hs setspawn");
 		setPlayerOnly();
 	}
 
@@ -40,7 +40,7 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "setspawn.0");
+			Messages.send(player, "commands.setspawn.0");
 			return true;
 		}
 
@@ -51,7 +51,7 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.SET_SPAWN)) {
-			reply(player, "setspawn.1");
+			Messages.send(player, "commands.setspawn.1");
 			return true;
 		}
 
@@ -60,7 +60,7 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
-			reply(player, "setspawn.2", region.getName());
+			Messages.send(player, "commands.setspawn.2", region.getName());
 			return true;
 		}
 
@@ -70,7 +70,7 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 
 		region.setLocation(location);
 
-		reply(player, "setspawn.3");
+		Messages.send(player, "commands.setspawn.3");
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_SPAWN);
 

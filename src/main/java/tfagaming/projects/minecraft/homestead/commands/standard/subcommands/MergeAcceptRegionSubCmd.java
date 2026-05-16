@@ -20,7 +20,7 @@ public class MergeAcceptRegionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region mergeaccept");
+		setUsage("/hs mergeaccept");
 		setPlayerOnly();
 	}
 
@@ -32,30 +32,30 @@ public class MergeAcceptRegionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "mergeaccept.0");
+			Messages.send(player, "commands.mergeaccept.0");
 			return true;
 		}
 
 		if (!MergeRegionSession.isToHaveRequest(region)) {
-			reply(player, "mergeaccept.1");
+			Messages.send(player, "commands.mergeaccept.1");
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			reply(player, "mergeaccept.2");
+			Messages.send(player, "commands.mergeaccept.2");
 			return true;
 		}
 
 		Region from = RegionManager.findRegion(MergeRegionSession.getFrom(region));
 
 		if (from == null) {
-			reply(player, "mergeaccept.3");
+			Messages.send(player, "commands.mergeaccept.3");
 			return true;
 		}
 
 		RegionManager.mergeRegions(from, region);
 
-		reply(player, "mergeaccept.4");
+		Messages.send(player, "commands.mergeaccept.4");
 
 		return true;
 	}

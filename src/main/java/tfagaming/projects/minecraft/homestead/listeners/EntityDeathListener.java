@@ -81,7 +81,7 @@ public final class EntityDeathListener implements Listener {
 
 		long amount = LevelManager.addRandomXp(region.getUniqueId(), xpRange[0], xpRange[1]);
 
-		Messages.send(killer, 198, new Placeholder()
+		Messages.send(killer, "common.level_entity_kill", new Placeholder()
 				.add("{region}", region.getName())
 				.add("{entity}", getBeautifulName(entity))
 				.add("{xp}", NumberUtils.convertToBalance(amount))

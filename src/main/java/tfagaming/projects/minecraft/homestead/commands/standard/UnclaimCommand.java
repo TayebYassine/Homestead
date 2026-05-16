@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
@@ -48,14 +49,14 @@ public class UnclaimCommand extends CommandBuilder {
 		Chunk chunk = player.getLocation().getChunk();
 
 		if (ChunkManager.isChunkInDisabledWorld(chunk)) {
-			Messages.send(player, 20);
+			Messages.send(player, "commands.unclaim.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			Messages.send(player, "commands.unclaim.1");
 			return true;
 		}
 
@@ -63,18 +64,19 @@ public class UnclaimCommand extends CommandBuilder {
 				region.getUniqueId(),
 				player,
 				ControlFlags.UNCLAIM_CHUNKS)) {
+			Messages.send(player, "commands.unclaim.2");
 			return true;
 		}
 
 		Region regionOwnsThisChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 		if (regionOwnsThisChunk == null) {
-			Messages.send(player, 25);
+			Messages.send(player, "commands.unclaim.3");
 			return true;
 		}
 
 		if (regionOwnsThisChunk.getUniqueId() != region.getUniqueId()) {
-			Messages.send(player, 23);
+			Messages.send(player, "commands.unclaim.4", region.getName());
 			return true;
 		}
 
@@ -88,9 +90,7 @@ public class UnclaimCommand extends CommandBuilder {
 				PlayerBank.deposit(region.getOwner(), chunkPrice);
 			}
 
-			Messages.send(player, 24, new Placeholder()
-					.add("{region}", region.getName())
-			);
+			Messages.send(player, "commands.unclaim.5", region.getName(), Formatter.getBalance(chunkPrice));
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.UNCLAIM_CHUNK);
 
@@ -99,8 +99,8 @@ public class UnclaimCommand extends CommandBuilder {
 			Homestead.callEvent(new ChunkUnclaimEvent(region, chunk));
 		} else {
 			switch (error) {
-				case REGION_NOT_FOUND -> Messages.send(player, 9);
-				case CHUNK_WOULD_SPLIT_REGION -> Messages.send(player, 141);
+				case REGION_NOT_FOUND -> Messages.send(player, "commands.unclaim.6");
+				case CHUNK_WOULD_SPLIT_REGION -> Messages.send(player, "commands.unclaim.7");
 			}
 		}
 

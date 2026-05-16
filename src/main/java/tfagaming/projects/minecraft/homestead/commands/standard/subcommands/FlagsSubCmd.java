@@ -35,7 +35,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region flags [global/world/member] {member} [flag] (allow/deny)");
+		setUsage("/hs flags [global/world/member] {member} [flag] (allow/deny)");
 		setPlayerOnly();
 	}
 
@@ -45,14 +45,14 @@ public class FlagsSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "flags.0");
+			Messages.send(player, "commands.flags.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "flags.1");
+			Messages.send(player, "commands.flags.1");
 			return true;
 		}
 
@@ -61,18 +61,18 @@ public class FlagsSubCmd extends SubCommandBuilder {
 		switch (setType) {
 			case "member": {
 				if (!player.hasPermission("homestead.actions.regions.update.flags.members")) {
-					reply(player, "flags.2");
+					Messages.send(player, "commands.flags.2");
 					return true;
 				}
 
 				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						ControlFlags.SET_MEMBER_FLAGS)) {
-					reply(player, "flags.3");
+					Messages.send(player, "commands.flags.3");
 					return true;
 				}
 
 				if (args.length < 3) {
-					reply(player, "flags.4", getUsage());
+					Messages.send(player, "commands.flags.4", getUsage());
 					return true;
 				}
 
@@ -81,31 +81,31 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 				if (target == null) {
-					reply(player, "flags.5");
+					Messages.send(player, "commands.flags.5");
 					return true;
 				}
 
 				RegionMember member = MemberManager.getMemberOfRegion(region, target);
 
 				if (member == null) {
-					reply(player, "flags.6");
+					Messages.send(player, "commands.flags.6");
 					return true;
 				}
 
 				if (!PlayerUtility.isOperator(player) && !region.isOwner(player) && player.getUniqueId().equals(target.getUniqueId())) {
-					reply(player, "flags.7");
+					Messages.send(player, "commands.flags.7");
 					return true;
 				}
 
 				String flagInput = args[2];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {
-					reply(player, "flags.8");
+					Messages.send(player, "commands.flags.8");
 					return true;
 				}
 
 				if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagInput)) {
-					reply(player, "flags.9");
+					Messages.send(player, "commands.flags.9");
 					return true;
 				}
 
@@ -145,7 +145,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				member.setPlayerFlags(newFlags);
 
-				reply(player, "flags.10", flagInput, Formatter.getFlagState(!currentState), targetName, region.getName());
+				Messages.send(player, "commands.flags.10", flagInput, Formatter.getFlagState(!currentState), targetName, region.getName());
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, member.getPlayerName(), Formatter.getFlagState(!currentState));
 
@@ -153,13 +153,13 @@ public class FlagsSubCmd extends SubCommandBuilder {
 			}
 			case "global": {
 				if (!player.hasPermission("homestead.actions.regions.update.flags.global")) {
-					reply(player, "flags.2");
+					Messages.send(player, "commands.flags.2");
 					return true;
 				}
 
 				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						ControlFlags.SET_GLOBAL_FLAGS)) {
-					reply(player, "flags.3");
+					Messages.send(player, "commands.flags.3");
 					return true;
 				}
 
@@ -171,12 +171,12 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				String flagInput = args[1];
 
 				if (!PlayerFlags.getFlags().contains(flagInput)) {
-					reply(player, "flags.8");
+					Messages.send(player, "commands.flags.8");
 					return true;
 				}
 
 				if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagInput)) {
-					reply(player, "flags.9");
+					Messages.send(player, "commands.flags.9");
 					return true;
 				}
 
@@ -216,7 +216,7 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				region.setPlayerFlags(newFlags);
 
-				reply(player, "flags.11", flagInput, Formatter.getFlagState(!currentState), region.getName());
+				Messages.send(player, "commands.flags.11", flagInput, Formatter.getFlagState(!currentState), region.getName());
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, region.getName(), Formatter.getFlagState(!currentState));
 
@@ -224,13 +224,13 @@ public class FlagsSubCmd extends SubCommandBuilder {
 			}
 			case "world": {
 				if (!player.hasPermission("homestead.actions.regions.update.flags.world")) {
-					reply(player, "flags.2");
+					Messages.send(player, "commands.flags.2");
 					return true;
 				}
 
 				if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 						ControlFlags.SET_WORLD_FLAGS)) {
-					reply(player, "flags.3");
+					Messages.send(player, "commands.flags.3");
 					return true;
 				}
 
@@ -242,12 +242,12 @@ public class FlagsSubCmd extends SubCommandBuilder {
 				String flagInput = args[1];
 
 				if (!WorldFlags.getFlags().contains(flagInput)) {
-					reply(player, "flags.8");
+					Messages.send(player, "commands.flags.8");
 					return true;
 				}
 
 				if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagInput)) {
-					reply(player, "flags.9");
+					Messages.send(player, "commands.flags.9");
 					return true;
 				}
 
@@ -292,14 +292,14 @@ public class FlagsSubCmd extends SubCommandBuilder {
 
 				region.setWorldFlags(newFlags);
 
-				reply(player, "flags.12", flagInput, Formatter.getFlagState(!currentState), region.getName());
+				Messages.send(player, "commands.flags.12", flagInput, Formatter.getFlagState(!currentState), region.getName());
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, region.getName(), Formatter.getFlagState(!currentState));
 
 				break;
 			}
 			default: {
-				reply(player, "flags.4", getUsage());
+				Messages.send(player, "commands.flags.4", getUsage());
 				break;
 			}
 		}

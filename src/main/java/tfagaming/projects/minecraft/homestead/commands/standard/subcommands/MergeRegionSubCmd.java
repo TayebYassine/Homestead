@@ -22,7 +22,7 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region merge [region]");
+		setUsage("/hs merge [region]");
 		setPlayerOnly();
 	}
 
@@ -34,12 +34,12 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "merge.0");
+			Messages.send(player, "commands.merge.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			reply(player, "merge.1");
+			Messages.send(player, "commands.merge.1");
 			return true;
 		}
 
@@ -48,17 +48,17 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 		Region targetRegion = RegionManager.findRegion(regionName);
 
 		if (targetRegion == null) {
-			reply(player, "merge.2", regionName);
+			Messages.send(player, "commands.merge.2", regionName);
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			reply(player, "merge.3");
+			Messages.send(player, "commands.merge.3");
 			return true;
 		}
 
 		if (region.getUniqueId() == targetRegion.getUniqueId()) {
-			reply(player, "merge.4");
+			Messages.send(player, "commands.merge.4");
 			return true;
 		}
 
@@ -66,24 +66,24 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 		Player targetOwner = targetOfflineOwner != null && targetOfflineOwner.isOnline() ? targetOfflineOwner.getPlayer() : null;
 
 		if (targetOwner == null) {
-			reply(player, "merge.5");
+			Messages.send(player, "commands.merge.5");
 			return true;
 		}
 
 		if (MergeRegionSession.isFromHaveRequest(region)) {
-			reply(player, "merge.6");
+			Messages.send(player, "commands.merge.6");
 			return true;
 		}
 
 		if (MergeRegionSession.isToHaveRequest(targetRegion)) {
-			reply(player, "merge.6");
+			Messages.send(player, "commands.merge.6");
 			return true;
 		}
 
 		MergeRegionSession.newMergeRequest(region, targetRegion);
 
-		reply(player, "merge.7");
-		reply(targetOwner, "merge.8", player.getName(), region.getName());
+		Messages.send(player, "commands.merge.7");
+		Messages.send(targetOwner, "commands.merge.8", player.getName(), region.getName());
 
 		return true;
 	}

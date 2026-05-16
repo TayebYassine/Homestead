@@ -20,7 +20,7 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.rate"
 		));
-		setUsage("/region rate [region]");
+		setUsage("/hs rate [region]");
 		setPlayerOnly();
 	}
 
@@ -30,7 +30,7 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "rate.0");
+			Messages.send(player, "commands.rate.0");
 			return true;
 		}
 
@@ -39,7 +39,7 @@ public class RateRegionSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			reply(player, "rate.1", regionName);
+			Messages.send(player, "commands.rate.1", regionName);
 			return true;
 		}
 

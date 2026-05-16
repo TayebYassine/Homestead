@@ -28,7 +28,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.kick"
 		));
-		setUsage("/region kick [player]");
+		setUsage("/hs kick [player]");
 		setPlayerOnly();
 	}
 
@@ -38,20 +38,20 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "kick.0");
+			Messages.send(player, "commands.kick.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "kick.1");
+			Messages.send(player, "commands.kick.1");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.KICK_PLAYERS)) {
-			reply(player, "kick.2");
+			Messages.send(player, "commands.kick.2");
 			return true;
 		}
 
@@ -60,29 +60,29 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 		Player target = Bukkit.getPlayer(targetName);
 
 		if (target == null) {
-			reply(player, "kick.3");
+			Messages.send(player, "commands.kick.3");
 			return true;
 		}
 
 		if (BanManager.isBanned(region, target)) {
-			reply(player, "kick.4");
+			Messages.send(player, "commands.kick.4");
 			return true;
 		}
 
 		if (region.isOwner(target) || target.getUniqueId().equals(player.getUniqueId())) {
-			reply(player, "kick.5");
+			Messages.send(player, "commands.kick.5");
 			return true;
 		}
 
 		SeRent rent = region.getRent();
 
 		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
-			reply(player, "kick.6");
+			Messages.send(player, "commands.kick.6");
 			return true;
 		}
 
 		if (!RegionManager.isPlayerInsideRegion(target, region)) {
-			reply(player, "kick.7");
+			Messages.send(player, "commands.kick.7");
 			return true;
 		}
 
@@ -92,7 +92,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 			PlayerUtility.teleportPlayerToChunk(target, chunk);
 		}
 
-		reply(player, "kick.8", targetName);
+		Messages.send(player, "commands.kick.8", targetName);
 
 		return true;
 	}

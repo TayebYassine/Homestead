@@ -29,7 +29,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.teleport"
 		));
-		setUsage("/region visit [region/playername] (index)");
+		setUsage("/hs visit [region/playername] (index)");
 		setPlayerOnly();
 	}
 
@@ -50,14 +50,14 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 			if (target == null) {
-				reply(player, "visit.0");
+				Messages.send(player, "commands.visit.0");
 				return true;
 			}
 
 			String indexInput = args.length >= 2 ? args[1] : "0";
 
 			if (!NumberUtils.isValidInteger(indexInput)) {
-				reply(player, "visit.1");
+				Messages.send(player, "commands.visit.1");
 				return true;
 			}
 
@@ -73,19 +73,19 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			}
 
 			if (filteredRegions.isEmpty()) {
-				reply(player, "visit.2");
+				Messages.send(player, "commands.visit.2");
 				return true;
 			}
 
 			if (index < 0 || index > filteredRegions.size() - 1) {
-				reply(player, "visit.3");
+				Messages.send(player, "commands.visit.3");
 				return true;
 			}
 
 			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().toBukkit());
 		} else {
 			if (args.length < 1) {
-				reply(player, "visit.4");
+				Messages.send(player, "commands.visit.4");
 				return true;
 			}
 
@@ -94,12 +94,12 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			Region region = RegionManager.findRegion(regionName);
 
 			if (region == null) {
-				reply(player, "visit.5", regionName);
+				Messages.send(player, "commands.visit.5", regionName);
 				return true;
 			}
 
 			if (region.getLocation() == null) {
-				reply(player, "visit.6");
+				Messages.send(player, "commands.visit.6");
 				return true;
 			}
 
@@ -107,7 +107,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 					&& !region.isOwner(player)
 					&& !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
 					&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
-				reply(player, "visit.7");
+				Messages.send(player, "commands.visit.7");
 				return true;
 			}
 

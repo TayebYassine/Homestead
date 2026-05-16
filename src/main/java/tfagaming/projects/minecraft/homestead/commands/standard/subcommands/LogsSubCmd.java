@@ -17,7 +17,7 @@ public class LogsSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region logs");
+		setUsage("/hs logs");
 		setPlayerOnly();
 	}
 
@@ -29,7 +29,7 @@ public class LogsSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "logs.0");
+			Messages.send(player, "commands.logs.0");
 			return true;
 		}
 

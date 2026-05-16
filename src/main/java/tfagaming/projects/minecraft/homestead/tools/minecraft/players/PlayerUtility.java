@@ -254,7 +254,7 @@ public final class PlayerUtility {
 	}
 
 	private static void sendDenialMessage(Player player, Region region, long flag) {
-		Messages.send(player, 50, new Placeholder()
+		Messages.send(player, "common.no_flag_permission", new Placeholder()
 				.add("{flag}", PlayerFlags.from(flag))
 				.add("{region}", region.getName())
 		);
@@ -278,7 +278,7 @@ public final class PlayerUtility {
 			}
 
 			if (!response && !COOLDOWN.contains(player.getUniqueId())) {
-				Messages.send(player, 70, new Placeholder()
+				Messages.send(player, "common.no_flag_permission", new Placeholder()
 						.add("{flag}", ControlFlags.from(flag))
 						.add("{region}", region.getName())
 				);

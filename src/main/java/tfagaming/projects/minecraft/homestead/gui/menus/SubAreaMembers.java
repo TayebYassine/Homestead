@@ -55,7 +55,7 @@ public final class SubAreaMembers {
 			}
 
 			if (!player.hasPermission("homestead.actions.regions.subareas.players.add")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -88,23 +88,24 @@ public final class SubAreaMembers {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 		if (target == null) {
-			Messages.send(player, 29, new Placeholder().add("{playername}", message));
+			Messages.send(player, "commands.trust.2");
 			return false;
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.MANAGE_SUBAREAS)) {
+			Messages.send(player, "common.no_permission");
 			return false;
 		}
-		if (region.isOwner(target)) {
-			Messages.send(player, 30);
+		if (region.isOwner(target) || target.getUniqueId().equals(player.getUniqueId())) {
+			Messages.send(player, "commands.trust.6");
 			return false;
 		}
 		if (!MemberManager.isMemberOfRegion(region, target)) {
-			Messages.send(player, 171);
+			Messages.send(player, "commands.trust.13");
 			return false;
 		}
 		if (MemberManager.isMemberOfSubArea(subArea, target)) {
-			Messages.send(player, 174);
+			Messages.send(player, "commands.trust.14");
 			return false;
 		}
 		return true;
@@ -143,12 +144,13 @@ public final class SubAreaMembers {
 		}
 
 		if (!player.hasPermission("homestead.actions.regions.subareas.players.remove")) {
-			Messages.send(player, 8);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.MANAGE_SUBAREAS)) {
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 

@@ -481,9 +481,7 @@ public final class WarManager {
 			if (warPlayer.isOnline()) {
 				Player player = (Player) warPlayer;
 
-				Messages.send(player, 214, new Placeholder()
-						.add("{region}", winner.getName())
-				);
+				Messages.send(player, "common.war_end", winner.getName());
 			}
 		}
 	}

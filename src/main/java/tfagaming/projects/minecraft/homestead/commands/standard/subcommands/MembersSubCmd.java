@@ -17,7 +17,7 @@ public class MembersSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region members");
+		setUsage("/hs members");
 		setPlayerOnly();
 	}
 
@@ -29,7 +29,7 @@ public class MembersSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "members.0");
+			Messages.send(player, "commands.members.0");
 			return true;
 		}
 

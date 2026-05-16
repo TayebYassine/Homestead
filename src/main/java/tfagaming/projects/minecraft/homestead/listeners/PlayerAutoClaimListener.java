@@ -13,12 +13,15 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
+import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
 import tfagaming.projects.minecraft.homestead.sessions.AutoClaimSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chunks.ChunkBorder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerBank;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.Map;
@@ -92,12 +95,12 @@ public final class PlayerAutoClaimListener implements Listener {
 		lastClaimAttempt.put(player, now);
 
 		if (ChunkManager.isChunkInDisabledWorld(chunk)) {
-			Messages.send(player, 20);
+			Messages.send(player, "commands.claim.1");
 			return;
 		}
 
 		if (Resources.<ConfigFile>get(ResourceType.Config).protectWorldGuardRegions() && WorldGuardAPI.isChunkInRegion(chunk)) {
-			Messages.send(player, 133);
+			Messages.send(player, "commands.claim.2");
 			return;
 		}
 
@@ -108,16 +111,17 @@ public final class PlayerAutoClaimListener implements Listener {
 				region = TargetRegionSession.getRegion(player);
 			} else {
 				if (!player.hasPermission("homestead.actions.regions.create")) {
-					Messages.send(player, 8);
+					Messages.send(player, "common.no_permission");
 					return;
 				}
 
 				if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
-					Messages.send(player, 116);
+					Messages.send(player, "commands.claim.13");
 					return;
 				}
 
 				region = RegionManager.createRegion(player.getName(), player);
+
 				TargetRegionSession.newSession(player, region);
 			}
 		}
@@ -129,14 +133,19 @@ public final class PlayerAutoClaimListener implements Listener {
 
 		Region owner = ChunkManager.getRegionOwnsTheChunk(chunk);
 		if (owner != null) {
-			Messages.send(player, 21, new Placeholder()
-					.add("{region}", owner.getName())
-			);
+			Messages.send(player, "commands.claim.3");
 			return;
 		}
 
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.CHUNKS_PER_REGION)) {
-			Messages.send(player, 116);
+			Messages.send(player, "commands.claim.8");
+			return;
+		}
+
+		double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
+
+		if (chunkPrice > 0 && PlayerBank.get(region.getOwner()) < chunkPrice) {
+			Messages.send(player, "commands.claim.7", Formatter.getBalance(chunkPrice));
 			return;
 		}
 
@@ -147,10 +156,12 @@ public final class PlayerAutoClaimListener implements Listener {
 		int after = ChunkManager.getChunksOfRegion(region).size();
 
 		if (error == null) {
+			if (chunkPrice > 0) {
+				PlayerBank.withdraw(region.getOwner(), chunkPrice);
+			}
+
 			if (after > before) {
-				Messages.send(player, 22, new Placeholder()
-						.add("{region}", region.getName())
-				);
+				Messages.send(player, "commands.claim.11");
 			}
 
 			if (region.getLocation() == null) {
@@ -160,8 +171,8 @@ public final class PlayerAutoClaimListener implements Listener {
 			ChunkBorder.show(player);
 		} else {
 			switch (error) {
-				case REGION_NOT_FOUND -> Messages.send(player, 9);
-				case CHUNK_NOT_ADJACENT_TO_REGION -> Messages.send(player, 140);
+				case REGION_NOT_FOUND -> Messages.send(player, "commands.claim.9");
+				case CHUNK_NOT_ADJACENT_TO_REGION -> Messages.send(player, "commands.claim.10");
 			}
 		}
 	}

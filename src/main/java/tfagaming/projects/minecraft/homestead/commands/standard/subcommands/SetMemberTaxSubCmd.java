@@ -27,7 +27,7 @@ public class SetMemberTaxSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region setmembertax [tax amount]");
+		setUsage("/hs setmembertax [tax amount]");
 		setPlayerOnly();
 	}
 
@@ -39,17 +39,17 @@ public class SetMemberTaxSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "setmembertax.0");
+			Messages.send(player, "commands.setmembertax.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			reply(player, "setmembertax.1");
+			Messages.send(player, "commands.setmembertax.1");
 			return true;
 		}
 
 		if (!Homestead.VAULT.isEconomyReady()) {
-			reply(player, "setmembertax.2");
+			Messages.send(player, "commands.setmembertax.2");
 
 			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
@@ -59,7 +59,7 @@ public class SetMemberTaxSubCmd extends SubCommandBuilder {
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled");
 
 		if (!isEnabled) {
-			reply(player, "setmembertax.3");
+			Messages.send(player, "commands.setmembertax.3");
 
 			return true;
 		}
@@ -67,7 +67,7 @@ public class SetMemberTaxSubCmd extends SubCommandBuilder {
 		String taxInput = args[0];
 
 		if (!NumberUtils.isValidDouble(taxInput)) {
-			reply(player, "setmembertax.4");
+			Messages.send(player, "commands.setmembertax.4");
 			return true;
 		}
 
@@ -77,14 +77,14 @@ public class SetMemberTaxSubCmd extends SubCommandBuilder {
 		double maxTax = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("taxes.max-tax");
 
 		if (taxAmount <= minTax || taxAmount > maxTax) {
-			reply(player, "setmembertax.5", Formatter.getBalance(maxTax), Formatter.getBalance(maxTax));
+			Messages.send(player, "commands.setmembertax.5", Formatter.getBalance(maxTax), Formatter.getBalance(maxTax));
 
 			return true;
 		}
 
 		region.setTaxes(taxAmount);
 
-		reply(player, "setmembertax.6");
+		Messages.send(player, "commands.setmembertax.6");
 
 		return true;
 	}

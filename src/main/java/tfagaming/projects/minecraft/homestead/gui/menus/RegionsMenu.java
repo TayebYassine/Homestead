@@ -98,12 +98,12 @@ public final class RegionsMenu {
 		}
 
 		if (region.getLocation() == null) {
-			Messages.send(clicker, 71, new Placeholder().add("{region}", region.getName()));
+			Messages.send(clicker, "commands.visit.6");
 			return;
 		}
 
 		if (!menuPlayer.hasPermission("homestead.actions.regions.teleport")) {
-			Messages.send(menuPlayer, 212);
+			Messages.send(clicker, "common.no_permission");
 			return;
 		}
 
@@ -114,7 +114,7 @@ public final class RegionsMenu {
 				&& clicker.hasPermission("homestead.actions.regions.teleport");
 
 		if (!allowed) {
-			Messages.send(clicker, 45, new Placeholder().add("{region}", region.getName()));
+			Messages.send(clicker, "common.no_permission");
 			return;
 		}
 
@@ -132,8 +132,8 @@ public final class RegionsMenu {
 		if (current != null && current.getUniqueId() == region.getUniqueId()) return;
 
 		TargetRegionSession.newSession(clicker, region);
+
 		PlayerSound.play(menuPlayer, PlayerSound.PredefinedSound.CLICK);
-		Messages.send(clicker, 12, new Placeholder().add("{region}", region.getName()));
 
 		regions = computeRegionList(clicker);
 		context.getInstance().setItems(getItems(clicker));

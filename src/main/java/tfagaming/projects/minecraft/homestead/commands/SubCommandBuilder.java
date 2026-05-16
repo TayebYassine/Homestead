@@ -112,18 +112,4 @@ public abstract class SubCommandBuilder {
 	protected Player asPlayer(CommandSender sender) {
 		return sender instanceof Player ? (Player) sender : null;
 	}
-
-	public void reply(CommandSender sender, String path, Object... args) {
-		Object obj = Resources.<LanguageFile>get(ResourceType.Language).getRaw("commands." + path);
-
-		if (obj == null) obj = "NULL";
-
-		if (obj instanceof String message) {
-			Messages.send(sender, message, args);
-		} else if (obj instanceof List<?> list) {
-			String message = list.stream().map(String::valueOf).collect(Collectors.joining("\n"));
-
-			Messages.send(sender, message, args);
-		}
-	}
 }

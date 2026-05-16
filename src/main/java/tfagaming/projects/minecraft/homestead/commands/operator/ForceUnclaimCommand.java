@@ -25,42 +25,33 @@ public class ForceUnclaimCommand extends CommandBuilder {
 
 	@Override
 	public boolean onDefaultExecution(CommandSender sender, String[] args) {
-		if (!(sender instanceof Player player)) {
-			Messages.send(sender, 8);
-			return false;
-		}
-
-		if (!PlayerUtility.isOperator(player)) {
-			Messages.send(sender, 8);
-			return true;
-		}
+		Player player = asPlayer(sender);
+		if (player == null) return false;
 
 		Chunk chunk = player.getLocation().getChunk();
 
 		if (ChunkManager.isChunkInDisabledWorld(chunk)) {
-			Messages.send(player, 20);
+			Messages.send(player, "commands.op_forceunclaim.0");
 			return true;
 		}
 
 		Region owningRegion = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 		if (owningRegion == null) {
-			Messages.send(player, 25);
+			Messages.send(player, "commands.op_forceunclaim.1");
 			return true;
 		}
 
 		ChunkManager.Error error = ChunkManager.forceUnclaimChunk(owningRegion, chunk);
 
 		if (error == null) {
-			Messages.send(player, 24, new Placeholder()
-					.add("{region}", owningRegion.getName())
-			);
+			Messages.send(player, "commands.op_forceunclaim.2");
 
 			ChunkBorder.show(player);
 		} else {
 			switch (error) {
-				case REGION_NOT_FOUND -> Messages.send(player, 9);
-				case CHUNK_WOULD_SPLIT_REGION -> Messages.send(player, 141);
+				case REGION_NOT_FOUND -> Messages.send(player, "commands.op_forceunclaim.3");
+				case CHUNK_WOULD_SPLIT_REGION -> Messages.send(player, "commands.op_forceunclaim.4");
 			}
 		}
 

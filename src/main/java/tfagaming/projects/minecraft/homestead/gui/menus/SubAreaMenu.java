@@ -64,7 +64,7 @@ public final class SubAreaMenu {
 			}
 
 			if (!player.hasPermission("homestead.actions.regions.subareas.update.name")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -104,15 +104,15 @@ public final class SubAreaMenu {
 			if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
 			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-				Messages.send(player, 159);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
 			if (subArea.getRent() == null) {
-				Messages.send(player, 195);
+				Messages.send(player, "commands.rent.0");
 			} else {
 				subArea.setRent(null);
-				Messages.send(player, 127);
+
 				new SubAreaMenu(player, region, subArea);
 			}
 		};
@@ -123,11 +123,12 @@ public final class SubAreaMenu {
 			if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.actions.regions.subareas.delete")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					ControlFlags.MANAGE_SUBAREAS)) {
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -154,20 +155,21 @@ public final class SubAreaMenu {
 				ControlFlags.MANAGE_SUBAREAS)) {
 			return false;
 		}
+		// TODO fix this
 		if (!StringUtils.isValidSubAreaName(message)) {
-			Messages.send(player, 57);
+			//Messages.send(player, 57);
 			return false;
 		}
 		if (subArea.getName().equalsIgnoreCase(message)) {
-			Messages.send(player, 11);
+			//Messages.send(player, 11);
 			return false;
 		}
 		if (SubAreaManager.isNameUsed(region.getUniqueId(), message)) {
-			Messages.send(player, 58);
+			//Messages.send(player, 58);
 			return false;
 		}
 		if (ColorTranslator.containsMiniMessageTag(message)) {
-			Messages.send(player, 30);
+			//Messages.send(player, 30);
 			return false;
 		}
 		return true;

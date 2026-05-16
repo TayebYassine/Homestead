@@ -113,13 +113,13 @@ public final class MapColorMenu {
 		}
 
 		if (!player.hasPermission("homestead.actions.regions.update.map_color")) {
-			Messages.send(player, 8);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			Messages.send(player, 159);
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
@@ -128,19 +128,12 @@ public final class MapColorMenu {
 			return;
 		}
 
-		final int oldColor = region.getMapColor();
-
 		Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
 
 		MapColorEntry entry = colorEntries.get(context.getIndex());
 		region.setMapColor(entry.colorValue);
 
 		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-		Messages.send(player, 19, new Placeholder()
-				.add("{oldcolor}", MapColor.toString(oldColor))
-				.add("{newcolor}", MapColor.toString(region.getMapColor()))
-		);
 
 		Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
 	}

@@ -22,7 +22,7 @@ public class LeaveRegionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region leave [confirm]");
+		setUsage("/hs leave [confirm]");
 		setPlayerOnly();
 	}
 
@@ -32,37 +32,37 @@ public class LeaveRegionSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "leave.0");
+			Messages.send(player, "commands.leave.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "leave.1");
+			Messages.send(player, "commands.leave.1");
 			return true;
 		}
 
 		String confirmInput = args[0];
 
 		if (!confirmInput.equalsIgnoreCase("confirm")) {
-			reply(player, "leave.0");
+			Messages.send(player, "commands.leave.0");
 			return true;
 		}
 
 		if (region.isOwner(player)) {
-			reply(player, "leave.3");
+			Messages.send(player, "commands.leave.3");
 			return true;
 		}
 
 		if (!MemberManager.isMemberOfRegion(region, player)) {
-			reply(player, "leave.2");
+			Messages.send(player, "commands.leave.2");
 			return true;
 		}
 
 		MemberManager.removeMemberFromRegion(player, region);
 
-		reply(player, "leave.4", region.getName());
+		Messages.send(player, "commands.leave.4", region.getName());
 
 		TargetRegionSession.randomizeRegion(player);
 

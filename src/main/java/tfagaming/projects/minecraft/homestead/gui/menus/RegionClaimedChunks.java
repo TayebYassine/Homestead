@@ -73,7 +73,7 @@ public final class RegionClaimedChunks {
 
 	private void handleTeleport(Player player, Region region, RegionChunk chunk) {
 		if (!player.hasPermission("homestead.actions.regions.teleport")) {
-			Messages.send(player, 212);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
@@ -89,7 +89,7 @@ public final class RegionClaimedChunks {
 
 	private void handleToggleForceLoad(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			Messages.send(player, 30);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
@@ -103,7 +103,7 @@ public final class RegionClaimedChunks {
 		int maxForceLoadedChunks = Limits.getRegionLimit(region, Limits.LimitType.MAX_FORCE_LOADED_CHUNKS);
 
 		if (totalForcedLoadedChunks >= maxForceLoadedChunks && !chunk.isForceLoaded()) {
-			Messages.send(player, 116);
+			Messages.send(player, "commands.claimlist.1");
 			return;
 		}
 
@@ -135,7 +135,7 @@ public final class RegionClaimedChunks {
 		}
 
 		if (!player.hasPermission("homestead.actions.regions.chunks.unclaim")) {
-			Messages.send(player, 212);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 

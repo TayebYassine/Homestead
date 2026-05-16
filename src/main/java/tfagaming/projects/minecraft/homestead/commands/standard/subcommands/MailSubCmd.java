@@ -24,7 +24,7 @@ public class MailSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.mail"
 		));
-		setUsage("/region mail [region] [message]");
+		setUsage("/hs mail [region] [message]");
 		setPlayerOnly();
 	}
 
@@ -34,7 +34,7 @@ public class MailSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 2) {
-			reply(player, "mail.0");
+			Messages.send(player, "commands.mail.0");
 			return true;
 		}
 
@@ -43,14 +43,14 @@ public class MailSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			reply(player, "mail.1", regionName);
+			Messages.send(player, "commands.mail.1", regionName);
 			return true;
 		}
 
 		int mailsCount = (int) LogManager.getUnreadLogs(region).stream().filter((l) -> l.getAuthor().equals(player.getName())).count();
 
 		if (mailsCount >= 10) {
-			reply(player, "mail.2");
+			Messages.send(player, "commands.mail.2");
 			return true;
 		}
 
@@ -58,13 +58,13 @@ public class MailSubCmd extends SubCommandBuilder {
 		String message = String.join(" ", messageList);
 
 		if (ColorTranslator.containsMiniMessageTag(message)) {
-			reply(player, "mail.3");
+			Messages.send(player, "commands.mail.3");
 			return true;
 		}
 
 		LogManager.addLog(region, player.getName(), message);
 
-		reply(player, "mail.4");
+		Messages.send(player, "commands.mail.4");
 
 		Homestead.callEvent(new PlayerMailEvent(region, player, message));
 

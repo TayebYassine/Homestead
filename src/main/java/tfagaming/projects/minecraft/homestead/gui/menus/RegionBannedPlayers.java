@@ -58,7 +58,7 @@ public final class RegionBannedPlayers {
 			}
 
 			if (!player.hasPermission("homestead.actions.regions.players.ban")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -101,18 +101,18 @@ public final class RegionBannedPlayers {
 			}
 
 			if (!player.hasPermission("homestead.actions.regions.players.unban")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					ControlFlags.UNBAN_PLAYERS)) {
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
 			int bannedCount = BanManager.getBansOfRegion(region).size();
 			if (bannedCount == 0) {
-				Messages.send(player, 77);
 				return;
 			}
 
@@ -121,7 +121,6 @@ public final class RegionBannedPlayers {
 			LogManager.addLog(region, player, LogManager.PredefinedLog.PURGE_BANS);
 
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-			Messages.send(player, 94);
 
 			Homestead.callEvent(new BulkUnbanPlayersEvent(region));
 
@@ -133,24 +132,26 @@ public final class RegionBannedPlayers {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 		if (target == null) {
-			Messages.send(player, 29, new Placeholder().add("{playername}", message));
+			Messages.send(player, "commands.ban.3", message);
 			return false;
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.BAN_PLAYERS)) {
+			Messages.send(player, "commands.ban.2");
 			return false;
 		}
 		if (BanManager.isBanned(region, target)) {
-			Messages.send(player, 32, new Placeholder().add("{playername}", target.getName()));
+			Messages.send(player, "commands.ban.5", target.getName());
 			return false;
 		}
-		if (region.isOwner(target)) {
-			Messages.send(player, 30);
+		if (region.isOwner(target) || target.getUniqueId().equals(player.getUniqueId())) {
+			Messages.send(player, "commands.ban.4");
 			return false;
 		}
 		SeRent rent = region.getRent();
 		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
-			Messages.send(player, 196);
+			Messages.send(player, "commands.ban.6", target.getName());
+			return false;
 		}
 		return true;
 	}
@@ -164,7 +165,7 @@ public final class RegionBannedPlayers {
 		}
 
 		if (!player.hasPermission("homestead.actions.regions.players.unban")) {
-			Messages.send(player, 8);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 

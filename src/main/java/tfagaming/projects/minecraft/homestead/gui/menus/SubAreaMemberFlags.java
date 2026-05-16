@@ -57,7 +57,7 @@ public final class SubAreaMemberFlags {
 		if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
 		if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.members")) {
-			Messages.send(player, 8);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
@@ -67,7 +67,7 @@ public final class SubAreaMemberFlags {
 		}
 
 		if (player.getUniqueId().equals(member.getPlayerId())) {
-			Messages.send(player, 159);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
@@ -105,7 +105,7 @@ public final class SubAreaMemberFlags {
 		}
 
 		if (changed == 0) {
-			Messages.send(player, 162);
+			Messages.send(player, "commands.flags.13");
 			return;
 		}
 
@@ -124,7 +124,7 @@ public final class SubAreaMemberFlags {
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			Messages.send(player, 42);
+			Messages.send(player, "commands.flags.9");
 			return;
 		}
 

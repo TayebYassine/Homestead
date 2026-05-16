@@ -30,7 +30,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.players.untrust"
 		));
-		setUsage("/region untrust [player]");
+		setUsage("/hs untrust [player]");
 		setPlayerOnly();
 	}
 
@@ -40,20 +40,20 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "untrust.0");
+			Messages.send(player, "commands.untrust.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "untrust.1");
+			Messages.send(player, "commands.untrust.1");
 			return true;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.UNTRUST_PLAYERS)) {
-			reply(player, "untrust.2");
+			Messages.send(player, "commands.untrust.2");
 			return true;
 		}
 
@@ -62,26 +62,26 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			reply(player, "untrust.3");
+			Messages.send(player, "commands.untrust.3");
 			return true;
 		}
 
 		if (InviteManager.isInvited(region, target)) {
 			InviteManager.deleteInvitesOfPlayer(region, target);
 
-			reply(player, "untrust.4");
+			Messages.send(player, "commands.untrust.4");
 
 			Homestead.callEvent(new RevokePlayerInviteEvent(region, target));
 		} else if (MemberManager.isMemberOfRegion(region, target)) {
 			MemberManager.removeMemberFromRegion(target, region);
 
-			reply(player, "untrust.5");
+			Messages.send(player, "commands.untrust.5");
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, target.getName());
 
 			Homestead.callEvent(new PlayerLeftRegionEvent(region, target));
 		} else {
-			reply(player, "untrust.6");
+			Messages.send(player, "commands.untrust.6");
 		}
 
 		return true;

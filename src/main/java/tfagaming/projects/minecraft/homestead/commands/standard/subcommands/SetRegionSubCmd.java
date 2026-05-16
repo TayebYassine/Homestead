@@ -21,7 +21,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region set [region]");
+		setUsage("/hs set [region]");
 		setPlayerOnly();
 	}
 
@@ -31,7 +31,7 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "set.0");
+			Messages.send(player, "commands.set.0");
 			return true;
 		}
 
@@ -40,25 +40,25 @@ public class SetRegionSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			reply(player, "set.1", regionName);
+			Messages.send(player, "commands.set.1", regionName);
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player)
 				&& !(region.isOwner(player) || MemberManager.isMemberOfRegion(region, player))) {
-			reply(player, "set.2");
+			Messages.send(player, "commands.set.2");
 			return true;
 		}
 
 		if (TargetRegionSession.hasSession(player)
 				&& TargetRegionSession.getRegion(player).getUniqueId() == region.getUniqueId()) {
-			reply(player, "set.3");
+			Messages.send(player, "commands.set.3");
 			return true;
 		}
 
 		TargetRegionSession.newSession(player, region);
 
-		reply(player, "set.4", regionName);
+		Messages.send(player, "commands.set.4", regionName);
 
 		return true;
 	}

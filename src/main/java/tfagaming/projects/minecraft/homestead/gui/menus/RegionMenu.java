@@ -146,15 +146,17 @@ public final class RegionMenu {
 			if (!checkRegionExists(player, region) || !event.isLeftClick()) return;
 
 			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-				Messages.send(player, 159);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
 			if (region.getRent() == null) {
-				Messages.send(player, 128);
+				Messages.send(player, "commands.rent.0");
 			} else {
 				region.setRent(null);
-				Messages.send(player, 127);
+
+
+
 				new RegionMenu(player, region);
 			}
 		};
@@ -186,7 +188,7 @@ public final class RegionMenu {
 
 			if (event.isLeftClick()) {
 				if (!player.hasPermission("homestead.actions.regions.update.weather")) {
-					Messages.send(player, 210);
+					Messages.send(player, "common.no_permission");
 					return;
 				}
 
@@ -197,7 +199,7 @@ public final class RegionMenu {
 				LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER, RegionWeather.from(newWeather));
 			} else if (event.isRightClick()) {
 				if (!player.hasPermission("homestead.actions.regions.update.time")) {
-					Messages.send(player, 211);
+					Messages.send(player, "common.no_permission");
 					return;
 				}
 

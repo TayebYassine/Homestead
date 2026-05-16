@@ -51,12 +51,13 @@ public final class GlobalPlayerFlags {
 		if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
 		if (!player.hasPermission("homestead.actions.regions.update.flags.global")) {
-			Messages.send(player, 8);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.SET_GLOBAL_FLAGS)) {
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
@@ -64,7 +65,7 @@ public final class GlobalPlayerFlags {
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			Messages.send(player, 42);
+			Messages.send(player, "commands.flags.9");
 			return;
 		}
 

@@ -19,7 +19,7 @@ public class BordersSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region borders (stop)");
+		setUsage("/hs borders (stop)");
 		setPlayerOnly();
 	}
 
@@ -31,21 +31,21 @@ public class BordersSubCmd extends SubCommandBuilder {
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled();
 
 		if (!isEnabled) {
-			reply(player, "borders.0");
+			Messages.send(player, "commands.borders.0");
 			return true;
 		}
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("stop")) {
 			ChunkBorder.stop(player);
 
-			reply(player, "borders.1");
+			Messages.send(player, "commands.borders.1");
 
 			return true;
 		}
 
 		ChunkBorder.show(player);
 
-		reply(player, "borders.2");
+		Messages.send(player, "commands.borders.2");
 
 		return true;
 	}

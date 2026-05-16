@@ -57,7 +57,7 @@ public final class RegionPlayersInvited {
 			if (!event.isLeftClick()) return;
 
 			if (!player.hasPermission("homestead.actions.regions.players.trust")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -84,12 +84,10 @@ public final class RegionPlayersInvited {
 									.add("{playername}", targetPlayer.getName())
 									.add("{ownername}", region.getOwnerName());
 
-							Messages.send(player, 36, placeholder);
-
 							LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, targetPlayer.getName());
 
 							if (targetPlayer.isOnline()) {
-								Messages.send(targetPlayer.getPlayer(), 139, placeholder);
+								Messages.send(player, "commands.trust.11");
 							}
 
 							Homestead.callEvent(new InvitePlayerEvent(region, targetPlayer));
@@ -112,7 +110,7 @@ public final class RegionPlayersInvited {
 			if (!event.isLeftClick()) return;
 
 			if (InviteManager.getInvitesOfRegion(region).isEmpty()) {
-				Messages.send(player, 76);
+				Messages.send(player, "commands.untrust.7");
 				return;
 			}
 
@@ -124,7 +122,6 @@ public final class RegionPlayersInvited {
 
 			Homestead.callEvent(new BulkDeleteInvitesEvent(region));
 
-			Messages.send(player, 95);
 			Homestead.getInstance().runSyncTask(() -> new RegionPlayersInvited(player, region));
 		};
 	}
@@ -133,7 +130,7 @@ public final class RegionPlayersInvited {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 		if (target == null) {
-			Messages.send(player, 29, new Placeholder().add("{playername}", message));
+			Messages.send(player, "commands.trust.2");
 			return false;
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
@@ -141,29 +138,29 @@ public final class RegionPlayersInvited {
 			return false;
 		}
 		if (BanManager.isBanned(region, target)) {
-			Messages.send(player, 74);
+			Messages.send(player, "commands.trust.3");
 			return false;
 		}
 		if (MemberManager.isMemberOfRegion(region, target)) {
-			Messages.send(player, 48, new Placeholder().add("{playername}", target.getName()));
+			Messages.send(player, "commands.trust.4");
 			return false;
 		}
 		if (InviteManager.isInvited(region, target)) {
-			Messages.send(player, 35, new Placeholder().add("{playername}", target.getName()));
+			Messages.send(player, "commands.trust.5");
 			return false;
 		}
-		if (region.isOwner(target)) {
-			Messages.send(player, 30);
+		if (region.isOwner(target) || target.getUniqueId().equals(player.getUniqueId())) {
+			Messages.send(player, "commands.trust.6");
 			return false;
 		}
 
 		SeRent rent = region.getRent();
 		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
-			Messages.send(player, 196);
+			Messages.send(player, "commands.trust.7");
 			return false;
 		}
 		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-			Messages.send(player, 116);
+			Messages.send(player, "commands.trust.8");
 			return false;
 		}
 		return true;

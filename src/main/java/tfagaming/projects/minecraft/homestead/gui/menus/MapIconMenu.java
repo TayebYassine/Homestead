@@ -53,14 +53,13 @@ public final class MapIconMenu {
         boolean isEnabled = Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled");
 
         if (!isEnabled) {
-            Messages.send(player, 105);
             player.closeInventory();
             return;
         }
 
         if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-            Messages.send(player, 159);
             PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            Messages.send(player, "common.no_permission");
             return;
         }
 
@@ -75,10 +74,6 @@ public final class MapIconMenu {
         region.setMapIcon(icon);
 
         PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-
-        Messages.send(player, 100, new Placeholder()
-                .add("{region}", region.getName())
-        );
 
         Homestead.getInstance().runSyncTask(() -> new MiscellaneousSettings(player, region));
     }

@@ -188,36 +188,3 @@ discord:
     player_left_region:
       enabled: true
       message: "**[MEMBERS]** Player {0} (`{1}`) left region: {2}"
-
-# ============================================================================
-# MISCELLANEOUS SETTINGS
-# ============================================================================
-
-# Formatting Strings - Customize date, money, location displays
-# WARNING: Only edit if you know what you're doing!
-formatters:
-  date-format: "dd/M/yyyy hh:mm a"
-  date: "{date} &7({time-ago} ago)"
-  duration: "{d} days, {h} hours, {m} minutes" # Removed "{s} seconds", you can add it
-
-  ago-days: "{v} days"
-  ago-hours: "{v} hours"
-  ago-minutes: "{v} minutes"
-  ago-seconds: "{v} seconds"
-
-  balance: "${balance}"
-  location: "&6{world} &7(X: &6{x} &7Y: &6{y} &7Z: &6{z}&7)"
-  chunk: "&6{world} &7(X: &6{x} &7Z: &6{z}&7)"
-
-  player-regions: "&7• &2{region}"
-  player-regions-joining: "\n"
-
-  region-members: "&7• &3{playername}"
-  region-members-joining: "\n"
-
-  gui-pagination-title: "&r{title} &r| &3{current-page}&r/&c{total-pages}"
-
-  war-regions: "&2{region}"
-  war-regions-joining: ", "
-
-  private-chat: "&2{region} &7- &e{sender}&7: &r{message}"

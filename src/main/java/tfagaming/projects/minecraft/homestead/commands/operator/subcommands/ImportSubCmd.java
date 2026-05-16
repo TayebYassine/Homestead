@@ -42,9 +42,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 1) {
-			Messages.send(sender, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			Logger.error("Insufficient arguments, usage: ", getUsage());
 			return true;
 		}
 
@@ -57,10 +55,12 @@ public class ImportSubCmd extends SubCommandBuilder {
 			case "lands" -> importFromLands(sender);
 			case "huskclaims" -> importFromHuskClaims(sender);
 			default -> {
-				Messages.send(sender, 113);
+				Logger.error("Invalid plugin name provided.");
 				return true;
 			}
 		}
+
+		Logger.info("Done.");
 
 		String[] headers = {"Model", "Imported"};
 
@@ -84,7 +84,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 
 	private void importFromGriefPrevention(CommandSender sender) {
 		if (!isGriefPreventionInstalled()) {
-			Messages.send(sender, 114);
+			Logger.error("Unable to retrieve the API of the plugin, the plugin could be disabled.");
 			return;
 		}
 
@@ -124,15 +124,11 @@ public class ImportSubCmd extends SubCommandBuilder {
 
 			imported++;
 		}
-
-		Messages.send(sender, 115, new Placeholder()
-				.add("{regions}", imported)
-		);
 	}
 
 	private void importFromLandLord(CommandSender sender) {
 		if (!isLandLordInstalled()) {
-			Messages.send(sender, 114);
+			Logger.error("Unable to retrieve the API of the plugin, the plugin could be disabled.");
 			return;
 		}
 
@@ -173,15 +169,11 @@ public class ImportSubCmd extends SubCommandBuilder {
 						region.getName(), region.getUniqueId(), owner.getName(), owner.getUniqueId()));
 			}
 		}
-
-		Messages.send(sender, 115, new Placeholder()
-				.add("{regions}", imported)
-		);
 	}
 
 	private void importFromClaimChunk(CommandSender sender) {
 		if (!isClaimChunkInstalled()) {
-			Messages.send(sender, 114);
+			Logger.error("Unable to retrieve the API of the plugin, the plugin could be disabled.");
 			return;
 		}
 
@@ -216,15 +208,11 @@ public class ImportSubCmd extends SubCommandBuilder {
 
 			imported++;
 		}
-
-		Messages.send(sender, 115, new Placeholder()
-				.add("{regions}", imported)
-		);
 	}
 
 	private void importFromLands(CommandSender sender) {
 		if (!isLandsInstalled()) {
-			Messages.send(sender, 114);
+			Logger.error("Unable to retrieve the API of the plugin, the plugin could be disabled.");
 			return;
 		}
 
@@ -268,15 +256,11 @@ public class ImportSubCmd extends SubCommandBuilder {
 
 			imported++;
 		}
-
-		Messages.send(sender, 115, new Placeholder()
-				.add("{regions}", imported)
-		);
 	}
 
 	private void importFromHuskClaims(CommandSender sender) {
 		if (!isHuskClaimsInstalled()) {
-			Messages.send(sender, 114);
+			Logger.error("Unable to retrieve the API of the plugin, the plugin could be disabled.");
 			return;
 		}
 
@@ -314,10 +298,6 @@ public class ImportSubCmd extends SubCommandBuilder {
 				imported++;
 			}
 		}
-
-		Messages.send(sender, 115, new Placeholder()
-				.add("{regions}", imported)
-		);
 	}
 
 	@Override

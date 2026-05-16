@@ -21,7 +21,7 @@ public class LevelsSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region levels");
+		setUsage("/hs levels");
 		setPlayerOnly();
 	}
 
@@ -33,14 +33,14 @@ public class LevelsSubCmd extends SubCommandBuilder {
 		boolean levelsEnabled = Resources.<LevelsFile>get(ResourceType.Levels).isEnabled();
 
 		if (!levelsEnabled) {
-			reply(player, "levels.0");
+			Messages.send(player, "commands.levels.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "levels.1");
+			Messages.send(player, "commands.levels.1");
 			return true;
 		}
 

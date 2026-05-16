@@ -29,9 +29,7 @@ public class ExportSubCmd extends SubCommandBuilder {
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
 		if (args.length < 1) {
-			Messages.send(sender, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			Logger.error("Insufficient arguments, usage: ", getUsage());
 			return true;
 		}
 
@@ -39,20 +37,16 @@ public class ExportSubCmd extends SubCommandBuilder {
 		Driver provider = Driver.parse(providerInput);
 
 		if (provider == null) {
-			Messages.send(sender, 84);
+			Logger.error("Incorrect provider provided.");
 			return true;
 		}
 
 		if (Homestead.database.getProvider() == provider) {
-			Messages.send(sender, 85);
+			Logger.error("Provider already in use.");
 			return true;
 		}
 
 		try {
-			if (sender instanceof Player p) {
-				Messages.send(p, 216);
-			}
-
 			Logger.info("Please wait...");
 			Logger.warning("The data exporter is asynchronous, please do NOT shutdown your server until you see \"Done.\"!");
 
@@ -92,7 +86,6 @@ public class ExportSubCmd extends SubCommandBuilder {
 			});
 		} catch (Exception e) {
 			Logger.error(e);
-			Messages.send(sender, 87);
 		}
 
 		return true;

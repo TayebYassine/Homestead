@@ -21,7 +21,7 @@ public class HomeSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.teleport"
 		));
-		setUsage("/region home");
+		setUsage("/hs home");
 		setPlayerOnly();
 	}
 
@@ -33,12 +33,12 @@ public class HomeSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "home.0");
+			Messages.send(player, "commands.home.0");
 			return true;
 		}
 
 		if (region.getLocation() == null) {
-			reply(player, "home.1");
+			Messages.send(player, "commands.home.1");
 			return true;
 		}
 
@@ -46,7 +46,7 @@ public class HomeSubCmd extends SubCommandBuilder {
 				&& !region.isOwner(player)
 				&& !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
 				&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
-			reply(player, "home.2");
+			Messages.send(player, "commands.home.2");
 			return true;
 		}
 

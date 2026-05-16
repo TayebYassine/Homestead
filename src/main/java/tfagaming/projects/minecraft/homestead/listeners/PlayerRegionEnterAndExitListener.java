@@ -17,6 +17,7 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.managers.WarManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionBan;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -63,21 +64,20 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 					player.setAllowFlight(false);
 					player.setFlying(false);
 
-					Messages.send(player, 206);
+					Messages.send(player, "commands.fly.2");
 				}
 			}
 
-			if (!PlayerUtility.isOperator(player) && BanManager.isBanned(region, player)) {
+			RegionBan ban = BanManager.getBannedPlayer(region, player);
+
+			if (!PlayerUtility.isOperator(player) && ban != null) {
 				Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
 					PlayerUtility.teleportPlayerToChunk(player, nearbyChunk);
 				}
 
-				Messages.send(player, 28, new Placeholder()
-						.add("{region}", region.getName())
-						.add("{ban-reason}", BanManager.getBannedPlayer(region, player).getReason())
-				);
+				Messages.send(player, "common.region_ban", region.getName(), ban.getReason());
 
 				return;
 			}
@@ -181,7 +181,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				player.setAllowFlight(false);
 				player.setFlying(false);
 
-				Messages.send(player, 206);
+				Messages.send(player, "commands.fly.2");
 			}
 		}
 	}

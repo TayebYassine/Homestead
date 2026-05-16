@@ -14,7 +14,7 @@ public class TopRegionsSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region top");
+		setUsage("/hs top");
 		setPlayerOnly();
 	}
 

@@ -31,9 +31,7 @@ public final class RegionRent {
 				if (renter != null && renter.isOnline()) {
 					Player player = (Player) renter;
 
-					Messages.send(player, 130, new Placeholder()
-							.add("{region}", region.getName())
-					);
+					Messages.send(player, "common.rent_end", region.getName());
 				}
 			}
 		}
@@ -49,9 +47,7 @@ public final class RegionRent {
 				if (renter != null && renter.isOnline()) {
 					Player player = (Player) renter;
 
-					Messages.send(player, 130, new Placeholder()
-							.add("{region}", subArea.getName())
-					);
+					Messages.send(player, "common.rent_subarea_end", subArea.getName(), subArea.getRegionName());
 				}
 			}
 		}

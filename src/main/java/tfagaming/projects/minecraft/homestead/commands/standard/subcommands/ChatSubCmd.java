@@ -7,6 +7,8 @@ import tfagaming.projects.minecraft.homestead.api.events.RegionChatEvent;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.sessions.ClaimFlySession;
+import tfagaming.projects.minecraft.homestead.sessions.PrivateChatSession;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
@@ -23,21 +25,33 @@ public class ChatSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.chat"
 		));
-		setUsage("/region chat [message]");
+		setUsage("/hs chat [message]");
 		setPlayerOnly();
 	}
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
-		// TODO added toggle
-
 		Player player = asPlayer(sender);
 		if (player == null) return false;
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "chat.0");
+			Messages.send(player, "commands.chat.0");
+			return true;
+		}
+
+		if (args.length < 1) {
+			if (PrivateChatSession.hasSession(player)) {
+				PrivateChatSession.removeSession(player);
+
+				Messages.send(player, "commands.chat.2");
+			} else {
+				PrivateChatSession.newSession(player);
+
+				Messages.send(player, "commands.chat.1");
+			}
+
 			return true;
 		}
 
@@ -45,7 +59,7 @@ public class ChatSubCmd extends SubCommandBuilder {
 		String message = String.join(" ", messageList);
 
 		if (ColorTranslator.containsMiniMessageTag(message)) {
-			reply(player, "chat.3");
+			Messages.send(player, "commands.chat.3");
 			return true;
 		}
 

@@ -48,7 +48,7 @@ public final class Formatter {
 		World world = location.getWorld();
 
 		return applyPlaceholders(
-				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.location"),
+				Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.location"),
 				new Placeholder()
 						.add("{world}", world == null ? "UnknownWorld" : world.getName())
 						.add("{x}", NumberUtils.truncate(location.getX()))
@@ -65,7 +65,7 @@ public final class Formatter {
 		World world = chunk.getWorld();
 
 		return applyPlaceholders(
-				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.chunk"),
+				Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.chunk"),
 				new Placeholder()
 						.add("{world}", world.getName())
 						.add("{x}", NumberUtils.truncate(chunk.getX()))
@@ -79,7 +79,7 @@ public final class Formatter {
 	 */
 	public static String getBalance(double amount) {
 		String balance = NumberUtils.convertToBalance(amount);
-		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.balance");
+		String format = Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.balance");
 
 		return format.replace("{balance}", balance);
 	}
@@ -89,11 +89,11 @@ public final class Formatter {
 	 * @param date The date timestamp
 	 */
 	public static String getDate(long date) {
-		String pattern = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.date-format");
+		String pattern = Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.date-format");
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
 		String formatted = simpleDateFormat.format(date);
-		String dateWithAgo = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.date");
+		String dateWithAgo = Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.date");
 
 		Placeholder placeholder = new Placeholder()
 				.add("{date}", formatted)
@@ -148,7 +148,7 @@ public final class Formatter {
 		long seconds = remaining % 60;
 
 		return applyPlaceholders(
-				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.duration"),
+				Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.duration"),
 				new Placeholder()
 						.add("{d}", days)
 						.add("{h}", hours)
@@ -175,7 +175,7 @@ public final class Formatter {
 		long seconds = remainingSeconds % 60;
 
 		return applyPlaceholders(
-				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.duration"),
+				Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.duration"),
 				new Placeholder()
 						.add("{d}", days)
 						.add("{h}", hours)
@@ -190,7 +190,7 @@ public final class Formatter {
 
 	public static String formatPaginationMenuTitle(String title, int currentPage, int totalPages) {
 		return applyPlaceholders(
-				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.gui-pagination-title"),
+				Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.gui-pagination-title"),
 				new Placeholder()
 						.add("{title}", title)
 						.add("{current-page}", currentPage)
@@ -200,7 +200,7 @@ public final class Formatter {
 
 	public static String formatPrivateChat(String regionName, String sender, String message) {
 		return applyPlaceholders(
-				Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.private-chat"),
+				Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.private-chat"),
 				new Placeholder()
 						.add("{region}", regionName)
 						.add("{sender}", sender)
@@ -219,11 +219,11 @@ public final class Formatter {
 			return getNone();
 		}
 
-		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions");
+		String format = Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.player-regions");
 
 		return regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
-				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions-joining")));
+				.collect(Collectors.joining(Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.player-regions-joining")));
 	}
 
 	/**
@@ -237,11 +237,11 @@ public final class Formatter {
 			return getNone();
 		}
 
-		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions");
+		String format = Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.player-regions");
 
 		return regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
-				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.player-regions-joining")));
+				.collect(Collectors.joining(Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.player-regions-joining")));
 	}
 
 	/**
@@ -255,14 +255,14 @@ public final class Formatter {
 			return getNone();
 		}
 
-		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.region-members");
+		String format = Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.region-members");
 
 		return members.stream()
 				.map((member) -> format.replace("{playername}",
 								member.getPlayerName()
 						)
 				)
-				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.region-members-joining")));
+				.collect(Collectors.joining(Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.region-members-joining")));
 	}
 
 	/**
@@ -276,11 +276,11 @@ public final class Formatter {
 			return getNone();
 		}
 
-		String format = Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.war-regions");
+		String format = Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.war-regions");
 
 		return regions.stream()
 				.map((region) -> format.replace("{region}", region.getName()))
-				.collect(Collectors.joining(Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.war-regions-joining")));
+				.collect(Collectors.joining(Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.war-regions-joining")));
 	}
 
 	public static String getNone() {
@@ -332,17 +332,17 @@ public final class Formatter {
 		long seconds = remaining % 60;
 
 		if (days != 0) {
-			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-days").replace("{v}", String.valueOf(Math.abs(days)));
+			return Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.ago-days").replace("{v}", String.valueOf(Math.abs(days)));
 		}
 
 		if (hours != 0) {
-			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-hours").replace("{v}", String.valueOf(Math.abs(hours)));
+			return Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.ago-hours").replace("{v}", String.valueOf(Math.abs(hours)));
 		}
 
 		if (minutes != 0) {
-			return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-minutes").replace("{v}", String.valueOf(Math.abs(minutes)));
+			return Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.ago-minutes").replace("{v}", String.valueOf(Math.abs(minutes)));
 		}
 
-		return Resources.<ConfigFile>get(ResourceType.Config).getString("formatters.ago-seconds").replace("{v}", String.valueOf(Math.abs(seconds)));
+		return Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.ago-seconds").replace("{v}", String.valueOf(Math.abs(seconds)));
 	}
 }

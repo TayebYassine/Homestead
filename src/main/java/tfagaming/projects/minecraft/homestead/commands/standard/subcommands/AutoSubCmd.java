@@ -13,9 +13,11 @@ public class AutoSubCmd extends SubCommandBuilder {
 		super("auto");
 		setPermission(List.of(
 				"homestead.commands.region",
-				"homestead.commands.region." + getName()
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.create",
+				"homestead.actions.regions.chunks.claim"
 		));
-		setUsage("/region auto");
+		setUsage("/hs auto");
 		setPlayerOnly();
 	}
 
@@ -27,11 +29,11 @@ public class AutoSubCmd extends SubCommandBuilder {
 		if (AutoClaimSession.hasSession(player)) {
 			AutoClaimSession.removeSession(player);
 
-			reply(player, "autoclaim.1");
+			Messages.send(player, "commands.auto.1");
 		} else {
 			AutoClaimSession.newSession(player);
 
-			reply(player, "autoclaim.0");
+			Messages.send(player, "commands.auto.0");
 		}
 
 		return true;

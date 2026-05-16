@@ -21,7 +21,7 @@ public class FlySubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.fly"
 		));
-		setUsage("/region fly");
+		setUsage("/hs fly");
 		setPlayerOnly();
 	}
 
@@ -34,7 +34,7 @@ public class FlySubCmd extends SubCommandBuilder {
 		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 		if (region == null || (!PlayerUtility.isOperator(player) && !(region.isOwner(player) || MemberManager.isMemberOfRegion(region, player)))) {
-			reply(player, "fly.0");
+			Messages.send(player, "commands.fly.0");
 			return true;
 		}
 
@@ -44,14 +44,14 @@ public class FlySubCmd extends SubCommandBuilder {
 			player.setAllowFlight(false);
 			player.setFlying(false);
 
-			reply(player, "fly.2");
+			Messages.send(player, "commands.fly.2");
 		} else {
 			ClaimFlySession.newSession(player);
 
 			player.setAllowFlight(true);
 			player.setFlying(true);
 
-			reply(player, "fly.1");
+			Messages.send(player, "commands.fly.1");
 		}
 
 		return true;

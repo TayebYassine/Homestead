@@ -28,7 +28,7 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.update.displayname"
 		));
-		setUsage("/region setdisplayname [name]");
+		setUsage("/hs setdisplayname [name]");
 		setPlayerOnly();
 	}
 
@@ -40,12 +40,12 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "setdisplayname.0");
+			Messages.send(player, "commands.setdisplayname.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			reply(player, "setdisplayname.1");
+			Messages.send(player, "commands.setdisplayname.1");
 			return true;
 		}
 
@@ -59,22 +59,22 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.RENAME_REGION)) {
-			reply(player, "setdisplayname.2");
+			Messages.send(player, "commands.setdisplayname.2");
 			return true;
 		}
 
 		if (!StringUtils.isValidRegionDisplayName(regionDisplayName)) {
-			reply(player, "setdisplayname.3");
+			Messages.send(player, "commands.setdisplayname.3");
 			return true;
 		}
 
 		if (region.getDisplayName() != null && region.getDisplayName().equals(regionDisplayName)) {
-			reply(player, "setdisplayname.4");
+			Messages.send(player, "commands.setdisplayname.4");
 			return true;
 		}
 
 		if (ColorTranslator.containsMiniMessageTag(regionDisplayName)) {
-			reply(player, "setdisplayname.5");
+			Messages.send(player, "commands.setdisplayname.5");
 			return true;
 		}
 
@@ -84,7 +84,7 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 
 		region.setDisplayName(regionDisplayName);
 
-		reply(player, "setdisplayname.6", oldDisplayName, regionDisplayName);
+		Messages.send(player, "commands.setdisplayname.6", oldDisplayName, regionDisplayName);
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DISPLAYNAME, regionDisplayName);
 

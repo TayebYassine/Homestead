@@ -24,13 +24,14 @@ public class ReloadSubCmd extends SubCommandBuilder {
 	public boolean onExecution(CommandSender sender, String[] args) {
 		Homestead instance = Homestead.getInstance();
 
+		Logger.info("Please wait...");
+
 		try {
 			Resources.load(instance);
 
-			Messages.send(sender, 90);
+			Logger.info("Done. Note that some changes may require a server restart.");
 		} catch (Exception e) {
 			Logger.error(e);
-			Messages.send(sender, 87);
 		}
 
 		return true;

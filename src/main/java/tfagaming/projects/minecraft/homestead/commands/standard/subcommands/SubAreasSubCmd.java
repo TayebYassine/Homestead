@@ -44,7 +44,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region subareas [create|conf] ...");
+		setUsage("/hs subareas [create|conf] [args]");
 		setPlayerOnly();
 	}
 
@@ -56,7 +56,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			Messages.send(player, 4);
+			Messages.send(player, "commands.subareas.0");
 			return true;
 		}
 
@@ -75,21 +75,19 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 		switch (action) {
 			case "create": {
 				if (args.length < 2) {
-					Messages.send(player, 0, new Placeholder()
-							.add("{usage}", "/hs subareas create [name]")
-					);
+					Messages.send(player, "commands.subareas.1", "/hs subareas create [name]");
 					return true;
 				}
 
 				if (!player.hasPermission("homestead.actions.regions.subareas.create")) {
-					Messages.send(player, 8);
+					Messages.send(player, "common.no_permission");
 					return true;
 				}
 
 				Selection session = SelectionToolListener.getPlayerSession(player);
 
 				if (session == null) {
-					Messages.send(player, 54);
+					Messages.send(player, "commands.subareas.2");
 					return true;
 				}
 
@@ -98,42 +96,39 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				for (Chunk chunk : ChunkUtility.getChunksInArea(firstCorner, secondCorner)) {
 					if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
-						Messages.send(player, 55);
+						Messages.send(player, "commands.subareas.3");
 						return true;
 					}
 				}
 
 				if (SubAreaUtility.isIntersectingOtherSubArea(region.getUniqueId(), new SeBlock(firstCorner),
 						new SeBlock(secondCorner))) {
-					Messages.send(player, 56);
+					Messages.send(player, "commands.subareas.4");
 					return true;
 				}
 
 				String name = args[1];
 
 				if (!StringUtils.isValidSubAreaName(name)) {
-					Messages.send(player, 57);
+					Messages.send(player, "commands.subareas.5");
 					return true;
 				}
 
 				if (SubAreaManager.isNameUsed(region.getUniqueId(), name)) {
-					Messages.send(player, 58);
+					Messages.send(player, "commands.subareas.6");
 					return true;
 				}
 
 				if (Limits.hasReachedLimit(null, region, Limits.LimitType.SUBAREAS_PER_REGION)) {
-					Messages.send(player, 116);
+					Messages.send(player, "commands.subareas.7");
 					return true;
 				}
 
 				int volume = SubAreaUtility.getVolume(firstCorner, secondCorner);
 				int maxVolume = Limits.getRegionLimit(region, Limits.LimitType.MAX_SUBAREA_VOLUME);
 
-				if (volume >= maxVolume) {
-					Messages.send(player, 117, new Placeholder()
-							.add("{max}", maxVolume)
-							.add("{volume}", volume)
-					);
+				if (volume > maxVolume) {
+					Messages.send(player, "commands.subareas.8", volume, maxVolume);
 					return true;
 				}
 
@@ -141,10 +136,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 				SelectionToolListener.cancelPlayerSession(player);
 
-				Messages.send(player, 59, new Placeholder()
-						.add("{subarea}", name)
-						.add("{subarea-volume}", volume)
-				);
+				Messages.send(player, "commands.subareas.9", region.getName(), volume);
 
 				LogManager.addLog(region, player, LogManager.PredefinedLog.CREATE_SUBAREA);
 
@@ -153,9 +145,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 			case "conf": {
 				if (args.length < 3) {
-					Messages.send(player, 0, new Placeholder()
-							.add("{usage}", "/hs subareas conf [subarea name] [action] (params)")
-					);
+					Messages.send(player, "commands.subareas.1", "/hs subareas conf [subarea name] [action] (params)");
 					return true;
 				}
 
@@ -165,22 +155,20 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 				SubArea subArea = SubAreaManager.findSubArea(region.getUniqueId(), subAreaName);
 
 				if (subArea == null) {
-					Messages.send(player, 60);
+					Messages.send(player, "commands.subareas.10");
 					return true;
 				}
 
 				switch (confAction) {
 					case "delete": {
 						if (!player.hasPermission("homestead.actions.regions.subareas.delete")) {
-							Messages.send(player, 8);
+							Messages.send(player, "common.no_permission");
 							return true;
 						}
 
 						SubAreaManager.deleteSubArea(subArea.getUniqueId());
 
-						Messages.send(player, 62, new Placeholder()
-								.add("{subarea}", subArea.getName())
-						);
+						Messages.send(player, "commands.subareas.11", subAreaName);
 
 						LogManager.addLog(region, player, LogManager.PredefinedLog.DELETE_SUBAREA);
 
@@ -189,36 +177,34 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 					case "rename": {
 						if (!player.hasPermission("homestead.actions.regions.subareas.update.name")) {
-							Messages.send(player, 8);
+							Messages.send(player, "common.no_permission");
 							return true;
 						}
 
 						if (args.length < 4) {
-							Messages.send(player, 0, new Placeholder()
-									.add("{usage}", "/hs subareas conf [subarea name] rename [new name]")
-							);
+							Messages.send(player, "commands.subareas.1", "/hs subareas conf [subarea name] rename [new name]");
 							return true;
 						}
 
 						String newName = args[3];
 
 						if (!StringUtils.isValidSubAreaName(newName)) {
-							Messages.send(player, 57);
+							Messages.send(player, "commands.subareas.5");
 							return true;
 						}
 
 						if (subArea.getName().equalsIgnoreCase(newName)) {
-							Messages.send(player, 11);
+							Messages.send(player, "commands.subareas.12");
 							return true;
 						}
 
 						if (SubAreaManager.isNameUsed(region.getUniqueId(), newName)) {
-							Messages.send(player, 58);
+							Messages.send(player, "commands.subareas.6");
 							return true;
 						}
 
 						if (ColorTranslator.containsMiniMessageTag(newName)) {
-							Messages.send(player, 30);
+							Messages.send(player, "commands.subareas.13");
 							return true;
 						}
 
@@ -226,24 +212,21 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 						subArea.setName(newName);
 
-						Messages.send(player, 61, new Placeholder()
-								.add("{oldname}", oldName)
-								.add("{newname}", newName)
-						);
+						Messages.send(player, "commands.subareas.14", oldName, newName);
 
 						return true;
 					}
 
 					case "resize": {
 						if (!player.hasPermission("homestead.actions.regions.subareas.resize")) {
-							Messages.send(player, 8);
+							Messages.send(player, "common.no_permission");
 							return true;
 						}
 
 						Selection session = SelectionToolListener.getPlayerSession(player);
 
 						if (session == null) {
-							Messages.send(player, 54);
+							Messages.send(player, "commands.subareas.2");
 							return true;
 						}
 
@@ -252,7 +235,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 						for (Chunk chunk : ChunkUtility.getChunksInArea(firstCorner, secondCorner)) {
 							if (!(ChunkManager.isChunkClaimedByRegion(region, chunk) && firstCorner.getWorld().getUID().equals(subArea.getWorldId()))) {
-								Messages.send(player, 55);
+								Messages.send(player, "commands.subareas.3");
 								return true;
 							}
 						}
@@ -261,35 +244,33 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								new SeBlock(secondCorner));
 
 						if (intersectedSubArea != null && intersectedSubArea.getUniqueId() != subArea.getUniqueId()) {
-							Messages.send(player, 56);
+							Messages.send(player, "commands.subareas.4");
 							return true;
 						}
 
 						subArea.setPoint1(firstCorner);
 						subArea.setPoint2(secondCorner);
 
-						Messages.send(player, 215);
+						Messages.send(player, "commands.subareas.15");
 
 						return true;
 					}
 
 					case "flags": {
 						if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.global")) {
-							Messages.send(player, 8);
+							Messages.send(player, "common.no_permission");
 							return true;
 						}
 
 						if (args.length < 4) {
-							Messages.send(player, 0, new Placeholder()
-									.add("{usage}", "/hs subareas conf [subarea name] flags [flag] (state)")
-							);
+							Messages.send(player, "commands.subareas.1", "/hs subareas conf [subarea name] flags [flag] (state)");
 							return true;
 						}
 
 						String flagInput = args[3];
 
 						if (!PlayerFlags.getFlags().contains(flagInput)) {
-							Messages.send(player, 41);
+							Messages.send(player, "commands.subareas.16");
 							return true;
 						}
 
@@ -329,12 +310,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 						subArea.setPlayerFlags(newFlags);
 
-						Messages.send(player, 63, new Placeholder()
-								.add("{region}", region.getName())
-								.add("{flag}", flagInput)
-								.add("{subarea}", subArea.getName())
-								.add("{state}", Formatter.getFlagState(!currentState))
-						);
+						Messages.send(player, "commands.subareas.17", flagInput, Formatter.getFlagState(!currentState), subAreaName);
 
 						LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, subArea.getName(), Formatter.getFlagState(!currentState));
 
@@ -343,9 +319,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 					case "players": {
 						if (args.length < 4) {
-							Messages.send(player, 0, new Placeholder()
-									.add("{usage}", "/hs subareas conf [subarea name] players [add|remove|flags] ...")
-							);
+							Messages.send(player, "commands.subareas.1", "/hs subareas conf [subarea name] players [add|remove|flags] ...");
 							return true;
 						}
 
@@ -354,14 +328,12 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 						switch (playerAction.toLowerCase()) {
 							case "add": {
 								if (args.length < 5) {
-									Messages.send(player, 0, new Placeholder()
-											.add("{usage}", "/hs subareas conf [subarea name] players add [player]")
-									);
+									Messages.send(player, "commands.subareas.1", "/hs subareas conf [subarea name] players add [player]");
 									return true;
 								}
 
 								if (!player.hasPermission("homestead.actions.regions.subareas.players.add")) {
-									Messages.send(player, 8);
+									Messages.send(player, "common.no_permission");
 									return true;
 								}
 
@@ -369,33 +341,28 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 								if (target == null) {
-									Messages.send(player, 29, new Placeholder()
-											.add("{playername}", playerName)
-									);
+									Messages.send(player, "commands.subareas.19");
 									return true;
 								}
 
 								if (region.isOwner(target)) {
-									Messages.send(player, 30);
+									Messages.send(player, "commands.subareas.20");
 									return true;
 								}
 
 								if (!MemberManager.isMemberOfRegion(region, target)) {
-									Messages.send(player, 171);
+									Messages.send(player, "commands.subareas.21");
 									return true;
 								}
 
 								if (MemberManager.isMemberOfSubArea(subArea, target)) {
-									Messages.send(player, 174);
+									Messages.send(player, "commands.subareas.22");
 									return true;
 								}
 
 								MemberManager.addMemberToSubArea(target, subArea);
 
-								Messages.send(player, 172, new Placeholder()
-										.add("{subarea}", subArea.getName())
-										.add("{player}", target.getName())
-								);
+								Messages.send(player, "commands.subareas.23", playerName);
 
 								LogManager.addLog(region, player, LogManager.PredefinedLog.ADD_PLAYER_SUBAREA, target.getName(), subArea.getName());
 
@@ -406,14 +373,12 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 							case "remove": {
 								if (args.length < 5) {
-									Messages.send(player, 0, new Placeholder()
-											.add("{usage}", "/hs subareas conf [subarea name] players remove [player]")
-									);
+									Messages.send(player, "commands.subareas.1", "/hs subareas conf [subarea name] players remove [player]");
 									return true;
 								}
 
 								if (!player.hasPermission("homestead.actions.regions.subareas.players.remove")) {
-									Messages.send(player, 8);
+									Messages.send(player, "common.no_permission");
 									return true;
 								}
 
@@ -421,23 +386,18 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 								if (target == null) {
-									Messages.send(player, 29, new Placeholder()
-											.add("{playername}", playerName)
-									);
+									Messages.send(player, "commands.subareas.19");
 									return true;
 								}
 
 								if (!MemberManager.isMemberOfSubArea(subArea, target)) {
-									Messages.send(player, 175);
+									Messages.send(player, "commands.subareas.24");
 									return true;
 								}
 
 								MemberManager.removeMemberFromSubArea(target, subArea);
 
-								Messages.send(player, 173, new Placeholder()
-										.add("{subarea}", subArea.getName())
-										.add("{player}", target.getName())
-								);
+								Messages.send(player, "commands.subareas.25", playerName);
 
 								LogManager.addLog(region, player, LogManager.PredefinedLog.REMOVE_PLAYER_SUBAREA, target.getName(), subArea.getName());
 
@@ -448,14 +408,12 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 							case "flags": {
 								if (args.length < 6) {
-									Messages.send(player, 0, new Placeholder()
-											.add("{usage}", "/hs subareas conf [subarea name] players flags [player] [flag] (state)")
-									);
+									Messages.send(player, "commands.subareas.1", "/hs subareas conf [subarea name] players flags [player] [flag] (state)");
 									return true;
 								}
 
 								if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.members")) {
-									Messages.send(player, 8);
+									Messages.send(player, "common.no_permission");
 									return true;
 								}
 
@@ -463,23 +421,21 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 								if (target == null) {
-									Messages.send(player, 29, new Placeholder()
-											.add("{playername}", playerName)
-									);
+									Messages.send(player, "commands.subareas.19");
 									return true;
 								}
 
 								RegionMember member = MemberManager.getMemberOfSubArea(subArea, target);
 
 								if (member == null) {
-									Messages.send(player, 170);
+									Messages.send(player, "commands.subareas.24");
 									return true;
 								}
 
 								String flagInput = args[5];
 
 								if (!PlayerFlags.getFlags().contains(flagInput)) {
-									Messages.send(player, 41);
+									Messages.send(player, "commands.subareas.16");
 									return true;
 								}
 
@@ -519,13 +475,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 
 								member.setPlayerFlags(newFlags);
 
-								Messages.send(player, 169, new Placeholder()
-										.add("{region}", region.getName())
-										.add("{flag}", flagInput)
-										.add("{state}", Formatter.getFlagState(!currentState))
-										.add("{subarea}", subArea.getName())
-										.add("{player}", target.getName())
-								);
+								Messages.send(player, "commands.subareas.18", flagInput, Formatter.getFlagState(!currentState), playerName, subArea.getName());
 
 								LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagInput, member.getPlayerName(), Formatter.getFlagState(!currentState));
 
@@ -533,27 +483,21 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 							}
 
 							default: {
-								Messages.send(player, 0, new Placeholder()
-										.add("{usage}", "/hs subareas conf [subarea name] players [add|remove|flags] ...")
-								);
+								Messages.send(player, "commands.subareas.1", "/hs subareas conf [subarea name] players [add|remove|flags] ...");
 								return true;
 							}
 						}
 					}
 
 					default: {
-						Messages.send(player, 0, new Placeholder()
-								.add("{usage}", "/hs subareas conf [subarea name] [delete|rename|resize|flags|players] (params)")
-						);
+						Messages.send(player, "commands.subareas.1", "/hs subareas conf [subarea name] [delete|rename|resize|flags|players] (params)");
 						return true;
 					}
 				}
 			}
 
 			default: {
-				Messages.send(player, 0, new Placeholder()
-						.add("{usage}", getUsage())
-				);
+				Messages.send(player, "commands.subareas.1", getUsage());
 				return true;
 			}
 		}

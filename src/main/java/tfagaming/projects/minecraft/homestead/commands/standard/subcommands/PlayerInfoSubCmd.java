@@ -19,7 +19,7 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region player [player]");
+		setUsage("/hs player [player]");
 		setPlayerOnly();
 	}
 
@@ -36,7 +36,7 @@ public class PlayerInfoSubCmd extends SubCommandBuilder {
 			OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 			if (target == null) {
-				reply(player, "player.0");
+				Messages.send(player, "commands.player.0");
 				return true;
 			}
 

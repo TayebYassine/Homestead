@@ -50,15 +50,16 @@ public final class RegionRating {
 			}
 
 			if (!player.hasPermission("homestead.actions.regions.rate")) {
-				Messages.send(player, 8);
+				Messages.send(player, "common.no_permission");
 				return;
 			}
 
 			if (!event.isLeftClick()) return;
 
 			RateManager.rateRegion(region, player, rating);
+
 			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-			Messages.send(player, 134);
+
 			new RegionRating(player, region, backButton);
 		};
 	}

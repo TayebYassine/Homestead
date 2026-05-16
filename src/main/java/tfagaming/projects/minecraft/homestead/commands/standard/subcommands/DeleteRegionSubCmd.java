@@ -25,7 +25,7 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.delete"
 		));
-		setUsage("/region delete [confirm]");
+		setUsage("/hs delete [confirm]");
 		setPlayerOnly();
 	}
 
@@ -37,24 +37,24 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "delete.0");
+			Messages.send(player, "commands.delete.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			reply(player, "delete.1");
+			Messages.send(player, "commands.delete.1");
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			reply(player, "delete.2");
+			Messages.send(player, "commands.delete.2");
 			return true;
 		}
 
 		String confirmInput = args[0];
 
 		if (!confirmInput.equalsIgnoreCase("confirm")) {
-			reply(player, "delete.1");
+			Messages.send(player, "commands.delete.1");
 			return true;
 		}
 
@@ -65,7 +65,7 @@ public class DeleteRegionSubCmd extends SubCommandBuilder {
 
 		PlayerBank.deposit(region.getOwner(), bankAmount);
 
-		reply(player, "delete.3", regionName);
+		Messages.send(player, "commands.delete.3", regionName);
 
 		TargetRegionSession.randomizeRegion(player);
 

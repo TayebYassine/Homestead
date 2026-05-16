@@ -20,7 +20,7 @@ public class RewardsSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region rewards");
+		setUsage("/hs rewards");
 		setPlayerOnly();
 	}
 
@@ -30,14 +30,14 @@ public class RewardsSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (!Resources.<RegionsFile>get(ResourceType.Regions).isRewardsEnabled()) {
-			reply(player, "rewards.0");
+			Messages.send(player, "commands.rewards.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "rewards.1");
+			Messages.send(player, "commands.rewards.1");
 			return true;
 		}
 

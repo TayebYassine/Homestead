@@ -18,7 +18,7 @@ public class MenuSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region menu");
+		setUsage("/hs menu");
 		setPlayerOnly();
 	}
 

@@ -2,6 +2,7 @@ package tfagaming.projects.minecraft.homestead.commands.operator.subcommands;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.managers.*;
@@ -26,10 +27,11 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 
 	@Override
 	public boolean onExecution(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return false;
+
 		if (args.length < 2) {
-			Messages.send(sender, 0, new Placeholder()
-					.add("{usage}", getUsage())
-			);
+			Messages.send(player, "commands.op_transfer.0", getUsage());
 			return true;
 		}
 
@@ -37,7 +39,7 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			Messages.send(sender, 9);
+			Messages.send(player, "commands.op_transfer.1");
 			return true;
 		}
 
@@ -45,14 +47,12 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 		if (target == null) {
-			Messages.send(sender, 29, new Placeholder()
-					.add("{playername}", playerName)
-			);
+			Messages.send(player, "commands.op_transfer.2");
 			return true;
 		}
 
 		if (region.isOwner(target)) {
-			Messages.send(sender, 192);
+			Messages.send(player, "commands.op_transfer.3");
 			return true;
 		}
 
@@ -66,10 +66,7 @@ public class TransferOwnershipSubCmd extends SubCommandBuilder {
 
 		region.setOwner(target);
 
-		Messages.send(sender, 193, new Placeholder()
-				.add("{region}", region.getName())
-				.add("{player}", target.getName())
-		);
+		Messages.send(player, "commands.op_transfer.4");
 
 		return true;
 	}

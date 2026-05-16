@@ -83,9 +83,7 @@ public class RegionCommand extends CommandBuilder {
 				StringSimilarity.find(getSubCommandNames(), attempted)
 		);
 
-		Messages.send(player, 7, new Placeholder()
-				.add("{similarity-subcmds}", similarity)
-		);
+		Messages.send(player, "commands.homestead.0", similarity);
 
 		return true;
 	}

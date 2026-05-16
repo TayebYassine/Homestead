@@ -158,9 +158,7 @@ public final class Level {
 		if (region.getOwner() != null && region.getOwner().isOnline()) {
 			Player owner = (Player) region.getOwner();
 
-			Messages.send(owner, 208, new Placeholder()
-					.add("{level}", this.level)
-			);
+			Messages.send(owner, "common.level_up", this.level);
 		}
 	}
 

@@ -22,7 +22,7 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region deny [region]");
+		setUsage("/hs deny [region]");
 		setPlayerOnly();
 	}
 
@@ -34,7 +34,7 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "deny.0");
+			Messages.send(player, "commands.deny.0");
 			return true;
 		}
 
@@ -43,18 +43,18 @@ public class DenyInviteSubCmd extends SubCommandBuilder {
 		Region region = RegionManager.findRegion(regionName);
 
 		if (region == null) {
-			reply(player, "deny.1");
+			Messages.send(player, "commands.deny.1");
 			return true;
 		}
 
 		if (!InviteManager.isInvited(region, player)) {
-			reply(player, "deny.2");
+			Messages.send(player, "commands.deny.2");
 			return true;
 		}
 
 		InviteManager.deleteInvitesOfPlayer(region, player);
 
-		reply(player, "deny.3");
+		Messages.send(player, "commands.deny.3");
 
 		Homestead.callEvent(new RevokePlayerInviteEvent(region, player));
 

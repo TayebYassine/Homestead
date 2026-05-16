@@ -25,7 +25,7 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.update.map_icon"
 		));
-		setUsage("/region setmapicon [icon]");
+		setUsage("/hs setmapicon [icon]");
 		setPlayerOnly();
 	}
 
@@ -37,12 +37,12 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "setmapicon.0");
+			Messages.send(player, "commands.setmapicon.0");
 			return true;
 		}
 
 		if (!(Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled") && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled"))) {
-			reply(player, "setmapicon.1");
+			Messages.send(player, "commands.setmapicon.1");
 			return true;
 		}
 
@@ -62,18 +62,18 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 		if (iconInput.equals("Default")) {
 			region.setMapIcon(iconInput);
 
-			reply(player, "setmapicon.4");
+			Messages.send(player, "commands.setmapicon.4");
 
 			return true;
 		}
 
 		if (!MapIcon.isValidIcon(iconInput)) {
-			reply(player, "setmapicon.2");
+			Messages.send(player, "commands.setmapicon.2");
 			return true;
 		}
 
 		if (region.getMapIcon() != null && region.getMapIcon().equals(iconInput)) {
-			reply(player, "setmapicon.3");
+			Messages.send(player, "commands.setmapicon.3");
 			return true;
 		}
 
@@ -81,7 +81,7 @@ public class SetMapIconSubCmd extends SubCommandBuilder {
 
 		region.setMapIcon(iconInput);
 
-		reply(player, "setmapicon.5");
+		Messages.send(player, "commands.setmapicon.5");
 
 		return true;
 	}

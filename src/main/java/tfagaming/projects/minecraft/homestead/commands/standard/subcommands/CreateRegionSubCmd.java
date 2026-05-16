@@ -23,7 +23,7 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.create"
 		));
-		setUsage("/region create [name]");
+		setUsage("/hs create [name]");
 		setPlayerOnly();
 	}
 
@@ -33,30 +33,30 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			reply(player, "create.0");
+			Messages.send(player, "commands.create.0");
 			return true;
 		}
 
 		String regionName = args[0];
 
 		if (!StringUtils.isValidRegionName(regionName)) {
-			reply(player, "create.1");
+			Messages.send(player, "commands.create.1");
 			return true;
 		}
 
 		if (RegionManager.isNameUsed(regionName)) {
-			reply(player, "create.2");
+			Messages.send(player, "commands.create.2");
 			return true;
 		}
 
 		if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
-			reply(player, "create.3");
+			Messages.send(player, "commands.create.3");
 			return true;
 		}
 
 		Region region = RegionManager.createRegion(regionName, player);
 
-		reply(player, "create.4", regionName);
+		Messages.send(player, "commands.create.4", regionName);
 
 		TargetRegionSession.newSession(player, region);
 

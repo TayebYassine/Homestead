@@ -25,7 +25,7 @@ public class SetMapColorSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.update.map_color"
 		));
-		setUsage("/region setmapcolor [color]");
+		setUsage("/hs setmapcolor [color]");
 		setPlayerOnly();
 	}
 
@@ -37,12 +37,12 @@ public class SetMapColorSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "setmapcolor.0");
+			Messages.send(player, "commands.setmapcolor.0");
 			return true;
 		}
 
 		if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
-			reply(player, "setmapcolor.1");
+			Messages.send(player, "commands.setmapcolor.1");
 			return true;
 		}
 
@@ -60,14 +60,14 @@ public class SetMapColorSubCmd extends SubCommandBuilder {
 		String colorInput = args[0].toLowerCase();
 
 		if (!MapColor.getAll().contains(colorInput)) {
-			reply(player, "setmapcolor.2");
+			Messages.send(player, "commands.setmapcolor.2");
 			return true;
 		}
 
 		int color = MapColor.parseFromString(colorInput);
 
 		if (region.getMapColor() == color) {
-			reply(player, "setmapcolor.3");
+			Messages.send(player, "commands.setmapcolor.3");
 			return true;
 		}
 
@@ -77,7 +77,7 @@ public class SetMapColorSubCmd extends SubCommandBuilder {
 
 		region.setMapColor(color);
 
-		reply(player, "setmapcolor.4", MapColor.toString(oldColor), MapColor.toString(color));
+		Messages.send(player, "commands.setmapcolor.4", MapColor.toString(oldColor), MapColor.toString(color));
 
 		return true;
 	}

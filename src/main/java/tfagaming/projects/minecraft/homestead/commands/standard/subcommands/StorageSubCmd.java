@@ -23,7 +23,7 @@ public class StorageSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.storage"
 		));
-		setUsage("/region storage");
+		setUsage("/hs storage");
 		setPlayerOnly();
 	}
 
@@ -35,19 +35,19 @@ public class StorageSubCmd extends SubCommandBuilder {
 		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isRegionStorageEnabled();
 
 		if (!isEnabled) {
-			reply(player, "storage.0");
+			Messages.send(player, "commands.storage.0");
 			return true;
 		}
 
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "storage.1");
+			Messages.send(player, "commands.storage.1");
 			return true;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player) && !MemberManager.isMemberOfRegion(region, player)) {
-			reply(player, "storage.2");
+			Messages.send(player, "commands.storage.2");
 			return true;
 		}
 

@@ -53,7 +53,7 @@ public final class RegionWorldFlags {
 		if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
 		if (!player.hasPermission("homestead.actions.regions.update.flags.world")) {
-			Messages.send(player, 8);
+			Messages.send(player, "common.no_permission");
 			return;
 		}
 
@@ -66,7 +66,7 @@ public final class RegionWorldFlags {
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			Messages.send(player, 42);
+			Messages.send(player, "commands.flags.9");
 			return;
 		}
 

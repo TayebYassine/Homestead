@@ -19,7 +19,7 @@ public class RegionInfoSubCmd extends SubCommandBuilder {
 				"homestead.commands.region",
 				"homestead.commands.region." + getName()
 		));
-		setUsage("/region info (region)");
+		setUsage("/hs info (region)");
 		setPlayerOnly();
 	}
 
@@ -34,7 +34,7 @@ public class RegionInfoSubCmd extends SubCommandBuilder {
 			Region region = RegionManager.findRegion(regionName);
 
 			if (region == null) {
-				reply(player, "info.0", regionName);
+				Messages.send(player, "commands.info.0", regionName);
 				return true;
 			}
 
@@ -43,7 +43,7 @@ public class RegionInfoSubCmd extends SubCommandBuilder {
 			Region region = ChunkManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
 
 			if (region == null) {
-				reply(player, "info.1");
+				Messages.send(player, "commands.info.1");
 				return true;
 			}
 

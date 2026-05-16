@@ -82,7 +82,7 @@ public class ClaimCommand extends CommandBuilder {
 		Block secondCorner = session.getSecondPosition();
 
 		if (!firstCorner.getWorld().equals(secondCorner.getWorld())) {
-			Messages.send(player, 192);
+			Messages.send(player, "commands.claim.0");
 			return true;
 		}
 
@@ -90,20 +90,18 @@ public class ClaimCommand extends CommandBuilder {
 
 		for (Chunk chunk : ChunkUtility.getChunksInArea(firstCorner, secondCorner)) {
 			if (ChunkManager.isChunkInDisabledWorld(chunk)) {
-				Messages.send(player, 20);
+				Messages.send(player, "commands.claim.1");
 				return true;
 			}
 
 			if (Resources.<ConfigFile>get(ResourceType.Config).protectWorldGuardRegions() && WorldGuardAPI.isChunkInRegion(chunk)) {
-				Messages.send(player, 133);
+				Messages.send(player, "commands.claim.2");
 				return true;
 			}
 
 			Region regionOwnsThisChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
 			if (regionOwnsThisChunk != null) {
-				Messages.send(player, 21, new Placeholder()
-						.add("{region}", regionOwnsThisChunk.getName())
-				);
+				Messages.send(player, "commands.claim.3");
 				return true;
 			}
 
@@ -111,7 +109,7 @@ public class ClaimCommand extends CommandBuilder {
 		}
 
 		if (chunksToClaim.isEmpty()) {
-			Messages.send(player, 186);
+			Messages.send(player, "commands.claim.4");
 			return true;
 		}
 
@@ -132,11 +130,11 @@ public class ClaimCommand extends CommandBuilder {
 			try {
 				radius = Integer.parseInt(args[1]);
 				if (radius < 1 || radius > 10) {
-					Messages.send(player, 209);
+					Messages.send(player, "commands.claim.5");
 					return true;
 				}
 			} catch (NumberFormatException e) {
-				Messages.send(player, 185);
+				Messages.send(player, "commands.claim.6");
 				return true;
 			}
 		}
@@ -151,20 +149,18 @@ public class ClaimCommand extends CommandBuilder {
 				Chunk chunk = centerChunk.getWorld().getChunkAt(x, z);
 
 				if (ChunkManager.isChunkInDisabledWorld(chunk)) {
-					Messages.send(player, 20);
+					Messages.send(player, "commands.claim.1");
 					return true;
 				}
 
 				if (Resources.<ConfigFile>get(ResourceType.Config).protectWorldGuardRegions() && WorldGuardAPI.isChunkInRegion(chunk)) {
-					Messages.send(player, 133);
+					Messages.send(player, "commands.claim.2");
 					return true;
 				}
 
 				Region regionOwnsThisChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
 				if (regionOwnsThisChunk != null) {
-					Messages.send(player, 21, new Placeholder()
-							.add("{region}", regionOwnsThisChunk.getName())
-					);
+					Messages.send(player, "commands.claim.3");
 					return true;
 				}
 
@@ -196,17 +192,14 @@ public class ClaimCommand extends CommandBuilder {
 		double totalPrice = chunkPrice * chunksToClaim.size();
 
 		if (totalPrice > 0 && PlayerBank.get(region.getOwner()) < totalPrice) {
-			Messages.send(player, 200, new Placeholder()
-					.add("{price}", Formatter.getBalance(totalPrice))
-					.add("{player}", region.getOwnerName())
-			);
+			Messages.send(player, "commands.claim.7", Formatter.getBalance(totalPrice));
 			return false;
 		}
 
 		int currentChunks = ChunkManager.getChunkCount(region);
 		int maxChunks = Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION);
 		if (currentChunks + chunksToClaim.size() > maxChunks) {
-			Messages.send(player, 116);
+			Messages.send(player, "commands.claim.8");
 			return false;
 		}
 
@@ -230,8 +223,8 @@ public class ClaimCommand extends CommandBuilder {
 			}
 
 			switch (lastError) {
-				case REGION_NOT_FOUND -> Messages.send(player, 9);
-				case CHUNK_NOT_ADJACENT_TO_REGION -> Messages.send(player, 140);
+				case REGION_NOT_FOUND -> Messages.send(player, "commands.claim.9");
+				case CHUNK_NOT_ADJACENT_TO_REGION -> Messages.send(player, "commands.claim.10");
 			}
 			return false;
 		}
@@ -242,15 +235,9 @@ public class ClaimCommand extends CommandBuilder {
 			}
 
 			if (claimedCount == 1) {
-				Messages.send(player, 22, new Placeholder()
-						.add("{region}", region.getName())
-				);
+				Messages.send(player, "commands.claim.11", region.getName(), Formatter.getBalance(totalPrice));
 			} else {
-				Messages.send(player, 187, new Placeholder()
-						.add("{region}", region.getName())
-						.add("{chunks}", claimedCount)
-						.add("{total}", chunksToClaim.size())
-				);
+				Messages.send(player, "commands.claim.12", claimedCount, chunksToClaim.size(), region.getName(), Formatter.getBalance(totalPrice));
 			}
 
 			LogManager.addLog(region, player, LogManager.PredefinedLog.CLAIM_CHUNK);
@@ -276,12 +263,11 @@ public class ClaimCommand extends CommandBuilder {
 				region = TargetRegionSession.getRegion(player);
 			} else {
 				if (!player.hasPermission("homestead.actions.regions.create")) {
-					Messages.send(player, 8);
 					return null;
 				}
 
 				if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
-					Messages.send(player, 116);
+					Messages.send(player, "commands.claim.13");
 					return null;
 				}
 

@@ -22,7 +22,7 @@ public class SetWeatherSubCmd extends SubCommandBuilder {
 				"homestead.commands.region." + getName(),
 				"homestead.actions.regions.update.weather"
 		));
-		setUsage("/region setweather [weather]");
+		setUsage("/hs setweather [weather]");
 		setPlayerOnly();
 	}
 
@@ -34,12 +34,12 @@ public class SetWeatherSubCmd extends SubCommandBuilder {
 		Region region = TargetRegionSession.getRegion(player);
 
 		if (region == null) {
-			reply(player, "setweather.0");
+			Messages.send(player, "commands.setweather.0");
 			return true;
 		}
 
 		if (args.length < 1) {
-			reply(player, "setweather.1");
+			Messages.send(player, "commands.setweather.1");
 			return true;
 		}
 
@@ -47,7 +47,7 @@ public class SetWeatherSubCmd extends SubCommandBuilder {
 		int weather = RegionWeather.parse(weatherInput);
 
 		if (weather == -1) {
-			reply(player, "setweather.2");
+			Messages.send(player, "commands.setweather.2");
 			return true;
 		}
 
@@ -55,7 +55,7 @@ public class SetWeatherSubCmd extends SubCommandBuilder {
 
 		region.setWeather(newWeather);
 
-		reply(player, "setweather.3", weatherInput);
+		Messages.send(player, "commands.setweather.3", weatherInput);
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_WEATHER, RegionWeather.from(newWeather));
 
