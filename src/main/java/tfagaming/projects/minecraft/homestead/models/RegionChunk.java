@@ -68,7 +68,16 @@ public final class RegionChunk {
 	}
 
 	public void setRegionId(long regionId) {
+		long oldRegionId = this.regionId;
+
+		if (oldRegionId == regionId) {
+			return;
+		}
+
+		Homestead.REGION_INDEXED_CHUNK_CACHE.remove(this);
 		this.regionId = regionId;
+
+		Homestead.REGION_INDEXED_CHUNK_CACHE.add(this);
 		update();
 	}
 
