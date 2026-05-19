@@ -119,13 +119,13 @@ public final class Formatter {
 			return getNone();
 		}
 
-		String star = Resources.<LanguageFile>get(ResourceType.Language).getString("default.star");
+		String star = Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.star");
 
 		return getStarColor(rate) + star.repeat(rate);
 	}
 
 	private static String getStarColor(int rate) {
-		return Resources.<LanguageFile>get(ResourceType.Language).getString("default.star-color." + rate);
+		return Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.star-color." + rate);
 	}
 
 	/**
@@ -284,32 +284,32 @@ public final class Formatter {
 	}
 
 	public static String getNone() {
-		return Resources.<LanguageFile>get(ResourceType.Language).getString("default.none");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.none");
 	}
 
 	public static String getNever() {
-		return Resources.<LanguageFile>get(ResourceType.Language).getString("default.never");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.never");
 	}
 
 	public static String getBoolean(boolean value) {
-		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "default.isTrue" : "default.isFalse");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "common.variables.isTrue" : "common.variables.isFalse");
 	}
 
 	public static String getToggle(boolean value) {
-		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "default.isEnabled" : "default.isDisabled");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "common.variables.isEnabled" : "common.variables.isDisabled");
 	}
 
 	public static String getFlagState(boolean value) {
-		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "default.flagSet" : "default.flagUnset");
+		return Resources.<LanguageFile>get(ResourceType.Language).getString(value ? "common.variables.flagSet" : "common.variables.flagUnset");
 	}
 
 	/**
 	 * Get the player status; <b>Online</b>, <b>Offline</b>, or server <b>Banned</b>.
 	 */
 	public static String getPlayerStatus(OfflinePlayer player) {
-		return Bukkit.getBannedPlayers().contains(player) ? Resources.<LanguageFile>get(ResourceType.Language).getString("default.banned")
-				: (player.isOnline() ? Resources.<LanguageFile>get(ResourceType.Language).getString("default.online")
-				: Resources.<LanguageFile>get(ResourceType.Language).getString("default.offline"));
+		return Bukkit.getBannedPlayers().contains(player) ? Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.banned")
+				: (player.isOnline() ? Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.online")
+				: Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.offline"));
 	}
 
 	/**

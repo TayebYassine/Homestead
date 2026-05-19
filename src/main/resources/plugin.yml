@@ -12,12 +12,12 @@ commands:
     description: 'Claim a chunk using Homestead'
     usage: '/<command> <name>'
     permission: 'homestead.commands.claim'
-    default: True
+    default: true
   unclaim:
     description: 'Unclaim a chunk using Homestead'
     usage: '/<command>'
     permission: 'homestead.commands.unclaim'
-    default: True
+    default: true
   region:
     description: 'The main command to manage regions using Homestead'
     usage: '/<command> [subcommand] <args>'
@@ -26,7 +26,7 @@ commands:
       - rg
       - hs
       - homestead
-    default: True
+    default: true
   homesteadadmin:
     description: 'The main command for administrators to manage Homestead regions'
     usage: '/<command>'
@@ -45,38 +45,40 @@ commands:
 
 permissions:
   homestead.actions.regions.change_owner:
-    default: True
+    default: true
   homestead.actions.regions.chat:
-    default: True
+    default: true
+  homestead.actions.regions.merge:
+    default: true
   homestead.actions.regions.chunks.claim:
-    default: True
+    default: true
   homestead.actions.regions.chunks.unclaim:
-    default: True
+    default: true
   homestead.actions.regions.chunks.*:
     default: true
     children:
       homestead.actions.regions.chunks.claim: true
       homestead.actions.regions.chunks.unclaim: true
   homestead.actions.regions.create:
-    default: True
+    default: true
   homestead.actions.regions.delete:
-    default: True
+    default: true
   homestead.actions.regions.deposit_bank:
-    default: True
+    default: true
   homestead.actions.regions.fly:
-    default: True
+    default: true
   homestead.actions.regions.kick:
-    default: True
+    default: true
   homestead.actions.regions.mail:
-    default: True
+    default: true
   homestead.actions.regions.players.ban:
-    default: True
+    default: true
   homestead.actions.regions.players.trust:
-    default: True
+    default: true
   homestead.actions.regions.players.unban:
-    default: True
+    default: true
   homestead.actions.regions.players.untrust:
-    default: True
+    default: true
   homestead.actions.regions.players.*:
     default: true
     children:
@@ -85,35 +87,35 @@ permissions:
       homestead.actions.regions.players.unban: true
       homestead.actions.regions.players.untrust: true
   homestead.actions.regions.rate:
-    default: True
+    default: true
   homestead.actions.regions.storage:
-    default: True
+    default: true
   homestead.actions.regions.subareas.create:
-    default: True
+    default: true
   homestead.actions.regions.subareas.delete:
-    default: True
+    default: true
   homestead.actions.regions.subareas.players.add:
-    default: True
+    default: true
   homestead.actions.regions.subareas.players.remove:
-    default: True
+    default: true
   homestead.actions.regions.subareas.players.*:
     default: true
     children:
       homestead.actions.regions.subareas.players.add: true
       homestead.actions.regions.subareas.players.remove: true
   homestead.actions.regions.subareas.resize:
-    default: True
+    default: true
   homestead.actions.regions.subareas.update.flags.global:
-    default: True
+    default: true
   homestead.actions.regions.subareas.update.flags.members:
-    default: True
+    default: true
   homestead.actions.regions.subareas.update.flags.*:
     default: true
     children:
       homestead.actions.regions.subareas.update.flags.global: true
       homestead.actions.regions.subareas.update.flags.members: true
   homestead.actions.regions.subareas.update.name:
-    default: True
+    default: true
   homestead.actions.regions.subareas.*:
     default: true
     children:
@@ -121,17 +123,17 @@ permissions:
       homestead.actions.regions.subareas.delete: true
       homestead.actions.regions.subareas.resize: true
   homestead.actions.regions.teleport:
-    default: True
+    default: true
   homestead.actions.regions.update.description:
-    default: True
+    default: true
   homestead.actions.regions.update.displayname:
-    default: True
+    default: true
   homestead.actions.regions.update.flags.global:
-    default: True
+    default: true
   homestead.actions.regions.update.flags.members:
-    default: True
+    default: true
   homestead.actions.regions.update.flags.world:
-    default: True
+    default: true
   homestead.actions.regions.update.flags.*:
     default: true
     children:
@@ -139,17 +141,17 @@ permissions:
       homestead.actions.regions.update.flags.members: true
       homestead.actions.regions.update.flags.world: true
   homestead.actions.regions.update.map_color:
-    default: True
+    default: true
   homestead.actions.regions.update.map_icon:
-    default: True
+    default: true
   homestead.actions.regions.update.name:
-    default: True
+    default: true
   homestead.actions.regions.update.spawn:
-    default: True
+    default: true
   homestead.actions.regions.update.time:
-    default: True
+    default: true
   homestead.actions.regions.update.weather:
-    default: True
+    default: true
   homestead.actions.regions.update.*:
     default: true
     children:
@@ -162,14 +164,15 @@ permissions:
       homestead.actions.regions.update.time: true
       homestead.actions.regions.update.weather: true
   homestead.actions.regions.war:
-    default: True
+    default: true
   homestead.actions.regions.withdraw_bank:
-    default: True
+    default: true
   homestead.actions.regions.*:
     default: true
     children:
       homestead.actions.regions.change_owner: true
       homestead.actions.regions.chat: true
+      homestead.actions.regions.merge: true
       homestead.actions.regions.create: true
       homestead.actions.regions.delete: true
       homestead.actions.regions.deposit_bank: true
@@ -212,103 +215,103 @@ permissions:
       homestead.commands.homesteadadmin.unclaim: true
       homestead.commands.homesteadadmin.updates: true
   homestead.commands.region.accept:
-    default: True
+    default: true
   homestead.commands.region.auto:
-    default: True
+    default: true
   homestead.commands.region.balance:
-    default: True
+    default: true
   homestead.commands.region.ban:
-    default: True
+    default: true
   homestead.commands.region.banlist:
-    default: True
+    default: true
   homestead.commands.region.borders:
-    default: True
+    default: true
   homestead.commands.region.chat:
-    default: True
+    default: true
   homestead.commands.region.claimlist:
-    default: True
+    default: true
   homestead.commands.region.create:
-    default: True
+    default: true
   homestead.commands.region.delete:
-    default: True
+    default: true
   homestead.commands.region.deny:
-    default: True
+    default: true
   homestead.commands.region.deposit:
-    default: True
+    default: true
   homestead.commands.region.flags:
-    default: True
+    default: true
   homestead.commands.region.fly:
-    default: True
+    default: true
   homestead.commands.region.help:
-    default: True
+    default: true
   homestead.commands.region.home:
-    default: True
+    default: true
   homestead.commands.region.info:
-    default: True
+    default: true
   homestead.commands.region.kick:
-    default: True
+    default: true
   homestead.commands.region.leave:
-    default: True
+    default: true
   homestead.commands.region.levels:
-    default: True
+    default: true
   homestead.commands.region.logs:
-    default: True
+    default: true
   homestead.commands.region.mail:
-    default: True
+    default: true
   homestead.commands.region.members:
-    default: True
+    default: true
   homestead.commands.region.menu:
-    default: True
+    default: true
   homestead.commands.region.merge:
-    default: True
+    default: true
   homestead.commands.region.mergeaccept:
-    default: True
+    default: true
   homestead.commands.region.player:
-    default: True
+    default: true
   homestead.commands.region.rate:
-    default: True
+    default: true
   homestead.commands.region.rename:
-    default: True
+    default: true
   homestead.commands.region.rewards:
-    default: True
+    default: true
   homestead.commands.region.set:
-    default: True
+    default: true
   homestead.commands.region.setdescription:
-    default: True
+    default: true
   homestead.commands.region.setdisplayname:
-    default: True
+    default: true
   homestead.commands.region.setmapcolor:
-    default: True
+    default: true
   homestead.commands.region.setmapicon:
-    default: True
+    default: true
   homestead.commands.region.setmembertax:
-    default: True
+    default: true
   homestead.commands.region.setspawn:
-    default: True
+    default: true
   homestead.commands.region.settime:
-    default: True
+    default: true
   homestead.commands.region.setweather:
-    default: True
+    default: true
   homestead.commands.region.storage:
-    default: True
+    default: true
   homestead.commands.region.subareas:
-    default: True
+    default: true
   homestead.commands.region.top:
-    default: True
+    default: true
   homestead.commands.region.trust:
-    default: True
+    default: true
   homestead.commands.region.unban:
-    default: True
+    default: true
   homestead.commands.region.untrust:
-    default: True
+    default: true
   homestead.commands.region.visit:
-    default: True
+    default: true
   homestead.commands.region.war:
-    default: True
+    default: true
   homestead.commands.region.withdraw:
-    default: True
+    default: true
   homestead.commands.region.*:
-    default: True
+    default: true
     children:
       homestead.commands.region.accept: true
       homestead.commands.region.auto: true

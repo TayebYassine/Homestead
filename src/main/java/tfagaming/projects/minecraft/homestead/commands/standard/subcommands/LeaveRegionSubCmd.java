@@ -43,13 +43,6 @@ public class LeaveRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		String confirmInput = args[0];
-
-		if (!confirmInput.equalsIgnoreCase("confirm")) {
-			Messages.send(player, "commands.leave.0");
-			return true;
-		}
-
 		if (region.isOwner(player)) {
 			Messages.send(player, "commands.leave.3");
 			return true;
@@ -60,13 +53,20 @@ public class LeaveRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		String confirmInput = args[0];
+
+		if (!confirmInput.equalsIgnoreCase("confirm")) {
+			Messages.send(player, "commands.leave.0");
+			return true;
+		}
+
 		MemberManager.removeMemberFromRegion(player, region);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, player.getName());
 
 		Messages.send(player, "commands.leave.4", region.getName());
 
 		TargetRegionSession.randomizeRegion(player);
-
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, player.getName());
 
 		Homestead.callEvent(new PlayerLeftRegionEvent(region, player));
 

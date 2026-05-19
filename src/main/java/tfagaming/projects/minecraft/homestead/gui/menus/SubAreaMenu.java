@@ -65,6 +65,7 @@ public final class SubAreaMenu {
 
 			if (!player.hasPermission("homestead.actions.regions.subareas.update.name")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -105,6 +106,7 @@ public final class SubAreaMenu {
 
 			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -124,11 +126,11 @@ public final class SubAreaMenu {
 
 			if (!player.hasPermission("homestead.actions.regions.subareas.delete")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					ControlFlags.MANAGE_SUBAREAS)) {
-				Messages.send(player, "common.no_permission");
 				return;
 			}
 
@@ -155,21 +157,20 @@ public final class SubAreaMenu {
 				ControlFlags.MANAGE_SUBAREAS)) {
 			return false;
 		}
-		// TODO fix this
 		if (!StringUtils.isValidSubAreaName(message)) {
-			//Messages.send(player, 57);
+			Messages.send(player, "commands.subareas.5");
 			return false;
 		}
 		if (subArea.getName().equalsIgnoreCase(message)) {
-			//Messages.send(player, 11);
+			Messages.send(player, "commands.subareas.12");
 			return false;
 		}
 		if (SubAreaManager.isNameUsed(region.getUniqueId(), message)) {
-			//Messages.send(player, 58);
+			Messages.send(player, "commands.subareas.6");
 			return false;
 		}
 		if (ColorTranslator.containsMiniMessageTag(message)) {
-			//Messages.send(player, 30);
+			Messages.send(player, "commands.subareas.13");
 			return false;
 		}
 		return true;

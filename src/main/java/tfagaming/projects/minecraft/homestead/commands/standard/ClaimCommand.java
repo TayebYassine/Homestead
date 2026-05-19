@@ -149,18 +149,18 @@ public class ClaimCommand extends CommandBuilder {
 				Chunk chunk = centerChunk.getWorld().getChunkAt(x, z);
 
 				if (ChunkManager.isChunkInDisabledWorld(chunk)) {
-					Messages.send(player, "commands.claim.1");
+					Messages.send(player, radius == 1 ? "commands.claim.14" : "commands.claim.1");
 					return true;
 				}
 
 				if (Resources.<ConfigFile>get(ResourceType.Config).protectWorldGuardRegions() && WorldGuardAPI.isChunkInRegion(chunk)) {
-					Messages.send(player, "commands.claim.2");
+					Messages.send(player, radius == 1 ? "commands.claim.15" : "commands.claim.2");
 					return true;
 				}
 
 				Region regionOwnsThisChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
 				if (regionOwnsThisChunk != null) {
-					Messages.send(player, "commands.claim.3");
+					Messages.send(player, radius == 1 ? "commands.claim.16" : "commands.claim.3");
 					return true;
 				}
 

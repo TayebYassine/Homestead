@@ -57,7 +57,6 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.TRUST_PLAYERS)) {
-			Messages.send(player, "commands.trust.12");
 			return true;
 		}
 
@@ -66,7 +65,7 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			Messages.send(player, "commands.trust.2");
+			Messages.send(player, "commands.trust.2", targetName);
 			return true;
 		}
 
@@ -105,21 +104,21 @@ public class TrustPlayerSubCmd extends SubCommandBuilder {
 		if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
 			MemberManager.addMemberToRegion(target, region);
 
-			Messages.send(player, "commands.trust.9");
-
 			LogManager.addLog(region, target, LogManager.PredefinedLog.JOIN_REGION);
+
+			Messages.send(player, "commands.trust.9");
 
 			Homestead.callEvent(new PlayerJoinRegionEvent(region, target));
 		} else {
 			InviteManager.invitePlayer(region, target);
+
+			LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, target.getName());
 
 			Messages.send(player, "commands.trust.10");
 
 			if (target.isOnline()) {
 				Messages.send(target.getPlayer(), "commands.trust.11");
 			}
-
-			LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, target.getName());
 
 			Homestead.callEvent(new InvitePlayerEvent(region, target));
 		}

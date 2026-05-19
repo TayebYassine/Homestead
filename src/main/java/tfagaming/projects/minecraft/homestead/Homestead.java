@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.entity.CopperGolem;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -28,6 +29,7 @@ import tfagaming.projects.minecraft.homestead.events.RegionRent;
 import tfagaming.projects.minecraft.homestead.events.RegionUpkeep;
 import tfagaming.projects.minecraft.homestead.integrations.*;
 import tfagaming.projects.minecraft.homestead.listeners.*;
+import tfagaming.projects.minecraft.homestead.listeners.util.CopperGolemTracker;
 import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.managers.*;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -282,6 +284,19 @@ public class Homestead extends JavaPlugin {
 				Logger.error(e);
 			}
 		}
+
+		// Load copper golems spawn location
+		runSyncTask(() -> {
+			Logger.info("Loading Copper Golem spawn locations... This may take a while.");
+
+			for (World world : Bukkit.getWorlds()) {
+				for (Entity entity : world.getEntities()) {
+					if (entity instanceof CopperGolem golem) {
+						CopperGolemTracker.recordSpawnRegion(golem);
+					}
+				}
+			}
+		});
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
 

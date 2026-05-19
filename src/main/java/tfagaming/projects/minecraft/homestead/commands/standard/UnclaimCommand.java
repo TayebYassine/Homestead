@@ -64,7 +64,6 @@ public class UnclaimCommand extends CommandBuilder {
 				region.getUniqueId(),
 				player,
 				ControlFlags.UNCLAIM_CHUNKS)) {
-			Messages.send(player, "commands.unclaim.2");
 			return true;
 		}
 

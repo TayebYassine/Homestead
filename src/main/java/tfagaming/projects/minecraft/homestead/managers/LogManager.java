@@ -59,7 +59,7 @@ public final class LogManager {
 			}
 		}
 
-		String author = player != null ? player.getName() : Resources.<LanguageFile>get(ResourceType.Language).getString("default.log-author");
+		String author = player != null ? player.getName() : Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.log-author");
 
 		addLog(regionId, author, message);
 	}

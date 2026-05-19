@@ -55,19 +55,21 @@ public final class SubAreaFlagsMenu {
 
 		if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.global")) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.MANAGE_SUBAREAS)) {
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		String flagString = PlayerFlags.getFlags().get(context.getIndex());
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			Messages.send(player, "commands.flags.9");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 

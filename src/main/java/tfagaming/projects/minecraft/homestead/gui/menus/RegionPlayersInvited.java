@@ -58,6 +58,7 @@ public final class RegionPlayersInvited {
 
 			if (!player.hasPermission("homestead.actions.regions.players.trust")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -78,11 +79,6 @@ public final class RegionPlayersInvited {
 							Homestead.callEvent(new PlayerJoinRegionEvent(region, targetPlayer));
 						} else {
 							InviteManager.invitePlayer(region, targetPlayer);
-
-							Placeholder placeholder = new Placeholder()
-									.add("{region}", region.getName())
-									.add("{playername}", targetPlayer.getName())
-									.add("{ownername}", region.getOwnerName());
 
 							LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, targetPlayer.getName());
 
@@ -111,6 +107,7 @@ public final class RegionPlayersInvited {
 
 			if (InviteManager.getInvitesOfRegion(region).isEmpty()) {
 				Messages.send(player, "commands.untrust.7");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -135,6 +132,7 @@ public final class RegionPlayersInvited {
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.TRUST_PLAYERS)) {
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return false;
 		}
 		if (BanManager.isBanned(region, target)) {
@@ -149,7 +147,7 @@ public final class RegionPlayersInvited {
 			Messages.send(player, "commands.trust.5");
 			return false;
 		}
-		if (region.isOwner(target) || target.getUniqueId().equals(player.getUniqueId())) {
+		if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
 			Messages.send(player, "commands.trust.6");
 			return false;
 		}

@@ -51,6 +51,7 @@ public final class RegionRating {
 
 			if (!player.hasPermission("homestead.actions.regions.rate")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 

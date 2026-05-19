@@ -10,6 +10,7 @@ import tfagaming.projects.minecraft.homestead.flags.ControlFlags;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
+import tfagaming.projects.minecraft.homestead.tools.java.Formatter;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.java.StringUtils;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.ColorTranslator;
@@ -58,7 +59,6 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.SET_DESCRIPTION)) {
-			Messages.send(player, "commands.setdescription.2");
 			return true;
 		}
 
@@ -67,7 +67,9 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.getDescription() != null && region.getDescription().equals(description)) {
+		final String oldDescription = region.getDescription();
+
+		if (oldDescription != null && oldDescription.equals(description)) {
 			Messages.send(player, "commands.setdescription.4");
 			return true;
 		}
@@ -77,17 +79,15 @@ public class SetDescriptionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		final String oldDescription = region.getDescription();
-
 		Cooldown.startCooldown(player, Cooldown.Type.REGION_DESCRIPTION_CHANGE);
 
 		region.setDescription(description);
 
-		Messages.send(player, "commands.setdescription.6");
-
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DESCRIPTION, description);
 
-		Homestead.callEvent(new RegionDescriptionUpdateEvent(region, oldDescription, description));
+		Messages.send(player, "commands.setdescription.6");
+
+		Homestead.callEvent(new RegionDescriptionUpdateEvent(region, oldDescription == null ? Formatter.getNone() : oldDescription, description));
 
 		return true;
 	}

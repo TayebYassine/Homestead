@@ -69,6 +69,12 @@ public final class MiscellaneousSettings {
 
 			if (!player.hasPermission("homestead.actions.regions.update.name")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+				return;
+			}
+
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION)) {
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -105,6 +111,12 @@ public final class MiscellaneousSettings {
 
 			if (!player.hasPermission("homestead.actions.regions.update.displayname")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+				return;
+			}
+
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION)) {
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -141,6 +153,12 @@ public final class MiscellaneousSettings {
 
 			if (!player.hasPermission("homestead.actions.regions.update.description")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+				return;
+			}
+
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_DESCRIPTION)) {
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -177,17 +195,21 @@ public final class MiscellaneousSettings {
 
 			if (!player.hasPermission("homestead.actions.regions.update.spawn")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_SPAWN))
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_SPAWN)) {
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
+			}
 
 			Location location = player.getLocation();
 			Chunk chunk = location.getChunk();
 
 			if (!ChunkManager.isChunkClaimedByRegion(region, chunk)) {
 				Messages.send(player, "commands.setspawn.2");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -216,6 +238,13 @@ public final class MiscellaneousSettings {
 
 			if (!player.hasPermission("homestead.actions.regions.change_owner")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+				return;
+			}
+
+			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
+				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -232,13 +261,18 @@ public final class MiscellaneousSettings {
 						final OfflinePlayer oldOwner = region.getOwner();
 
 						Cooldown.startCooldown(player, Cooldown.Type.REGION_TRANSFER_OWNERSHIP);
+
 						region.setOwner(targetPlayer);
+
 						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-						if (MemberManager.isMemberOfRegion(region, targetPlayer))
+						if (MemberManager.isMemberOfRegion(region, targetPlayer)) {
 							MemberManager.removeMemberFromRegion(targetPlayer, region);
-						if (InviteManager.isInvited(region, targetPlayer))
+						}
+
+						if (InviteManager.isInvited(region, targetPlayer)) {
 							InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
+						}
 
 						Homestead.callEvent(new RegionOwnerUpdateEvent(region, oldOwner, targetPlayer));
 
@@ -256,13 +290,14 @@ public final class MiscellaneousSettings {
 				return;
 			}
 			if (!PlayerUtility.isOperator(_player) && !region.isOwner(_player)) {
-				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
 			if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
 				Messages.send(player, "commands.setmapcolor.1");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -270,6 +305,7 @@ public final class MiscellaneousSettings {
 				new MapColorMenu(player, region);
 			} else if (event.isLeftClick()) {
 				if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
+					PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 					Messages.send(player, "commands.setmapicon.1");
 					return;
 				}
@@ -288,8 +324,8 @@ public final class MiscellaneousSettings {
 			if (!(event.isRightClick() && event.isShiftClick())) return;
 
 			if (!PlayerUtility.isOperator(_player) && !region.isOwner(_player)) {
-				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -331,8 +367,6 @@ public final class MiscellaneousSettings {
 	}
 
 	private static boolean validateRename(Player player, Region region, String message) {
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION))
-			return false;
 		if (!StringUtils.isValidRegionName(message)) {
 			Messages.send(player, "commands.rename.3");
 			return false;
@@ -353,8 +387,6 @@ public final class MiscellaneousSettings {
 	}
 
 	private static boolean validateDisplayName(Player player, Region region, String message) {
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION))
-			return false;
 		if (!StringUtils.isValidRegionDisplayName(message)) {
 			Messages.send(player, "commands.setdisplayname.3");
 			return false;
@@ -371,8 +403,6 @@ public final class MiscellaneousSettings {
 	}
 
 	private static boolean validateDescription(Player player, Region region, String message) {
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_DESCRIPTION))
-			return false;
 		if (!StringUtils.isValidRegionDescription(message)) {
 			Messages.send(player, "commands.setdescription.3");
 			return false;
@@ -389,23 +419,17 @@ public final class MiscellaneousSettings {
 	}
 
 	private static boolean validateTransferOwnership(Player player, Region region, String message) {
-		// TODO fix this
-
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 		if (target == null) {
-			//Messages.send(player, 29, new Placeholder().add("{playername}", message));
-			return false;
-		}
-		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			//Messages.send(player, 30);
+			Messages.send(player, "commands.player.0", message);
 			return false;
 		}
 		if (BanManager.isBanned(region, target)) {
-			//Messages.send(player, 32, new Placeholder().add("{playername}", target.getName()));
+			Messages.send(player, "commands.trust.3");
 			return false;
 		}
 		if (region.isOwner(target)) {
-			//Messages.send(player, 30);
+			Messages.send(player, "common.no_permission");
 			return false;
 		}
 		return true;
@@ -414,6 +438,7 @@ public final class MiscellaneousSettings {
 	private static boolean onCooldown(Player player, Cooldown.Type type) {
 		if (Cooldown.hasCooldown(player, type)) {
 			Cooldown.sendCooldownMessage(player);
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return true;
 		}
 		return false;

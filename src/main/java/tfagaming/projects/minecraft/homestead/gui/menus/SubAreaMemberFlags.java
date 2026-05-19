@@ -58,16 +58,19 @@ public final class SubAreaMemberFlags {
 
 		if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.members")) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.MANAGE_SUBAREAS)) {
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		if (player.getUniqueId().equals(member.getPlayerId())) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 

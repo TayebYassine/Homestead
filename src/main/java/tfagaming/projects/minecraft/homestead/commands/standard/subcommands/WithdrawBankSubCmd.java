@@ -64,7 +64,6 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.WITHDRAW_MONEY)) {
-			Messages.send(player, "commands.withdraw.4");
 			return true;
 		}
 

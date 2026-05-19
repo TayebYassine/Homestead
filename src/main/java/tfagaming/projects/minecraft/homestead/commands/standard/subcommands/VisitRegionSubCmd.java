@@ -9,6 +9,7 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.gui.menus.RegionsWithWelcomeSigns;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
@@ -50,7 +51,7 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 			OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 			if (target == null) {
-				Messages.send(player, "commands.visit.0");
+				Messages.send(player, "commands.visit.0", playerName);
 				return true;
 			}
 
@@ -82,7 +83,11 @@ public class VisitRegionSubCmd extends SubCommandBuilder {
 				return true;
 			}
 
-			new DelayedTeleport(player, filteredRegions.get(index).getWelcomeSign().toBukkit());
+			SeLocation sign = filteredRegions.get(index).getWelcomeSign();
+
+			if (sign == null) return true;
+
+			new DelayedTeleport(player, sign.toBukkit());
 		} else {
 			if (args.length < 1) {
 				Messages.send(player, "commands.visit.4");

@@ -59,7 +59,6 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.RENAME_REGION)) {
-			Messages.send(player, "commands.setdisplayname.2");
 			return true;
 		}
 
@@ -68,7 +67,9 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.getDisplayName() != null && region.getDisplayName().equals(regionDisplayName)) {
+		final String oldDisplayName = region.getDisplayName();
+
+		if (oldDisplayName != null && oldDisplayName.equals(regionDisplayName)) {
 			Messages.send(player, "commands.setdisplayname.4");
 			return true;
 		}
@@ -78,15 +79,13 @@ public class SetDisplayNameSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		final String oldDisplayName = region.getDisplayName() == null ? Formatter.getNone() : region.getDisplayName();
-
 		Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
 
 		region.setDisplayName(regionDisplayName);
 
-		Messages.send(player, "commands.setdisplayname.6", oldDisplayName, regionDisplayName);
-
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DISPLAYNAME, regionDisplayName);
+
+		Messages.send(player, "commands.setdisplayname.6", oldDisplayName == null ? Formatter.getNone() : oldDisplayName, regionDisplayName);
 
 		Homestead.callEvent(new RegionDisplaynameUpdateEvent(region, oldDisplayName, regionDisplayName));
 

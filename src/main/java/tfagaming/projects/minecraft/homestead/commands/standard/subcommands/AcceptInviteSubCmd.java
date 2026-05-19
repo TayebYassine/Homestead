@@ -34,8 +34,7 @@ public class AcceptInviteSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, "commands.accept.0", getUsage());
-
+			Messages.send(player, "commands.accept.0");
 			return true;
 		}
 

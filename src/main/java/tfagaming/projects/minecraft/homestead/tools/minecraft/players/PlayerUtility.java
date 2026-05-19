@@ -310,4 +310,8 @@ public final class PlayerUtility {
 
 		return null;
 	}
+
+	public static boolean equals(OfflinePlayer p1, OfflinePlayer p2) {
+		return p1.getUniqueId().equals(p2.getUniqueId());
+	}
 }

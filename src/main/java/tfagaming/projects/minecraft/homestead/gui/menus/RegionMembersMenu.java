@@ -86,12 +86,13 @@ public final class RegionMembersMenu {
 
 		if (!player.hasPermission("homestead.actions.regions.players.untrust")) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.UNTRUST_PLAYERS)) {
-			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 

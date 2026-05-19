@@ -28,9 +28,7 @@ public class BordersSubCmd extends SubCommandBuilder {
 		Player player = asPlayer(sender);
 		if (player == null) return false;
 
-		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled();
-
-		if (!isEnabled) {
+		if (!Resources.<RegionsFile>get(ResourceType.Regions).isBordersEnabled()) {
 			Messages.send(player, "commands.borders.0");
 			return true;
 		}

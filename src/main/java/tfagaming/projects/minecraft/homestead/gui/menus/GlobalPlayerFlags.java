@@ -43,6 +43,8 @@ public final class GlobalPlayerFlags {
 	}
 
 	private void handleFlagClick(Player player, Region region, PaginationMenu.ClickContext context) {
+		if (!context.getEvent().isLeftClick()) return;
+
 		if (RegionManager.findRegion(region.getUniqueId()) == null) {
 			player.closeInventory();
 			return;
@@ -52,24 +54,23 @@ public final class GlobalPlayerFlags {
 
 		if (!player.hasPermission("homestead.actions.regions.update.flags.global")) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.SET_GLOBAL_FLAGS)) {
-			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		String flagString = PlayerFlags.getFlags().get(context.getIndex());
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			Messages.send(player, "commands.flags.9");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
-
-		if (!context.getEvent().isLeftClick()) return;
 
 		long flags = region.getPlayerFlags();
 		long flag = PlayerFlags.valueOf(flagString);

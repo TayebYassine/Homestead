@@ -30,9 +30,7 @@ public class LevelsSubCmd extends SubCommandBuilder {
 		Player player = asPlayer(sender);
 		if (player == null) return false;
 
-		boolean levelsEnabled = Resources.<LevelsFile>get(ResourceType.Levels).isEnabled();
-
-		if (!levelsEnabled) {
+		if (!Resources.<LevelsFile>get(ResourceType.Levels).isEnabled()) {
 			Messages.send(player, "commands.levels.0");
 			return true;
 		}

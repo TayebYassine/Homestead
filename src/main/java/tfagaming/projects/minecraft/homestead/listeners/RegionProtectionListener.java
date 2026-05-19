@@ -36,6 +36,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldRules;
+import tfagaming.projects.minecraft.homestead.listeners.util.CopperGolemTracker;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
@@ -75,32 +76,46 @@ public final class RegionProtectionListener implements Listener {
 				return;
 			}
 
-			if (entity instanceof CopperGolem) {
+			if (entity instanceof CopperGolem golem) {
+				Long spawnRegionId = CopperGolemTracker.getSpawnRegionId(golem);
+
 				if (ChunkManager.isChunkClaimed(toChunk)) {
-					Region fromRegion = ChunkManager.getRegionOwnsTheChunk(fromChunk);
 					Region toRegion = ChunkManager.getRegionOwnsTheChunk(toChunk);
 
 					if (toRegion == null) {
 						return;
 					}
 
-					if (fromRegion == null) {
-						if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
-							entity.remove();
-						}
-					} else if (fromRegion.getUniqueId() != toRegion.getUniqueId()) {
-						if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
-							entity.remove();
-						}
+					Long toRegionId = toRegion.getUniqueId();
+
+					if (spawnRegionId != null && spawnRegionId.equals(toRegionId)) {
+						return;
+					}
+
+					if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+						entity.remove();
 					}
 				} else {
-					if (!WorldRules.isWorldFlagAllowed(toChunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+					if (spawnRegionId == null && !WorldRules.isWorldFlagAllowed(toChunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
 						entity.remove();
 					}
 				}
 			}
 		} catch (Exception ignored) {
+		}
+	}
 
+	@EventHandler
+	public void onEntitySpawn(EntitySpawnEvent event) {
+		if (event.getEntity() instanceof CopperGolem golem) {
+			CopperGolemTracker.recordSpawnRegion(golem);
+		}
+	}
+
+	@EventHandler
+	public void onEntityDeath(EntityDeathEvent event) {
+		if (event.getEntity() instanceof CopperGolem golem) {
+			CopperGolemTracker.forgetGolem(golem);
 		}
 	}
 

@@ -341,7 +341,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 								if (target == null) {
-									Messages.send(player, "commands.subareas.19");
+									Messages.send(player, "commands.subareas.19", playerName);
 									return true;
 								}
 
@@ -386,7 +386,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 								if (target == null) {
-									Messages.send(player, "commands.subareas.19");
+									Messages.send(player, "commands.subareas.19", playerName);
 									return true;
 								}
 
@@ -421,7 +421,7 @@ public class SubAreasSubCmd extends SubCommandBuilder {
 								OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
 
 								if (target == null) {
-									Messages.send(player, "commands.subareas.19");
+									Messages.send(player, "commands.subareas.19", playerName);
 									return true;
 								}
 

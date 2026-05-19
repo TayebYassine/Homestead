@@ -54,19 +54,21 @@ public final class RegionWorldFlags {
 
 		if (!player.hasPermission("homestead.actions.regions.update.flags.world")) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.SET_WORLD_FLAGS)) {
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		String flagString = WorldFlags.getFlags().get(context.getIndex());
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			Messages.send(player, "commands.flags.9");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
