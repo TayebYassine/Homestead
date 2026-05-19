@@ -83,6 +83,7 @@ public final class Database {
 		Homestead.REGION_CACHE.putAll(instance.importRegions());
 		Homestead.MEMBER_CACHE.putAll(instance.importRegionMembers());
 		Homestead.CHUNK_CACHE.putAll(instance.importRegionChunks());
+		Homestead.REGION_INDEXED_CHUNK_CACHE.putAll(instance.importRegionChunks());
 		Homestead.LOG_CACHE.putAll(instance.importRegionLogs());
 		Homestead.INVITE_CACHE.putAll(instance.importRegionInvites());
 		Homestead.BAN_CACHE.putAll(instance.importRegionBannedPlayers());
@@ -90,6 +91,7 @@ public final class Database {
 		Homestead.SUBAREA_CACHE.putAll(instance.importSubAreas());
 		Homestead.WAR_CACHE.putAll(instance.importWars());
 		Homestead.LEVEL_CACHE.putAll(instance.importLevels());
+
 	}
 
 	public void exportFromCache() throws Exception {
