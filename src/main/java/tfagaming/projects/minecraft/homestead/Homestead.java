@@ -285,6 +285,19 @@ public class Homestead extends JavaPlugin {
 			}
 		}
 
+		// Load copper golems spawn location
+		runSyncTask(() -> {
+			Logger.info("Loading Copper Golem spawn locations... This may take a while.");
+
+			for (World world : Bukkit.getWorlds()) {
+				for (Entity entity : world.getEntities()) {
+					if (entity instanceof CopperGolem golem) {
+						CopperGolemTracker.recordSpawnRegion(golem);
+					}
+				}
+			}
+		});
+
 		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
 
 		// Prepare Discord webhook client
@@ -295,17 +308,6 @@ public class Homestead extends JavaPlugin {
 
 			Logger.info("Discord webhook instance is ready.");
 		}
-
-		// Load copper golems spawn location
-		runAsyncTask(() -> {
-			for (World world : Bukkit.getWorlds()) {
-				for (Entity entity : world.getEntities()) {
-					if (entity instanceof CopperGolem golem) {
-						CopperGolemTracker.recordSpawnRegion(golem);
-					}
-				}
-			}
-		});
 
 		// Cache interval
 		int cacheInterval = Resources.<ConfigFile>get(ResourceType.Config).getCacheInterval();
