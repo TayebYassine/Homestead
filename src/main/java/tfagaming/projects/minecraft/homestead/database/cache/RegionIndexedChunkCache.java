@@ -16,6 +16,7 @@ public final class RegionIndexedChunkCache {
             if (chunks == null) {
                 chunks = Collections.synchronizedList(new ArrayList<>());
             }
+            chunks.remove(chunk);
 
             chunks.add(chunk);
 
@@ -43,5 +44,11 @@ public final class RegionIndexedChunkCache {
 
     public void clear() {
         cache.clear();
+    }
+
+    public void putAll(List<RegionChunk> items) {
+        for (RegionChunk item : items) {
+            add(item);
+        }
     }
 }
