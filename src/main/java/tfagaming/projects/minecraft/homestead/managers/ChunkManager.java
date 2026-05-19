@@ -53,6 +53,7 @@ public final class ChunkManager {
 				false
 		);
 		Homestead.CHUNK_CACHE.putOrUpdate(regionChunk);
+		Homestead.REGION_INDEXED_CHUNK_CACHE.add(regionChunk);
 		return regionChunk;
 	}
 
@@ -199,7 +200,9 @@ public final class ChunkManager {
 	 * @param id The chunk ID
 	 */
 	private static void deleteChunk(long id) {
+		RegionChunk r = Homestead.CHUNK_CACHE.get(id);
 		Homestead.CHUNK_CACHE.remove(id);
+		Homestead.REGION_INDEXED_CHUNK_CACHE.remove(r);
 	}
 
 	/**
@@ -217,10 +220,7 @@ public final class ChunkManager {
 	 * @return List of region chunks.
 	 */
 	public static List<RegionChunk> getChunksOfRegion(long regionId) {
-		return Homestead.CHUNK_CACHE.getAll().stream()
-				.filter(l -> l.getRegionId() == regionId)
-				.sorted(Comparator.comparingLong(RegionChunk::getClaimedAt).reversed())
-				.collect(Collectors.toList());
+		return Homestead.REGION_INDEXED_CHUNK_CACHE.get(regionId);
 	}
 
 	/**
