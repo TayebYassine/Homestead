@@ -72,13 +72,14 @@ public final class RegionClaimedChunks {
 	}
 
 	private void handleTeleport(Player player, Region region, RegionChunk chunk) {
-		if (!player.hasPermission("homestead.actions.regions.teleport")) {
-			Messages.send(player, "common.no_permission");
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
 			return;
 		}
 
-		if (RegionManager.findRegion(region.getUniqueId()) == null) {
-			player.closeInventory();
+		if (!player.hasPermission("homestead.actions.regions.teleport")) {
+			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
@@ -90,6 +91,7 @@ public final class RegionClaimedChunks {
 	private void handleToggleForceLoad(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
@@ -104,6 +106,7 @@ public final class RegionClaimedChunks {
 
 		if (totalForcedLoadedChunks >= maxForceLoadedChunks && !chunk.isForceLoaded()) {
 			Messages.send(player, "commands.claimlist.1");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
@@ -134,13 +137,14 @@ public final class RegionClaimedChunks {
 			return;
 		}
 
-		if (!player.hasPermission("homestead.actions.regions.chunks.unclaim")) {
-			Messages.send(player, "common.no_permission");
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
 			return;
 		}
 
-		if (RegionManager.findRegion(region.getUniqueId()) == null) {
-			player.closeInventory();
+		if (!player.hasPermission("homestead.actions.regions.chunks.unclaim")) {
+			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
@@ -153,6 +157,7 @@ public final class RegionClaimedChunks {
 			}
 
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.UNCLAIM_CHUNKS)) {
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 

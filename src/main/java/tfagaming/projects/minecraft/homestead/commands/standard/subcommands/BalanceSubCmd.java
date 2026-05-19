@@ -33,9 +33,6 @@ public class BalanceSubCmd extends SubCommandBuilder {
 
 		if (!Homestead.VAULT.isEconomyReady()) {
 			Messages.send(player, "commands.balance.0");
-
-			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
-
 			return true;
 		}
 

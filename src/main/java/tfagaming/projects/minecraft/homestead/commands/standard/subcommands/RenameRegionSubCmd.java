@@ -55,7 +55,6 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.RENAME_REGION)) {
-			Messages.send(player, "commands.rename.2");
 			return true;
 		}
 
@@ -87,9 +86,9 @@ public class RenameRegionSubCmd extends SubCommandBuilder {
 
 		RegionManager.renameRegion(region, regionName);
 
-		Messages.send(player, "commands.rename.7", oldName, regionName);
-
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_NAME, regionName);
+
+		Messages.send(player, "commands.rename.7", oldName, regionName);
 
 		Homestead.callEvent(new RegionNameUpdateEvent(region, oldName, regionName));
 

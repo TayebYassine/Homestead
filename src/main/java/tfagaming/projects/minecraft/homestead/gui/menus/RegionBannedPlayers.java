@@ -59,6 +59,7 @@ public final class RegionBannedPlayers {
 
 			if (!player.hasPermission("homestead.actions.regions.players.ban")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -102,17 +103,20 @@ public final class RegionBannedPlayers {
 
 			if (!player.hasPermission("homestead.actions.regions.players.unban")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					ControlFlags.UNBAN_PLAYERS)) {
-				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
 			int bannedCount = BanManager.getBansOfRegion(region).size();
 			if (bannedCount == 0) {
+				Messages.send(player, "commands.unban.5");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -137,14 +141,14 @@ public final class RegionBannedPlayers {
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.BAN_PLAYERS)) {
-			Messages.send(player, "commands.ban.2");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return false;
 		}
 		if (BanManager.isBanned(region, target)) {
 			Messages.send(player, "commands.ban.5", target.getName());
 			return false;
 		}
-		if (region.isOwner(target) || target.getUniqueId().equals(player.getUniqueId())) {
+		if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
 			Messages.send(player, "commands.ban.4");
 			return false;
 		}
@@ -166,6 +170,7 @@ public final class RegionBannedPlayers {
 
 		if (!player.hasPermission("homestead.actions.regions.players.unban")) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
@@ -175,6 +180,7 @@ public final class RegionBannedPlayers {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.UNBAN_PLAYERS)) {
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 

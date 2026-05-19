@@ -25,6 +25,7 @@ import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.tools.java.ListUtils;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.*;
 
@@ -107,7 +108,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 			}
 
 			for (OfflinePlayer player : Homestead.getInstance().getOfflinePlayersSync()) {
-				if (player.getUniqueId().equals(owner.getUniqueId())) {
+				if (PlayerUtility.equals(player, owner)) {
 					continue;
 				}
 
@@ -154,7 +155,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 			for (UUID friendUuid : chunk.getFriends()) {
 				OfflinePlayer friend = Homestead.getInstance().getOfflinePlayerSync(friendUuid);
 
-				if (friend == null || friend.getUniqueId().equals(owner.getUniqueId())) {
+				if (friend == null || PlayerUtility.equals(friend, owner)) {
 					continue;
 				}
 
@@ -241,7 +242,7 @@ public class ImportSubCmd extends SubCommandBuilder {
 			for (UUID trustedUuid : land.getTrustedPlayers()) {
 				OfflinePlayer trusted = Homestead.getInstance().getOfflinePlayerSync(trustedUuid);
 
-				if (trusted == null || trusted.getUniqueId().equals(owner.getUniqueId())) {
+				if (trusted == null || PlayerUtility.equals(trusted, owner)) {
 					continue;
 				}
 

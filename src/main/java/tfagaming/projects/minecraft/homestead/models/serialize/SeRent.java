@@ -55,6 +55,14 @@ public final class SeRent {
 		this.renterId = renterId;
 	}
 
+	public boolean isRenterer(OfflinePlayer player) {
+		return isRenterer(player.getUniqueId());
+	}
+
+	public boolean isRenterer(UUID renterId) {
+		return this.renterId.equals(renterId);
+	}
+
 	public @Nullable OfflinePlayer getRenter() {
 		if (INSTANCE == null) return null;
 

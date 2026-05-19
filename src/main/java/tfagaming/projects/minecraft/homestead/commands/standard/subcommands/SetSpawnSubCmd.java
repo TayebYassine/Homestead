@@ -51,7 +51,6 @@ public class SetSpawnSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.SET_SPAWN)) {
-			Messages.send(player, "commands.setspawn.1");
 			return true;
 		}
 

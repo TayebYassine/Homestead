@@ -37,6 +37,11 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
+		if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
+			Messages.send(player, "commands.create.3");
+			return true;
+		}
+
 		String regionName = args[0];
 
 		if (!StringUtils.isValidRegionName(regionName)) {
@@ -46,11 +51,6 @@ public class CreateRegionSubCmd extends SubCommandBuilder {
 
 		if (RegionManager.isNameUsed(regionName)) {
 			Messages.send(player, "commands.create.2");
-			return true;
-		}
-
-		if (Limits.hasReachedLimit(player, null, Limits.LimitType.REGIONS)) {
-			Messages.send(player, "commands.create.3");
 			return true;
 		}
 

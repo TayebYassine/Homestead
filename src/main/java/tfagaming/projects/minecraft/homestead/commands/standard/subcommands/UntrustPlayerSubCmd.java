@@ -53,7 +53,6 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.UNTRUST_PLAYERS)) {
-			Messages.send(player, "commands.untrust.2");
 			return true;
 		}
 
@@ -62,7 +61,7 @@ public class UntrustPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			Messages.send(player, "commands.untrust.3");
+			Messages.send(player, "commands.untrust.3", targetName);
 			return true;
 		}
 

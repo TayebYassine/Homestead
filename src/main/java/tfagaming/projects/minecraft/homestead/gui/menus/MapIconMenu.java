@@ -50,21 +50,20 @@ public final class MapIconMenu {
             return;
         }
 
-        boolean isEnabled = Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled");
-
-        if (!isEnabled) {
+        if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
             player.closeInventory();
             return;
         }
 
         if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
             Messages.send(player, "common.no_permission");
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
             return;
         }
 
         if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
             Cooldown.sendCooldownMessage(player);
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
             return;
         }
 

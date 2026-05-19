@@ -14,6 +14,7 @@ import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.menus.MenuUtility;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTeleport;
+import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerSound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ public final class RegionsWithWelcomeSigns {
 
 		if (!player.hasPermission("homestead.actions.regions.teleport")) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 

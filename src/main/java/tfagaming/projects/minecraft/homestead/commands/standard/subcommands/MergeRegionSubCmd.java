@@ -20,7 +20,8 @@ public class MergeRegionSubCmd extends SubCommandBuilder {
 		super("merge");
 		setPermission(List.of(
 				"homestead.commands.region",
-				"homestead.commands.region." + getName()
+				"homestead.commands.region." + getName(),
+				"homestead.actions.regions.merge"
 		));
 		setUsage("/hs merge [region]");
 		setPlayerOnly();

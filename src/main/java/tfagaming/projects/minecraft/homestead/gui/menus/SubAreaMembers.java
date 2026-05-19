@@ -56,6 +56,7 @@ public final class SubAreaMembers {
 
 			if (!player.hasPermission("homestead.actions.regions.subareas.players.add")) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -93,10 +94,9 @@ public final class SubAreaMembers {
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.MANAGE_SUBAREAS)) {
-			Messages.send(player, "common.no_permission");
 			return false;
 		}
-		if (region.isOwner(target) || target.getUniqueId().equals(player.getUniqueId())) {
+		if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
 			Messages.send(player, "commands.trust.6");
 			return false;
 		}
@@ -145,12 +145,12 @@ public final class SubAreaMembers {
 
 		if (!player.hasPermission("homestead.actions.regions.subareas.players.remove")) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.MANAGE_SUBAREAS)) {
-			Messages.send(player, "common.no_permission");
 			return;
 		}
 

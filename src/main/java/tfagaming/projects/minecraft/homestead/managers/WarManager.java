@@ -148,13 +148,10 @@ public final class WarManager {
 
 		War war = new War(name);
 
-		war.setAutoUpdate(false);
-
+		war.setDescription(Resources.<LanguageFile>get(ResourceType.Language).getString("common.default.war-description"));
 		war.addRegionId(regionA.getUniqueId());
 		war.addRegionId(regionB.getUniqueId());
 		war.setPrize(prize);
-
-		war.setAutoUpdate(true);
 
 		Homestead.WAR_CACHE.putOrUpdate(war);
 

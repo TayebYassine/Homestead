@@ -46,7 +46,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 		if (player == null) return false;
 
 		if (args.length < 1) {
-			Messages.send(player, "commands.ban.0", getUsage());
+			Messages.send(player, "commands.ban.0");
 			return true;
 		}
 
@@ -59,7 +59,6 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.BAN_PLAYERS)) {
-			Messages.send(player, "commands.ban.2");
 			return true;
 		}
 
@@ -72,7 +71,7 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.isOwner(target) || player.getUniqueId().equals(target.getUniqueId())) {
+		if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
 			Messages.send(player, "commands.ban.4");
 			return true;
 		}
@@ -86,12 +85,12 @@ public class BanPlayerSubCmd extends SubCommandBuilder {
 
 		SeRent rent = region.getRent();
 
-		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
+		if (rent != null && rent.isRenterer(target)) {
 			Messages.send(player, "commands.ban.6");
 			return true;
 		}
 
-		String reason = Resources.<LanguageFile>get(ResourceType.Language).getString("default.reason");
+		String reason = Resources.<LanguageFile>get(ResourceType.Language).getString("common.default.reason");
 
 		if (args.length > 1) {
 			List<String> reasonList = Arrays.asList(args).subList(1, args.length);

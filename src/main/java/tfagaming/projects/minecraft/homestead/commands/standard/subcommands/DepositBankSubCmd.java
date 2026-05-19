@@ -65,7 +65,6 @@ public class DepositBankSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.DEPOSIT_MONEY)) {
-			Messages.send(player, "commands.deposit.4");
 			return true;
 		}
 

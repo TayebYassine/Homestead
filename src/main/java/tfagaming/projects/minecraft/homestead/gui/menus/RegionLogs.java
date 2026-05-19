@@ -69,6 +69,7 @@ public final class RegionLogs {
 
 			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -99,6 +100,7 @@ public final class RegionLogs {
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.MANAGE_LOGS)) {
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 

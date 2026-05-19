@@ -114,17 +114,19 @@ public final class MapColorMenu {
 
 		if (!player.hasPermission("homestead.actions.regions.update.map_color")) {
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
 		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
 			Cooldown.sendCooldownMessage(player);
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 

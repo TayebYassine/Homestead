@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.commands.SubCommandBuilder;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
 import tfagaming.projects.minecraft.homestead.sessions.TargetRegionSession;
 import tfagaming.projects.minecraft.homestead.tools.java.Placeholder;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.chat.Messages;
@@ -37,7 +38,9 @@ public class HomeSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.getLocation() == null) {
+		SeLocation loc = region.getLocation();
+
+		if (loc == null) {
 			Messages.send(player, "commands.home.1");
 			return true;
 		}
@@ -50,7 +53,7 @@ public class HomeSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		new DelayedTeleport(player, region.getLocation().toBukkit());
+		new DelayedTeleport(player, loc.toBukkit());
 
 		return true;
 	}

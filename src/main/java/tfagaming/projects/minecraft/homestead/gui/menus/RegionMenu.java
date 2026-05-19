@@ -147,6 +147,7 @@ public final class RegionMenu {
 
 			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
 				Messages.send(player, "common.no_permission");
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
@@ -154,8 +155,6 @@ public final class RegionMenu {
 				Messages.send(player, "commands.rent.0");
 			} else {
 				region.setRent(null);
-
-
 
 				new RegionMenu(player, region);
 			}
@@ -181,14 +180,17 @@ public final class RegionMenu {
 	private static BiConsumer<Player, InventoryClickEvent> handleWeatherTime(Player player, Region region) {
 		return (_player, event) -> {
 			if (!checkRegionExists(player, region)) return;
+
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 					ControlFlags.SET_WEATHER_AND_TIME)) {
+				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
 
 			if (event.isLeftClick()) {
 				if (!player.hasPermission("homestead.actions.regions.update.weather")) {
 					Messages.send(player, "common.no_permission");
+					PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 					return;
 				}
 
@@ -200,6 +202,7 @@ public final class RegionMenu {
 			} else if (event.isRightClick()) {
 				if (!player.hasPermission("homestead.actions.regions.update.time")) {
 					Messages.send(player, "common.no_permission");
+					PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 					return;
 				}
 

@@ -51,7 +51,6 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
 				ControlFlags.KICK_PLAYERS)) {
-			Messages.send(player, "commands.kick.2");
 			return true;
 		}
 
@@ -60,7 +59,7 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 		Player target = Bukkit.getPlayer(targetName);
 
 		if (target == null) {
-			Messages.send(player, "commands.kick.3");
+			Messages.send(player, "commands.kick.3", targetName);
 			return true;
 		}
 
@@ -69,14 +68,14 @@ public class KickPlayerSubCmd extends SubCommandBuilder {
 			return true;
 		}
 
-		if (region.isOwner(target) || target.getUniqueId().equals(player.getUniqueId())) {
+		if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
 			Messages.send(player, "commands.kick.5");
 			return true;
 		}
 
 		SeRent rent = region.getRent();
 
-		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
+		if (rent != null && rent.isRenterer(target)) {
 			Messages.send(player, "commands.kick.6");
 			return true;
 		}

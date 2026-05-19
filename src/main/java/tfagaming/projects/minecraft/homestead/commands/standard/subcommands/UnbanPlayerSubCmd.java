@@ -58,7 +58,7 @@ public class UnbanPlayerSubCmd extends SubCommandBuilder {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
 		if (target == null) {
-			Messages.send(player, "commands.unban.2");
+			Messages.send(player, "commands.unban.2", targetName);
 			return true;
 		}
 

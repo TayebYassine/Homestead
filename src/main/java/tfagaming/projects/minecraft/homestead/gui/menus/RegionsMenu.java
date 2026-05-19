@@ -104,6 +104,7 @@ public final class RegionsMenu {
 
 		if (!menuPlayer.hasPermission("homestead.actions.regions.teleport")) {
 			Messages.send(clicker, "common.no_permission");
+			PlayerSound.play(clicker, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
@@ -115,6 +116,7 @@ public final class RegionsMenu {
 
 		if (!allowed) {
 			Messages.send(clicker, "common.no_permission");
+			PlayerSound.play(clicker, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
