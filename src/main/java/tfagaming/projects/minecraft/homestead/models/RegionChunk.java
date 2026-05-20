@@ -125,7 +125,6 @@ public final class RegionChunk {
 
 	public void setZ(int z) {
 		this.z = z;
-		Homestead.REGION_INDEXED_CHUNK_CACHE.add(this);
 		update();
 	}
 
@@ -135,7 +134,6 @@ public final class RegionChunk {
 
 	public void setClaimedAt(long claimedAt) {
 		this.claimedAt = claimedAt;
-		Homestead.REGION_INDEXED_CHUNK_CACHE.add(this);
 		update();
 	}
 
@@ -193,6 +191,7 @@ public final class RegionChunk {
 	private void update() {
 		if (!autoUpdate) return;
 		Homestead.REGION_INDEXED_CHUNK_CACHE.add(this);
+		Homestead.POSITION_INDEXED_CHUNK_CACHE.add(this);
 
 		Homestead.CHUNK_CACHE.putOrUpdate(this);
 	}

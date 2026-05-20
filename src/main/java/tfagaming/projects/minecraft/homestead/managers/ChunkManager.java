@@ -3,6 +3,7 @@ package tfagaming.projects.minecraft.homestead.managers;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.database.cache.ChunkPositionKey;
 import tfagaming.projects.minecraft.homestead.integrations.FastAsyncWorldEditAPI;
 import tfagaming.projects.minecraft.homestead.models.*;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
@@ -54,6 +55,7 @@ public final class ChunkManager {
 		);
 		Homestead.CHUNK_CACHE.putOrUpdate(regionChunk);
 		Homestead.REGION_INDEXED_CHUNK_CACHE.add(regionChunk);
+		Homestead.POSITION_INDEXED_CHUNK_CACHE.add(regionChunk);
 		return regionChunk;
 	}
 
@@ -203,6 +205,7 @@ public final class ChunkManager {
 		RegionChunk r = Homestead.CHUNK_CACHE.get(id);
 		Homestead.CHUNK_CACHE.remove(id);
 		Homestead.REGION_INDEXED_CHUNK_CACHE.remove(r);
+		Homestead.POSITION_INDEXED_CHUNK_CACHE.remove(r);
 	}
 
 	/**
@@ -614,12 +617,7 @@ public final class ChunkManager {
 	 * @return The RegionChunk, or {@code null}.
 	 */
 	public static RegionChunk findChunk(UUID worldId, int x, int z) {
-		for (RegionChunk chunk : getAll()) {
-			if (chunk.getWorldId().equals(worldId) && chunk.getX() == x && chunk.getZ() == z) {
-				return chunk;
-			}
-		}
-		return null;
+		return Homestead.POSITION_INDEXED_CHUNK_CACHE.get(new ChunkPositionKey(worldId, x, z));
 	}
 
 	/**

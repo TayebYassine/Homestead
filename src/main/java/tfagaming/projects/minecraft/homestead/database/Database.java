@@ -84,6 +84,7 @@ public final class Database {
 		Homestead.MEMBER_CACHE.putAll(instance.importRegionMembers());
 		Homestead.CHUNK_CACHE.putAll(instance.importRegionChunks());
 		Homestead.REGION_INDEXED_CHUNK_CACHE.putAll(instance.importRegionChunks());
+		Homestead.POSITION_INDEXED_CHUNK_CACHE.putAll(instance.importRegionChunks());
 		Homestead.LOG_CACHE.putAll(instance.importRegionLogs());
 		Homestead.INVITE_CACHE.putAll(instance.importRegionInvites());
 		Homestead.BAN_CACHE.putAll(instance.importRegionBannedPlayers());

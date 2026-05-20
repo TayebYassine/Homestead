@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+//TODO make this configable
 public final class RegionIndexedChunkCache {
 
     private final ConcurrentHashMap<Long, List<RegionChunk>> cache = new ConcurrentHashMap<>();
