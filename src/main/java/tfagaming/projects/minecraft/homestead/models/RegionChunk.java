@@ -74,10 +74,8 @@ public final class RegionChunk {
 			return;
 		}
 
-		Homestead.REGION_INDEXED_CHUNK_CACHE.remove(this);
 		this.regionId = regionId;
 
-		Homestead.REGION_INDEXED_CHUNK_CACHE.add(this);
 		update();
 	}
 
@@ -192,6 +190,8 @@ public final class RegionChunk {
 
 	private void update() {
 		if (!autoUpdate) return;
+		Homestead.REGION_INDEXED_CHUNK_CACHE.add(this);
+		Homestead.POSITION_INDEXED_CHUNK_CACHE.add(this);
 
 		Homestead.CHUNK_CACHE.putOrUpdate(this);
 	}

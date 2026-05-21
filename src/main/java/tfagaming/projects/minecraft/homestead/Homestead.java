@@ -68,6 +68,7 @@ public class Homestead extends JavaPlugin {
 	public static RegionBanCache BAN_CACHE;
 	public static RegionChunkCache CHUNK_CACHE;
 	public static RegionIndexedChunkCache REGION_INDEXED_CHUNK_CACHE;
+	public static PositionIndexedChunkCache POSITION_INDEXED_CHUNK_CACHE;
 	public static RegionInviteCache INVITE_CACHE;
 	public static RegionLogCache LOG_CACHE;
 	public static RegionRateCache RATE_CACHE;
@@ -161,6 +162,7 @@ public class Homestead extends JavaPlugin {
 		Homestead.BAN_CACHE = new RegionBanCache();
 		Homestead.CHUNK_CACHE = new RegionChunkCache();
 		Homestead.REGION_INDEXED_CHUNK_CACHE = new RegionIndexedChunkCache();
+		Homestead.POSITION_INDEXED_CHUNK_CACHE = new PositionIndexedChunkCache();
 		Homestead.INVITE_CACHE = new RegionInviteCache();
 		Homestead.LOG_CACHE = new RegionLogCache();
 		Homestead.RATE_CACHE = new RegionRateCache();
