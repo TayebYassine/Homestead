@@ -33,7 +33,7 @@ public final class PlayerJoinListener implements Listener {
 			unreadLogs += LogManager.getLogs(region).stream().filter(log -> !log.isRead()).count();
 		}
 
-		Messages.send(player, Formatter.applyPlaceholders(message, new Placeholder()
+		Messages.sendString(player, Formatter.applyPlaceholders(message, new Placeholder()
 				.add("{unread-logs}", unreadLogs)
 				.add("{regions-invited}", InviteManager.getInvitesOfPlayer(player).size())
 		));

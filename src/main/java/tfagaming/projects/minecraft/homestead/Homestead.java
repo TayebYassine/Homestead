@@ -58,8 +58,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Homestead extends JavaPlugin {
-	private final static String VERSION = "5.2.0.1";
-	private final static boolean SNAPSHOT = false;
+	private final static String VERSION = "5.2.1.0-26w22a";
+	private final static boolean SNAPSHOT = true;
 	public static Database database;
 
 	// Cache

@@ -515,7 +515,7 @@ public final class WarManager {
 	}
 
 	private static void sendBroadcastMessage(Player player, War war, Region regionA, Region regionB) {
-		List<String> listString = Resources.<LanguageFile>get(ResourceType.Language).getStringList("147");
+		List<String> listString = Resources.<LanguageFile>get(ResourceType.Language).getStringList("common.war_declaration");
 
 		Placeholder placeholder = new Placeholder()
 				.add("{war-name}", war.getName())
@@ -526,7 +526,7 @@ public final class WarManager {
 		player.playSound(player.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
 
 		for (String string : listString) {
-			Messages.send(player, Formatter.applyPlaceholders(string, placeholder));
+			Messages.sendString(player, Formatter.applyPlaceholders(string, placeholder));
 		}
 	}
 
