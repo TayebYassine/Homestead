@@ -17,7 +17,6 @@ public final class SubArea {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private final long id;
 	private final long createdAt;
-	private boolean autoUpdate = true;
 	private long regionId;
 	private String name;
 	private UUID worldId;
@@ -51,15 +50,6 @@ public final class SubArea {
 		this.playerFlags = playerFlags;
 		this.rent = rent;
 		this.createdAt = createdAt;
-	}
-
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
 	}
 
 	public long getUniqueId() {
@@ -240,8 +230,6 @@ public final class SubArea {
 	}
 
 	private void update() {
-		if (!autoUpdate) return;
-
 		Homestead.SUBAREA_CACHE.putOrUpdate(this);
 	}
 }

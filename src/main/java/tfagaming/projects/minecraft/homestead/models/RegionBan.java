@@ -11,7 +11,6 @@ import java.util.UUID;
 public final class RegionBan {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private final long id;
-	private boolean autoUpdate = true;
 	private long regionId;
 	private UUID playerId;
 	private String reason;
@@ -35,15 +34,6 @@ public final class RegionBan {
 		this.playerId = playerId;
 		this.reason = reason.length() > 256 ? reason.substring(0, 256) : reason;
 		this.bannedAt = bannedAt;
-	}
-
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
 	}
 
 	public long getUniqueId() {
@@ -132,8 +122,6 @@ public final class RegionBan {
 	}
 
 	private void update() {
-		if (!autoUpdate) return;
-
 		Homestead.BAN_CACHE.putOrUpdate(this);
 	}
 }

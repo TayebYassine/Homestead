@@ -14,11 +14,10 @@ import java.util.UUID;
 public final class RegionChunk {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private final long id;
-	private boolean autoUpdate = true;
 	private long regionId;
-	private UUID worldId;
-	private int x;
-	private int z;
+	private final UUID worldId;
+	private final int x;
+	private final int z;
 	private long claimedAt;
 	private boolean forceLoaded;
 
@@ -50,15 +49,6 @@ public final class RegionChunk {
 		this.forceLoaded = forceLoaded;
 	}
 
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
-	}
-
 	public long getUniqueId() {
 		return id;
 	}
@@ -73,6 +63,8 @@ public final class RegionChunk {
 		if (oldRegionId == regionId) {
 			return;
 		}
+
+		Homestead.REGION_INDEXED_CHUNK_CACHE.removeFromRegion(this, oldRegionId);
 
 		this.regionId = regionId;
 
@@ -101,11 +93,6 @@ public final class RegionChunk {
 		return worldId;
 	}
 
-	public void setWorldId(@NotNull UUID worldId) {
-		this.worldId = worldId;
-		update();
-	}
-
 	public @Nullable World getWorld() {
 		return Bukkit.getWorld(worldId);
 	}
@@ -114,18 +101,8 @@ public final class RegionChunk {
 		return x;
 	}
 
-	public void setX(int x) {
-		this.x = x;
-		update();
-	}
-
 	public int getZ() {
 		return z;
-	}
-
-	public void setZ(int z) {
-		this.z = z;
-		update();
 	}
 
 	public long getClaimedAt() {
@@ -189,7 +166,6 @@ public final class RegionChunk {
 	}
 
 	private void update() {
-		if (!autoUpdate) return;
 		Homestead.REGION_INDEXED_CHUNK_CACHE.add(this);
 		Homestead.POSITION_INDEXED_CHUNK_CACHE.add(this);
 

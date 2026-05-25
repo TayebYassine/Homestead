@@ -13,7 +13,6 @@ public final class Level {
 	public static final double CONSTANT = 100;
 	private final long id;
 	private final long createdAt;
-	private boolean autoUpdate = true;
 	private long regionId = -1L;
 	private int level = 0;
 	private long experience = 0L;
@@ -38,15 +37,6 @@ public final class Level {
 		if (level < 0) return 0;
 		double xp = BASE * Math.pow(level, 2) + (COEFFICIENT * level) + CONSTANT;
 		return (long) Math.floor(xp);
-	}
-
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
 	}
 
 	public long getUniqueId() {
@@ -183,8 +173,6 @@ public final class Level {
 	}
 
 	private void update() {
-		if (!autoUpdate) return;
-
 		Homestead.LEVEL_CACHE.putOrUpdate(this);
 	}
 }

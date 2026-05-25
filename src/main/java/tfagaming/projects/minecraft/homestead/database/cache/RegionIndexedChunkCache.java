@@ -33,6 +33,13 @@ public final class RegionIndexedChunkCache {
         });
     }
 
+    public void removeFromRegion(RegionChunk chunk, long regionId) {
+        cache.computeIfPresent(regionId, (id, chunks) -> {
+            chunks.remove(chunk);
+            return chunks.isEmpty() ? null : chunks;
+        });
+    }
+
     public List<RegionChunk> get(long regionId) {
         List<RegionChunk> list = cache.get(regionId);
 

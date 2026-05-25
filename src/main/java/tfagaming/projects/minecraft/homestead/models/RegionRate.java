@@ -11,7 +11,6 @@ import java.util.UUID;
 public final class RegionRate {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private final long id;
-	private boolean autoUpdate = true;
 	private long regionId;
 	private UUID playerId;
 	private int rate;
@@ -35,15 +34,6 @@ public final class RegionRate {
 		this.playerId = playerId;
 		this.rate = rate;
 		this.ratedAt = ratedAt;
-	}
-
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
 	}
 
 	public long getUniqueId() {
@@ -127,8 +117,6 @@ public final class RegionRate {
 	}
 
 	private void update() {
-		if (!autoUpdate) return;
-
 		Homestead.RATE_CACHE.putOrUpdate(this);
 	}
 }

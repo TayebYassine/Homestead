@@ -11,7 +11,6 @@ import java.util.List;
 public final class War {
 	private final long id;
 	private final List<Long> regionIds;
-	private boolean autoUpdate = true;
 	private String name;
 	private String displayName;
 	private String description;
@@ -41,15 +40,6 @@ public final class War {
 		this.regionIds = new ArrayList<>(regionIds);
 		this.prize = prize;
 		this.startedAt = startedAt;
-	}
-
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
 	}
 
 	public long getUniqueId() {
@@ -144,8 +134,6 @@ public final class War {
 	}
 
 	private void update() {
-		if (!autoUpdate) return;
-
 		Homestead.WAR_CACHE.putOrUpdate(this);
 	}
 }

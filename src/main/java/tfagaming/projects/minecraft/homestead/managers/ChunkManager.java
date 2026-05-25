@@ -202,10 +202,11 @@ public final class ChunkManager {
 	 * @param id The chunk ID
 	 */
 	private static void deleteChunk(long id) {
-		RegionChunk r = Homestead.CHUNK_CACHE.get(id);
-		Homestead.CHUNK_CACHE.remove(id);
-		Homestead.REGION_INDEXED_CHUNK_CACHE.remove(r);
-		Homestead.POSITION_INDEXED_CHUNK_CACHE.remove(r);
+		RegionChunk r = Homestead.CHUNK_CACHE.remove(id);
+		if (r != null) {
+			Homestead.REGION_INDEXED_CHUNK_CACHE.remove(r);
+			Homestead.POSITION_INDEXED_CHUNK_CACHE.remove(r);
+		}
 	}
 
 	/**
@@ -488,7 +489,6 @@ public final class ChunkManager {
 		RegionChunk rc = findChunk(chunk);
 		if (rc == null || rc.getRegionId() != fromRegionId) return false;
 		if (RegionManager.findRegion(toRegionId) == null) return false;
-
 		rc.setRegionId(toRegionId);
 		return true;
 	}
@@ -504,11 +504,12 @@ public final class ChunkManager {
 			return 0;
 		}
 
-		List<RegionChunk> toTransfer = getChunksOfRegion(fromRegionId);
+		List<RegionChunk> toTransfer = new ArrayList<>(getChunksOfRegion(fromRegionId));
+
 		for (RegionChunk chunk : toTransfer) {
 			chunk.setRegionId(toRegionId);
-			Homestead.CHUNK_CACHE.putOrUpdate(chunk);
 		}
+
 		return toTransfer.size();
 	}
 

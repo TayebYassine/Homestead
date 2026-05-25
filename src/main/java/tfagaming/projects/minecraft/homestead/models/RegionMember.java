@@ -13,7 +13,6 @@ public final class RegionMember {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private final long id;
 	private final LinkageType linkageType;
-	private boolean autoUpdate = true;
 	private UUID playerId;
 	private long regionId = -1L;
 	private long subAreaId = -1L;
@@ -53,15 +52,6 @@ public final class RegionMember {
 		this.controlFlags = controlFlags;
 		this.taxesAt = taxesAt;
 		this.joinedAt = joinedAt;
-	}
-
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
 	}
 
 	public long getUniqueId() {
@@ -194,8 +184,6 @@ public final class RegionMember {
 	}
 
 	private void update() {
-		if (!autoUpdate) return;
-
 		Homestead.MEMBER_CACHE.putOrUpdate(this);
 	}
 

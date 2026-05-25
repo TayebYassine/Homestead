@@ -19,7 +19,6 @@ public final class Region {
 	private static final Homestead INSTANCE = Homestead.getInstance();
 	private final long id;
 	private final long createdAt;
-	private boolean autoUpdate = true;
 	private String name;
 	private String displayName;
 	private String description;
@@ -53,15 +52,6 @@ public final class Region {
 		this.name = name;
 		this.ownerId = ownerId;
 		this.createdAt = createdAt;
-	}
-
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
 	}
 
 	public long getUniqueId() {
@@ -286,8 +276,6 @@ public final class Region {
 	}
 
 	private void update() {
-		if (!autoUpdate) return;
-
 		Homestead.REGION_CACHE.putOrUpdate(this);
 	}
 }

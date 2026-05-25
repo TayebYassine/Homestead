@@ -7,7 +7,6 @@ import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 
 public final class RegionLog {
 	private final long id;
-	private boolean autoUpdate = true;
 	private long regionId;
 	private String author;
 	private String message;
@@ -34,15 +33,6 @@ public final class RegionLog {
 		this.message = message.length() > 256 ? message.substring(0, 256) : message;
 		this.sentAt = sentAt;
 		this.read = read;
-	}
-
-	/**
-	 * Toggle Auto-Update for caching. If {@code true}, any call for setters will automatically
-	 * update the cache. Otherwise, only the instance of the class will be updated.<br>
-	 * @param autoUpdate Auto-Update toggle
-	 */
-	public void setAutoUpdate(boolean autoUpdate) {
-		this.autoUpdate = autoUpdate;
 	}
 
 	public long getUniqueId() {
@@ -113,8 +103,6 @@ public final class RegionLog {
 	}
 
 	private void update() {
-		if (!autoUpdate) return;
-
 		Homestead.LOG_CACHE.putOrUpdate(this);
 	}
 }

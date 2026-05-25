@@ -5,6 +5,7 @@ import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 //TODO make this configable
@@ -17,7 +18,7 @@ public final class PositionIndexedChunkCache {
     }
 
     public void remove(RegionChunk chunk) {
-        cache.remove(new ChunkPositionKey(chunk.getWorldId(), chunk.getX(), chunk.getZ()), chunk);
+        cache.remove(new ChunkPositionKey(chunk.getWorldId(), chunk.getX(), chunk.getZ()));
     }
 
     public RegionChunk get(ChunkPositionKey key) {
