@@ -7,7 +7,7 @@ These are the requirements for Homestead to work.
 | Software Version  | Java Version | Homestead Version |
 |:-----------------:|:------------:|:-----------------:|
 |  1.21 to 1.21.8   |      21      |  1.0.0 to 4.2.0   |
-| 1.21.9 to latest  |    21/25     | 4.3.0 to 5.1.0.1  |
+|      1.21.9       |    21/25     | 4.3.0 to 5.1.0.1  |
 | 1.21.10 to latest |    21/25     | 5.2.0.0 to latest |
 
 ### Dependencies
@@ -18,7 +18,7 @@ These are the requirements for Homestead to work.
 
 | Software Version  | Java Version | Homestead Version |
 |:-----------------:|:------------:|:-----------------:|
-| 1.21.9 to latest  |    21/25     |      5.0.1.0      |
+|      1.21.9       |    21/25     |      5.0.1.0      |
 | 1.21.10 to latest |    21/25     | 5.2.0.0 to latest |
 
 ### Dependencies
