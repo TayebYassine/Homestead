@@ -6,8 +6,10 @@ import de.bluecolored.bluemap.api.BlueMapMap;
 import de.bluecolored.bluemap.api.markers.ExtrudeMarker;
 import de.bluecolored.bluemap.api.markers.MarkerSet;
 import de.bluecolored.bluemap.api.markers.POIMarker;
+import de.bluecolored.bluemap.api.markers.ShapeMarker;
 import de.bluecolored.bluemap.api.math.Color;
 import de.bluecolored.bluemap.api.math.Shape;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -15,6 +17,10 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
 import tfagaming.projects.minecraft.homestead.models.RegionChunk;
+import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
+import tfagaming.projects.minecraft.homestead.resources.ResourceType;
+import tfagaming.projects.minecraft.homestead.resources.Resources;
+import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.Collection;
@@ -111,26 +117,49 @@ public final class BlueMapAPI extends AbstractMapIntegration {
 			return;
 		}
 
+		boolean force2d = Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.bluemap.use-2d-markers");
+
 		float minY = world.getMinHeight();
 		float maxY = world.getMaxHeight();
+
 		int i = 0;
 
 		for (Cheese cheese : platter) {
-			ExtrudeMarker.Builder builder = ExtrudeMarker.builder()
-					.label(label)
-					.detail(hoverText)
-					.shape(cheese.getShape(), minY, maxY)
-					.fillColor(new Color(chunkColor, getTransparencyFill()))
-					.lineColor(new Color(chunkColor, getTransparencyOutline()))
-					.lineWidth(2)
-					.depthTestEnabled(false);
-
-			if (!cheese.getHoles().isEmpty()) {
-				builder.holes(cheese.getHoles().toArray(Shape[]::new));
-			}
-
 			String markerId = "region-" + region.getUniqueId() + "-area-" + (i++);
-			markerSet.getMarkers().put(markerId, builder.build());
+
+			if (force2d) {
+				int y = world.getSeaLevel();
+
+				ShapeMarker.Builder builder = ShapeMarker.builder()
+						.label(label)
+						.detail(hoverText)
+						.shape(cheese.getShape(), y)
+						.fillColor(new Color(chunkColor, getTransparencyFill()))
+						.lineColor(new Color(chunkColor, getTransparencyOutline()))
+						.lineWidth(2)
+						.depthTestEnabled(false);
+
+				if (!cheese.getHoles().isEmpty()) {
+					builder.holes(cheese.getHoles().toArray(Shape[]::new));
+				}
+
+				markerSet.getMarkers().put(markerId, builder.build());
+			} else {
+				ExtrudeMarker.Builder builder = ExtrudeMarker.builder()
+						.label(label)
+						.detail(hoverText)
+						.shape(cheese.getShape(), world.getMinHeight(), world.getMaxHeight())
+						.fillColor(new Color(chunkColor, getTransparencyFill()))
+						.lineColor(new Color(chunkColor, getTransparencyOutline()))
+						.lineWidth(2)
+						.depthTestEnabled(false);
+
+				if (!cheese.getHoles().isEmpty()) {
+					builder.holes(cheese.getHoles().toArray(Shape[]::new));
+				}
+
+				markerSet.getMarkers().put(markerId, builder.build());
+			}
 		}
 	}
 

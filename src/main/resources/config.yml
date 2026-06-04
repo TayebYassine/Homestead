@@ -149,6 +149,10 @@ dynamic-maps:
     transparency-fill: 40
     transparency-outline: 125
 
+  bluemap:
+    # Always use 2D markers, even when users select 3D, it will always display 2D.
+    use-2d-markers: false
+
 # Discord Integration - Send update messages via Discord, recommended for staff members
 discord:
   enabled: false
