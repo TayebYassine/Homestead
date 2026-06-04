@@ -100,6 +100,8 @@ public final class Database {
 			throw new IllegalStateException("Instance is null");
 		}
 
+		Logger.debug("Started exporting data from cache to the database...");
+
 		instance.exportRegions(Homestead.REGION_CACHE.getAll());
 		instance.exportRegionMembers(Homestead.MEMBER_CACHE.getAll());
 		instance.exportRegionChunks(Homestead.CHUNK_CACHE.getAll());
@@ -110,6 +112,8 @@ public final class Database {
 		instance.exportSubAreas(Homestead.SUBAREA_CACHE.getAll());
 		instance.exportWars(Homestead.WAR_CACHE.getAll());
 		instance.exportLevels(Homestead.LEVEL_CACHE.getAll());
+
+		Logger.debug("Done exporting data.");
 	}
 
 	public void closeConnection() throws Exception {

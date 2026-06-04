@@ -89,7 +89,11 @@ public final class EntityDeathListener implements Listener {
 
 		killer.playSound(killer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1.2f);
 
-		COOLDOWN.add(killer.getUniqueId());
-		Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(killer.getUniqueId()), 2);
+		int timeout = Resources.<LevelsFile>get(ResourceType.Levels).getInt("levels.timeout", 0);
+
+		if (timeout > 0) {
+			COOLDOWN.add(killer.getUniqueId());
+			Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(killer.getUniqueId()), timeout);
+		}
 	}
 }

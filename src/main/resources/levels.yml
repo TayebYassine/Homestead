@@ -6,6 +6,10 @@ levels:
   # Enable region leveling
   enabled: true
 
+  # Restrict the xp gain, in seconds.
+  # Useful to avoid players from farming XP by killing multiple entities at once.
+  timeout: 2
+
   # XP per entity type (kill must happen IN your region, except Ender Dragon)
   # Format: ENTITY_NAME: [ min_xp, max_xp ]
   on-kill-entity:
