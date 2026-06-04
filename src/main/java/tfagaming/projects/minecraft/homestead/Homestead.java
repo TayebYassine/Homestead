@@ -60,6 +60,10 @@ import java.util.stream.Collectors;
 public class Homestead extends JavaPlugin {
 	private final static String VERSION = "5.2.1.0-26w22a";
 	private final static boolean SNAPSHOT = true;
+
+	private static boolean IS_FOLIA = false;
+	private static boolean IS_PAPER = false;
+
 	public static Database database;
 
 	// Cache
@@ -98,7 +102,7 @@ public class Homestead extends JavaPlugin {
 		return INSTANCE;
 	}
 
-	public static boolean isFolia() {
+	public static boolean checkSoftwareIfFolia() {
 		try {
 			Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
 			return true;
@@ -107,13 +111,21 @@ public class Homestead extends JavaPlugin {
 		}
 	}
 
-	public static boolean isPaper() {
+	public static boolean isFolia() {
+		return IS_FOLIA;
+	}
+
+	public static boolean checkSoftwareIfPaper() {
 		try {
 			Class.forName("io.papermc.paper.configuration.Configuration");
 			return true;
 		} catch (ClassNotFoundException e) {
 			return false;
 		}
+	}
+
+	public static boolean isPaper() {
+		return IS_PAPER;
 	}
 
 	public static void callEvent(APIEvent event) {
@@ -127,6 +139,9 @@ public class Homestead extends JavaPlugin {
 	public void onEnable() {
 		Homestead.INSTANCE = this;
 		Homestead.STARTED_AT = System.currentTimeMillis();
+
+		Homestead.IS_FOLIA = checkSoftwareIfFolia();
+		Homestead.IS_PAPER = checkSoftwareIfPaper();
 
 		new Logger();
 
