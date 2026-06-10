@@ -19,8 +19,11 @@ public final class Cooldown {
 	private static final Map<UUID, CooldownData> COOLDOWNS = new ConcurrentHashMap<>();
 
 	public static void startCooldown(Player player, Type type) {
+		int cooldown = type.getCooldown();
+		if (cooldown <= 1) return;
+
 		addCooldown(player.getUniqueId(), type);
-		startCooldownSync(player.getUniqueId(), type.getCooldown());
+		startCooldownSync(player.getUniqueId(), cooldown);
 	}
 
 	private static void addCooldown(UUID id, Type type) {
@@ -49,6 +52,9 @@ public final class Cooldown {
 
 		if (COOLDOWNS.containsKey(id)) {
 			CooldownData data = COOLDOWNS.get(id);
+
+			int cooldown = type.getCooldown();
+			if (data.getType() == type && cooldown <= 1) return false;
 
 			return data.getType() == type && !(type.ignoreOperators() && PlayerUtility.isOperator(player));
 		}

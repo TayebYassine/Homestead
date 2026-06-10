@@ -94,7 +94,7 @@ public final class CustomSignsListener implements Listener {
 		}
 
 		formatSignLines(event,
-				colored("[Sell]", ChatColor.GREEN, "<green>"),
+				colored("[HSell]", ChatColor.GREEN, "<green>"),
 				colored(region.getName(), ChatColor.DARK_GREEN, "<dark_green>"),
 				colored(Formatter.getBalance(price.value()), ChatColor.RED, "<red>"),
 				""
@@ -443,7 +443,7 @@ public final class CustomSignsListener implements Listener {
 	private enum SignType {
 		WELCOME("[welcome]"),
 		RENT("[rent]"),
-		SELL("[sell]");
+		SELL("[hsell]");
 
 		private final String identifier;
 
