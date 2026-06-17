@@ -39,6 +39,7 @@ public final class PlayerFlags {
 	public static final long TRIGGER_RAID = 1L << 33;
 	public static final long ELYTRA = 1L << 34;
 	public static final long SPAWN_ENTITIES = 1L << 35;
+	public static final long PUNCH_SULFUR_CUBES = 1L << 36;
 	private static final Map<String, Long> MAPPED_FLAGS = new HashMap<>();
 
 	static {
@@ -78,6 +79,7 @@ public final class PlayerFlags {
 		MAPPED_FLAGS.put("trigger-raid", TRIGGER_RAID);
 		MAPPED_FLAGS.put("elytra", ELYTRA);
 		MAPPED_FLAGS.put("spawn-entities", SPAWN_ENTITIES);
+		MAPPED_FLAGS.put("punch-sulfur-cubes", PUNCH_SULFUR_CUBES);
 	}
 
 	private PlayerFlags() {

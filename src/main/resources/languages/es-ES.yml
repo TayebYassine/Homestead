@@ -762,6 +762,11 @@ flags-info:
     description:
       - '&7Permitir a los jugadores generar mobs con huevos de spawn?'
     type: ZOMBIE_SPAWN_EGG
+  punch-sulfur-cubes:
+    description:
+      - "&7Permitir a los jugadores perforar cubos de azufre?"
+    type: BUCKET_OF_SULFUR_CUBE
+
   passive-entity-spawn:
     description:
       - '&7Permitir que entidades pasivas, como ovejas y vacas,'

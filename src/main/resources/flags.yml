@@ -60,6 +60,7 @@ default-players-flags:
   trigger-raid: false            # Start raids with Bad Omen
   elytra: true                   # Elytra flight
   spawn-entities: false          # Use spawn eggs
+  punch-sulfur-cubes: false      # Punch sulfur cubes
 
 # World/Environment Flags
 # Controls environmental effects and mob behavior

@@ -433,6 +433,12 @@ public class Homestead extends JavaPlugin {
 		registerEvent(new RegionProtectionListener());
 		registerEvent(new PlayerRegionEnterAndExitListener());
 		registerEvent(new PrivateRegionChatListener());
+
+		try {
+			registerEvent(new PaperSulfurCubeListener());
+		} catch (Exception e) {
+			Logger.error(e);
+		}
 	}
 
 	private void registerEvent(Listener listener) {

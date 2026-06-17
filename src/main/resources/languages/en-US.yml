@@ -786,6 +786,10 @@ flags-info:
     description:
       - "&7Allow players to spawn mobs with Spawn eggs?"
     type: ZOMBIE_SPAWN_EGG
+  punch-sulfur-cubes:
+    description:
+      - "&7Allow players to punch Sulfur Cubes?"
+    type: BUCKET_OF_SULFUR_CUBE
 
   # WORLD FLAGS
   passive-entity-spawn:
