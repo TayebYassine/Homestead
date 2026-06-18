@@ -113,23 +113,20 @@ public final class SubAreaUtility {
 			return null;
 		}
 
+		int minX1 = Math.min(firstPoint.getX(), secondPoint.getX());
+		int minY1 = Math.min(firstPoint.getY(), secondPoint.getY());
+		int minZ1 = Math.min(firstPoint.getZ(), secondPoint.getZ());
+		int maxX1 = Math.max(firstPoint.getX(), secondPoint.getX());
+		int maxY1 = Math.max(firstPoint.getY(), secondPoint.getY());
+		int maxZ1 = Math.max(firstPoint.getZ(), secondPoint.getZ());
+
 		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(regionId)) {
-			Block thisFirstPoint = firstPoint.toBukkit();
-			Block thisSecondPoint = secondPoint.toBukkit();
-
-			int minX1 = Math.min(thisFirstPoint.getX(), thisSecondPoint.getX());
-			int minY1 = Math.min(thisFirstPoint.getY(), thisSecondPoint.getY());
-			int minZ1 = Math.min(thisFirstPoint.getZ(), thisSecondPoint.getZ());
-			int maxX1 = Math.max(thisFirstPoint.getX(), thisSecondPoint.getX());
-			int maxY1 = Math.max(thisFirstPoint.getY(), thisSecondPoint.getY());
-			int maxZ1 = Math.max(thisFirstPoint.getZ(), thisSecondPoint.getZ());
-
-			int minX2 = Math.min(firstPoint.getX(), secondPoint.getX());
-			int minY2 = Math.min(firstPoint.getY(), secondPoint.getY());
-			int minZ2 = Math.min(firstPoint.getZ(), secondPoint.getZ());
-			int maxX2 = Math.max(firstPoint.getX(), secondPoint.getX());
-			int maxY2 = Math.max(firstPoint.getY(), secondPoint.getY());
-			int maxZ2 = Math.max(firstPoint.getZ(), secondPoint.getZ());
+			int minX2 = subArea.getMinX();
+			int minY2 = subArea.getMinY();
+			int minZ2 = subArea.getMinZ();
+			int maxX2 = subArea.getMaxX();
+			int maxY2 = subArea.getMaxY();
+			int maxZ2 = subArea.getMaxZ();
 
 			if ((minX1 <= maxX2 && maxX1 >= minX2) &&
 					(minY1 <= maxY2 && maxY1 >= minY2) &&
