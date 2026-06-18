@@ -18,7 +18,7 @@ Players can list their regions for sale, allowing others to purchase ownership. 
 Write the sign text in this exact format:
 
 ```
-Line 1: [Sell]
+Line 1: [HSell]
 Line 2: (Region name)
 Line 3: (Sale price, example: 15000 (15.0k), 7500 (7.5k)...)
 Line 4: (Leave empty)

@@ -2,11 +2,11 @@
 
 This is a document that lists all releases made to Homestead, including the obsolete ones.
 
-## Latest Releases
+## Recent Releases
 
-- [Release 5.2.1.0 (stable)](https://www.spigotmc.org/resources/homestead-%E2%80%94-advanced-land-claiming-plugin.121873/update?update=642947)
-- [Release 5.2.0.1](https://www.spigotmc.org/resources/homestead-%E2%80%94-advanced-land-claiming-plugin.121873/update?update=639101)
-- [Release 5.2.0.0](https://www.spigotmc.org/resources/homestead-%E2%80%94-advanced-land-claiming-plugin.121873/update?update=638759)
+- [Release 5.2.2.1 (stable)](https://www.spigotmc.org/resources/homestead-%E2%80%94-advanced-land-claiming-plugin.121873/update?update=644785)
+- [Release 5.2.2.0](https://www.spigotmc.org/resources/homestead-%E2%80%94-advanced-land-claiming-plugin.121873/update?update=644672)
+- [Release 5.2.1.0](https://www.spigotmc.org/resources/homestead-%E2%80%94-advanced-land-claiming-plugin.121873/update?update=642947)
 
 ## Table of Releases
 
