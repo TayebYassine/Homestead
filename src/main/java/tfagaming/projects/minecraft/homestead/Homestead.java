@@ -304,7 +304,7 @@ public class Homestead extends JavaPlugin {
 
 		// Load copper golems spawn location
 		runSyncTask(() -> {
-			Logger.info("Loading Copper Golem spawn locations... This may take a while.");
+			Logger.debug("Loading Copper Golem spawn locations... This may take a while.");
 
 			for (World world : Bukkit.getWorlds()) {
 				for (Entity entity : world.getEntities()) {
@@ -313,6 +313,8 @@ public class Homestead extends JavaPlugin {
 					}
 				}
 			}
+
+			Logger.debug("Done recording Copper Golems spawn locations.");
 		});
 
 		Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");

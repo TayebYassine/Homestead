@@ -161,7 +161,7 @@ public final class PlayerAutoClaimListener implements Listener {
 			}
 
 			if (after > before) {
-				Messages.send(player, "commands.claim.11");
+				Messages.send(player, "commands.claim.11", region.getName(), Formatter.getBalance(chunkPrice));
 			}
 
 			if (region.getLocation() == null) {

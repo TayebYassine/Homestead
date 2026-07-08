@@ -98,6 +98,7 @@ commands:
       - "{__prefix__} &7Auto-claim has been &aenabled&7."
       - "{__prefix__} &7Any unclaimed chunk will be automatically claimed for the region &2{0}&7."
     1: "{__prefix__} &7Auto-claim has been &cdisabled&7."
+    2: "{__prefix__} &7You do not have a selected region. Use: &e/hs set [region]"
   balance:
     0: "{__prefix__} &cEconomy integration is disabled."
     1: "{__prefix__} &cNo region found with the name '&2{0}&7'."
