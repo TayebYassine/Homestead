@@ -383,31 +383,15 @@ public final class ChunkManager {
 	 * @param chunk The chunk to check
 	 * @return {@code true} if the chunk touches the region edge.
 	 */
-	public static boolean isChunkOnBorder(long regionId, Chunk chunk) {
-		List<RegionChunk> regionChunks = getChunksOfRegion(regionId);
-		UUID worldId = chunk.getWorld().getUID();
+	public static boolean isChunkOnBorder(long regionId, RegionChunk chunk) {
 		int x = chunk.getX(), z = chunk.getZ();
-
-		boolean found = false;
-		for (RegionChunk rc : regionChunks) {
-			if (rc.getWorldId().equals(worldId) && rc.getX() == x && rc.getZ() == z) {
-				found = true;
-				break;
-			}
-		}
-		if (!found) return false;
+		RegionChunk rc = findChunk(chunk.getWorldId(), x, z);
+		if (rc == null || rc.getRegionId() != regionId) return false;
 
 		int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 		for (int[] dir : dirs) {
-			int nx = x + dir[0], nz = z + dir[1];
-			boolean hasNeighbor = false;
-			for (RegionChunk rc : regionChunks) {
-				if (rc.getWorldId().equals(worldId) && rc.getX() == nx && rc.getZ() == nz) {
-					hasNeighbor = true;
-					break;
-				}
-			}
-			if (!hasNeighbor) return true;
+			RegionChunk neighbor = findChunk(chunk.getWorldId(), x + dir[0], z + dir[1]);
+			if (neighbor == null || neighbor.getRegionId() != regionId) return true;
 		}
 		return false;
 	}
@@ -429,8 +413,7 @@ public final class ChunkManager {
 	public static List<RegionChunk> getBorderChunks(long regionId) {
 		List<RegionChunk> border = new ArrayList<>();
 		for (RegionChunk chunk : getChunksOfRegion(regionId)) {
-			Chunk bukkit = chunk.toBukkit();
-			if (bukkit != null && isChunkOnBorder(regionId, bukkit)) {
+			if (isChunkOnBorder(regionId, chunk)) {
 				border.add(chunk);
 			}
 		}
@@ -643,11 +626,11 @@ public final class ChunkManager {
 		List<RegionChunk> chunks = getChunksOfRegion(regionId);
 		if (chunks.isEmpty()) return false;
 
-		List<RegionChunk> remaining = new ArrayList<>(chunks);
-		remaining.removeIf(c -> c.getWorldId().equals(chunkToRemove.getWorld().getUID())
-				&& c.getX() == chunkToRemove.getX()
-				&& c.getZ() == chunkToRemove.getZ());
+		UUID removeWorldId = chunkToRemove.getWorld().getUID();
+		int rx = chunkToRemove.getX(), rz = chunkToRemove.getZ();
 
+		List<RegionChunk> remaining = new ArrayList<>(chunks);
+		remaining.removeIf(c -> c.getWorldId().equals(removeWorldId) && c.getX() == rx && c.getZ() == rz);
 		if (remaining.isEmpty()) return false;
 
 		UUID worldId = remaining.getFirst().getWorldId();
@@ -659,26 +642,20 @@ public final class ChunkManager {
 
 		while (!queue.isEmpty()) {
 			RegionChunk current = queue.poll();
+			int cx = current.getX(), cz = current.getZ();
+			int[][] dirs = {{cx + 1, cz}, {cx - 1, cz}, {cx, cz + 1}, {cx, cz - 1}};
 
-			for (RegionChunk neighbor : remaining) {
-				if (!neighbor.getWorldId().equals(worldId)) continue;
-				if (visited.contains(neighbor)) continue;
-
-				if (areAdjacent(current, neighbor)) {
-					visited.add(neighbor);
+			for (int[] dir : dirs) {
+				RegionChunk neighbor = findChunk(worldId, dir[0], dir[1]);
+				if (neighbor == null || neighbor.getRegionId() != regionId) continue;
+				if (neighbor.getX() == rx && neighbor.getZ() == rz) continue;
+				if (visited.add(neighbor)) {
 					queue.add(neighbor);
 				}
 			}
 		}
 
 		return visited.size() != remaining.size();
-	}
-
-	private static boolean areAdjacent(RegionChunk a, RegionChunk b) {
-		if (!a.getWorldId().equals(b.getWorldId())) return false;
-		int dx = Math.abs(a.getX() - b.getX());
-		int dz = Math.abs(a.getZ() - b.getZ());
-		return (dx == 1 && dz == 0) || (dx == 0 && dz == 1);
 	}
 
 	/**
@@ -758,17 +735,14 @@ public final class ChunkManager {
 	 * @return {@code true} if an adjacent owned chunk exists.
 	 */
 	public static boolean hasAdjacentOwnedChunk(long regionId, Chunk chunk) {
-		World world = chunk.getWorld();
+		UUID worldId = chunk.getWorld().getUID();
 		int x = chunk.getX();
 		int z = chunk.getZ();
 
 		int[][] dirs = {{x + 1, z}, {x - 1, z}, {x, z + 1}, {x, z - 1}};
 		for (int[] dir : dirs) {
-			int nx = dir[0], nz = dir[1];
-			if (!world.isChunkLoaded(nx, nz)) continue;
-
-			Chunk neighbor = world.getChunkAt(nx, nz);
-			if (isChunkClaimedByRegion(regionId, neighbor)) {
+			RegionChunk neighbor = findChunk(worldId, dir[0], dir[1]);
+			if (neighbor != null && neighbor.getRegionId() == regionId) {
 				return true;
 			}
 		}
@@ -781,18 +755,18 @@ public final class ChunkManager {
 	 * @return An unclaimed chunk, or {@code null}.
 	 */
 	public static Chunk findNearbyUnclaimedChunk(Player player) {
-		Chunk start = player.getLocation().getChunk();
 		World world = player.getWorld();
+		UUID worldId = world.getUID();
+		Chunk start = player.getLocation().getChunk();
 		int sx = start.getX(), sz = start.getZ();
 
 		for (int radius = 1; radius <= 30; radius++) {
 			for (int x = -radius; x <= radius; x++) {
 				for (int z = -radius; z <= radius; z++) {
 					if (Math.abs(x) != radius && Math.abs(z) != radius) continue;
-					if (!world.isChunkLoaded(sx + x, sz + z)) continue;
-
-					Chunk current = world.getChunkAt(sx + x, sz + z);
-					if (!isChunkClaimed(current)) return current;
+					int cx = sx + x, cz = sz + z;
+					if (findChunk(worldId, cx, cz) != null) continue;
+					return world.getChunkAt(cx, cz);
 				}
 			}
 		}
@@ -806,20 +780,15 @@ public final class ChunkManager {
 	 */
 	public static boolean hasNeighbor(Player player) {
 		Chunk chunk = player.getLocation().getChunk();
-		World world = player.getWorld();
+		UUID worldId = chunk.getWorld().getUID();
 		int x = chunk.getX();
 		int z = chunk.getZ();
 
-		Chunk[] neighbors = {
-				world.getChunkAt(x, z - 1),
-				world.getChunkAt(x, z + 1),
-				world.getChunkAt(x - 1, z),
-				world.getChunkAt(x + 1, z)
-		};
-
-		for (Chunk neighbor : neighbors) {
-			if (isChunkClaimed(neighbor)) {
-				Region r = getRegionOwnsTheChunk(neighbor);
+		int[][] dirs = {{x, z - 1}, {x, z + 1}, {x - 1, z}, {x + 1, z}};
+		for (int[] dir : dirs) {
+			RegionChunk rc = findChunk(worldId, dir[0], dir[1]);
+			if (rc != null) {
+				Region r = RegionManager.findRegion(rc.getRegionId());
 				if (r != null && !r.isOwner(player)) {
 					return true;
 				}

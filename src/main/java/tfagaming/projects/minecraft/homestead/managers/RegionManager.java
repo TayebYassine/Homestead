@@ -148,7 +148,7 @@ public final class RegionManager {
 		SubAreaManager.deleteSubAreasOfRegion(id);
 
 		// Delete related chunks
-		for (RegionChunk chunk : ChunkManager.getChunksOfRegion(id)) {
+		for (RegionChunk chunk : chunksToRegen) {
 			ChunkManager.forceUnclaimChunk(id, chunk.toBukkit());
 		}
 
@@ -415,17 +415,16 @@ public final class RegionManager {
 	 * @return List of nearby regions.
 	 */
 	public static List<Region> getRegionsNearLocation(Location location, int chunkRadius) {
-		Chunk center = location.getChunk();
 		World world = location.getWorld();
 		if (world == null) return Collections.emptyList();
-
+		UUID worldId = world.getUID();
+		Chunk center = location.getChunk();
 		int cx = center.getX(), cz = center.getZ();
 		Set<Long> nearbyRegions = new HashSet<>();
 
 		for (int x = -chunkRadius; x <= chunkRadius; x++) {
 			for (int z = -chunkRadius; z <= chunkRadius; z++) {
-				Chunk chunk = world.getChunkAt(cx + x, cz + z);
-				RegionChunk rc = ChunkManager.findChunk(chunk);
+				RegionChunk rc = ChunkManager.findChunk(worldId, cx + x, cz + z);
 				if (rc != null) {
 					nearbyRegions.add(rc.getRegionId());
 				}
@@ -669,14 +668,8 @@ public final class RegionManager {
 	/** Tests whether the player's current chunk is claimed by the supplied region. */
 	public static boolean isPlayerInsideRegion(Player player, Region region) {
 		Chunk location = player.getLocation().getChunk();
-		for (RegionChunk chunk : ChunkManager.getChunksOfRegion(region.getUniqueId())) {
-			if (chunk.getWorldId().equals(location.getWorld().getUID())
-					&& chunk.getX() == location.getX()
-					&& chunk.getZ() == location.getZ()) {
-				return true;
-			}
-		}
-		return false;
+		RegionChunk rc = ChunkManager.findChunk(location);
+		return rc != null && rc.getRegionId() == region.getUniqueId();
 	}
 
 	/**

@@ -15,6 +15,7 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.players.DelayedTel
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public final class ChunkUtility {
 	private ChunkUtility() {
@@ -52,8 +53,10 @@ public final class ChunkUtility {
 	}
 
 	public static Chunk findNearbyUnclaimedChunk(Location location, int maxRadius) {
-		Chunk startChunk = location.getChunk();
 		World world = location.getWorld();
+		if (world == null) return null;
+		UUID worldId = world.getUID();
+		Chunk startChunk = location.getChunk();
 		int startX = startChunk.getX();
 		int startZ = startChunk.getZ();
 
@@ -62,11 +65,9 @@ public final class ChunkUtility {
 			for (int x = -radius; x <= radius; x++) {
 				for (int z = -radius; z <= radius; z++) {
 					if (Math.abs(x) != radius && Math.abs(z) != radius) continue;
-
-					Chunk currentChunk = world.getChunkAt(startX + x, startZ + z);
-					if (!ChunkManager.isChunkClaimed(currentChunk)) {
-						return currentChunk;
-					}
+					int cx = startX + x, cz = startZ + z;
+					if (ChunkManager.findChunk(worldId, cx, cz) != null) continue;
+					return world.getChunkAt(cx, cz);
 				}
 			}
 			radius++;
