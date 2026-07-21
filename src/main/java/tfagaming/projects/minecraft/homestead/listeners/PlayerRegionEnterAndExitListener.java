@@ -114,6 +114,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 						break;
 					case RegionWeather.RAIN:
 						player.setPlayerWeather(WeatherType.DOWNFALL);
+						break;
 					default:
 						break;
 				}

@@ -41,7 +41,7 @@ public final class MemberTaxes {
 					OfflinePlayer targetPlayer = member.getPlayer();
 
 					if (targetPlayer == null) {
-						return;
+						continue;
 					}
 
 					if (PlayerBank.get(targetPlayer) >= amountToPay) {

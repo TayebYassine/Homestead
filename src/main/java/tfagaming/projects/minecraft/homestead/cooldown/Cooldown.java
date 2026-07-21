@@ -68,7 +68,7 @@ public final class Cooldown {
 			return 0;
 		}
 
-		return data.getEndTime();
+		return Math.max(0, data.getEndTime() - System.currentTimeMillis());
 	}
 
 	private static void startCooldownSync(UUID id, int duration) {

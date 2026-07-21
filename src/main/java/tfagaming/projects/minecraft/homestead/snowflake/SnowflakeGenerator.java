@@ -9,6 +9,8 @@ import java.util.Enumeration;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+
+
 /**
  * Snowflake ID Generator for Homestead models.
  */
@@ -83,13 +85,14 @@ public class SnowflakeGenerator {
 		long id = 0L;
 		try {
 			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-			while (interfaces.hasMoreElements()) {
-				NetworkInterface ni = interfaces.nextElement();
-				byte[] mac = ni.getHardwareAddress();
-				if (mac != null && mac.length >= 6) {
-
-					id = ((mac[4] & 0xFF) << 8 | (mac[5] & 0xFF)) & MAX_WORKER_ID;
-					break;
+			if (interfaces != null) {
+				while (interfaces.hasMoreElements()) {
+					NetworkInterface ni = interfaces.nextElement();
+					byte[] mac = ni.getHardwareAddress();
+					if (mac != null && mac.length >= 6) {
+						id = ((mac[4] & 0xFF) << 8 | (mac[5] & 0xFF)) & MAX_WORKER_ID;
+						break;
+					}
 				}
 			}
 		} catch (Exception ignored) {
@@ -133,7 +136,7 @@ public class SnowflakeGenerator {
 					| (workerId << WORKER_ID_SHIFT)
 					| sequence;
 
-			Logger.debug("[Snowflake] Generated ID=" + id + " timestamp=" + currentTimestamp + " worker=" + workerId + " sequence=" + sequence + " hash=" + System.identityHashCode(this));
+			Logger.debug("[Snowflake] Generated ID=" + id + " timestamp=" + currentTimestamp + " worker=" + workerId + " sequence=" + sequence);
 
 			return id;
 		} finally {

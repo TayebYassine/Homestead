@@ -28,10 +28,10 @@ import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.limits.Limits.LimitMethod;
 import tfagaming.projects.minecraft.homestead.tools.minecraft.platform.PlatformBridge;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class PlayerUtility {
 	public static final Set<Long> RENT_FLAGS_SET = Set.of(
@@ -49,7 +49,7 @@ public final class PlayerUtility {
 			PlayerFlags.TAKE_FALL_DAMAGE
 	);
 	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
-	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
+	private static final Set<UUID> COOLDOWN = ConcurrentHashMap.newKeySet();
 	private PlayerUtility() {
 	}
 

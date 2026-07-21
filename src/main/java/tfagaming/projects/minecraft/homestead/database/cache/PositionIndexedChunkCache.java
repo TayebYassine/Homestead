@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-//TODO make this configable
 public final class PositionIndexedChunkCache {
 
     private final ConcurrentHashMap<ChunkPositionKey, RegionChunk> cache = new ConcurrentHashMap<>();

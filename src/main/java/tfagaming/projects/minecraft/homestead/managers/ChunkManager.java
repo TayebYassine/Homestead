@@ -633,29 +633,38 @@ public final class ChunkManager {
 		remaining.removeIf(c -> c.getWorldId().equals(removeWorldId) && c.getX() == rx && c.getZ() == rz);
 		if (remaining.isEmpty()) return false;
 
-		UUID worldId = remaining.getFirst().getWorldId();
-		Set<RegionChunk> visited = new HashSet<>();
-		Queue<RegionChunk> queue = new LinkedList<>();
+		Set<Long> globalVisited = new HashSet<>();
+		Map<UUID, List<RegionChunk>> byWorld = remaining.stream()
+				.collect(Collectors.groupingBy(RegionChunk::getWorldId));
 
-		queue.add(remaining.getFirst());
-		visited.add(remaining.getFirst());
+		for (Map.Entry<UUID, List<RegionChunk>> entry : byWorld.entrySet()) {
+			List<RegionChunk> worldChunks = entry.getValue();
+			Set<Long> worldVisited = new HashSet<>();
+			Queue<RegionChunk> queue = new LinkedList<>();
 
-		while (!queue.isEmpty()) {
-			RegionChunk current = queue.poll();
-			int cx = current.getX(), cz = current.getZ();
-			int[][] dirs = {{cx + 1, cz}, {cx - 1, cz}, {cx, cz + 1}, {cx, cz - 1}};
+			queue.add(worldChunks.getFirst());
+			worldVisited.add(worldChunks.getFirst().getUniqueId());
 
-			for (int[] dir : dirs) {
-				RegionChunk neighbor = findChunk(worldId, dir[0], dir[1]);
-				if (neighbor == null || neighbor.getRegionId() != regionId) continue;
-				if (neighbor.getX() == rx && neighbor.getZ() == rz) continue;
-				if (visited.add(neighbor)) {
-					queue.add(neighbor);
+			while (!queue.isEmpty()) {
+				RegionChunk current = queue.poll();
+				int cx = current.getX(), cz = current.getZ();
+				int[][] dirs = {{cx + 1, cz}, {cx - 1, cz}, {cx, cz + 1}, {cx, cz - 1}};
+
+				for (int[] dir : dirs) {
+					RegionChunk neighbor = findChunk(entry.getKey(), dir[0], dir[1]);
+					if (neighbor == null || neighbor.getRegionId() != regionId) continue;
+					if (neighbor.getX() == rx && neighbor.getZ() == rz) continue;
+					if (worldVisited.add(neighbor.getUniqueId())) {
+						queue.add(neighbor);
+					}
 				}
 			}
+
+			globalVisited.addAll(worldVisited);
+			if (worldVisited.size() != worldChunks.size()) return true;
 		}
 
-		return visited.size() != remaining.size();
+		return globalVisited.size() != remaining.size();
 	}
 
 	/**

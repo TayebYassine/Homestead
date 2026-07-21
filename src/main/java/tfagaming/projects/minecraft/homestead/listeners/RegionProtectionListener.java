@@ -37,15 +37,15 @@ import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldRules;
 import tfagaming.projects.minecraft.homestead.listeners.util.CopperGolemTracker;
+import tfagaming.projects.minecraft.homestead.listeners.util.Explosives;
+import tfagaming.projects.minecraft.homestead.listeners.util.Projectiles;
+import tfagaming.projects.minecraft.homestead.listeners.util.RegionProtection;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
-import tfagaming.projects.minecraft.homestead.managers.SubAreaManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
-import tfagaming.projects.minecraft.homestead.models.SubArea;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.FlagsFile;
 import tfagaming.projects.minecraft.homestead.resources.files.RegionsFile;
-import tfagaming.projects.minecraft.homestead.tools.minecraft.players.PlayerUtility;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -114,7 +114,10 @@ public final class RegionProtectionListener implements Listener {
 
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event) {
-		if (event.getEntity() instanceof CopperGolem golem) {
+		Entity entity = event.getEntity();
+		lastLocations.remove(entity.getUniqueId());
+
+		if (entity instanceof CopperGolem golem) {
 			CopperGolemTracker.forgetGolem(golem);
 		}
 	}
@@ -1407,7 +1410,7 @@ public final class RegionProtectionListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onPlayerLeashEntity(PlayerLeashEntityEvent event) {
+	public void onLeashEvent(PlayerLeashEntityEvent event) {
 		Player player = event.getPlayer();
 		Entity entity = event.getEntity();
 		Location location = entity.getLocation();
@@ -1423,28 +1426,6 @@ public final class RegionProtectionListener implements Listener {
 		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
 			event.setCancelled(true);
 		});
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onLeashEvent(PlayerLeashEntityEvent event) {
-		Player player = event.getPlayer();
-		Entity entity = event.getEntity();
-		Location location = entity.getLocation();
-		Block block = location.getBlock();
-		Chunk chunk = location.getChunk();
-
-		if (block.getBlockData() instanceof Fence) {
-			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
-					event.setCancelled(true);
-					return;
-				}
-			}
-
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
-				event.setCancelled(true);
-			});
-		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -1697,36 +1678,33 @@ public final class RegionProtectionListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onBlockExplode(BlockExplodeEvent event) {
 		Block block = event.getBlock();
+		Location location = block.getLocation();
+		Chunk chunk = location.getChunk();
 
-		if (block.getType().equals(Material.AIR)) {
-			Location location = block.getLocation();
-			Chunk chunk = location.getChunk();
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (ChunkManager.isChunkClaimed(chunk)) {
-				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-
-				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
-					event.setCancelled(true);
-				}
-			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
-					event.setCancelled(true);
-					return;
-				}
-
-				List<Block> allowedBlocks = new ArrayList<>();
-
-				for (Block b : event.blockList()) {
-					Chunk blockChunk = b.getLocation().getChunk();
-
-					if (!ChunkManager.isChunkClaimed(blockChunk)) {
-						allowedBlocks.add(b);
-					}
-				}
-
-				event.blockList().clear();
-				event.blockList().addAll(allowedBlocks);
+			if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
+				event.setCancelled(true);
 			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+				event.setCancelled(true);
+				return;
+			}
+
+			List<Block> allowedBlocks = new ArrayList<>();
+
+			for (Block b : event.blockList()) {
+				Chunk blockChunk = b.getLocation().getChunk();
+
+				if (!ChunkManager.isChunkClaimed(blockChunk)) {
+					allowedBlocks.add(b);
+				}
+			}
+
+			event.blockList().clear();
+			event.blockList().addAll(allowedBlocks);
 		}
 	}
 
@@ -2268,86 +2246,4 @@ public final class RegionProtectionListener implements Listener {
 				|| type == Material.SWEET_BERRY_BUSH;
 	}
 
-	public static class Explosives {
-		public static boolean isExplosive(Entity e) {
-			if (e == null) return false;
-
-			if (e instanceof TNTPrimed) return true;
-			if (e instanceof Creeper) return true;
-			if (e instanceof Fireball) return true;
-			if (e instanceof WitherSkull) return true;
-			if (e instanceof EnderCrystal) return true;
-			if (e instanceof WindCharge) return true;
-
-			if (e instanceof Player) {
-				return false;
-			}
-
-			return switch (e.getType()) {
-				case TNT, TNT_MINECART, CREEPER, FIREBALL, WITHER_SKULL, END_CRYSTAL, WIND_CHARGE -> true;
-				default -> false;
-			};
-		}
-	}
-
-	public static class Projectiles {
-		public static boolean isProjectile(Entity e) {
-			return e instanceof Projectile;
-		}
-
-		public static boolean isPlayerProjectile(Entity e) {
-			return e instanceof Projectile p &&
-					p.getShooter() instanceof Player;
-		}
-
-		public static boolean isMobProjectile(Entity e) {
-			return e instanceof Projectile p &&
-					p.getShooter() instanceof LivingEntity &&
-					!(p.getShooter() instanceof Player);
-		}
-	}
-
-	public static class RegionProtection {
-		public static boolean hasPermission(Player player,
-											Chunk chunk,
-											Location location,
-											long flag) {
-			if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk))
-				return true;
-
-			if (player == null) return true;
-
-			if (PlayerUtility.isOperator(player)) return true;
-
-			if (!ChunkManager.isChunkClaimed(chunk)) return true;
-
-			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-			if (region == null) return true;
-
-			if (region.isOwner(player)) return true;
-
-			SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(location);
-
-			return subArea != null
-					? PlayerUtility.hasPermissionFlag(region.getUniqueId(), subArea.getUniqueId(), player, flag, true)
-					: PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, flag, true);
-		}
-
-		public static void hasPermission(Player player,
-										 Chunk chunk,
-										 Location location,
-										 long flag,
-										 Runnable onTrue,
-										 Runnable onFalse) {
-			if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk)) {
-				if (onTrue != null) onTrue.run();
-				return;
-			}
-
-			boolean allowed = hasPermission(player, chunk, location, flag);
-
-			if (allowed && onTrue != null) onTrue.run();
-			if (!allowed && onFalse != null) onFalse.run();
-		}
-	}
 }

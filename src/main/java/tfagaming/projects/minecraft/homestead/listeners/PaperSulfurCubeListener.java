@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import tfagaming.projects.minecraft.homestead.Homestead;
 import tfagaming.projects.minecraft.homestead.flags.PlayerFlags;
 import tfagaming.projects.minecraft.homestead.flags.WorldRules;
+import tfagaming.projects.minecraft.homestead.listeners.util.RegionProtection;
 import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 
 public final class PaperSulfurCubeListener implements Listener {
@@ -53,7 +54,7 @@ public final class PaperSulfurCubeListener implements Listener {
 			}
 		}
 
-		RegionProtectionListener.RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PUNCH_SULFUR_CUBES, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PUNCH_SULFUR_CUBES, null, () -> {
 			cancelAndFreeze(player, targetEntity);
 		});
 	}
