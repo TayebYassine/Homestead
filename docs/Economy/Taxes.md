@@ -1,31 +1,32 @@
 # Member Taxes
 
-Member taxes require trusted players to pay a fee to maintain their membership in a region. This helps region owners offset upkeep costs or generates income.
+Member taxes require trusted players to pay a fee to maintain their membership.
 
-## How it works
+## How It Works
 
-1. **Owner sets tax amount** (within configured limits)
-2. **Members pay taxes** to stay trusted in the region
-3. **Non-payment** results in automatic untrust
-4. **Payments go** to the region bank
+1. Owner sets a tax amount
+2. Members must pay regularly to stay trusted
+3. Non-payment results in automatic untrust
+4. Payments go to the region bank
 
-**Example:** A region owner sets $50 weekly taxes. Each trusted member must pay $50/week or they'll be automatically untrusted.
+## Commands
+
+| Command | Description |
+|:--------|:------------|
+| `/region setmembertax [amount]` | Set the member tax |
+| `/region setmembertax 0` | Disable taxes |
 
 ## Configuration
 
-Location: **regions.yml**
-
 ```yaml
-# Member Taxes System
-# Require members to pay fees to stay in region
+# In regions.yml
 taxes:
   enabled: false
   min-tax: 0.0
   max-tax: 10000.0
-  tax-timer: 604800
+  tax-timer: 604800    # Payment frequency (seconds)
 ```
 
 !!! warning "Restart Required"
 
-    If you change any tax settings, you **must restart** your server for changes to take effect.
-
+    Tax setting changes require a full server restart.

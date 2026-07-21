@@ -1,12 +1,35 @@
-# Regional Banking
+# Regional Bank
 
-Every region has its own bank account where owners can securely store money. The regional bank is separate from a player's personal balance and stays with the region even if ownership changes.
+Every region has its own bank account, separate from the player's personal balance.
 
-## **Features:**
+## Features
 
-- Deposit money into your region's bank
-- Withdraw funds when needed
-- Safe storage that can't be lost on death (depends on your server's style)
-- Useful for saving up for upkeep or member taxes
+- :material-check: Deposit and withdraw money
+- :material-check: Secure — money stays in the region bank
+- :material-check: Persistent — survives ownership transfers
 
-This feature cannot be disabled as it's essential for other economy features.
+## Commands
+
+| Command | Description |
+|:--------|:------------|
+| `/region deposit [amount]` | Add money to the region bank |
+| `/region withdraw [amount]` | Remove money from the region bank |
+| `/region balance` | Check current bank balance |
+
+## Configuration
+
+```yaml
+# In limits.yml
+max-bank-deposit: 100000000
+```
+
+## Control Flags
+
+Trusted members can be given bank access:
+
+| Flag | Allows |
+|:-----|:-------|
+| `deposit-money` | Deposit to bank |
+| `withdraw-money` | Withdraw from bank |
+
+See [Control Flags](../Configuration/Control Flags.md).

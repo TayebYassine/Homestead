@@ -1,29 +1,42 @@
-# Setup Economy
+# Economy Setup
 
-The economy system adds depth to survival servers by allowing players to rent regions, sell land, and manage upkeep costs.
+Homestead integrates with economy plugins for banking, upkeep, taxes, renting, and selling.
 
-## Features
+## Requirements
 
-- Region Upkeep
-- Member Taxes
-- Bank
-- Sell Regions
-- Rent Regions
+- **[Vault](https://www.spigotmc.org/resources/34315/)** + an economy plugin, **OR**
+- **[ServiceIO](https://modrinth.com/plugin/service-io)** (Paper/Purpur)
+- **[VaultUnlocked](https://modrinth.com/plugin/vaultunlocked/version/2.16.0)** (Folia)
 
-... and much more!
+## Economy Plugins
 
-## How to Enable
+| Plugin | Notes |
+|:-------|:------|
+| [EssentialsX](https://www.spigotmc.org/resources/9089/) | Most common |
+| [CMI](https://www.spigotmc.org/resources/3742/) | All-in-one |
+| [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked) | Lightweight |
+| [ItemEconomy II](https://github.com/adrianvic/ItemEconomy) | Item-based |
 
-Homestead always lookup for any economy plugin that provides the necessary services on startup. In case there are no services,
-most economy features will be limited.
+## How It Works
 
-## Plugins
+1. Install an economy plugin and Vault/ServiceIO
+2. Restart the server
+3. Homestead auto-detects the economy provider
 
-Example list of plugins that provides economy services and can be integrated with Homestead:
+## Testing
 
-- [EssentialsX](https://www.spigotmc.org/resources/9089/)\*
-- [CMI](http://spigotmc.org/resources/3742/)\*
-- [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked)
-- [ItemEconomy II](https://github.com/adrianvic/ItemEconomy)
+```
+/region balance      # Check bank balance
+/region deposit 100  # Deposit money
+/region withdraw 50  # Withdraw money
+```
 
-\*: Not an economy plugin but it provides the necessary services.
+## Feature Overview
+
+| Feature | Description |
+|:--------|:------------|
+| [Regional Bank](Bank.md) | Each region has its own bank |
+| [Upkeep](Upkeep.md) | Recurring fees per chunk |
+| [Member Taxes](Taxes.md) | Members pay to stay trusted |
+| [Rent](Rent.md) | Rent out regions |
+| [Sell](Sell.md) | Sell regions to other players |

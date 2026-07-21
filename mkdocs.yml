@@ -1,7 +1,7 @@
 site_name: Homestead
 site_author: Tayeb Yassine
 site_description: An advanced, chunk-based land claiming plugin for Minecraft servers, with multiple APIs support, based on Bukkit API.
-copyright: Copyright (©) 2025 Tayeb Yassine
+copyright: Copyright (&copy;) 2025 Tayeb Yassine
 
 extra:
   social:
@@ -11,13 +11,10 @@ extra:
 
 theme:
   name: material
-
   favicon: assets/favicon.ico
   logo: assets/logo.png
-
   icon:
     repo: fontawesome/brands/github
-
   palette:
     - scheme: default
       primary: indigo
@@ -25,54 +22,113 @@ theme:
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-      code: atom-one-light
-
     - scheme: slate
       primary: black
       accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-      code: atom-one-dark
-
   features:
-    #- navigation.instant            # SPA-style page switches
-    - navigation.instant.progress   # thin progress bar while loading
-    - navigation.tracking           # URL=#anchor follows scroll
-    #- navigation.sections           # 2nd-level groups in sidebar
-    #- navigation.expand             # auto-expand sidebar groups
-    #- navigation.path               # breadcrumb above title
-    - navigation.top                # "back to top" button
-    - navigation.footer             # prev / next links
-    # - toc.integrate                 # merge TOC into left sidebar
-    - search.suggest                # search auto-suggest
-    - search.highlight              # highlight searched words
-    - content.code.copy             # copy button on code blocks
-    - content.code.annotate         # code annotations
-    - content.tabs.link             # sync same-named content tabs
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
 
 repo_url: https://github.com/TayebYassine/Homestead
 repo_name: TayebYassine/Homestead
 
 markdown_extensions:
   - admonition
+  - pymdownx.details
+  - pymdownx.superfences
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
-  - pymdownx.superfences
-  - pymdownx.details
-  - tables
-  - attr_list
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.tabbed:
-      alternate_style: true
-  
+  - tables
+  - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
+
 extra_css:
   - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+
+  - Getting Started:
+    - Prerequisites: Getting Started/Prerequisites.md
+    - Installation: Getting Started/Installation.md
+    - First Steps: Getting Started/First Steps.md
+    - FAQ: Getting Started/FAQ.md
+
+  - Configuration:
+    - Overview: Configuration/Overview.md
+    - Database: Configuration/Database.md
+    - Database Migration: Configuration/Database Migration.md
+    - Ranks & Limits: Configuration/Ranks and Limits.md
+    - Flags Overview: Configuration/Flags Overview.md
+    - Player Flags: Configuration/Player Flags.md
+    - World Flags: Configuration/World Flags.md
+    - Control Flags: Configuration/Control Flags.md
+    - Disabled Flags: Configuration/Disabled Flags.md
+    - Leveling & XP: Configuration/Leveling and XP.md
+    - Rewards: Configuration/Rewards.md
+    - Other Settings: Configuration/Other Settings.md
+
+  - Economy:
+    - Setup: Economy/Setup.md
+    - Regional Bank: Economy/Bank.md
+    - Upkeep: Economy/Upkeep.md
+    - Member Taxes: Economy/Taxes.md
+    - Rent: Economy/Rent.md
+    - Sell: Economy/Sell.md
+
+  - Usage:
+    - Creating a Region: Usage/Creating a Region.md
+    - Managing a Region: Usage/Managing a Region.md
+    - Sub-Areas: Usage/Sub-Areas.md
+    - Wars: Usage/Wars.md
+    - Welcome Signs: Usage/Welcome Signs.md
+    - Region Chat & Mail: Usage/Region Chat and Mail.md
+    - Region Storage: Usage/Region Storage.md
+    - Leveling & XP: Usage/Leveling and XP.md
+    - Borders & Maps: Usage/Borders and Maps.md
+    - Teleportation: Usage/Teleportation.md
+    - Merging Regions: Usage/Merging Regions.md
+
+  - Commands:
+    - Player Commands: Commands/Player Commands.md
+    - Admin Commands: Commands/Admin Commands.md
+    - Permissions: Commands/Permissions.md
+
+  - Advanced:
+    - Language: Advanced/Language.md
+    - Menus: Advanced/Menus.md
+    - PlaceholderAPI: Advanced/PlaceholderAPI.md
+    - Plugin Integrations: Advanced/Integrations.md
+    - Developer API: Advanced/API.md
+    - API Examples: Advanced/API Examples.md
+    - Bedrock Edition: Advanced/Bedrock Edition.md
+    - Experimental: Advanced/Experimental.md
+
+  - Support:
+    - Changelog: Support/Changelog.md
+    - Troubleshooting: Support/Troubleshooting.md
+    - Getting Help: Support/Support.md

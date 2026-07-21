@@ -1,52 +1,45 @@
-# Region Upkeep
+# Upkeep
 
-Upkeep requires region owners to pay a fee regularly based on the number of chunks they've claimed. This prevents land hoarding and keeps the economy active.
+Upkeep requires region owners to pay recurring fees from the region bank based on chunk count.
 
-Note that all the payment is done by region's bank, not the player's own wallet. You must deposit your money to the region's bank.
+!!! info "Paid From Region Bank"
 
-## How it works
+    Upkeep is deducted from the region bank, not the player's personal balance.
 
-1. **Calculate cost**: Multiply chunks claimed by the per-chunk cost
-2. **Payment due**: Owners must pay from their region bank
-3. **Grace period**: New regions get a grace period before first payment
-4. **Auto-unclaim**: Optionally unclaim chunks if payment fails
+## How It Works
 
-**Example:** If upkeep is $100 per chunk, and you claimed 10 chunks, you'll owe $1,000 per upkeep period.
+1. Each chunk costs a set amount per payment period
+2. Fee deducted from the region bank
+3. If the bank can't cover it, chunks are auto-unclaimed (optional)
+4. New regions get a grace period
+
+**Example:** $100/chunk, 10 chunks = $1,000 due per period.
 
 ## Configuration
 
 ```yaml
+# In regions.yml
 upkeep:
-  # Enable recurring maintenance fees
   enabled: false
-
-  # Cost per chunk per payment period
   per-chunk: 100.0
-
-  # Auto-unclaim chunks if payment fails
   unclaim-chunks: true
-
-  # Grace period before first payment (seconds)
-  # 604800 = 1 week, 1209600 = 2 weeks, 2592000 = 30 days
-  start-upkeep: 604800
-
-  # Payment frequency (seconds)
-  upkeep-timer: 604800
+  start-upkeep: 604800    # Grace period (seconds)
+  upkeep-timer: 604800    # Payment frequency (seconds)
 ```
+
+### Time Values
+
+| Duration | Seconds |
+|:---------|:-------:|
+| 1 day | 86400 |
+| 1 week | 604800 |
+| 2 weeks | 1209600 |
+| 30 days | 2592000 |
+
+## Leveling Bonus
+
+Level-up rewards can reduce upkeep costs by up to 50%.
 
 !!! warning "Restart Required"
 
-    If you change any upkeep settings, you **must restart** your server for changes to take effect.
-
-## FAQs
-### What happens if I don't pay the upkeep?
-
-Any chunk that cannot be paid for will be automatically unclaimed.
-
-For example, if you have 10 chunks claimed, and you can only afford 6 chunks, the plugin will automatically unclaim 4 random chunks.
-
-### What is `start-upkeep`, or Grace period?
-
-It's a period where region owners receive a short period to grind and earn more money before the actual upkeep starts.
-
-It is useful for beginners and new joined players!
+    Changes to upkeep settings require a full server restart.

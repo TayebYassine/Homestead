@@ -1,33 +1,52 @@
-# War
+# Wars
 
-!!! failure "Deprecation in the Future"
+!!! warning "Experimental & Potentially Deprecated"
 
-    The wars feature is implemented and never been used, this feature will become deprecated unless servers enable Wars.
+    The war system has been implemented but rarely used. It may become deprecated unless servers actively use it.
 
-A war is an organized armed conflict involving PvP between nations (or regions), characterized by clashes, or territorial disputes, leading to mass killing of players, social disruption, and economic destruction between them.
+A war is an organized PvP conflict between regions with an economic stake.
 
 ## Declaring a War
 
-To declare a war, you must confirm that:
+```
+/hs war declare [target-region] [prize] (war-name)
+```
 
-- You have an army of players, which are the members of your region.
-- Once you get killed by anything during the war, the other nation will be marked as the winner, and you will pay the prize.
-- The other nation's members can attack you, but other players cannot attack you. Unfortunately, your members **may** attack you.
-- A member can be a part of your nation and the other nation, so it means they are a regicide, and they can murder you.
-- Surrendering first will mark you as the loser, and you will pay the prize.
+**Example:** `/hs war declare EnemyBase 50000 TheGreatWar`
 
-To declare a war, use: `/hs war declare [region] [prize] (the war name)`
+### Prerequisites
 
-Once the war is declared, these flags will be ignored for the two regions:
+- Your region must have the `wars` world flag set to Allow
+- The target must also have `wars` enabled
+- You must have enough money in your region bank for the prize
 
-- Doors
-- Trap doors
-- Fence gates
-- PvP
-- Passthrough
+### What Happens During War
+
+- Members of both regions can attack each other freely
+- Ignored flags: Doors, trap doors, fence gates, PvP, Passthrough
+- Players who are members of **both** regions are "regicides" — can attack either side
 
 ## Surrendering
 
-Once you surrender, the other region will be marked as the winners of the war, which means you must pay the prize.
+```
+/hs war surrender
+```
 
-If you have no choice and you want to end the conflict, use: `/hs war surrender`
+The other region wins and receives the prize.
+
+## Winning
+
+A war ends when a player from either side dies. The opposing team wins and receives the prize.
+
+### Configuration
+
+```yaml
+# In regions.yml
+wars:
+  enabled: false
+  min-prize: 1000.0
+  max-prize: 1000000000.0
+  keep-inventory: false
+  give-head: true
+  broadcast-type: "regions"  # regions, server, or silent
+```
