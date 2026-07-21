@@ -46,7 +46,10 @@ public final class PlayerUtility {
 			PlayerFlags.ELYTRA,
 			PlayerFlags.TELEPORT,
 			PlayerFlags.PICKUP_ITEMS,
-			PlayerFlags.TAKE_FALL_DAMAGE
+			PlayerFlags.TAKE_FALL_DAMAGE,
+			PlayerFlags.CONTAINERS,
+			PlayerFlags.BREAK_BLOCKS,
+			PlayerFlags.PLACE_BLOCKS
 	);
 	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
 	private static final Set<UUID> COOLDOWN = ConcurrentHashMap.newKeySet();
