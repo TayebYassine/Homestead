@@ -1298,7 +1298,7 @@ public final class RegionProtectionListener implements Listener {
 				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
 					event.setCancelled(true);
 				});
-			} else if (entityHit instanceof ArmorStand) {
+			} else if (entityHit instanceof ArmorStand || entityHit instanceof ItemFrame || entityHit instanceof Painting) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
 					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
 						event.setCancelled(true);
