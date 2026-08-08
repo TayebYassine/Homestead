@@ -1904,7 +1904,8 @@ public final class RegionProtectionListener implements Listener {
 				if (!chunk.equals(pistonChunk) && ChunkManager.isChunkClaimed(chunk)) {
 					Region pistonChunkRegion = ChunkManager.getRegionOwnsTheChunk(pistonChunk);
 					UUID pistonChunkOwner = pistonChunkRegion == null ? null : pistonChunkRegion.getOwnerId();
-					UUID targetChunkOwner = Objects.requireNonNull(ChunkManager.getRegionOwnsTheChunk(chunk)).getOwnerId();
+					Region targetRegion = ChunkManager.getRegionOwnsTheChunk(chunk);
+					UUID targetChunkOwner = targetRegion == null ? null : targetRegion.getOwnerId();
 
 					if (pistonChunkRegion != null && pistonChunkOwner != null && pistonChunkOwner.equals(targetChunkOwner)) {
 						return true;
@@ -1929,7 +1930,8 @@ public final class RegionProtectionListener implements Listener {
 				if (!chunk.equals(pistonChunk) && ChunkManager.isChunkClaimed(chunk)) {
 					Region pistonChunkRegion = ChunkManager.getRegionOwnsTheChunk(pistonChunk);
 					UUID pistonChunkOwner = pistonChunkRegion == null ? null : pistonChunkRegion.getOwnerId();
-					UUID targetChunkOwner = Objects.requireNonNull(ChunkManager.getRegionOwnsTheChunk(chunk)).getOwnerId();
+					Region targetRegion = ChunkManager.getRegionOwnsTheChunk(chunk);
+					UUID targetChunkOwner = targetRegion == null ? null : targetRegion.getOwnerId();
 
 					if (pistonChunkRegion != null && pistonChunkOwner != null && pistonChunkOwner.equals(targetChunkOwner)) {
 						return true;
@@ -1957,7 +1959,8 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(targetChunk)) {
 				Region dispenserChunkRegion = ChunkManager.getRegionOwnsTheChunk(block.getLocation().getChunk());
 				UUID dispenserChunkOwner = dispenserChunkRegion == null ? null : dispenserChunkRegion.getOwnerId();
-				UUID targetChunkOwner = Objects.requireNonNull(ChunkManager.getRegionOwnsTheChunk(targetChunk)).getOwnerId();
+				Region targetRegion = ChunkManager.getRegionOwnsTheChunk(targetChunk);
+				UUID targetChunkOwner = targetRegion == null ? null : targetRegion.getOwnerId();
 
 				if (dispenserChunkRegion != null && dispenserChunkOwner != null && dispenserChunkOwner.equals(targetChunkOwner)) {
 					return;
