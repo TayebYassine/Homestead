@@ -26,17 +26,28 @@ public class SharedStorage {
 			DataInputStream dataInput = new DataInputStream(inputStream);
 			int size = dataInput.readInt();
 			int itemCount = dataInput.readInt();
+			if (size <= 0 || size > 1080 || itemCount < 0 || itemCount > 1080) {
+				throw new IllegalArgumentException("Invalid storage size or item count");
+			}
 			SharedStorage storage = new SharedStorage(regionId, size);
 			for (int i = 0; i < itemCount; i++) {
 				int slot = dataInput.readInt();
-				byte[] itemBytes = new byte[dataInput.readInt()];
+				int itemBytesLen = dataInput.readInt();
+				if (itemBytesLen <= 0 || itemBytesLen > 1000000) continue;
+				byte[] itemBytes = new byte[itemBytesLen];
 				dataInput.readFully(itemBytes);
-				storage.items.put(slot, ItemStack.deserializeBytes(itemBytes));
+				try {
+					ItemStack item = ItemStack.deserializeBytes(itemBytes);
+					if (item != null && !item.getType().isAir()) {
+						storage.items.put(slot, item);
+					}
+				} catch (Exception ignored) {
+				}
 			}
 			dataInput.close();
 			return storage;
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to deserialize storage", e);
+		} catch (IOException | IllegalArgumentException e) {
+			return createEmpty(regionId);
 		}
 	}
 
