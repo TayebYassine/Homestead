@@ -17,6 +17,7 @@ import tfagaming.projects.minecraft.homestead.managers.ChunkManager;
 import tfagaming.projects.minecraft.homestead.managers.LogManager;
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
 import tfagaming.projects.minecraft.homestead.models.Region;
+import tfagaming.projects.minecraft.homestead.models.RegionChunk;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
 import tfagaming.projects.minecraft.homestead.resources.files.ConfigFile;
@@ -219,7 +220,11 @@ public class ClaimCommand extends CommandBuilder {
 
 		if (lastError != null && claimedCount < chunksToClaim.size()) {
 			for (int i = 0; i < claimedCount; i++) {
-				ChunkManager.forceUnclaimChunk(region, chunksToClaim.get(i));
+				Chunk claimed = chunksToClaim.get(i);
+				RegionChunk rc = ChunkManager.findChunk(claimed);
+				if (rc != null && rc.getRegionId() == region.getUniqueId()) {
+					ChunkManager.forceUnclaimChunk(region, claimed);
+				}
 			}
 
 			switch (lastError) {
