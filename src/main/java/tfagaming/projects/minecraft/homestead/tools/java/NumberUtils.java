@@ -28,8 +28,8 @@ public final class NumberUtils {
 
 	public static boolean isValidDouble(String string) {
 		try {
-			Double.parseDouble(string);
-			return true;
+			double d = Double.parseDouble(string);
+			return Double.isFinite(d);
 		} catch (NumberFormatException e) {
 			return false;
 		}

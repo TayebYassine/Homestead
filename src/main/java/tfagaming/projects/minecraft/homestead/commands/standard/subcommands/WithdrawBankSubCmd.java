@@ -69,8 +69,7 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 
 		String amountInput = args[0];
 
-		if ((!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput))
-				|| (NumberUtils.isValidDouble(amountInput) && Double.parseDouble(amountInput) > Integer.MAX_VALUE)) {
+		if (!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput)) {
 			Messages.send(player, "commands.withdraw.5");
 			return true;
 		}
@@ -78,7 +77,7 @@ public class WithdrawBankSubCmd extends SubCommandBuilder {
 		double amount = amountInput.equalsIgnoreCase("all") ? region.getBank()
 				: Double.parseDouble(amountInput);
 
-		if (amount <= 0) {
+		if (!Double.isFinite(amount) || amount <= 0) {
 			Messages.send(player, "commands.withdraw.6");
 			return true;
 		}
