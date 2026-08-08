@@ -194,9 +194,9 @@ public final class Region {
 	}
 
 	public void withdrawBank(double amount) {
-		setBank(getBank() - amount);
+		if (amount <= 0 || !Double.isFinite(amount)) return;
 
-		if (getBank() < 0) setBank(0);
+		setBank(Math.max(0, getBank() - amount));
 	}
 
 	public int getMapColor() {

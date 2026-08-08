@@ -10,6 +10,7 @@ import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.models.*;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
@@ -217,7 +218,8 @@ public final class MongoDB implements Provider {
 						if (l != null) newLogs.add(l);
 					}
 				}
-			} catch (Exception ignored) {
+			} catch (Exception e) {
+				Logger.debug("[Migration] Skipped region doc: " + e.getMessage());
 			}
 		}
 
@@ -265,7 +267,8 @@ public final class MongoDB implements Provider {
 						if (m != null) newMembers.add(m);
 					}
 				}
-			} catch (Exception ignored) {
+			} catch (Exception e) {
+				Logger.debug("[Migration] Skipped subarea doc: " + e.getMessage());
 			}
 		}
 
@@ -282,7 +285,8 @@ public final class MongoDB implements Provider {
 						doc.getLong("experience"),
 						doc.getLong("totalExperience"),
 						doc.getLong("createdAt")));
-			} catch (Exception ignored) {
+			} catch (Exception e) {
+				Logger.debug("[Migration] Skipped level doc: " + e.getMessage());
 			}
 		}
 
@@ -310,7 +314,8 @@ public final class MongoDB implements Provider {
 						doc.getLong("startedAt"));
 				newWars.add(war);
 				warRegionMap.put(newWarId, mappedRegionIds);
-			} catch (Exception ignored) {
+			} catch (Exception e) {
+				Logger.debug("[Migration] Skipped war doc: " + e.getMessage());
 			}
 		}
 

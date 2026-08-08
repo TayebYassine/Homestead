@@ -315,6 +315,7 @@ public final class SQLite implements Provider {
 							if (l != null) newLogs.add(l);
 						});
 					} catch (Exception e) {
+						Logger.debug("[Migration] Skipped region row: " + e.getMessage());
 					}
 				}
 			}
@@ -364,8 +365,8 @@ public final class SQLite implements Provider {
 									newSubAreaId, RegionMember.LinkageType.SUBAREA, part);
 							if (m != null) newMembers.add(m);
 						});
-
 					} catch (Exception e) {
+						Logger.debug("[Migration] Skipped subarea row: " + e.getMessage());
 					}
 				}
 			}
@@ -390,6 +391,7 @@ public final class SQLite implements Provider {
 								rs.getLong("createdAt"));
 						newLevels.add(lvl);
 					} catch (Exception e) {
+						Logger.debug("[Migration] Skipped level row: " + e.getMessage());
 					}
 				}
 			}
@@ -421,8 +423,8 @@ public final class SQLite implements Provider {
 								rs.getLong("startedAt"));
 						newWars.add(war);
 						warRegionMap.put(newWarId, mappedRegionIds);
-
 					} catch (Exception e) {
+						Logger.debug("[Migration] Skipped war row: " + e.getMessage());
 					}
 				}
 			}

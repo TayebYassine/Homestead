@@ -1,6 +1,7 @@
 package tfagaming.projects.minecraft.homestead.database.providers;
 
 import tfagaming.projects.minecraft.homestead.Homestead;
+import tfagaming.projects.minecraft.homestead.logs.Logger;
 import tfagaming.projects.minecraft.homestead.models.*;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeBlock;
 import tfagaming.projects.minecraft.homestead.models.serialize.SeLocation;
@@ -278,7 +279,8 @@ public final class MySQL implements Provider {
 						RegionLog l = LegacyParsers.parseLegacyLog(newId, part);
 						if (l != null) newLogs.add(l);
 					});
-				} catch (Exception ignored) {
+				} catch (Exception e) {
+					Logger.debug("[Migration] Skipped region row: " + e.getMessage());
 				}
 			}
 		}
@@ -325,7 +327,8 @@ public final class MySQL implements Provider {
 							RegionMember m = LegacyParsers.parseLegacyMember(newSubAreaId, RegionMember.LinkageType.SUBAREA, part);
 							if (m != null) newMembers.add(m);
 						});
-					} catch (Exception ignored) {
+					} catch (Exception e) {
+						Logger.debug("[Migration] Skipped subarea row: " + e.getMessage());
 					}
 				}
 			}
@@ -346,7 +349,8 @@ public final class MySQL implements Provider {
 								rs.getLong("experience"),
 								rs.getLong("totalExperience"),
 								rs.getLong("createdAt")));
-					} catch (Exception ignored) {
+					} catch (Exception e) {
+						Logger.debug("[Migration] Skipped level row: " + e.getMessage());
 					}
 				}
 			}
@@ -374,7 +378,8 @@ public final class MySQL implements Provider {
 								rs.getLong("startedAt"));
 						newWars.add(war);
 						warRegionMap.put(newWarId, mappedRegionIds);
-					} catch (Exception ignored) {
+					} catch (Exception e) {
+						Logger.debug("[Migration] Skipped war row: " + e.getMessage());
 					}
 				}
 			}
