@@ -90,7 +90,13 @@ public class SnowflakeGenerator {
 					NetworkInterface ni = interfaces.nextElement();
 					byte[] mac = ni.getHardwareAddress();
 					if (mac != null && mac.length >= 6) {
-						id = ((mac[4] & 0xFF) << 8 | (mac[5] & 0xFF)) & MAX_WORKER_ID;
+						id = (long) (mac[0] & 0xFF) << 40
+								| (long) (mac[1] & 0xFF) << 32
+								| (long) (mac[2] & 0xFF) << 24
+								| (long) (mac[3] & 0xFF) << 16
+								| (long) (mac[4] & 0xFF) << 8
+								| (long) (mac[5] & 0xFF);
+						id = (id ^ (id >>> 10) ^ (id >>> 20)) & MAX_WORKER_ID;
 						break;
 					}
 				}
