@@ -2,7 +2,9 @@ package tfagaming.projects.minecraft.homestead.integrations.vault;
 
 import net.milkbowl.vault2.economy.Economy;
 import net.milkbowl.vault2.economy.EconomyResponse;
-import net.milkbowl.vault2.permission.Permission;
+import net.milkbowl.vault2.helper.context.Context;
+import net.milkbowl.vault2.helper.subject.Subject;
+import net.milkbowl.vault2.permission.PermissionUnlocked;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import tfagaming.projects.minecraft.homestead.Homestead;
@@ -12,7 +14,7 @@ import java.math.BigDecimal;
 public class VaultUnlockedProvider implements EconomyProvider, PermissionsProvider {
 	private final Homestead plugin;
 	private Economy economy;
-	private Permission permissions;
+	private PermissionUnlocked permissions;
 
 	public VaultUnlockedProvider(Homestead plugin) {
 		this.plugin = plugin;
@@ -31,7 +33,7 @@ public class VaultUnlockedProvider implements EconomyProvider, PermissionsProvid
 	}
 
 	public boolean setupPermissions() {
-		RegisteredServiceProvider<Permission> rsp = this.plugin.getServer().getServicesManager().getRegistration(Permission.class);
+		RegisteredServiceProvider<PermissionUnlocked> rsp = this.plugin.getServer().getServicesManager().getRegistration(PermissionUnlocked.class);
 
 		if (rsp == null) {
 			return false;
@@ -93,25 +95,25 @@ public class VaultUnlockedProvider implements EconomyProvider, PermissionsProvid
 	@Override
 	public boolean has(OfflinePlayer player, String permission) {
 		if (permissions == null) return false;
-		return permissions.playerHas(null, player, permission);
+		return permissions.has(Context.GLOBAL, Subject.player(player.getUniqueId(), player.getName()), permission).asBool();
 	}
 
 	@Override
 	public String getPrimaryGroup(OfflinePlayer player) {
 		if (permissions == null) return null;
-		return permissions.getPrimaryGroup(null, player);
+		return permissions.primaryGroup(Context.GLOBAL, Subject.player(player.getUniqueId(), player.getName()));
 	}
 
 	@Override
 	public String[] getGroups(OfflinePlayer player) {
 		if (permissions == null) return new String[0];
-		return permissions.getPlayerGroups(null, player);
+		return permissions.getGroups(Context.GLOBAL, Subject.player(player.getUniqueId(), player.getName()));
 	}
 
 	@Override
 	public boolean inGroup(OfflinePlayer player, String group) {
 		if (permissions == null) return false;
-		return permissions.playerInGroup(null, player, group);
+		return permissions.inGroup(Context.GLOBAL, Subject.player(player.getUniqueId(), player.getName()), group);
 	}
 
 	public EconomyProvider getEconomy() {
