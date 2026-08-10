@@ -24,7 +24,9 @@ public final class IntegrationUtility {
 		PL3XMAP("Pl3xMap"),
 		SQUAREMAP("squaremap"),
 		BLUEMAP("BlueMap"),
-		NEXO("Nexo");
+		NEXO("Nexo"),
+		ITEMSADDER("ItemsAdder");
+
 
 		private final String name;
 

@@ -207,12 +207,4 @@ public final class ItemUtility {
 		}
 		return head;
 	}
-
-    public static ItemStack getIAItem(String name, List<String> lore, CustomStack stack, Placeholder placeholder) {
-		return getItem(
-				Formatter.applyPlaceholders(name, placeholder),
-				applyPlaceholders(lore, placeholder),
-				stack
-		);
-    }
 }
