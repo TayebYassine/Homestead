@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.menus;
 
+import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
@@ -115,6 +116,13 @@ public final class MenuUtility {
 						: ItemUtility.getItem(data.getName(), data.getLore(), Material.BARRIER, placeholder);
 			}
 			return ItemUtility.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
+		}
+
+		if(type.contains(":")){
+			CustomStack stack = CustomStack.getInstance(type.toLowerCase());
+			return stack !=null
+					? ItemUtility.getIAItem(data.getName(), data.getLore(), stack, placeholder)
+					: ItemUtility.getItem(data.getName(), data.getLore(), Material.BARRIER, placeholder);
 		}
 
 		if (type.startsWith("NEXOMC-") || type.startsWith("NEXO-")) {
