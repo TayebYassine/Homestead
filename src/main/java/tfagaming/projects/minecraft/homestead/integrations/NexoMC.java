@@ -42,7 +42,7 @@ public final class NexoMC {
 			return ItemUtility.applyMetadata(item, displayname, lore, placeholder);
 		}
 
-		return new ItemStack(Material.BARRIER);
+		return ItemUtility.applyMetadata(new ItemStack(Material.BARRIER), displayname, lore, placeholder);
 	}
 
 	public static boolean isAvailable() {

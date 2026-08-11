@@ -1,5 +1,6 @@
 package tfagaming.projects.minecraft.homestead.tools.minecraft.items;
 
+import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -77,6 +78,12 @@ public final class ItemUtility {
 	public static ItemStack getItem(String displayName, List<String> lore, Material material) {
 		if (material == null) material = Material.BARRIER;
 		ItemStack item = new ItemStack(material);
+		applyMeta(item, displayName, lore);
+		return item;
+	}
+
+	public static ItemStack getItem(String displayName, List<String> lore, CustomStack stack) {
+		ItemStack item = stack.getItemStack().clone();
 		applyMeta(item, displayName, lore);
 		return item;
 	}

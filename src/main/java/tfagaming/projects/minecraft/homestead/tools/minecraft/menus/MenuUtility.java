@@ -3,6 +3,8 @@ package tfagaming.projects.minecraft.homestead.tools.minecraft.menus;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import tfagaming.projects.minecraft.homestead.integrations.CraftEngine;
+import tfagaming.projects.minecraft.homestead.integrations.ItemsAdder;
 import tfagaming.projects.minecraft.homestead.integrations.NexoMC;
 import tfagaming.projects.minecraft.homestead.resources.ResourceType;
 import tfagaming.projects.minecraft.homestead.resources.Resources;
@@ -117,9 +119,18 @@ public final class MenuUtility {
 			return ItemUtility.getPlayerHead(data.getName(), data.getLore(), texture, placeholder);
 		}
 
+		if(type.startsWith("IA-")){
+			String itemId = type.split("-", 2)[1];
+			return ItemsAdder.getIAItem(itemId, data.getName(), data.getLore(), placeholder);
+		}
+
 		if (type.startsWith("NEXOMC-") || type.startsWith("NEXO-")) {
 			String itemId = type.split("-", 2)[1];
 			return NexoMC.getNexoItem(itemId, data.getName(), data.getLore(), placeholder);
+		}
+		if(type.startsWith("CE-")){
+			String itemId = type.split("-", 2)[1];
+			return CraftEngine.getCEItem(itemId, data.getName(), data.getLore(), placeholder);
 		}
 
 		Material material = Material.getMaterial(type);

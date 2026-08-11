@@ -81,6 +81,10 @@
 			<id>nexomc-releases</id>
 			<url>https://repo.nexomc.com/releases/</url>
 		</repository>
+		<repository>
+			<id>momirealms-repo</id>
+			<url>https://repo.momirealms.net/releases/</url>
+		</repository>
 	</repositories>
 
 	<dependencyManagement>
@@ -311,6 +315,27 @@
 					<artifactId>triumph-gui</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>beer.devs</groupId>
+			<artifactId>itemsadder-api</artifactId>
+			<version>4.0.18-beta-10</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.momirealms</groupId>
+			<artifactId>craft-engine-core</artifactId>
+			<version>26.7</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.momirealms</groupId>
+			<artifactId>craft-engine-bukkit</artifactId>
+			<version>26.7</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
