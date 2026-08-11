@@ -25,7 +25,8 @@ public final class IntegrationUtility {
 		SQUAREMAP("squaremap"),
 		BLUEMAP("BlueMap"),
 		NEXO("Nexo"),
-		ITEMSADDER("ItemsAdder");
+		ITEMSADDER("ItemsAdder"),
+		CRAFTENGINE("CraftEngine");
 
 
 		private final String name;
