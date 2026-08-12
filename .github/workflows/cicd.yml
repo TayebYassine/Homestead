@@ -7,7 +7,11 @@ on:
       - 'docs/**'
       - 'mkdocs.yml'
       - '.github/workflows/cicd.yml'
-      - 'pom.xml'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle/**'
+      - 'gradlew'
+      - 'gradlew.bat'
       - 'version.yml'
 
 permissions:
@@ -31,10 +35,13 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: 'maven'
+          cache: 'gradle'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Generate JavaDoc
-        run: mvn clean javadoc:javadoc -DskipTests
+        run: ./gradlew javadoc --no-daemon
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -50,7 +57,7 @@ jobs:
       - name: Copy JavaDoc to site
         run: |
           mkdir -p site/javadoc
-          cp -r target/site/apidocs/* site/javadoc/
+          cp -r build/docs/javadoc/* site/javadoc/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
