@@ -1,0 +1,2252 @@
+package me.tayebyassine.homestead.listeners;
+
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Lectern;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.type.Fence;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.*;
+import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.*;
+import org.bukkit.event.raid.RaidTriggerEvent;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.event.world.StructureGrowEvent;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.projectiles.ProjectileSource;
+import me.tayebyassine.homestead.flags.PlayerFlags;
+import me.tayebyassine.homestead.flags.WorldFlags;
+import me.tayebyassine.homestead.flags.WorldRules;
+import me.tayebyassine.homestead.listeners.util.CopperGolemTracker;
+import me.tayebyassine.homestead.listeners.util.Explosives;
+import me.tayebyassine.homestead.listeners.util.Projectiles;
+import me.tayebyassine.homestead.listeners.util.RegionProtection;
+import me.tayebyassine.homestead.managers.ChunkManager;
+import me.tayebyassine.homestead.models.Region;
+import me.tayebyassine.homestead.resources.ResourceType;
+import me.tayebyassine.homestead.resources.Resources;
+import me.tayebyassine.homestead.resources.files.FlagsFile;
+import me.tayebyassine.homestead.resources.files.RegionsFile;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public final class RegionProtectionListener implements Listener {
+	public static final Map<UUID, Location> lastLocations = new ConcurrentHashMap<>();
+
+	// Blocks protection
+
+	/**
+	 * Static function to listen when an entity move.
+	 */
+	public static void onEntityMove(Entity entity) {
+		try {
+			Location from = lastLocations.get(entity.getUniqueId());
+			Location to = entity.getLocation();
+
+			if (from == null) {
+				from = entity.getLocation();
+			}
+
+			Chunk fromChunk = from.getChunk();
+			Chunk toChunk = to.getChunk();
+
+			lastLocations.put(entity.getUniqueId(), to.clone());
+
+			if (fromChunk.equals(toChunk)) {
+				return;
+			}
+
+			if (entity instanceof CopperGolem golem) {
+				Long spawnRegionId = CopperGolemTracker.getSpawnRegionId(golem);
+
+				if (ChunkManager.isChunkClaimed(toChunk)) {
+					Region toRegion = ChunkManager.getRegionOwnsTheChunk(toChunk);
+
+					if (toRegion == null) {
+						return;
+					}
+
+					Long toRegionId = toRegion.getUniqueId();
+
+					if (spawnRegionId != null && spawnRegionId.equals(toRegionId)) {
+						return;
+					}
+
+					if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+						entity.remove();
+					}
+				} else {
+					if (spawnRegionId == null && !WorldRules.isWorldFlagAllowed(toChunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+						entity.remove();
+					}
+				}
+			}
+		} catch (Exception ignored) {
+		}
+	}
+
+	@EventHandler
+	public void onEntitySpawn(EntitySpawnEvent event) {
+		if (event.getEntity() instanceof CopperGolem golem) {
+			CopperGolemTracker.recordSpawnRegion(golem);
+		}
+	}
+
+	@EventHandler
+	public void onEntityDeath(EntityDeathEvent event) {
+		Entity entity = event.getEntity();
+		lastLocations.remove(entity.getUniqueId());
+
+		if (entity instanceof CopperGolem golem) {
+			CopperGolemTracker.forgetGolem(golem);
+		}
+	}
+
+	private static boolean canBeBrokenByProjectile(Block block) {
+		return !block.isPreferredTool(new ItemStack(Material.AIR));
+	}
+
+	// Block place
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockPlace(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+		Block block = event.getBlock();
+		Location location = block.getLocation();
+		Chunk chunk = block.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	// Block break
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockBreak(BlockBreakEvent event) {
+		Player player = event.getPlayer();
+		Block block = event.getBlock();
+		Location location = block.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onInventoryInstanceOfEntityOpen(InventoryOpenEvent event) {
+		Inventory inventory = event.getInventory();
+		InventoryHolder holder = inventory.getHolder();
+
+		if (holder instanceof Entity entity) {
+			if (entity instanceof Villager villager) {
+				Player player = (Player) event.getPlayer();
+				Location location = villager.getLocation();
+				Chunk chunk = location.getChunk();
+
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRADE_VILLAGERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
+					event.setCancelled(true);
+				});
+			} else if (entity instanceof ChestBoat
+					|| entity instanceof ChestedHorse
+					|| entity instanceof StorageMinecart
+					|| entity instanceof HopperMinecart) {
+				Player player = (Player) event.getPlayer();
+				Location location = entity.getLocation();
+				Chunk chunk = location.getChunk();
+
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+					event.setCancelled(true);
+				});
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event) {
+		Player player = event.getPlayer();
+		Block blockClicked = event.getBlockClicked();
+		BlockFace blockFace = event.getBlockFace();
+		Block blockRelative = blockClicked.getRelative(blockFace);
+		Location location = blockRelative.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerBucketFill(PlayerBucketFillEvent event) {
+		Player player = event.getPlayer();
+		Block blockClicked = event.getBlockClicked();
+		BlockFace blockFace = event.getBlockFace();
+		Block blockRelative = blockClicked.getRelative(blockFace);
+		Location location = blockRelative.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerExtinguishFire(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Action action = event.getAction();
+		Block targetBlock = player.getTargetBlock(null, 5);
+
+		if (action != Action.LEFT_CLICK_BLOCK) {
+			return;
+		}
+
+		if (targetBlock.getType() == Material.FIRE) {
+			Location location = targetBlock.getLocation();
+			Chunk chunk = location.getChunk();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.IGNITE)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.IGNITE, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerTrampleBlock(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Block blockClicked = event.getClickedBlock();
+		Action action = event.getAction();
+
+		if (action != Action.PHYSICAL || blockClicked == null) {
+			return;
+		}
+
+		if (List.of(Material.FARMLAND, Material.TURTLE_EGG).contains(blockClicked.getType())) {
+			Location location = blockClicked.getLocation();
+			Chunk chunk = location.getChunk();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BLOCK_TRAMPLING)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BLOCK_TRAMPLING, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerHarvestCrop(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Block blockClicked = event.getClickedBlock();
+
+		if (blockClicked == null) {
+			return;
+		}
+
+		if (isCropBlock(blockClicked)) {
+			Location location = blockClicked.getLocation();
+			Chunk chunk = location.getChunk();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.HARVEST_CROPS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.HARVEST_CROPS, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerPlaceSpawnEgg(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Action action = event.getAction();
+		Block blockClicked = event.getClickedBlock();
+		ItemStack item = event.getItem();
+
+		if (item == null || blockClicked == null || (action != Action.RIGHT_CLICK_BLOCK && action != Action.RIGHT_CLICK_AIR)) {
+			return;
+		}
+
+		if (item.getType().name().endsWith("_SPAWN_EGG")) {
+			Location location = blockClicked.getLocation();
+			Chunk chunk = location.getChunk();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.SPAWN_ENTITIES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.SPAWN_ENTITIES, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	/**
+	 * Handles most player interaction with blocks and certain placeable items in claimed chunks.
+	 * Uses Bukkit tags where available and centralizes permission gating to reduce branching and duplication.
+	 */
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		final Block clicked = event.getClickedBlock();
+		final Location location = (clicked != null ? clicked.getLocation() : player.getLocation());
+		final Chunk chunk = location.getChunk();
+
+		if (event.getItem() != null) {
+			final Material itemType = event.getItem().getType();
+			final String itn = itemType.name();
+
+			final boolean placeSpawnItem =
+					itn.contains("BOAT") ||
+							itn.contains("ARMOR_STAND") ||
+							itn.contains("MINECART") ||
+							itn.contains("PAINTING") ||
+							itemType == Material.BONE_MEAL ||
+							itemType == Material.ITEM_FRAME ||
+							itemType == Material.GLOW_ITEM_FRAME;
+
+			if (placeSpawnItem) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+		}
+
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && clicked != null) {
+			final Material type = clicked.getType();
+
+			if (isShulkerBox(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (isAnySign(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (isContainerLike(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (isAnvil(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.USE_ANVIL)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_ANVIL, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (Tag.TRAPDOORS.isTagged(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRAP_DOORS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRAP_DOORS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (Tag.DOORS.isTagged(type) || type.name().contains("DOOR")) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DOORS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DOORS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (isArchaeologyBlockWithBrush(type, player)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (Tag.BUTTONS.isTagged(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BUTTONS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BUTTONS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (type.name().contains("FENCE_GATE")) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.FENCE_GATES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.FENCE_GATES, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (isSmallInteractable(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.GENERAL_INTERACTION)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.GENERAL_INTERACTION, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (isLecternOrVaultWithKey(type, player)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (type.name().endsWith("_BED")) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.SLEEP)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.SLEEP, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (type == Material.LEVER) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.LEVERS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.LEVERS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (type == Material.BELL) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.USE_BELLS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_BELLS, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (isRedstoneInteraction(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.REDSTONE)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.REDSTONE, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+			return;
+		}
+
+		if (event.getAction() == Action.PHYSICAL && clicked != null) {
+			final Material type = clicked.getType();
+
+			if (Tag.PRESSURE_PLATES.isTagged(type)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PRESSURE_PLATES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PRESSURE_PLATES, null, () -> {
+					event.setCancelled(true);
+				});
+				return;
+			}
+
+			if (type == Material.TRIPWIRE) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRIGGER_TRIPWIRE)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRIGGER_TRIPWIRE, null, () -> {
+					event.setCancelled(true);
+				});
+			}
+		}
+	}
+
+	/**
+	 * Returns true for all shulker boxes using Bukkit tags with a simple fallback.
+	 */
+	private boolean isShulkerBox(Material type) {
+		if (Tag.SHULKER_BOXES.isTagged(type)) return true;
+		final String n = type.name();
+		return n.endsWith("SHULKER_BOX");
+	}
+
+	/**
+	 * Returns true for any kind of sign (standing, wall, hanging).
+	 */
+	private boolean isAnySign(Material type) {
+		if (Tag.SIGNS.isTagged(type)) return true;
+		final String n = type.name();
+		return n.endsWith("_HANGING_SIGN")
+				|| n.endsWith("_WALL_HANGING_SIGN")
+				|| n.endsWith("_SIGN")
+				|| n.endsWith("_WALL_SIGN");
+	}
+
+	/**
+	 * Returns true for blocks gated by the CONTAINERS flag in your logic.
+	 */
+	private boolean isContainerLike(Material type) {
+		if (type == Material.ENDER_CHEST) return false;
+		if (Tag.CAMPFIRES.isTagged(type)) return true;
+		if (isShulkerBox(type)) return true;
+
+		switch (type) {
+			case FURNACE:
+			case SMOKER:
+			case BLAST_FURNACE:
+			case BREWING_STAND:
+			case BARREL:
+			case BEACON:
+			case DROPPER:
+			case DISPENSER:
+			case CHISELED_BOOKSHELF:
+			case CAULDRON:
+			case LAVA_CAULDRON:
+			case WATER_CAULDRON:
+			case LODESTONE:
+			case HOPPER:
+				return true;
+			default:
+				final String n = type.name();
+
+				if (n.contains("CHEST")) return true;
+				return n.contains("SHELF");
+		}
+	}
+
+	/**
+	 * Returns true if the block is an anvil variant.
+	 */
+	private boolean isAnvil(Material type) {
+		return type.name().contains("ANVIL");
+	}
+
+	/**
+	 * Returns true for archaeology brushing blocks when the player holds a brush.
+	 */
+	private boolean isArchaeologyBlock(Material type) {
+		return (type == Material.SUSPICIOUS_GRAVEL || type == Material.SUSPICIOUS_SAND);
+	}
+
+	/**
+	 * Returns true for archaeology brushing blocks when the player holds a brush.
+	 */
+	private boolean isArchaeologyBlockWithBrush(Material type, Player player) {
+		if (!isArchaeologyBlock(type)) return false;
+		return player.getInventory().getItemInMainHand().getType() == Material.BRUSH;
+	}
+
+	/**
+	 * Returns true for small interactables handled under GENERAL_INTERACTION.
+	 */
+	private boolean isSmallInteractable(Material type) {
+		if (type == Material.CAKE) return true;
+		if (type == Material.DECORATED_POT) return true;
+		if (type == Material.FLOWER_POT) return true;
+		final String n = type.name();
+		return n.contains("POTTED");
+	}
+
+	/**
+	 * Returns true if the block requires CONTAINERS based on item-in-hand logic (lectern with book, vault with trial key).
+	 */
+	private boolean isLecternOrVaultWithKey(Material type, Player player) {
+		if (type == Material.LECTERN) {
+			final Material inHand = player.getInventory().getItemInMainHand().getType();
+			return inHand == Material.WRITTEN_BOOK || inHand == Material.WRITABLE_BOOK;
+		}
+		if (type == Material.VAULT) {
+			return player.getInventory().getItemInMainHand().getType().name().contains("TRIAL_KEY");
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true for blocks considered redstone interaction in your logic.
+	 */
+	private boolean isRedstoneInteraction(Material type) {
+		return switch (type) {
+			case REPEATER, COMPARATOR, COMMAND_BLOCK, COMMAND_BLOCK_MINECART, REDSTONE, REDSTONE_WIRE, NOTE_BLOCK,
+				 JUKEBOX, COMPOSTER, DAYLIGHT_DETECTOR -> true;
+			default -> false;
+		};
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerBrushBlock(BlockDropItemEvent event) {
+		Player player = event.getPlayer();
+		Block block = event.getBlock();
+		BlockState blockState = event.getBlockState();
+		Material type = blockState.getType();
+
+		if (isArchaeologyBlock(type)) {
+			Location location = block.getLocation();
+			Chunk chunk = location.getChunk();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerPunchFrame(EntityDamageByEntityEvent event) {
+		Entity entity = event.getEntity();
+
+		if (entity instanceof ItemFrame) { // GlowItemFrame extends ItemFrame
+			if (event.getDamager() instanceof Player player) {
+				Location location = entity.getLocation();
+				Chunk chunk = location.getChunk();
+
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				});
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event) {
+		Player player = event.getPlayer();
+		Lectern lectern = event.getLectern();
+		Location location = lectern.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerFrostWalkerEnchantedBootsUsage(EntityBlockFormEvent event) {
+		Entity entity = event.getEntity();
+		Block block = event.getBlock();
+
+		if (entity instanceof Player player) {
+			Location location = block.getLocation();
+			Chunk chunk = location.getChunk();
+
+			EntityEquipment equipment = player.getEquipment();
+
+			if (equipment == null) {
+				return;
+			}
+
+			ItemStack boots = equipment.getBoots();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.FROST_WALKER)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			if (boots != null && boots.getEnchantments().containsKey(Enchantment.FROST_WALKER)) {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.FROST_WALKER, null, () -> {
+					event.setCancelled(true);
+				});
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockIgnite(BlockIgniteEvent event) {
+		Player player = event.getPlayer();
+		Block block = event.getBlock();
+		Location location = block.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (player == null) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.FIRE_SPREAD)) {
+					event.setCancelled(true);
+				}
+			}
+
+			return;
+		}
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.IGNITE)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.IGNITE, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onHangingEntityBreak(HangingBreakByEntityEvent event) {
+		Entity entity = event.getEntity();
+		Entity remover = event.getRemover();
+
+		if (entity instanceof Painting || entity instanceof ItemFrame) {
+			if (remover instanceof Player player) {
+				Location location = entity.getLocation();
+				Chunk chunk = location.getChunk();
+
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				});
+			} else if (Explosives.isExplosive(remover)) {
+				Location location = entity.getLocation();
+				Chunk chunk = location.getChunk();
+
+				if (ChunkManager.isChunkClaimed(chunk)) {
+					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+					if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
+						event.setCancelled(true);
+						return;
+					}
+				} else {
+					if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+						event.setCancelled(true);
+					}
+				}
+			}
+		} else {
+			Location location = entity.getLocation();
+			Chunk chunk = location.getChunk();
+
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	// Entities protection
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onProjectileHitBreakableBlock(ProjectileHitEvent event) {
+		Block hit = event.getHitBlock();
+
+		if (hit == null) {
+			return;
+		}
+
+		Projectile projectile = event.getEntity();
+		ProjectileSource source = projectile.getShooter();
+
+		if (!canBeBrokenByProjectile(hit)) {
+			return;
+		}
+
+		Location location = hit.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (source instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (projectile instanceof WitherSkull) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
+					event.getEntity().remove();
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WITHER_DAMAGE)) {
+					event.getEntity().remove();
+					event.setCancelled(true);
+				}
+			}
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+		Entity entity = event.getEntity();
+		Entity damager = event.getDamager();
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
+
+		Player shooterPlayer = null;
+
+		if (damager instanceof Projectile projectile) {
+			ProjectileSource source = projectile.getShooter();
+			if (source instanceof Player player) {
+				shooterPlayer = player;
+			}
+		}
+
+		Player effectiveDamager = (damager instanceof Player player) ? player : shooterPlayer;
+
+		if (effectiveDamager != null) {
+			if (entity instanceof ArmorStand) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				});
+			} else if (entity instanceof Player) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PVP)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.PVP, null, () -> {
+					event.setCancelled(true);
+				});
+			} else if (entity instanceof Monster || entity instanceof IronGolem) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_HOSTILE_ENTITIES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.DAMAGE_HOSTILE_ENTITIES, null, () -> {
+					event.setCancelled(true);
+				});
+			} else if (entity instanceof Mob) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_PASSIVE_ENTITIES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
+					event.setCancelled(true);
+				});
+			}
+		} else if (damager instanceof Projectile) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			}
+		} else if (Explosives.isExplosive(damager)) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+					event.setCancelled(true);
+				}
+			}
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_DAMAGE)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_DAMAGE)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
+		Player player = event.getPlayer();
+		Entity entity = event.getEntity();
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerInteractThrowThrowable(PlayerInteractEvent event) {
+		Action action = event.getAction();
+		if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) {
+			return;
+		}
+
+		Player player = event.getPlayer();
+		ItemStack item = event.getItem();
+		if (item == null) {
+			return;
+		}
+
+		Material type = item.getType();
+		long flag = -1L;
+
+		if (type == Material.ENDER_PEARL) {
+			flag = PlayerFlags.TELEPORT;
+		} else if (type == Material.SPLASH_POTION || type == Material.LINGERING_POTION) {
+			flag = PlayerFlags.THROW_POTIONS;
+		} else {
+			return;
+		}
+
+		Location launchLoc = player.getLocation();
+		Chunk chunk = launchLoc.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), flag)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, launchLoc, flag, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerEatChorusFruit(PlayerItemConsumeEvent event) {
+		Player player = event.getPlayer();
+		Location location = player.getLocation();
+		Chunk chunk = location.getChunk();
+		ItemStack item = event.getItem();
+
+		if (item.getType().equals(Material.CHORUS_FRUIT)) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TELEPORT)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TELEPORT, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPotionSplash(PotionSplashEvent event) {
+		Projectile entity = event.getEntity();
+		ProjectileSource shooter = entity.getShooter();
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (shooter instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.THROW_POTIONS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.THROW_POTIONS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onLingeringPotionSplash(LingeringPotionSplashEvent event) {
+		Projectile entity = event.getEntity();
+		ProjectileSource shooter = entity.getShooter();
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (shooter instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.THROW_POTIONS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.THROW_POTIONS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onProjectileHitEntity(ProjectileHitEvent event) {
+		Projectile projectile = event.getEntity();
+		ProjectileSource shooter = projectile.getShooter();
+		Entity entityHit = event.getHitEntity();
+
+		if (entityHit == null) {
+			return;
+		}
+
+		if (projectile instanceof ThrownPotion) {
+			return;
+		}
+
+		Location location = entityHit.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (shooter instanceof Player player) {
+			if (entityHit instanceof Player) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PVP)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PVP, null, () -> {
+					event.setCancelled(true);
+				});
+			} else if (entityHit instanceof Monster || entityHit instanceof IronGolem) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_HOSTILE_ENTITIES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_HOSTILE_ENTITIES, null, () -> {
+					event.setCancelled(true);
+				});
+			} else if (entityHit instanceof Mob) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_PASSIVE_ENTITIES)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
+					event.setCancelled(true);
+				});
+			} else if (entityHit instanceof ArmorStand || entityHit instanceof ItemFrame || entityHit instanceof Painting) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+					event.setCancelled(true);
+				});
+			}
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+					return;
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerDropItem(PlayerDropItemEvent event) {
+		Player player = event.getPlayer();
+
+		Location location = player.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PICKUP_ITEMS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PICKUP_ITEMS, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerPickupItem(EntityPickupItemEvent event) {
+		Entity entity = event.getEntity();
+
+		if (!(entity instanceof Player player)) {
+			return;
+		}
+
+		Location location = event.getItem().getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PICKUP_ITEMS)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PICKUP_ITEMS, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onVehicleEnter(VehicleEnterEvent event) {
+		Vehicle vehicle = event.getVehicle();
+		Location location = vehicle.getLocation();
+		Chunk chunk = location.getChunk();
+		Entity entity = event.getEntered();
+
+		if (entity instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.VEHICLES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.VEHICLES, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onVehicleDamage(VehicleDamageEvent event) {
+		Vehicle vehicle = event.getVehicle();
+		Location location = vehicle.getLocation();
+		Chunk chunk = location.getChunk();
+		Entity entity = event.getAttacker();
+
+		if (entity instanceof Player player) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.VEHICLES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.VEHICLES, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onLeashEvent(PlayerLeashEntityEvent event) {
+		Player player = event.getPlayer();
+		Entity entity = event.getEntity();
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+				event.setCancelled(true);
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+			event.setCancelled(true);
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerUnleashEntity(PlayerUnleashEntityEvent event) {
+		Player player = event.getPlayer();
+		Entity entity = event.getEntity();
+		Location location = entity.getLocation();
+		Block block = location.getBlock();
+		Chunk chunk = location.getChunk();
+
+		if (block.getBlockData() instanceof Fence) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+		Player player = event.getPlayer();
+		Entity entity = event.getRightClicked();
+
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (entity instanceof Villager) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRADE_VILLAGERS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (entity instanceof ArmorStand) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ARMOR_STANDS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (entity instanceof ItemFrame) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ITEM_FRAME_INTERACTION)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (!(entity instanceof Player)) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
+		Player player = event.getPlayer();
+		Entity entity = event.getRightClicked();
+
+		Location location = entity.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (entity instanceof Villager) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRADE_VILLAGERS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (entity instanceof ArmorStand) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ARMOR_STANDS)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (entity instanceof ItemFrame) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ITEM_FRAME_INTERACTION)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (!(entity instanceof Player)) {
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onEntityToggleGlide(EntityToggleGlideEvent event) {
+		Entity entity = event.getEntity();
+
+		if (entity instanceof Player player) {
+			Location location = player.getLocation();
+			Chunk chunk = location.getChunk();
+
+			if (event.isGliding() && isWearingElytra(player)) {
+				if (!ChunkManager.isChunkClaimed(chunk)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ELYTRA)) {
+						event.setCancelled(true);
+						return;
+					}
+				}
+
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ELYTRA, null, () -> {
+					event.setCancelled(true);
+				});
+			}
+		}
+	}
+
+
+	// World protection
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPlayerFallDamage(EntityDamageEvent event) {
+		Entity entity = event.getEntity();
+		EntityDamageEvent.DamageCause cause = event.getCause();
+
+		if (cause != DamageCause.FALL && cause != DamageCause.FLY_INTO_WALL) return;
+
+		if (entity instanceof Player player) {
+			Location location = player.getLocation();
+			Chunk chunk = location.getChunk();
+
+			if (!ChunkManager.isChunkClaimed(chunk)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TAKE_FALL_DAMAGE)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TAKE_FALL_DAMAGE, null, () -> {
+				event.setCancelled(true);
+			});
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onEntityExplode(EntityExplodeEvent event) {
+		Entity entity = event.getEntity();
+
+		if (entity instanceof WindCharge) {
+			Chunk chunk = event.getLocation().getChunk();
+
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.WINDCHARGE_BURST)) {
+					entity.remove();
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WINDCHARGE_BURST)) {
+					entity.remove();
+					event.setCancelled(true);
+				}
+			}
+		} else if (entity instanceof Wither || entity instanceof WitherSkull) {
+			event.blockList().removeIf((block) -> {
+				Chunk chunk = block.getChunk();
+
+				if (ChunkManager.isChunkClaimed(chunk)) {
+					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+					return region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE);
+				} else {
+					return !WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WITHER_DAMAGE);
+				}
+			});
+		} else if (Explosives.isExplosive(entity)) {
+			Chunk chunk = event.getLocation().getChunk();
+
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
+					event.setCancelled(true);
+				}
+			} else {
+				boolean belowSeaOnly = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.tnt-explodes-only-below-sea-level");
+
+				List<Block> allowed = new ArrayList<>();
+
+				for (Block block : event.blockList()) {
+					Chunk blockChunk = block.getChunk();
+
+					if (!ChunkManager.isChunkClaimed(blockChunk)) {
+						if (belowSeaOnly && entity instanceof TNTPrimed) {
+							if (block.getY() <= block.getWorld().getSeaLevel()) {
+								allowed.add(block);
+							}
+						} else {
+							allowed.add(block);
+						}
+					}
+				}
+
+				event.blockList().clear();
+				event.blockList().addAll(allowed);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockExplode(BlockExplodeEvent event) {
+		Block block = event.getBlock();
+		Location location = block.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+			if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
+				event.setCancelled(true);
+			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+				event.setCancelled(true);
+				return;
+			}
+
+			List<Block> allowedBlocks = new ArrayList<>();
+
+			for (Block b : event.blockList()) {
+				Chunk blockChunk = b.getLocation().getChunk();
+
+				if (!ChunkManager.isChunkClaimed(blockChunk)) {
+					allowedBlocks.add(b);
+				}
+			}
+
+			event.blockList().clear();
+			event.blockList().addAll(allowedBlocks);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockSpread(BlockSpreadEvent event) {
+		BlockState newState = event.getNewState();
+		Block block = event.getBlock();
+		Block source = event.getSource();
+
+		Location location = block.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (newState.getType() == Material.FIRE) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.FIRE_SPREAD)) {
+					event.setCancelled(true);
+				}
+			}
+		} else if (source.getType() == Material.GRASS_BLOCK || source.getType() == Material.MYCELIUM) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.GRASS_GROWTH)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.GRASS_GROWTH)) {
+					event.setCancelled(true);
+				}
+			}
+		} else if (event.getSource().getType() == Material.SCULK_CATALYST) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.SCULK_SPREAD)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.SCULK_SPREAD)) {
+					event.setCancelled(true);
+				}
+			}
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PLANT_GROWTH)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockGrow(BlockGrowEvent event) {
+		Block block = event.getBlock();
+		Location location = block.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+			if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
+				event.setCancelled(true);
+			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PLANT_GROWTH)) {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onLeavesDecay(LeavesDecayEvent event) {
+		Block block = event.getBlock();
+		Location location = block.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+			if (region != null && !region.isWorldFlagSet(WorldFlags.LEAVES_DECAY)) {
+				event.setCancelled(true);
+			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.LEAVES_DECAY)) {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockBurn(BlockBurnEvent event) {
+		Block block = event.getBlock();
+		Location location = block.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+			if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
+				event.setCancelled(true);
+			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.FIRE_SPREAD)) {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onLiquidFlow(BlockFromToEvent event) {
+		Chunk fromChunk = event.getBlock().getChunk();
+		Chunk toChunk = event.getToBlock().getChunk();
+
+		if (fromChunk.equals(toChunk)) {
+			return;
+		}
+
+		Region fromRegion = ChunkManager.getRegionOwnsTheChunk(fromChunk);
+		Region toRegion = ChunkManager.getRegionOwnsTheChunk(toChunk);
+
+		if (fromRegion == null && toRegion == null) {
+			return;
+		}
+
+		if (fromRegion != null && toRegion != null && fromRegion.getUniqueId() == toRegion.getUniqueId()) {
+			return;
+		}
+
+		if (toRegion != null && !toRegion.isWorldFlagSet(WorldFlags.LIQUID_FLOW)) {
+			event.setCancelled(true);
+			return;
+		}
+
+		if (fromRegion != null && !fromRegion.isWorldFlagSet(WorldFlags.LIQUID_FLOW)) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPistonExtend(BlockPistonExtendEvent event) {
+		Block piston = event.getBlock();
+		@SuppressWarnings({"rawtypes", "unchecked"})
+		List<Block> affectedBlocks = new ArrayList(event.getBlocks());
+		BlockFace direction = event.getDirection();
+
+		if (!affectedBlocks.isEmpty()) {
+			affectedBlocks.add(piston.getRelative(direction));
+		}
+
+		if (!this.canPistonMoveBlock(affectedBlocks, direction, piston.getLocation().getChunk(), false)) {
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onPistonRetract(BlockPistonRetractEvent event) {
+		Block piston = event.getBlock();
+		@SuppressWarnings({"rawtypes", "unchecked"})
+		List<Block> affectedBlocks = new ArrayList(event.getBlocks());
+		BlockFace direction = event.getDirection();
+
+		if (event.isSticky() && !affectedBlocks.isEmpty()) {
+			affectedBlocks.add(piston.getRelative(direction));
+		}
+
+		if (!this.canPistonMoveBlock(affectedBlocks, direction, piston.getLocation().getChunk(), true)) {
+			event.setCancelled(true);
+		}
+	}
+
+	private boolean canPistonMoveBlock(List<Block> blocks, BlockFace direction, Chunk pistonChunk,
+									   boolean retractOrNot) {
+		@SuppressWarnings("rawtypes")
+		Iterator var5;
+		Block block;
+		Chunk chunk;
+
+		if (retractOrNot) {
+			var5 = blocks.iterator();
+
+			while (var5.hasNext()) {
+				block = (Block) var5.next();
+				chunk = block.getLocation().getChunk();
+
+				if (!chunk.equals(pistonChunk) && ChunkManager.isChunkClaimed(chunk)) {
+					Region pistonChunkRegion = ChunkManager.getRegionOwnsTheChunk(pistonChunk);
+					UUID pistonChunkOwner = pistonChunkRegion == null ? null : pistonChunkRegion.getOwnerId();
+					Region targetRegion = ChunkManager.getRegionOwnsTheChunk(chunk);
+					UUID targetChunkOwner = targetRegion == null ? null : targetRegion.getOwnerId();
+
+					if (pistonChunkRegion != null && pistonChunkOwner != null && pistonChunkOwner.equals(targetChunkOwner)) {
+						return true;
+					}
+
+					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+					if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		} else {
+			var5 = blocks.iterator();
+
+			while (var5.hasNext()) {
+				block = (Block) var5.next();
+				chunk = block.getRelative(direction).getLocation().getChunk();
+
+				if (!chunk.equals(pistonChunk) && ChunkManager.isChunkClaimed(chunk)) {
+					Region pistonChunkRegion = ChunkManager.getRegionOwnsTheChunk(pistonChunk);
+					UUID pistonChunkOwner = pistonChunkRegion == null ? null : pistonChunkRegion.getOwnerId();
+					Region targetRegion = ChunkManager.getRegionOwnsTheChunk(chunk);
+					UUID targetChunkOwner = targetRegion == null ? null : targetRegion.getOwnerId();
+
+					if (pistonChunkRegion != null && pistonChunkOwner != null && pistonChunkOwner.equals(targetChunkOwner)) {
+						return true;
+					}
+
+					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+					if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onDispense(BlockDispenseEvent event) {
+		Block block = event.getBlock();
+		BlockData blockdata = event.getBlock().getBlockData();
+		Chunk targetChunk = block.getRelative(((Directional) blockdata).getFacing()).getLocation().getChunk();
+
+		if (!block.getLocation().getChunk().equals(targetChunk)) {
+			if (ChunkManager.isChunkClaimed(targetChunk)) {
+				Region dispenserChunkRegion = ChunkManager.getRegionOwnsTheChunk(block.getLocation().getChunk());
+				UUID dispenserChunkOwner = dispenserChunkRegion == null ? null : dispenserChunkRegion.getOwnerId();
+				Region targetRegion = ChunkManager.getRegionOwnsTheChunk(targetChunk);
+				UUID targetChunkOwner = targetRegion == null ? null : targetRegion.getOwnerId();
+
+				if (dispenserChunkRegion != null && dispenserChunkOwner != null && dispenserChunkOwner.equals(targetChunkOwner)) {
+					return;
+				}
+
+				Region region = ChunkManager.getRegionOwnsTheChunk(targetChunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+		Entity entity = event.getEntity();
+		Block block = event.getBlock();
+		Location location = block.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (entity instanceof Sheep || entity instanceof Goat || entity instanceof Cow || entity instanceof Villager || entity instanceof Bee || entity instanceof FallingBlock || block.getType().hasGravity()) {
+			return;
+		}
+
+		if (entity instanceof Player player) {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				event.setCancelled(true);
+			});
+		} else if (entity instanceof Wither || entity instanceof WitherSkull) {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WITHER_DAMAGE)) {
+					event.setCancelled(true);
+				}
+			}
+		} else {
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onCreatureSpawn(CreatureSpawnEvent event) {
+		Location location = event.getLocation();
+		Chunk chunk = location.getChunk();
+		Entity entity = event.getEntity();
+		CreatureSpawnEvent.SpawnReason spawnReason = event.getSpawnReason();
+
+		boolean ignoreSpawners = Resources.<FlagsFile>get(ResourceType.Flags).doSpawnersIgnoreSpawnFlags();
+
+		if (ignoreSpawners && spawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER) {
+			return;
+		}
+
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+			if (entity instanceof Monster || entity instanceof IronGolem) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.HOSTILE_ENTITY_SPAWN)) {
+					event.setCancelled(true);
+				}
+			} else if (entity instanceof Mob) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.PASSIVE_ENTITY_SPAWN)) {
+					event.setCancelled(true);
+				}
+			}
+		} else {
+			if (entity instanceof Monster || entity instanceof IronGolem) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.HOSTILE_ENTITY_SPAWN)) {
+					event.setCancelled(true);
+				}
+			} else if (entity instanceof Mob) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PASSIVE_ENTITY_SPAWN)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onEntityBreakDoor(EntityBreakDoorEvent event) {
+		Entity entity = event.getEntity();
+		Chunk chunk = entity.getLocation().getChunk();
+
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+			if (!(entity instanceof Player)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+					event.setCancelled(true);
+				}
+			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onRaidTrigger(RaidTriggerEvent event) {
+		Player player = event.getPlayer();
+		Raid raid = event.getRaid();
+		Location location = raid.getLocation();
+		Chunk chunk = location.getChunk();
+
+		if (!ChunkManager.isChunkClaimed(chunk)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRIGGER_RAID)) {
+				event.setCancelled(true);
+
+				PotionEffect effect = event.getPlayer().getPotionEffect(PotionEffectType.RAID_OMEN);
+
+				if (effect != null) {
+					event.getPlayer().removePotionEffect(PotionEffectType.RAID_OMEN);
+				}
+
+				return;
+			}
+		}
+
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRIGGER_RAID, null, () -> {
+			event.setCancelled(true);
+
+			PotionEffect effect = event.getPlayer().getPotionEffect(PotionEffectType.RAID_OMEN);
+
+			if (effect != null) {
+				event.getPlayer().removePotionEffect(PotionEffectType.RAID_OMEN);
+			}
+		});
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onBlockFade(BlockFadeEvent event) {
+		Material blockType = event.getBlock().getType();
+		Chunk chunk = event.getBlock().getLocation().getChunk();
+
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+			if (blockType == Material.SNOW) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.SNOW_MELTING)) {
+					event.setCancelled(true);
+				}
+			} else if (blockType == Material.ICE) {
+				if (region != null && !region.isWorldFlagSet(WorldFlags.ICE_MELTING)) {
+					event.setCancelled(true);
+				}
+			}
+		} else {
+			if (blockType == Material.SNOW) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.SNOW_MELTING)) {
+					event.setCancelled(true);
+				}
+			} else if (blockType == Material.ICE) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ICE_MELTING)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onVehicleMove(VehicleMoveEvent event) {
+		if (!(event.getVehicle() instanceof Minecart)) {
+			return;
+		}
+
+		Location from = event.getFrom();
+		Location to = event.getTo();
+
+		Chunk fromChunk = from.getChunk();
+		Chunk toChunk = to.getChunk();
+
+		if (fromChunk.equals(toChunk)) {
+			return;
+		}
+
+		if (ChunkManager.isChunkClaimed(toChunk)) {
+			Region fromRegion = ChunkManager.getRegionOwnsTheChunk(fromChunk);
+			Region toRegion = ChunkManager.getRegionOwnsTheChunk(toChunk);
+
+			if (fromRegion == null) {
+				if (toRegion != null && !toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_MINECARTS)) {
+					event.getVehicle().remove();
+				}
+			} else if (toRegion != null && fromRegion.getUniqueId() != toRegion.getUniqueId()) {
+				if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_MINECARTS)) {
+					event.getVehicle().remove();
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onSnowGolemTrail(EntityBlockFormEvent event) {
+		Entity entity = event.getEntity();
+
+		if (entity instanceof Snowman) {
+			Block block = event.getBlock();
+			Chunk chunk = block.getChunk();
+
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.SNOWMAN_TRAILS)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.SNOWMAN_TRAILS)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onWeatherSnowForm(EntityBlockFormEvent event) {
+		Block block = event.getBlock();
+		BlockState state = event.getNewState();
+		Material stateType = state.getType();
+
+		if (stateType == Material.SNOW) {
+			Chunk chunk = block.getChunk();
+
+			if (ChunkManager.isChunkClaimed(chunk)) {
+				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+				if (region != null && !region.isWorldFlagSet(WorldFlags.WEATHER_SNOW)) {
+					event.setCancelled(true);
+				}
+			} else {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WEATHER_SNOW)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onTreeGrow(StructureGrowEvent event) {
+		Chunk chunk = event.getLocation().getChunk();
+
+		if (ChunkManager.isChunkClaimed(chunk)) {
+			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+
+			if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
+				event.setCancelled(true);
+			}
+		} else {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PLANT_GROWTH)) {
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	// Helper functions
+
+	private boolean isWearingElytra(Player player) {
+		return player.getInventory().getChestplate() != null &&
+				player.getInventory().getChestplate().getType() == Material.ELYTRA;
+	}
+
+	private boolean isCropBlock(Block block) {
+		Material type = block.getType();
+
+		return type == Material.WHEAT || type == Material.CARROTS || type == Material.POTATOES
+				|| type == Material.BEETROOTS || type == Material.PITCHER_PLANT || type == Material.NETHER_WART
+				|| type == Material.KELP || type == Material.CACTUS || type == Material.SEA_PICKLE
+				|| type == Material.RED_MUSHROOM || type == Material.BROWN_MUSHROOM || type == Material.SWEET_BERRIES
+				|| type == Material.SWEET_BERRY_BUSH;
+	}
+
+}

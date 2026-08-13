@@ -1,0 +1,69 @@
+package me.tayebyassine.homestead.commands.standard.subcommands;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.SubCommandBuilder;
+import me.tayebyassine.homestead.gui.menus.RegionInfoMenu;
+import me.tayebyassine.homestead.managers.ChunkManager;
+import me.tayebyassine.homestead.managers.RegionManager;
+import me.tayebyassine.homestead.models.Region;
+import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class RegionInfoSubCmd extends SubCommandBuilder {
+	public RegionInfoSubCmd() {
+		super("info");
+		setPermission(List.of(
+				"homestead.commands.region",
+				"homestead.commands.region." + getName()
+		));
+		setUsage("/hs info (region)");
+		setPlayerOnly();
+	}
+
+	@Override
+	public boolean onExecution(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return false;
+
+		if (args.length > 0) {
+			String regionName = args[0];
+
+			Region region = RegionManager.findRegion(regionName);
+
+			if (region == null) {
+				Messages.send(player, "commands.info.0", regionName);
+				return true;
+			}
+
+			new RegionInfoMenu(player, region, player::closeInventory);
+		} else {
+			Region region = ChunkManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
+
+			if (region == null) {
+				Messages.send(player, "commands.info.1");
+				return true;
+			}
+
+			new RegionInfoMenu(player, region, player::closeInventory);
+		}
+
+		return true;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, String[] args) {
+		Player player = asPlayer(sender);
+		if (player == null) return new ArrayList<>();
+
+		List<String> suggestions = new ArrayList<>();
+
+		if (args.length == 1) {
+			suggestions.addAll(RegionManager.getRegionNames());
+		}
+
+		return suggestions;
+	}
+}

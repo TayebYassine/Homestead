@@ -1,0 +1,234 @@
+package me.tayebyassine.homestead.tools.minecraft.limits;
+
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+import me.tayebyassine.homestead.managers.ChunkManager;
+import me.tayebyassine.homestead.managers.MemberManager;
+import me.tayebyassine.homestead.managers.RegionManager;
+import me.tayebyassine.homestead.managers.SubAreaManager;
+import me.tayebyassine.homestead.models.Region;
+import me.tayebyassine.homestead.resources.ResourceType;
+import me.tayebyassine.homestead.resources.Resources;
+import me.tayebyassine.homestead.resources.files.LimitsFile;
+import me.tayebyassine.homestead.tools.minecraft.players.PlayerUtility;
+import me.tayebyassine.homestead.tools.minecraft.rewards.LevelRewards;
+import me.tayebyassine.homestead.tools.minecraft.rewards.Rewards;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public final class Limits {
+	private Limits() {
+	}
+
+	public static int getPlayerLimit(OfflinePlayer player, LimitType limit) {
+		return switch (limit) {
+			case REGIONS, MAX_SUBAREA_VOLUME, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN ->
+					getBaseLimitValue(player, limit);
+			default -> 0;
+		};
+	}
+
+	public static int getRegionLimit(Region region, LimitType limit) {
+		if (region == null) {
+			return 0;
+		}
+
+		OfflinePlayer owner = region.getOwner();
+		if (owner == null) {
+			return 0;
+		}
+
+		return switch (limit) {
+			case CHUNKS_PER_REGION -> getBaseLimitValue(owner, limit)
+					+ Rewards.getChunksByEachMember(region)
+					+ Rewards.getChunksByPlayTime(owner)
+					+ LevelRewards.getChunksByLevel(region);
+			case MEMBERS_PER_REGION -> getBaseLimitValue(owner, limit)
+					+ LevelRewards.getMembersByLevel(region);
+			case SUBAREAS_PER_REGION -> getBaseLimitValue(owner, limit)
+					+ Rewards.getSubAreasByEachMember(region)
+					+ Rewards.getSubAreasByPlayTime(owner)
+					+ LevelRewards.getSubAreasByLevel(region);
+			case MAX_SUBAREA_VOLUME, MAX_BANK_DEPOSIT, MAX_FORCE_LOADED_CHUNKS, COMMANDS_COOLDOWN ->
+					getBaseLimitValue(owner, limit);
+			default -> 0;
+		};
+	}
+
+	public static boolean hasReachedLimit(OfflinePlayer player, Region region, LimitType limit) {
+		return switch (limit) {
+			case REGIONS -> hasReachedRegionsLimit(player);
+			case CHUNKS_PER_REGION -> hasReachedChunksLimit(region);
+			case MEMBERS_PER_REGION -> hasReachedMembersLimit(region);
+			case SUBAREAS_PER_REGION -> hasReachedSubAreasLimit(region);
+			default -> false;
+		};
+	}
+
+	private static int getBaseLimitValue(OfflinePlayer player, LimitType limit) {
+		String limitKey = getLimitConfigKey(limit);
+
+		Object playerOverride = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
+				"player-limits." + player.getName() + "." + limitKey
+		);
+		if (playerOverride != null) {
+			return (int) playerOverride;
+		}
+
+		LimitMethod method = getLimitsMethod();
+
+		switch (method) {
+			case STATIC -> {
+				String opKey = PlayerUtility.isOperator(player) ? "op" : "non-op";
+
+				Object staticValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
+						"limits.static." + opKey + "." + limitKey
+				);
+
+				return staticValue == null ? 0 : (int) staticValue;
+			}
+			case GROUPS -> {
+				String group = PlayerUtility.getPlayerGroup(player);
+
+				if (group == null) {
+					group = "default";
+				}
+				Object groupValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
+						"limits.groups." + group + "." + limitKey
+				);
+				return groupValue == null ? 0 : (int) groupValue;
+			}
+			case PERMISSIONS -> {
+				return getPermissionBasedLimit(player, limit);
+			}
+		}
+
+		return 0;
+	}
+
+	private static int getPermissionBasedLimit(OfflinePlayer player, LimitType limit) {
+		String limitKey = getLimitConfigKey(limit);
+
+		if (!player.isOnline()) return 0;
+
+		Player onlinePlayer = player.getPlayer();
+
+		if (onlinePlayer == null) return 0;
+
+		Set<String> effectivePerms = onlinePlayer.getEffectivePermissions()
+				.stream()
+				.filter(PermissionAttachmentInfo::getValue)
+				.map(PermissionAttachmentInfo::getPermission)
+				.collect(Collectors.toSet());
+
+		List<String> priorityGroups = Resources.<LimitsFile>get(ResourceType.Limits)
+				.getStringList("limits.permissions-priority");
+
+		if (priorityGroups.isEmpty()) {
+			priorityGroups = Objects.requireNonNull(Resources.<LimitsFile>get(ResourceType.Limits)
+							.getConfig()
+							.getConfigurationSection("limits.permissions"))
+					.getKeys(false)
+					.stream()
+					.toList();
+		}
+
+		for (String group : priorityGroups) {
+			if (effectivePerms.contains("homestead.group." + group)) {
+				Object limitValue = Resources.<LimitsFile>get(ResourceType.Limits).getRaw(
+						"limits.permissions." + group + "." + limitKey
+				);
+				if (limitValue != null) {
+					return (int) limitValue;
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	private static boolean hasReachedRegionsLimit(OfflinePlayer player) {
+		if (player == null) {
+			return false;
+		}
+
+		int current = RegionManager.getRegionsOwnedByPlayer(player).size();
+		int max = getPlayerLimit(player, LimitType.REGIONS);
+
+		return current >= max;
+	}
+
+	private static boolean hasReachedChunksLimit(Region region) {
+		if (region == null) {
+			return false;
+		}
+
+		int current = ChunkManager.getChunksOfRegion(region).size();
+		int max = getRegionLimit(region, LimitType.CHUNKS_PER_REGION);
+		return current >= max;
+	}
+
+	private static boolean hasReachedMembersLimit(Region region) {
+		if (region == null) {
+			return false;
+		}
+
+		int current = MemberManager.getMembersOfRegion(region).size();
+		int max = getRegionLimit(region, LimitType.MEMBERS_PER_REGION);
+		return current >= max;
+	}
+
+	private static boolean hasReachedSubAreasLimit(Region region) {
+		if (region == null) {
+			return false;
+		}
+
+		int current = SubAreaManager.getSubAreasOfRegion(region.getUniqueId()).size();
+		int max = getRegionLimit(region, LimitType.SUBAREAS_PER_REGION);
+		return current >= max;
+	}
+
+	private static String getLimitConfigKey(LimitType limit) {
+		return switch (limit) {
+			case REGIONS -> "regions";
+			case CHUNKS_PER_REGION -> "chunks-per-region";
+			case MEMBERS_PER_REGION -> "members-per-region";
+			case SUBAREAS_PER_REGION -> "subareas-per-region";
+			case MAX_SUBAREA_VOLUME -> "max-subarea-volume";
+			case MAX_BANK_DEPOSIT -> "max-bank-deposit";
+			case MAX_FORCE_LOADED_CHUNKS -> "max-force-loaded-chunks";
+			case COMMANDS_COOLDOWN -> "commands-cooldown";
+		};
+	}
+
+	public static LimitMethod getLimitsMethod() {
+		String method = Resources.<LimitsFile>get(ResourceType.Limits).getString("limits.method");
+		return switch (method) {
+			case "static" -> LimitMethod.STATIC;
+			case "groups" -> LimitMethod.GROUPS;
+			case "permissions" -> LimitMethod.PERMISSIONS;
+			default -> LimitMethod.STATIC;
+		};
+	}
+
+	public enum LimitType {
+		REGIONS,
+		CHUNKS_PER_REGION,
+		MEMBERS_PER_REGION,
+		SUBAREAS_PER_REGION,
+		MAX_SUBAREA_VOLUME,
+		MAX_BANK_DEPOSIT,
+		MAX_FORCE_LOADED_CHUNKS,
+		COMMANDS_COOLDOWN
+	}
+
+	public enum LimitMethod {
+		GROUPS,
+		STATIC,
+		PERMISSIONS
+	}
+}

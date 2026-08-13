@@ -1,0 +1,131 @@
+package me.tayebyassine.homestead.gui.menus;
+
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.api.events.PlayerLeftRegionEvent;
+import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.gui.PaginationMenu;
+import me.tayebyassine.homestead.managers.LogManager;
+import me.tayebyassine.homestead.managers.MemberManager;
+import me.tayebyassine.homestead.managers.RegionManager;
+import me.tayebyassine.homestead.models.Region;
+import me.tayebyassine.homestead.models.RegionMember;
+import me.tayebyassine.homestead.resources.ResourceType;
+import me.tayebyassine.homestead.resources.Resources;
+import me.tayebyassine.homestead.resources.files.RegionsFile;
+import me.tayebyassine.homestead.tools.java.Formatter;
+import me.tayebyassine.homestead.tools.java.Placeholder;
+import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.tools.minecraft.limits.Limits;
+import me.tayebyassine.homestead.tools.minecraft.menus.MenuUtility;
+import me.tayebyassine.homestead.tools.minecraft.players.PlayerSound;
+import me.tayebyassine.homestead.tools.minecraft.players.PlayerUtility;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public final class RegionMembersMenu {
+	private List<RegionMember> members;
+
+	public RegionMembersMenu(Player player, Region region) {
+		this.members = MemberManager.getMembersOfRegion(region);
+
+		PaginationMenu.builder(5, 9 * 4)
+				.nextPageItem(MenuUtility.getNextPageButton())
+				.prevPageItem(MenuUtility.getPreviousPageButton())
+				.items(getItems(player, region))
+				.fillEmptySlots()
+				.goBack((_player, event) -> new RegionPlayersManagement(player, region))
+				.onClick((_player, context) -> handleMemberClick(player, region, context))
+				.actionButton(1, MenuUtility.getButton(83, new Placeholder()
+						.add("{max-members}", Limits.getRegionLimit(region, Limits.LimitType.MEMBERS_PER_REGION))), null)
+				.build()
+				.open(player);
+	}
+
+	private void handleMemberClick(Player player, Region region, PaginationMenu.ClickContext context) {
+		if (context.getIndex() >= members.size()) return;
+
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
+
+		RegionMember member = members.get(context.getIndex());
+
+		if (member.getPlayer() == null || !MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())) {
+			player.closeInventory();
+			return;
+		}
+
+		if (context.getEvent().isShiftClick() && context.getEvent().isRightClick()) {
+			new PlayerInfo(player, member.getPlayer(), () -> new RegionMembersMenu(player, region));
+
+		} else if (context.getEvent().isRightClick()) {
+			new RegionMemberControlFlags(player, region, member);
+
+		} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
+			handleUntrust(player, region, member, context);
+
+		} else if (context.getEvent().isLeftClick()) {
+			new RegionMemberFlags(player, region, member);
+		}
+	}
+
+	private void handleUntrust(Player player, Region region, RegionMember member, PaginationMenu.ClickContext context) {
+		if (RegionManager.findRegion(region.getUniqueId()) == null) {
+			player.closeInventory();
+			return;
+		}
+
+		if (!MemberManager.isMemberOfRegion(region.getUniqueId(), member.getPlayerId())) {
+			player.closeInventory();
+			return;
+		}
+
+		if (!player.hasPermission("homestead.actions.regions.players.untrust")) {
+			Messages.send(player, "common.no_permission");
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+			return;
+		}
+
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+				ControlFlags.UNTRUST_PLAYERS)) {
+			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+			return;
+		}
+
+		MemberManager.removeMemberFromRegion(member.getPlayer(), region);
+
+		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+
+		LogManager.addLog(region, player, LogManager.PredefinedLog.UNTRUST_PLAYER, member.getPlayerName());
+
+		Homestead.callEvent(new PlayerLeftRegionEvent(region, player));
+
+		members = MemberManager.getMembersOfRegion(region);
+		context.getInstance().setItems(getItems(player, region));
+	}
+
+	private List<ItemStack> getItems(Player player, Region region) {
+		List<ItemStack> items = new ArrayList<>();
+		boolean taxesEnabled = Homestead.VAULT.isEconomyReady()
+				&& Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled");
+
+		for (RegionMember member : members) {
+			Placeholder placeholder = new Placeholder()
+					.add("{region}", region.getName())
+					.add("{playername}", member.getPlayerName())
+					.add("{member-joinedat}", Formatter.getDate(member.getJoinedAt()))
+					.add("{taxes-dueon}", taxesEnabled && region.getTaxes() > 0
+							? Formatter.getRemainingTime(member.getTaxesAt())
+							: Formatter.getNever())
+					.add("{tax-amount}", Formatter.getBalance(region.getTaxes()));
+
+			items.add(MenuUtility.getButton(24, placeholder, member.getPlayer()));
+		}
+
+		return items;
+	}
+}

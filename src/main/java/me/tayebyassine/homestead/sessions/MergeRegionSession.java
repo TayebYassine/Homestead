@@ -1,0 +1,55 @@
+package me.tayebyassine.homestead.sessions;
+
+import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.models.Region;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public final class MergeRegionSession {
+	private static final Map<Long, Long> REQUESTS = new ConcurrentHashMap<>();
+
+	private MergeRegionSession() {
+	}
+
+	public static void newMergeRequest(Region region, Region regionToMerge) {
+		long from = region.getUniqueId();
+		long to = regionToMerge.getUniqueId();
+
+		if (REQUESTS.containsValue(to) || REQUESTS.containsValue(from) || REQUESTS.containsKey(to) || REQUESTS.containsKey(from)) {
+			return;
+		}
+
+		REQUESTS.put(from, to);
+		startTimer(region);
+	}
+
+	public static boolean isFromHaveRequest(Region from) {
+		return REQUESTS.containsKey(from.getUniqueId());
+	}
+
+	public static boolean isToHaveRequest(Region to) {
+		return REQUESTS.containsValue(to.getUniqueId());
+	}
+
+	public static long getFrom(Region to) {
+		for (Map.Entry<Long, Long> e : REQUESTS.entrySet()) {
+			if (e.getValue() == to.getUniqueId()) {
+				return e.getKey();
+			}
+		}
+		return -1L;
+	}
+
+	public static long getTo(Region from) {
+		return REQUESTS.get(from.getUniqueId());
+	}
+
+	private static void startTimer(Region fromRegion) {
+		final long id = fromRegion.getUniqueId();
+
+		Homestead.getInstance().runAsyncTaskLater(() -> {
+			REQUESTS.remove(id);
+		}, 60);
+	}
+}

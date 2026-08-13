@@ -4,7 +4,7 @@ plugins {
     id("com.gradleup.shadow") version "9.6.1"
 }
 
-group = "tfagaming.projects.minecraft.homestead"
+group = "me.tayebyassine.homestead"
 version = "5.2.3.0"
 description = "A chunk-based land claiming plugin"
 
@@ -78,11 +78,11 @@ dependencies {
 
 tasks.shadowJar {
     archiveClassifier.set("")
-    relocate("com.technicjelle.BMUtils", "tfagaming.projects.minecraft.homestead.libs.bmutils")
-    relocate("me.lucko.commodore", "tfagaming.projects.minecraft.homestead.libs.commodore")
-    relocate("dev.faststats", "tfagaming.projects.minecraft.homestead.libs.faststats")
+    relocate("com.technicjelle.BMUtils", "me.tayebyassine.homestead.libs.bmutils")
+    relocate("me.lucko.commodore", "me.tayebyassine.homestead.libs.commodore")
+    relocate("dev.faststats", "me.tayebyassine.homestead.libs.faststats")
     manifest {
-        attributes["Main-Class"] = "tfagaming.projects.minecraft.homestead.Homestead"
+        attributes["Main-Class"] = "me.tayebyassine.homestead.Homestead"
     }
 }
 
