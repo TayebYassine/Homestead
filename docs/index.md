@@ -84,7 +84,7 @@ Homestead is purely written in Java :material-language-java:.
 
 :material-update: **Active Development** — Regular updates bring new features, bug fixes, and compatibility with the latest Minecraft versions.
 
-:material-database: **Six Database Providers** — SQLite, MySQL, MariaDB, PostgreSQL, MongoDB, and YAML are supported.
+:material-database: **Four Database Providers** — SQLite, MySQL, MariaDB, and PostgreSQL are supported.
 
 :material-door-open: **Easy Migration** — Built-in migration tools for GriefPrevention, ClaimChunk, LandLord4, Lands, and HuskClaims.
 

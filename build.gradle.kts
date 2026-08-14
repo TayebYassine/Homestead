@@ -37,6 +37,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 dependencies {
     testImplementation("junit:junit:4.13.1")
+    testImplementation("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
 
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
@@ -66,9 +67,11 @@ dependencies {
     compileOnly("net.momirealms:craft-engine-bukkit:26.7")
 
     implementation("commons-io:commons-io:2.18.0")
-    implementation("org.postgresql:postgresql:42.7.10")
-    implementation("org.mongodb:mongodb-driver-sync:5.6.5")
+    implementation("com.j256.ormlite:ormlite-jdbc:6.1")
+    implementation("org.xerial:sqlite-jdbc:3.49.1.0")
+    implementation("com.mysql:mysql-connector-j:9.2.0")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.8")
+    implementation("org.postgresql:postgresql:42.7.10")
     implementation("com.technicjelle:BMUtils:5.0.1") {
         exclude(group = "com.flowpowered", module = "flow-math")
     }

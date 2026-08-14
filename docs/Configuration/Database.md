@@ -10,8 +10,6 @@ A database stores all region data — claims, members, bans, logs, and settings.
 | **MySQL** | Large servers (~1,000+ players) |
 | **MariaDB** | Large servers (~1,000+ players) |
 | **PostgreSQL** | Large servers (~1,000+ players) |
-| **MongoDB** | Medium servers (~500 players) |
-| **YAML** | Small/private servers (~50 players), human-readable files |
 
 ## Configuration
 
@@ -19,7 +17,7 @@ Set the provider in `config.yml`:
 
 ```yaml
 database:
-  provider: "sqlite"  # sqlite, mysql, mariadb, postgresql, mongodb, yaml
+  provider: "sqlite"  # sqlite, mysql, mariadb, postgresql
 ```
 
 ### SQLite
@@ -45,28 +43,6 @@ database:
     database: "homestead_data"
     table_prefix: ""           # e.g. "myserver_"
     jdbc_url_parameters: ""    # e.g. "?useSSL=false&serverTimezone=UTC"
-```
-
-### MongoDB
-
-```yaml
-database:
-  provider: "mongodb"
-  mongodb:
-    uri: "mongodb://localhost:27017"  # Or Atlas SRV URI
-    database: "homestead"
-    collection_prefix: "hs_"
-```
-
-### YAML
-
-!!! warning "Not Recommended for Production"
-
-    YAML is human-readable but slow. Only use for testing or tiny private servers.
-
-```yaml
-database:
-  provider: "yaml"
 ```
 
 ## Cache System

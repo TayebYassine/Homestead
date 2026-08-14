@@ -17,7 +17,7 @@ All admin commands are accessible via `/homesteadadmin` or `/hsadmin`.
 | `/hsadmin export [provider]` | Export data to a different database provider |
 | `/hsadmin import [plugin]` | Import claims from another plugin |
 
-**Providers:** `SQLite`, `MySQL`, `MariaDB`, `PostgreSQL`, `MongoDB`, `YAML`
+**Providers:** `SQLite`, `MySQL`, `MariaDB`, `PostgreSQL`
 
 **Import plugins:** `GriefPrevention`, `LandLord`, `ClaimChunk`, `Lands`, `HuskClaims`
 

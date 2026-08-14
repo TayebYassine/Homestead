@@ -35,11 +35,9 @@ menus: "en-US"
 # ============================================================================
 
 database:
-  # Provider: sqlite (default), mysql, mariadb, postgresql, mongodb, yaml
+  # Provider: sqlite (default), mysql, mariadb, postgresql
   # sqlite: Good for small-medium servers, no setup required
   # mysql/mariadb/postgresql: Good for large servers (100+ players)
-  # mongodb: Good for large servers (requires subscription for tiers)
-  # yaml: Human-readable, slowest (not recommended for production)
   provider: "sqlite"
 
   # PostgreSQL settings (only used if provider = "postgresql")
@@ -71,12 +69,6 @@ database:
     database: "homestead_data"
     table_prefix: ""
     jdbc_url_parameters: ""
-
-  # MongoDB settings (only used if provider = "mongodb")
-  mongodb:
-    uri: "mongodb://localhost:27017"  # Or Atlas SRV URI
-    database: "homestead"
-    collection_prefix: "hs_"
 
   # SQLite filename (only used if provider = "sqlite")
   sqlite: "homestead_data.db"

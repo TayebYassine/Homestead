@@ -5,8 +5,6 @@ public enum Driver {
 	MARIADB("MariaDB"),
 	MYSQL("MySQL"),
 	SQLITE("SQLite"),
-	YAML("YAML"),
-	MONGODB("MongoDB"),
 	;
 
 	private final String name;
@@ -21,8 +19,6 @@ public enum Driver {
 			case "mariadb" -> MARIADB;
 			case "mysql" -> MYSQL;
 			case "sqlite" -> SQLITE;
-			case "yaml" -> YAML;
-			case "mongodb" -> MONGODB;
 			default -> null;
 		};
 	}

@@ -27,7 +27,7 @@ public class Logger {
 
 	public static void info(String... message) {
 		logger.info("INFO » " + String.join(" ", message));
-		logs.save("[INFO] " + String.join(" ", message));
+		saveLog("[INFO] " + String.join(" ", message));
 	}
 
 	public static void warning(PredefinedMessage message) {
@@ -38,7 +38,22 @@ public class Logger {
 
 	public static void warning(String... message) {
 		logger.warning("WARN » " + String.join(" ", message));
-		logs.save("[WARN] " + String.join(" ", message));
+		saveLog("[WARN] " + String.join(" ", message));
+	}
+
+	private static boolean isDebugEnabled() {
+		try {
+			ConfigFile config = Resources.<ConfigFile>get(ResourceType.Config);
+			return config != null && config.isDebugEnabled();
+		} catch (Exception ignored) {
+			return false;
+		}
+	}
+
+	private static void saveLog(String line) {
+		if (logs != null) {
+			logs.save(line);
+		}
 	}
 
 	public static void debug(PredefinedMessage message) {
@@ -48,14 +63,14 @@ public class Logger {
 	}
 
 	public static void debug(String... message) {
-		if (Resources.<ConfigFile>get(ResourceType.Config).isDebugEnabled()) {
+		if (isDebugEnabled()) {
 			logger.warning("DEBUG » " + String.join(" ", message));
-			logs.save("[DEBUG] " + String.join(" ", message));
+			saveLog("[DEBUG] " + String.join(" ", message));
 		}
 	}
 
 	public static void debug(Object... message) {
-		if (Resources.<ConfigFile>get(ResourceType.Config).isDebugEnabled()) {
+		if (isDebugEnabled()) {
 			StringBuilder messageStr = new StringBuilder();
 
 			for (Object each : message) {
@@ -75,7 +90,7 @@ public class Logger {
 
 	public static void error(String... message) {
 		logger.severe("ERROR » " + String.join(" ", message));
-		logs.save("[ERROR] " + String.join(" ", message));
+		saveLog("[ERROR] " + String.join(" ", message));
 	}
 
 	public static void error(Throwable error) {
