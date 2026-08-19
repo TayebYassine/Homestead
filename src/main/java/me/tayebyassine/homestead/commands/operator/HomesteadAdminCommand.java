@@ -3,9 +3,8 @@ package me.tayebyassine.homestead.commands.operator;
 import org.bukkit.command.CommandSender;
 import me.tayebyassine.homestead.commands.CommandBuilder;
 import me.tayebyassine.homestead.commands.operator.subcommands.*;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.java.StringSimilarity;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.java.StringSimilarity;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 import java.util.List;
 

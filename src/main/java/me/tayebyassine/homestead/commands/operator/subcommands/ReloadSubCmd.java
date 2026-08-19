@@ -5,7 +5,6 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.resources.Resources;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
 
 import java.util.List;
 

@@ -4,9 +4,9 @@ import com.nexomc.nexo.api.NexoItems;
 import com.nexomc.nexo.items.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.items.ItemUtility;
-import me.tayebyassine.homestead.tools.minecraft.plugins.IntegrationUtility;
+import me.tayebyassine.homestead.util.java.Placeholder;
+import me.tayebyassine.homestead.util.minecraft.items.ItemUtility;
+import me.tayebyassine.homestead.util.minecraft.plugins.IntegrationUtility;
 
 import java.util.List;
 

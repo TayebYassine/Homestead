@@ -22,10 +22,8 @@ import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.managers.*;
 import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.tools.java.ListUtils;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerUtility;
+import me.tayebyassine.homestead.util.java.ListUtils;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 
 import java.util.*;
 

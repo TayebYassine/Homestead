@@ -10,9 +10,8 @@ import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.ConfigFile;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.plugins.MapColor;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.plugins.MapColor;
 
 import java.util.ArrayList;
 import java.util.List;

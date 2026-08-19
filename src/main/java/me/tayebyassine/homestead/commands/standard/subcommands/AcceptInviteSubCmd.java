@@ -1,6 +1,5 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
@@ -8,11 +7,9 @@ import me.tayebyassine.homestead.api.events.PlayerJoinRegionEvent;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.managers.*;
 import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.models.RegionBan;
 import me.tayebyassine.homestead.models.RegionInvite;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.limits.Limits;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 
 import java.util.ArrayList;
 import java.util.List;

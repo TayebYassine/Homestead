@@ -4,8 +4,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.managers.RegionManager;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 public final class Level {
 	public static final double BASE = 5;

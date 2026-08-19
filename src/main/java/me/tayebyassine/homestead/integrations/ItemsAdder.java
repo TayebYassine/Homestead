@@ -3,9 +3,9 @@ package me.tayebyassine.homestead.integrations;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.items.ItemUtility;
-import me.tayebyassine.homestead.tools.minecraft.plugins.IntegrationUtility;
+import me.tayebyassine.homestead.util.java.Placeholder;
+import me.tayebyassine.homestead.util.minecraft.items.ItemUtility;
+import me.tayebyassine.homestead.util.minecraft.plugins.IntegrationUtility;
 
 import java.util.List;
 

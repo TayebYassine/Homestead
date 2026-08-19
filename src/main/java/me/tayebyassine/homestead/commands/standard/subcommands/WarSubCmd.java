@@ -17,11 +17,10 @@ import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.NumberUtils;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.ColorTranslator;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.NumberUtils;
+import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 import java.util.ArrayList;
 import java.util.Arrays;

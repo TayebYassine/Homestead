@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.RegionChunk;
-import me.tayebyassine.homestead.tools.minecraft.chunks.ChunkBorder;
+import me.tayebyassine.homestead.util.minecraft.chunks.ChunkBorder;
 
 import java.util.ArrayList;
 import java.util.List;

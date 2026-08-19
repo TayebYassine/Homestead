@@ -5,9 +5,8 @@ import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.commands.CommandBuilder;
 import me.tayebyassine.homestead.commands.standard.subcommands.*;
 import me.tayebyassine.homestead.gui.menus.RegionsMenu;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.java.StringSimilarity;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.java.StringSimilarity;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 import java.util.List;
 

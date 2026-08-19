@@ -12,9 +12,9 @@ import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.ConfigFile;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.minecraft.economy.UpkeepUtility;
-import me.tayebyassine.homestead.tools.minecraft.limits.Limits;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.minecraft.economy.UpkeepUtility;
+import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 
 public final class PlaceholderAPI extends PlaceholderExpansion {
 	public PlaceholderAPI() {

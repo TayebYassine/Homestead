@@ -15,12 +15,11 @@ import me.tayebyassine.homestead.models.RegionChunk;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
-import me.tayebyassine.homestead.tools.minecraft.threads.TaskHandle;
+import me.tayebyassine.homestead.util.minecraft.threads.TaskHandle;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.tools.minecraft.menus.MenuUtility;
+import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
 
 public class RegionStorage {
 

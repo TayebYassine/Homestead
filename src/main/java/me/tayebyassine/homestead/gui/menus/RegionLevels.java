@@ -11,11 +11,11 @@ import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.MenusFile;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.NumberUtils;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.menus.MenuUtility;
-import me.tayebyassine.homestead.tools.minecraft.rewards.LevelRewards;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.NumberUtils;
+import me.tayebyassine.homestead.util.java.Placeholder;
+import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
+import me.tayebyassine.homestead.util.minecraft.rewards.LevelRewards;
 
 import java.util.ArrayList;
 import java.util.List;

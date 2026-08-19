@@ -7,10 +7,10 @@ import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.managers.SubAreaManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.SubArea;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.limits.Limits;
-import me.tayebyassine.homestead.tools.minecraft.menus.MenuUtility;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.Placeholder;
+import me.tayebyassine.homestead.util.minecraft.limits.Limits;
+import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
 
 import java.util.ArrayList;
 import java.util.List;

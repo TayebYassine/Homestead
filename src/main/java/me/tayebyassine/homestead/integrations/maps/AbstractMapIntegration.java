@@ -10,9 +10,9 @@ import me.tayebyassine.homestead.models.RegionChunk;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.ConfigFile;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.ColorTranslator;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.Placeholder;
+import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
 
 import java.util.List;
 import java.util.UUID;

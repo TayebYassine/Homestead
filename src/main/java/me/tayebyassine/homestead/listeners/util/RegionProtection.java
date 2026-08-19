@@ -10,7 +10,7 @@ import me.tayebyassine.homestead.models.SubArea;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerUtility;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 
 public final class RegionProtection {
 	public static boolean hasPermission(Player player,

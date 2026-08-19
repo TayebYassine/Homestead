@@ -6,7 +6,7 @@ import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.gui.menus.RegionLogs;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 import java.util.List;
 

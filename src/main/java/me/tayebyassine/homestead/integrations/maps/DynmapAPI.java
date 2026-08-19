@@ -9,7 +9,7 @@ import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.RegionChunk;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerUtility;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 
 public final class DynmapAPI extends AbstractMapIntegration {
 

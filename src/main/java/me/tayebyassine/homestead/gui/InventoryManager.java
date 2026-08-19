@@ -1,10 +1,8 @@
 package me.tayebyassine.homestead.gui;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.logs.Logger;
-import me.tayebyassine.homestead.tools.minecraft.chat.ColorTranslator;
 
 import java.util.*;
 

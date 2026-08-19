@@ -9,8 +9,7 @@ import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 import java.util.ArrayList;
 import java.util.List;

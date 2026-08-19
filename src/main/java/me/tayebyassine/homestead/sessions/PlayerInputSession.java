@@ -14,8 +14,8 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.LanguageFile;
-import me.tayebyassine.homestead.tools.minecraft.platform.PlatformBridge;
-import me.tayebyassine.homestead.tools.minecraft.threads.TaskHandle;
+import me.tayebyassine.homestead.util.minecraft.platform.PlatformBridge;
+import me.tayebyassine.homestead.util.minecraft.threads.TaskHandle;
 
 import java.util.Map;
 import java.util.UUID;

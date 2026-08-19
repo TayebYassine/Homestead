@@ -12,9 +12,8 @@ import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.RegionMember;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,20 +4,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.NumberUtils;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.plugins.MapColor;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.NumberUtils;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SetMemberTaxSubCmd extends SubCommandBuilder {

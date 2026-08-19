@@ -3,11 +3,7 @@ package me.tayebyassine.homestead.commands;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.resources.ResourceType;
-import me.tayebyassine.homestead.resources.Resources;
-import me.tayebyassine.homestead.resources.files.LanguageFile;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.commands.AutoCompleteFilter;
+import me.tayebyassine.homestead.util.minecraft.commands.AutoCompleteFilter;
 
 import java.util.*;
 import java.util.stream.Collectors;

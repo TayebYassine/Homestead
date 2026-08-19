@@ -9,7 +9,7 @@ import me.tayebyassine.homestead.flags.FlagsCalculator;
 import me.tayebyassine.homestead.flags.PlayerFlags;
 import me.tayebyassine.homestead.models.serialize.SeLocation;
 import me.tayebyassine.homestead.models.serialize.SeRent;
-import me.tayebyassine.homestead.tools.minecraft.plugins.MapColor;
+import me.tayebyassine.homestead.util.minecraft.plugins.MapColor;
 import me.tayebyassine.homestead.weatherandtime.RegionTime;
 import me.tayebyassine.homestead.weatherandtime.RegionWeather;
 

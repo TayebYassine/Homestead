@@ -8,11 +8,9 @@ import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerBank;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerUtility;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;

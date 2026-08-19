@@ -4,11 +4,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.managers.LogManager;
-import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.weatherandtime.RegionTime;
 
 import java.util.ArrayList;

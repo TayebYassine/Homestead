@@ -8,8 +8,7 @@ import me.tayebyassine.homestead.managers.SubAreaManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.SubArea;
 import me.tayebyassine.homestead.models.serialize.SeRent;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 public final class RegionRent {
 	private RegionRent() {

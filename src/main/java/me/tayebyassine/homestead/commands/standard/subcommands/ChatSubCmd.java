@@ -7,12 +7,10 @@ import me.tayebyassine.homestead.api.events.RegionChatEvent;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.sessions.ClaimFlySession;
 import me.tayebyassine.homestead.sessions.PrivateChatSession;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.ColorTranslator;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 import java.util.Arrays;
 import java.util.List;

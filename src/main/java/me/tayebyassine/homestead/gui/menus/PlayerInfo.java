@@ -4,10 +4,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.gui.Menu;
 import me.tayebyassine.homestead.managers.RegionManager;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.menus.MenuUtility;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerBank;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.Placeholder;
+import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
 
 public final class PlayerInfo {
 	public PlayerInfo(Player player, OfflinePlayer target, Runnable backButton) {

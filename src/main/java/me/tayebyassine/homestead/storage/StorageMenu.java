@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.gui.InventoryManager;
 import me.tayebyassine.homestead.gui.Menu;
-import me.tayebyassine.homestead.tools.minecraft.chat.ColorTranslator;
+import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -11,9 +11,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.minecraft.chat.ColorTranslator;
-import me.tayebyassine.homestead.tools.minecraft.menus.MenuUtility;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
+import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
 
 import java.util.ArrayList;
 import java.util.HashMap;

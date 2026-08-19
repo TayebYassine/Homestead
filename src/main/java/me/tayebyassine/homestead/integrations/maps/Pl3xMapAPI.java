@@ -17,8 +17,8 @@ import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.RegionChunk;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerUtility;
-import me.tayebyassine.homestead.tools.minecraft.plugins.MapIcon;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import me.tayebyassine.homestead.util.minecraft.plugins.MapIcon;
 
 import java.awt.image.*;
 import java.util.HashMap;

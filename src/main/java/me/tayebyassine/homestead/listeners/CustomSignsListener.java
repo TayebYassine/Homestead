@@ -24,12 +24,11 @@ import me.tayebyassine.homestead.models.serialize.SeRent;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.NumberUtils;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.platform.PlatformBridge;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerBank;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.NumberUtils;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.platform.PlatformBridge;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
 
 import java.util.concurrent.TimeUnit;
 

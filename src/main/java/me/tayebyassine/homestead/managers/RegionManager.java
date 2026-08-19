@@ -15,9 +15,9 @@ import me.tayebyassine.homestead.resources.files.LanguageFile;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.storage.StorageManager;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.economy.UpkeepUtility;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.economy.UpkeepUtility;
 
 import java.util.*;
 import java.util.stream.Collectors;

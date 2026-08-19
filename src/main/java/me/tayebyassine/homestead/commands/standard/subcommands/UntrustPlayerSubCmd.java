@@ -15,9 +15,8 @@ import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.RegionInvite;
 import me.tayebyassine.homestead.models.RegionMember;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerUtility;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 
 import java.util.ArrayList;
 import java.util.List;

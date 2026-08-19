@@ -6,7 +6,7 @@ import me.tayebyassine.homestead.integrations.maps.DynmapAPI;
 import me.tayebyassine.homestead.integrations.maps.Pl3xMapAPI;
 import me.tayebyassine.homestead.integrations.maps.SquaremapAPI;
 import me.tayebyassine.homestead.logs.Logger;
-import me.tayebyassine.homestead.tools.minecraft.plugins.IntegrationUtility;
+import me.tayebyassine.homestead.util.minecraft.plugins.IntegrationUtility;
 
 public final class DynamicMaps {
 	public static DynmapAPI DYNMAP_INSTANCE;

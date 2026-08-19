@@ -10,8 +10,8 @@ import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.ConfigFile;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
-import me.tayebyassine.homestead.tools.minecraft.chunks.ChunkUtility;
-import me.tayebyassine.homestead.tools.minecraft.chunks.PersistentChunkTicket;
+import me.tayebyassine.homestead.util.minecraft.chunks.ChunkUtility;
+import me.tayebyassine.homestead.util.minecraft.chunks.PersistentChunkTicket;
 
 import java.util.*;
 import java.util.stream.Collectors;

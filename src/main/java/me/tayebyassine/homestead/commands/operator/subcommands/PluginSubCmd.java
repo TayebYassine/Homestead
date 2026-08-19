@@ -2,14 +2,12 @@ package me.tayebyassine.homestead.commands.operator.subcommands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.database.Database;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.managers.*;
-import me.tayebyassine.homestead.tools.java.ListUtils;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.java.ListUtils;
 
 import java.util.List;
 

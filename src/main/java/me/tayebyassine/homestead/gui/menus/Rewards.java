@@ -6,9 +6,9 @@ import me.tayebyassine.homestead.gui.Menu;
 import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.minecraft.menus.MenuUtility;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.Placeholder;
+import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
 
 import java.util.function.BiConsumer;
 
@@ -18,14 +18,14 @@ public final class Rewards {
 				.item(12, MenuUtility.getButton(66, new Placeholder()
 						.add("{region}", region.getName())
 						.add("{members}", MemberManager.getMembersOfRegion(region).size())
-						.add("{chunks}", me.tayebyassine.homestead.tools.minecraft.rewards.Rewards.getChunksByEachMember(region))
-						.add("{subareas}", me.tayebyassine.homestead.tools.minecraft.rewards.Rewards.getSubAreasByEachMember(region))))
+						.add("{chunks}", me.tayebyassine.homestead.util.minecraft.rewards.Rewards.getChunksByEachMember(region))
+						.add("{subareas}", me.tayebyassine.homestead.util.minecraft.rewards.Rewards.getSubAreasByEachMember(region))))
 				.item(14, MenuUtility.getButton(67, new Placeholder()
 						.add("{region}", region.getName())
 						.add("{members}", MemberManager.getMembersOfRegion(region).size())
 						.add("{player-playtime}", Formatter.getPlayerPlaytime(player))
-						.add("{chunks}", me.tayebyassine.homestead.tools.minecraft.rewards.Rewards.getChunksByPlayTime(player))
-						.add("{subareas}", me.tayebyassine.homestead.tools.minecraft.rewards.Rewards.getSubAreasByPlayTime(player))))
+						.add("{chunks}", me.tayebyassine.homestead.util.minecraft.rewards.Rewards.getChunksByPlayTime(player))
+						.add("{subareas}", me.tayebyassine.homestead.util.minecraft.rewards.Rewards.getSubAreasByPlayTime(player))))
 				.button(18, MenuUtility.getBackButton(), handleBack(player, region, backButton))
 				.fillEmptySlots()
 				.build()

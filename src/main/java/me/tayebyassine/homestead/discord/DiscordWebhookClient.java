@@ -3,15 +3,14 @@ package me.tayebyassine.homestead.discord;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.*;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.ConfigFile;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.Placeholder;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.Placeholder;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;

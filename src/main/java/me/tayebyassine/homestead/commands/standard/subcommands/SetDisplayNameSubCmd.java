@@ -10,12 +10,11 @@ import me.tayebyassine.homestead.flags.ControlFlags;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.tools.java.Formatter;
-import me.tayebyassine.homestead.tools.java.Placeholder;
-import me.tayebyassine.homestead.tools.java.StringUtils;
-import me.tayebyassine.homestead.tools.minecraft.chat.ColorTranslator;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
-import me.tayebyassine.homestead.tools.minecraft.players.PlayerUtility;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.StringUtils;
+import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 
 import java.util.Arrays;
 import java.util.List;

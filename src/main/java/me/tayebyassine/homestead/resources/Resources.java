@@ -4,7 +4,7 @@ import org.apache.commons.io.FileUtils;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.resources.files.*;
-import me.tayebyassine.homestead.tools.validator.ResourceValidator;
+import me.tayebyassine.homestead.util.validator.ResourceValidator;
 
 import java.io.File;
 import java.io.FileNotFoundException;

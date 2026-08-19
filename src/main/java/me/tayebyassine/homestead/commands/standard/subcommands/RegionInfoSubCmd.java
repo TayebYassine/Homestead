@@ -7,7 +7,7 @@ import me.tayebyassine.homestead.gui.menus.RegionInfoMenu;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.tools.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
 import java.util.ArrayList;
 import java.util.List;
