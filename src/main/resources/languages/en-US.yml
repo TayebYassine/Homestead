@@ -463,6 +463,10 @@ commands:
     8: "{__prefix__} &7You have withdrawn &c{0}&7 from the region &2{1}&7."
 
   # Operator
+  op_updates:
+    0: "{__prefix__} &aYou are on the latest version!"
+    1: "{__prefix__} &eYou are on an old version; Current: {0}, Latest: {1}"
+    2: "{__prefix__} &cUnable to fetch from the GitHub repository."
   op_claim:
     0: "{__prefix__} &7Insufficient arguments, usage: &e{0}"
     1: "{__prefix__} &cUnable to find the region."

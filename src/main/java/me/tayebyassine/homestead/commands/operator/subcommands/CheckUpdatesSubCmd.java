@@ -6,6 +6,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.util.https.UpdateChecker;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -17,18 +18,23 @@ public final class CheckUpdatesSubCmd extends SubCommandBuilder {
         super("updates");
         setAdminPermission();
         setUsage("/hsadmin updates");
-        setAllowedCommandSenders(CommandSenderType.CONSOLE);
+        setAllowedCommandSenders(CommandSenderType.PLAYER, CommandSenderType.CONSOLE);
     }
 
     @Override
     public boolean onExecution(CommandSender sender, String[] args) {
         Homestead.getInstance().runAsyncTask(() -> {
-            String newVersion = UpdateChecker.fetch(Homestead.getInstance());
+            UpdateChecker.FetchedUpdateData data = UpdateChecker.fetch();
 
-            if (newVersion != null) {
-                Logger.warning(Logger.PredefinedMessage.UPDATE_FOUND);
+            if (data.errored()) {
+                Messages.send(sender, "commands.op_updates.2");
+                return;
+            }
+
+            if (data.current().equals(data.latest())) {
+                Messages.send(sender, "commands.op_updates.0");
             } else {
-                Logger.info(Logger.PredefinedMessage.UPDATE_NOT_FOUND);
+                Messages.send(sender, "commands.op_updates.1");
             }
         });
 

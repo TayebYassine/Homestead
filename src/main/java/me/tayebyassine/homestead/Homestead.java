@@ -375,12 +375,17 @@ public class Homestead extends JavaPlugin {
 
 		// Check for updates every 24 hours
 		runAsyncTimerTask(() -> {
-			String newVersion = UpdateChecker.fetch(this);
+			UpdateChecker.FetchedUpdateData data = UpdateChecker.fetch();
 
-			if (newVersion != null) {
-				Logger.warning(Logger.PredefinedMessage.UPDATE_FOUND);
+			if (data.errored()) {
+				Logger.error(Logger.PredefinedMessage.UPDATE_FETCH_FAILURE);
+				return;
+			}
+
+			if (data.current().equals(data.latest())) {
+				Logger.info(Logger.PredefinedMessage.UPDATE_LATEST);
 			} else {
-				Logger.info(Logger.PredefinedMessage.UPDATE_NOT_FOUND);
+				Logger.warning(Logger.PredefinedMessage.UPDATE_FOUND);
 			}
 		}, 86400);
 

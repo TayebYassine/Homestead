@@ -26,7 +26,7 @@ public class Logger {
 	}
 
 	public static void info(String... message) {
-		logger.info("INFO » " + String.join(" ", message));
+		logger.info(String.join(" ", message));
 		saveLog("[INFO] " + String.join(" ", message));
 	}
 
@@ -37,7 +37,7 @@ public class Logger {
 	}
 
 	public static void warning(String... message) {
-		logger.warning("WARN » " + String.join(" ", message));
+		logger.warning(String.join(" ", message));
 		saveLog("[WARN] " + String.join(" ", message));
 	}
 
@@ -64,7 +64,7 @@ public class Logger {
 
 	public static void debug(String... message) {
 		if (isDebugEnabled()) {
-			logger.warning("DEBUG » " + String.join(" ", message));
+			logger.warning("[DEBUG-MODE] " + String.join(" ", message));
 			saveLog("[DEBUG] " + String.join(" ", message));
 		}
 	}
@@ -77,7 +77,7 @@ public class Logger {
 				messageStr.append(each).append(" ");
 			}
 
-			logger.warning("DEBUG » " + messageStr);
+			logger.warning("[DEBUG-MODE] " + messageStr);
 			logs.save("[DEBUG] " + messageStr);
 		}
 	}
@@ -89,7 +89,7 @@ public class Logger {
 	}
 
 	public static void error(String... message) {
-		logger.severe("ERROR » " + String.join(" ", message));
+		logger.severe(String.join(" ", message));
 		saveLog("[ERROR] " + String.join(" ", message));
 	}
 
@@ -148,7 +148,7 @@ public class Logger {
 				"https://modrinth.com/plugin/homestead-plugin, ",
 				"https://hangar.papermc.io/TayebYassine/Homestead"
 		}),
-		UPDATE_NOT_FOUND(new String[]{
+		UPDATE_LATEST(new String[]{
 				"You are currently on the latest version!"
 		}),
 		UPDATE_FETCH_FAILURE(new String[]{

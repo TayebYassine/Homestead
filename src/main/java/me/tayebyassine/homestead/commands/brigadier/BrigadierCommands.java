@@ -225,6 +225,9 @@ public final class BrigadierCommands {
 
     private void registerAdminCommand() {
         BrigadierCommandBuilder.create("homesteadadmin")
+                .literalSub("updates")
+                .end()
+
                 .literalSub("transfer")
                 .stringArg("region")
                 .stringArg("player")
