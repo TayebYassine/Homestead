@@ -1,8 +1,7 @@
 package me.tayebyassine.homestead.commands.operator.subcommands;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.CommandSenderType;
+
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.FlagsCalculator;
@@ -14,195 +13,208 @@ import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.RegionMember;
 import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlagsOverrideSubCmd extends SubCommandBuilder {
-	public FlagsOverrideSubCmd() {
-		super("flagsoverride");
-		setPermission(List.of(
-				"homestead.commands.homesteadadmin",
-				"homestead.commands.homesteadadmin." + getName()
-		));
-		setUsage("/hsadmin flagsoverride [global/world/member] {member} [flag] (allow/deny)");
-		setPlayerOnly();
-	}
+/**
+ * Admin sub-command ({@code /hsadmin flagsoverride}) that applies a flag state across
+ * every region, ignoring the regular per-region permission checks.
+ */
+public final class FlagsOverrideSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public FlagsOverrideSubCmd() {
+        super("flagsoverride");
+        setAdminPermission();
+        setUsage("/hsadmin flagsoverride [global/world/member] {member} [flag] (allow/deny)");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length < 1) {
-			Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
-			return true;
-		}
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		String setType = args[0].toLowerCase();
+        if (args.length < 1) {
+            Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+            return true;
+        }
 
-		switch (setType) {
-			case "member" -> handleMemberFlags(sender, args);
-			case "global" -> handleGlobalFlags(sender, args);
-			case "world" -> handleWorldFlags(sender, args);
-			default -> Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
-		}
+        switch (args[0].toLowerCase()) {
+            case "member" -> handleMemberFlags(sender, args);
+            case "global" -> handleGlobalFlags(sender, args);
+            case "world" -> handleWorldFlags(sender, args);
+            default -> Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+        }
 
-		Messages.send(sender, "commands.op_flagsoverride.3");
+        Messages.send(sender, "commands.op_flagsoverride.3");
 
-		return true;
-	}
+        return true;
+    }
 
-	private void handleMemberFlags(CommandSender sender, String[] args) {
-		if (args.length < 3) {
-			Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
-			return;
-		}
+    private void handleMemberFlags(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+            return;
+        }
 
-		String targetName = args[1];
-		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
+        String targetName = args[1];
+        OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
-		if (target == null) {
-			Messages.send(sender, "commands.op_flagsoverride.1");
-			return;
-		}
+        if (target == null) {
+            Messages.send(sender, "commands.op_flagsoverride.1");
+            return;
+        }
 
-		String flagInput = args[2];
+        long flag = parsePlayerFlag(sender, args[2]);
+        if (flag == -1) {
+            return;
+        }
 
-		if (!PlayerFlags.getFlags().contains(flagInput)) {
-			Messages.send(sender, "commands.op_flagsoverride.2");
-			return;
-		}
+        String stateInput = args.length > 3 ? args[3] : null;
 
-		long flag = PlayerFlags.valueOf(flagInput);
+        for (Region region : RegionManager.getAll()) {
+            RegionMember member = MemberManager.getMemberOfRegion(region, target);
 
-		for (Region region : RegionManager.getAll()) {
-			RegionMember member = MemberManager.getMemberOfRegion(region, target);
+            if (member == null) {
+                continue;
+            }
 
-			if (member == null) {
-				continue;
-			}
+            long flags = member.getPlayerFlags();
+            boolean targetState = resolveTargetState(FlagsCalculator.isFlagSet(flags, flag), stateInput);
 
-			long flags = member.getPlayerFlags();
-			boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
+            member.setPlayerFlags(targetState
+                    ? FlagsCalculator.addFlag(flags, flag)
+                    : FlagsCalculator.removeFlag(flags, flag));
 
-			if (args.length > 3) {
-				currentState = !parseFlagState(args[3]);
-			}
+            Messages.send(sender, "commands.op_flagsoverride.4",
+                    args[2], Formatter.getFlagState(targetState), targetName, region.getName());
+        }
+    }
 
-			long newFlags = currentState
-					? FlagsCalculator.removeFlag(flags, flag)
-					: FlagsCalculator.addFlag(flags, flag);
+    private void handleGlobalFlags(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+            return;
+        }
 
-			member.setPlayerFlags(newFlags);
+        long flag = parsePlayerFlag(sender, args[1]);
+        if (flag == -1) {
+            return;
+        }
 
-			Messages.send(sender, "commands.op_flagsoverride.4", flagInput, Formatter.getFlagState(!currentState), targetName, region.getName());
-		}
-	}
+        String stateInput = args.length > 2 ? args[2] : null;
 
-	private void handleGlobalFlags(CommandSender sender, String[] args) {
-		if (args.length < 2) {
-			Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
-			return;
-		}
+        for (Region region : RegionManager.getAll()) {
+            long flags = region.getPlayerFlags();
+            boolean targetState = resolveTargetState(FlagsCalculator.isFlagSet(flags, flag), stateInput);
 
-		String flagInput = args[1];
+            region.setPlayerFlags(targetState
+                    ? FlagsCalculator.addFlag(flags, flag)
+                    : FlagsCalculator.removeFlag(flags, flag));
 
-		if (!PlayerFlags.getFlags().contains(flagInput)) {
-			Messages.send(sender, "commands.op_flagsoverride.2");
-			return;
-		}
+            Messages.send(sender, "commands.op_flagsoverride.5",
+                    args[1], Formatter.getFlagState(targetState), region.getName());
+        }
+    }
 
-		long flag = PlayerFlags.valueOf(flagInput);
+    private void handleWorldFlags(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+            return;
+        }
 
-		for (Region region : RegionManager.getAll()) {
-			long flags = region.getPlayerFlags();
-			boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
+        String flagInput = args[1];
 
-			if (args.length > 2) {
-				currentState = !parseFlagState(args[2]);
-			}
+        if (!WorldFlags.getFlags().contains(flagInput)) {
+            Messages.send(sender, "commands.op_flagsoverride.2");
+            return;
+        }
 
-			long newFlags = currentState
-					? FlagsCalculator.removeFlag(flags, flag)
-					: FlagsCalculator.addFlag(flags, flag);
+        long flag = WorldFlags.valueOf(flagInput);
+        String stateInput = args.length > 2 ? args[2] : null;
 
-			region.setPlayerFlags(newFlags);
+        for (Region region : RegionManager.getAll()) {
+            long flags = region.getWorldFlags();
+            boolean targetState = resolveTargetState(FlagsCalculator.isFlagSet(flags, flag), stateInput);
 
-			Messages.send(sender, "commands.op_flagsoverride.5", flagInput, Formatter.getFlagState(!currentState), region.getName());
-		}
-	}
+            region.setWorldFlags(targetState
+                    ? FlagsCalculator.addFlag(flags, flag)
+                    : FlagsCalculator.removeFlag(flags, flag));
 
-	private void handleWorldFlags(CommandSender sender, String[] args) {
-		if (args.length < 2) {
-			Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
-			return;
-		}
+            Messages.send(sender, "commands.op_flagsoverride.6",
+                    flagInput, Formatter.getFlagState(targetState), region.getName());
+        }
+    }
 
-		String flagInput = args[1];
+    private long parsePlayerFlag(CommandSender sender, String flagInput) {
+        if (!PlayerFlags.getFlags().contains(flagInput)) {
+            Messages.send(sender, "commands.op_flagsoverride.2");
+            return -1;
+        }
+        return PlayerFlags.valueOf(flagInput);
+    }
 
-		if (!WorldFlags.getFlags().contains(flagInput)) {
-			Messages.send(sender, "commands.op_flagsoverride.2");
-			return;
-		}
+    private boolean resolveTargetState(boolean currentState, String stateInput) {
+        return stateInput == null ? !currentState : parseFlagState(stateInput);
+    }
 
-		long flag = WorldFlags.valueOf(flagInput);
+    private boolean parseFlagState(String input) {
+        return switch (input.toLowerCase()) {
+            case "1", "t", "true", "allow" -> true;
+            default -> false;
+        };
+    }
 
-		for (Region region : RegionManager.getAll()) {
-			long flags = region.getWorldFlags();
-			boolean currentState = FlagsCalculator.isFlagSet(flags, flag);
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        List<String> suggestions = new ArrayList<>();
 
-			if (args.length > 2) {
-				currentState = !parseFlagState(args[2]);
-			}
+        if (args.length == 1) {
+            suggestions.addAll(List.of("member", "global", "world"));
+        } else if (args.length == 2) {
+            switch (args[0].toLowerCase()) {
+                case "member" -> {
+                    if (player != null) {
+                        suggestions.addAll(getAllMemberNames());
+                    }
+                }
+                case "global" -> suggestions.addAll(PlayerFlags.getFlags());
+                case "world" -> suggestions.addAll(WorldFlags.getFlags());
+            }
+        } else if (args.length == 3 && args[0].equalsIgnoreCase("member")) {
+            suggestions.addAll(PlayerFlags.getFlags());
+        } else if ((args.length == 3 && (args[0].equalsIgnoreCase("global") || args[0].equalsIgnoreCase("world")))
+                || (args.length == 4 && args[0].equalsIgnoreCase("member"))) {
+            suggestions.addAll(List.of("allow", "deny"));
+        }
 
-			long newFlags = currentState
-					? FlagsCalculator.removeFlag(flags, flag)
-					: FlagsCalculator.addFlag(flags, flag);
+        return suggestions;
+    }
 
-			region.setWorldFlags(newFlags);
+    private List<String> getAllMemberNames() {
+        List<String> names = new ArrayList<>();
 
-			Messages.send(sender, "commands.op_flagsoverride.6", flagInput, Formatter.getFlagState(!currentState), region.getName());
-		}
-	}
+        for (Region region : RegionManager.getAll()) {
+            for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
+                OfflinePlayer bukkitMember = member.getPlayer();
+                if (bukkitMember != null) {
+                    names.add(bukkitMember.getName());
+                }
+            }
+        }
 
-	private boolean parseFlagState(String input) {
-		return switch (input.toLowerCase()) {
-			case "1", "t", "true", "allow" -> true;
-			default -> false;
-		};
-	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		List<String> suggestions = new ArrayList<>();
-
-		if (args.length == 1) {
-			suggestions.addAll(List.of("member", "global", "world"));
-		} else if (args.length == 2 && args[0].equalsIgnoreCase("member")) {
-			if (player != null) {
-				for (Region region : RegionManager.getAll()) {
-					for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
-						OfflinePlayer bukkitMember = member.getPlayer();
-						if (bukkitMember != null) {
-							suggestions.add(bukkitMember.getName());
-						}
-					}
-				}
-			}
-		} else if (args.length == 2 && args[0].equalsIgnoreCase("global")) {
-			suggestions.addAll(PlayerFlags.getFlags());
-		} else if (args.length == 2 && args[0].equalsIgnoreCase("world")) {
-			suggestions.addAll(WorldFlags.getFlags());
-		} else if (args.length == 3 && args[0].equalsIgnoreCase("member")) {
-			suggestions.addAll(PlayerFlags.getFlags());
-		} else if ((args.length == 3 && args[0].equalsIgnoreCase("global"))
-				|| (args.length == 3 && args[0].equalsIgnoreCase("world"))
-				|| (args.length == 4 && args[0].equalsIgnoreCase("member"))) {
-			suggestions.addAll(List.of("allow", "deny"));
-		}
-
-		return suggestions;
-	}
+        return names;
+    }
 }
+
+
+
+
+

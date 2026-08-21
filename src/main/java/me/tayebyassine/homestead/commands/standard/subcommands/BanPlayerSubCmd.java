@@ -1,11 +1,8 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.Chunk;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.BanPlayerEvent;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.ControlFlags;
 import me.tayebyassine.homestead.managers.BanManager;
@@ -22,116 +19,125 @@ import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.chunks.ChunkUtility;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.Chunk;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BanPlayerSubCmd extends SubCommandBuilder {
-	public BanPlayerSubCmd() {
-		super("ban");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.players.ban"
-		));
-		setUsage("/hs ban [player] (reason)");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs ban}) that bans a player from the current region, with an optional reason.
+ */
+public final class BanPlayerSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public BanPlayerSubCmd() {
+        super("ban");
+        setRegionPermission("homestead.actions.regions.players.ban");
+        setUsage("/hs ban [player] (reason)");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.ban.0");
-			return true;
-		}
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		Region region = TargetRegionSession.getRegion(player);
+        if (args.length < 1) {
+            Messages.send(player, "commands.ban.0");
+            return true;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.ban.1");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.BAN_PLAYERS)) {
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.ban.1");
+            return true;
+        }
 
-		String targetName = args[0];
+        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+                ControlFlags.BAN_PLAYERS)) {
+            return true;
+        }
 
-		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
+        String targetName = args[0];
+        OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
-		if (target == null) {
-			Messages.send(player, "commands.ban.3", targetName);
-			return true;
-		}
+        if (target == null) {
+            Messages.send(player, "commands.ban.3", targetName);
+            return true;
+        }
 
-		if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
-			Messages.send(player, "commands.ban.4");
-			return true;
-		}
+        if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
+            Messages.send(player, "commands.ban.4");
+            return true;
+        }
 
-		RegionBan ban = BanManager.getBannedPlayer(region, target);
+        RegionBan ban = BanManager.getBannedPlayer(region, target);
 
-		if (ban != null) {
-			Messages.send(player, "commands.ban.5", targetName, ban.getReason());
-			return true;
-		}
+        if (ban != null) {
+            Messages.send(player, "commands.ban.5", targetName, ban.getReason());
+            return true;
+        }
 
-		SeRent rent = region.getRent();
+        SeRent rent = region.getRent();
 
-		if (rent != null && rent.isRenterer(target)) {
-			Messages.send(player, "commands.ban.6");
-			return true;
-		}
+        if (rent != null && rent.isRenterer(target)) {
+            Messages.send(player, "commands.ban.6");
+            return true;
+        }
 
-		String reason = Resources.<LanguageFile>get(ResourceType.Language).getString("common.default.reason");
+        String reason = Resources.<LanguageFile>get(ResourceType.Language).getString("common.default.reason");
 
-		if (args.length > 1) {
-			List<String> reasonList = Arrays.asList(args).subList(1, args.length);
-			reason = String.join(" ", reasonList);
-		}
+        if (args.length > 1) {
+            reason = String.join(" ", Arrays.asList(args).subList(1, args.length));
+        }
 
-		if (ColorTranslator.containsMiniMessageTag(reason)) {
-			Messages.send(player, "commands.ban.7");
-			return true;
-		}
+        if (ColorTranslator.containsMiniMessageTag(reason)) {
+            Messages.send(player, "commands.ban.7");
+            return true;
+        }
 
-		Player targetOnline = target.isOnline() ? target.getPlayer() : null;
+        Player targetOnline = target.isOnline() ? target.getPlayer() : null;
 
-		if (targetOnline != null && RegionManager.isPlayerInsideRegion(targetOnline, region)) {
-			Chunk chunk = ChunkUtility.findNearbyUnclaimedChunk(targetOnline.getLocation(), 64);
+        if (targetOnline != null && RegionManager.isPlayerInsideRegion(targetOnline, region)) {
+            Chunk chunk = ChunkUtility.findNearbyUnclaimedChunk(targetOnline.getLocation(), 64);
 
-			if (chunk != null) {
-				PlayerUtility.teleportPlayerToChunk(targetOnline, chunk);
-			}
-		}
+            if (chunk != null) {
+                PlayerUtility.teleportPlayerToChunk(targetOnline, chunk);
+            }
+        }
 
-		BanManager.banPlayer(region, target, reason);
-		LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, target.getName());
+        BanManager.banPlayer(region, target, reason);
+        LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, target.getName());
 
-		Messages.send(player, "commands.ban.8", targetName, region.getName(), reason);
+        Messages.send(player, "commands.ban.8", targetName, region.getName(), reason);
 
-		Homestead.callEvent(new BanPlayerEvent(region, target, reason));
+        Homestead.callEvent(new BanPlayerEvent(region, target, reason));
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		List<String> suggestions = new ArrayList<>();
+        List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 1) {
-			suggestions.addAll(Homestead.getInstance().getOnlinePlayerNamesSync());
-		}
+        if (args.length == 1) {
+            suggestions.addAll(Homestead.getInstance().getOnlinePlayerNamesSync());
+        }
 
-		return suggestions;
-	}
+        return suggestions;
+    }
 }
+
+
+

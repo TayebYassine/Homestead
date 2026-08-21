@@ -1,9 +1,8 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.BankWithdrawEvent;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.ControlFlags;
 import me.tayebyassine.homestead.logs.Logger;
@@ -15,98 +14,109 @@ import me.tayebyassine.homestead.util.java.NumberUtils;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WithdrawBankSubCmd extends SubCommandBuilder {
-	public WithdrawBankSubCmd() {
-		super("withdraw");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.withdraw_bank"
-		));
-		setUsage("/hs withdraw [amount/all]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs withdraw}) that withdraws money from the current region's bank
+ * into the player's balance.
+ */
+public final class WithdrawBankSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public WithdrawBankSubCmd() {
+        super("withdraw");
+        setRegionPermission("homestead.actions.regions.withdraw_bank");
+        setUsage("/hs withdraw [amount/all]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.withdraw.0");
-			return true;
-		}
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		if (!Homestead.VAULT.isEconomyReady()) {
-			Messages.send(player, "commands.withdraw.1");
+        if (args.length < 1) {
+            Messages.send(player, "commands.withdraw.0");
+            return true;
+        }
 
-			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
+        if (!Homestead.VAULT.isEconomyReady()) {
+            Messages.send(player, "commands.withdraw.1");
 
-			return true;
-		}
+            Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
-		Region region = TargetRegionSession.getRegion(player);
+            return true;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.withdraw.2");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (WarManager.isRegionInWar(region)) {
-			Messages.send(player, "commands.withdraw.3");
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.withdraw.2");
+            return true;
+        }
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.WITHDRAW_MONEY)) {
-			return true;
-		}
+        if (WarManager.isRegionInWar(region)) {
+            Messages.send(player, "commands.withdraw.3");
+            return true;
+        }
 
-		String amountInput = args[0];
+        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+                ControlFlags.WITHDRAW_MONEY)) {
+            return true;
+        }
 
-		if (!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput)) {
-			Messages.send(player, "commands.withdraw.5");
-			return true;
-		}
+        String amountInput = args[0];
 
-		double amount = amountInput.equalsIgnoreCase("all") ? region.getBank()
-				: Double.parseDouble(amountInput);
+        if (!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput)) {
+            Messages.send(player, "commands.withdraw.5");
+            return true;
+        }
 
-		if (!Double.isFinite(amount) || amount <= 0) {
-			Messages.send(player, "commands.withdraw.6");
-			return true;
-		}
+        double amount = amountInput.equalsIgnoreCase("all")
+                ? region.getBank()
+                : Double.parseDouble(amountInput);
 
-		if (amount > region.getBank()) {
-			Messages.send(player, "commands.withdraw.7");
-			return true;
-		}
+        if (!Double.isFinite(amount) || amount <= 0) {
+            Messages.send(player, "commands.withdraw.6");
+            return true;
+        }
 
-		PlayerBank.deposit(player, amount);
-		region.withdrawBank(amount);
+        if (amount > region.getBank()) {
+            Messages.send(player, "commands.withdraw.7");
+            return true;
+        }
 
-		Messages.send(player, "commands.withdraw.8", Formatter.getBalance(amount), region.getName());
+        PlayerBank.deposit(player, amount);
+        region.withdrawBank(amount);
 
-		Homestead.callEvent(new BankWithdrawEvent(region, amount));
+        Messages.send(player, "commands.withdraw.8", Formatter.getBalance(amount), region.getName());
 
-		return true;
-	}
+        Homestead.callEvent(new BankWithdrawEvent(region, amount));
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+        return true;
+    }
 
-		List<String> suggestions = new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		if (args.length == 1) {
-			suggestions.add("all");
-		}
+        List<String> suggestions = new ArrayList<>();
 
-		return suggestions;
-	}
+        if (args.length == 1) {
+            suggestions.add("all");
+        }
+
+        return suggestions;
+    }
 }
+
+
+

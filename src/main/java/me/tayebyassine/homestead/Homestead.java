@@ -13,13 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import me.tayebyassine.homestead.api.events.APIEvent;
-import me.tayebyassine.homestead.commands.CommandBuilder;
+import me.tayebyassine.homestead.commands.CommandRegistry;
 import me.tayebyassine.homestead.commands.brigadier.BrigadierCommands;
-import me.tayebyassine.homestead.commands.operator.ForceUnclaimCommand;
-import me.tayebyassine.homestead.commands.operator.HomesteadAdminCommand;
-import me.tayebyassine.homestead.commands.standard.ClaimCommand;
-import me.tayebyassine.homestead.commands.standard.RegionCommand;
-import me.tayebyassine.homestead.commands.standard.UnclaimCommand;
 import me.tayebyassine.homestead.database.Database;
 import me.tayebyassine.homestead.database.Driver;
 import me.tayebyassine.homestead.database.cache.*;
@@ -413,12 +408,7 @@ public class Homestead extends JavaPlugin {
 	}
 
 	private void registerCommands() {
-		CommandBuilder.register(new RegionCommand());
-		CommandBuilder.register(new ClaimCommand());
-		CommandBuilder.register(new UnclaimCommand());
-
-		CommandBuilder.register(new HomesteadAdminCommand());
-		CommandBuilder.register(new ForceUnclaimCommand());
+		CommandRegistry.registerAll();
 	}
 
 	private void registerEvents() {
@@ -455,7 +445,7 @@ public class Homestead extends JavaPlugin {
 		try {
 			if (CommodoreProvider.isSupported()) {
 				Commodore commodore = CommodoreProvider.getCommodore(this);
-				new BrigadierCommands(this, commodore);
+				new BrigadierCommands(commodore);
 			} else {
 				Logger.warning("Mojang Brigadier is not supported on this server software.");
 			}

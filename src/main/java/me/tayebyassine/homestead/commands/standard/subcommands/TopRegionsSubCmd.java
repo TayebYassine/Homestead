@@ -1,30 +1,35 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.gui.menus.TopRegionsMenu;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import java.util.List;
+/**
+ * Sub-command ({@code /hs top}) that opens the top regions menu.
+ */
+public final class TopRegionsSubCmd extends SubCommandBuilder {
 
-public class TopRegionsSubCmd extends SubCommandBuilder {
-	public TopRegionsSubCmd() {
-		super("top");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName()
-		));
-		setUsage("/hs top");
-		setPlayerOnly();
-	}
+    public TopRegionsSubCmd() {
+        super("top");
+        setRegionPermission();
+        setUsage("/hs top");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		new TopRegionsMenu(player, true);
+        new TopRegionsMenu(player, true);
 
-		return true;
-	}
+        return true;
+    }
 }
+
+
+

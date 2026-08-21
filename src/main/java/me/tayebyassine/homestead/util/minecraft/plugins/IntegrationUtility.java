@@ -11,8 +11,18 @@ public final class IntegrationUtility {
 		return Bukkit.getServer().getPluginManager().getPlugin(plugin.getName());
 	}
 
+	public static Plugin getInstance(String pluginName) {
+		return Bukkit.getServer().getPluginManager().getPlugin(pluginName);
+	}
+
 	public static boolean isEnabled(Integration plugin) {
 		Plugin instance = getInstance(plugin);
+
+		return instance != null && instance.isEnabled();
+	}
+
+	public static boolean isEnabled(String pluginName) {
+		Plugin instance = getInstance(pluginName);
 
 		return instance != null && instance.isEnabled();
 	}

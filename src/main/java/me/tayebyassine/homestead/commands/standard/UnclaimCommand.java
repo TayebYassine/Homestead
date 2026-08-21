@@ -1,9 +1,7 @@
 package me.tayebyassine.homestead.commands.standard;
 
-import org.bukkit.Chunk;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.api.events.ChunkUnclaimEvent;
 import me.tayebyassine.homestead.commands.CommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
@@ -20,93 +18,97 @@ import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.chunks.ChunkBorder;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.Chunk;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class UnclaimCommand extends CommandBuilder {
-	public UnclaimCommand() {
-		super("unclaim");
-		setPermission(List.of(
-				"homestead.commands.unclaim",
-				"homestead.actions.regions.chunks.unclaim"
-		));
-		setUsage("/unclaim");
-		setPlayerOnly();
-	}
+/**
+ * Player command ({@code /unclaim}) that unclaims the chunk the player is standing on.
+ */
+public final class UnclaimCommand extends CommandBuilder {
 
-	@Override
-	public boolean onDefaultExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public UnclaimCommand() {
+        super("unclaim");
+        setPermission(List.of(
+                "homestead.commands.unclaim",
+                "homestead.actions.regions.chunks.unclaim"
+        ));
+        setUsage("/unclaim");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
-			Cooldown.sendCooldownMessage(player);
-			return true;
-		}
+    @Override
+    public boolean onDefaultExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		Chunk chunk = player.getLocation().getChunk();
+        if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
+            Cooldown.sendCooldownMessage(player);
+            return true;
+        }
 
-		if (ChunkManager.isChunkInDisabledWorld(chunk)) {
-			Messages.send(player, "commands.unclaim.0");
-			return true;
-		}
+        Chunk chunk = player.getLocation().getChunk();
 
-		Region region = TargetRegionSession.getRegion(player);
+        if (ChunkManager.isChunkInDisabledWorld(chunk)) {
+            Messages.send(player, "commands.unclaim.0");
+            return true;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.unclaim.1");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(
-				region.getUniqueId(),
-				player,
-				ControlFlags.UNCLAIM_CHUNKS)) {
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.unclaim.1");
+            return true;
+        }
 
-		Region regionOwnsThisChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
+        if (!PlayerUtility.hasControlRegionPermissionFlag(
+                region.getUniqueId(),
+                player,
+                ControlFlags.UNCLAIM_CHUNKS)) {
+            return true;
+        }
 
-		if (regionOwnsThisChunk == null) {
-			Messages.send(player, "commands.unclaim.3");
-			return true;
-		}
+        Region regionOwnsThisChunk = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-		if (regionOwnsThisChunk.getUniqueId() != region.getUniqueId()) {
-			Messages.send(player, "commands.unclaim.4", region.getName());
-			return true;
-		}
+        if (regionOwnsThisChunk == null) {
+            Messages.send(player, "commands.unclaim.3");
+            return true;
+        }
 
-		Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
+        if (regionOwnsThisChunk.getUniqueId() != region.getUniqueId()) {
+            Messages.send(player, "commands.unclaim.4", region.getName());
+            return true;
+        }
 
-		ChunkManager.Error error = ChunkManager.unclaimChunk(region, chunk);
+        Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
-		if (error == null) {
-			double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
-			if (chunkPrice > 0) {
-				PlayerBank.deposit(region.getOwner(), chunkPrice);
-			}
+        ChunkManager.Error error = ChunkManager.unclaimChunk(region, chunk);
 
-			Messages.send(player, "commands.unclaim.5", region.getName(), Formatter.getBalance(chunkPrice));
+        if (error == null) {
+            double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
 
-			LogManager.addLog(region, player, LogManager.PredefinedLog.UNCLAIM_CHUNK);
+            if (chunkPrice > 0) {
+                PlayerBank.deposit(region.getOwner(), chunkPrice);
+            }
 
-			ChunkBorder.show(player);
+            Messages.send(player, "commands.unclaim.5", region.getName(), Formatter.getBalance(chunkPrice));
 
-			Homestead.callEvent(new ChunkUnclaimEvent(region, chunk));
-		} else {
-			switch (error) {
-				case REGION_NOT_FOUND -> Messages.send(player, "commands.unclaim.6");
-				case CHUNK_WOULD_SPLIT_REGION -> Messages.send(player, "commands.unclaim.7");
-			}
-		}
+            LogManager.addLog(region, player, LogManager.PredefinedLog.UNCLAIM_CHUNK);
 
-		return true;
-	}
+            ChunkBorder.show(player);
 
-	@Override
-	public List<String> onDefaultTabComplete(CommandSender sender, String[] args) {
-		return new ArrayList<>();
-	}
+            Homestead.callEvent(new ChunkUnclaimEvent(region, chunk));
+        } else {
+            switch (error) {
+                case REGION_NOT_FOUND -> Messages.send(player, "commands.unclaim.6");
+                case CHUNK_WOULD_SPLIT_REGION -> Messages.send(player, "commands.unclaim.7");
+            }
+        }
+
+        return true;
+    }
 }

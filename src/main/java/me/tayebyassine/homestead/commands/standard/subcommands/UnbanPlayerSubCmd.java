@@ -1,10 +1,8 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.UnbanPlayerEvent;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.ControlFlags;
 import me.tayebyassine.homestead.managers.BanManager;
@@ -14,86 +12,96 @@ import me.tayebyassine.homestead.models.RegionBan;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UnbanPlayerSubCmd extends SubCommandBuilder {
-	public UnbanPlayerSubCmd() {
-		super("unban");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.players.unban"
-		));
-		setUsage("/hs unban [player]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs unban}) that unbans a player from the current region.
+ */
+public final class UnbanPlayerSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public UnbanPlayerSubCmd() {
+        super("unban");
+        setRegionPermission("homestead.actions.regions.players.unban");
+        setUsage("/hs unban [player]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.unban.0");
-			return true;
-		}
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		Region region = TargetRegionSession.getRegion(player);
+        if (args.length < 1) {
+            Messages.send(player, "commands.unban.0");
+            return true;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.unban.1");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.UNBAN_PLAYERS)) {
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.unban.1");
+            return true;
+        }
 
-		String targetName = args[0];
+        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+                ControlFlags.UNBAN_PLAYERS)) {
+            return true;
+        }
 
-		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
+        String targetName = args[0];
 
-		if (target == null) {
-			Messages.send(player, "commands.unban.2", targetName);
-			return true;
-		}
+        OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
-		if (!BanManager.isBanned(region, target)) {
-			Messages.send(player, "commands.unban.3");
-			return true;
-		}
+        if (target == null) {
+            Messages.send(player, "commands.unban.2", targetName);
+            return true;
+        }
 
-		BanManager.unbanPlayer(region, target);
+        if (!BanManager.isBanned(region, target)) {
+            Messages.send(player, "commands.unban.3");
+            return true;
+        }
 
-		Messages.send(player, "commands.unban.4");
+        BanManager.unbanPlayer(region, target);
 
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, target.getName());
+        Messages.send(player, "commands.unban.4");
 
-		Homestead.callEvent(new UnbanPlayerEvent(region, player));
+        LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, target.getName());
 
-		return true;
-	}
+        Homestead.callEvent(new UnbanPlayerEvent(region, player));
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+        return true;
+    }
 
-		List<String> suggestions = new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		if (args.length == 1) {
-			Region region = TargetRegionSession.getRegion(player);
+        List<String> suggestions = new ArrayList<>();
 
-			if (region != null) {
-				for (RegionBan each : BanManager.getBansOfRegion(region)) {
-					suggestions.add(each.getPlayerName());
-				}
-			}
-		}
+        if (args.length == 1) {
+            Region region = TargetRegionSession.getRegion(player);
 
-		return suggestions;
-	}
+            if (region != null) {
+                for (RegionBan ban : BanManager.getBansOfRegion(region)) {
+                    suggestions.add(ban.getPlayerName());
+                }
+            }
+        }
+
+        return suggestions;
+    }
 }
+
+
+

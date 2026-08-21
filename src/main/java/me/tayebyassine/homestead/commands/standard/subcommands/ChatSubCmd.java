@@ -1,9 +1,8 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.RegionChatEvent;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
@@ -11,60 +10,66 @@ import me.tayebyassine.homestead.sessions.PrivateChatSession;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.List;
 
-public class ChatSubCmd extends SubCommandBuilder {
-	public ChatSubCmd() {
-		super("chat");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.chat"
-		));
-		setUsage("/hs chat [message]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs chat}) that toggles private region chat or sends a message
+ * to the current region's members.
+ */
+public final class ChatSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public ChatSubCmd() {
+        super("chat");
+        setRegionPermission("homestead.actions.regions.chat");
+        setUsage("/hs chat [message]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		Region region = TargetRegionSession.getRegion(player);
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.chat.0");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (args.length < 1) {
-			if (PrivateChatSession.hasSession(player)) {
-				PrivateChatSession.removeSession(player);
+        if (region == null) {
+            Messages.send(player, "commands.chat.0");
+            return true;
+        }
 
-				Messages.send(player, "commands.chat.2");
-			} else {
-				PrivateChatSession.newSession(player);
+        if (args.length < 1) {
+            if (PrivateChatSession.hasSession(player)) {
+                PrivateChatSession.removeSession(player);
 
-				Messages.send(player, "commands.chat.1");
-			}
+                Messages.send(player, "commands.chat.2");
+            } else {
+                PrivateChatSession.newSession(player);
 
-			return true;
-		}
+                Messages.send(player, "commands.chat.1");
+            }
 
-		List<String> messageList = Arrays.asList(args).subList(0, args.length);
-		String message = String.join(" ", messageList);
+            return true;
+        }
 
-		if (ColorTranslator.containsMiniMessageTag(message)) {
-			Messages.send(player, "commands.chat.3");
-			return true;
-		}
+        String message = String.join(" ", Arrays.asList(args));
 
-		RegionManager.sendPrivateChat(region, player, message);
+        if (ColorTranslator.containsMiniMessageTag(message)) {
+            Messages.send(player, "commands.chat.3");
+            return true;
+        }
 
-		Homestead.callEvent(new RegionChatEvent(region, player, message));
+        RegionManager.sendPrivateChat(region, player, message);
 
-		return true;
-	}
+        Homestead.callEvent(new RegionChatEvent(region, player, message));
+
+        return true;
+    }
 }
+
+
+

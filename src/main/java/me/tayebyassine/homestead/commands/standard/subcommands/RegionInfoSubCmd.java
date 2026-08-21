@@ -1,69 +1,79 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.gui.menus.RegionInfoMenu;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegionInfoSubCmd extends SubCommandBuilder {
-	public RegionInfoSubCmd() {
-		super("info");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName()
-		));
-		setUsage("/hs info (region)");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs info}) that opens the info menu of a region,
+ * or of the region the sender is standing in when none is specified.
+ */
+public final class RegionInfoSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public RegionInfoSubCmd() {
+        super("info");
+        setRegionPermission();
+        setUsage("/hs info (region)");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length > 0) {
-			String regionName = args[0];
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-			Region region = RegionManager.findRegion(regionName);
+        if (args.length > 0) {
+            String regionName = args[0];
 
-			if (region == null) {
-				Messages.send(player, "commands.info.0", regionName);
-				return true;
-			}
+            Region region = RegionManager.findRegion(regionName);
 
-			new RegionInfoMenu(player, region, player::closeInventory);
-		} else {
-			Region region = ChunkManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
+            if (region == null) {
+                Messages.send(player, "commands.info.0", regionName);
+                return true;
+            }
 
-			if (region == null) {
-				Messages.send(player, "commands.info.1");
-				return true;
-			}
+            new RegionInfoMenu(player, region, player::closeInventory);
+        } else {
+            Region region = ChunkManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
 
-			new RegionInfoMenu(player, region, player::closeInventory);
-		}
+            if (region == null) {
+                Messages.send(player, "commands.info.1");
+                return true;
+            }
 
-		return true;
-	}
+            new RegionInfoMenu(player, region, player::closeInventory);
+        }
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+        return true;
+    }
 
-		List<String> suggestions = new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		if (args.length == 1) {
-			suggestions.addAll(RegionManager.getRegionNames());
-		}
+        List<String> suggestions = new ArrayList<>();
 
-		return suggestions;
-	}
+        if (args.length == 1) {
+            suggestions.addAll(RegionManager.getRegionNames());
+        }
+
+        return suggestions;
+    }
 }
+
+
+

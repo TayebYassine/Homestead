@@ -1,14 +1,11 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.flags.WorldFlags;
 import me.tayebyassine.homestead.logs.Logger;
-import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.managers.WarManager;
 import me.tayebyassine.homestead.models.Region;
@@ -21,228 +18,242 @@ import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.java.NumberUtils;
 import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class WarSubCmd extends SubCommandBuilder {
-	public WarSubCmd() {
-		super("war");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.war"
-		));
-		setUsage("/hs war [action] (params)");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs war}) that manages wars between regions:
+ * declare, surrender, or inspect the current war.
+ */
+public final class WarSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public WarSubCmd() {
+        super("war");
+        setRegionPermission("homestead.actions.regions.war");
+        setUsage("/hs war [action] (params)");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		boolean isEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("wars.enabled");
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		if (!isEnabled) {
-			Messages.send(player, "commands.war.1");
-			return true;
-		}
+        if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("wars.enabled")) {
+            Messages.send(player, "commands.war.1");
+            return true;
+        }
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.war.2", getUsage());
-			return true;
-		}
+        if (args.length < 1) {
+            Messages.send(player, "commands.war.2", getUsage());
+            return true;
+        }
 
-		if (!Homestead.VAULT.isEconomyReady()) {
-			Messages.send(player, "commands.war.3");
+        if (!Homestead.VAULT.isEconomyReady()) {
+            Messages.send(player, "commands.war.3");
 
-			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
+            Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
-			return true;
-		}
+            return true;
+        }
 
-		switch (args[0]) {
-			case "declare": {
-				Region region = TargetRegionSession.getRegion(player);
+        return switch (args[0]) {
+            case "declare" -> declareWar(player, args);
+            case "surrender" -> surrender(player);
+            case "info" -> warInfo(player);
+            default -> true;
+        };
+    }
 
-				if (region == null) {
-					Messages.send(player, "commands.war.4");
-					return true;
-				}
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-				if (WarManager.isRegionInWar(region.getUniqueId())) {
-					Messages.send(player, "commands.war.5");
-					return true;
-				}
+        List<String> suggestions = new ArrayList<>();
 
-				if (args.length < 4) {
-					Messages.send(player, "commands.war.2", "/hs war declare [target] [prize] (war name)");
-					return true;
-				}
+        if (args.length == 2 && args[0].equalsIgnoreCase("declare")) {
+            suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
+        }
 
-				String targetRegionName = args[1];
-				Region targetRegion = RegionManager.findRegion(targetRegionName);
+        return suggestions;
+    }
 
-				if (targetRegion == null) {
-					Messages.send(player, "commands.war.6");
-					return true;
-				}
+    private boolean declareWar(Player player, String[] args) {
+        Region region = TargetRegionSession.getRegion(player);
 
-				if (!region.isOwner(player) && MemberManager.isMemberOfRegion(region, player)) {
-					Messages.send(player, "commands.war.7");
-					return true;
-				}
+        if (region == null) {
+            Messages.send(player, "commands.war.4");
+            return true;
+        }
 
-				if (region.getUniqueId() == targetRegion.getUniqueId() || region.isOwner(targetRegion.getOwnerId())) {
-					Messages.send(player, "commands.war.8");
-					return true;
-				}
+        if (WarManager.isRegionInWar(region.getUniqueId())) {
+            Messages.send(player, "commands.war.5");
+            return true;
+        }
 
-				if (!(region.isWorldFlagSet(WorldFlags.WARS) && targetRegion.isWorldFlagSet(WorldFlags.WARS))) {
-					Messages.send(player, "commands.war.9");
-					return true;
-				}
+        if (args.length < 4) {
+            Messages.send(player, "commands.war.2", "/hs war declare [target] [prize] (war name)");
+            return true;
+        }
 
-				if (WarManager.isRegionInWar(targetRegion.getUniqueId())) {
-					Messages.send(player, "commands.war.10");
-					return true;
-				}
+        Region targetRegion = RegionManager.findRegion(args[1]);
 
-				String prizeInput = args[2];
+        if (targetRegion == null) {
+            Messages.send(player, "commands.war.6");
+            return true;
+        }
 
-				if ((!NumberUtils.isValidDouble(prizeInput))
-						|| (NumberUtils.isValidDouble(prizeInput) && Double.parseDouble(prizeInput) > Integer.MAX_VALUE)) {
-					Messages.send(player, "commands.war.11");
-					return true;
-				}
+        if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
+            Messages.send(player, "commands.war.7");
+            return true;
+        }
 
-				double prize = Double.parseDouble(prizeInput);
+        if (region.getUniqueId() == targetRegion.getUniqueId()
+                || region.isOwner(targetRegion.getOwnerId())) {
+            Messages.send(player, "commands.war.8");
+            return true;
+        }
 
-				double minPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.min-prize");
-				double maxPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.max-prize");
+        if (!(region.isWorldFlagSet(WorldFlags.WARS) && targetRegion.isWorldFlagSet(WorldFlags.WARS))) {
+            Messages.send(player, "commands.war.9");
+            return true;
+        }
 
-				if (prize < minPrize || prize > maxPrize) {
-					Messages.send(player, "commands.war.12", Formatter.getBalance(minPrize), Formatter.getBalance(maxPrize));
-					return true;
-				}
+        if (WarManager.isRegionInWar(targetRegion.getUniqueId())) {
+            Messages.send(player, "commands.war.10");
+            return true;
+        }
 
-				if (!(targetRegion.getBank() >= prize && region.getBank() >= prize)) {
-					Messages.send(player, "commands.war.13");
-					return true;
-				}
+        String prizeInput = args[2];
 
-				List<String> nameList = Arrays.asList(args).subList(3, args.length);
-				String name = String.join(" ", nameList);
+        if (!NumberUtils.isValidDouble(prizeInput) || Double.parseDouble(prizeInput) > Integer.MAX_VALUE) {
+            Messages.send(player, "commands.war.11");
+            return true;
+        }
 
-				if (name.isEmpty()) name = "War";
+        double prize = Double.parseDouble(prizeInput);
 
-				if (name.length() > 128) {
-					Messages.send(player, "commands.war.14");
-					return true;
-				}
+        double minPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.min-prize");
+        double maxPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.max-prize");
 
-				if (ColorTranslator.containsMiniMessageTag(name)) {
-					Messages.send(player, "commands.war.14");
-					return true;
-				}
+        if (prize < minPrize || prize > maxPrize) {
+            Messages.send(player, "commands.war.12", Formatter.getBalance(minPrize), Formatter.getBalance(maxPrize));
+            return true;
+        }
 
-				War war = WarManager.declareWar(name, prize, region, targetRegion);
+        if (!(targetRegion.getBank() >= prize && region.getBank() >= prize)) {
+            Messages.send(player, "commands.war.13");
+            return true;
+        }
 
-				WarManager.broadcastDeclarationOfWar(war);
+        String name = String.join(" ", Arrays.asList(args).subList(3, args.length));
 
-				break;
-			}
+        if (name.isEmpty()) {
+            name = "War";
+        }
 
-			case "surrender": {
-				Region region = TargetRegionSession.getRegion(player);
+        if (name.length() > 128 || ColorTranslator.containsMiniMessageTag(name)) {
+            Messages.send(player, "commands.war.14");
+            return true;
+        }
 
-				if (region == null) {
-					Messages.send(player, "commands.war.4");
-					return true;
-				}
+        War war = WarManager.declareWar(name, prize, region, targetRegion);
 
-				if (!WarManager.isRegionInWar(region.getUniqueId())) {
-					Messages.send(player, "commands.war.15");
-					return true;
-				}
+        WarManager.broadcastDeclarationOfWar(war);
 
-				War war = WarManager.findWarByRegion(region.getUniqueId());
+        return true;
+    }
 
-				final List<OfflinePlayer> warMembers = List.copyOf(WarManager.getMembersOfWar(war.getUniqueId()));
+    private boolean surrender(Player player) {
+        Region region = TargetRegionSession.getRegion(player);
 
-				war = WarManager.removeRegionFromWar(region.getUniqueId());
+        if (region == null) {
+            Messages.send(player, "commands.war.4");
+            return true;
+        }
 
-				if (war != null) {
-					Region winner = war.getWinner();
+        if (!WarManager.isRegionInWar(region.getUniqueId())) {
+            Messages.send(player, "commands.war.15");
+            return true;
+        }
 
-					if (winner != null) {
-						double prize = war.getPrize();
+        War war = WarManager.findWarByRegion(region.getUniqueId());
 
-						region.withdrawBank(prize);
-						winner.depositBank(prize);
+        final List<OfflinePlayer> warMembers = List.copyOf(WarManager.getMembersOfWar(war.getUniqueId()));
 
-						OfflinePlayer offlineOwner = winner.getOwner();
-						Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
+        war = WarManager.removeRegionFromWar(region.getUniqueId());
 
-						if (owner != null) {
-							Messages.send(owner, "common.war_player_winner");
+        if (war != null) {
+            Region winner = war.getWinner();
 
-							Cooldown.startCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED);
-						}
-					}
+            if (winner != null) {
+                double prize = war.getPrize();
 
-					OfflinePlayer offlineOwner = region.getOwner();
-					Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
+                region.withdrawBank(prize);
+                winner.depositBank(prize);
 
-					if (owner != null) {
-						Cooldown.startCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED);
-					}
+                Player owner = getOnlineOwner(winner);
 
-					WarManager.tellPlayersWarEnded(warMembers, winner);
+                if (owner != null) {
+                    Messages.send(owner, "common.war_player_winner");
 
-					WarManager.endWar(war.getUniqueId());
-				}
+                    Cooldown.startCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED);
+                }
+            }
 
-				Messages.send(player, "commands.war.16");
+            Player owner = getOnlineOwner(region);
 
-				break;
-			}
+            if (owner != null) {
+                Cooldown.startCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED);
+            }
 
-			case "info": {
-				Region region = TargetRegionSession.getRegion(player);
+            WarManager.tellPlayersWarEnded(warMembers, winner);
 
-				if (region == null) {
-					Messages.send(player, "commands.war.4");
-					return true;
-				}
+            WarManager.endWar(war.getUniqueId());
+        }
 
-				War war = WarManager.findWarByRegion(region.getUniqueId());
+        Messages.send(player, "commands.war.16");
 
-				if (war == null) {
-					Messages.send(player, "commands.war.15");
-					return true;
-				}
+        return true;
+    }
 
-				Messages.send(player, "commands.war.17", Formatter.getRegionsOfWar(war), Formatter.getBalance(war.getPrize()));
-			}
-		}
+    private boolean warInfo(Player player) {
+        Region region = TargetRegionSession.getRegion(player);
 
-		return true;
-	}
+        if (region == null) {
+            Messages.send(player, "commands.war.4");
+            return true;
+        }
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+        War war = WarManager.findWarByRegion(region.getUniqueId());
 
-		List<String> suggestions = new ArrayList<>();
+        if (war == null) {
+            Messages.send(player, "commands.war.15");
+            return true;
+        }
 
-		if (args.length == 2 && args[0].equalsIgnoreCase("declare")) {
-			suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
-		}
+        Messages.send(player, "commands.war.17", Formatter.getRegionsOfWar(war), Formatter.getBalance(war.getPrize()));
 
-		return suggestions;
-	}
+        return true;
+    }
+
+    private Player getOnlineOwner(Region region) {
+        OfflinePlayer offlineOwner = region.getOwner();
+
+        return offlineOwner != null && offlineOwner.isOnline() ? offlineOwner.getPlayer() : null;
+    }
 }
+
+
+

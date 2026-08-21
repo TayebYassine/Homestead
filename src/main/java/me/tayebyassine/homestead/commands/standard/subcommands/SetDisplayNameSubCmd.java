@@ -1,9 +1,8 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.RegionDisplaynameUpdateEvent;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.flags.ControlFlags;
@@ -15,79 +14,85 @@ import me.tayebyassine.homestead.util.java.StringUtils;
 import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.List;
 
-public class SetDisplayNameSubCmd extends SubCommandBuilder {
-	public SetDisplayNameSubCmd() {
-		super("setdisplayname");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.update.displayname"
-		));
-		setUsage("/hs setdisplayname [name]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs setdisplayname}) that sets the display name of the current region.
+ */
+public final class SetDisplayNameSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public SetDisplayNameSubCmd() {
+        super("setdisplayname");
+        setRegionPermission("homestead.actions.regions.update.displayname");
+        setUsage("/hs setdisplayname [name]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		Region region = TargetRegionSession.getRegion(player);
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.setdisplayname.0");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.setdisplayname.1");
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.setdisplayname.0");
+            return true;
+        }
 
-		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) {
-			Cooldown.sendCooldownMessage(player);
-			return true;
-		}
+        if (args.length < 1) {
+            Messages.send(player, "commands.setdisplayname.1");
+            return true;
+        }
 
-		List<String> regionDisplayNameList = Arrays.asList(args).subList(0, args.length);
-		String regionDisplayName = String.join(" ", regionDisplayNameList);
+        if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE)) {
+            Cooldown.sendCooldownMessage(player);
+            return true;
+        }
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.RENAME_REGION)) {
-			return true;
-		}
+        String regionDisplayName = String.join(" ", Arrays.asList(args));
 
-		if (!StringUtils.isValidRegionDisplayName(regionDisplayName)) {
-			Messages.send(player, "commands.setdisplayname.3");
-			return true;
-		}
+        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+                ControlFlags.RENAME_REGION)) {
+            return true;
+        }
 
-		final String oldDisplayName = region.getDisplayName();
+        if (!StringUtils.isValidRegionDisplayName(regionDisplayName)) {
+            Messages.send(player, "commands.setdisplayname.3");
+            return true;
+        }
 
-		if (oldDisplayName != null && oldDisplayName.equals(regionDisplayName)) {
-			Messages.send(player, "commands.setdisplayname.4");
-			return true;
-		}
+        final String oldDisplayName = region.getDisplayName();
 
-		if (ColorTranslator.containsMiniMessageTag(regionDisplayName)) {
-			Messages.send(player, "commands.setdisplayname.5");
-			return true;
-		}
+        if (oldDisplayName != null && oldDisplayName.equals(regionDisplayName)) {
+            Messages.send(player, "commands.setdisplayname.4");
+            return true;
+        }
 
-		Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
+        if (ColorTranslator.containsMiniMessageTag(regionDisplayName)) {
+            Messages.send(player, "commands.setdisplayname.5");
+            return true;
+        }
 
-		region.setDisplayName(regionDisplayName);
+        Cooldown.startCooldown(player, Cooldown.Type.REGION_RENAME_CHANGE);
 
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DISPLAYNAME, regionDisplayName);
+        region.setDisplayName(regionDisplayName);
 
-		Messages.send(player, "commands.setdisplayname.6", oldDisplayName == null ? Formatter.getNone() : oldDisplayName, regionDisplayName);
+        LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_REGION_DISPLAYNAME, regionDisplayName);
 
-		Homestead.callEvent(new RegionDisplaynameUpdateEvent(region, oldDisplayName, regionDisplayName));
+        Messages.send(player, "commands.setdisplayname.6",
+                oldDisplayName == null ? Formatter.getNone() : oldDisplayName, regionDisplayName);
 
-		return true;
-	}
+        Homestead.callEvent(new RegionDisplaynameUpdateEvent(region, oldDisplayName, regionDisplayName));
+
+        return true;
+    }
 }
+
+
+

@@ -1,11 +1,9 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.InvitePlayerEvent;
 import me.tayebyassine.homestead.api.events.PlayerJoinRegionEvent;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.ControlFlags;
 import me.tayebyassine.homestead.managers.BanManager;
@@ -21,121 +19,132 @@ import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrustPlayerSubCmd extends SubCommandBuilder {
-	public TrustPlayerSubCmd() {
-		super("trust");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.players.trust"
-		));
-		setUsage("/hs trust [player]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs trust}) that invites or instantly trusts a player
+ * in the current region, depending on the instant-trust system.
+ */
+public final class TrustPlayerSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public TrustPlayerSubCmd() {
+        super("trust");
+        setRegionPermission("homestead.actions.regions.players.trust");
+        setUsage("/hs trust [player]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.trust.0");
-			return true;
-		}
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		Region region = TargetRegionSession.getRegion(player);
+        if (args.length < 1) {
+            Messages.send(player, "commands.trust.0");
+            return true;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.trust.1");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.TRUST_PLAYERS)) {
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.trust.1");
+            return true;
+        }
 
-		String targetName = args[0];
+        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+                ControlFlags.TRUST_PLAYERS)) {
+            return true;
+        }
 
-		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
+        String targetName = args[0];
 
-		if (target == null) {
-			Messages.send(player, "commands.trust.2", targetName);
-			return true;
-		}
+        OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
-		if (BanManager.isBanned(region, target)) {
-			Messages.send(player, "commands.trust.3");
-			return true;
-		}
+        if (target == null) {
+            Messages.send(player, "commands.trust.2", targetName);
+            return true;
+        }
 
-		if (MemberManager.isMemberOfRegion(region, target)) {
-			Messages.send(player, "commands.trust.4");
-			return true;
-		}
+        if (BanManager.isBanned(region, target)) {
+            Messages.send(player, "commands.trust.3");
+            return true;
+        }
 
-		if (InviteManager.isInvited(region, target)) {
-			Messages.send(player, "commands.trust.5");
-			return true;
-		}
+        if (MemberManager.isMemberOfRegion(region, target)) {
+            Messages.send(player, "commands.trust.4");
+            return true;
+        }
 
-		if (region.isOwner(target)) {
-			Messages.send(player, "commands.trust.6");
-			return true;
-		}
+        if (InviteManager.isInvited(region, target)) {
+            Messages.send(player, "commands.trust.5");
+            return true;
+        }
 
-		SeRent rent = region.getRent();
+        if (region.isOwner(target)) {
+            Messages.send(player, "commands.trust.6");
+            return true;
+        }
 
-		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
-			Messages.send(player, "commands.trust.7");
-			return true;
-		}
+        SeRent rent = region.getRent();
 
-		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-			Messages.send(player, "commands.trust.8");
-			return true;
-		}
+        if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
+            Messages.send(player, "commands.trust.7");
+            return true;
+        }
 
-		if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
-			MemberManager.addMemberToRegion(target, region);
+        if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
+            Messages.send(player, "commands.trust.8");
+            return true;
+        }
 
-			LogManager.addLog(region, target, LogManager.PredefinedLog.JOIN_REGION);
+        if (Resources.<RegionsFile>get(ResourceType.Regions).isInstantTrustSystemEnabled()) {
+            MemberManager.addMemberToRegion(target, region);
 
-			Messages.send(player, "commands.trust.9");
+            LogManager.addLog(region, target, LogManager.PredefinedLog.JOIN_REGION);
 
-			Homestead.callEvent(new PlayerJoinRegionEvent(region, target));
-		} else {
-			InviteManager.invitePlayer(region, target);
+            Messages.send(player, "commands.trust.9");
 
-			LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, target.getName());
+            Homestead.callEvent(new PlayerJoinRegionEvent(region, target));
+        } else {
+            InviteManager.invitePlayer(region, target);
 
-			Messages.send(player, "commands.trust.10");
+            LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, target.getName());
 
-			if (target.isOnline()) {
-				Messages.send(target.getPlayer(), "commands.trust.11");
-			}
+            Messages.send(player, "commands.trust.10");
 
-			Homestead.callEvent(new InvitePlayerEvent(region, target));
-		}
+            if (target.isOnline()) {
+                Messages.send(target.getPlayer(), "commands.trust.11");
+            }
 
-		return true;
-	}
+            Homestead.callEvent(new InvitePlayerEvent(region, target));
+        }
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+        return true;
+    }
 
-		List<String> suggestions = new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		if (args.length == 1) {
-			suggestions.addAll(Homestead.getInstance().getOfflinePlayerNamesSync());
-		}
+        List<String> suggestions = new ArrayList<>();
 
-		return suggestions;
-	}
+        if (args.length == 1) {
+            suggestions.addAll(Homestead.getInstance().getOfflinePlayerNamesSync());
+        }
+
+        return suggestions;
+    }
 }
+
+
+

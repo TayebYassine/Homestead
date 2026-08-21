@@ -1,9 +1,8 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.BankDepositEvent;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.ControlFlags;
 import me.tayebyassine.homestead.logs.Logger;
@@ -16,102 +15,114 @@ import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DepositBankSubCmd extends SubCommandBuilder {
-	public DepositBankSubCmd() {
-		super("deposit");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.deposit_bank"
-		));
-		setUsage("/hs deposit [amount/all]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs deposit}) that deposits money from the player's balance
+ * into the current region's bank.
+ */
+public final class DepositBankSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public DepositBankSubCmd() {
+        super("deposit");
+        setRegionPermission("homestead.actions.regions.deposit_bank");
+        setUsage("/hs deposit [amount/all]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.deposit.0");
-			return true;
-		}
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		if (!Homestead.VAULT.isEconomyReady()) {
-			Messages.send(player, "commands.deposit.1");
+        if (args.length < 1) {
+            Messages.send(player, "commands.deposit.0");
+            return true;
+        }
 
-			Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
+        if (!Homestead.VAULT.isEconomyReady()) {
+            Messages.send(player, "commands.deposit.1");
 
-			return true;
-		}
+            Logger.warning(Logger.PredefinedMessage.ECONOMY_INTEGRATION_DISABLED);
 
-		Region region = TargetRegionSession.getRegion(player);
+            return true;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.deposit.2");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (WarManager.isRegionInWar(region)) {
-			Messages.send(player, "commands.deposit.3");
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.deposit.2");
+            return true;
+        }
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.DEPOSIT_MONEY)) {
-			return true;
-		}
+        if (WarManager.isRegionInWar(region)) {
+            Messages.send(player, "commands.deposit.3");
+            return true;
+        }
 
-		String amountInput = args[0];
+        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
+                ControlFlags.DEPOSIT_MONEY)) {
+            return true;
+        }
 
-		if (!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput)) {
-			Messages.send(player, "commands.deposit.5");
-			return true;
-		}
+        String amountInput = args[0];
 
-		double amount = amountInput.equalsIgnoreCase("all") ? PlayerBank.get(player) : Double.parseDouble(amountInput);
+        if (!amountInput.equalsIgnoreCase("all") && !NumberUtils.isValidDouble(amountInput)) {
+            Messages.send(player, "commands.deposit.5");
+            return true;
+        }
 
-		if (!Double.isFinite(amount) || amount <= 0) {
-			Messages.send(player, "commands.deposit.6");
-			return true;
-		}
+        double amount = amountInput.equalsIgnoreCase("all")
+                ? PlayerBank.get(player)
+                : Double.parseDouble(amountInput);
 
-		if (amount > PlayerBank.get(player)) {
-			Messages.send(player, "commands.deposit.7");
-			return true;
-		}
+        if (!Double.isFinite(amount) || amount <= 0) {
+            Messages.send(player, "commands.deposit.6");
+            return true;
+        }
 
-		if ((amount + region.getBank()) >= Limits.getRegionLimit(region, Limits.LimitType.MAX_BANK_DEPOSIT)) {
-			Messages.send(player, "commands.deposit.8");
-			return true;
-		}
+        if (amount > PlayerBank.get(player)) {
+            Messages.send(player, "commands.deposit.7");
+            return true;
+        }
 
-		PlayerBank.withdraw(player, amount);
-		region.depositBank(amount);
+        if ((amount + region.getBank()) >= Limits.getRegionLimit(region, Limits.LimitType.MAX_BANK_DEPOSIT)) {
+            Messages.send(player, "commands.deposit.8");
+            return true;
+        }
 
-		Messages.send(player, "commands.deposit.9", Formatter.getBalance(amount), region.getName());
+        PlayerBank.withdraw(player, amount);
+        region.depositBank(amount);
 
-		Homestead.callEvent(new BankDepositEvent(region, amount));
+        Messages.send(player, "commands.deposit.9", Formatter.getBalance(amount), region.getName());
 
-		return true;
-	}
+        Homestead.callEvent(new BankDepositEvent(region, amount));
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+        return true;
+    }
 
-		List<String> suggestions = new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		if (args.length == 1) {
-			suggestions.add("all");
-		}
+        List<String> suggestions = new ArrayList<>();
 
-		return suggestions;
-	}
+        if (args.length == 1) {
+            suggestions.add("all");
+        }
+
+        return suggestions;
+    }
 }
+
+
+

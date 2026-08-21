@@ -1,7 +1,6 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.gui.menus.MapColorMenu;
@@ -12,85 +11,96 @@ import me.tayebyassine.homestead.resources.files.ConfigFile;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.plugins.MapColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetMapColorSubCmd extends SubCommandBuilder {
-	public SetMapColorSubCmd() {
-		super("setmapcolor");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.update.map_color"
-		));
-		setUsage("/hs setmapcolor [color]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs setmapcolor}) that changes the map color of the current region,
+ * or opens the color menu when no color is specified.
+ */
+public final class SetMapColorSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public SetMapColorSubCmd() {
+        super("setmapcolor");
+        setRegionPermission("homestead.actions.regions.update.map_color");
+        setUsage("/hs setmapcolor [color]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		Region region = TargetRegionSession.getRegion(player);
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.setmapcolor.0");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
-			Messages.send(player, "commands.setmapcolor.1");
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.setmapcolor.0");
+            return true;
+        }
 
-		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
-			Cooldown.sendCooldownMessage(player);
-			return true;
-		}
+        if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
+            Messages.send(player, "commands.setmapcolor.1");
+            return true;
+        }
 
-		if (args.length < 1) {
-			new MapColorMenu(player, region);
+        if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE)) {
+            Cooldown.sendCooldownMessage(player);
+            return true;
+        }
 
-			return true;
-		}
+        if (args.length < 1) {
+            new MapColorMenu(player, region);
 
-		String colorInput = args[0].toLowerCase();
+            return true;
+        }
 
-		if (!MapColor.getAll().contains(colorInput)) {
-			Messages.send(player, "commands.setmapcolor.2");
-			return true;
-		}
+        String colorInput = args[0].toLowerCase();
 
-		int color = MapColor.parseFromString(colorInput);
+        if (!MapColor.getAll().contains(colorInput)) {
+            Messages.send(player, "commands.setmapcolor.2");
+            return true;
+        }
 
-		if (region.getMapColor() == color) {
-			Messages.send(player, "commands.setmapcolor.3");
-			return true;
-		}
+        int color = MapColor.parseFromString(colorInput);
 
-		final int oldColor = region.getMapColor();
+        if (region.getMapColor() == color) {
+            Messages.send(player, "commands.setmapcolor.3");
+            return true;
+        }
 
-		Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
+        final int oldColor = region.getMapColor();
 
-		region.setMapColor(color);
+        Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
 
-		Messages.send(player, "commands.setmapcolor.4", MapColor.toString(oldColor), MapColor.toString(color));
+        region.setMapColor(color);
 
-		return true;
-	}
+        Messages.send(player, "commands.setmapcolor.4", MapColor.toString(oldColor), MapColor.toString(color));
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+        return true;
+    }
 
-		List<String> suggestions = new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		if (args.length == 1)
-			suggestions.addAll(MapColor.getAll());
+        List<String> suggestions = new ArrayList<>();
 
-		return suggestions;
-	}
+        if (args.length == 1) {
+            suggestions.addAll(MapColor.getAll());
+        }
+
+        return suggestions;
+    }
 }
+
+
+

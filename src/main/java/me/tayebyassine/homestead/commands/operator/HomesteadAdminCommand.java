@@ -1,47 +1,45 @@
 package me.tayebyassine.homestead.commands.operator;
 
-import org.bukkit.command.CommandSender;
 import me.tayebyassine.homestead.commands.CommandBuilder;
 import me.tayebyassine.homestead.commands.operator.subcommands.*;
 import me.tayebyassine.homestead.util.java.StringSimilarity;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import org.bukkit.command.CommandSender;
 
-import java.util.List;
+/**
+ * Admin command ({@code /homesteadadmin}, {@code /hsadmin}) used to manage the plugin
+ * and perform administrative operations on regions.
+ */
+public final class HomesteadAdminCommand extends CommandBuilder {
 
-public class HomesteadAdminCommand extends CommandBuilder {
-	public HomesteadAdminCommand() {
-		super("homesteadadmin", "hsadmin");
+    public HomesteadAdminCommand() {
+        super("homesteadadmin", "hsadmin");
 
-		setPermission("homestead.commands.homesteadadmin");
-		setUsage("/hsadmin [sub-command]");
+        setPermission("homestead.commands.homesteadadmin");
+        setUsage("/hsadmin [sub-command]");
 
-		registerSubCommand(new ExportSubCmd());
-		registerSubCommand(new PluginSubCmd());
-		registerSubCommand(new ReloadSubCmd());
-		registerSubCommand(new CheckUpdatesSubCmd());
-		registerSubCommand(new ImportSubCmd());
-		registerSubCommand(new FlagsOverrideSubCmd());
-		registerSubCommand(new ClaimSubCmd());
-		registerSubCommand(new UnclaimSubCmd());
-		registerSubCommand(new TransferOwnershipSubCmd());
-	}
+        registerSubCommand(new ExportSubCmd());
+        registerSubCommand(new PluginSubCmd());
+        registerSubCommand(new ReloadSubCmd());
+        registerSubCommand(new CheckUpdatesSubCmd());
+        registerSubCommand(new ImportSubCmd());
+        registerSubCommand(new FlagsOverrideSubCmd());
+        registerSubCommand(new ClaimSubCmd());
+        registerSubCommand(new UnclaimSubCmd());
+        registerSubCommand(new TransferOwnershipSubCmd());
+    }
 
-	@Override
-	public boolean onDefaultExecution(CommandSender sender, String[] args) {
-		if (args.length == 0) {
-			return true;
-		}
+    @Override
+    public boolean onDefaultExecution(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return true;
+        }
 
-		String attempted = args[0].toLowerCase();
-		String similarity = String.join(", ", StringSimilarity.find(getSubCommandNames(), attempted));
+        String attempted = args[0].toLowerCase();
+        String similarity = String.join(", ", StringSimilarity.find(getSubCommandNames(), attempted));
 
-		Messages.send(sender, "commands.op_hsadmin.0", similarity);
+        Messages.send(sender, "commands.op_hsadmin.0", similarity);
 
-		return true;
-	}
-
-	@Override
-	public List<String> onDefaultTabComplete(CommandSender sender, String[] args) {
-		return super.onDefaultTabComplete(sender, args);
-	}
+        return true;
+    }
 }

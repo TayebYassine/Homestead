@@ -1,55 +1,35 @@
 package me.tayebyassine.homestead.commands.operator.subcommands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.database.Database;
 import me.tayebyassine.homestead.logs.Logger;
-import me.tayebyassine.homestead.managers.*;
 import me.tayebyassine.homestead.util.java.ListUtils;
+import org.bukkit.command.CommandSender;
 
-import java.util.List;
+/**
+ * Admin sub-command ({@code /hsadmin plugin}) that prints server software and plugin
+ * data statistics to the console.
+ */
+public final class PluginSubCmd extends SubCommandBuilder {
 
-public class PluginSubCmd extends SubCommandBuilder {
-	public PluginSubCmd() {
-		super("plugin");
-		setPermission(List.of(
-				"homestead.commands.homesteadadmin",
-				"homestead.commands.homesteadadmin." + getName()
-		));
-		setUsage("/hsadmin plugin");
-		setConsoleOnly();
-	}
+    public PluginSubCmd() {
+        super("plugin");
+        setAdminPermission();
+        setUsage("/hsadmin plugin");
+        setAllowedCommandSenders(CommandSenderType.CONSOLE);
+    }
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Logger.info("Please wait...");
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Logger.info("Please wait...");
 
-		String[] headers = {"Property", "Value"};
+        ListUtils.printTable(new String[]{"Property", "Value"}, DataStats.combine(DataStats.infoRows(), DataStats.dataRows()));
 
-		Object[][] data = {
-				{"Software", Bukkit.getName()},
-				{"Version", Bukkit.getVersion()},
-				{"Players", Bukkit.getOnlinePlayers().size()},
-				{"Homestead", "v" + Homestead.getVersion()},
-				{"Database Provider", Homestead.database.getProvider().toString()},
-				{"Database Latency", Homestead.database.getLatency() + "ms"},
-				{"Cache Latency", Database.getCacheLatency() + "ms"},
-				{"Data - Regions", RegionManager.getRegionCount()},
-				{"Data - Members", MemberManager.getMemberCount()},
-				{"Data - Chunks", ChunkManager.getChunkCount()},
-				{"Data - Invites", InviteManager.getInviteCount()},
-				{"Data - Logs", LogManager.getLogCount()},
-				{"Data - Rates", RateManager.getRateCount()},
-				{"Data - Bans", BanManager.getBanCount()},
-				{"Data - Levels", LevelManager.getLevelCount()},
-				{"Data - Wars", WarManager.getWarCount()},
-				{"Data - SubAreas", SubAreaManager.getSubAreaCount()},
-		};
-
-		ListUtils.printTable(headers, data);
-
-		return true;
-	}
+        return true;
+    }
 }
+
+
+
+
+

@@ -1,7 +1,7 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.CommandSenderType;
+
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.PlayerJoinRegionEvent;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
@@ -10,84 +10,91 @@ import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.RegionInvite;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AcceptInviteSubCmd extends SubCommandBuilder {
-	public AcceptInviteSubCmd() {
-		super("accept");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName()
-		));
-		setUsage("/hs accept [region]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs accept}) that lets a player accept a pending region invite.
+ */
+public final class AcceptInviteSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public AcceptInviteSubCmd() {
+        super("accept");
+        setRegionPermission();
+        setUsage("/hs accept [region]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.accept.0");
-			return true;
-		}
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		String regionName = args[0];
-		Region region = RegionManager.findRegion(regionName);
+        if (args.length < 1) {
+            Messages.send(player, "commands.accept.0");
+            return true;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.accept.1", regionName);
-			return true;
-		}
+        Region region = RegionManager.findRegion(args[0]);
 
-		if (MemberManager.isMemberOfRegion(region, player)) {
-			Messages.send(player, "commands.accept.2");
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.accept.1", args[0]);
+            return true;
+        }
 
-		if (!InviteManager.isInvited(region, player)) {
-			Messages.send(player, "commands.accept.3");
-			return true;
-		}
+        if (MemberManager.isMemberOfRegion(region, player)) {
+            Messages.send(player, "commands.accept.2");
+            return true;
+        }
 
-		if (BanManager.isBanned(region, player)) {
-			Messages.send(player, "commands.accept.4");
-			return true;
-		}
+        if (!InviteManager.isInvited(region, player)) {
+            Messages.send(player, "commands.accept.3");
+            return true;
+        }
 
-		if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
-			Messages.send(player, "commands.accept.5");
-			return true;
-		}
+        if (BanManager.isBanned(region, player)) {
+            Messages.send(player, "commands.accept.4");
+            return true;
+        }
 
-		MemberManager.addMemberToRegion(player, region);
-		LogManager.addLog(region, player, LogManager.PredefinedLog.JOIN_REGION);
+        if (Limits.hasReachedLimit(null, region, Limits.LimitType.MEMBERS_PER_REGION)) {
+            Messages.send(player, "commands.accept.5");
+            return true;
+        }
 
-		Messages.send(player, "commands.accept.6", regionName);
+        MemberManager.addMemberToRegion(player, region);
+        LogManager.addLog(region, player, LogManager.PredefinedLog.JOIN_REGION);
 
-		Homestead.callEvent(new PlayerJoinRegionEvent(region, player));
+        Messages.send(player, "commands.accept.6", args[0]);
 
-		return true;
-	}
+        Homestead.callEvent(new PlayerJoinRegionEvent(region, player));
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+        return true;
+    }
 
-		List<String> suggestions = new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		if (args.length == 1) {
-			suggestions.addAll(
-					InviteManager.getInvitesOfPlayer(player).stream()
-							.map(RegionInvite::getRegionName)
-							.toList()
-			);
-		}
+        List<String> suggestions = new ArrayList<>();
 
-		return suggestions;
-	}
+        if (args.length == 1) {
+            suggestions.addAll(InviteManager.getInvitesOfPlayer(player).stream()
+                    .map(RegionInvite::getRegionName)
+                    .toList());
+        }
+
+        return suggestions;
+    }
 }
+
+
+

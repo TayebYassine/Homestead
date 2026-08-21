@@ -1,63 +1,71 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.gui.menus.RegionRating;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RateRegionSubCmd extends SubCommandBuilder {
-	public RateRegionSubCmd() {
-		super("rate");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.rate"
-		));
-		setUsage("/hs rate [region]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs rate}) that opens the rating menu of a region.
+ */
+public final class RateRegionSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public RateRegionSubCmd() {
+        super("rate");
+        setRegionPermission("homestead.actions.regions.rate");
+        setUsage("/hs rate [region]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.rate.0");
-			return true;
-		}
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		String regionName = args[0];
+        if (args.length < 1) {
+            Messages.send(player, "commands.rate.0");
+            return true;
+        }
 
-		Region region = RegionManager.findRegion(regionName);
+        String regionName = args[0];
 
-		if (region == null) {
-			Messages.send(player, "commands.rate.1", regionName);
-			return true;
-		}
+        Region region = RegionManager.findRegion(regionName);
 
-		new RegionRating(player, region, player::closeInventory);
+        if (region == null) {
+            Messages.send(player, "commands.rate.1", regionName);
+            return true;
+        }
 
-		return true;
-	}
+        new RegionRating(player, region, player::closeInventory);
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+        return true;
+    }
 
-		List<String> suggestions = new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		if (args.length == 1) {
-			suggestions.addAll(RegionManager.getRegionNames());
-		}
+        List<String> suggestions = new ArrayList<>();
 
-		return suggestions;
-	}
+        if (args.length == 1) {
+            suggestions.addAll(RegionManager.getRegionNames());
+        }
+
+        return suggestions;
+    }
 }
+
+
+

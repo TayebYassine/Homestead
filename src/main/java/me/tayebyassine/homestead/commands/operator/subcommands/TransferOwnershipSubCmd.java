@@ -1,89 +1,94 @@
 package me.tayebyassine.homestead.commands.operator.subcommands;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.CommandSenderType;
+
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.managers.*;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.SubArea;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransferOwnershipSubCmd extends SubCommandBuilder {
-	public TransferOwnershipSubCmd() {
-		super("transfer");
-		setPermission(List.of(
-				"homestead.commands.homesteadadmin",
-				"homestead.commands.homesteadadmin." + getName()
-		));
-		setUsage("/hsadmin transfer [region] [new-owner]");
-		setPlayerOnly();
-	}
+/**
+ * Admin sub-command ({@code /hsadmin transfer}) that transfers the ownership of a region
+ * to another player.
+ */
+public final class TransferOwnershipSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public TransferOwnershipSubCmd() {
+        super("transfer");
+        setAdminPermission();
+        setUsage("/hsadmin transfer [region] [new-owner]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		if (args.length < 2) {
-			Messages.send(player, "commands.op_transfer.0", getUsage());
-			return true;
-		}
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		String regionName = args[0];
-		Region region = RegionManager.findRegion(regionName);
+        if (args.length < 2) {
+            Messages.send(player, "commands.op_transfer.0", getUsage());
+            return true;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.op_transfer.1");
-			return true;
-		}
+        Region region = RegionManager.findRegion(args[0]);
 
-		String playerName = args[1];
-		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(playerName);
+        if (region == null) {
+            Messages.send(player, "commands.op_transfer.1");
+            return true;
+        }
 
-		if (target == null) {
-			Messages.send(player, "commands.op_transfer.2");
-			return true;
-		}
+        OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(args[1]);
 
-		if (region.isOwner(target)) {
-			Messages.send(player, "commands.op_transfer.3");
-			return true;
-		}
+        if (target == null) {
+            Messages.send(player, "commands.op_transfer.2");
+            return true;
+        }
 
-		BanManager.unbanPlayer(region, target);
-		InviteManager.deleteInvitesOfPlayer(region, target);
-		MemberManager.removeMemberFromRegion(target, region);
+        if (region.isOwner(target)) {
+            Messages.send(player, "commands.op_transfer.3");
+            return true;
+        }
 
-		for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(region)) {
-			MemberManager.removeMemberFromSubArea(target, subArea);
-		}
+        BanManager.unbanPlayer(region, target);
+        InviteManager.deleteInvitesOfPlayer(region, target);
+        MemberManager.removeMemberFromRegion(target, region);
 
-		region.setOwner(target);
+        for (SubArea subArea : SubAreaManager.getSubAreasOfRegion(region)) {
+            MemberManager.removeMemberFromSubArea(target, subArea);
+        }
 
-		Messages.send(player, "commands.op_transfer.4");
+        region.setOwner(target);
 
-		return true;
-	}
+        Messages.send(player, "commands.op_transfer.4");
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		List<String> suggestions = new ArrayList<>();
+        return true;
+    }
 
-		if (args.length == 1) {
-			suggestions.addAll(
-					RegionManager.getRegionNames()
-			);
-		} else if (args.length == 2) {
-			suggestions.addAll(
-					Homestead.getInstance().getOfflinePlayerNamesSync()
-			);
-		}
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        List<String> suggestions = new ArrayList<>();
 
-		return suggestions;
-	}
+        if (args.length == 1) {
+            suggestions.addAll(RegionManager.getRegionNames());
+        } else if (args.length == 2) {
+            suggestions.addAll(Homestead.getInstance().getOfflinePlayerNamesSync());
+        }
+
+        return suggestions;
+    }
 }
+
+
+
+
+

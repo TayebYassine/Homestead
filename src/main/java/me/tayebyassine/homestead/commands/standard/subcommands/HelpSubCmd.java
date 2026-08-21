@@ -1,88 +1,103 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.LanguageFile;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class HelpSubCmd extends SubCommandBuilder {
-	private static final int COMMANDS_PER_PAGE = 6;
+/**
+ * Sub-command ({@code /hs help}) that shows the command descriptions in a paged list.
+ */
+public final class HelpSubCmd extends SubCommandBuilder {
 
-	public HelpSubCmd() {
-		super("help");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName()
-		));
-		setUsage("/hs help [page]");
-	}
+    private static final int COMMANDS_PER_PAGE = 6;
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public HelpSubCmd() {
+        super("help");
+        setRegionPermission();
+        setUsage("/hs help [page]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		LanguageFile lang = Resources.<LanguageFile>get(ResourceType.Language);
-		List<String> commandKeys = lang.getKeysUnderPath("command-descriptions");
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		if (commandKeys.isEmpty()) {
-			Messages.send(player, "commands.help.0");
-			return true;
-		}
+        LanguageFile lang = Resources.get(ResourceType.Language);
+        List<String> commandKeys = lang.getKeysUnderPath("command-descriptions");
 
-		int totalPages = (int) Math.ceil((double) commandKeys.size() / COMMANDS_PER_PAGE);
-		int page = 1;
+        if (commandKeys.isEmpty()) {
+            Messages.send(player, "commands.help.0");
+            return true;
+        }
 
-		if (args.length > 0) {
-			try {
-				page = Integer.parseInt(args[0]);
-			} catch (NumberFormatException e) {
-				return true;
-			}
-		}
+        int totalPages = (int) Math.ceil((double) commandKeys.size() / COMMANDS_PER_PAGE);
+        int page = 1;
 
-		if (page < 1) page = 1;
-		if (page > totalPages) page = totalPages;
+        if (args.length > 0) {
+            try {
+                page = Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                return true;
+            }
+        }
 
-		int start = (page - 1) * COMMANDS_PER_PAGE;
-		int end = Math.min(start + COMMANDS_PER_PAGE, commandKeys.size());
+        if (page < 1) {
+            page = 1;
+        }
 
-		Messages.send(player, "commands.help.header", page, totalPages);
+        if (page > totalPages) {
+            page = totalPages;
+        }
 
-		for (int i = start; i < end; i++) {
-			String key = commandKeys.get(i);
-			String description = lang.getString("command-descriptions." + key);
-			String commandLabel = key.replace("_", " ");
+        int start = (page - 1) * COMMANDS_PER_PAGE;
+        int end = Math.min(start + COMMANDS_PER_PAGE, commandKeys.size());
 
-			String entry = lang.getString("commands.help.entry-format")
-					.replace("{command}", commandLabel)
-					.replace("{description}", description);
+        Messages.send(player, "commands.help.header", page, totalPages);
 
-			Messages.sendString(player, entry, "");
-		}
+        for (int i = start; i < end; i++) {
+            String key = commandKeys.get(i);
+            String description = lang.getString("command-descriptions." + key);
+            String commandLabel = key.replace("_", " ");
 
-		boolean hasPrev = page > 1;
-		boolean hasNext = page < totalPages;
+            String entry = lang.getString("commands.help.entry-format")
+                    .replace("{command}", commandLabel)
+                    .replace("{description}", description);
 
-		String prevTag = hasPrev
-				? "<click:run_command:/hs help " + (page - 1) + "><hover:show_text:'" + lang.getString("commands.help.prev-hover") + "'>" + lang.getString("commands.help.prev") + "</hover></click>"
-				: lang.getString("commands.help.prev-disabled");
+            Messages.sendString(player, entry, "");
+        }
 
-		String nextTag = hasNext
-				? "<click:run_command:/hs help " + (page + 1) + "><hover:show_text:'" + lang.getString("commands.help.next-hover") + "'>" + lang.getString("commands.help.next") + "</hover></click>"
-				: lang.getString("commands.help.next-disabled");
+        boolean hasPrev = page > 1;
+        boolean hasNext = page < totalPages;
 
-		String footer = lang.getString("commands.help.footer")
-				.replace("{previous}", prevTag)
-				.replace("{next}", nextTag);
+        String prevTag = hasPrev
+                ? "<click:run_command:/hs help " + (page - 1) + "><hover:show_text:'"
+                + lang.getString("commands.help.prev-hover") + "'>" + lang.getString("commands.help.prev")
+                + "</hover></click>"
+                : lang.getString("commands.help.prev-disabled");
 
-		Messages.sendString(player, footer, "");
+        String nextTag = hasNext
+                ? "<click:run_command:/hs help " + (page + 1) + "><hover:show_text:'"
+                + lang.getString("commands.help.next-hover") + "'>" + lang.getString("commands.help.next")
+                + "</hover></click>"
+                : lang.getString("commands.help.next-disabled");
 
-		return true;
-	}
+        String footer = lang.getString("commands.help.footer")
+                .replace("{previous}", prevTag)
+                .replace("{next}", nextTag);
+
+        Messages.sendString(player, footer, "");
+
+        return true;
+    }
 }
+

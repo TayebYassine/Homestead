@@ -1,76 +1,82 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.weatherandtime.RegionTime;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetTimeSubCmd extends SubCommandBuilder {
-	public SetTimeSubCmd() {
-		super("settime");
-		setPermission(List.of(
-				"homestead.commands.region",
-				"homestead.commands.region." + getName(),
-				"homestead.actions.regions.update.time"
-		));
-		setUsage("/hs settime [time]");
-		setPlayerOnly();
-	}
+/**
+ * Sub-command ({@code /hs settime}) that sets the time of the current region.
+ */
+public final class SetTimeSubCmd extends SubCommandBuilder {
 
-	@Override
-	public boolean onExecution(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return false;
+    public SetTimeSubCmd() {
+        super("settime");
+        setRegionPermission("homestead.actions.regions.update.time");
+        setUsage("/hs settime [time]");
+        setAllowedCommandSenders(CommandSenderType.PLAYER);
+    }
 
-		Region region = TargetRegionSession.getRegion(player);
+    @Override
+    public boolean onExecution(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return false;
+        }
 
-		if (region == null) {
-			Messages.send(player, "commands.settime.0");
-			return true;
-		}
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (args.length < 1) {
-			Messages.send(player, "commands.settime.1");
-			return true;
-		}
+        if (region == null) {
+            Messages.send(player, "commands.settime.0");
+            return true;
+        }
 
-		String timeInput = args[0];
-		int time = RegionTime.parse(timeInput);
+        if (args.length < 1) {
+            Messages.send(player, "commands.settime.1");
+            return true;
+        }
 
-		if (time == -1) {
-			Messages.send(player, "commands.settime.2");
-			return true;
-		}
+        String timeInput = args[0];
+        int time = RegionTime.parse(timeInput);
 
-		int newTime = RegionTime.next(region.getTime());
+        if (time == -1) {
+            Messages.send(player, "commands.settime.2");
+            return true;
+        }
 
-		region.setTime(newTime);
+        region.setTime(time);
 
-		Messages.send(player, "commands.settime.3", timeInput);
+        Messages.send(player, "commands.settime.3", timeInput);
 
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME, RegionTime.from(newTime));
+        LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_TIME, RegionTime.from(time));
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, String[] args) {
-		Player player = asPlayer(sender);
-		if (player == null) return new ArrayList<>();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        Player player = asPlayer(sender);
+        if (player == null) {
+            return new ArrayList<>();
+        }
 
-		List<String> suggestions = new ArrayList<>();
+        List<String> suggestions = new ArrayList<>();
 
-		if (args.length == 1) {
-			suggestions.addAll(RegionTime.getAll());
-		}
+        if (args.length == 1) {
+            suggestions.addAll(RegionTime.getAll());
+        }
 
-		return suggestions;
-	}
+        return suggestions;
+    }
 }
+
+
+
