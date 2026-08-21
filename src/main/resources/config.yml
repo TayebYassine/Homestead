@@ -134,10 +134,30 @@ dynamic-maps:
 
   # Chunk display settings
   chunks:
-    operator-color: 0xFF0000
-    operator-description: "<div style='font-size:16px;'><b>[Operator] {region} (#{global-rank})</b></div>{region-description}<br><br><b>Owner</b>: {region-owner}<br><b>Members</b>: {region-members}<br><b>Chunks</b>: {region-chunks}<br><b>Size</b>: {region-size} blocks"
-    color: 0x00FF00
-    description: "<div style='font-size:16px;'><b>{region} (#{global-rank})</b></div>{region-description}<br><br><b>Owner</b>: {region-owner}<br><b>Members</b>: {region-members}<br><b>Chunks</b>: {region-chunks}<br><b>Size</b>: {region-size} blocks"
+    operator-color: 16711680
+    # NOTE: Each new array string = new "<br>"
+    operator-description:
+      - '<div style="font-family:Arial,Helvetica,sans-serif;padding:14px;min-width:220px;line-height:1.6;"><img src="https://crafatar.com/avatars/{region-owner-uuid}" style="float:right;width:48px;height:48px;margin:0 0 10px 12px;border-radius:4px;image-rendering:pixelated;border:1px solid #bbb;"><div style="font-size:16px;margin-bottom:10px;"><b>{region} [Mod] (#{global-rank})</b></div>'
+      - '<div style="margin-bottom:16px;"><i>{region-description}</i></div><div>'
+      - '<b>Owner</b> — {region-owner}'
+      - '<b>Members</b> — {region-members}'
+      - '<b>Chunks</b> — {region-chunks}'
+      - '<b>Size</b> — {region-size} blocks'
+      - '<b>Founded</b> — {region-created-at}'
+      - '</div></div>'
+
+    color: 65280
+    # NOTE: Each new array string = new "<br>"
+    description:
+      - '<div style="font-family:Arial,Helvetica,sans-serif;padding:14px;min-width:220px;line-height:1.6;"><img src="https://crafatar.com/avatars/{region-owner-uuid}" style="float:right;width:48px;height:48px;margin:0 0 10px 12px;border-radius:4px;image-rendering:pixelated;border:1px solid #bbb;"><div style="font-size:16px;margin-bottom:10px;"><b>{region} (#{global-rank})</b></div>'
+      - '<div style="margin-bottom:16px;"><i>{region-description}</i></div><div>'
+      - '<b>Owner</b> — {region-owner}'
+      - '<b>Members</b> — {region-members}'
+      - '<b>Chunks</b> — {region-chunks}'
+      - '<b>Size</b> — {region-size} blocks'
+      - '<b>Founded</b> — {region-created-at}'
+      - '</div></div>'
+
     transparency-fill: 40
     transparency-outline: 125
 

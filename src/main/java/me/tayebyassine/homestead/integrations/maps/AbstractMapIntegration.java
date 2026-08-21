@@ -1,5 +1,7 @@
 package me.tayebyassine.homestead.integrations.maps;
 
+import me.tayebyassine.homestead.managers.MemberManager;
+import me.tayebyassine.homestead.models.RegionMember;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import me.tayebyassine.homestead.Homestead;
@@ -16,6 +18,7 @@ import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public abstract class AbstractMapIntegration {
 
@@ -52,19 +55,22 @@ public abstract class AbstractMapIntegration {
 	protected String resolveHoverText(Region region, boolean isOperator) {
 		List<RegionChunk> chunks = ChunkManager.getChunksOfRegion(region);
 
-		OfflinePlayer owner = region.getOwner();
+		List<RegionMember> members = MemberManager.getMembersOfRegion(region);
+		List<String> regionMembers = members.stream().map(RegionMember::getPlayerName).toList();
 
 		Placeholder placeholder = new Placeholder()
 				.add("{region}", region.getName())
-				.add("{region-owner}", owner == null ? "UNKNOWN PLAYER" : owner.getName())
-				.add("{region-members}", ColorTranslator.preserve(Formatter.getMembersOfRegion(region)))
+				.add("{region-owner}", region.getOwnerName())
+				.add("{region-owner-uuid}", region.getOwnerId().toString())
+				.add("{region-created-at}", ColorTranslator.preserve(Formatter.getDate(region.getCreatedAt())))
+				.add("{region-members}", ColorTranslator.preserve(members.isEmpty() ? Formatter.getNone() : String.join(", ", regionMembers)))
 				.add("{region-chunks}", chunks.size())
 				.add("{global-rank}", RegionManager.getGlobalRank(region.getUniqueId()))
-				.add("{region-description}", region.getDescription())
+				.add("{region-description}", ColorTranslator.preserve(region.getDescription()))
 				.add("{region-size}", chunks.size() * 256);
 
 		String path = isOperator ? "chunks.operator-description" : "chunks.description";
-		return Formatter.applyPlaceholders(getConfigString(path), placeholder);
+		return Formatter.applyPlaceholders(String.join("<br>", getConfigStringList(path)), placeholder);
 	}
 
 	protected String resolvePlainLabel(Region region) {
@@ -105,6 +111,10 @@ public abstract class AbstractMapIntegration {
 
 	protected String getConfigString(String path) {
 		return Resources.<ConfigFile>get(ResourceType.Config).getString(CONFIG_PATH + "." + path);
+	}
+
+	protected List<String> getConfigStringList(String path) {
+		return Resources.<ConfigFile>get(ResourceType.Config).getStringList(CONFIG_PATH + "." + path);
 	}
 
 	protected int getConfigInt(String path) {
