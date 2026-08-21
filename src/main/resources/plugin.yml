@@ -7,6 +7,11 @@ api-version: 1.21.10
 folia-supported: true
 depend: [ Vault ]
 softdepend: [ VaultUnlocked, Essentials, EssentialsX, CMI, TheNewEconomy, Polyconomy, iConomyUnlocked, BlueMap, squaremap, dynmap, Pl3xMap, ItemsAdder, CraftEngine ]
+libraries:
+  - "org.xerial:sqlite-jdbc:3.53.2.1"
+  - "com.mysql:mysql-connector-j:26.7.0"
+  - "org.mariadb.jdbc:mariadb-java-client:3.5.10"
+  - "org.postgresql:postgresql:42.7.13"
 commands:
   claim:
     description: 'Claim a chunk using Homestead'

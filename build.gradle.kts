@@ -46,11 +46,11 @@ dependencies {
     compileOnly("com.flowpowered:flow-math:1.0.3")
     compileOnly("us.dynmap:DynmapCoreAPI:3.7-beta-6")
     compileOnly("maven.modrinth:pl3xmap:1.21.10-538")
-    compileOnly("xyz.jpenilla:squaremap-api:1.3.11")
+    compileOnly("xyz.jpenilla:squaremap-api:1.3.15")
     compileOnly("com.github.GriefPrevention:GriefPrevention:16.18.2")
     compileOnly("biz.princeps:landlord-api:4.365")
     compileOnly("com.cjburkey.claimchunk:claimchunk:0.0.25-FIX3")
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("me.clip:placeholderapi:2.12.3")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.4.0")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.14")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.15.0")
@@ -66,17 +66,18 @@ dependencies {
     compileOnly("net.momirealms:craft-engine-core:26.7")
     compileOnly("net.momirealms:craft-engine-bukkit:26.7")
 
-    implementation("commons-io:commons-io:2.18.0")
+    compileOnly("org.xerial:sqlite-jdbc:3.53.2.1")
+    compileOnly("com.mysql:mysql-connector-j:26.7.0")
+    compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.10")
+    compileOnly("org.postgresql:postgresql:42.7.13")
+
+    implementation("commons-io:commons-io:2.22.0")
     implementation("com.j256.ormlite:ormlite-jdbc:6.1")
-    implementation("org.xerial:sqlite-jdbc:3.49.1.0")
-    implementation("com.mysql:mysql-connector-j:9.2.0")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.8")
-    implementation("org.postgresql:postgresql:42.7.10")
     implementation("com.technicjelle:BMUtils:5.0.1") {
         exclude(group = "com.flowpowered", module = "flow-math")
     }
     implementation("me.lucko:commodore:2.2")
-    implementation("dev.faststats.metrics:bukkit:0.22.0")
+    implementation("dev.faststats.metrics:bukkit:0.29.0")
 }
 
 tasks.shadowJar {
