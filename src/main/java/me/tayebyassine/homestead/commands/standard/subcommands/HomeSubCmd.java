@@ -2,7 +2,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.flags.PlayerFlags;
+import me.tayebyassine.homestead.flags.PlayerFlag;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.serialize.SeLocation;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
@@ -47,8 +47,8 @@ public final class HomeSubCmd extends SubCommandBuilder {
 
         if (!PlayerUtility.isOperator(player)
                 && !region.isOwner(player)
-                && !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
-                && PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
+                && !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlag.TELEPORT_SPAWN.getBitmask(), true)
+                && PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlag.PASSTHROUGH.getBitmask(), true))) {
             Messages.send(player, "commands.home.2");
             return true;
         }
@@ -58,6 +58,7 @@ public final class HomeSubCmd extends SubCommandBuilder {
         return true;
     }
 }
+
 
 
 

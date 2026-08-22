@@ -4,7 +4,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.WorldFlags;
+import me.tayebyassine.homestead.flags.WorldFlag;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.managers.WarManager;
@@ -125,7 +125,7 @@ public final class WarSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!(region.isWorldFlagSet(WorldFlags.WARS) && targetRegion.isWorldFlagSet(WorldFlags.WARS))) {
+        if (!(region.isWorldFlagSet(WorldFlag.WARS.getBitmask()) && targetRegion.isWorldFlagSet(WorldFlag.WARS.getBitmask()))) {
             Messages.send(player, "commands.war.9");
             return true;
         }
@@ -254,6 +254,7 @@ public final class WarSubCmd extends SubCommandBuilder {
         return offlineOwner != null && offlineOwner.isOnline() ? offlineOwner.getPlayer() : null;
     }
 }
+
 
 
 

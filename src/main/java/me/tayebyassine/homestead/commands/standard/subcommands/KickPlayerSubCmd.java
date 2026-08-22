@@ -3,7 +3,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.managers.BanManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
@@ -52,7 +52,7 @@ public final class KickPlayerSubCmd extends SubCommandBuilder {
         }
 
         if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlags.KICK_PLAYERS)) {
+                ControlFlag.KICK_PLAYERS.getBitmask())) {
             return true;
         }
 
@@ -113,6 +113,7 @@ public final class KickPlayerSubCmd extends SubCommandBuilder {
         return suggestions;
     }
 }
+
 
 
 

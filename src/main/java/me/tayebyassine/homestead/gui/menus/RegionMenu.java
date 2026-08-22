@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.PlayerLeftRegionEvent;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.Menu;
 import me.tayebyassine.homestead.managers.*;
 import me.tayebyassine.homestead.managers.RegionManager.RegionSorting;
@@ -182,7 +182,7 @@ public final class RegionMenu {
 			if (!checkRegionExists(player, region)) return;
 
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					ControlFlags.SET_WEATHER_AND_TIME)) {
+					ControlFlag.SET_WEATHER_AND_TIME.getBitmask())) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}

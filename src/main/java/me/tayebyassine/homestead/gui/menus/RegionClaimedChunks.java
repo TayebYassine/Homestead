@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.ChunkUnclaimEvent;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -156,7 +156,7 @@ public final class RegionClaimedChunks {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.UNCLAIM_CHUNKS)) {
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.UNCLAIM_CHUNKS.getBitmask())) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}

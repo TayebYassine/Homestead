@@ -3,8 +3,8 @@ package me.tayebyassine.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -26,8 +26,8 @@ public final class RegionMemberControlFlags {
 	public RegionMemberControlFlags(Player player, Region region, RegionMember member) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (String flagString : ControlFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(member.getControlFlags(), ControlFlags.valueOf(flagString));
+		for (String flagString : ControlFlag.getFlags()) {
+			boolean value = FlagCalculator.isFlagSet(member.getControlFlags(), ControlFlag.parse(flagString));
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
@@ -69,7 +69,7 @@ public final class RegionMemberControlFlags {
 			return;
 		}
 
-		String flagString = ControlFlags.getFlags().get(context.getIndex());
+		String flagString = ControlFlag.getFlags().get(context.getIndex());
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 			Messages.send(player, "commands.flags.9");
@@ -80,17 +80,19 @@ public final class RegionMemberControlFlags {
 		if (!context.getEvent().isLeftClick()) return;
 
 		long flags = member.getControlFlags();
-		long flag = ControlFlags.valueOf(flagString);
-		boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
+		long flag = ControlFlag.parse(flagString);
+		boolean isSet = FlagCalculator.isFlagSet(flags, flag);
 
 		Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
 
 		member.setControlFlags(isSet
-				? FlagsCalculator.removeFlag(flags, flag)
-				: FlagsCalculator.addFlag(flags, flag));
+				? FlagCalculator.removeFlag(flags, flag)
+				: FlagCalculator.addFlag(flags, flag));
 
 		PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
 
 		context.getInstance().replaceSlot(context.getIndex(), MenuUtility.getFlagButton(flagString, !isSet));
 	}
 }
+
+

@@ -7,9 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.Nullable;
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.PlayerFlags;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.PlayerFlag;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -35,21 +35,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class PlayerUtility {
 	public static final Set<Long> RENT_FLAGS_SET = Set.of(
-			PlayerFlags.PVP
+			PlayerFlag.PVP.getBitmask()
 	);
 	public static final Set<Long> WAR_FLAGS_SET = Set.of(
-			PlayerFlags.PVP,
-			PlayerFlags.DOORS,
-			PlayerFlags.TRAP_DOORS,
-			PlayerFlags.FENCE_GATES,
-			PlayerFlags.PASSTHROUGH,
-			PlayerFlags.ELYTRA,
-			PlayerFlags.TELEPORT,
-			PlayerFlags.PICKUP_ITEMS,
-			PlayerFlags.TAKE_FALL_DAMAGE,
-			PlayerFlags.CONTAINERS,
-			PlayerFlags.BREAK_BLOCKS,
-			PlayerFlags.PLACE_BLOCKS
+			PlayerFlag.PVP.getBitmask(),
+			PlayerFlag.DOORS.getBitmask(),
+			PlayerFlag.TRAP_DOORS.getBitmask(),
+			PlayerFlag.FENCE_GATES.getBitmask(),
+			PlayerFlag.PASSTHROUGH.getBitmask(),
+			PlayerFlag.ELYTRA.getBitmask(),
+			PlayerFlag.TELEPORT.getBitmask(),
+			PlayerFlag.PICKUP_ITEMS.getBitmask(),
+			PlayerFlag.TAKE_FALL_DAMAGE.getBitmask(),
+			PlayerFlag.CONTAINERS.getBitmask(),
+			PlayerFlag.BREAK_BLOCKS.getBitmask(),
+			PlayerFlag.PLACE_BLOCKS.getBitmask()
 	);
 	private static final int MESSAGE_COOLDOWN_SECONDS = 3;
 	private static final Set<UUID> COOLDOWN = ConcurrentHashMap.newKeySet();
@@ -215,13 +215,13 @@ public final class PlayerUtility {
 			response = true;
 		} else if (MemberManager.isMemberOfRegion(regionId, player)) {
 			RegionMember member = MemberManager.getMemberOfRegion(regionId, player);
-			response = FlagsCalculator.isFlagSet(member.getPlayerFlags(), flag);
+			response = FlagCalculator.isFlagSet(member.getPlayerFlags(), flag);
 		} else {
-			response = FlagsCalculator.isFlagSet(region.getPlayerFlags(), flag);
+			response = FlagCalculator.isFlagSet(region.getPlayerFlags(), flag);
 		}
 
 		if (!response
-				&& flag != PlayerFlags.TAKE_FALL_DAMAGE
+				&& flag != PlayerFlag.TAKE_FALL_DAMAGE.getBitmask()
 				&& !COOLDOWN.contains(player.getUniqueId())
 				&& notify) {
 			sendDenialMessage(player, region, flag);
@@ -247,10 +247,10 @@ public final class PlayerUtility {
 
 			if (MemberManager.isMemberOfSubArea(subAreaId, player)) {
 				RegionMember member = MemberManager.getMemberOfSubArea(subAreaId, player);
-				return FlagsCalculator.isFlagSet(member.getPlayerFlags(), flag);
+				return FlagCalculator.isFlagSet(member.getPlayerFlags(), flag);
 			}
 
-			return FlagsCalculator.isFlagSet(subArea.getPlayerFlags(), flag);
+			return FlagCalculator.isFlagSet(subArea.getPlayerFlags(), flag);
 		}
 
 		return hasPermissionFlag(regionId, player, flag, notify);
@@ -258,7 +258,7 @@ public final class PlayerUtility {
 
 	private static void sendDenialMessage(Player player, Region region, long flag) {
 		Messages.send(player, "common.no_flag_permission", new Placeholder()
-				.add("{flag}", PlayerFlags.from(flag))
+				.add("{flag}", PlayerFlag.from(flag))
 				.add("{region}", region.getName())
 		);
 
@@ -277,12 +277,12 @@ public final class PlayerUtility {
 
 			if (MemberManager.isMemberOfRegion(region, player)) {
 				RegionMember member = MemberManager.getMemberOfRegion(region, player);
-				response = FlagsCalculator.isFlagSet(member.getControlFlags(), flag);
+				response = FlagCalculator.isFlagSet(member.getControlFlags(), flag);
 			}
 
 			if (!response && !COOLDOWN.contains(player.getUniqueId())) {
 				Messages.send(player, "common.no_flag_permission", new Placeholder()
-						.add("{flag}", ControlFlags.from(flag))
+						.add("{flag}", ControlFlag.from(flag))
 						.add("{region}", region.getName())
 				);
 
@@ -318,3 +318,4 @@ public final class PlayerUtility {
 		return p1.getUniqueId().equals(p2.getUniqueId());
 	}
 }
+

@@ -5,9 +5,9 @@ import me.tayebyassine.homestead.api.events.PlayerJoinSubAreaEvent;
 import me.tayebyassine.homestead.api.events.PlayerLeftSubAreaEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.flags.ControlFlags;
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.PlayerFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.PlayerFlag;
 import me.tayebyassine.homestead.gui.menus.SubAreasMenu;
 import me.tayebyassine.homestead.listeners.SelectionToolListener;
 import me.tayebyassine.homestead.listeners.SelectionToolListener.Selection;
@@ -70,7 +70,7 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
         }
 
         if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlags.MANAGE_SUBAREAS)) {
+                ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
             return true;
         }
 
@@ -106,7 +106,7 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
             suggestions.addAll(List.of("delete", "rename", "resize", "flags", "players"));
         } else if (args.length == 4 && args[0].equals("conf")) {
             if (args[2].equals("flags")) {
-                suggestions.addAll(PlayerFlags.getFlags());
+                suggestions.addAll(PlayerFlag.getFlags());
             } else if (args[2].equals("players")) {
                 suggestions.addAll(List.of("add", "remove", "flags"));
             }
@@ -118,7 +118,7 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
             suggestions.addAll(List.of("allow", "deny"));
         } else if (args.length == 6 && args[0].equals("conf") && args[2].equals("players")
                 && args[3].equals("flags")) {
-            suggestions.addAll(PlayerFlags.getFlags());
+            suggestions.addAll(PlayerFlag.getFlags());
         } else if (args.length == 7 && args[0].equals("conf") && args[2].equals("players")
                 && args[3].equals("flags")) {
             suggestions.addAll(List.of("allow", "deny"));
@@ -336,19 +336,19 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
 
         String flagInput = args[3];
 
-        if (!PlayerFlags.getFlags().contains(flagInput)) {
+        if (!PlayerFlag.getFlags().contains(flagInput)) {
             Messages.send(player, "commands.subareas.16");
             return true;
         }
 
         long flags = subArea.getPlayerFlags();
-        long flag = PlayerFlags.valueOf(flagInput);
+        long flag = PlayerFlag.parse(flagInput);
 
-        boolean denyState = resolveDenyState(FlagsCalculator.isFlagSet(flags, flag),
+        boolean denyState = resolveDenyState(FlagCalculator.isFlagSet(flags, flag),
                 args.length > 4 ? args[4] : null);
 
-        subArea.setPlayerFlags(denyState ? FlagsCalculator.removeFlag(flags, flag)
-                : FlagsCalculator.addFlag(flags, flag));
+        subArea.setPlayerFlags(denyState ? FlagCalculator.removeFlag(flags, flag)
+                : FlagCalculator.addFlag(flags, flag));
 
         Messages.send(player, "commands.subareas.17", flagInput, Formatter.getFlagState(!denyState), subArea.getName());
 
@@ -485,19 +485,19 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
 
         String flagInput = args[5];
 
-        if (!PlayerFlags.getFlags().contains(flagInput)) {
+        if (!PlayerFlag.getFlags().contains(flagInput)) {
             Messages.send(player, "commands.subareas.16");
             return true;
         }
 
         long flags = member.getPlayerFlags();
-        long flag = PlayerFlags.valueOf(flagInput);
+        long flag = PlayerFlag.parse(flagInput);
 
-        boolean denyState = resolveDenyState(FlagsCalculator.isFlagSet(flags, flag),
+        boolean denyState = resolveDenyState(FlagCalculator.isFlagSet(flags, flag),
                 args.length > 6 ? args[6] : null);
 
-        member.setPlayerFlags(denyState ? FlagsCalculator.removeFlag(flags, flag)
-                : FlagsCalculator.addFlag(flags, flag));
+        member.setPlayerFlags(denyState ? FlagCalculator.removeFlag(flags, flag)
+                : FlagCalculator.addFlag(flags, flag));
 
         Messages.send(player, "commands.subareas.18", flagInput, Formatter.getFlagState(!denyState),
                 member.getPlayerName(), subArea.getName());
@@ -540,6 +540,9 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
         return names;
     }
 }
+
+
+
 
 
 

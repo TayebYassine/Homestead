@@ -5,7 +5,7 @@ import me.tayebyassine.homestead.api.events.RegionDescriptionUpdateEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
@@ -58,7 +58,7 @@ public final class SetDescriptionSubCmd extends SubCommandBuilder {
         String description = String.join(" ", Arrays.asList(args));
 
         if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlags.SET_DESCRIPTION)) {
+                ControlFlag.SET_DESCRIPTION.getBitmask())) {
             return true;
         }
 
@@ -93,6 +93,7 @@ public final class SetDescriptionSubCmd extends SubCommandBuilder {
         return true;
     }
 }
+
 
 
 

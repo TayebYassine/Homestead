@@ -8,7 +8,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.BulkDeleteInvitesEvent;
 import me.tayebyassine.homestead.api.events.InvitePlayerEvent;
 import me.tayebyassine.homestead.api.events.PlayerJoinRegionEvent;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.*;
 import me.tayebyassine.homestead.models.Region;
@@ -131,7 +131,7 @@ public final class RegionPlayersInvited {
 			return false;
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.TRUST_PLAYERS)) {
+				ControlFlag.TRUST_PLAYERS.getBitmask())) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return false;
 		}

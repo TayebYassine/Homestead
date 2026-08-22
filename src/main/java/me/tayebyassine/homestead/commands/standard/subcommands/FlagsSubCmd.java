@@ -4,10 +4,10 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.ControlFlags;
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.PlayerFlags;
-import me.tayebyassine.homestead.flags.WorldFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.PlayerFlag;
+import me.tayebyassine.homestead.flags.WorldFlag;
 import me.tayebyassine.homestead.gui.menus.GlobalPlayerFlags;
 import me.tayebyassine.homestead.gui.menus.RegionWorldFlags;
 import me.tayebyassine.homestead.managers.LogManager;
@@ -90,13 +90,13 @@ public final class FlagsSubCmd extends SubCommandBuilder {
             case 2 -> {
                 switch (setType) {
                     case "member" -> suggestions.addAll(getMemberNames(player));
-                    case "global" -> suggestions.addAll(PlayerFlags.getFlags());
-                    case "world" -> suggestions.addAll(WorldFlags.getFlags());
+                    case "global" -> suggestions.addAll(PlayerFlag.getFlags());
+                    case "world" -> suggestions.addAll(WorldFlag.getFlags());
                 }
             }
             case 3 -> {
                 if (setType.equals("member")) {
-                    suggestions.addAll(PlayerFlags.getFlags());
+                    suggestions.addAll(PlayerFlag.getFlags());
                 } else if (setType.equals("global") || setType.equals("world")) {
                     suggestions.addAll(FLAG_STATES);
                 }
@@ -113,7 +113,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
 
     private void handleMemberFlags(Player player, Region region, String[] args) {
         if (!checkPermission(player, region, "homestead.actions.regions.update.flags.members",
-                ControlFlags.SET_MEMBER_FLAGS)) {
+                ControlFlag.SET_MEMBER_FLAGS.getBitmask())) {
             return;
         }
 
@@ -146,7 +146,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
             return;
         }
 
-        long flag = PlayerFlags.valueOf(flagInput);
+        long flag = PlayerFlag.parse(flagInput);
         boolean newState = toggleFlag(member.getPlayerFlags(), flag, args, 3);
 
         member.setPlayerFlags(applyFlag(member.getPlayerFlags(), flag, newState));
@@ -160,7 +160,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
 
     private void handleGlobalFlags(Player player, Region region, String[] args) {
         if (!checkPermission(player, region, "homestead.actions.regions.update.flags.global",
-                ControlFlags.SET_GLOBAL_FLAGS)) {
+                ControlFlag.SET_GLOBAL_FLAGS.getBitmask())) {
             return;
         }
 
@@ -175,7 +175,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
             return;
         }
 
-        long flag = PlayerFlags.valueOf(flagInput);
+        long flag = PlayerFlag.parse(flagInput);
         boolean newState = toggleFlag(region.getPlayerFlags(), flag, args, 2);
 
         region.setPlayerFlags(applyFlag(region.getPlayerFlags(), flag, newState));
@@ -188,7 +188,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
 
     private void handleWorldFlags(Player player, Region region, String[] args) {
         if (!checkPermission(player, region, "homestead.actions.regions.update.flags.world",
-                ControlFlags.SET_WORLD_FLAGS)) {
+                ControlFlag.SET_WORLD_FLAGS.getBitmask())) {
             return;
         }
 
@@ -203,9 +203,9 @@ public final class FlagsSubCmd extends SubCommandBuilder {
             return;
         }
 
-        long flag = WorldFlags.valueOf(flagInput);
+        long flag = WorldFlag.parse(flagInput);
 
-        if (flag == WorldFlags.WARS && Cooldown.hasCooldown(player, Cooldown.Type.WAR_FLAG_DISABLED)) {
+        if (flag == WorldFlag.WARS.getBitmask() && Cooldown.hasCooldown(player, Cooldown.Type.WAR_FLAG_DISABLED)) {
             Cooldown.sendCooldownMessage(player);
             return;
         }
@@ -244,7 +244,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
     }
 
     private boolean isValidPlayerFlag(Player player, String flagInput) {
-        if (!PlayerFlags.getFlags().contains(flagInput)) {
+        if (!PlayerFlag.getFlags().contains(flagInput)) {
             Messages.send(player, "commands.flags.8");
             return false;
         }
@@ -253,7 +253,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
     }
 
     private boolean isValidWorldFlag(Player player, String flagInput) {
-        if (!WorldFlags.getFlags().contains(flagInput)) {
+        if (!WorldFlag.getFlags().contains(flagInput)) {
             Messages.send(player, "commands.flags.8");
             return false;
         }
@@ -271,7 +271,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
     }
 
     private boolean toggleFlag(long currentFlags, long flag, String[] args, int stateIndex) {
-        boolean currentState = FlagsCalculator.isFlagSet(currentFlags, flag);
+        boolean currentState = FlagCalculator.isFlagSet(currentFlags, flag);
 
         if (args.length > stateIndex) {
             String input = args[stateIndex].toLowerCase();
@@ -289,7 +289,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
     }
 
     private long applyFlag(long flags, long flag, boolean set) {
-        return set ? FlagsCalculator.addFlag(flags, flag) : FlagsCalculator.removeFlag(flags, flag);
+        return set ? FlagCalculator.addFlag(flags, flag) : FlagCalculator.removeFlag(flags, flag);
     }
 
     private List<String> getMemberNames(Player player) {
@@ -312,6 +312,9 @@ public final class FlagsSubCmd extends SubCommandBuilder {
         return names;
     }
 }
+
+
+
 
 
 

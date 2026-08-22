@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -99,7 +99,7 @@ public final class RegionLogs {
 			return;
 		}
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.MANAGE_LOGS)) {
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.MANAGE_LOGS.getBitmask())) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}

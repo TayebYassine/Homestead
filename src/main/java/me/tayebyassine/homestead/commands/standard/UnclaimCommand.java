@@ -5,7 +5,7 @@ import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.api.events.ChunkUnclaimEvent;
 import me.tayebyassine.homestead.commands.CommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.models.Region;
@@ -68,7 +68,7 @@ public final class UnclaimCommand extends CommandBuilder {
         if (!PlayerUtility.hasControlRegionPermissionFlag(
                 region.getUniqueId(),
                 player,
-                ControlFlags.UNCLAIM_CHUNKS)) {
+                ControlFlag.UNCLAIM_CHUNKS.getBitmask())) {
             return true;
         }
 
@@ -112,3 +112,4 @@ public final class UnclaimCommand extends CommandBuilder {
         return true;
     }
 }
+

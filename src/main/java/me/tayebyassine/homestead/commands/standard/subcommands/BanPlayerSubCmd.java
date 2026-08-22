@@ -4,7 +4,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.BanPlayerEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.managers.BanManager;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -60,7 +60,7 @@ public final class BanPlayerSubCmd extends SubCommandBuilder {
         }
 
         if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlags.BAN_PLAYERS)) {
+                ControlFlag.BAN_PLAYERS.getBitmask())) {
             return true;
         }
 
@@ -138,6 +138,7 @@ public final class BanPlayerSubCmd extends SubCommandBuilder {
         return suggestions;
     }
 }
+
 
 
 

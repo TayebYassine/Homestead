@@ -4,9 +4,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.ControlFlags;
-import me.tayebyassine.homestead.flags.WorldFlags;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.ControlFlag;
+import me.tayebyassine.homestead.flags.WorldFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -28,8 +28,8 @@ public final class RegionWorldFlags {
 	public RegionWorldFlags(Player player, Region region) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (String flagString : WorldFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(region.getWorldFlags(), WorldFlags.valueOf(flagString));
+		for (String flagString : WorldFlag.getFlags()) {
+			boolean value = FlagCalculator.isFlagSet(region.getWorldFlags(), WorldFlag.parse(flagString));
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
@@ -59,12 +59,12 @@ public final class RegionWorldFlags {
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.SET_WORLD_FLAGS)) {
+				ControlFlag.SET_WORLD_FLAGS.getBitmask())) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
-		String flagString = WorldFlags.getFlags().get(context.getIndex());
+		String flagString = WorldFlag.getFlags().get(context.getIndex());
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 			Messages.send(player, "commands.flags.9");
@@ -75,23 +75,23 @@ public final class RegionWorldFlags {
 		if (!context.getEvent().isLeftClick()) return;
 
 		long flags = region.getWorldFlags();
-		long flag = WorldFlags.valueOf(flagString);
+		long flag = WorldFlag.parse(flagString);
 
 		OfflinePlayer offlineOwner = region.getOwner();
 		Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
 
-		if (owner != null && Cooldown.hasCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlags.WARS) {
+		if (owner != null && Cooldown.hasCooldown(owner, Cooldown.Type.WAR_FLAG_DISABLED) && flag == WorldFlag.WARS.getBitmask()) {
 			Cooldown.sendCooldownMessage(player);
 			return;
 		}
 
-		boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
+		boolean isSet = FlagCalculator.isFlagSet(flags, flag);
 
 		Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
 
 		region.setWorldFlags(isSet
-				? FlagsCalculator.removeFlag(flags, flag)
-				: FlagsCalculator.addFlag(flags, flag));
+				? FlagCalculator.removeFlag(flags, flag)
+				: FlagCalculator.addFlag(flags, flag));
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagString, region.getName(), Formatter.getFlagState(!isSet));
 
@@ -100,3 +100,5 @@ public final class RegionWorldFlags {
 		context.getInstance().replaceSlot(context.getIndex(), MenuUtility.getFlagButton(flagString, !isSet));
 	}
 }
+
+

@@ -3,7 +3,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.flags.PlayerFlags;
+import me.tayebyassine.homestead.flags.PlayerFlag;
 import me.tayebyassine.homestead.gui.menus.RegionsWithWelcomeSigns;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
@@ -148,8 +148,8 @@ public final class VisitRegionSubCmd extends SubCommandBuilder {
 
         if (!PlayerUtility.isOperator(player)
                 && !region.isOwner(player)
-                && !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.TELEPORT_SPAWN, true)
-                && PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true))) {
+                && !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlag.TELEPORT_SPAWN.getBitmask(), true)
+                && PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlag.PASSTHROUGH.getBitmask(), true))) {
             Messages.send(player, "commands.visit.7");
             return true;
         }
@@ -159,6 +159,7 @@ public final class VisitRegionSubCmd extends SubCommandBuilder {
         return true;
     }
 }
+
 
 
 

@@ -10,8 +10,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import me.tayebyassine.homestead.flags.PlayerFlags;
-import me.tayebyassine.homestead.flags.WorldFlags;
+import me.tayebyassine.homestead.flags.PlayerFlag;
+import me.tayebyassine.homestead.flags.WorldFlag;
 import me.tayebyassine.homestead.managers.BanManager;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -82,7 +82,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			}
 
 			if (!PlayerUtility.isOperator(player) && !region.isOwner(player)
-					&& !PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.PASSTHROUGH, true) && !WarManager.isRegionInWar(region.getUniqueId())) {
+					&& !PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlag.PASSTHROUGH.getBitmask(), true) && !WarManager.isRegionInWar(region.getUniqueId())) {
 				Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
 				if (nearbyChunk != null) {
@@ -124,7 +124,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			}
 
 			// Glowing
-			if (region.isWorldFlagSet(WorldFlags.PLAYER_GLOWING)) {
+			if (region.isWorldFlagSet(WorldFlag.PLAYER_GLOWING.getBitmask())) {
 				if (!player.hasPotionEffect(PotionEffectType.GLOWING)) {
 					player.addPotionEffect(
 							new PotionEffect(PotionEffectType.GLOWING, PotionEffect.INFINITE_DURATION, 1, false, false));
@@ -134,7 +134,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 			// Checking if player has an elytra
 			if (player.isGliding() && isWearingElytra(player) && !PlayerUtility.isOperator(player)) {
 				if (!region.isOwner(player)
-						&& !PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlags.ELYTRA, true)) {
+						&& !PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlag.ELYTRA.getBitmask(), true)) {
 					player.setGliding(false);
 				}
 			}
@@ -198,3 +198,4 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 				player.getInventory().getChestplate().getType() == Material.ELYTRA;
 	}
 }
+

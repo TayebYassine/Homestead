@@ -33,12 +33,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
-import me.tayebyassine.homestead.flags.PlayerFlags;
-import me.tayebyassine.homestead.flags.WorldFlags;
+import me.tayebyassine.homestead.flags.PlayerFlag;
+import me.tayebyassine.homestead.flags.WorldFlag;
 import me.tayebyassine.homestead.flags.WorldRules;
 import me.tayebyassine.homestead.listeners.util.CopperGolemTracker;
 import me.tayebyassine.homestead.listeners.util.Explosives;
-import me.tayebyassine.homestead.listeners.util.Projectiles;
 import me.tayebyassine.homestead.listeners.util.RegionProtection;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.models.Region;
@@ -92,11 +91,11 @@ public final class RegionProtectionListener implements Listener {
 						return;
 					}
 
-					if (!toRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+					if (!toRegion.isWorldFlagSet(WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 						entity.remove();
 					}
 				} else {
-					if (spawnRegionId == null && !WorldRules.isWorldFlagAllowed(toChunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+					if (spawnRegionId == null && !WorldRules.isWorldFlagAllowed(toChunk.getWorld(), WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 						entity.remove();
 					}
 				}
@@ -135,13 +134,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = block.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PLACE_BLOCKS.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PLACE_BLOCKS.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -155,13 +154,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BREAK_BLOCKS.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -178,13 +177,13 @@ public final class RegionProtectionListener implements Listener {
 				Chunk chunk = location.getChunk();
 
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRADE_VILLAGERS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.TRADE_VILLAGERS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.TRADE_VILLAGERS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof ChestBoat
@@ -196,13 +195,13 @@ public final class RegionProtectionListener implements Listener {
 				Chunk chunk = location.getChunk();
 
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.CONTAINERS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.CONTAINERS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			}
@@ -219,13 +218,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PLACE_BLOCKS.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PLACE_BLOCKS.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -240,13 +239,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BREAK_BLOCKS.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -266,13 +265,13 @@ public final class RegionProtectionListener implements Listener {
 			Chunk chunk = location.getChunk();
 
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.IGNITE)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.IGNITE.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.IGNITE, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.IGNITE.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -293,13 +292,13 @@ public final class RegionProtectionListener implements Listener {
 			Chunk chunk = location.getChunk();
 
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BLOCK_TRAMPLING)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BLOCK_TRAMPLING.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BLOCK_TRAMPLING, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BLOCK_TRAMPLING.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -319,13 +318,13 @@ public final class RegionProtectionListener implements Listener {
 			Chunk chunk = location.getChunk();
 
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.HARVEST_CROPS)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.HARVEST_CROPS.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.HARVEST_CROPS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.HARVEST_CROPS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -347,13 +346,13 @@ public final class RegionProtectionListener implements Listener {
 			Chunk chunk = location.getChunk();
 
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.SPAWN_ENTITIES)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.SPAWN_ENTITIES.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.SPAWN_ENTITIES, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.SPAWN_ENTITIES.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -385,13 +384,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (placeSpawnItem) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PLACE_BLOCKS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PLACE_BLOCKS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -403,13 +402,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (isShulkerBox(type)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.CONTAINERS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.CONTAINERS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -417,13 +416,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (isAnySign(type)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PLACE_BLOCKS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PLACE_BLOCKS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PLACE_BLOCKS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PLACE_BLOCKS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -431,13 +430,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (isContainerLike(type)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.CONTAINERS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.CONTAINERS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -445,13 +444,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (isAnvil(type)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.USE_ANVIL)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.USE_ANVIL.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_ANVIL, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.USE_ANVIL.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -459,13 +458,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (Tag.TRAPDOORS.isTagged(type)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRAP_DOORS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.TRAP_DOORS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRAP_DOORS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.TRAP_DOORS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -473,13 +472,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (Tag.DOORS.isTagged(type) || type.name().contains("DOOR")) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DOORS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.DOORS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DOORS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.DOORS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -487,13 +486,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (isArchaeologyBlockWithBrush(type, player)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BREAK_BLOCKS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -501,13 +500,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (Tag.BUTTONS.isTagged(type)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BUTTONS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BUTTONS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BUTTONS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BUTTONS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -515,13 +514,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (type.name().contains("FENCE_GATE")) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.FENCE_GATES)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.FENCE_GATES.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.FENCE_GATES, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.FENCE_GATES.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -529,13 +528,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (isSmallInteractable(type)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.GENERAL_INTERACTION)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.GENERAL_INTERACTION.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.GENERAL_INTERACTION, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.GENERAL_INTERACTION.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -543,13 +542,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (isLecternOrVaultWithKey(type, player)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.CONTAINERS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.CONTAINERS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -557,13 +556,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (type.name().endsWith("_BED")) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.SLEEP)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.SLEEP.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.SLEEP, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.SLEEP.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -571,13 +570,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (type == Material.LEVER) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.LEVERS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.LEVERS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.LEVERS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.LEVERS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -585,13 +584,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (type == Material.BELL) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.USE_BELLS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.USE_BELLS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.USE_BELLS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.USE_BELLS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -599,13 +598,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (isRedstoneInteraction(type)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.REDSTONE)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.REDSTONE.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.REDSTONE, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.REDSTONE.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -618,13 +617,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (Tag.PRESSURE_PLATES.isTagged(type)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PRESSURE_PLATES)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PRESSURE_PLATES.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PRESSURE_PLATES, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PRESSURE_PLATES.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 				return;
@@ -632,13 +631,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (type == Material.TRIPWIRE) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRIGGER_TRIPWIRE)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.TRIGGER_TRIPWIRE.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRIGGER_TRIPWIRE, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.TRIGGER_TRIPWIRE.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			}
@@ -768,13 +767,13 @@ public final class RegionProtectionListener implements Listener {
 			Chunk chunk = location.getChunk();
 
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BREAK_BLOCKS.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -790,13 +789,13 @@ public final class RegionProtectionListener implements Listener {
 				Chunk chunk = location.getChunk();
 
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BREAK_BLOCKS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			}
@@ -811,13 +810,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.CONTAINERS)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.CONTAINERS.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.CONTAINERS, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.CONTAINERS.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -840,14 +839,14 @@ public final class RegionProtectionListener implements Listener {
 			ItemStack boots = equipment.getBoots();
 
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.FROST_WALKER)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.FROST_WALKER.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
 			if (boots != null && boots.getEnchantments().containsKey(Enchantment.FROST_WALKER)) {
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.FROST_WALKER, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.FROST_WALKER.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			}
@@ -865,11 +864,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.FIRE_SPREAD.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.FIRE_SPREAD)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.FIRE_SPREAD.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -878,13 +877,13 @@ public final class RegionProtectionListener implements Listener {
 		}
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.IGNITE)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.IGNITE.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.IGNITE, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.IGNITE.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -900,13 +899,13 @@ public final class RegionProtectionListener implements Listener {
 				Chunk chunk = location.getChunk();
 
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BREAK_BLOCKS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (Explosives.isExplosive(remover)) {
@@ -916,12 +915,12 @@ public final class RegionProtectionListener implements Listener {
 				if (ChunkManager.isChunkClaimed(chunk)) {
 					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-					if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
+					if (region != null && !region.isWorldFlagSet(WorldFlag.EXPLOSION_DAMAGE.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				} else {
-					if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+					if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.EXPLOSION_DAMAGE.getBitmask())) {
 						event.setCancelled(true);
 					}
 				}
@@ -932,11 +931,11 @@ public final class RegionProtectionListener implements Listener {
 
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -964,25 +963,25 @@ public final class RegionProtectionListener implements Listener {
 
 		if (source instanceof Player player) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BREAK_BLOCKS.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (projectile instanceof WitherSkull) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.WITHER_DAMAGE.getBitmask())) {
 					event.getEntity().remove();
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WITHER_DAMAGE)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.WITHER_DAMAGE.getBitmask())) {
 					event.getEntity().remove();
 					event.setCancelled(true);
 				}
@@ -991,11 +990,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1023,79 +1022,79 @@ public final class RegionProtectionListener implements Listener {
 		if (effectiveDamager != null) {
 			if (entity instanceof ArmorStand) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BREAK_BLOCKS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof Player) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PVP)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PVP.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.PVP, null, () -> {
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlag.PVP.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof Monster || entity instanceof IronGolem) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_HOSTILE_ENTITIES)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.DAMAGE_HOSTILE_ENTITIES.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.DAMAGE_HOSTILE_ENTITIES, null, () -> {
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlag.DAMAGE_HOSTILE_ENTITIES.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entity instanceof Mob) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_PASSIVE_ENTITIES)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.DAMAGE_PASSIVE_ENTITIES.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
+				RegionProtection.hasPermission(effectiveDamager, chunk, location, PlayerFlag.DAMAGE_PASSIVE_ENTITIES.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			}
 		} else if (damager instanceof Projectile) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
 		} else if (Explosives.isExplosive(damager)) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.EXPLOSION_DAMAGE.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.EXPLOSION_DAMAGE.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
 		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_DAMAGE)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.ENTITY_DAMAGE.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_DAMAGE)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.ENTITY_DAMAGE.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1110,13 +1109,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.INTERACT_ENTITIES.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.INTERACT_ENTITIES.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -1138,9 +1137,9 @@ public final class RegionProtectionListener implements Listener {
 		long flag = -1L;
 
 		if (type == Material.ENDER_PEARL) {
-			flag = PlayerFlags.TELEPORT;
+			flag = PlayerFlag.TELEPORT.getBitmask();
 		} else if (type == Material.SPLASH_POTION || type == Material.LINGERING_POTION) {
-			flag = PlayerFlags.THROW_POTIONS;
+			flag = PlayerFlag.THROW_POTIONS.getBitmask();
 		} else {
 			return;
 		}
@@ -1169,13 +1168,13 @@ public final class RegionProtectionListener implements Listener {
 
 		if (item.getType().equals(Material.CHORUS_FRUIT)) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TELEPORT)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.TELEPORT.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TELEPORT, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.TELEPORT.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -1190,24 +1189,24 @@ public final class RegionProtectionListener implements Listener {
 
 		if (shooter instanceof Player player) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.THROW_POTIONS)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.THROW_POTIONS.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.THROW_POTIONS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.THROW_POTIONS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1223,24 +1222,24 @@ public final class RegionProtectionListener implements Listener {
 
 		if (shooter instanceof Player player) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.THROW_POTIONS)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.THROW_POTIONS.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.THROW_POTIONS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.THROW_POTIONS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1267,58 +1266,58 @@ public final class RegionProtectionListener implements Listener {
 		if (shooter instanceof Player player) {
 			if (entityHit instanceof Player) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PVP)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PVP.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PVP, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PVP.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entityHit instanceof Monster || entityHit instanceof IronGolem) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_HOSTILE_ENTITIES)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.DAMAGE_HOSTILE_ENTITIES.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_HOSTILE_ENTITIES, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.DAMAGE_HOSTILE_ENTITIES.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entityHit instanceof Mob) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.DAMAGE_PASSIVE_ENTITIES)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.DAMAGE_PASSIVE_ENTITIES.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.DAMAGE_PASSIVE_ENTITIES, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.DAMAGE_PASSIVE_ENTITIES.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			} else if (entityHit instanceof ArmorStand || entityHit instanceof ItemFrame || entityHit instanceof Painting) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.BREAK_BLOCKS)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.BREAK_BLOCKS.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			}
 		} else {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-				if (region != null && !region.isWorldFlagSet(WorldFlags.PROJECTILES)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PROJECTILES)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.PROJECTILES.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1333,13 +1332,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PICKUP_ITEMS)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PICKUP_ITEMS.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PICKUP_ITEMS, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PICKUP_ITEMS.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -1356,13 +1355,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PICKUP_ITEMS)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PICKUP_ITEMS.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PICKUP_ITEMS, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PICKUP_ITEMS.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -1376,13 +1375,13 @@ public final class RegionProtectionListener implements Listener {
 
 		if (entity instanceof Player player) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.VEHICLES)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.VEHICLES.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.VEHICLES, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.VEHICLES.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -1397,13 +1396,13 @@ public final class RegionProtectionListener implements Listener {
 
 		if (entity instanceof Player player) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.VEHICLES)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.VEHICLES.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.VEHICLES, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.VEHICLES.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -1417,13 +1416,13 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.INTERACT_ENTITIES.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.INTERACT_ENTITIES.getBitmask(), null, () -> {
 			event.setCancelled(true);
 		});
 	}
@@ -1438,13 +1437,13 @@ public final class RegionProtectionListener implements Listener {
 
 		if (block.getBlockData() instanceof Fence) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.INTERACT_ENTITIES.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.INTERACT_ENTITIES.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -1460,46 +1459,46 @@ public final class RegionProtectionListener implements Listener {
 
 		if (entity instanceof Villager) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRADE_VILLAGERS)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.TRADE_VILLAGERS.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.TRADE_VILLAGERS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ArmorStand) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ARMOR_STANDS)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.ARMOR_STANDS.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.ARMOR_STANDS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ItemFrame) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ITEM_FRAME_INTERACTION)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.ITEM_FRAME_INTERACTION.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.ITEM_FRAME_INTERACTION.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (!(entity instanceof Player)) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.INTERACT_ENTITIES.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.INTERACT_ENTITIES.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -1515,46 +1514,46 @@ public final class RegionProtectionListener implements Listener {
 
 		if (entity instanceof Villager) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRADE_VILLAGERS)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.TRADE_VILLAGERS.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRADE_VILLAGERS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.TRADE_VILLAGERS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ArmorStand) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ARMOR_STANDS)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.ARMOR_STANDS.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ARMOR_STANDS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.ARMOR_STANDS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof ItemFrame) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ITEM_FRAME_INTERACTION)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.ITEM_FRAME_INTERACTION.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ITEM_FRAME_INTERACTION, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.ITEM_FRAME_INTERACTION.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (!(entity instanceof Player)) {
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.INTERACT_ENTITIES)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.INTERACT_ENTITIES.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.INTERACT_ENTITIES, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.INTERACT_ENTITIES.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -1570,13 +1569,13 @@ public final class RegionProtectionListener implements Listener {
 
 			if (event.isGliding() && isWearingElytra(player)) {
 				if (!ChunkManager.isChunkClaimed(chunk)) {
-					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.ELYTRA)) {
+					if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.ELYTRA.getBitmask())) {
 						event.setCancelled(true);
 						return;
 					}
 				}
 
-				RegionProtection.hasPermission(player, chunk, location, PlayerFlags.ELYTRA, null, () -> {
+				RegionProtection.hasPermission(player, chunk, location, PlayerFlag.ELYTRA.getBitmask(), null, () -> {
 					event.setCancelled(true);
 				});
 			}
@@ -1598,13 +1597,13 @@ public final class RegionProtectionListener implements Listener {
 			Chunk chunk = location.getChunk();
 
 			if (!ChunkManager.isChunkClaimed(chunk)) {
-				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TAKE_FALL_DAMAGE)) {
+				if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.TAKE_FALL_DAMAGE.getBitmask())) {
 					event.setCancelled(true);
 					return;
 				}
 			}
 
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TAKE_FALL_DAMAGE, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.TAKE_FALL_DAMAGE.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		}
@@ -1620,12 +1619,12 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.WINDCHARGE_BURST)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.WINDCHARGE_BURST.getBitmask())) {
 					entity.remove();
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WINDCHARGE_BURST)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.WINDCHARGE_BURST.getBitmask())) {
 					entity.remove();
 					event.setCancelled(true);
 				}
@@ -1636,9 +1635,9 @@ public final class RegionProtectionListener implements Listener {
 
 				if (ChunkManager.isChunkClaimed(chunk)) {
 					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-					return region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE);
+					return region != null && !region.isWorldFlagSet(WorldFlag.WITHER_DAMAGE.getBitmask());
 				} else {
-					return !WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WITHER_DAMAGE);
+					return !WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.WITHER_DAMAGE.getBitmask());
 				}
 			});
 		} else if (Explosives.isExplosive(entity)) {
@@ -1647,7 +1646,7 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.EXPLOSION_DAMAGE.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
@@ -1684,11 +1683,11 @@ public final class RegionProtectionListener implements Listener {
 		if (ChunkManager.isChunkClaimed(chunk)) {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.EXPLOSION_DAMAGE)) {
+			if (region != null && !region.isWorldFlagSet(WorldFlag.EXPLOSION_DAMAGE.getBitmask())) {
 				event.setCancelled(true);
 			}
 		} else {
-			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.EXPLOSION_DAMAGE)) {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.EXPLOSION_DAMAGE.getBitmask())) {
 				event.setCancelled(true);
 				return;
 			}
@@ -1721,11 +1720,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.FIRE_SPREAD.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.FIRE_SPREAD)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.FIRE_SPREAD.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1733,11 +1732,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.GRASS_GROWTH)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.GRASS_GROWTH.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.GRASS_GROWTH)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.GRASS_GROWTH.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1745,11 +1744,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.SCULK_SPREAD)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.SCULK_SPREAD.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.SCULK_SPREAD)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.SCULK_SPREAD.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1757,11 +1756,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.PLANT_GROWTH.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PLANT_GROWTH)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.PLANT_GROWTH.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1777,11 +1776,11 @@ public final class RegionProtectionListener implements Listener {
 		if (ChunkManager.isChunkClaimed(chunk)) {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
+			if (region != null && !region.isWorldFlagSet(WorldFlag.PLANT_GROWTH.getBitmask())) {
 				event.setCancelled(true);
 			}
 		} else {
-			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PLANT_GROWTH)) {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.PLANT_GROWTH.getBitmask())) {
 				event.setCancelled(true);
 			}
 		}
@@ -1796,11 +1795,11 @@ public final class RegionProtectionListener implements Listener {
 		if (ChunkManager.isChunkClaimed(chunk)) {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.LEAVES_DECAY)) {
+			if (region != null && !region.isWorldFlagSet(WorldFlag.LEAVES_DECAY.getBitmask())) {
 				event.setCancelled(true);
 			}
 		} else {
-			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.LEAVES_DECAY)) {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.LEAVES_DECAY.getBitmask())) {
 				event.setCancelled(true);
 			}
 		}
@@ -1815,11 +1814,11 @@ public final class RegionProtectionListener implements Listener {
 		if (ChunkManager.isChunkClaimed(chunk)) {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.FIRE_SPREAD)) {
+			if (region != null && !region.isWorldFlagSet(WorldFlag.FIRE_SPREAD.getBitmask())) {
 				event.setCancelled(true);
 			}
 		} else {
-			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.FIRE_SPREAD)) {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.FIRE_SPREAD.getBitmask())) {
 				event.setCancelled(true);
 			}
 		}
@@ -1845,12 +1844,12 @@ public final class RegionProtectionListener implements Listener {
 			return;
 		}
 
-		if (toRegion != null && !toRegion.isWorldFlagSet(WorldFlags.LIQUID_FLOW)) {
+		if (toRegion != null && !toRegion.isWorldFlagSet(WorldFlag.LIQUID_FLOW.getBitmask())) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (fromRegion != null && !fromRegion.isWorldFlagSet(WorldFlags.LIQUID_FLOW)) {
+		if (fromRegion != null && !fromRegion.isWorldFlagSet(WorldFlag.LIQUID_FLOW.getBitmask())) {
 			event.setCancelled(true);
 		}
 	}
@@ -1913,7 +1912,7 @@ public final class RegionProtectionListener implements Listener {
 
 					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-					if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
+					if (region != null && !region.isWorldFlagSet(WorldFlag.WILDERNESS_PISTONS.getBitmask())) {
 						return false;
 					}
 				}
@@ -1939,7 +1938,7 @@ public final class RegionProtectionListener implements Listener {
 
 					Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-					if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_PISTONS)) {
+					if (region != null && !region.isWorldFlagSet(WorldFlag.WILDERNESS_PISTONS.getBitmask())) {
 						return false;
 					}
 				}
@@ -1968,7 +1967,7 @@ public final class RegionProtectionListener implements Listener {
 
 				Region region = ChunkManager.getRegionOwnsTheChunk(targetChunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.WILDERNESS_DISPENSERS)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.WILDERNESS_DISPENSERS.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -1987,18 +1986,18 @@ public final class RegionProtectionListener implements Listener {
 		}
 
 		if (entity instanceof Player player) {
-			RegionProtection.hasPermission(player, chunk, location, PlayerFlags.BREAK_BLOCKS, null, () -> {
+			RegionProtection.hasPermission(player, chunk, location, PlayerFlag.BREAK_BLOCKS.getBitmask(), null, () -> {
 				event.setCancelled(true);
 			});
 		} else if (entity instanceof Wither || entity instanceof WitherSkull) {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.WITHER_DAMAGE)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.WITHER_DAMAGE.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WITHER_DAMAGE)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.WITHER_DAMAGE.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -2006,11 +2005,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -2034,21 +2033,21 @@ public final class RegionProtectionListener implements Listener {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (entity instanceof Monster || entity instanceof IronGolem) {
-				if (region != null && !region.isWorldFlagSet(WorldFlags.HOSTILE_ENTITY_SPAWN)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.HOSTILE_ENTITY_SPAWN.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else if (entity instanceof Mob) {
-				if (region != null && !region.isWorldFlagSet(WorldFlags.PASSIVE_ENTITY_SPAWN)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.PASSIVE_ENTITY_SPAWN.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
 		} else {
 			if (entity instanceof Monster || entity instanceof IronGolem) {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.HOSTILE_ENTITY_SPAWN)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.HOSTILE_ENTITY_SPAWN.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else if (entity instanceof Mob) {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PASSIVE_ENTITY_SPAWN)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.PASSIVE_ENTITY_SPAWN.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -2064,12 +2063,12 @@ public final class RegionProtectionListener implements Listener {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (!(entity instanceof Player)) {
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
 		} else {
-			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 				event.setCancelled(true);
 			}
 		}
@@ -2083,7 +2082,7 @@ public final class RegionProtectionListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.TRIGGER_RAID)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.TRIGGER_RAID.getBitmask())) {
 				event.setCancelled(true);
 
 				PotionEffect effect = event.getPlayer().getPotionEffect(PotionEffectType.RAID_OMEN);
@@ -2096,7 +2095,7 @@ public final class RegionProtectionListener implements Listener {
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.TRIGGER_RAID, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.TRIGGER_RAID.getBitmask(), null, () -> {
 			event.setCancelled(true);
 
 			PotionEffect effect = event.getPlayer().getPotionEffect(PotionEffectType.RAID_OMEN);
@@ -2116,21 +2115,21 @@ public final class RegionProtectionListener implements Listener {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
 			if (blockType == Material.SNOW) {
-				if (region != null && !region.isWorldFlagSet(WorldFlags.SNOW_MELTING)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.SNOW_MELTING.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else if (blockType == Material.ICE) {
-				if (region != null && !region.isWorldFlagSet(WorldFlags.ICE_MELTING)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.ICE_MELTING.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
 		} else {
 			if (blockType == Material.SNOW) {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.SNOW_MELTING)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.SNOW_MELTING.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else if (blockType == Material.ICE) {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.ICE_MELTING)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.ICE_MELTING.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -2159,11 +2158,11 @@ public final class RegionProtectionListener implements Listener {
 			Region toRegion = ChunkManager.getRegionOwnsTheChunk(toChunk);
 
 			if (fromRegion == null) {
-				if (toRegion != null && !toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_MINECARTS)) {
+				if (toRegion != null && !toRegion.isWorldFlagSet(WorldFlag.WILDERNESS_MINECARTS.getBitmask())) {
 					event.getVehicle().remove();
 				}
 			} else if (toRegion != null && fromRegion.getUniqueId() != toRegion.getUniqueId()) {
-				if (!toRegion.isWorldFlagSet(WorldFlags.WILDERNESS_MINECARTS)) {
+				if (!toRegion.isWorldFlagSet(WorldFlag.WILDERNESS_MINECARTS.getBitmask())) {
 					event.getVehicle().remove();
 				}
 			}
@@ -2181,11 +2180,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.SNOWMAN_TRAILS)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.SNOWMAN_TRAILS.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.SNOWMAN_TRAILS)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.SNOWMAN_TRAILS.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -2204,11 +2203,11 @@ public final class RegionProtectionListener implements Listener {
 			if (ChunkManager.isChunkClaimed(chunk)) {
 				Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-				if (region != null && !region.isWorldFlagSet(WorldFlags.WEATHER_SNOW)) {
+				if (region != null && !region.isWorldFlagSet(WorldFlag.WEATHER_SNOW.getBitmask())) {
 					event.setCancelled(true);
 				}
 			} else {
-				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.WEATHER_SNOW)) {
+				if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.WEATHER_SNOW.getBitmask())) {
 					event.setCancelled(true);
 				}
 			}
@@ -2222,11 +2221,11 @@ public final class RegionProtectionListener implements Listener {
 		if (ChunkManager.isChunkClaimed(chunk)) {
 			Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
 
-			if (region != null && !region.isWorldFlagSet(WorldFlags.PLANT_GROWTH)) {
+			if (region != null && !region.isWorldFlagSet(WorldFlag.PLANT_GROWTH.getBitmask())) {
 				event.setCancelled(true);
 			}
 		} else {
-			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlags.PLANT_GROWTH)) {
+			if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), WorldFlag.PLANT_GROWTH.getBitmask())) {
 				event.setCancelled(true);
 			}
 		}
@@ -2250,3 +2249,4 @@ public final class RegionProtectionListener implements Listener {
 	}
 
 }
+

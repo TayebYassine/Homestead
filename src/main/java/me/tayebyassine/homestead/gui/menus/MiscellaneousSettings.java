@@ -8,7 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.*;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.Menu;
 import me.tayebyassine.homestead.managers.*;
 import me.tayebyassine.homestead.models.Region;
@@ -73,7 +73,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION)) {
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.RENAME_REGION.getBitmask())) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
@@ -115,7 +115,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.RENAME_REGION)) {
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.RENAME_REGION.getBitmask())) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
@@ -157,7 +157,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_DESCRIPTION)) {
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.SET_DESCRIPTION.getBitmask())) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
@@ -199,7 +199,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_SPAWN)) {
+			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.SET_SPAWN.getBitmask())) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}

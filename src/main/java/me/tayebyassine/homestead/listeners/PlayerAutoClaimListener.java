@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.integrations.WorldGuardAPI;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -126,7 +126,7 @@ public final class PlayerAutoClaimListener implements Listener {
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.CLAIM_CHUNKS)) {
+				ControlFlag.CLAIM_CHUNKS.getBitmask())) {
 			return;
 		}
 
@@ -176,3 +176,4 @@ public final class PlayerAutoClaimListener implements Listener {
 		}
 	}
 }
+

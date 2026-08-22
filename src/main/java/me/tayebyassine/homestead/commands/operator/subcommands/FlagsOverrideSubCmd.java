@@ -4,9 +4,9 @@ import me.tayebyassine.homestead.commands.CommandSenderType;
 
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.PlayerFlags;
-import me.tayebyassine.homestead.flags.WorldFlags;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.PlayerFlag;
+import me.tayebyassine.homestead.flags.WorldFlag;
 import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
@@ -86,11 +86,11 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
             }
 
             long flags = member.getPlayerFlags();
-            boolean targetState = resolveTargetState(FlagsCalculator.isFlagSet(flags, flag), stateInput);
+            boolean targetState = resolveTargetState(FlagCalculator.isFlagSet(flags, flag), stateInput);
 
             member.setPlayerFlags(targetState
-                    ? FlagsCalculator.addFlag(flags, flag)
-                    : FlagsCalculator.removeFlag(flags, flag));
+                    ? FlagCalculator.addFlag(flags, flag)
+                    : FlagCalculator.removeFlag(flags, flag));
 
             Messages.send(sender, "commands.op_flagsoverride.4",
                     args[2], Formatter.getFlagState(targetState), targetName, region.getName());
@@ -112,11 +112,11 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
 
         for (Region region : RegionManager.getAll()) {
             long flags = region.getPlayerFlags();
-            boolean targetState = resolveTargetState(FlagsCalculator.isFlagSet(flags, flag), stateInput);
+            boolean targetState = resolveTargetState(FlagCalculator.isFlagSet(flags, flag), stateInput);
 
             region.setPlayerFlags(targetState
-                    ? FlagsCalculator.addFlag(flags, flag)
-                    : FlagsCalculator.removeFlag(flags, flag));
+                    ? FlagCalculator.addFlag(flags, flag)
+                    : FlagCalculator.removeFlag(flags, flag));
 
             Messages.send(sender, "commands.op_flagsoverride.5",
                     args[1], Formatter.getFlagState(targetState), region.getName());
@@ -131,21 +131,21 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
 
         String flagInput = args[1];
 
-        if (!WorldFlags.getFlags().contains(flagInput)) {
+        if (!WorldFlag.getFlags().contains(flagInput)) {
             Messages.send(sender, "commands.op_flagsoverride.2");
             return;
         }
 
-        long flag = WorldFlags.valueOf(flagInput);
+        long flag = WorldFlag.parse(flagInput);
         String stateInput = args.length > 2 ? args[2] : null;
 
         for (Region region : RegionManager.getAll()) {
             long flags = region.getWorldFlags();
-            boolean targetState = resolveTargetState(FlagsCalculator.isFlagSet(flags, flag), stateInput);
+            boolean targetState = resolveTargetState(FlagCalculator.isFlagSet(flags, flag), stateInput);
 
             region.setWorldFlags(targetState
-                    ? FlagsCalculator.addFlag(flags, flag)
-                    : FlagsCalculator.removeFlag(flags, flag));
+                    ? FlagCalculator.addFlag(flags, flag)
+                    : FlagCalculator.removeFlag(flags, flag));
 
             Messages.send(sender, "commands.op_flagsoverride.6",
                     flagInput, Formatter.getFlagState(targetState), region.getName());
@@ -153,11 +153,11 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
     }
 
     private long parsePlayerFlag(CommandSender sender, String flagInput) {
-        if (!PlayerFlags.getFlags().contains(flagInput)) {
+        if (!PlayerFlag.getFlags().contains(flagInput)) {
             Messages.send(sender, "commands.op_flagsoverride.2");
             return -1;
         }
-        return PlayerFlags.valueOf(flagInput);
+        return PlayerFlag.parse(flagInput);
     }
 
     private boolean resolveTargetState(boolean currentState, String stateInput) {
@@ -185,11 +185,11 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
                         suggestions.addAll(getAllMemberNames());
                     }
                 }
-                case "global" -> suggestions.addAll(PlayerFlags.getFlags());
-                case "world" -> suggestions.addAll(WorldFlags.getFlags());
+                case "global" -> suggestions.addAll(PlayerFlag.getFlags());
+                case "world" -> suggestions.addAll(WorldFlag.getFlags());
             }
         } else if (args.length == 3 && args[0].equalsIgnoreCase("member")) {
-            suggestions.addAll(PlayerFlags.getFlags());
+            suggestions.addAll(PlayerFlag.getFlags());
         } else if ((args.length == 3 && (args[0].equalsIgnoreCase("global") || args[0].equalsIgnoreCase("world")))
                 || (args.length == 4 && args[0].equalsIgnoreCase("member"))) {
             suggestions.addAll(List.of("allow", "deny"));
@@ -213,6 +213,9 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
         return names;
     }
 }
+
+
+
 
 
 

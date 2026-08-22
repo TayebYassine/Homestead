@@ -34,7 +34,7 @@ public final class WorldRules {
 
 		if (flags == -1) return true;
 
-		return FlagsCalculator.isFlagSet(flags, flag);
+		return FlagCalculator.isFlagSet(flags, flag);
 	}
 
 	public static boolean isWorldFlagAllowed(World world, long flag) {
@@ -50,6 +50,6 @@ public final class WorldRules {
 
 		if (flags == -1) return true;
 
-		return FlagsCalculator.isFlagSet(flags, flag);
+		return FlagCalculator.isFlagSet(flags, flag);
 	}
 }

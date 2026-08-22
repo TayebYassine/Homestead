@@ -1,8 +1,8 @@
 package me.tayebyassine.homestead.resources.files;
 
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.PlayerFlags;
-import me.tayebyassine.homestead.flags.WorldFlags;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.PlayerFlag;
+import me.tayebyassine.homestead.flags.WorldFlag;
 import me.tayebyassine.homestead.resources.ResourceFile;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
@@ -36,7 +36,7 @@ public class FlagsFile extends ResourceFile {
 		for (String key : keys) {
 			if (getBoolean("default-players-flags." + key)) {
 				try {
-					flags = FlagsCalculator.addFlag(flags, PlayerFlags.valueOf(key));
+					flags = FlagCalculator.addFlag(flags, PlayerFlag.parse(key));
 				} catch (IllegalArgumentException ignored) {
 					// Skip silently
 				}
@@ -46,13 +46,13 @@ public class FlagsFile extends ResourceFile {
 	}
 
 	public long getAllAllowedPlayerFlagsExcludeDisabledOnes() {
-		List<String> keys = PlayerFlags.getFlags();
+		List<String> keys = PlayerFlag.getFlags();
 		long flags = 0L;
 
 		for (String key : keys) {
 			if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(key)) continue;
 
-			flags = FlagsCalculator.addFlag(flags, PlayerFlags.valueOf(key));
+			flags = FlagCalculator.addFlag(flags, PlayerFlag.parse(key));
 		}
 
 		return flags;
@@ -65,7 +65,7 @@ public class FlagsFile extends ResourceFile {
 		for (String key : keys) {
 			if (getBoolean("default-world-flags." + key)) {
 				try {
-					flags = FlagsCalculator.addFlag(flags, WorldFlags.valueOf(key));
+					flags = FlagCalculator.addFlag(flags, WorldFlag.parse(key));
 				} catch (IllegalArgumentException ignored) {
 					// Skip silently
 				}
@@ -75,15 +75,17 @@ public class FlagsFile extends ResourceFile {
 	}
 
 	public long getAllAllowedWorldFlagsExcludeDisabledOnes() {
-		List<String> keys = WorldFlags.getFlags();
+		List<String> keys = WorldFlag.getFlags();
 		long flags = 0L;
 
 		for (String key : keys) {
 			if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(key)) continue;
 
-			flags = FlagsCalculator.addFlag(flags, WorldFlags.valueOf(key));
+			flags = FlagCalculator.addFlag(flags, WorldFlag.parse(key));
 		}
 
 		return flags;
 	}
 }
+
+

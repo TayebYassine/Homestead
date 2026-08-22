@@ -4,7 +4,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.BankDepositEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.managers.WarManager;
 import me.tayebyassine.homestead.models.Region;
@@ -67,7 +67,7 @@ public final class DepositBankSubCmd extends SubCommandBuilder {
         }
 
         if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlags.DEPOSIT_MONEY)) {
+                ControlFlag.DEPOSIT_MONEY.getBitmask())) {
             return true;
         }
 
@@ -123,6 +123,7 @@ public final class DepositBankSubCmd extends SubCommandBuilder {
         return suggestions;
     }
 }
+
 
 
 

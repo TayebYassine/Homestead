@@ -3,9 +3,9 @@ package me.tayebyassine.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.PlayerFlags;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.PlayerFlag;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -29,8 +29,8 @@ public final class SubAreaFlagsMenu {
 	public SubAreaFlagsMenu(Player player, Region region, SubArea subArea) {
 		List<ItemStack> items = new ArrayList<>();
 
-		for (String flagString : PlayerFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(subArea.getPlayerFlags(), PlayerFlags.valueOf(flagString));
+		for (String flagString : PlayerFlag.getFlags()) {
+			boolean value = FlagCalculator.isFlagSet(subArea.getPlayerFlags(), PlayerFlag.parse(flagString));
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
@@ -60,12 +60,12 @@ public final class SubAreaFlagsMenu {
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.MANAGE_SUBAREAS)) {
+				ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
 
-		String flagString = PlayerFlags.getFlags().get(context.getIndex());
+		String flagString = PlayerFlag.getFlags().get(context.getIndex());
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 			Messages.send(player, "commands.flags.9");
@@ -76,17 +76,19 @@ public final class SubAreaFlagsMenu {
 		if (!context.getEvent().isLeftClick()) return;
 
 		long flags = subArea.getPlayerFlags();
-		long flag = PlayerFlags.valueOf(flagString);
-		boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
+		long flag = PlayerFlag.parse(flagString);
+		boolean isSet = FlagCalculator.isFlagSet(flags, flag);
 
 		Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
 
 		subArea.setPlayerFlags(isSet
-				? FlagsCalculator.removeFlag(flags, flag)
-				: FlagsCalculator.addFlag(flags, flag));
+				? FlagCalculator.removeFlag(flags, flag)
+				: FlagCalculator.addFlag(flags, flag));
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagString, subArea.getName(), Formatter.getFlagState(!isSet));
 
 		context.getInstance().replaceSlot(context.getIndex(), MenuUtility.getFlagButton(flagString, !isSet));
 	}
 }
+
+

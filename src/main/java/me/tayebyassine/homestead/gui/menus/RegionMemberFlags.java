@@ -3,9 +3,9 @@ package me.tayebyassine.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.PlayerFlags;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.PlayerFlag;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.MemberManager;
@@ -60,7 +60,7 @@ public final class RegionMemberFlags {
 			return;
 		}
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlags.SET_MEMBER_FLAGS)) {
+		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.SET_MEMBER_FLAGS.getBitmask())) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}
@@ -89,17 +89,17 @@ public final class RegionMemberFlags {
 		long newFlags = member.getPlayerFlags();
 		int changed = 0;
 
-		for (String flagString : PlayerFlags.getFlags()) {
+		for (String flagString : PlayerFlag.getFlags()) {
 			if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) continue;
 
-			long flag = PlayerFlags.valueOf(flagString);
-			boolean isSet = FlagsCalculator.isFlagSet(newFlags, flag);
+			long flag = PlayerFlag.parse(flagString);
+			boolean isSet = FlagCalculator.isFlagSet(newFlags, flag);
 
 			if (enableAll && !isSet) {
-				newFlags = FlagsCalculator.addFlag(newFlags, flag);
+				newFlags = FlagCalculator.addFlag(newFlags, flag);
 				changed++;
 			} else if (disableAll && isSet) {
-				newFlags = FlagsCalculator.removeFlag(newFlags, flag);
+				newFlags = FlagCalculator.removeFlag(newFlags, flag);
 				changed++;
 			}
 		}
@@ -117,9 +117,9 @@ public final class RegionMemberFlags {
 
 	private void handleSingleToggle(Player player, Region region, RegionMember member, PaginationMenu.ClickContext context, int index) {
 		int flagListIndex = index - 1;
-		if (flagListIndex < 0 || flagListIndex >= PlayerFlags.getFlags().size()) return;
+		if (flagListIndex < 0 || flagListIndex >= PlayerFlag.getFlags().size()) return;
 
-		String flagString = PlayerFlags.getFlags().get(flagListIndex);
+		String flagString = PlayerFlag.getFlags().get(flagListIndex);
 
 		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
@@ -130,14 +130,14 @@ public final class RegionMemberFlags {
 		if (!context.getEvent().isLeftClick()) return;
 
 		long flags = member.getPlayerFlags();
-		long flag = PlayerFlags.valueOf(flagString);
-		boolean isSet = FlagsCalculator.isFlagSet(flags, flag);
+		long flag = PlayerFlag.parse(flagString);
+		boolean isSet = FlagCalculator.isFlagSet(flags, flag);
 
 		Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
 
 		member.setPlayerFlags(isSet
-				? FlagsCalculator.removeFlag(flags, flag)
-				: FlagsCalculator.addFlag(flags, flag));
+				? FlagCalculator.removeFlag(flags, flag)
+				: FlagCalculator.addFlag(flags, flag));
 
 		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagString, member.getPlayerName(), Formatter.getFlagState(!isSet));
 
@@ -149,11 +149,13 @@ public final class RegionMemberFlags {
 		List<ItemStack> items = new ArrayList<>();
 		items.add(MenuUtility.getButton(65));
 
-		for (String flagString : PlayerFlags.getFlags()) {
-			boolean value = FlagsCalculator.isFlagSet(member.getPlayerFlags(), PlayerFlags.valueOf(flagString));
+		for (String flagString : PlayerFlag.getFlags()) {
+			boolean value = FlagCalculator.isFlagSet(member.getPlayerFlags(), PlayerFlag.parse(flagString));
 			items.add(MenuUtility.getFlagButton(flagString, value));
 		}
 
 		return items;
 	}
 }
+
+

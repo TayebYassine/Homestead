@@ -8,7 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import me.tayebyassine.homestead.flags.WorldFlags;
+import me.tayebyassine.homestead.flags.WorldFlag;
 import me.tayebyassine.homestead.flags.WorldRules;
 import me.tayebyassine.homestead.listeners.util.CopperGolemTracker;
 import me.tayebyassine.homestead.managers.ChunkManager;
@@ -50,11 +50,11 @@ public final class ItemTransportingEntityValidateTargetListener implements Liste
 				return;
 			}
 
-			if (!targetRegion.isWorldFlagSet(WorldFlags.ENTITY_GRIEFING)) {
+			if (!targetRegion.isWorldFlagSet(WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 				event.setAllowed(false);
 			}
 		} else {
-			if (spawnRegionId == null && !WorldRules.isWorldFlagAllowed(targetChunk.getWorld(), WorldFlags.ENTITY_GRIEFING)) {
+			if (spawnRegionId == null && !WorldRules.isWorldFlagAllowed(targetChunk.getWorld(), WorldFlag.ENTITY_GRIEFING.getBitmask())) {
 				entity.remove();
 			}
 		}

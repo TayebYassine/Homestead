@@ -8,7 +8,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.BanPlayerEvent;
 import me.tayebyassine.homestead.api.events.BulkUnbanPlayersEvent;
 import me.tayebyassine.homestead.api.events.UnbanPlayerEvent;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.*;
 import me.tayebyassine.homestead.models.Region;
@@ -108,7 +108,7 @@ public final class RegionBannedPlayers {
 			}
 
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					ControlFlags.UNBAN_PLAYERS)) {
+					ControlFlag.UNBAN_PLAYERS.getBitmask())) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
@@ -140,7 +140,7 @@ public final class RegionBannedPlayers {
 			return false;
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.BAN_PLAYERS)) {
+				ControlFlag.BAN_PLAYERS.getBitmask())) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return false;
 		}
@@ -179,7 +179,7 @@ public final class RegionBannedPlayers {
 		if (!BanManager.isBanned(region, bannedPlayer.getPlayer())) return;
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.UNBAN_PLAYERS)) {
+				ControlFlag.UNBAN_PLAYERS.getBitmask())) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}

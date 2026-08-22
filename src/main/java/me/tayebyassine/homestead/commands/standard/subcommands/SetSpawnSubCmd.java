@@ -5,7 +5,7 @@ import me.tayebyassine.homestead.api.events.RegionLocationUpdateEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.models.Region;
@@ -49,7 +49,7 @@ public final class SetSpawnSubCmd extends SubCommandBuilder {
         }
 
         if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlags.SET_SPAWN)) {
+                ControlFlag.SET_SPAWN.getBitmask())) {
             return true;
         }
 
@@ -75,6 +75,7 @@ public final class SetSpawnSubCmd extends SubCommandBuilder {
         return true;
     }
 }
+
 
 
 

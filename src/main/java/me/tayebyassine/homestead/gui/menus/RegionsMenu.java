@@ -2,7 +2,7 @@ package me.tayebyassine.homestead.gui.menus;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import me.tayebyassine.homestead.flags.PlayerFlags;
+import me.tayebyassine.homestead.flags.PlayerFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
@@ -110,8 +110,8 @@ public final class RegionsMenu {
 
 		boolean allowed = PlayerUtility.isOperator(clicker)
 				|| region.isOwner(menuPlayer)
-				|| (PlayerUtility.hasPermissionFlag(region.getUniqueId(), clicker, PlayerFlags.TELEPORT_SPAWN, true)
-				&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), clicker, PlayerFlags.PASSTHROUGH, true))
+				|| (PlayerUtility.hasPermissionFlag(region.getUniqueId(), clicker, PlayerFlag.TELEPORT_SPAWN.getBitmask(), true)
+				&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), clicker, PlayerFlag.PASSTHROUGH.getBitmask(), true))
 				&& clicker.hasPermission("homestead.actions.regions.teleport");
 
 		if (!allowed) {

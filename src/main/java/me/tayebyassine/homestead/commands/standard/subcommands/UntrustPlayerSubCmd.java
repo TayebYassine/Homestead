@@ -5,7 +5,7 @@ import me.tayebyassine.homestead.api.events.PlayerLeftRegionEvent;
 import me.tayebyassine.homestead.api.events.RevokePlayerInviteEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.managers.InviteManager;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.MemberManager;
@@ -55,7 +55,7 @@ public final class UntrustPlayerSubCmd extends SubCommandBuilder {
         }
 
         if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlags.UNTRUST_PLAYERS)) {
+                ControlFlag.UNTRUST_PLAYERS.getBitmask())) {
             return true;
         }
 
@@ -114,6 +114,7 @@ public final class UntrustPlayerSubCmd extends SubCommandBuilder {
         return suggestions;
     }
 }
+
 
 
 

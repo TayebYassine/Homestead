@@ -5,7 +5,7 @@ import me.tayebyassine.homestead.api.events.RegionDisplaynameUpdateEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
@@ -58,7 +58,7 @@ public final class SetDisplayNameSubCmd extends SubCommandBuilder {
         String regionDisplayName = String.join(" ", Arrays.asList(args));
 
         if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlags.RENAME_REGION)) {
+                ControlFlag.RENAME_REGION.getBitmask())) {
             return true;
         }
 
@@ -93,6 +93,7 @@ public final class SetDisplayNameSubCmd extends SubCommandBuilder {
         return true;
     }
 }
+
 
 
 

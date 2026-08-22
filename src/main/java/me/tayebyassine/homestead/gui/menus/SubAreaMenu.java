@@ -3,7 +3,7 @@ package me.tayebyassine.homestead.gui.menus;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.Menu;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.MemberManager;
@@ -130,7 +130,7 @@ public final class SubAreaMenu {
 				return;
 			}
 			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					ControlFlags.MANAGE_SUBAREAS)) {
+					ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
 				return;
 			}
 
@@ -154,7 +154,7 @@ public final class SubAreaMenu {
 
 	private static boolean validateRename(Player player, Region region, SubArea subArea, String message) {
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.MANAGE_SUBAREAS)) {
+				ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
 			return false;
 		}
 		if (!StringUtils.isValidSubAreaName(message)) {

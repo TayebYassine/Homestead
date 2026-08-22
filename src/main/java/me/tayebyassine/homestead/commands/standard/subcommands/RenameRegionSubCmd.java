@@ -5,7 +5,7 @@ import me.tayebyassine.homestead.api.events.RegionNameUpdateEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
@@ -54,7 +54,7 @@ public final class RenameRegionSubCmd extends SubCommandBuilder {
         }
 
         if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlags.RENAME_REGION)) {
+                ControlFlag.RENAME_REGION.getBitmask())) {
             return true;
         }
 
@@ -95,6 +95,7 @@ public final class RenameRegionSubCmd extends SubCommandBuilder {
         return true;
     }
 }
+
 
 
 

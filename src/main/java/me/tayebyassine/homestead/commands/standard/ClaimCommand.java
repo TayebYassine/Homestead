@@ -7,7 +7,7 @@ import me.tayebyassine.homestead.api.events.ChunkClaimEvent;
 import me.tayebyassine.homestead.api.events.RegionCreateEvent;
 import me.tayebyassine.homestead.commands.CommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.integrations.WorldGuardAPI;
 import me.tayebyassine.homestead.listeners.SelectionToolListener;
 import me.tayebyassine.homestead.listeners.SelectionToolListener.Selection;
@@ -85,7 +85,7 @@ public final class ClaimCommand extends CommandBuilder {
         if (!PlayerUtility.hasControlRegionPermissionFlag(
                 region.getUniqueId(),
                 player,
-                ControlFlags.CLAIM_CHUNKS)) {
+                ControlFlag.CLAIM_CHUNKS.getBitmask())) {
             return true;
         }
 
@@ -189,7 +189,7 @@ public final class ClaimCommand extends CommandBuilder {
         if (!PlayerUtility.hasControlRegionPermissionFlag(
                 region.getUniqueId(),
                 player,
-                ControlFlags.CLAIM_CHUNKS)) {
+                ControlFlag.CLAIM_CHUNKS.getBitmask())) {
             return true;
         }
 
@@ -319,6 +319,7 @@ public final class ClaimCommand extends CommandBuilder {
         return suggestions;
     }
 }
+
 
 
 

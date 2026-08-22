@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.PlayerJoinSubAreaEvent;
 import me.tayebyassine.homestead.api.events.PlayerLeftSubAreaEvent;
-import me.tayebyassine.homestead.flags.ControlFlags;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.MemberManager;
@@ -93,7 +93,7 @@ public final class SubAreaMembers {
 			return false;
 		}
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.MANAGE_SUBAREAS)) {
+				ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
 			return false;
 		}
 		if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
@@ -150,7 +150,7 @@ public final class SubAreaMembers {
 		}
 
 		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlags.MANAGE_SUBAREAS)) {
+				ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
 			return;
 		}
 

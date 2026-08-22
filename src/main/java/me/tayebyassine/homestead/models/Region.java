@@ -5,8 +5,8 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.flags.FlagsCalculator;
-import me.tayebyassine.homestead.flags.PlayerFlags;
+import me.tayebyassine.homestead.flags.FlagCalculator;
+import me.tayebyassine.homestead.flags.PlayerFlag;
 import me.tayebyassine.homestead.models.serialize.SeLocation;
 import me.tayebyassine.homestead.models.serialize.SeRent;
 import me.tayebyassine.homestead.util.minecraft.plugins.MapColor;
@@ -153,7 +153,7 @@ public final class Region {
 	}
 
 	public boolean isPlayerFlagSet(long flag) {
-		return FlagsCalculator.isFlagSet(playerFlags, flag);
+		return FlagCalculator.isFlagSet(playerFlags, flag);
 	}
 
 	public long getWorldFlags() {
@@ -166,7 +166,7 @@ public final class Region {
 	}
 
 	public boolean isWorldFlagSet(long flag) {
-		return FlagsCalculator.isFlagSet(worldFlags, flag);
+		return FlagCalculator.isFlagSet(worldFlags, flag);
 	}
 
 	public double getTaxes() {
@@ -268,11 +268,11 @@ public final class Region {
 
 	/**
 	 * Check if the region is public.
-	 * @return {@code true} if the flags {@code PASSTHROUGH} ({@value me.tayebyassine.homestead.flags.PlayerFlags#PASSTHROUGH}) and
-	 * {@code TELEPORT_SPAWN} ({@value me.tayebyassine.homestead.flags.PlayerFlags#TELEPORT_SPAWN}) are allowed to global players, {@code false} otherwise.
+	 * @return {@code true} if the flags {@code PASSTHROUGH} ({@value PlayerFlag#PASSTHROUGH}) and
+	 * {@code TELEPORT_SPAWN} ({@value PlayerFlag#TELEPORT_SPAWN}) are allowed to global players, {@code false} otherwise.
 	 */
 	public boolean isPublic() {
-		return FlagsCalculator.isFlagSet(playerFlags, PlayerFlags.PASSTHROUGH) && FlagsCalculator.isFlagSet(playerFlags, PlayerFlags.TELEPORT_SPAWN);
+		return FlagCalculator.isFlagSet(playerFlags, PlayerFlag.PASSTHROUGH.getBitmask()) && FlagCalculator.isFlagSet(playerFlags, PlayerFlag.TELEPORT_SPAWN.getBitmask());
 	}
 
 	private void update() {

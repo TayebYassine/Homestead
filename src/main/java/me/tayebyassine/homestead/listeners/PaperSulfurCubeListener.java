@@ -17,7 +17,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.flags.PlayerFlags;
+import me.tayebyassine.homestead.flags.PlayerFlag;
 import me.tayebyassine.homestead.flags.WorldRules;
 import me.tayebyassine.homestead.listeners.util.RegionProtection;
 import me.tayebyassine.homestead.managers.ChunkManager;
@@ -48,13 +48,13 @@ public final class PaperSulfurCubeListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlags.PUNCH_SULFUR_CUBES)) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PUNCH_SULFUR_CUBES.getBitmask())) {
 				cancelAndFreeze(player, targetEntity);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlags.PUNCH_SULFUR_CUBES, null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PUNCH_SULFUR_CUBES.getBitmask(), null, () -> {
 			cancelAndFreeze(player, targetEntity);
 		});
 	}
@@ -140,3 +140,4 @@ public final class PaperSulfurCubeListener implements Listener {
 		return bodyItem != null && !bodyItem.getType().isAir();
 	}
 }
+
