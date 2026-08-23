@@ -457,7 +457,7 @@ commands:
     4: '{__prefix__} &cNo se puede encontrar el mundo.'
     5: '{__prefix__} &cNo hay chunks para reclamar.'
     6: '{__prefix__} &7Hecho.'
-  op_flagsoverride:
+  op_overrideflag:
     0: '{__prefix__} &7Argumentos insuficientes, uso: &e{0}'
     1: '{__prefix__} &cJugador inválido proporcionado.'
     2: '{__prefix__} &cFlag inválida proporcionada.'

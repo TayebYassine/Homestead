@@ -455,7 +455,7 @@ commands:
     4: '{__prefix__} &cNem sikerült megtalálni a világot.'
     5: '{__prefix__} &cNincs foglalható chunk.'
     6: '{__prefix__} &7Kész.'
-  op_flagsoverride:
+  op_overrideflag:
     0: '{__prefix__} &7Nincs elegendő argumentum, használat: &e{0}'
     1: '{__prefix__} &cÉrvénytelen játékos megadva.'
     2: '{__prefix__} &cÉrvénytelen flag megadva.'

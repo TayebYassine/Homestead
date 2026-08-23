@@ -193,7 +193,7 @@ permissions:
     default: op
   homestead.commands.homesteadadmin.export:
     default: op
-  homestead.commands.homesteadadmin.flagsoverride:
+  homestead.commands.homesteadadmin.overrideflag:
     default: op
   homestead.commands.homesteadadmin.import:
     default: op
@@ -212,7 +212,7 @@ permissions:
     children:
       homestead.commands.homesteadadmin.claim: true
       homestead.commands.homesteadadmin.export: true
-      homestead.commands.homesteadadmin.flagsoverride: true
+      homestead.commands.homesteadadmin.overrideflag: true
       homestead.commands.homesteadadmin.import: true
       homestead.commands.homesteadadmin.plugin: true
       homestead.commands.homesteadadmin.reload: true

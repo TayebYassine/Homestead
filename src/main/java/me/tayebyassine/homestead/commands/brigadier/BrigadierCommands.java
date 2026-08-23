@@ -228,12 +228,15 @@ public final class BrigadierCommands {
                 .literalSub("updates")
                 .end()
 
+                .literalSub("reload")
+                .end()
+
                 .literalSub("transfer")
                 .stringArg("region")
                 .stringArg("player")
                 .end()
 
-                .literalSub("flagsoverride")
+                .literalSub("overrideflag")
                 .literalSub("global")
                 .stringArg("flag")
                 .stringArg("state")

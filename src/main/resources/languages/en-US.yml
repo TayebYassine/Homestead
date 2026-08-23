@@ -479,7 +479,7 @@ commands:
     4: "{__prefix__} &cUnable to find the world."
     5: "{__prefix__} &cThere are no chunks to claim."
     6: "{__prefix__} &7Done."
-  op_flagsoverride:
+  op_overrideflag:
     0: "{__prefix__} &7Insufficient arguments, usage: &e{0}"
     1: "{__prefix__} &cInvalid player provided."
     2: "{__prefix__} &cInvalid flag provided."

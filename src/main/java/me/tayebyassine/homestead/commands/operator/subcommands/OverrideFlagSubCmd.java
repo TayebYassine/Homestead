@@ -21,27 +21,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Admin sub-command ({@code /hsadmin flagsoverride}) that applies a flag state across
+ * Admin sub-command ({@code /hsadmin overrideflag}) that applies a flag state across
  * every region, ignoring the regular per-region permission checks.
  */
-public final class FlagsOverrideSubCmd extends SubCommandBuilder {
+public final class OverrideFlagSubCmd extends SubCommandBuilder {
 
-    public FlagsOverrideSubCmd() {
-        super("flagsoverride");
+    public OverrideFlagSubCmd() {
+        super("overrideflag");
         setAdminPermission();
-        setUsage("/hsadmin flagsoverride [global/world/member] {member} [flag] (allow/deny)");
-        setAllowedCommandSenders(CommandSenderType.PLAYER);
+        setUsage("/hsadmin overrideflag [global/world/member] {member} [flag] (allow/deny)");
+        setAllowedCommandSenders(CommandSenderType.PLAYER, CommandSenderType.CONSOLE);
     }
 
     @Override
     public boolean onExecution(CommandSender sender, String[] args) {
-        Player player = asPlayer(sender);
-        if (player == null) {
-            return false;
-        }
-
         if (args.length < 1) {
-            Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+            Messages.send(sender, "commands.op_overrideflag.0", getUsage());
             return true;
         }
 
@@ -49,17 +44,15 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
             case "member" -> handleMemberFlags(sender, args);
             case "global" -> handleGlobalFlags(sender, args);
             case "world" -> handleWorldFlags(sender, args);
-            default -> Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+            default -> Messages.send(sender, "commands.op_overrideflag.0", getUsage());
         }
-
-        Messages.send(sender, "commands.op_flagsoverride.3");
 
         return true;
     }
 
     private void handleMemberFlags(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+            Messages.send(sender, "commands.op_overrideflag.0", getUsage());
             return;
         }
 
@@ -67,7 +60,7 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
         OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(targetName);
 
         if (target == null) {
-            Messages.send(sender, "commands.op_flagsoverride.1");
+            Messages.send(sender, "commands.op_overrideflag.1");
             return;
         }
 
@@ -92,14 +85,16 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
                     ? FlagCalculator.addFlag(flags, flag)
                     : FlagCalculator.removeFlag(flags, flag));
 
-            Messages.send(sender, "commands.op_flagsoverride.4",
+            Messages.send(sender, "commands.op_overrideflag.4",
                     args[2], Formatter.getFlagState(targetState), targetName, region.getName());
         }
+
+        Messages.send(sender, "commands.op_overrideflag.3");
     }
 
     private void handleGlobalFlags(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+            Messages.send(sender, "commands.op_overrideflag.0", getUsage());
             return;
         }
 
@@ -118,21 +113,23 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
                     ? FlagCalculator.addFlag(flags, flag)
                     : FlagCalculator.removeFlag(flags, flag));
 
-            Messages.send(sender, "commands.op_flagsoverride.5",
+            Messages.send(sender, "commands.op_overrideflag.5",
                     args[1], Formatter.getFlagState(targetState), region.getName());
         }
+
+        Messages.send(sender, "commands.op_overrideflag.3");
     }
 
     private void handleWorldFlags(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            Messages.send(sender, "commands.op_flagsoverride.0", getUsage());
+            Messages.send(sender, "commands.op_overrideflag.0", getUsage());
             return;
         }
 
         String flagInput = args[1];
 
         if (!WorldFlag.getFlags().contains(flagInput)) {
-            Messages.send(sender, "commands.op_flagsoverride.2");
+            Messages.send(sender, "commands.op_overrideflag.2");
             return;
         }
 
@@ -147,14 +144,16 @@ public final class FlagsOverrideSubCmd extends SubCommandBuilder {
                     ? FlagCalculator.addFlag(flags, flag)
                     : FlagCalculator.removeFlag(flags, flag));
 
-            Messages.send(sender, "commands.op_flagsoverride.6",
+            Messages.send(sender, "commands.op_overrideflag.6",
                     flagInput, Formatter.getFlagState(targetState), region.getName());
         }
+
+        Messages.send(sender, "commands.op_overrideflag.3");
     }
 
     private long parsePlayerFlag(CommandSender sender, String flagInput) {
         if (!PlayerFlag.getFlags().contains(flagInput)) {
-            Messages.send(sender, "commands.op_flagsoverride.2");
+            Messages.send(sender, "commands.op_overrideflag.2");
             return -1;
         }
         return PlayerFlag.parse(flagInput);
