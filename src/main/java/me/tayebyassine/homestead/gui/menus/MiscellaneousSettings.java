@@ -81,7 +81,7 @@ public final class MiscellaneousSettings {
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
-					.prompt(78)
+					.prompt(1)
 					.validator(msg -> validateRename(player, region, msg))
 					.callback((p, input) -> {
 						String oldName = region.getName();
@@ -123,7 +123,7 @@ public final class MiscellaneousSettings {
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
-					.prompt(79)
+					.prompt(2)
 					.validator(msg -> validateDisplayName(player, region, msg))
 					.callback((p, input) -> {
 						String oldDisplayname = region.getDisplayName();
@@ -165,7 +165,7 @@ public final class MiscellaneousSettings {
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
-					.prompt(80)
+					.prompt(3)
 					.validator(msg -> validateDescription(player, region, msg))
 					.callback((p, input) -> {
 						String oldDescription = region.getDescription();
@@ -251,7 +251,7 @@ public final class MiscellaneousSettings {
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
-					.prompt(81)
+					.prompt(4)
 					.validator(msg -> validateTransferOwnership(player, region, msg))
 					.callback((p, input) -> {
 						OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);

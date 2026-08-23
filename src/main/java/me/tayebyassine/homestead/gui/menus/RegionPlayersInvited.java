@@ -65,7 +65,7 @@ public final class RegionPlayersInvited {
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
-					.prompt(75)
+					.prompt(6)
 					.validator(msg -> validateInvite(player, region, msg))
 					.callback((p, input) -> {
 						OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);

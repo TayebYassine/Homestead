@@ -204,3 +204,7 @@ discord:
     player_left_region:
       enabled: true
       message: "**[MEMBERS]** Player {0} (`{1}`) left region: {2}"
+
+player-input:
+  # chat/title/actionbar
+  type: "chat"

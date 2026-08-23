@@ -72,7 +72,7 @@ public final class SubAreaMenu {
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
-					.prompt(88)
+					.prompt(7)
 					.validator(msg -> validateRename(player, region, subArea, msg))
 					.callback((p, input) -> {
 						subArea.setName(input);

@@ -63,7 +63,7 @@ public final class SubAreaMembers {
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
-					.prompt(75)
+					.prompt(6)
 					.validator(msg -> validateAddMember(player, region, subArea, msg))
 					.callback((p, input) -> {
 						OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);

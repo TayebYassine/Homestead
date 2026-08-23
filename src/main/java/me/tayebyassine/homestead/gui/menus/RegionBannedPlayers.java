@@ -66,7 +66,7 @@ public final class RegionBannedPlayers {
 			player.closeInventory();
 
 			PlayerInputSession.builder(Homestead.getInstance(), player)
-					.prompt(73)
+					.prompt(5)
 					.validator(msg -> validateBan(player, region, msg))
 					.callback((p, input) -> {
 						OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);

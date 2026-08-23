@@ -1,6 +1,7 @@
 package me.tayebyassine.homestead.sessions;
 
 import com.google.common.base.Function;
+import me.tayebyassine.homestead.resources.files.ConfigFile;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +18,7 @@ import me.tayebyassine.homestead.resources.files.LanguageFile;
 import me.tayebyassine.homestead.util.minecraft.platform.PlatformBridge;
 import me.tayebyassine.homestead.util.minecraft.threads.TaskHandle;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,145 +27,170 @@ import java.util.function.Consumer;
 
 public final class PlayerInputSession implements Listener {
 
-	private static final Map<UUID, PlayerInputSession> SESSIONS = new ConcurrentHashMap<>();
+    private static final Map<UUID, PlayerInputSession> SESSIONS = new ConcurrentHashMap<>();
 
-	private final Homestead plugin;
-	private final Player player;
-	private final BiConsumer<Player, String> callback;
-	private final Function<String, Boolean> validator;
-	private final Consumer<Player> onCancel;
-	private final String prompt;
-	private final TaskHandle repeatTask;
-	private final TaskHandle timeoutTask;
+    private final Homestead plugin;
+    private final Player player;
+    private final BiConsumer<Player, String> callback;
+    private final Function<String, Boolean> validator;
+    private final Consumer<Player> onCancel;
+    private final int promptId;
+    private final TaskHandle repeatTask;
+    private final TaskHandle timeoutTask;
+    private final String inputType;
+    private boolean titleSent = false;
 
-	private PlayerInputSession(Builder builder) {
-		this.plugin = builder.plugin;
-		this.player = builder.player;
-		this.callback = builder.callback;
-		this.validator = builder.validator;
-		this.onCancel = builder.onCancel;
-		this.prompt = builder.prompt;
+    private PlayerInputSession(Builder builder) {
+        this.plugin = builder.plugin;
+        this.player = builder.player;
+        this.callback = builder.callback;
+        this.validator = builder.validator;
+        this.onCancel = builder.onCancel;
+        this.promptId = builder.promptId;
+        this.inputType = getInputType();
 
-		PlayerInputSession old = SESSIONS.put(player.getUniqueId(), this);
-		if (old != null) old.internalDestroy();
+        PlayerInputSession old = SESSIONS.put(player.getUniqueId(), this);
+        if (old != null) old.internalDestroy();
 
-		Bukkit.getPluginManager().registerEvents(this, plugin);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
 
-		this.repeatTask = plugin.runAsyncTimerTask(() -> {
-			PlatformBridge.get().sendActionBar(player, prompt);
-		}, 1);
+        switch (inputType) {
+            case "title": {
+                List<String> titleData = Resources.<LanguageFile>get(ResourceType.Language)
+                        .getStringList("input." + promptId + ".title");
 
-		this.timeoutTask = plugin.runAsyncTaskLater(this::internalDestroy, builder.timeoutSeconds);
-	}
+                if (titleData.size() == 2) {
+                    String t1 = titleData.getFirst();
+                    String t2 = titleData.get(1);
+                    int stayTicks = builder.timeoutSeconds * 20;
+                    PlatformBridge.get().showTitle(player, t1, t2, 10, stayTicks, 20);
+                    this.titleSent = true;
+                }
+                break;
+            }
+            case "chat": {
+                String text = Resources.<LanguageFile>get(ResourceType.Language)
+                        .getString("input." + promptId + ".chat");
+                PlatformBridge.get().sendMessage(player, text);
+                break;
+            }
+        }
 
-	public static boolean isWaitingForInput(Player player) {
-		return SESSIONS.containsKey(player.getUniqueId());
-	}
+        this.repeatTask = plugin.runAsyncTimerTask(() -> {
+            if (inputType.equals("actionbar")) {
+                String text = Resources.<LanguageFile>get(ResourceType.Language)
+                        .getString("input." + promptId + ".actionbar");
+                PlatformBridge.get().sendActionBar(player, text);
+            }
+        }, 1);
 
-	public static Builder builder(Homestead plugin, Player player) {
-		return new Builder(plugin, player);
-	}
+        this.timeoutTask = plugin.runAsyncTaskLater(this::internalDestroy, builder.timeoutSeconds);
+    }
 
-	private void internalDestroy() {
-		SESSIONS.remove(player.getUniqueId(), this);
-		HandlerList.unregisterAll(this);
-		if (repeatTask != null) repeatTask.cancel();
-		if (timeoutTask != null) timeoutTask.cancel();
-	}
+    public static boolean isWaitingForInput(Player player) {
+        return SESSIONS.containsKey(player.getUniqueId());
+    }
 
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onChat(AsyncPlayerChatEvent e) {
-		if (!e.getPlayer().equals(player)) return;
-		e.setCancelled(true);
+    public static Builder builder(Homestead plugin, Player player) {
+        return new Builder(plugin, player);
+    }
 
-		String msg = e.getMessage();
-		if (msg.equalsIgnoreCase("cancel")) {
-			plugin.runSyncTask(() -> {
-				if (onCancel != null) onCancel.accept(player);
-				internalDestroy();
-			});
-			return;
-		}
+    private void internalDestroy() {
+        SESSIONS.remove(player.getUniqueId(), this);
+        HandlerList.unregisterAll(this);
+        if (repeatTask != null) repeatTask.cancel();
+        if (timeoutTask != null) timeoutTask.cancel();
 
-		if (validator != null && validator.apply(msg)) {
-			plugin.runSyncTask(() -> {
-				callback.accept(player, msg);
-				internalDestroy();
-			});
-		}
-	}
+        if (titleSent) {
+            PlatformBridge.get().showTitle(player, "", "", 0, 0, 0);
+        }
+    }
 
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onCommand(PlayerCommandPreprocessEvent e) {
-		if (e.getPlayer().equals(player) && SESSIONS.containsKey(player.getUniqueId())) {
-			e.setCancelled(true);
-		}
-	}
+    private String getInputType() {
+        return Resources.<ConfigFile>get(ResourceType.Config).getString("player-input.type");
+    }
 
-	@EventHandler
-	public void onQuit(PlayerQuitEvent e) {
-		if (e.getPlayer().equals(player)) {
-			internalDestroy();
-		}
-	}
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onChat(AsyncPlayerChatEvent e) {
+        if (!e.getPlayer().equals(player)) return;
+        e.setCancelled(true);
 
-	public static final class Builder {
-		private final Homestead plugin;
-		private final Player player;
-		private BiConsumer<Player, String> callback;
-		private Function<String, Boolean> validator;
-		private Consumer<Player> onCancel;
-		private String prompt;
-		private int timeoutSeconds = 60;
+        String msg = e.getMessage();
+        if (msg.equalsIgnoreCase("cancel")) {
+            plugin.runSyncTask(() -> {
+                if (onCancel != null) onCancel.accept(player);
+                internalDestroy();
+            });
+            return;
+        }
 
-		private Builder(Homestead plugin, Player player) {
-			this.plugin = plugin;
-			this.player = player;
-		}
+        if (validator != null && validator.apply(msg)) {
+            plugin.runSyncTask(() -> {
+                callback.accept(player, msg);
+                internalDestroy();
+            });
+        }
+    }
 
-		public Builder callback(BiConsumer<Player, String> callback) {
-			this.callback = callback;
-			return this;
-		}
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onCommand(PlayerCommandPreprocessEvent e) {
+        if (e.getPlayer().equals(player) && SESSIONS.containsKey(player.getUniqueId())) {
+            e.setCancelled(true);
+        }
+    }
 
-		public Builder validator(Function<String, Boolean> validator) {
-			this.validator = validator;
-			return this;
-		}
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        if (e.getPlayer().equals(player)) {
+            internalDestroy();
+        }
+    }
 
-		public Builder onCancel(Consumer<Player> onCancel) {
-			this.onCancel = onCancel;
-			return this;
-		}
+    public static final class Builder {
+        private final Homestead plugin;
+        private final Player player;
+        private BiConsumer<Player, String> callback;
+        private Function<String, Boolean> validator;
+        private Consumer<Player> onCancel;
+        private int promptId;
+        private int timeoutSeconds = 60;
 
-		public Builder prompt(String prompt) {
-			this.prompt = prompt;
-			return this;
-		}
+        private Builder(Homestead plugin, Player player) {
+            this.plugin = plugin;
+            this.player = player;
+        }
 
-		public Builder prompt(int messagePath) {
-			String key = String.valueOf(messagePath);
+        public Builder callback(BiConsumer<Player, String> callback) {
+            this.callback = callback;
+            return this;
+        }
 
-			this.prompt = Resources.<LanguageFile>get(ResourceType.Language).getString(key);
+        public Builder validator(Function<String, Boolean> validator) {
+            this.validator = validator;
+            return this;
+        }
 
-			return this;
-		}
+        public Builder onCancel(Consumer<Player> onCancel) {
+            this.onCancel = onCancel;
+            return this;
+        }
 
-		public Builder timeout(int seconds) {
-			this.timeoutSeconds = seconds;
-			return this;
-		}
+        public Builder prompt(int promptId) {
+            this.promptId = promptId;
+            return this;
+        }
 
-		public PlayerInputSession build() {
-			if (callback == null) {
-				throw new IllegalStateException("Callback must be set");
-			}
+        public Builder timeout(int seconds) {
+            this.timeoutSeconds = seconds;
+            return this;
+        }
 
-			if (prompt == null || prompt.isEmpty()) {
-				throw new IllegalStateException("Prompt must be set");
-			}
+        public PlayerInputSession build() {
+            if (callback == null) {
+                throw new IllegalStateException("Callback must be set");
+            }
 
-			return new PlayerInputSession(this);
-		}
-	}
+            return new PlayerInputSession(this);
+        }
+    }
 }

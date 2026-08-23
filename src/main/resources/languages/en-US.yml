@@ -599,6 +599,36 @@ logs:
   18: "Purged all invites."
   19: "Joined the region."
 
+input:
+  1:
+    title: [ "&eRegion Name", "&7Please enter the region's new name!" ]
+    actionbar: "&ePlease type the region's new name! &7Type 'cancel' to cancel"
+    chat: "&ePlease type the region's new name! &7Type 'cancel' to cancel"
+  2:
+    title: [ "&eRegion Displayname", "&7Please enter the region's new displayname!" ]
+    actionbar: "&ePlease type the region's new displayname! &7Type 'cancel' to cancel"
+    chat: "&ePlease type the region's new displayname! &7Type 'cancel' to cancel"
+  3:
+    title: [ "&eRegion Description", "&7Please enter the region's new description!" ]
+    actionbar: "&ePlease type the region's new description! &7Type 'cancel' to cancel"
+    chat: "&ePlease type the region's new description! &7Type 'cancel' to cancel"
+  4:
+    title: [ "&eTransfer Ownership", "&7Please enter the region's new owner name!" ]
+    actionbar: "&ePlease type the region's new owner name! &7Type 'cancel' to cancel"
+    chat: "&ePlease type the region's new owner name! &7Type 'cancel' to cancel"
+  5:
+    title: [ "&eBan Player", "&7Please enter the player name to ban!" ]
+    actionbar: "&ePlease type the player name to ban! &7Type 'cancel' to cancel"
+    chat: "&ePlease type the player name to ban! &7Type 'cancel' to cancel"
+  6:
+    title: [ "&eInvite Player", "&7Please enter the player name to invite!" ]
+    actionbar: "&ePlease type the player name to invite! &7Type 'cancel' to cancel"
+    chat: "&ePlease type the player name to invite! &7Type 'cancel' to cancel"
+  7:
+    title: [ "&eSub-Area Name", "&7Please enter the sub-area's new name!" ]
+    actionbar: "&ePlease type the sub-area's new name! &7Type 'cancel' to cancel"
+    chat: "&ePlease type the sub-area's new name! &7Type 'cancel' to cancel"
+
 formatters:
   date-format: "dd/M/yyyy hh:mm a"
   date: "{date} &7({time-ago} ago)"
