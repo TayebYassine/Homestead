@@ -463,6 +463,10 @@ commands:
     8: "{__prefix__} &7You have withdrawn &c{0}&7 from the region &2{1}&7."
 
   # Operator
+  op_reload:
+    0: "{__prefix__} &7Reloading resource files..."
+    1: "{__prefix__} &aDone! &eNote that some changes may require a server restart."
+    2: "{__prefix__} &cAn unexpected error has occurred, please check the console for more information."
   op_updates:
     0: "{__prefix__} &aYou are on the latest version!"
     1: "{__prefix__} &eYou are on an old version; Current: {0}, Latest: {1}"

@@ -6,6 +6,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.resources.Resources;
+import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -17,20 +18,22 @@ public final class ReloadSubCmd extends SubCommandBuilder {
         super("reload");
         setAdminPermission();
         setUsage("/hsadmin reload");
-        setAllowedCommandSenders(CommandSenderType.CONSOLE);
+        setAllowedCommandSenders(CommandSenderType.PLAYER, CommandSenderType.CONSOLE);
     }
 
     @Override
     public boolean onExecution(CommandSender sender, String[] args) {
         Homestead instance = Homestead.getInstance();
 
-        Logger.info("Please wait...");
+        Messages.send(sender, "commands.op_reload.0");
 
         try {
             Resources.load(instance);
 
-            Logger.info("Done. Note that some changes may require a server restart.");
+            Messages.send(sender, "commands.op_reload.1");
         } catch (Exception e) {
+            Messages.send(sender, "commands.op_reload.2");
+
             Logger.error(e);
         }
 
