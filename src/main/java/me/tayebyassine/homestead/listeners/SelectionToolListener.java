@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.borders.SelectedAreaParticlesSpawner;
+import me.tayebyassine.homestead.borders.particles.SelectedAreaParticlesSpawner;
 import me.tayebyassine.homestead.models.serialize.SeBlock;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;

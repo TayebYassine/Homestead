@@ -6,8 +6,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import me.tayebyassine.homestead.borders.BorderBlockRenderer;
-import me.tayebyassine.homestead.borders.FakeBorderRegistry;
+import me.tayebyassine.homestead.borders.blocks.BorderBlockRenderer;
+import me.tayebyassine.homestead.borders.blocks.FakeBorderRegistry;
 
 public final class BorderBreakListener implements Listener {
 

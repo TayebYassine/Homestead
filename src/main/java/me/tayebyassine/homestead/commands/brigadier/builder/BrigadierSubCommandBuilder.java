@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * A single literal node (and its optional arguments and nested literals) of a Brigadier command tree.
  *
- * <p>Instances are obtained through {@link BrigadierCommandBuilder#literalSub(String)}.
+ * <p>Instances are obtained through {@link BrigadierCommandBuilder#literalSub(String)}.</p>
  */
 public final class BrigadierSubCommandBuilder {
 

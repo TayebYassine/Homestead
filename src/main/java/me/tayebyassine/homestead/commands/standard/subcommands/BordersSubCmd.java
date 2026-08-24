@@ -6,7 +6,7 @@ import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
-import me.tayebyassine.homestead.util.minecraft.chunks.ChunkBorder;
+import me.tayebyassine.homestead.borders.ChunkBorder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

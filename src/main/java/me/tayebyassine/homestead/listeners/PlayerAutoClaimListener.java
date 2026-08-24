@@ -18,7 +18,7 @@ import me.tayebyassine.homestead.sessions.AutoClaimSession;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
-import me.tayebyassine.homestead.util.minecraft.chunks.ChunkBorder;
+import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
