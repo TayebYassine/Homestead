@@ -1,6 +1,7 @@
 package me.tayebyassine.homestead.flags;
 
 import org.bukkit.World;
+import me.tayebyassine.homestead.ProtectionMode;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.FlagsFile;
@@ -28,6 +29,8 @@ public final class WorldRules {
 	}
 
 	public static boolean isPlayerFlagAllowed(String worldName, long flag) {
+		if (ProtectionMode.isEnabled()) return false;
+
 		if (!isEnabled()) return true;
 
 		long flags = getPlayerFlags(worldName);
@@ -44,6 +47,8 @@ public final class WorldRules {
 	}
 
 	public static boolean isWorldFlagAllowed(String worldName, long flag) {
+		if (ProtectionMode.isEnabled()) return false;
+
 		if (!isEnabled()) return true;
 
 		long flags = getWorldFlags(worldName);

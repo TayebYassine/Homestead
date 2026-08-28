@@ -3,6 +3,7 @@ package me.tayebyassine.homestead.listeners.util;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import me.tayebyassine.homestead.ProtectionMode;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.SubAreaManager;
 import me.tayebyassine.homestead.models.Region;
@@ -17,6 +18,8 @@ public final class RegionProtection {
 										Chunk chunk,
 										Location location,
 										long flag) {
+		if (ProtectionMode.isEnabled()) return false;
+
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk))
 			return true;
 
@@ -44,6 +47,11 @@ public final class RegionProtection {
 									 long flag,
 									 Runnable onTrue,
 									 Runnable onFalse) {
+		if (ProtectionMode.isEnabled()) {
+			if (onFalse != null) onFalse.run();
+			return;
+		}
+
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk)) {
 			if (onTrue != null) onTrue.run();
 			return;

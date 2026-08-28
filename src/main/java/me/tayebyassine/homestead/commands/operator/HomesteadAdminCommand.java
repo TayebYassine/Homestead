@@ -27,6 +27,7 @@ public final class HomesteadAdminCommand extends CommandBuilder {
         registerSubCommand(new ClaimSubCmd());
         registerSubCommand(new UnclaimSubCmd());
         registerSubCommand(new TransferOwnershipSubCmd());
+        registerSubCommand(new ProtectionModeSubCmd());
     }
 
     @Override

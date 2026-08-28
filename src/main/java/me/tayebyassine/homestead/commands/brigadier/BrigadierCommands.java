@@ -232,6 +232,10 @@ public final class BrigadierCommands {
                 .literalSub("updates")
                 .end()
 
+                .literalSub("protectionmode")
+                .stringArg("state")
+                .end()
+
                 .literalSub("reload")
                 .end()
 

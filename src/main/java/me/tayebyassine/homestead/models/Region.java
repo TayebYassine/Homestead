@@ -1,5 +1,6 @@
 package me.tayebyassine.homestead.models;
 
+import me.tayebyassine.homestead.ProtectionMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -153,6 +154,8 @@ public final class Region {
 	}
 
 	public boolean isPlayerFlagSet(long flag) {
+		if (ProtectionMode.isEnabled()) return false;
+
 		return FlagCalculator.isFlagSet(playerFlags, flag);
 	}
 
@@ -166,6 +169,8 @@ public final class Region {
 	}
 
 	public boolean isWorldFlagSet(long flag) {
+		if (ProtectionMode.isEnabled()) return false;
+
 		return FlagCalculator.isFlagSet(worldFlags, flag);
 	}
 

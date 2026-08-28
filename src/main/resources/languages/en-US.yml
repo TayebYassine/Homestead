@@ -508,7 +508,13 @@ commands:
     5: "{__prefix__} &7{0} &7-> {1} &7(&9Global &7- &2{2}&7)"
     6: "{__prefix__} &7{0} &7-> {1} &7(&2World &7- &2{2}&7)"
   op_hsadmin:
-    0: "{__prefix__} &7Sub-command not found, probably you meant... &e{0}&7?"
+     0: "{__prefix__} &7Sub-command not found, probably you meant... &e{0}&7?"
+  op_protectionmode:
+    0: "{__prefix__} &7Insufficient arguments, usage: &e{0}"
+    1: "{__prefix__} &cProtection mode is now ENABLED. &7All claims are locked down and the plugin is no longer fully functional."
+    2: "{__prefix__} &aProtection mode is now DISABLED. &7The plugin has resumed normal operation."
+    3: "{__prefix__} &7Protection mode is already {0}."
+    4: "{__prefix__} &7Protection mode is currently &e{0}&7."
   op_transfer:
     0: "{__prefix__} &7Insufficient arguments, usage: &e{0}"
     1: "{__prefix__} &cUnable to find the region."

@@ -17,6 +17,7 @@ import me.tayebyassine.homestead.commands.CommandRegistry;
 import me.tayebyassine.homestead.commands.brigadier.BrigadierCommands;
 import me.tayebyassine.homestead.database.Database;
 import me.tayebyassine.homestead.database.Driver;
+import me.tayebyassine.homestead.ProtectionMode;
 import me.tayebyassine.homestead.database.cache.*;
 import me.tayebyassine.homestead.discord.DiscordWebhookClient;
 import me.tayebyassine.homestead.events.MemberTaxes;
@@ -188,16 +189,14 @@ public class Homestead extends JavaPlugin {
 			}
 
 			Homestead.database = new Database(provider);
-		} catch (Exception e) {
-			endInstance(e);
-			return;
-		}
-
-		try {
 			database.importToCache();
 		} catch (Exception e) {
-			endInstance(e);
-			return;
+			Logger.error("A critical database error occurred while starting up. The plugin will NOT be disabled.");
+			Logger.error("The plugin will enter protection mode to keep all claims safe from griefing and land theft.");
+			Logger.error(e);
+
+			ProtectionMode.enableAutomatic();
+			Homestead.database = null;
 		}
 
 		if (!IntegrationUtility.isEnabled(IntegrationUtility.Integration.VAULT)) {
@@ -327,10 +326,21 @@ public class Homestead extends JavaPlugin {
 		int cacheInterval = Resources.<ConfigFile>get(ResourceType.Config).getCacheInterval();
 
 		runAsyncTimerTask(() -> {
+			if (Homestead.database == null) {
+				tryReconnectDatabase();
+				return;
+			}
+
 			try {
 				Homestead.database.exportFromCache();
+				ProtectionMode.clearManualOverride();
 			} catch (Exception e) {
-				endInstance(e);
+				Logger.error("A critical database error occurred while exporting data. The plugin will NOT be disabled.");
+				Logger.error("The plugin will enter protection mode to keep all claims safe from griefing and land theft.");
+				Logger.error(e);
+
+				ProtectionMode.enable();
+				tryReconnectDatabase();
 			}
 		}, 10, cacheInterval);
 
@@ -783,6 +793,27 @@ public class Homestead extends JavaPlugin {
 		Logger.error(e);
 
 		endInstance();
+	}
+
+	/**
+	 * Attempt to (re)establish the database connection. Used while the plugin is in protection mode
+	 * after a database failure, so the connection can recover in the background. Reconnecting does NOT
+	 * automatically disable protection mode; an operator must turn it off manually.
+	 */
+	private void tryReconnectDatabase() {
+		try {
+			Driver provider = Driver.parse(Resources.<ConfigFile>get(ResourceType.Config).getDatabaseProvider());
+
+			if (provider == null) {
+				Logger.error("Unable to reconnect: database provider not found in config.");
+				return;
+			}
+
+			Homestead.database = new Database(provider);
+			Logger.info("Database connection re-established successfully.");
+		} catch (Exception e) {
+			Logger.error("Unable to re-establish the database connection. The plugin will remain in protection mode and retry on the next cycle.");
+		}
 	}
 
 	private static class SnowflakeHolder {
