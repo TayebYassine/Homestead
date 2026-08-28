@@ -30,17 +30,14 @@ import java.util.function.BiConsumer;
 public final class SubAreaMenu {
 	public SubAreaMenu(Player player, Region region, SubArea subArea) {
 		boolean isEconomyEnabled = Homestead.VAULT.isEconomyReady();
-		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled");
+		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).isRentingEnabled();
 
 		SeRent rent = subArea.getRent();
 
 		Placeholder placeholder = new Placeholder()
 				.add("{subarea}", subArea.getName())
 				.add("{subarea-players}", MemberManager.getMembersOfRegion(region).size())
-				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
-				.add("{rent-renter}", rent != null ? rent.getRenterName() : Formatter.getNone())
-				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
-				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
+				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled));
 
 		Menu.builder(MenuUtility.getTitle(15).replace("{subarea}", subArea.getName()), 9 * 3)
 				.button(11, MenuUtility.getButton(43, placeholder), handleRename(player, region, subArea))
@@ -110,10 +107,12 @@ public final class SubAreaMenu {
 				return;
 			}
 
-			if (subArea.getRent() == null) {
+			SeRent rent = subArea.getRent();
+
+			if (!rent.hasRenter()) {
 				Messages.send(player, "commands.rent.0");
 			} else {
-				subArea.setRent(null);
+				rent.clearRenter();
 
 				new SubAreaMenu(player, region, subArea);
 			}

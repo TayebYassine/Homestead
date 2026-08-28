@@ -217,12 +217,15 @@ public final class Region {
 		update();
 	}
 
-	public @Nullable SeRent getRent() {
+	public @NotNull SeRent getRent() {
+		if (rent == null) {
+			rent = new SeRent();
+		}
 		return rent;
 	}
 
 	public void setRent(@Nullable SeRent rent) {
-		this.rent = rent;
+		this.rent = rent != null ? rent : new SeRent();
 		update();
 	}
 
@@ -268,8 +271,8 @@ public final class Region {
 
 	/**
 	 * Check if the region is public.
-	 * @return {@code true} if the flags {@code PASSTHROUGH} ({@value PlayerFlag#PASSTHROUGH}) and
-	 * {@code TELEPORT_SPAWN} ({@value PlayerFlag#TELEPORT_SPAWN}) are allowed to global players, {@code false} otherwise.
+	 * @return {@code true} if the flags {@link PlayerFlag#PASSTHROUGH} and
+	 * {@link PlayerFlag#TELEPORT_SPAWN} are allowed to global players, {@code false} otherwise.
 	 */
 	public boolean isPublic() {
 		return FlagCalculator.isFlagSet(playerFlags, PlayerFlag.PASSTHROUGH.getBitmask()) && FlagCalculator.isFlagSet(playerFlags, PlayerFlag.TELEPORT_SPAWN.getBitmask());

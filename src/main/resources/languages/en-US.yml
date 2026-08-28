@@ -11,6 +11,8 @@ common:
     - "&cSorry, but you do not have permission to do this."
     - "&cFlag: &7{flag}&c, Region: &2{region}"
 
+  economy_disabled: "&cEconomy integration is disabled."
+
   cooldown: "&cYou are on cooldown for {0}!"
   cooldown_command: "&cToo fast! Please try again in few seconds."
 
@@ -80,6 +82,9 @@ common:
       3: "&e"
       4: "&a"
       5: "&a"
+    na: "&3N/A"
+    permanent: "&6Permanent"
+    rent-vacate-notice: "&aActive &7({days} days)"
 
 prefix: "&8[&6Homestead&8]&r"
 
@@ -276,6 +281,21 @@ commands:
     1: "{__prefix__} &cNo region found with the name '&2{0}&c'."
   rent:
     0: "{__prefix__} &cNo person currently rented this region."
+    1: "{__prefix__} &cRenting is currently disabled."
+    2: "{__prefix__} &cNo sub-area found with the name '&2{0}&c'."
+    3: "{__prefix__} &cNo renter to issue notice to vacate."
+    4: "{__prefix__} &cCannot issue notice to vacate for permanent rent."
+    5: "{__prefix__} &aNotice to vacate cancelled."
+    6: "{__prefix__} &aNotice to vacate issued for &e{0} &adays."
+    7: "{__prefix__} &aRent cancelled successfully."
+    8: "{__prefix__} &aRent set to permanent."
+    9: "{__prefix__} &cPrice must be between &6{0} &cand &6{1}&c."
+    10: "{__prefix__} &cInvalid number format."
+    11: "{__prefix__} &cDuration must be between &6{0} &cand &6{1} &cdays (or -1 for permanent)."
+    12: "{__prefix__} &cNotice days must be between &6{0} &cand &6{1}&c."
+    13: "{__prefix__} &cThis region/sub-area is already rented."
+    14: "{__prefix__} &7Rent cancelled."
+    15: "{__prefix__} &cOnly the owner of this region can configure rent!"
   info:
     0: "{__prefix__} &cNo region found with the name '&2{0}&c'."
     1: "{__prefix__} &7You are currently in the wilderness."
@@ -580,6 +600,8 @@ signs:
   13: "{__prefix__} &cThe region is currently in a war."
   14: "{__prefix__} &cI'm sorry, but you cannot do this!"
   15: "{__prefix__} &cYou have rented the region, you cannot purchase it until the contract ends."
+  16: "{__prefix__} &cRent duration must be between &6{0} &cand &6{1} &cdays!"
+  17: "{__prefix__} &cThe region is currently rented."
 
 logs:
   0: "Updated region name to '{0}'."
@@ -632,6 +654,22 @@ input:
     title: [ "&eSub-Area Name", "&7Please enter the sub-area's new name!" ]
     actionbar: "&ePlease type the sub-area's new name! &7Type 'cancel' to cancel"
     chat: "&ePlease type the sub-area's new name! &7Type 'cancel' to cancel"
+  10:
+    title: [ "&eRent Price", "&7Please enter the rent price!" ]
+    actionbar: "&eEnter rent price &7(&c{min-price} &7- &c{max-price}&7). &7Type 'cancel' to cancel"
+    chat: "&eEnter rent price &7(&c{min-price} &7- &c{max-price}&7). &7Type 'cancel' to cancel"
+  11:
+    title: [ "&eRent Duration", "&7Please enter the rent duration in days!" ]
+    actionbar: "&eEnter rent duration in days &7(&c{min-days} &7- &c{max-days}&7). &7Type 'cancel' to cancel"
+    chat: "&eEnter rent duration in days &7(&c{min-days} &7- &c{max-days}&7). &7Type 'cancel' to cancel"
+  12:
+    title: [ "&eSecurity Deposit", "&7Please enter the security deposit!" ]
+    actionbar: "&eEnter security deposit &7(&c{min-deposit} &7- &c{max-deposit}&7). &7Type 'cancel' to cancel"
+    chat: "&eEnter security deposit &7(&c{min-deposit} &7- &c{max-deposit}&7). &7Type 'cancel' to cancel"
+  13:
+    title: [ "&eNotice to Vacate", "&7Please enter notice days!" ]
+    actionbar: "&eEnter notice days!"
+    chat: "&eEnter notice days!"
 
 formatters:
   date-format: "dd/M/yyyy hh:mm a"

@@ -33,6 +33,9 @@ titles:
   28: "Storage - &2{region}"
   29: "Map Color - &2{region}"
   30: "Map Icon - &2{region}"
+  31: "Region Rent - &2{region}"
+  32: "Sub-Area Rent - &2{subarea}"
+  33: "Rent Confirmation - &2{region-or-subarea}"
 
 # Menu buttons
 # Each button has its own unique index, which you cannot change or add/remove buttons.
@@ -145,11 +148,9 @@ buttons:
   12:
     name: "&#FF8A65&lRent &8({rent-enabled}&8)"
     lore:
-      - "&7• Player: &6{rent-renter}"
-      - "&7• Price: &6{rent-price}"
-      - "&7• Expires In: &6{rent-until}"
+      - "&7Rent management for this region."
       - ""
-      - "&#FF8A65&n➥ Left-click to cancel the lease."
+      - "&#FF8A65&n➥ Left-click to configure the rent."
     type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
   13:
     name: "&#9575CD&lLogs"
@@ -686,11 +687,9 @@ buttons:
   71:
     name: "&#FF8A65&lRent &8({rent-enabled}&8)"
     lore:
-      - "&7• Player: &6{rent-renter}"
-      - "&7• Price: &6{rent-price}"
-      - "&7• Expires In: &6{rent-until}"
+      - "&7Rent management for this sub-area."
       - ""
-      - "&#FF8A65&n➥ Left-click to cancel the lease for this sub-area."
+      - "&#FF8A65&n➥ Left-click to configure the rent."
     type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
   72:
     name: "&#42A5F5&lInformation"
@@ -803,6 +802,100 @@ buttons:
       - "&9&n➥ Left-click to change region icon."
       - "&9&n➥ Right-click to change the map color."
     type: FILLED_MAP
+  85:
+    name: "&#FFD54F&lRent Price"
+    lore:
+      - "&7Set the rent price for this region/sub-area."
+      - ""
+      - "&7Current: &c{rent-price}"
+      - "&7Range: &c{min-price} &7- &c{max-price}"
+      - ""
+      - "&#FFD54F&n➥ Left-click to set price."
+    type: EMERALD
+  86:
+    name: "&#FFB74D&lRent Duration"
+    lore:
+        - "&7Set the rent duration in days."
+        - ""
+        - "&7Current: &6{rent-duration}"
+        - "&7Range: &c{min-days} &7- &c{max-days} &7days"
+        - "&7Use &c-1 &7for permanent rent."
+        - ""
+        - "&#FFB74D&n➥ Left-click to set duration."
+    type: CLOCK
+  87:
+    name: "&#AED581&lSecurity Deposit"
+    lore:
+        - "&7Set the security deposit (refundable)."
+        - ""
+        - "&7Current: &c{rent-deposit}"
+        - "&7Range: &c{min-deposit} &7- &c{max-deposit}"
+        - ""
+        - "&#AED581&n➥ Left-click to set deposit."
+    type: PLAYERHEAD-e730127542440ef0e18b4a2994fbd097e9529d59f6cedb57dbfd5fb6134a606d
+  88:
+    name: "&#4FC3F7&lNotice to Vacate"
+    lore:
+        - "&7Issue a notice to vacate to the current renter."
+        - ""
+        - "&7Status: &6{rent-notice}"
+        - ""
+        - "&#4FC3F7&n➥ Left-click to issue/cancel notice."
+    type: WRITABLE_BOOK
+  89:
+    name: "&#E57373&lCancel Rent"
+    lore:
+        - "&7Cancel the current rent agreement."
+        - ""
+        - "&7Current Renter: &6{rent-renter}"
+        - ""
+        - "&#E57373&n➥ Left-click to cancel rent."
+    type: BARRIER
+  90:
+    name: "&#FF8A65&lEnd Rent (Owner)"
+    lore:
+        - "&7Forcefully end the current rent."
+        - ""
+        - "&7Current Renter: &6{rent-renter}"
+        - ""
+        - "&#FF8A65&n➥ Left-click to end rent."
+    type: PLAYERHEAD-927c3b8a5696d20c62b9eaf7f47bc41a6ae8ee79d7000308b5a1542b73a1b5eb
+  91:
+    name: "&#9575CD&lSet Permanent"
+    lore:
+        - "&7Make the rent permanent (no expiration)."
+        - ""
+        - "&#9575CD&n➥ Left-click to set permanent."
+    type: NETHER_STAR
+
+    # Rent Confirmation Menu Buttons
+  92:
+    name: "&#FFD54F&lRent Offer Details"
+    lore:
+        - "&7Region: &2{region}"
+        - "&7Sub-Area: &3{subarea}"
+        - ""
+        - "&7Price: &c{rent-price}"
+        - "&7Duration: &6{rent-duration}"
+        - "&7Deposit: &c{rent-deposit}"
+        - "&7Total Cost: &c{rent-total}"
+        - ""
+        - "&7Your Balance: &c{player-balance}"
+    type: OAK_SIGN
+  93:
+    name: "&#66BB6A&lAccept Rent"
+    lore:
+        - "&7Confirm and pay for the rent."
+        - ""
+        - "&#66BB6A&n➥ Left-click to accept."
+    type: LIME_STAINED_GLASS_PANE
+  94:
+    name: "&#EF5350&lDecline Rent"
+    lore:
+        - "&7Cancel and don't rent."
+        - ""
+        - "&#EF5350&n➥ Left-click to decline."
+    type: RED_STAINED_GLASS_PANE
 
 # Do NOT modify these
 button-types:

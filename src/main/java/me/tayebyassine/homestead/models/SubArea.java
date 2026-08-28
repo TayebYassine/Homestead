@@ -142,12 +142,15 @@ public final class SubArea {
 		update();
 	}
 
-	public @Nullable SeRent getRent() {
+	public @NotNull SeRent getRent() {
+		if (rent == null) {
+			rent = new SeRent();
+		}
 		return rent;
 	}
 
 	public void setRent(@Nullable SeRent rent) {
-		this.rent = rent;
+		this.rent = rent != null ? rent : new SeRent();
 		update();
 	}
 

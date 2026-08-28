@@ -361,13 +361,13 @@ public class Homestead extends JavaPlugin {
 			}, 10);
 		}
 
-		if (Homestead.VAULT.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("upkeep.enabled")) {
+		if (Homestead.VAULT.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
 			runAsyncTimerTask(() -> {
 				RegionUpkeep.trigger(this);
 			}, 10);
 		}
 
-		if (Homestead.VAULT.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("renting.enabled")) {
+		if (Homestead.VAULT.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).isRentingEnabled()) {
 			runAsyncTimerTask(() -> {
 				RegionRent.trigger(this);
 			}, 10);

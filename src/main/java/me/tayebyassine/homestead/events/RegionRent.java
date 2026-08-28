@@ -20,10 +20,10 @@ public final class RegionRent {
 	 */
 	public static void trigger(Homestead instance) {
 		for (Region region : RegionManager.getAll()) {
-			final SeRent rent = region.getRent();
+			SeRent rent = region.getRent();
 
-			if (rent != null && System.currentTimeMillis() > rent.getUntilAt()) {
-				region.setRent(null);
+			if (rent.hasRenter() && rent.isExpired()) {
+				rent.clearRenter();
 
 				OfflinePlayer renter = rent.getRenter();
 
@@ -36,10 +36,10 @@ public final class RegionRent {
 		}
 
 		for (SubArea subArea : SubAreaManager.getAll()) {
-			final SeRent rent = subArea.getRent();
+			SeRent rent = subArea.getRent();
 
-			if (rent != null && System.currentTimeMillis() > rent.getUntilAt()) {
-				subArea.setRent(null);
+			if (rent.hasRenter() && rent.isExpired()) {
+				rent.clearRenter();
 
 				OfflinePlayer renter = rent.getRenter();
 

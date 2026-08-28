@@ -126,8 +126,23 @@ taxes:
 # Region Renting System
 renting:
   enabled: true
-  min-rent: 500.0
-  max-rent: 10000000.0
+
+  price:
+    default: 1500.0 # $1.5k
+    min: 500.0 # $500
+    max: 10000000.0 # $10M
+
+  duration:
+    default: 7 # 7 days
+    min: 1 # 1 day
+    max: 84 # 84 days (12 weeks)
+
+  security-deposit:
+    default: 500.0 # $500
+    min: 0.0 # $0
+    max: 100000.0 # $100k
+
+  notice-to-vacate: 3 # 3 days
 
 # Region Selling System
 selling:

@@ -1,7 +1,15 @@
 package me.tayebyassine.homestead.sessions;
 
 import com.google.common.base.Function;
+import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.resources.ResourceType;
+import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.ConfigFile;
+import me.tayebyassine.homestead.resources.files.LanguageFile;
+import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.Placeholder;
+import me.tayebyassine.homestead.util.minecraft.platform.PlatformBridge;
+import me.tayebyassine.homestead.util.minecraft.threads.TaskHandle;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,12 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.resources.ResourceType;
-import me.tayebyassine.homestead.resources.Resources;
-import me.tayebyassine.homestead.resources.files.LanguageFile;
-import me.tayebyassine.homestead.util.minecraft.platform.PlatformBridge;
-import me.tayebyassine.homestead.util.minecraft.threads.TaskHandle;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ public final class PlayerInputSession implements Listener {
     private final Function<String, Boolean> validator;
     private final Consumer<Player> onCancel;
     private final int promptId;
+    private final Placeholder promptPlaceholder;
     private final TaskHandle repeatTask;
     private final TaskHandle timeoutTask;
     private final String inputType;
@@ -47,6 +50,7 @@ public final class PlayerInputSession implements Listener {
         this.validator = builder.validator;
         this.onCancel = builder.onCancel;
         this.promptId = builder.promptId;
+        this.promptPlaceholder = builder.promptPlaceholder;
         this.inputType = getInputType();
 
         PlayerInputSession old = SESSIONS.put(player.getUniqueId(), this);
@@ -63,7 +67,7 @@ public final class PlayerInputSession implements Listener {
                     String t1 = titleData.getFirst();
                     String t2 = titleData.get(1);
                     int stayTicks = builder.timeoutSeconds * 20;
-                    PlatformBridge.get().showTitle(player, t1, t2, 10, stayTicks, 20);
+                    PlatformBridge.get().showTitle(player, Formatter.applyPlaceholders(t1, promptPlaceholder), Formatter.applyPlaceholders(t2, promptPlaceholder), 10, stayTicks, 20);
                     this.titleSent = true;
                 }
                 break;
@@ -71,7 +75,7 @@ public final class PlayerInputSession implements Listener {
             case "chat": {
                 String text = Resources.<LanguageFile>get(ResourceType.Language)
                         .getString("input." + promptId + ".chat");
-                PlatformBridge.get().sendMessage(player, text);
+                PlatformBridge.get().sendMessage(player, Formatter.applyPlaceholders(text, promptPlaceholder));
                 break;
             }
         }
@@ -80,7 +84,7 @@ public final class PlayerInputSession implements Listener {
             if (inputType.equals("actionbar")) {
                 String text = Resources.<LanguageFile>get(ResourceType.Language)
                         .getString("input." + promptId + ".actionbar");
-                PlatformBridge.get().sendActionBar(player, text);
+                PlatformBridge.get().sendActionBar(player, Formatter.applyPlaceholders(text, promptPlaceholder));
             }
         }, 1);
 
@@ -153,6 +157,7 @@ public final class PlayerInputSession implements Listener {
         private Function<String, Boolean> validator;
         private Consumer<Player> onCancel;
         private int promptId;
+        private Placeholder promptPlaceholder;
         private int timeoutSeconds = 60;
 
         private Builder(Homestead plugin, Player player) {
@@ -177,6 +182,12 @@ public final class PlayerInputSession implements Listener {
 
         public Builder prompt(int promptId) {
             this.promptId = promptId;
+            return this;
+        }
+
+        public Builder prompt(int promptId, Placeholder promptPlaceholder) {
+            this.promptId = promptId;
+            this.promptPlaceholder = promptPlaceholder;
             return this;
         }
 

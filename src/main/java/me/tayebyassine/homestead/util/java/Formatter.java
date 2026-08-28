@@ -22,6 +22,8 @@ public final class Formatter {
 	 * @param placeholder The placeholders
 	 */
 	public static String applyPlaceholders(String string, Placeholder placeholder) {
+		if (placeholder == null) placeholder = new Placeholder();
+
 		Map<String, String> replacements = placeholder.build();
 
 		return applyPlaceholders(string, replacements);
@@ -136,6 +138,36 @@ public final class Formatter {
 
 		long differenceMillis = time - currentTime;
 		long totalSeconds = differenceMillis / 1000;
+
+		long days = totalSeconds / 86400;
+		long remaining = totalSeconds % 86400;
+
+		long hours = remaining / 3600;
+		remaining = remaining % 3600;
+
+		long minutes = remaining / 60;
+		long seconds = remaining % 60;
+
+		return applyPlaceholders(
+				Resources.<LanguageFile>get(ResourceType.Language).getString("formatters.duration"),
+				new Placeholder()
+						.add("{d}", days)
+						.add("{h}", hours)
+						.add("{m}", minutes)
+						.add("{s}", seconds)
+		);
+	}
+
+	/**
+	 * Get beautiful and readable duration string from milliseconds.
+	 * @param millis The duration in milliseconds
+	 */
+	public static String getDuration(long millis) {
+		if (millis <= 0) {
+			return getPermanent();
+		}
+
+		long totalSeconds = millis / 1000;
 
 		long days = totalSeconds / 86400;
 		long remaining = totalSeconds % 86400;
@@ -284,6 +316,14 @@ public final class Formatter {
 
 	public static String getNone() {
 		return Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.none");
+	}
+
+	public static String getNA() {
+		return Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.na");
+	}
+
+	public static String getPermanent() {
+		return Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.permanent");
 	}
 
 	public static String getNever() {

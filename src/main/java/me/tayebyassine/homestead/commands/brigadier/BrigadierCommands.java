@@ -148,6 +148,10 @@ public final class BrigadierCommands {
                 .endNested()
                 .end()
 
+                .literalSub("rent")
+                .stringArg("subarea")
+                .end()
+
                 .literalSub("flags")
                 .literalSub("global")
                 .stringArg("flag")

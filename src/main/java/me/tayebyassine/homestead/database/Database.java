@@ -403,7 +403,7 @@ public final class Database {
 		entity.bank = region.getBank();
 		entity.mapColor = region.getMapColor();
 		entity.mapIcon = region.getMapIcon();
-		entity.rent = region.getRent() == null ? null : region.getRent().serialize();
+		entity.rent = region.getRent().serialize();
 		entity.weather = region.getWeather();
 		entity.time = region.getTime();
 		entity.welcomeSign = region.getWelcomeSign() == null ? null : region.getWelcomeSign().serialize();
@@ -626,7 +626,7 @@ public final class Database {
 			entity.point1 = subArea.getPoint1().serialize();
 			entity.point2 = subArea.getPoint2().serialize();
 			entity.playerFlags = subArea.getPlayerFlags();
-			entity.rent = subArea.getRent() == null ? null : subArea.getRent().serialize();
+			entity.rent = subArea.getRent().serialize();
 			entity.createdAt = subArea.getCreatedAt();
 			entities.add(entity);
 			cacheIds.add(subArea.getUniqueId());

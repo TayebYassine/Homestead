@@ -1,8 +1,7 @@
 package me.tayebyassine.homestead.commands.standard;
 
-import me.tayebyassine.homestead.commands.CommandSenderType;
-
 import me.tayebyassine.homestead.commands.CommandBuilder;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.standard.subcommands.*;
 import me.tayebyassine.homestead.gui.menus.RegionsMenu;
 import me.tayebyassine.homestead.util.java.StringSimilarity;
@@ -36,6 +35,7 @@ public final class RegionCommand extends CommandBuilder {
         registerSubCommand(new DenyInviteSubCmd());
         registerSubCommand(new VisitRegionSubCmd());
         registerSubCommand(new SubAreasSubCmd());
+        registerSubCommand(new RentSubCmd());
         registerSubCommand(new DepositBankSubCmd());
         registerSubCommand(new WithdrawBankSubCmd());
         registerSubCommand(new MenuSubCmd());

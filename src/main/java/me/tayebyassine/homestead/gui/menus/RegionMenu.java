@@ -31,7 +31,7 @@ public final class RegionMenu {
 	public RegionMenu(Player player, Region region) {
 		boolean isEconomyEnabled = Homestead.VAULT.isEconomyReady();
 		boolean isUpkeepEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled");
-		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("renting.enabled");
+		boolean isRentEnabled = isEconomyEnabled && Resources.<RegionsFile>get(ResourceType.Regions).isRentingEnabled();
 		boolean isSubAreasEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("sub-areas.enabled");
 
 		SeRent rent = region.getRent();
@@ -60,10 +60,7 @@ public final class RegionMenu {
 				.add("{subareas-enabled}", Formatter.getToggle(isSubAreasEnabled))
 				.add("{region-subareas}", SubAreaManager.getSubAreasOfRegion(region.getUniqueId()).size())
 				.add("{region-subareas-max}", Limits.getRegionLimit(region, Limits.LimitType.SUBAREAS_PER_REGION))
-				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled))
-				.add("{rent-renter}", rent != null ? rent.getRenterName() : Formatter.getNone())
-				.add("{rent-price}", rent != null ? Formatter.getBalance(rent.getPrice()) : Formatter.getNone())
-				.add("{rent-until}", rent != null ? Formatter.getRemainingTime(rent.getUntilAt()) : Formatter.getNever());
+				.add("{rent-enabled}", Formatter.getToggle(isRentEnabled));
 
 		Menu.Builder<?> builder = Menu.builder(MenuUtility.getTitle(1).replace("{region}", region.getName()), 9 * 4)
 				.button(10, MenuUtility.getButton(6, placeholder), handlePlayersManagement(player, region))
@@ -73,7 +70,7 @@ public final class RegionMenu {
 				.button(14, MenuUtility.getButton(10, placeholder), handleSubAreas(player, region))
 				.button(20, MenuUtility.getButton(79, placeholder), handleRewards(player, region))
 				.item(21, MenuUtility.getButton(11, placeholder))
-				.button(22, MenuUtility.getButton(12, placeholder), handleEndRent(player, region))
+				.button(22, MenuUtility.getButton(12, placeholder), handleOpenRentMenu(player, region))
 				.button(23, MenuUtility.getButton(80, placeholder), handleLevels(player, region))
 				.item(24, MenuUtility.getButton(15, placeholder))
 				.button(15, MenuUtility.getButton(13, placeholder), handleLogs(player, region))
@@ -141,7 +138,7 @@ public final class RegionMenu {
 		};
 	}
 
-	private static BiConsumer<Player, InventoryClickEvent> handleEndRent(Player player, Region region) {
+	private static BiConsumer<Player, InventoryClickEvent> handleOpenRentMenu(Player player, Region region) {
 		return (_player, event) -> {
 			if (!checkRegionExists(player, region) || !event.isLeftClick()) return;
 
@@ -151,13 +148,7 @@ public final class RegionMenu {
 				return;
 			}
 
-			if (region.getRent() == null) {
-				Messages.send(player, "commands.rent.0");
-			} else {
-				region.setRent(null);
-
-				new RegionMenu(player, region);
-			}
+			new RentConfigMenu(player, region, null);
 		};
 	}
 

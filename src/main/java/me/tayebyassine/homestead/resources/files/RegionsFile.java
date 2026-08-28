@@ -73,6 +73,48 @@ public class RegionsFile extends ResourceFile {
 		return size;
 	}
 
+	public boolean isRentingEnabled() {
+		return getBoolean("renting.enabled");
+	}
+
+	public double getDefaultRentPrice() { return getDouble("renting.price.default", 1500.0); }
+
+	public double getMinRentPrice() {
+		return getDouble("renting.price.min", 500.0);
+	}
+
+	public double getMaxRentPrice() {
+		return getDouble("renting.price.max", 10_000_000.0);
+	}
+
+	public int getDefaultRentDays() {
+		return getInt("renting.duration.default", 7);
+	}
+
+	public int getMinRentDays() {
+		return getInt("renting.duration.min", 1);
+	}
+
+	public int getMaxRentDays() {
+		return getInt("renting.duration.max", 84);
+	}
+
+	public double getDefaultSecurityDeposit() {
+		return getDouble("renting.security-deposit.default", 500.0);
+	}
+
+	public double getMinSecurityDeposit() {
+		return getDouble("renting.security-deposit.min", 0.0);
+	}
+
+	public double getMaxSecurityDeposit() {
+		return getDouble("renting.security-deposit.max", 100_000.0);
+	}
+
+	public int getNoticeToVacateDays() {
+		return getInt("renting.notice-to-vacate", 3);
+	}
+
 	public enum DustColorType {
 		OWNER("owner"),
 		MEMBER("member"),
