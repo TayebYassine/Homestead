@@ -83,7 +83,7 @@ public final class Cooldown {
 	public static void sendCooldownMessage(Player player) {
 		long remaining = getRemainingTime(player);
 
-		Messages.send(player, "common.cooldown", Formatter.getAgo(remaining));
+		Messages.send(player, "common.cooldown", Formatter.getDuration(remaining));
 	}
 
 	public enum Type {
