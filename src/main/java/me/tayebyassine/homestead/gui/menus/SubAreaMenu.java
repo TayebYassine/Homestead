@@ -128,8 +128,7 @@ public final class SubAreaMenu {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
 				return;
 			}
 
@@ -152,8 +151,7 @@ public final class SubAreaMenu {
 	}
 
 	private static boolean validateRename(Player player, Region region, SubArea subArea, String message) {
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
 			return false;
 		}
 		if (!StringUtils.isValidSubAreaName(message)) {

@@ -1,4 +1,4 @@
-package me.tayebyassine.homestead.listeners;
+package me.tayebyassine.homestead.listeners.player;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +16,10 @@ import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 
+/**
+ * Sends a welcome message to players on join, including the number of unread region logs
+ * and pending region invites, when the feature is enabled in the configuration.
+ */
 public final class PlayerJoinListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {

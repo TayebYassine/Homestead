@@ -50,8 +50,7 @@ public final class UnbanPlayerSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.UNBAN_PLAYERS.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNBAN_PLAYERS, true)) {
             return true;
         }
 

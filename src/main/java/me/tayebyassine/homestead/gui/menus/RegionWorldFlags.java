@@ -58,8 +58,7 @@ public final class RegionWorldFlags {
 			return;
 		}
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlag.SET_WORLD_FLAGS.getBitmask())) {
+		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.SET_WORLD_FLAGS, true)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}

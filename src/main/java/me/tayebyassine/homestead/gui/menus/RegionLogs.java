@@ -99,7 +99,7 @@ public final class RegionLogs {
 			return;
 		}
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.MANAGE_LOGS.getBitmask())) {
+		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_LOGS, true)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}

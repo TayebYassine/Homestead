@@ -59,8 +59,7 @@ public final class BanPlayerSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.BAN_PLAYERS.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.BAN_PLAYERS, true)) {
             return true;
         }
 

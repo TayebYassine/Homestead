@@ -148,8 +148,8 @@ public final class VisitRegionSubCmd extends SubCommandBuilder {
 
         if (!PlayerUtility.isOperator(player)
                 && !region.isOwner(player)
-                && !(PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlag.TELEPORT_SPAWN.getBitmask(), true)
-                && PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, PlayerFlag.PASSTHROUGH.getBitmask(), true))) {
+                && !(PlayerUtility.hasPermissionFlag(region, player, PlayerFlag.TELEPORT_SPAWN, false)
+                && PlayerUtility.hasPermissionFlag(region, player, PlayerFlag.PASSTHROUGH, false))) {
             Messages.send(player, "commands.visit.7");
             return true;
         }

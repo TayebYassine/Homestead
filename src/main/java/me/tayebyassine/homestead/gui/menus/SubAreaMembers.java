@@ -92,8 +92,7 @@ public final class SubAreaMembers {
 			Messages.send(player, "commands.trust.2");
 			return false;
 		}
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
 			return false;
 		}
 		if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
@@ -149,8 +148,7 @@ public final class SubAreaMembers {
 			return;
 		}
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
 			return;
 		}
 

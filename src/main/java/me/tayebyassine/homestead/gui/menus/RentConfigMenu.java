@@ -77,8 +77,7 @@ public final class RentConfigMenu {
         return (_player, event) -> {
             if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
-            if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                    ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+            if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
                 Messages.send(player, "common.no_permission");
                 PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
                 return;
@@ -109,8 +108,7 @@ public final class RentConfigMenu {
         return (_player, event) -> {
             if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
-            if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                    ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+            if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
                 Messages.send(player, "common.no_permission");
                 PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
                 return;
@@ -147,8 +145,7 @@ public final class RentConfigMenu {
         return (_player, event) -> {
             if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
-            if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                    ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+            if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
                 Messages.send(player, "common.no_permission");
                 PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
                 return;
@@ -179,8 +176,7 @@ public final class RentConfigMenu {
         return (_player, event) -> {
             if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
-            if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                    ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+            if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
                 Messages.send(player, "common.no_permission");
                 PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
                 return;
@@ -241,8 +237,7 @@ public final class RentConfigMenu {
         return (_player, event) -> {
             if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
-            if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                    ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+            if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
                 Messages.send(player, "common.no_permission");
                 PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
                 return;
@@ -267,8 +262,7 @@ public final class RentConfigMenu {
         return (_player, event) -> {
             if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
-            if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                    ControlFlag.MANAGE_SUBAREAS.getBitmask()) && !PlayerUtility.isOperator(player) && !region.isOwner(player)) {
+            if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true) && !PlayerUtility.isOperator(player) && !region.isOwner(player)) {
                 Messages.send(player, "common.no_permission");
                 PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
                 return;
@@ -293,8 +287,7 @@ public final class RentConfigMenu {
         return (_player, event) -> {
             if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
-            if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                    ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+            if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
                 Messages.send(player, "common.no_permission");
                 PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
                 return;

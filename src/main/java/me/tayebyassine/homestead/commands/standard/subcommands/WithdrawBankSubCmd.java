@@ -65,8 +65,7 @@ public final class WithdrawBankSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.WITHDRAW_MONEY.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.WITHDRAW_MONEY, true)) {
             return true;
         }
 

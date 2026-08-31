@@ -172,8 +172,7 @@ public final class RegionMenu {
 		return (_player, event) -> {
 			if (!checkRegionExists(player, region)) return;
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					ControlFlag.SET_WEATHER_AND_TIME.getBitmask())) {
+			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.SET_WEATHER_AND_TIME, true)) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}

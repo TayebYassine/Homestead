@@ -1,5 +1,6 @@
 package me.tayebyassine.homestead.listeners.util;
 
+import me.tayebyassine.homestead.flags.PlayerFlag;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,7 +18,7 @@ public final class RegionProtection {
 	public static boolean hasPermission(Player player,
 										Chunk chunk,
 										Location location,
-										long flag) {
+										PlayerFlag flag) {
 		if (ProtectionMode.isEnabled()) return false;
 
 		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk))
@@ -37,14 +38,14 @@ public final class RegionProtection {
 		SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(location);
 
 		return subArea != null
-				? PlayerUtility.hasPermissionFlag(region.getUniqueId(), subArea.getUniqueId(), player, flag, true)
-				: PlayerUtility.hasPermissionFlag(region.getUniqueId(), player, flag, true);
+				? PlayerUtility.hasPermissionFlag(region, subArea, player, flag, true)
+				: PlayerUtility.hasPermissionFlag(region, player, flag, true);
 	}
 
 	public static void hasPermission(Player player,
 									 Chunk chunk,
 									 Location location,
-									 long flag,
+									 PlayerFlag flag,
 									 Runnable onTrue,
 									 Runnable onFalse) {
 		if (ProtectionMode.isEnabled()) {
@@ -63,5 +64,7 @@ public final class RegionProtection {
 		if (!allowed && onFalse != null) onFalse.run();
 	}
 
-	private RegionProtection() {}
+	private RegionProtection() {
+		throw new AssertionError("Uninstantiable class");
+	}
 }

@@ -17,6 +17,7 @@ public final class WorldEditAPI {
 	 * @param world The chunk world
 	 * @param chunk The chunk
 	 */
+	@Deprecated
 	public static void regenerateChunk(World world, Chunk chunk) {
 		regenerateChunk(world, chunk.getX(), chunk.getZ());
 	}
@@ -28,6 +29,7 @@ public final class WorldEditAPI {
 	 * @param chunkX The chunk X
 	 * @param chunkZ The chunk Z
 	 */
+	@Deprecated
 	public static void regenerateChunk(World world, int chunkX, int chunkZ) {
 		Bukkit.getScheduler().runTaskAsynchronously(Homestead.getInstance(), () -> {
 			com.sk89q.worldedit.world.World weWorld = BukkitAdapter.adapt(world);

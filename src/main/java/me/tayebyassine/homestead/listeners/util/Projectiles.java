@@ -18,5 +18,7 @@ public final class Projectiles {
 				!(p.getShooter() instanceof Player);
 	}
 
-	private Projectiles() {}
+	private Projectiles() {
+		throw new AssertionError("Uninstantiable class");
+	}
 }

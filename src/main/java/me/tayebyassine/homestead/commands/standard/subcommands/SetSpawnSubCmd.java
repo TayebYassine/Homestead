@@ -48,8 +48,7 @@ public final class SetSpawnSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.SET_SPAWN.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.SET_SPAWN, true)) {
             return true;
         }
 

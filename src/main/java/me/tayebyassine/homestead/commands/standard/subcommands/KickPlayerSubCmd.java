@@ -51,8 +51,7 @@ public final class KickPlayerSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.KICK_PLAYERS.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.KICK_PLAYERS, true)) {
             return true;
         }
 

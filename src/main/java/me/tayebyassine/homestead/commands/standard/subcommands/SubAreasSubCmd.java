@@ -9,8 +9,8 @@ import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.flags.FlagCalculator;
 import me.tayebyassine.homestead.flags.PlayerFlag;
 import me.tayebyassine.homestead.gui.menus.SubAreasMenu;
-import me.tayebyassine.homestead.listeners.SelectionToolListener;
-import me.tayebyassine.homestead.listeners.SelectionToolListener.Selection;
+import me.tayebyassine.homestead.listeners.selection.SelectionToolListener;
+import me.tayebyassine.homestead.listeners.selection.SelectionToolListener.Selection;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.MemberManager;
@@ -69,8 +69,7 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.MANAGE_SUBAREAS.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
             return true;
         }
 

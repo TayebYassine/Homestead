@@ -110,8 +110,8 @@ public final class RegionsMenu {
 
 		boolean allowed = PlayerUtility.isOperator(clicker)
 				|| region.isOwner(menuPlayer)
-				|| (PlayerUtility.hasPermissionFlag(region.getUniqueId(), clicker, PlayerFlag.TELEPORT_SPAWN.getBitmask(), true)
-				&& PlayerUtility.hasPermissionFlag(region.getUniqueId(), clicker, PlayerFlag.PASSTHROUGH.getBitmask(), true))
+				|| (PlayerUtility.hasPermissionFlag(region, clicker, PlayerFlag.TELEPORT_SPAWN, false)
+				&& PlayerUtility.hasPermissionFlag(region, clicker, PlayerFlag.PASSTHROUGH, false))
 				&& clicker.hasPermission("homestead.actions.regions.teleport");
 
 		if (!allowed) {

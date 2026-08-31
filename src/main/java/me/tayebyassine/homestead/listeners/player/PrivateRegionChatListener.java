@@ -1,4 +1,4 @@
-package me.tayebyassine.homestead.listeners;
+package me.tayebyassine.homestead.listeners.player;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,6 +20,10 @@ import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Routes chat messages sent by players in a private-region chat session to the region's members
+ * only, and fires a {@link me.tayebyassine.homestead.api.events.RegionChatEvent}.
+ */
 public final class PrivateRegionChatListener implements Listener {
 	private static void sendMessage(Player player, String path) {
 		Object obj = Resources.<LanguageFile>get(ResourceType.Language).getRaw("commands." + path);

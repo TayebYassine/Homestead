@@ -156,7 +156,7 @@ public final class RegionClaimedChunks {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.UNCLAIM_CHUNKS.getBitmask())) {
+			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNCLAIM_CHUNKS, true)) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}

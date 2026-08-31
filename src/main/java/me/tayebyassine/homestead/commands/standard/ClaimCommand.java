@@ -1,16 +1,16 @@
 package me.tayebyassine.homestead.commands.standard;
 
-import me.tayebyassine.homestead.commands.CommandSenderType;
-
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.ChunkClaimEvent;
 import me.tayebyassine.homestead.api.events.RegionCreateEvent;
+import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.commands.CommandBuilder;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.integrations.WorldGuardAPI;
-import me.tayebyassine.homestead.listeners.SelectionToolListener;
-import me.tayebyassine.homestead.listeners.SelectionToolListener.Selection;
+import me.tayebyassine.homestead.listeners.selection.SelectionToolListener;
+import me.tayebyassine.homestead.listeners.selection.SelectionToolListener.Selection;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -23,7 +23,6 @@ import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
-import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.util.minecraft.chunks.ChunkUtility;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
@@ -82,10 +81,11 @@ public final class ClaimCommand extends CommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(
-                region.getUniqueId(),
+        if (!PlayerUtility.hasControlPermissionFlag(
+                region,
                 player,
-                ControlFlag.CLAIM_CHUNKS.getBitmask())) {
+                ControlFlag.CLAIM_CHUNKS,
+                true)) {
             return true;
         }
 
@@ -186,10 +186,11 @@ public final class ClaimCommand extends CommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(
-                region.getUniqueId(),
+        if (!PlayerUtility.hasControlPermissionFlag(
+                region,
                 player,
-                ControlFlag.CLAIM_CHUNKS.getBitmask())) {
+                ControlFlag.CLAIM_CHUNKS,
+                true)) {
             return true;
         }
 

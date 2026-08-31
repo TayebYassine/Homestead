@@ -58,8 +58,7 @@ public final class TrustPlayerSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.TRUST_PLAYERS.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.TRUST_PLAYERS, true)) {
             return true;
         }
 

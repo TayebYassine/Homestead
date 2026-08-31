@@ -1,4 +1,4 @@
-package me.tayebyassine.homestead.listeners;
+package me.tayebyassine.homestead.listeners.entities;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -22,6 +22,10 @@ import me.tayebyassine.homestead.flags.WorldRules;
 import me.tayebyassine.homestead.listeners.util.RegionProtection;
 import me.tayebyassine.homestead.managers.ChunkManager;
 
+/**
+ * Handles punching absorbed (non-empty) Sulfur Cubes on Paper, enforcing the
+ * {@link me.tayebyassine.homestead.flags.PlayerFlag#PUNCH_SULFUR_CUBES} flag.
+ */
 public final class PaperSulfurCubeListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerPunchSulfurCube(PlayerAnimationEvent event) {
@@ -48,13 +52,13 @@ public final class PaperSulfurCubeListener implements Listener {
 		Chunk chunk = location.getChunk();
 
 		if (!ChunkManager.isChunkClaimed(chunk)) {
-			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PUNCH_SULFUR_CUBES.getBitmask())) {
+			if (!WorldRules.isPlayerFlagAllowed(chunk.getWorld(), PlayerFlag.PUNCH_SULFUR_CUBES)) {
 				cancelAndFreeze(player, targetEntity);
 				return;
 			}
 		}
 
-		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PUNCH_SULFUR_CUBES.getBitmask(), null, () -> {
+		RegionProtection.hasPermission(player, chunk, location, PlayerFlag.PUNCH_SULFUR_CUBES, null, () -> {
 			cancelAndFreeze(player, targetEntity);
 		});
 	}

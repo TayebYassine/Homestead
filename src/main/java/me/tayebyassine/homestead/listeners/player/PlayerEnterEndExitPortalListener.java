@@ -1,4 +1,4 @@
-package me.tayebyassine.homestead.listeners;
+package me.tayebyassine.homestead.listeners.player;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -91,6 +91,8 @@ public final class PlayerEnterEndExitPortalListener implements Listener {
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		LAST_LOCATIONS.remove(event.getPlayer().getUniqueId());
+		Player player = event.getPlayer();
+
+		LAST_LOCATIONS.remove(player.getUniqueId());
 	}
 }

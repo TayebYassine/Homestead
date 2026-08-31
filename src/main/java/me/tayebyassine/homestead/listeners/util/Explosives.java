@@ -23,5 +23,7 @@ public final class Explosives {
 		};
 	}
 
-	private Explosives() {}
+	private Explosives() {
+		throw new AssertionError("Uninstantiable class");
+	}
 }

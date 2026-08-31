@@ -1,4 +1,4 @@
-package me.tayebyassine.homestead.listeners;
+package me.tayebyassine.homestead.listeners.player;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +12,9 @@ import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.players.DelayedTeleport;
 
+/**
+ * Cancels pending delayed teleports if the player moves (when configured) or quits the server.
+ */
 public final class DelayedTeleportListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerMove(PlayerMoveEvent event) {

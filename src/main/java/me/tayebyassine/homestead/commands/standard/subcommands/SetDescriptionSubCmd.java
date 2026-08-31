@@ -57,8 +57,7 @@ public final class SetDescriptionSubCmd extends SubCommandBuilder {
 
         String description = String.join(" ", Arrays.asList(args));
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.SET_DESCRIPTION.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.SET_DESCRIPTION, true)) {
             return true;
         }
 

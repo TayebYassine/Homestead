@@ -65,10 +65,7 @@ public final class UnclaimCommand extends CommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(
-                region.getUniqueId(),
-                player,
-                ControlFlag.UNCLAIM_CHUNKS.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNCLAIM_CHUNKS, true)) {
             return true;
         }
 

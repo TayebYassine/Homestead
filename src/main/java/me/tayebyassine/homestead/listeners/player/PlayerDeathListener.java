@@ -1,4 +1,4 @@
-package me.tayebyassine.homestead.listeners;
+package me.tayebyassine.homestead.listeners.player;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -20,6 +20,12 @@ import me.tayebyassine.homestead.util.minecraft.items.ItemUtility;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Resolves active wars when a region owner dies.
+ *
+ * <p>If the dead player owned a region that is currently at war, the war ends and the opposing
+ * region is declared the winner (receiving the prize and the loser's head, if configured).</p>
+ */
 public final class PlayerDeathListener implements Listener {
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {

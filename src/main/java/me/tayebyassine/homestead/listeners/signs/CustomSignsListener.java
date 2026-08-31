@@ -1,4 +1,4 @@
-package me.tayebyassine.homestead.listeners;
+package me.tayebyassine.homestead.listeners.signs;
 
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.RegionOwnerUpdateEvent;
@@ -31,13 +31,17 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Handles Homestead's custom signs: {@code [Welcome]}, {@code [Rent]} and {@code [HSell]}.
+ *
+ * <p>On placement, it validates ownership and formats the sign; on right-click it performs the
+ * rent or purchase action, transferring ownership and funds as appropriate.</p>
+ */
 public final class CustomSignsListener implements Listener {
 
     private static final boolean ADVENTURE_SUPPORTED = PlatformBridge.isAdventureClassPresent();
-    private static final long MAX_RENT_DURATION_MS = 6048000000L; // 10 weeks
     private static final long MS_PER_WEEK = 7L * 24 * 60 * 60 * 1000;
 
     private final SignFormatter welcomeFormatter = (event, player, region) -> {

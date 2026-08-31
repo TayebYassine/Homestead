@@ -107,8 +107,7 @@ public final class RegionBannedPlayers {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-					ControlFlag.UNBAN_PLAYERS.getBitmask())) {
+			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNBAN_PLAYERS, true)) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
@@ -139,8 +138,7 @@ public final class RegionBannedPlayers {
 			Messages.send(player, "commands.ban.3", message);
 			return false;
 		}
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlag.BAN_PLAYERS.getBitmask())) {
+		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.BAN_PLAYERS, true)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return false;
 		}
@@ -178,8 +176,7 @@ public final class RegionBannedPlayers {
 		if (!context.getEvent().isLeftClick()) return;
 		if (!BanManager.isBanned(region, bannedPlayer.getPlayer())) return;
 
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlag.UNBAN_PLAYERS.getBitmask())) {
+		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNBAN_PLAYERS, true)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return;
 		}

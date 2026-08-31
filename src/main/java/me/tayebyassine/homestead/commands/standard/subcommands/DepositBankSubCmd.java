@@ -66,8 +66,7 @@ public final class DepositBankSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.DEPOSIT_MONEY.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.DEPOSIT_MONEY, true)) {
             return true;
         }
 

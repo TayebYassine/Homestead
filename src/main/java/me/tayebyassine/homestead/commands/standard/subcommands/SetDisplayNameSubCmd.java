@@ -57,8 +57,7 @@ public final class SetDisplayNameSubCmd extends SubCommandBuilder {
 
         String regionDisplayName = String.join(" ", Arrays.asList(args));
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.RENAME_REGION.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.RENAME_REGION, true)) {
             return true;
         }
 

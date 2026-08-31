@@ -53,8 +53,7 @@ public final class RenameRegionSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.RENAME_REGION.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.RENAME_REGION, true)) {
             return true;
         }
 

@@ -1,4 +1,4 @@
-package me.tayebyassine.homestead.listeners;
+package me.tayebyassine.homestead.listeners.player;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -24,6 +24,10 @@ import me.tayebyassine.homestead.util.minecraft.rewards.LevelRewards;
 import java.util.HashSet;
 import java.util.UUID;
 
+/**
+ * Awards region XP when the region owner kills a rewarded entity inside their own claimed chunks
+ * (or an Ender Dragon anywhere), subject to a configurable cooldown.
+ */
 public final class EntityDeathListener implements Listener {
 	private static final HashSet<UUID> COOLDOWN = new HashSet<UUID>();
 
@@ -93,7 +97,10 @@ public final class EntityDeathListener implements Listener {
 
 		if (timeout > 0) {
 			COOLDOWN.add(killer.getUniqueId());
-			Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(killer.getUniqueId()), timeout);
+
+			Homestead.getInstance().runAsyncTaskLater(() -> {
+				COOLDOWN.remove(killer.getUniqueId());
+			}, timeout);
 		}
 	}
 }

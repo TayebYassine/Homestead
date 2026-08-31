@@ -54,8 +54,7 @@ public final class UntrustPlayerSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-                ControlFlag.UNTRUST_PLAYERS.getBitmask())) {
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNTRUST_PLAYERS, true)) {
             return true;
         }
 

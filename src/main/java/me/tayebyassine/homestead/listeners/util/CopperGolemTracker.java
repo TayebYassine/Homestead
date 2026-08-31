@@ -14,6 +14,7 @@ public final class CopperGolemTracker {
 	private static final Map<UUID, Long> GOLEM_SPAWN_REGION = new ConcurrentHashMap<>();
 
 	private CopperGolemTracker() {
+		throw new AssertionError("Uninstantiable class");
 	}
 
 	public static void recordSpawnRegion(CopperGolem golem) {

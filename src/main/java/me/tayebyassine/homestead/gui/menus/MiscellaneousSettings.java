@@ -73,7 +73,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.RENAME_REGION.getBitmask())) {
+			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.RENAME_REGION, true)) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
@@ -115,7 +115,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.RENAME_REGION.getBitmask())) {
+			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.RENAME_REGION, true)) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
@@ -157,7 +157,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.SET_DESCRIPTION.getBitmask())) {
+			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.SET_DESCRIPTION, true)) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}
@@ -199,7 +199,7 @@ public final class MiscellaneousSettings {
 				return;
 			}
 
-			if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, ControlFlag.SET_SPAWN.getBitmask())) {
+			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.SET_SPAWN, true)) {
 				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 				return;
 			}

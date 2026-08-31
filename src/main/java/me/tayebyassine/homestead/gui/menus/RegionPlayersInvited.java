@@ -130,8 +130,7 @@ public final class RegionPlayersInvited {
 			Messages.send(player, "commands.trust.2");
 			return false;
 		}
-		if (!PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player,
-				ControlFlag.TRUST_PLAYERS.getBitmask())) {
+		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.TRUST_PLAYERS, true)) {
 			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
 			return false;
 		}

@@ -22,6 +22,10 @@ public final class WorldRules {
 		return Resources.<FlagsFile>get(ResourceType.Flags).getLong("world-rules.worlds." + worldName + ".world_flags", -1L);
 	}
 
+	public static boolean isPlayerFlagAllowed(World world, PlayerFlag flag) {
+		return isPlayerFlagAllowed(world, flag.getBitmask());
+	}
+
 	public static boolean isPlayerFlagAllowed(World world, long flag) {
 		if (world == null) return true;
 
@@ -38,6 +42,10 @@ public final class WorldRules {
 		if (flags == -1) return true;
 
 		return FlagCalculator.isFlagSet(flags, flag);
+	}
+
+	public static boolean isWorldFlagAllowed(World world, WorldFlag flag) {
+		return isWorldFlagAllowed(world, flag.getBitmask());
 	}
 
 	public static boolean isWorldFlagAllowed(World world, long flag) {

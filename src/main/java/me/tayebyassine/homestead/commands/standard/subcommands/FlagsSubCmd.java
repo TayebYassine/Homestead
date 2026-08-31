@@ -112,8 +112,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
     }
 
     private void handleMemberFlags(Player player, Region region, String[] args) {
-        if (!checkPermission(player, region, "homestead.actions.regions.update.flags.members",
-                ControlFlag.SET_MEMBER_FLAGS.getBitmask())) {
+        if (!checkPermission(player, region, "homestead.actions.regions.update.flags.members", ControlFlag.SET_MEMBER_FLAGS)) {
             return;
         }
 
@@ -159,8 +158,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
     }
 
     private void handleGlobalFlags(Player player, Region region, String[] args) {
-        if (!checkPermission(player, region, "homestead.actions.regions.update.flags.global",
-                ControlFlag.SET_GLOBAL_FLAGS.getBitmask())) {
+        if (!checkPermission(player, region, "homestead.actions.regions.update.flags.global", ControlFlag.SET_GLOBAL_FLAGS)) {
             return;
         }
 
@@ -187,8 +185,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
     }
 
     private void handleWorldFlags(Player player, Region region, String[] args) {
-        if (!checkPermission(player, region, "homestead.actions.regions.update.flags.world",
-                ControlFlag.SET_WORLD_FLAGS.getBitmask())) {
+        if (!checkPermission(player, region, "homestead.actions.regions.update.flags.world", ControlFlag.SET_WORLD_FLAGS)) {
             return;
         }
 
@@ -220,13 +217,14 @@ public final class FlagsSubCmd extends SubCommandBuilder {
                 flagInput, region.getName(), Formatter.getFlagState(newState));
     }
 
-    private boolean checkPermission(Player player, Region region, String permission, long controlFlag) {
+    private boolean checkPermission(Player player, Region region, String permission, ControlFlag flag) {
         if (!player.hasPermission(permission)) {
-            Messages.send(player, "commands.flags.2");
+            // TODO remove this in the future
+            // Messages.send(player, "commands.flags.2");
             return false;
         }
 
-        return PlayerUtility.hasControlRegionPermissionFlag(region.getUniqueId(), player, controlFlag);
+        return PlayerUtility.hasControlPermissionFlag(region, player, flag, true);
     }
 
     private OfflinePlayer resolveTarget(Player player, String targetName) {
