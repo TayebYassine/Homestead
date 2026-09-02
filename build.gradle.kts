@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.tayebyassine.homestead"
-version = "5.2.3.0"
+version = "6.0.0.0-26w36a"
 description = "A chunk-based land claiming plugin"
 
 repositories {

@@ -34,7 +34,7 @@ public final class CheckUpdatesSubCmd extends SubCommandBuilder {
             if (data.current().equals(data.latest())) {
                 Messages.send(sender, "commands.op_updates.0");
             } else {
-                Messages.send(sender, "commands.op_updates.1");
+                Messages.send(sender, "commands.op_updates.1", data.current(), data.latest());
             }
         });
 

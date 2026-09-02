@@ -59,8 +59,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Homestead extends JavaPlugin {
-    private final static String VERSION = "5.2.3.0";
-    private final static boolean SNAPSHOT = false;
+    private final static String VERSION = "6.0.0.0-26w36a";
+    private final static boolean SNAPSHOT = true;
 
     private static boolean IS_FOLIA = false;
     private static boolean IS_PAPER = false;

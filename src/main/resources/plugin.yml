@@ -1,6 +1,6 @@
 name: Homestead
 main: me.tayebyassine.homestead.Homestead
-version: 5.2.3.0
+version: 6.0.0.0-26w36a
 description: 'A chunk-based land claiming plugin'
 author: TayebYassine
 api-version: 1.21.10
