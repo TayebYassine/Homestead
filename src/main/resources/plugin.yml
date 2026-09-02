@@ -189,6 +189,12 @@ permissions:
       homestead.actions.regions.teleport: true
       homestead.actions.regions.war: true
       homestead.actions.regions.withdraw_bank: true
+  homestead.commands.claim:
+    default: true
+  homestead.commands.unclaim:
+    default: true
+  homestead.commands.region:
+    default: true
   homestead.commands.homesteadadmin.claim:
     default: op
   homestead.commands.homesteadadmin.export:
@@ -364,5 +370,7 @@ permissions:
       homestead.commands.region.visit: true
       homestead.commands.region.war: true
       homestead.commands.region.withdraw: true
+  homestead.admin.forceunclaim:
+    default: op
   homestead.operator:
     default: op
