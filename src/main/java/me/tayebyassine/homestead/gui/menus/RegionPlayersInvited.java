@@ -152,7 +152,7 @@ public final class RegionPlayersInvited {
 		}
 
 		SeRent rent = region.getRent();
-		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
+		if (rent != null && rent.isRenterer(target)) {
 			Messages.send(player, "commands.trust.7");
 			return false;
 		}
