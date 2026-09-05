@@ -151,7 +151,7 @@ public final class RegionBannedPlayers {
 			return false;
 		}
 		SeRent rent = region.getRent();
-		if (rent != null && rent.getRenterId().equals(target.getUniqueId())) {
+		if (rent != null && rent.isRenterer(target)) {
 			Messages.send(player, "commands.ban.6", target.getName());
 			return false;
 		}

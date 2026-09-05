@@ -304,7 +304,7 @@ public final class CustomSignsListener implements Listener {
             return false;
         }
         SeRent rent = region.getRent();
-        if (rent != null && rent.getRenterId().equals(player.getUniqueId())) {
+        if (rent != null && rent.isRenterer(player)) {
             Messages.send(player, "signs.15");
             return false;
         }

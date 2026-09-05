@@ -23,14 +23,16 @@ public final class RegionRent {
 			SeRent rent = region.getRent();
 
 			if (rent.hasRenter() && rent.isExpired()) {
-				rent.clearRenter();
-
 				OfflinePlayer renter = rent.getRenter();
 
-				if (renter != null && renter.isOnline()) {
-					Player player = (Player) renter;
+				rent.clearRenter();
 
-					Messages.send(player, "common.rent_end", region.getName());
+				if (renter != null && renter.isOnline()) {
+					Player player = renter.getPlayer();
+
+					if (player != null) {
+						Messages.send(player, "common.rent_end", region.getName());
+					}
 				}
 			}
 		}
@@ -39,14 +41,16 @@ public final class RegionRent {
 			SeRent rent = subArea.getRent();
 
 			if (rent.hasRenter() && rent.isExpired()) {
-				rent.clearRenter();
-
 				OfflinePlayer renter = rent.getRenter();
 
-				if (renter != null && renter.isOnline()) {
-					Player player = (Player) renter;
+				rent.clearRenter();
 
-					Messages.send(player, "common.rent_subarea_end", subArea.getName(), subArea.getRegionName());
+				if (renter != null && renter.isOnline()) {
+					Player player = renter.getPlayer();
+
+					if (player != null) {
+						Messages.send(player, "common.rent_subarea_end", subArea.getName(), subArea.getRegionName());
+					}
 				}
 			}
 		}
