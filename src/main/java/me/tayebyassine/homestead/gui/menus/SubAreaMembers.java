@@ -89,7 +89,7 @@ public final class SubAreaMembers {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 		if (target == null) {
-			Messages.send(player, "commands.trust.2");
+			Messages.send(player, "commands.trust.2", message);
 			return false;
 		}
 		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {

@@ -119,7 +119,7 @@ public final class TrustPlayerSubCmd extends SubCommandBuilder {
             Messages.send(player, "commands.trust.10");
 
             if (target.isOnline()) {
-                Messages.send(target.getPlayer(), "commands.trust.11");
+                Messages.send(target.getPlayer(), "commands.trust.11", region.getName());
             }
 
             Homestead.callEvent(new InvitePlayerEvent(region, target));

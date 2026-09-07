@@ -83,7 +83,7 @@ public final class RegionPlayersInvited {
 							LogManager.addLog(region, player, LogManager.PredefinedLog.INVITE_PLAYER, targetPlayer.getName());
 
 							if (targetPlayer.isOnline()) {
-								Messages.send(player, "commands.trust.11");
+								Messages.send(player, "commands.trust.11", region.getName());
 							}
 
 							Homestead.callEvent(new InvitePlayerEvent(region, targetPlayer));
@@ -127,7 +127,7 @@ public final class RegionPlayersInvited {
 		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
 		if (target == null) {
-			Messages.send(player, "commands.trust.2");
+			Messages.send(player, "commands.trust.2", message);
 			return false;
 		}
 		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.TRUST_PLAYERS, true)) {
