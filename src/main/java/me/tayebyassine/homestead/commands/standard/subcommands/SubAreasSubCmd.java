@@ -5,6 +5,7 @@ import me.tayebyassine.homestead.api.events.PlayerJoinSubAreaEvent;
 import me.tayebyassine.homestead.api.events.PlayerLeftSubAreaEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
+import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.flags.FlagCalculator;
 import me.tayebyassine.homestead.flags.PlayerFlag;
@@ -75,6 +76,7 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
 
         return switch (args[0]) {
             case "create" -> executeCreate(player, region, args);
+            case "tool" -> executeTool(player);
             case "conf" -> executeConfig(player, region, args);
             default -> {
                 Messages.send(player, "commands.subareas.1", getUsage());
@@ -192,6 +194,21 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
         Messages.send(player, "commands.subareas.9", region.getName(), volume);
 
         LogManager.addLog(region, player, LogManager.PredefinedLog.CREATE_SUBAREA);
+
+        return true;
+    }
+
+    private boolean executeTool(Player player) {
+        if (Cooldown.hasCooldown(player, Cooldown.Type.SELECTION_TOOL)) {
+            Cooldown.sendCooldownMessage(player);
+            return true;
+        }
+
+        player.getInventory().addItem(SelectionToolListener.getSelectionToolItem());
+
+        Messages.send(player, "commands.subareas.26");
+
+        Cooldown.startCooldown(player, Cooldown.Type.SELECTION_TOOL);
 
         return true;
     }

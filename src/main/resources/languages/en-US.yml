@@ -400,6 +400,7 @@ commands:
     23: "{__prefix__} &7Added the player &3{0} &7to the sub-area."
     24: "{__prefix__} &cThe player is not added to this sub-area."
     25: "{__prefix__} &7Removed the player &3{0} &7from the sub-area."
+    26: "{__prefix__} &7You have received the selection tool item! Check your inventory."
   trust:
     0: "{__prefix__} &cPlease provide a player name."
     1: "{__prefix__} &7You do not have a selected region. Use: &e/hs set [region]"

@@ -2,10 +2,12 @@ package me.tayebyassine.homestead.listeners.selection;
 
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.borders.particles.SelectedAreaParticlesSpawner;
+import me.tayebyassine.homestead.integrations.NexoMC;
 import me.tayebyassine.homestead.models.serialize.SeBlock;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
+import me.tayebyassine.homestead.util.minecraft.items.ItemUtility;
 import me.tayebyassine.homestead.util.minecraft.platform.PlatformBridge;
 import me.tayebyassine.homestead.util.minecraft.threads.TaskHandle;
 import org.bukkit.Material;
@@ -18,6 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -80,7 +83,7 @@ public final class SelectionToolListener implements Listener {
         Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (item != null && item.getType() == getSelectionToolType()) {
+        if (item != null && item.isSimilar(getSelectionToolItem())) {
             UUID playerId = player.getUniqueId();
             SESSIONS.putIfAbsent(playerId, new Selection());
             Selection selection = SESSIONS.get(playerId);
@@ -140,7 +143,7 @@ public final class SelectionToolListener implements Listener {
         ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
         UUID playerId = player.getUniqueId();
 
-        if (newItem == null || newItem.getType() != getSelectionToolType()) {
+        if (newItem == null || newItem.isSimilar(getSelectionToolItem())) {
             cancelPlayerSession(player);
         } else {
             SESSIONS.putIfAbsent(playerId, new Selection());
@@ -157,9 +160,20 @@ public final class SelectionToolListener implements Listener {
         TASKS.put(player.getUniqueId(), task);
     }
 
-    private Material getSelectionToolType() {
-        String itemString = Resources.<RegionsFile>get(ResourceType.Regions).getString("selection-tool.item");
-        return Material.getMaterial(itemString);
+    public static ItemStack getSelectionToolItem() {
+        String itemName = Resources.<RegionsFile>get(ResourceType.Regions).getString("selection-tool.item.name");
+        List<String> itemLore = Resources.<RegionsFile>get(ResourceType.Regions).getStringList("selection-tool.item.lore");
+        String itemType = Resources.<RegionsFile>get(ResourceType.Regions).getString("selection-tool.item.type");
+
+
+        if (itemType.startsWith("NEXOMC-") || itemType.startsWith("NEXO-")) {
+            String itemId = itemType.split("-", 2)[1];
+            return NexoMC.getNexoItem(itemId, itemName, itemLore);
+        }
+
+        Material material = Material.getMaterial(itemType);
+
+        return ItemUtility.getItem(itemName, itemLore, material != null ? material : Material.BARRIER);
     }
 
     private boolean sameWorld(Block loc1, Block loc2) {

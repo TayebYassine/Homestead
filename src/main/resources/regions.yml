@@ -87,7 +87,12 @@ enter-exit-region-message:
 # Selection Tool
 selection-tool:
   # Item used to select corners
-  item: GOLDEN_HOE
+  item:
+    name: "&eSelection Tool"
+    lore:
+      - "&7Use this tool to create sub-areas or"
+      - "&7claim new chunks!"
+    type: GOLDEN_HOE # Use "NEXOMC-(id)" for custom NexoMC custom materials
 
   # Selection status messages
   messages:
@@ -320,6 +325,11 @@ cooldown:
   region-teleport:
     ignore-operators: true
     value: 15 # 15 seconds
+
+  # Selection tool
+  selection-tool:
+    ignore-operators: false
+    value: 604800 # 7 days (604800 seconds)
 
   # Disallow regions to disable wars when they finished a war
   # From example below, if a region won or lost a war, they cannot change the wars flag state for 36 hours.

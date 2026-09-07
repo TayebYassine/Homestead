@@ -172,6 +172,8 @@ public final class BrigadierCommands {
                 .literalSub("create")
                 .stringArg("name")
                 .endNested()
+                .literalSub("tool")
+                .endNested()
                 .literalSub("conf")
                 .stringArg("subarea")
                 .literalSub("delete")

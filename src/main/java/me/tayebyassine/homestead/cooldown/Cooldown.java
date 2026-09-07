@@ -96,6 +96,7 @@ public final class Cooldown {
 		REGION_CHUNK_CLAIM("region-chunk-claim"),
 		REGION_CHUNK_UNCLAIM("region-chunk-unclaim"),
 		REGION_TELEPORT("region-teleport"),
+		SELECTION_TOOL("selection-tool"),
 		WAR_FLAG_DISABLED("war-flag-disabled");
 
 		private final String key;
