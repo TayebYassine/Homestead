@@ -873,6 +873,10 @@ flags-info:
     description:
       - "&7Allow players to punch Sulfur Cubes?"
     type: BUCKET_OF_SULFUR_CUBE
+  throw-eggs:
+    description:
+      - "&7Allow players to throw eggs?"
+    type: EGG
 
   # WORLD FLAGS
   passive-entity-spawn:

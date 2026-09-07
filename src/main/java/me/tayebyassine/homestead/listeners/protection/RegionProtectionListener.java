@@ -813,6 +813,42 @@ public final class RegionProtectionListener implements Listener {
     }
 
     /**
+     * Prevents throwing eggs into regions without the {@link PlayerFlag#THROW_EGGS} permission.
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEggProjectileHit(ProjectileHitEvent event) {
+        Entity entity = event.getEntity();
+
+        if (!(entity instanceof Egg egg)) {
+            return;
+        }
+
+        ProjectileSource source = egg.getShooter();
+        if (!(source instanceof Player player)) {
+            return;
+        }
+
+        Location location;
+        Block hitBlock = event.getHitBlock();
+        Entity hitEntity = event.getHitEntity();
+
+        if (hitBlock != null) {
+            location = hitBlock.getLocation();
+        } else if (hitEntity != null) {
+            location = hitEntity.getLocation();
+        } else {
+            location = egg.getLocation();
+        }
+
+        Chunk chunk = location.getChunk();
+        Runnable cancel = () -> {
+            egg.remove();
+            event.setCancelled(true);
+        };
+        checkPlayerFlag(player, chunk, location, PlayerFlag.THROW_EGGS, cancel);
+    }
+
+    /**
      * Prevents dropping / picking up items without the {@link PlayerFlag#PICKUP_ITEMS} permission.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

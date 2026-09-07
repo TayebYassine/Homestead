@@ -199,7 +199,12 @@ public enum PlayerFlag {
 	/**
 	 * Allows punching sulfur cubes (custom gameplay mechanic).
 	 */
-	PUNCH_SULFUR_CUBES(1L << 36, "punch-sulfur-cubes");
+	PUNCH_SULFUR_CUBES(1L << 36, "punch-sulfur-cubes"),
+
+	/**
+	 * Allows throwing eggs.
+	 */
+	THROW_EGGS(1L << 37, "throw-eggs");
 
 	private final long bitmask;
 	private final String name;

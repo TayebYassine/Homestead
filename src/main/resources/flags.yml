@@ -61,6 +61,7 @@ default-players-flags:
   elytra: true                   # Elytra flight
   spawn-entities: false          # Use spawn eggs
   punch-sulfur-cubes: false      # Punch sulfur cubes
+  throw-eggs: false              # Throw eggs
 
 # World/Environment Flags
 # Controls environmental effects and mob behavior
