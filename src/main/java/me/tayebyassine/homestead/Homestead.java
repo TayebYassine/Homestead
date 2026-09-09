@@ -59,7 +59,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Homestead extends JavaPlugin {
-    private final static String VERSION = "6.0.0.0-26w37a";
+    private final static String VERSION = "6.0.0.0-26w37b";
     private final static boolean SNAPSHOT = true;
     public static Database database;
     // Cache

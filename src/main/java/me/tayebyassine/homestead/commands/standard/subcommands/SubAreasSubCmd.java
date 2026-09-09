@@ -95,7 +95,7 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
         List<String> suggestions = new ArrayList<>();
 
         if (args.length == 1) {
-            suggestions.addAll(List.of("create", "conf"));
+            suggestions.addAll(List.of("create", "conf", "tool"));
         } else if (args.length == 2 && args[0].equals("conf")) {
             Region region = TargetRegionSession.getRegion(player);
 
