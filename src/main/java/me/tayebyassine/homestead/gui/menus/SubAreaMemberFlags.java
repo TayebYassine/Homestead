@@ -49,7 +49,7 @@ public final class SubAreaMemberFlags {
             return;
         }
 
-        if (!MemberManager.isMemberOfSubArea(subArea, player)) {
+        if (!MemberManager.isMemberOfSubArea(subArea, member)) {
             player.closeInventory();
             return;
         }

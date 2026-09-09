@@ -465,6 +465,21 @@ public final class MemberManager {
      * @param player The player
      * @return {@code true} if the player is member, {@code false} otherwise.
      */
+    public static boolean isMemberOfRegion(Region region, RegionMember player) {
+        OfflinePlayer p = player.getPlayer();
+
+        if (p == null) return false;
+
+        return isMemberOfRegion(region.getUniqueId(), p);
+    }
+
+    /**
+     * Checks if a player is a member of a region.
+     *
+     * @param region The region
+     * @param player The player
+     * @return {@code true} if the player is member, {@code false} otherwise.
+     */
     public static boolean isMemberOfRegion(Region region, OfflinePlayer player) {
         return isMemberOfRegion(region.getUniqueId(), player);
     }
@@ -500,6 +515,21 @@ public final class MemberManager {
      */
     public static boolean isMemberOfAnyRegion(OfflinePlayer player) {
         return !getRegionsOfPlayer(player).isEmpty();
+    }
+
+    /**
+     * Checks if a player is a member of a sub-area.
+     *
+     * @param subArea The sub-area
+     * @param player  The player
+     * @return {@code true} if the player is member, {@code false} otherwise.
+     */
+    public static boolean isMemberOfSubArea(SubArea subArea, RegionMember player) {
+        OfflinePlayer p = player.getPlayer();
+
+        if (p == null) return false;
+
+        return isMemberOfSubArea(subArea.getUniqueId(), p);
     }
 
     /**

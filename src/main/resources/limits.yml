@@ -11,8 +11,8 @@
 # below, it will be re-added back. For this solution, don't delete the groups, just set their limits to 0 or to absolute
 # maximum value.
 # Example: Your server has these groups: default, builder, donor, staff, mod, admin, owner
-# If you add extra groups (e.g. vip, mvp) that don't exist in your permissions plugin, they will re-appear
-# on every restart. The solution is to set their limits to 0 (for regions, chunks...) or to something big
+# If you remove extra groups that were defined by Homestead (e.g. vip, mvp) that don't exist in your permissions plugin,
+# they will re-appear on every restart. The solution is to set their limits to 0 (for regions, chunks...) or to something big
 # (for command cooldown) to 999999999. Since your server doesn't have those groups, they won't be used
 # by players and will not be detected by Homestead.
 # ---------- IMPORTANT NOTICE ----------
@@ -100,7 +100,7 @@ limits:
     - default # Lowest
 
   # Note: You must give each group in LuckPerms (or any other plugin) the following permission: "homestead.group.(NAME)"
-  # Example: Go to your vip group in LuckPerms, add the permission "homestead.group.vip", and apply changes.
+  # Example: Go to your 'vip' group in LuckPerms, add the permission "homestead.group.vip", and apply changes.
   permissions:
     default:
       regions: 1
