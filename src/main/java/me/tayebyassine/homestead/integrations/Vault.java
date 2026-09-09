@@ -11,55 +11,55 @@ import me.tayebyassine.homestead.integrations.vault.VaultUnlockedProvider;
  */
 public class Vault {
 
-	private VaultUnlockedProvider vaultUnlockedProvider;
-	private LegacyVaultProvider legacyVaultProvider;
+    private VaultUnlockedProvider vaultUnlockedProvider;
+    private LegacyVaultProvider legacyVaultProvider;
 
-	public Vault(Homestead plugin) {
+    public Vault(Homestead plugin) {
 
-		if (Homestead.isFolia()) {
-			this.vaultUnlockedProvider = new VaultUnlockedProvider(plugin);
-		} else {
-			this.legacyVaultProvider = new LegacyVaultProvider(plugin);
-		}
-	}
+        if (Homestead.isFolia()) {
+            this.vaultUnlockedProvider = new VaultUnlockedProvider(plugin);
+        } else {
+            this.legacyVaultProvider = new LegacyVaultProvider(plugin);
+        }
+    }
 
-	public boolean setupEconomy() {
-		if (Homestead.isFolia()) {
-			return vaultUnlockedProvider.setupEconomy();
-		} else {
-			return legacyVaultProvider.setupEconomy();
-		}
-	}
+    public boolean setupEconomy() {
+        if (Homestead.isFolia()) {
+            return vaultUnlockedProvider.setupEconomy();
+        } else {
+            return legacyVaultProvider.setupEconomy();
+        }
+    }
 
-	public boolean setupPermissions() {
-		if (Homestead.isFolia()) {
-			return vaultUnlockedProvider.setupPermissions();
-		} else {
-			return legacyVaultProvider.setupPermissions();
-		}
-	}
+    public boolean setupPermissions() {
+        if (Homestead.isFolia()) {
+            return vaultUnlockedProvider.setupPermissions();
+        } else {
+            return legacyVaultProvider.setupPermissions();
+        }
+    }
 
-	public EconomyProvider getEconomy() {
-		if (Homestead.isFolia()) {
-			return vaultUnlockedProvider.getEconomy();
-		} else {
-			return legacyVaultProvider.getEconomy();
-		}
-	}
+    public EconomyProvider getEconomy() {
+        if (Homestead.isFolia()) {
+            return vaultUnlockedProvider.getEconomy();
+        } else {
+            return legacyVaultProvider.getEconomy();
+        }
+    }
 
-	public PermissionsProvider getPermissions() {
-		if (Homestead.isFolia()) {
-			return vaultUnlockedProvider.getPermissions();
-		} else {
-			return legacyVaultProvider.getPermissions();
-		}
-	}
+    public PermissionsProvider getPermissions() {
+        if (Homestead.isFolia()) {
+            return vaultUnlockedProvider.getPermissions();
+        } else {
+            return legacyVaultProvider.getPermissions();
+        }
+    }
 
-	public boolean isEconomyReady() {
-		return getEconomy() != null;
-	}
+    public boolean isEconomyReady() {
+        return getEconomy() != null;
+    }
 
-	public boolean isPermissionsReady() {
-		return getPermissions() != null;
-	}
+    public boolean isPermissionsReady() {
+        return getPermissions() != null;
+    }
 }

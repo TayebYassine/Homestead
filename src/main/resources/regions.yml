@@ -1,3 +1,7 @@
+# ============================================================================
+# REGIONS CONFIGURATION
+# ============================================================================
+
 # Startup Data Cleanup
 # Remove invalid data on startup (orphaned regions, broken coordinates, etc.)
 # Disable if using dynamic world loading that happens after startup
@@ -6,17 +10,23 @@ clean-startup: true
 # Welcome message
 # Sends a message when a player joins the server
 welcome-message:
+  # Do you want Homestead to send a welcome message to players who join the server (not first time)?
+  # true = Yes, false = No
   enabled: true
 
+  # The message to send
+  # Note: Use "\n" for a new line.
   message: "&eWelcome back! There are &6{unread-logs} &eunread mails, with &6{regions-invited} &eregions sent you an invite!"
 
 # Log Private Region Chat to Console
 # Log all region chat messages for moderation purposes
+# true = Yes, false = No
 log-private-chat: true
 
 # Adjacent Chunks Requirement
 # Force all claimed chunks to be connected (no scattered claims)
 # Disable for multi-location builds (bases + farms)
+# true = Yes, false = No
 adjacent-chunks: true
 
 # Chunk Purchase Price
@@ -26,10 +36,13 @@ chunk-price: 0.0
 
 # Auto-Select Target Region
 # Automatically assign a random target region to new players
+# true = Yes, false = No
 autoset-target-region: true
 
 # Disabled Worlds (Exact Names)
 # List exact world names where claiming is disabled (case-sensitive)
+# If there are no disabled worlds, make this an empty array:
+# disabled-worlds-exact: []
 disabled-worlds-exact:
   - "world_the_end"
   - "factions"
@@ -38,6 +51,8 @@ disabled-worlds-exact:
 # Disabled Worlds (Pattern Matching)
 # Wildcard patterns for worlds where claiming is disabled
 # * = any characters
+# If there are no disabled worlds, make this an empty array:
+# disabled-worlds-pattern: []
 disabled-worlds-pattern:
   - "em_*"
   - "minigame_*_end"
@@ -45,9 +60,13 @@ disabled-worlds-pattern:
 # Region Borders Visualization
 borders:
   # Enable border display toggle (/region borders)
+  # true = Yes, false = No
   enabled: true
 
-  # Display type: particles (recommended) or blocks
+  # Display type:
+  # - particles: Using dust particles around region borders, following player's Y position (recommended)
+  # - blocks: Spawns fake blocks in the highest surface of the region borders
+  # - glow: Spawns fake invisible blocks with glowing effect around the region borders, following player's Y position
   type: particles
 
   # Dust colors, RGB format (type = 'particles')
@@ -62,11 +81,12 @@ borders:
   dust-size: 3.0
 
   # Block type for block-based borders (type = 'blocks')
-  block-type: GRAY_GLAZED_TERRACOTTA
+  block-type: GRAY_GLAZED_TERRACOTTA # Available types: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
 
 # Enter/Exit Region Messages
 enter-exit-region-message:
   # Enable enter/exit messages
+  # true = Yes, false = No
   enabled: true
 
   # Display type: title, actionbar, or chat
@@ -75,18 +95,22 @@ enter-exit-region-message:
   # Message content (use & for colors)
   # Variables: {region-displayname}, {region-description}, {region-owner}
   messages:
+    # The message when a player enters a region
     enter:
-      title: [ "&2{region-displayname}", "&7{region-description}" ]
+      title: [ "&2{region-displayname}", "&7{region-description}" ] # [ TITLE, SUBTITLE ]
       actionbar: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
       chat: "&7You enter the territory of &2{region-displayname}&7: {region-description}"
+
+    # The message when a player leaves a region
     exit:
-      title: [ "&3Wilderness", "&7Roam the wild!" ]
+      title: [ "&3Wilderness", "&7Roam the wild!" ] # [ TITLE, SUBTITLE ]
       actionbar: "&7You left the territory of &2{region-displayname}&7."
       chat: "&7You left the territory of &2{region-displayname}&7."
 
 # Selection Tool
 selection-tool:
   # Item used to select corners
+  # See all available material types: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
   item:
     name: "&eSelection Tool"
     lore:
@@ -105,73 +129,111 @@ selection-tool:
 # Requires Vault + economy plugin
 upkeep:
   # Enable recurring maintenance fees
+  # true = Yes, false = No
   enabled: false
 
   # Cost per chunk per payment period
-  per-chunk: 100.0
+  per-chunk: 100.0 # $100
 
   # Auto-unclaim chunks if payment fails
+  # true = Yes, false = No
   unclaim-chunks: true
 
   # Grace period before first payment (seconds)
   # 604800 = 1 week, 1209600 = 2 weeks, 2592000 = 30 days
-  start-upkeep: 604800
+  start-upkeep: 604800 # 1 week = 604800 seconds
 
   # Payment frequency (seconds)
-  upkeep-timer: 604800
+  upkeep-timer: 604800 # 1 week = 604800 seconds
 
 # Member Taxes System
 # Require members to pay fees to stay in region
 taxes:
+  # Enable taxation system
+  # true = Yes, false = No
   enabled: false
-  min-tax: 0.0
-  max-tax: 10000.0
-  tax-timer: 604800
+
+  # Minimum tax price
+  # If set to 0.0, trusted players can stay in regions permanently without paying
+  min-tax: 0.0 # $0
+
+  # Max tax price
+  max-tax: 10000.0 # $10k
+
+  # Tax frequency (seconds)
+  tax-timer: 604800 # 1 week = 604800 seconds
 
 # Region Renting System
 renting:
+  # Enable region renting
+  # true = Yes, false = No
   enabled: true
 
+  # Renting price
   price:
+    # Default price given to newly created regions
     default: 1500.0 # $1.5k
+
+    # Min and max price
     min: 500.0 # $500
     max: 10000000.0 # $10M
 
+  # Renting duration
   duration:
+    # Default duration given to newly created regions
     default: 7 # 7 days
+
+    # Min and max duration (in days)
     min: 1 # 1 day
     max: 84 # 84 days (12 weeks)
 
+  # Renting security deposit
   security-deposit:
+    # Default security deposit given to newly created regions
     default: 500.0 # $500
+
+    # Min and max security deposit
     min: 0.0 # $0
     max: 100000.0 # $100k
 
+  # Notice to vacate (in days)
   notice-to-vacate: 3 # 3 days
 
 # Region Selling System
 selling:
+  # Allow players to sell their regions
+  # true = Yes, false = No
   enabled: true
-  min-sell: 10.0
-  max-sell: 1000000000.0
+
+  # Min and max price
+  min-sell: 10.0 # $10
+  max-sell: 1000000000.0 # $1B
 
 # Sub-Areas Feature
 # Create zones with different permissions within regions
 sub-areas:
+  # Allow players to create sub-areas
+  # true = Yes, false = No
   enabled: true
 
 # Wars System
 # Region PvP conflicts with economic stakes
 wars:
+  # Enable wars
+  # true = Yes, false = No
   enabled: false
-  min-prize: 1000.0
-  max-prize: 1000000000.0
 
-  # Force keep inventory when a player is part of a war and died?
+  # Min and max prize
+  min-prize: 1000.0 # $1k
+  max-prize: 1000000000.0 # $1B
+
+  # Force keep inventory when a player dies while part of a war?
   # This completely ignores the game rule set for any world.
+  # true = Yes, false = No
   keep-inventory: false
 
-  # Give the region owner's head to the region owner who won the war?
+  # Give the winning region owner's head to the region owner who won the war?
+  # true = Yes, false = No
   give-head: true
 
   # Broadcast the message "A war has been declared"
@@ -183,17 +245,21 @@ wars:
 # Welcome Signs Feature
 # Clickable signs that teleport to region homes
 welcome-signs:
+  # Enable welcome signs?
+  # true = Yes, false = No
   enabled: false
 
 # Reward System
 # Bonus chunks/sub-areas for member count and playtime
 rewards:
+  # Enable rewarding system?
+  # true = Yes, false = No
   enabled: true
 
   # Bonus per trusted member
   for-each-member:
-    chunks: 2
-    subareas: 1
+    chunks: 2 # For each trusted member, the owner receives +2 chunks (e.g. 4 trusted players = 8 chunks rewarded)
+    subareas: 1 # For each trusted member, the owner receives +1 sub-area (e.g. 4 trusted players = 4 sub-areas)
 
   # Playtime tiers (highest applicable tier only)
   # Time format: minutes + hours + days (additive)
@@ -232,6 +298,8 @@ rewards:
 # Region Storage
 # Allow trusted players in a region to share a private chest for everyone, no permissions required
 storage:
+  # Enable region storage?
+  # true = Yes, false = No
   enabled: false
 
   # Storage size, values: 9, 18, 27, 36, 45, or 54
@@ -239,33 +307,40 @@ storage:
 
 # Special Features
 special-feat:
-  # TNT only explodes below Y=63 in unclaimed areas (protects surface)
+  # TNT only explodes below Y=63 in regions (protects surface)
+  # true = Yes, false = No
   tnt-explodes-only-below-sea-level: false
 
   # Disable region protection in disabled-worlds (recommended: true)
+  # true = Yes, false = No
   ignore-region-protection-if-action-in-disabled-world: true
 
   # Skip trust acceptance (/region trust adds immediately without /region accept)
+  # true = Yes, false = No
   ignore-trust-acceptance-system: false
 
   # Teleport to region spawn instead of world spawn when exiting End
+  # true = Yes, false = No
   teleport-players-back-to-region-spawn-when-entering-end-exit-portal: true
 
 # Teleport Delay System
 delayed-teleport:
   # Enable countdown for /region visit, /region home, welcome signs
+  # true = Yes, false = No
   enabled: true
 
   # Delay duration (seconds)
-  delay: 3
+  delay: 3 # 3 seconds
 
   # Teleport cost (0.0 = free)
-  price: 0.0
+  price: 0.0 # $0
 
   # Cancel teleport if player moves
+  # true = Yes, false = No
   cancel-on-move: true
 
   # Operators bypass delay
+  # true = Yes, false = No
   ignore-operators: true
 
   # Boss bar countdown display
@@ -278,6 +353,7 @@ delayed-teleport:
     countdown-mode: "DEPLETE"
 
 # Cooldown for actions
+# Note: Restarting the server will reset the cooldowns!
 cooldown:
   # Flag state change
   flag-change-state:
@@ -331,7 +407,7 @@ cooldown:
     ignore-operators: false
     value: 604800 # 7 days (604800 seconds)
 
-  # Disallow regions to disable wars when they finished a war
+  # Prevent regions from changing the wars flag after participating in a war
   # From example below, if a region won or lost a war, they cannot change the wars flag state for 36 hours.
   war-flag-disabled:
     ignore-operators: true

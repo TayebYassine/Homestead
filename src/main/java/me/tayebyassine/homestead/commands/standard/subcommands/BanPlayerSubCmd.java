@@ -90,7 +90,7 @@ public final class BanPlayerSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        String reason = Resources.<LanguageFile>get(ResourceType.Language).getString("common.default.reason");
+        String reason = Resources.<LanguageFile>get(ResourceType.Language).getDefaultBanReason();
 
         if (args.length > 1) {
             reason = String.join(" ", Arrays.asList(args).subList(1, args.length));

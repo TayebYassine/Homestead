@@ -7,21 +7,21 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "region_banned_players")
 public final class RegionBanEntity {
 
-	@DatabaseField(id = true, columnName = "id")
-	public long id;
+    @DatabaseField(id = true, columnName = "id")
+    public long id;
 
-	@DatabaseField(columnName = "regionId")
-	public long regionId;
+    @DatabaseField(columnName = "regionId")
+    public long regionId;
 
-	@DatabaseField(columnName = "playerId")
-	public String playerId;
+    @DatabaseField(columnName = "playerId")
+    public String playerId;
 
-	@DatabaseField(columnName = "reason", dataType = DataType.LONG_STRING)
-	public String reason;
+    @DatabaseField(columnName = "reason", dataType = DataType.LONG_STRING)
+    public String reason;
 
-	@DatabaseField(columnName = "bannedAt")
-	public long bannedAt;
+    @DatabaseField(columnName = "bannedAt")
+    public long bannedAt;
 
-	public RegionBanEntity() {
-	}
+    public RegionBanEntity() {
+    }
 }

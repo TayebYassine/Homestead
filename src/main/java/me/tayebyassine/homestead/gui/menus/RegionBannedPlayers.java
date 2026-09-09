@@ -1,9 +1,5 @@
 package me.tayebyassine.homestead.gui.menus;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.BanPlayerEvent;
 import me.tayebyassine.homestead.api.events.BulkUnbanPlayersEvent;
@@ -22,203 +18,207 @@ import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerSound;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
 public final class RegionBannedPlayers {
-	private List<RegionBan> bannedPlayers;
+    private List<RegionBan> bannedPlayers;
 
-	public RegionBannedPlayers(Player player, Region region) {
-		this.bannedPlayers = BanManager.getBansOfRegion(region);
+    public RegionBannedPlayers(Player player, Region region) {
+        this.bannedPlayers = BanManager.getBansOfRegion(region);
 
-		PaginationMenu gui = PaginationMenu.builder(MenuUtility.getTitle(9), 9 * 4)
-				.nextPageItem(MenuUtility.getNextPageButton())
-				.prevPageItem(MenuUtility.getPreviousPageButton())
-				.items(getItems(player, region))
-				.fillEmptySlots()
-				.goBack((_player, event) -> new RegionPlayersManagement(player, region))
-				.onClick((_player, context) -> handleUnban(player, region, context))
-				.build();
+        PaginationMenu gui = PaginationMenu.builder(MenuUtility.getTitle(9), 9 * 4)
+                .nextPageItem(MenuUtility.getNextPageButton())
+                .prevPageItem(MenuUtility.getPreviousPageButton())
+                .items(getItems(player, region))
+                .fillEmptySlots()
+                .goBack((_player, event) -> new RegionPlayersManagement(player, region))
+                .onClick((_player, context) -> handleUnban(player, region, context))
+                .build();
 
-		gui.addActionButton(0, MenuUtility.getButton(28), handleBanPlayer(player, region))
-				.addActionButton(2, MenuUtility.getButton(32), handleUnbanAll(player, region));
+        gui.addActionButton(0, MenuUtility.getButton(28), handleBanPlayer(player, region))
+                .addActionButton(2, MenuUtility.getButton(32), handleUnbanAll(player, region));
 
-		gui.open(player);
-	}
+        gui.open(player);
+    }
 
-	private static BiConsumer<Player, InventoryClickEvent> handleBanPlayer(Player player, Region region) {
-		return (_player, event) -> {
-			if (!event.isLeftClick()) return;
+    private static BiConsumer<Player, InventoryClickEvent> handleBanPlayer(Player player, Region region) {
+        return (_player, event) -> {
+            if (!event.isLeftClick()) return;
 
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
-			}
+            if (RegionManager.findRegion(region.getUniqueId()) == null) {
+                player.closeInventory();
+                return;
+            }
 
-			if (!player.hasPermission("homestead.actions.regions.players.ban")) {
-				Messages.send(player, "common.no_permission");
-				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-				return;
-			}
+            if (!player.hasPermission("homestead.actions.regions.players.ban")) {
+                Messages.send(player, "common.no_permission");
+                PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+                return;
+            }
 
-			player.closeInventory();
+            player.closeInventory();
 
-			PlayerInputSession.builder(Homestead.getInstance(), player)
-					.prompt(5)
-					.validator(msg -> validateBan(player, region, msg))
-					.callback((p, input) -> {
-						OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
+            PlayerInputSession.builder(Homestead.getInstance(), player)
+                    .prompt(5)
+                    .validator(msg -> validateBan(player, region, msg))
+                    .callback((p, input) -> {
+                        OfflinePlayer targetPlayer = Homestead.getInstance().getOfflinePlayerSync(input);
 
-						if (targetPlayer == null) return;
+                        if (targetPlayer == null) return;
 
-						BanManager.banPlayer(region, targetPlayer, null);
-						if (MemberManager.isMemberOfRegion(region, targetPlayer))
-							MemberManager.removeMemberFromRegion(targetPlayer, region);
-						if (InviteManager.isInvited(region, targetPlayer))
-							InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
+                        BanManager.banPlayer(region, targetPlayer, null);
+                        if (MemberManager.isMemberOfRegion(region, targetPlayer))
+                            MemberManager.removeMemberFromRegion(targetPlayer, region);
+                        if (InviteManager.isInvited(region, targetPlayer))
+                            InviteManager.deleteInvitesOfPlayer(region, targetPlayer);
 
-						PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+                        PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-						LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, targetPlayer.getName());
+                        LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, targetPlayer.getName());
 
-						Homestead.callEvent(new BanPlayerEvent(region, player, null));
+                        Homestead.callEvent(new BanPlayerEvent(region, player, null));
 
-						Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region));
-					})
-					.onCancel(p -> Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region)))
-					.build();
-		};
-	}
+                        Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region));
+                    })
+                    .onCancel(p -> Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region)))
+                    .build();
+        };
+    }
 
-	private static BiConsumer<Player, InventoryClickEvent> handleUnbanAll(Player player, Region region) {
-		return (_player, event) -> {
-			if (!event.isLeftClick()) return;
+    private static BiConsumer<Player, InventoryClickEvent> handleUnbanAll(Player player, Region region) {
+        return (_player, event) -> {
+            if (!event.isLeftClick()) return;
 
-			if (RegionManager.findRegion(region.getUniqueId()) == null) {
-				player.closeInventory();
-				return;
-			}
+            if (RegionManager.findRegion(region.getUniqueId()) == null) {
+                player.closeInventory();
+                return;
+            }
 
-			if (!player.hasPermission("homestead.actions.regions.players.unban")) {
-				Messages.send(player, "common.no_permission");
-				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-				return;
-			}
+            if (!player.hasPermission("homestead.actions.regions.players.unban")) {
+                Messages.send(player, "common.no_permission");
+                PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+                return;
+            }
 
-			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNBAN_PLAYERS, true)) {
-				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-				return;
-			}
+            if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNBAN_PLAYERS, true)) {
+                PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+                return;
+            }
 
-			int bannedCount = BanManager.getBansOfRegion(region).size();
-			if (bannedCount == 0) {
-				Messages.send(player, "commands.unban.5");
-				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-				return;
-			}
+            int bannedCount = BanManager.getBansOfRegion(region).size();
+            if (bannedCount == 0) {
+                Messages.send(player, "commands.unban.5");
+                PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+                return;
+            }
 
-			BanManager.unbanAllPlayers(region);
+            BanManager.unbanAllPlayers(region);
 
-			LogManager.addLog(region, player, LogManager.PredefinedLog.PURGE_BANS);
+            LogManager.addLog(region, player, LogManager.PredefinedLog.PURGE_BANS);
 
-			PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+            PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-			Homestead.callEvent(new BulkUnbanPlayersEvent(region));
+            Homestead.callEvent(new BulkUnbanPlayersEvent(region));
 
-			Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region));
-		};
-	}
+            Homestead.getInstance().runSyncTask(() -> new RegionBannedPlayers(player, region));
+        };
+    }
 
-	private static boolean validateBan(Player player, Region region, String message) {
-		OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
+    private static boolean validateBan(Player player, Region region, String message) {
+        OfflinePlayer target = Homestead.getInstance().getOfflinePlayerSync(message);
 
-		if (target == null) {
-			Messages.send(player, "commands.ban.3", message);
-			return false;
-		}
-		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.BAN_PLAYERS, true)) {
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return false;
-		}
-		if (BanManager.isBanned(region, target)) {
-			Messages.send(player, "commands.ban.5", target.getName());
-			return false;
-		}
-		if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
-			Messages.send(player, "commands.ban.4");
-			return false;
-		}
-		SeRent rent = region.getRent();
-		if (rent != null && rent.isRenterer(target)) {
-			Messages.send(player, "commands.ban.6", target.getName());
-			return false;
-		}
-		return true;
-	}
+        if (target == null) {
+            Messages.send(player, "commands.ban.3", message);
+            return false;
+        }
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.BAN_PLAYERS, true)) {
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return false;
+        }
+        if (BanManager.isBanned(region, target)) {
+            Messages.send(player, "commands.ban.5", target.getName());
+            return false;
+        }
+        if (region.isOwner(target) || PlayerUtility.equals(player, target)) {
+            Messages.send(player, "commands.ban.4");
+            return false;
+        }
+        SeRent rent = region.getRent();
+        if (rent != null && rent.isRenterer(target)) {
+            Messages.send(player, "commands.ban.6", target.getName());
+            return false;
+        }
+        return true;
+    }
 
-	private void handleUnban(Player player, Region region, PaginationMenu.ClickContext context) {
-		if (context.getIndex() >= bannedPlayers.size()) return;
+    private void handleUnban(Player player, Region region, PaginationMenu.ClickContext context) {
+        if (context.index() >= bannedPlayers.size()) return;
 
-		if (RegionManager.findRegion(region.getUniqueId()) == null) {
-			player.closeInventory();
-			return;
-		}
+        if (RegionManager.findRegion(region.getUniqueId()) == null) {
+            player.closeInventory();
+            return;
+        }
 
-		if (!player.hasPermission("homestead.actions.regions.players.unban")) {
-			Messages.send(player, "common.no_permission");
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return;
-		}
+        if (!player.hasPermission("homestead.actions.regions.players.unban")) {
+            Messages.send(player, "common.no_permission");
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return;
+        }
 
-		RegionBan bannedPlayer = bannedPlayers.get(context.getIndex());
-		if (!context.getEvent().isLeftClick()) return;
-		if (!BanManager.isBanned(region, bannedPlayer.getPlayer())) return;
+        RegionBan bannedPlayer = bannedPlayers.get(context.index());
+        if (!context.event().isLeftClick()) return;
+        if (!BanManager.isBanned(region, bannedPlayer.getPlayer())) return;
 
-		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNBAN_PLAYERS, true)) {
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return;
-		}
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNBAN_PLAYERS, true)) {
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return;
+        }
 
-		BanManager.unbanPlayer(region, bannedPlayer.getPlayer());
-		PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+        BanManager.unbanPlayer(region, bannedPlayer.getPlayer());
+        PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, bannedPlayer.getPlayerName());
+        LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, bannedPlayer.getPlayerName());
 
-		Homestead.callEvent(new UnbanPlayerEvent(region, player));
+        Homestead.callEvent(new UnbanPlayerEvent(region, player));
 
-		bannedPlayers = BanManager.getBansOfRegion(region);
-		context.getInstance().setItems(getItems(player, region));
-	}
+        bannedPlayers = BanManager.getBansOfRegion(region);
+        context.instance().setItems(getItems(player, region));
+    }
 
-	private List<ItemStack> getItems(Player player, Region region) {
-		List<ItemStack> items = new ArrayList<>();
+    private List<ItemStack> getItems(Player player, Region region) {
+        List<ItemStack> items = new ArrayList<>();
 
-		for (RegionBan bannedPlayer : bannedPlayers) {
-			Placeholder placeholder = new Placeholder()
-					.add("{region}", region.getName())
-					.add("{playername}", bannedPlayer.getPlayerName())
-					.add("{player-bannedat}", Formatter.getDate(bannedPlayer.getBannedAt()))
-					.add("{player-banreason}", wrapMessage(bannedPlayer.getReason()));
+        for (RegionBan bannedPlayer : bannedPlayers) {
+            Placeholder placeholder = new Placeholder()
+                    .add("{region}", region.getName())
+                    .add("{playername}", bannedPlayer.getPlayerName())
+                    .add("{player-bannedat}", Formatter.getDate(bannedPlayer.getBannedAt()))
+                    .add("{player-banreason}", wrapMessage(bannedPlayer.getReason()));
 
-			items.add(MenuUtility.getButton(27, placeholder, bannedPlayer.getPlayer()));
-		}
+            items.add(MenuUtility.getButton(27, placeholder, bannedPlayer.getPlayer()));
+        }
 
-		return items;
-	}
+        return items;
+    }
 
-	private String wrapMessage(String message) {
-		message = ColorTranslator.preserve(message);
+    private String wrapMessage(String message) {
+        message = ColorTranslator.preserve(message);
 
-		int wrapLength = 40;
-		StringBuilder sb = new StringBuilder();
+        int wrapLength = 40;
+        StringBuilder sb = new StringBuilder();
 
-		for (int i = 0; i < message.length(); i++) {
-			if (i > 0 && i % wrapLength == 0) sb.append("\n");
-			sb.append(message.charAt(i));
-		}
+        for (int i = 0; i < message.length(); i++) {
+            if (i > 0 && i % wrapLength == 0) sb.append("\n");
+            sb.append(message.charAt(i));
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

@@ -1,8 +1,7 @@
 package me.tayebyassine.homestead.commands.operator.subcommands;
 
-import me.tayebyassine.homestead.commands.CommandSenderType;
-
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.database.Database;
 import me.tayebyassine.homestead.database.Driver;
@@ -47,7 +46,12 @@ public final class ExportSubCmd extends SubCommandBuilder {
 
         try {
             Logger.info("Please wait...");
-            Logger.warning("The data exporter is asynchronous, please do NOT shutdown your server until you see \"Done.\"!");
+
+            Logger.warning("-".repeat(70));
+            for (int i = 0; i < 5; i++) {
+                Logger.warning("THE DATA EXPORTER IS ASYNCHRONOUS, PLEASE DO **NOT** SHUT DOWN YOUR SERVER UNTIL YOU SEE \"Done!\".");
+            }
+            Logger.warning("-".repeat(70));
 
             final Database instance = new Database(provider);
 
@@ -58,9 +62,9 @@ public final class ExportSubCmd extends SubCommandBuilder {
                     throw new RuntimeException(e);
                 }
 
-                ListUtils.printTable(new String[]{"Model", "Exported"}, DataStats.dataRows());
+                Logger.info("Done!");
 
-                Logger.info("Done.");
+                ListUtils.printTable(new String[]{"Model", "Exported"}, DataStats.dataRows());
 
                 try {
                     instance.closeConnection();

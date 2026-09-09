@@ -2,10 +2,7 @@ package me.tayebyassine.homestead.database.cache;
 
 import me.tayebyassine.homestead.models.RegionChunk;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class PositionIndexedChunkCache {

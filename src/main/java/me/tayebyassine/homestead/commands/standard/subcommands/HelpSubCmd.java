@@ -33,7 +33,7 @@ public final class HelpSubCmd extends SubCommandBuilder {
         }
 
         LanguageFile lang = Resources.get(ResourceType.Language);
-        List<String> commandKeys = lang.getKeysUnderPath("command-descriptions");
+        List<String> commandKeys = lang.getHelpCommandDescriptionKeys();
 
         if (commandKeys.isEmpty()) {
             Messages.send(player, "commands.help.0");
@@ -66,10 +66,10 @@ public final class HelpSubCmd extends SubCommandBuilder {
 
         for (int i = start; i < end; i++) {
             String key = commandKeys.get(i);
-            String description = lang.getString("command-descriptions." + key);
+            String description = lang.getHelpCommandDescription(key);
             String commandLabel = key.replace("_", " ");
 
-            String entry = lang.getString("commands.help.entry-format")
+            String entry = lang.getHelpEntryFormat()
                     .replace("{command}", commandLabel)
                     .replace("{description}", description);
 
@@ -81,17 +81,17 @@ public final class HelpSubCmd extends SubCommandBuilder {
 
         String prevTag = hasPrev
                 ? "<click:run_command:/hs help " + (page - 1) + "><hover:show_text:'"
-                + lang.getString("commands.help.prev-hover") + "'>" + lang.getString("commands.help.prev")
+                + lang.getHelpPrevHover() + "'>" + lang.getHelpPrev()
                 + "</hover></click>"
-                : lang.getString("commands.help.prev-disabled");
+                : lang.getHelpPrevDisabled();
 
         String nextTag = hasNext
                 ? "<click:run_command:/hs help " + (page + 1) + "><hover:show_text:'"
-                + lang.getString("commands.help.next-hover") + "'>" + lang.getString("commands.help.next")
+                + lang.getHelpNextHover() + "'>" + lang.getHelpNext()
                 + "</hover></click>"
-                : lang.getString("commands.help.next-disabled");
+                : lang.getHelpNextDisabled();
 
-        String footer = lang.getString("commands.help.footer")
+        String footer = lang.getHelpFooter()
                 .replace("{previous}", prevTag)
                 .replace("{next}", nextTag);
 

@@ -61,7 +61,7 @@ public final class ChunkBorder {
      * @return the material, defaulting to GOLD_BLOCK if invalid
      */
     public static Material getBlockType() {
-        String blockType = Resources.<RegionsFile>get(ResourceType.Regions).getString("borders.block-type");
+        String blockType = Resources.<RegionsFile>get(ResourceType.Regions).getBordersBlockType();
         Material material = Material.getMaterial(blockType);
         return material != null ? material : Material.GOLD_BLOCK;
     }

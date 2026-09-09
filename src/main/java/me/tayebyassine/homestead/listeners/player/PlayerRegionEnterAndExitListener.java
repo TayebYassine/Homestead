@@ -55,7 +55,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
             return;
         }
 
-        boolean isRegionInfoMessagesEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("enter-exit-region-message.enabled");
+        boolean isRegionInfoMessagesEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isEnterExitRegionMessageEnabled();
 
         if (ChunkManager.isChunkClaimed(chunk)) {
             // Player enters a region
@@ -208,12 +208,11 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
     }
 
     private void sendMessageRegionEnter(Player player, Placeholder placeholder) {
-        String type = Resources.<RegionsFile>get(ResourceType.Regions).getString("enter-exit-region-message.type").toLowerCase();
+        String type = Resources.<RegionsFile>get(ResourceType.Regions).getEnterExitRegionMessageType().toLowerCase();
 
         switch (type) {
             case "title": {
-                List<String> titleData = Resources.<RegionsFile>get(ResourceType.Regions).getStringList(
-                        "enter-exit-region-message.messages.enter.title");
+                List<String> titleData = Resources.<RegionsFile>get(ResourceType.Regions).getRegionEnterTitle();
 
                 if (titleData.size() == 2) {
                     String t1 = Formatter.applyPlaceholders(titleData.getFirst(), placeholder);
@@ -225,8 +224,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
             }
             case "actionbar": {
                 String text = Formatter.applyPlaceholders(
-                        Resources.<RegionsFile>get(ResourceType.Regions).getString(
-                                "enter-exit-region-message.messages.enter.actionbar"),
+                        Resources.<RegionsFile>get(ResourceType.Regions).getRegionEnterActionbar(),
                         placeholder);
 
                 PlatformBridge.get().sendActionBar(player, text);
@@ -234,8 +232,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
             }
             default: {
                 String text = Formatter.applyPlaceholders(
-                        Resources.<RegionsFile>get(ResourceType.Regions).getString(
-                                "enter-exit-region-message.messages.enter.chat"),
+                        Resources.<RegionsFile>get(ResourceType.Regions).getRegionEnterChat(),
                         placeholder);
 
                 PlatformBridge.get().sendMessage(player, text);
@@ -245,12 +242,11 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
     }
 
     private void sendMessageRegionExit(Player player, Placeholder placeholder) {
-        String type = Resources.<RegionsFile>get(ResourceType.Regions).getString("enter-exit-region-message.type").toLowerCase();
+        String type = Resources.<RegionsFile>get(ResourceType.Regions).getEnterExitRegionMessageType().toLowerCase();
 
         switch (type) {
             case "title": {
-                List<String> titleData = Resources.<RegionsFile>get(ResourceType.Regions).getStringList(
-                        "enter-exit-region-message.messages.exit.title");
+                List<String> titleData = Resources.<RegionsFile>get(ResourceType.Regions).getRegionExitTitle();
 
                 if (titleData.size() == 2) {
                     String t1 = Formatter.applyPlaceholders(titleData.getFirst(), placeholder);
@@ -262,8 +258,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
             }
             case "actionbar": {
                 String text = Formatter.applyPlaceholders(
-                        Resources.<RegionsFile>get(ResourceType.Regions).getString(
-                                "enter-exit-region-message.messages.exit.actionbar"),
+                        Resources.<RegionsFile>get(ResourceType.Regions).getRegionExitActionbar(),
                         placeholder);
 
                 PlatformBridge.get().sendActionBar(player, text);
@@ -271,8 +266,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
             }
             default: {
                 String text = Formatter.applyPlaceholders(
-                        Resources.<RegionsFile>get(ResourceType.Regions).getString(
-                                "enter-exit-region-message.messages.exit.chat"),
+                        Resources.<RegionsFile>get(ResourceType.Regions).getRegionExitChat(),
                         placeholder);
 
                 PlatformBridge.get().sendMessage(player, text);

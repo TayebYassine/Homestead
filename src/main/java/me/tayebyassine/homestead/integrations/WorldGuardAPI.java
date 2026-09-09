@@ -4,63 +4,63 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import me.tayebyassine.homestead.logs.Logger;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import me.tayebyassine.homestead.logs.Logger;
 
 public final class WorldGuardAPI {
-	public static boolean isChunkInRegion(Chunk chunk) {
-		if (!isAvailable()) {
-			Logger.debug(Logger.PredefinedMessage.WORLDGUARD_PLUGIN_NOT_FOUND);
-			return false;
-		}
+    public static boolean isChunkInRegion(Chunk chunk) {
+        if (!isAvailable()) {
+            Logger.debug(Logger.PredefinedMessage.WORLDGUARD_PLUGIN_NOT_FOUND);
+            return false;
+        }
 
-		try {
-			RegionContainer regionContainer = getInstance().getPlatform().getRegionContainer();
+        try {
+            RegionContainer regionContainer = getInstance().getPlatform().getRegionContainer();
 
-			com.sk89q.worldedit.world.World worldEditWorld = BukkitAdapter.adapt(chunk.getWorld());
+            com.sk89q.worldedit.world.World worldEditWorld = BukkitAdapter.adapt(chunk.getWorld());
 
-			if (worldEditWorld == null) {
-				return false;
-			}
+            if (worldEditWorld == null) {
+                return false;
+            }
 
-			RegionManager regionManager = regionContainer.get(worldEditWorld);
-			if (regionManager == null) {
-				return false;
-			}
+            RegionManager regionManager = regionContainer.get(worldEditWorld);
+            if (regionManager == null) {
+                return false;
+            }
 
-			int chunkX = chunk.getX() << 4;
-			int chunkZ = chunk.getZ() << 4;
+            int chunkX = chunk.getX() << 4;
+            int chunkZ = chunk.getZ() << 4;
 
-			for (int x = chunkX; x < chunkX + 16; x++) {
-				for (int z = chunkZ; z < chunkZ + 16; z++) {
-					Location location = new Location(chunk.getWorld(), x, 64, z);
-					com.sk89q.worldedit.math.BlockVector3 blockVector = BukkitAdapter.asBlockVector(location);
+            for (int x = chunkX; x < chunkX + 16; x++) {
+                for (int z = chunkZ; z < chunkZ + 16; z++) {
+                    Location location = new Location(chunk.getWorld(), x, 64, z);
+                    com.sk89q.worldedit.math.BlockVector3 blockVector = BukkitAdapter.asBlockVector(location);
 
-					ApplicableRegionSet regionSet = regionManager.getApplicableRegions(blockVector);
+                    ApplicableRegionSet regionSet = regionManager.getApplicableRegions(blockVector);
 
-					if (regionSet.size() > 0) {
-						return true;
-					}
-				}
-			}
-		} catch (Exception e) {
-			Logger.error(e);
-		}
+                    if (regionSet.size() > 0) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Logger.error(e);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public static boolean isAvailable() {
-		try {
-			Class.forName("com.sk89q.worldguard.WorldGuard");
-			return true;
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
-	}
+    public static boolean isAvailable() {
+        try {
+            Class.forName("com.sk89q.worldguard.WorldGuard");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 
-	public static com.sk89q.worldguard.WorldGuard getInstance() {
-		return com.sk89q.worldguard.WorldGuard.getInstance();
-	}
+    public static com.sk89q.worldguard.WorldGuard getInstance() {
+        return com.sk89q.worldguard.WorldGuard.getInstance();
+    }
 }

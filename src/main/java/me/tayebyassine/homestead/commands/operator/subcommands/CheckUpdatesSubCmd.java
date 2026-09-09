@@ -1,10 +1,8 @@
 package me.tayebyassine.homestead.commands.operator.subcommands;
 
-import me.tayebyassine.homestead.commands.CommandSenderType;
-
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.util.https.UpdateChecker;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import org.bukkit.command.CommandSender;

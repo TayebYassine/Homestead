@@ -1,8 +1,6 @@
 package me.tayebyassine.homestead.integrations;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.MemberManager;
@@ -15,124 +13,126 @@ import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.minecraft.economy.UpkeepUtility;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public final class PlaceholderAPI extends PlaceholderExpansion {
-	public PlaceholderAPI() {
-	}
+    public PlaceholderAPI() {
+    }
 
-	@Override
-	public @NotNull String getIdentifier() {
-		return "Homestead";
-	}
+    @Override
+    public @NotNull String getIdentifier() {
+        return "Homestead";
+    }
 
-	@Override
-	public @NotNull String getAuthor() {
-		return "TayebYassine";
-	}
+    @Override
+    public @NotNull String getAuthor() {
+        return "TayebYassine";
+    }
 
-	@Override
-	public @NotNull String getVersion() {
-		return Homestead.getVersion();
-	}
+    @Override
+    public @NotNull String getVersion() {
+        return Homestead.getVersion();
+    }
 
-	@Override
-	public boolean persist() {
-		return true;
-	}
+    @Override
+    public boolean persist() {
+        return true;
+    }
 
-	@Override
-	public boolean canRegister() {
-		return true;
-	}
+    @Override
+    public boolean canRegister() {
+        return true;
+    }
 
-	@Override
-	public String onPlaceholderRequest(Player player, @NotNull String params) {
-		if (player == null) {
-			return "";
-		}
+    @Override
+    public String onPlaceholderRequest(Player player, @NotNull String params) {
+        if (player == null) {
+            return "";
+        }
 
-		Region region = TargetRegionSession.getRegion(player);
-		Region currentRegion = ChunkManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
+        Region region = TargetRegionSession.getRegion(player);
+        Region currentRegion = ChunkManager.getRegionOwnsTheChunk(player.getLocation().getChunk());
 
-		return switch (params.toLowerCase()) {
-			case "region_bank" -> {
-				if (region == null) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.region_bank");
-				}
+        return switch (params.toLowerCase()) {
+            case "region_bank" -> {
+                if (region == null) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("region_bank");
+                }
 
-				yield Formatter.getBalance(region.getBank());
-			}
-			case "region_name" -> {
-				if (region == null) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.region_name");
-				}
+                yield Formatter.getBalance(region.getBank());
+            }
+            case "region_name" -> {
+                if (region == null) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("region_name");
+                }
 
-				yield region.getName();
-			}
-			case "region_claimed_chunks" -> {
-				if (region == null) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.region_claimed_chunks");
-				}
+                yield region.getName();
+            }
+            case "region_claimed_chunks" -> {
+                if (region == null) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("region_claimed_chunks");
+                }
 
-				yield String.valueOf(ChunkManager.getChunksOfRegion(region).size());
-			}
-			case "region_max_chunks" -> {
-				if (region == null) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.region_max_chunks");
-				}
+                yield String.valueOf(ChunkManager.getChunksOfRegion(region).size());
+            }
+            case "region_max_chunks" -> {
+                if (region == null) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("region_max_chunks");
+                }
 
-				yield String.valueOf(Limits.getPlayerLimit(player, Limits.LimitType.CHUNKS_PER_REGION));
-			}
-			case "region_trusted_members" -> {
-				if (region == null) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.region_trusted_members");
-				}
+                yield String.valueOf(Limits.getPlayerLimit(player, Limits.LimitType.CHUNKS_PER_REGION));
+            }
+            case "region_trusted_members" -> {
+                if (region == null) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("region_trusted_members");
+                }
 
-				yield String.valueOf(MemberManager.getMembersOfRegion(region).size());
-			}
-			case "region_max_members" -> {
-				if (region == null) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.region_max_members");
-				}
+                yield String.valueOf(MemberManager.getMembersOfRegion(region).size());
+            }
+            case "region_max_members" -> {
+                if (region == null) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("region_max_members");
+                }
 
-				yield String.valueOf(Limits.getPlayerLimit(player, Limits.LimitType.MEMBERS_PER_REGION));
-			}
-			case "region_current" -> {
-				if (currentRegion == null) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.region_current");
-				}
+                yield String.valueOf(Limits.getPlayerLimit(player, Limits.LimitType.MEMBERS_PER_REGION));
+            }
+            case "region_current" -> {
+                if (currentRegion == null) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("region_current");
+                }
 
-				yield currentRegion.getName();
-			}
-			case "upkeep_amount" -> {
-				if (region == null) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.upkeep_amount");
-				}
+                yield currentRegion.getName();
+            }
+            case "upkeep_amount" -> {
+                if (region == null) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("upkeep_amount");
+                }
 
-				yield Formatter.getBalance(UpkeepUtility.getAmountToPay(region));
-			}
-			case "upkeep_at" -> {
-				if (region == null) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.upkeep_at");
-				}
+                yield Formatter.getBalance(UpkeepUtility.getAmountToPay(region));
+            }
+            case "upkeep_at" -> {
+                if (region == null) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("upkeep_at");
+                }
 
-				yield Formatter.getDate(region.getUpkeepAt());
-			}
-			case "war_name" -> {
-				if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.war_name");
-				}
+                yield Formatter.getDate(region.getUpkeepAt());
+            }
+            case "war_name" -> {
+                if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("war_name");
+                }
 
-				yield WarManager.findWarByRegion(region.getUniqueId()).getName();
-			}
-			case "war_prize" -> {
-				if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
-					yield Resources.<ConfigFile>get(ResourceType.Config).getString("placeholderapi.default.war_prize");
-				}
+                yield WarManager.findWarByRegion(region.getUniqueId()).getName();
+            }
+            case "war_prize" -> {
+                if (region == null || !WarManager.isRegionInWar(region.getUniqueId())) {
+                    yield Resources.<ConfigFile>get(ResourceType.Config).getPlaceholderDefault("war_prize");
+                }
 
-				yield Formatter.getBalance(WarManager.findWarByRegion(region.getUniqueId()).getPrize());
-			}
-			default -> null;
-		};
-	}
+                yield Formatter.getBalance(WarManager.findWarByRegion(region.getUniqueId()).getPrize());
+            }
+            default -> null;
+        };
+    }
 }

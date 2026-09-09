@@ -5,33 +5,33 @@ import org.bukkit.entity.Player;
 
 public final class PlatformBridge {
 
-	private static final IPlatformBridge INSTANCE;
-	private static boolean ADVENTURE_CLASS_PRESENT;
+    private static final IPlatformBridge INSTANCE;
+    private static final boolean ADVENTURE_CLASS_PRESENT;
 
-	static {
-		ADVENTURE_CLASS_PRESENT = hasAdventureSupport();
-		INSTANCE = ADVENTURE_CLASS_PRESENT
-				? new AdventurePlatformBridge()
-				: new LegacyPlatformBridge();
-	}
+    static {
+        ADVENTURE_CLASS_PRESENT = hasAdventureSupport();
+        INSTANCE = ADVENTURE_CLASS_PRESENT
+                ? new AdventurePlatformBridge()
+                : new LegacyPlatformBridge();
+    }
 
-	private static boolean hasAdventureSupport() {
-		try {
-			Player.class.getMethod("sendMessage", Component.class);
-			return true;
-		} catch (NoSuchMethodException | NoClassDefFoundError e) {
-			return false;
-		}
-	}
+    private PlatformBridge() {
+    }
 
-	private PlatformBridge() {
-	}
+    private static boolean hasAdventureSupport() {
+        try {
+            Player.class.getMethod("sendMessage", Component.class);
+            return true;
+        } catch (NoSuchMethodException | NoClassDefFoundError e) {
+            return false;
+        }
+    }
 
-	public static IPlatformBridge get() {
-		return INSTANCE;
-	}
+    public static IPlatformBridge get() {
+        return INSTANCE;
+    }
 
-	public static boolean isAdventureClassPresent() {
-		return ADVENTURE_CLASS_PRESENT;
-	}
+    public static boolean isAdventureClassPresent() {
+        return ADVENTURE_CLASS_PRESENT;
+    }
 }

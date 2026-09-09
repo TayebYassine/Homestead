@@ -47,7 +47,7 @@ public final class WarSubCmd extends SubCommandBuilder {
             return false;
         }
 
-        if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("wars.enabled")) {
+        if (!Resources.<RegionsFile>get(ResourceType.Regions).isWarsEnabled()) {
             Messages.send(player, "commands.war.1");
             return true;
         }
@@ -144,8 +144,8 @@ public final class WarSubCmd extends SubCommandBuilder {
 
         double prize = Double.parseDouble(prizeInput);
 
-        double minPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.min-prize");
-        double maxPrize = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("wars.max-prize");
+        double minPrize = Resources.<RegionsFile>get(ResourceType.Regions).getMinWarPrize();
+        double maxPrize = Resources.<RegionsFile>get(ResourceType.Regions).getMaxWarPrize();
 
         if (prize < minPrize || prize > maxPrize) {
             Messages.send(player, "commands.war.12", Formatter.getBalance(minPrize), Formatter.getBalance(maxPrize));

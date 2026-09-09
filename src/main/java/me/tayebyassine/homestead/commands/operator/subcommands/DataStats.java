@@ -20,14 +20,17 @@ public final class DataStats {
      * @return rows describing the server software and the plugin's database status
      */
     public static Object[][] infoRows() {
+        long databaseLatency = Homestead.database.getLatency();
+        long cacheLatency = Database.getCacheLatency();
+
         return new Object[][]{
                 {"Software", Bukkit.getName()},
                 {"Version", Bukkit.getVersion()},
                 {"Players", Bukkit.getOnlinePlayers().size()},
                 {"Homestead", "v" + Homestead.getVersion()},
                 {"Database Provider", Homestead.database.getProvider().toString()},
-                {"Database Latency", Homestead.database.getLatency() + "ms"},
-                {"Cache Latency", Database.getCacheLatency() + "ms"},
+                {"Database Latency", databaseLatency + " ms (" + getLatencyStatus(databaseLatency) + ")"},
+                {"Cache Latency", cacheLatency + " ms (" + getLatencyStatus(cacheLatency) + ")"},
         };
     }
 
@@ -68,6 +71,26 @@ public final class DataStats {
         }
 
         return combined;
+    }
+
+    private static String getLatencyStatus(long latencyMs) {
+        if (latencyMs < 50) {
+            return "Excellent";
+        }
+
+        if (latencyMs < 250) {
+            return "Good";
+        }
+
+        if (latencyMs < 500) {
+            return "Bad";
+        }
+
+        if (latencyMs < 1000) {
+            return "Very Bad";
+        }
+
+        return "Unusable";
     }
 }
 

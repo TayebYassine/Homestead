@@ -126,7 +126,9 @@ public final class PlayerUtility {
         return player.hasPermission("homestead.operator");
     }
 
-    /** @return {@code true} if the offline player is an OP. */
+    /**
+     * @return {@code true} if the offline player is an OP.
+     */
     public static boolean isOperator(OfflinePlayer player) {
         return player.isOp();
     }
@@ -326,7 +328,9 @@ public final class PlayerUtility {
         return null;
     }
 
-    /** @return {@code true} if both players share the same {@link UUID}. */
+    /**
+     * @return {@code true} if both players share the same {@link UUID}.
+     */
     public static boolean equals(OfflinePlayer p1, OfflinePlayer p2) {
         return p1.getUniqueId().equals(p2.getUniqueId());
     }

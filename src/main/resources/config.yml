@@ -34,6 +34,8 @@ menus: "en-US"
 # DATABASE CONFIGURATION
 # ============================================================================
 
+# Database configuration - How do you want Homestead to store data?
+# Note: Homestead uses ORMLite.
 database:
   # Provider: sqlite (default), mysql, mariadb, postgresql
   # sqlite: Good for small-medium servers, no setup required
@@ -48,7 +50,7 @@ database:
     password: "PASSWORD"
     database: "homestead_data"
     table_prefix: ""
-    jdbc_url_parameters: ""
+    jdbc_url_parameters: "" # Additional connection parameters, starts with "?"
 
   # MariaDB settings (only used if provider = "mariadb")
   mariadb:
@@ -58,7 +60,7 @@ database:
     password: "PASSWORD"
     database: "homestead_data"
     table_prefix: ""
-    jdbc_url_parameters: "?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
+    jdbc_url_parameters: "?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC" # Additional connection parameters, starts with "?"
 
   # MySQL settings (only used if provider = "mysql")
   mysql:
@@ -68,9 +70,10 @@ database:
     password: "PASSWORD"
     database: "homestead_data"
     table_prefix: ""
-    jdbc_url_parameters: ""
+    jdbc_url_parameters: "" # Additional connection parameters, starts with "?"
 
   # SQLite filename (only used if provider = "sqlite")
+  # Note: The file will be located in your server's main directory, not in the plugin's data folder.
   sqlite: "homestead_data.db"
 
 # Cache Flush Interval (seconds)
@@ -83,17 +86,22 @@ cache-interval: 30
 # PLUGIN INTEGRATIONS
 # ============================================================================
 
-# WorldGuard Integration - Prevent claiming inside WG-protected regions
+# WorldGuard Integration
 worldguard:
+  # Prevent players from claiming inside WorldGuard regions?
+  # true = Yes, false = No
   protect-existing-regions: true
 
-# FastAsyncWorldEdit (FAWE) Integration - Regenerate chunks when regions are deleted or chunks are unclaimed
-# NOTE: This is not supported for Folia!
+# FastAsyncWorldEdit (FAWE) Integration
 fastasyncworldedit:
+  # Should chunks be regenerated when a chunk is unclaimed or a region gets deleted?
+  # true = Yes, false = No
+  # Note: This doesn't work on Folia servers!
   regenerate-chunks: false
 
-# PlaceholderAPI Integration - Display Homestead data in chat/tab/scoreboards
+# PlaceholderAPI Integration
 placeholderapi:
+  # Custom default values when a placeholder returns a null value
   default:
     region_bank: "None"
     region_name: "None"
@@ -107,18 +115,36 @@ placeholderapi:
     war_name: "None"
     war_prize: "0,00"
 
-# Dynamic Web Maps Integration (dynmap, squaremap, BlueMap, Pl3xMap)
+# ============================================================================
+# DYNAMIC MAPS VISUALIZATION TOOL
+# ============================================================================
+
+# Dynamic Web Maps Integration
+# Supported plugins: dynmap, squaremap, BlueMap, Pl3xMap
 dynamic-maps:
+  # Do you want to enable Web Maps visualization?
+  # true = Yes, false = No
   enabled: true
 
-  # Update frequency (seconds). Lower = faster updates, more CPU usage
+  # Update frequency (seconds).
+  # Lower = faster updates, more CPU usage
+  # If your server is massive, increase the update frequency up to 240 seconds.
   update-interval: 60
 
-  # Custom region icons (players select with /region set icon [name])
+  # Custom region icons
   icons:
+    # Do you want players to set custom icons for their regions?
+    # true = Yes, false = No
     enabled: false
+
+    # Default icon
     default: https://imgur.com/TUQzlCK.png
+
+    # Icons size (20x20)
     size: 20
+
+    # List of custom icons
+    # Add as many icons as you want.
     list:
       Hut: https://imgur.com/GFrfD0H.png
       Outpost: https://imgur.com/4EvpONv.png
@@ -134,8 +160,9 @@ dynamic-maps:
 
   # Chunk display settings
   chunks:
-    operator-color: 16711680
-    # NOTE: Each new array string = new "<br>"
+    # Chunk marker display for regions owned by server operators
+    # Note: For description, each new line (new array string) equals a new "<br>".
+    operator-color: 16711680 # Chunk color
     operator-description:
       - '<div style="font-family:Arial,Helvetica,sans-serif;padding:14px;min-width:220px;line-height:1.6;"><img src="https://crafatar.com/avatars/{region-owner-uuid}" style="float:right;width:48px;height:48px;margin:0 0 10px 12px;border-radius:4px;image-rendering:pixelated;border:1px solid #bbb;"><div style="font-size:16px;margin-bottom:10px;"><b>{region} [Mod] (#{global-rank})</b></div>'
       - '<div style="margin-bottom:16px;"><i>{region-description}</i></div><div>'
@@ -146,8 +173,9 @@ dynamic-maps:
       - '<b>Founded</b> — {region-created-at}'
       - '</div></div>'
 
-    color: 65280
-    # NOTE: Each new array string = new "<br>"
+    # Chunk marker display for regions owned by non-server operators
+    # Note: For description, each new line (new array string) equals a new "<br>".
+    color: 65280 # Chunk color
     description:
       - '<div style="font-family:Arial,Helvetica,sans-serif;padding:14px;min-width:220px;line-height:1.6;"><img src="https://crafatar.com/avatars/{region-owner-uuid}" style="float:right;width:48px;height:48px;margin:0 0 10px 12px;border-radius:4px;image-rendering:pixelated;border:1px solid #bbb;"><div style="font-size:16px;margin-bottom:10px;"><b>{region} (#{global-rank})</b></div>'
       - '<div style="margin-bottom:16px;"><i>{region-description}</i></div><div>'
@@ -158,53 +186,93 @@ dynamic-maps:
       - '<b>Founded</b> — {region-created-at}'
       - '</div></div>'
 
-    transparency-fill: 40
-    transparency-outline: 125
+    # Color transparency (alpha)
+    transparency-fill: 40 # The transparency of the color (inside)
+    transparency-outline: 125 # The transparency of the color (outside/border)
 
+  # BlueMap configuration
   bluemap:
     # Always use 2D markers, even when users select 3D, it will always display 2D.
+    # true = Always 2D, false = 3D and 2D
     use-2d-markers: false
 
-# Discord Integration - Send update messages via Discord, recommended for staff members
+# ============================================================================
+# DISCORD INTEGRATION
+# ============================================================================
+
+# Discord Integration
+# Send update messages via Discord, recommended for staff members
 discord:
+  # Do you want Homestead to send updates to Discord?
+  # true = Yes, false = No
   enabled: false
 
   # The Discord Webhook URL, not your Discord bot token!
   # PLEASE KEEP THIS WEBHOOK URL A SECRET! DO NOT SHARE WITH ANY OTHER PERSON!
-  webhook_url: "YOUR DISCORD WEBHOOK URL"
+  # Example URL: https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
+  webhook_url: "YOUR_DISCORD_WEBHOOK_URL"
 
+  # Handled events
   events:
+    # When a region is created
     region_create:
       enabled: true
       message: "**[REGIONS]** Region created: {0}"
+
+    # When a region is deleted
     region_delete:
       enabled: true
       message: "**[REGIONS]** Region deleted: {0}"
+
+    # When a region is renamed
     region_rename:
       enabled: true
       message: "**[REGIONS]** Region name update: {0} -> {1}"
+
+    # When a region's displayname is updated
     region_displayname_update:
       enabled: true
       message: "**[REGIONS]** Region display-name update: {0} -> {1}"
+
+    # When a region's description is updated
     region_description_update:
       enabled: true
       message: "**[REGIONS]** Region description update: {0} -> {1}"
+
+    # When a player sends a message in a region's private chat
     region_private_chat:
       enabled: true
       message: "**[CHAT]** Player {0} (`{1}`) -> {2}: *{3}*"
+
+    # When a player bought a region, or a player gave their region to another player
     region_owner_transfer:
       enabled: true
       message: "**[REGIONS]** Region owner changed: {0} -> {1} (Region: {2})"
+
+    # When a player sends a mail to a region
     player_send_mail:
       enabled: true
       message: "**[MAILS]** Player {0} (`{1}`) -> {2}: *{3}*"
+
+    # When a player joined a region (trust)
     player_join_region:
       enabled: true
       message: "**[MEMBERS]** Player {0} (`{1}`) joined region: {2}"
+
+    # When a player left a region (untrust)
     player_left_region:
       enabled: true
       message: "**[MEMBERS]** Player {0} (`{1}`) left region: {2}"
 
+# ============================================================================
+# PLAYER INPUT SESSION
+# ============================================================================
+
+# Player input configuration
+# Player input happens when Homestead asks a player to send something in chat, for
+# example, renaming a region, trusting player... etc.
+# Note: Messages are configured inside the language file (en-US.yml)
 player-input:
-  # chat/title/actionbar
+  # How do you want your players to see the player input message?
+  # Available types: chat, title, actionbar
   type: "chat"

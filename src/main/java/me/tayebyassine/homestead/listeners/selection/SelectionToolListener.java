@@ -78,6 +78,22 @@ public final class SelectionToolListener implements Listener {
         return selection;
     }
 
+    public static ItemStack getSelectionToolItem() {
+        String itemName = Resources.<RegionsFile>get(ResourceType.Regions).getSelectionToolItemName();
+        List<String> itemLore = Resources.<RegionsFile>get(ResourceType.Regions).getSelectionToolItemLore();
+        String itemType = Resources.<RegionsFile>get(ResourceType.Regions).getSelectionToolItemType();
+
+
+        if (itemType.startsWith("NEXOMC-") || itemType.startsWith("NEXO-")) {
+            String itemId = itemType.split("-", 2)[1];
+            return NexoMC.getNexoItem(itemId, itemName, itemLore);
+        }
+
+        Material material = Material.getMaterial(itemType);
+
+        return ItemUtility.getItem(itemName, itemLore, material != null ? material : Material.BARRIER);
+    }
+
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -143,7 +159,7 @@ public final class SelectionToolListener implements Listener {
         ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
         UUID playerId = player.getUniqueId();
 
-        if (newItem == null || newItem.isSimilar(getSelectionToolItem())) {
+        if (newItem == null || !newItem.isSimilar(getSelectionToolItem())) {
             cancelPlayerSession(player);
         } else {
             SESSIONS.putIfAbsent(playerId, new Selection());
@@ -155,25 +171,9 @@ public final class SelectionToolListener implements Listener {
         cancelTask(player);
 
         TaskHandle task = Homestead.getInstance().runSyncTimerTask(
-                () -> PlatformBridge.get().sendActionBar(player, Resources.<RegionsFile>get(ResourceType.Regions).getString("selection-tool.messages." + path)), 20);
+                () -> PlatformBridge.get().sendActionBar(player, Resources.<RegionsFile>get(ResourceType.Regions).getSelectionToolMessage(path)), 20);
 
         TASKS.put(player.getUniqueId(), task);
-    }
-
-    public static ItemStack getSelectionToolItem() {
-        String itemName = Resources.<RegionsFile>get(ResourceType.Regions).getString("selection-tool.item.name");
-        List<String> itemLore = Resources.<RegionsFile>get(ResourceType.Regions).getStringList("selection-tool.item.lore");
-        String itemType = Resources.<RegionsFile>get(ResourceType.Regions).getString("selection-tool.item.type");
-
-
-        if (itemType.startsWith("NEXOMC-") || itemType.startsWith("NEXO-")) {
-            String itemId = itemType.split("-", 2)[1];
-            return NexoMC.getNexoItem(itemId, itemName, itemLore);
-        }
-
-        Material material = Material.getMaterial(itemType);
-
-        return ItemUtility.getItem(itemName, itemLore, material != null ? material : Material.BARRIER);
     }
 
     private boolean sameWorld(Block loc1, Block loc2) {

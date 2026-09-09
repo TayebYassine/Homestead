@@ -1,183 +1,183 @@
 package me.tayebyassine.homestead.logs;
 
-import org.bukkit.Bukkit;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.ConfigFile;
+import org.bukkit.Bukkit;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class Logger {
-	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Homestead");
-	private static LogsFile logs;
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Homestead");
+    private static LogsFile logs;
 
-	public Logger() {
-		Logger.logs = new LogsFile();
+    public Logger() {
+        Logger.logs = new LogsFile();
 
-		sendPluginBanner();
-	}
+        sendPluginBanner();
+    }
 
-	public static void info(PredefinedMessage message) {
-		for (String each : message.getStrings()) {
-			info(each);
-		}
-	}
+    public static void info(PredefinedMessage message) {
+        for (String each : message.getStrings()) {
+            info(each);
+        }
+    }
 
-	public static void info(String... message) {
-		logger.info(String.join(" ", message));
-		saveLog("[INFO] " + String.join(" ", message));
-	}
+    public static void info(String... message) {
+        logger.info(String.join(" ", message));
+        saveLog("[INFO] " + String.join(" ", message));
+    }
 
-	public static void warning(PredefinedMessage message) {
-		for (String each : message.getStrings()) {
-			warning(each);
-		}
-	}
+    public static void warning(PredefinedMessage message) {
+        for (String each : message.getStrings()) {
+            warning(each);
+        }
+    }
 
-	public static void warning(String... message) {
-		logger.warning(String.join(" ", message));
-		saveLog("[WARN] " + String.join(" ", message));
-	}
+    public static void warning(String... message) {
+        logger.warning(String.join(" ", message));
+        saveLog("[WARN] " + String.join(" ", message));
+    }
 
-	private static boolean isDebugEnabled() {
-		try {
-			ConfigFile config = Resources.<ConfigFile>get(ResourceType.Config);
-			return config != null && config.isDebugEnabled();
-		} catch (Exception ignored) {
-			return false;
-		}
-	}
+    private static boolean isDebugEnabled() {
+        try {
+            ConfigFile config = Resources.get(ResourceType.Config);
+            return config != null && config.isDebugEnabled();
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
 
-	private static void saveLog(String line) {
-		if (logs != null) {
-			logs.save(line);
-		}
-	}
+    private static void saveLog(String line) {
+        if (logs != null) {
+            logs.save(line);
+        }
+    }
 
-	public static void debug(PredefinedMessage message) {
-		for (String each : message.getStrings()) {
-			debug(each);
-		}
-	}
+    public static void debug(PredefinedMessage message) {
+        for (String each : message.getStrings()) {
+            debug(each);
+        }
+    }
 
-	public static void debug(String... message) {
-		if (isDebugEnabled()) {
-			logger.warning("[DEBUG-MODE] " + String.join(" ", message));
-			saveLog("[DEBUG] " + String.join(" ", message));
-		}
-	}
+    public static void debug(String... message) {
+        if (isDebugEnabled()) {
+            logger.warning("[DEBUG-MODE] " + String.join(" ", message));
+            saveLog("[DEBUG] " + String.join(" ", message));
+        }
+    }
 
-	public static void debug(Object... message) {
-		if (isDebugEnabled()) {
-			StringBuilder messageStr = new StringBuilder();
+    public static void debug(Object... message) {
+        if (isDebugEnabled()) {
+            StringBuilder messageStr = new StringBuilder();
 
-			for (Object each : message) {
-				messageStr.append(each).append(" ");
-			}
+            for (Object each : message) {
+                messageStr.append(each).append(" ");
+            }
 
-			logger.warning("[DEBUG-MODE] " + messageStr);
-			logs.save("[DEBUG] " + messageStr);
-		}
-	}
+            logger.warning("[DEBUG-MODE] " + messageStr);
+            logs.save("[DEBUG] " + messageStr);
+        }
+    }
 
-	public static void error(PredefinedMessage message) {
-		for (String each : message.getStrings()) {
-			error(each);
-		}
-	}
+    public static void error(PredefinedMessage message) {
+        for (String each : message.getStrings()) {
+            error(each);
+        }
+    }
 
-	public static void error(String... message) {
-		logger.severe(String.join(" ", message));
-		saveLog("[ERROR] " + String.join(" ", message));
-	}
+    public static void error(String... message) {
+        logger.severe(String.join(" ", message));
+        saveLog("[ERROR] " + String.join(" ", message));
+    }
 
-	public static void error(Throwable error) {
-		Logger.error("An unexpected error occurred while running Homestead. The plugin could be disabled at any time to avoid any exploits or data corruption.");
-		Logger.error("Please report the issue to the GitHub issues tracker or on the Discord server to resolve it as soon as possible.");
+    public static void error(Throwable error) {
+        Logger.error("An unexpected error occurred while running Homestead. The plugin could be disabled at any time to avoid any exploits or data corruption.");
+        Logger.error("Please report the issue to the GitHub issues tracker or on the Discord server to resolve it as soon as possible.");
 
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		error.printStackTrace(pw);
-		String fullStackTrace = sw.toString();
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        error.printStackTrace(pw);
+        String fullStackTrace = sw.toString();
 
-		Logger.error(fullStackTrace);
-	}
+        Logger.error(fullStackTrace);
+    }
 
-	public void sendPluginBanner() {
-		StringBuilder lineSplitter = new StringBuilder();
+    public void sendPluginBanner() {
+        StringBuilder lineSplitter = new StringBuilder();
 
-		lineSplitter.append("-".repeat(54));
+        lineSplitter.append("-".repeat(54));
 
-		String banner = " _   _                           _                 _ \r\n" +
-				"| | | | ___  _ __ ___   ___  ___| |_ ___  __ _  __| |\r\n" +
-				"| |_| |/ _ \\| '_ ` _ \\ / _ \\/ __| __/ _ \\/ _` |/ _` |\r\n" +
-				"|  _  | (_) | | | | | |  __/\\__ \\ ||  __/ (_| | (_| |\r\n" +
-				"|_| |_|\\___/|_| |_| |_|\\___||___/\\__\\___|\\__,_|\\__,_|" +
-				"\n\nVersion: " + Homestead.getVersion() + "\nRunning on " + Bukkit.getName() + ": "
-				+ Bukkit.getVersion();
+        String banner = " _   _                           _                 _ \r\n" +
+                "| | | | ___  _ __ ___   ___  ___| |_ ___  __ _  __| |\r\n" +
+                "| |_| |/ _ \\| '_ ` _ \\ / _ \\/ __| __/ _ \\/ _` |/ _` |\r\n" +
+                "|  _  | (_) | | | | | |  __/\\__ \\ ||  __/ (_| | (_| |\r\n" +
+                "|_| |_|\\___/|_| |_| |_|\\___||___/\\__\\___|\\__,_|\\__,_|" +
+                "\n\nVersion: " + Homestead.getVersion() + "\nRunning on " + Bukkit.getName() + ": "
+                + Bukkit.getVersion();
 
-		logger.info(lineSplitter.toString());
+        logger.info(lineSplitter.toString());
 
-		for (String line : banner.split("\n")) {
-			logger.info(Colors.CYAN + line + Colors._RESET);
-		}
+        for (String line : banner.split("\n")) {
+            logger.info(Colors.CYAN + line + Colors._RESET);
+        }
 
-		logger.info(lineSplitter.toString());
+        logger.info(lineSplitter.toString());
 
-		if (Homestead.isSnapshot()) {
-			Logger.warning("This Homestead version is a snapshot! Bugs and exploits may be present in this JAR file.");
-			Logger.warning("If you're not a developer or a contributor of Homestead, we recommend you use this JAR file for development, not for production!");
-		}
-	}
+        if (Homestead.isSnapshot()) {
+            Logger.warning("This Homestead version is a snapshot! Bugs and exploits may be present in this JAR file.");
+            Logger.warning("If you're not a developer or a contributor of Homestead, we recommend you use this JAR file for development, not for production!");
+        }
+    }
 
-	public enum PredefinedMessage {
-		WORLDGUARD_PLUGIN_NOT_FOUND(new String[]{
-				"Unable to find the plugin 'WorldGuard' or execute API methods for its class.",
-				"Please install the plugin, or disable any feature that requires the API of that extension."
-		}),
-		ECONOMY_INTEGRATION_DISABLED(new String[]{
-				"Unable to find an economy integration or execute API methods for its class.",
-				"Please install a plugin that includes Economy API, or disable any feature that requires the API of that extension."
-		}),
-		UPDATE_FOUND(new String[]{
-				"There is an available update for Homestead.",
-				"Download links:",
-				"https://www.spigotmc.org/resources/121873/, ",
-				"https://modrinth.com/plugin/homestead-plugin, ",
-				"https://hangar.papermc.io/TayebYassine/Homestead"
-		}),
-		UPDATE_LATEST(new String[]{
-				"You are currently on the latest version!"
-		}),
-		UPDATE_FETCH_FAILURE(new String[]{
-				"Failed to fetch for updates, maybe GitHub is down or you are not connected to the internet.",
-				"You can manually look for updates on SpigotMC, Modrinth, or Hangar!"
-		});
+    public enum PredefinedMessage {
+        WORLDGUARD_PLUGIN_NOT_FOUND(new String[]{
+                "Unable to find the plugin 'WorldGuard' or execute API methods for its class.",
+                "Please install the plugin, or disable any feature that requires the API of that extension."
+        }),
+        ECONOMY_INTEGRATION_DISABLED(new String[]{
+                "Unable to find an economy integration or execute API methods for its class.",
+                "Please install a plugin that includes Economy API, or disable any feature that requires the API of that extension."
+        }),
+        UPDATE_FOUND(new String[]{
+                "There is an available update for Homestead.",
+                "Download links:",
+                "> https://www.spigotmc.org/resources/121873/, ",
+                "> https://modrinth.com/plugin/homestead-plugin, ",
+                "> https://hangar.papermc.io/TayebYassine/Homestead"
+        }),
+        UPDATE_LATEST(new String[]{
+                "You are currently on the latest version!"
+        }),
+        UPDATE_FETCH_FAILURE(new String[]{
+                "Failed to fetch for updates, maybe GitHub is down or you are not connected to the internet.",
+                "You can manually look for updates on SpigotMC, Modrinth, or Hangar!"
+        });
 
-		private final String[] strings;
+        private final String[] strings;
 
-		PredefinedMessage(String[] strings) {
-			this.strings = strings;
-		}
+        PredefinedMessage(String[] strings) {
+            this.strings = strings;
+        }
 
-		PredefinedMessage(String string) {
-			this.strings = new String[]{string};
-		}
+        PredefinedMessage(String string) {
+            this.strings = new String[]{string};
+        }
 
-		public String[] getStrings() {
-			return strings;
-		}
-	}
+        public String[] getStrings() {
+            return strings;
+        }
+    }
 
-	public static class Colors {
-		public static final String RED = "\u001B[31m";
-		public static final String YELLOW = "\u001B[33m";
-		public static final String GREEN = "\u001B[32m";
-		public static final String BLUE = "\u001B[34m";
-		public static final String CYAN = "\u001B[36m";
+    public static class Colors {
+        public static final String RED = "\u001B[31m";
+        public static final String YELLOW = "\u001B[33m";
+        public static final String GREEN = "\u001B[32m";
+        public static final String BLUE = "\u001B[34m";
+        public static final String CYAN = "\u001B[36m";
 
-		public static final String _RESET = "\u001B[0m";
-	}
+        public static final String _RESET = "\u001B[0m";
+    }
 }

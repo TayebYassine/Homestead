@@ -56,7 +56,7 @@ public final class TargetRegionSession {
 
         Region region = RegionManager.findRegion(regionId);
 
-        if (region == null && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("autoset-target-region") && player.isOnline() && !RegionManager.getRegionsOwnedByPlayer(player).isEmpty()) {
+        if (region == null && Resources.<RegionsFile>get(ResourceType.Regions).isAutoSetTargetRegion() && player.isOnline() && !RegionManager.getRegionsOwnedByPlayer(player).isEmpty()) {
             randomizeRegion((Player) player);
 
             return getRegion(player);

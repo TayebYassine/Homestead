@@ -1,7 +1,5 @@
 package me.tayebyassine.homestead.commands.operator.subcommands;
 
-import me.tayebyassine.homestead.commands.CommandSenderType;
-
 import biz.princeps.landlord.api.ILandLord;
 import biz.princeps.landlord.api.IOwnedLand;
 import com.cjburkey.claimchunk.ClaimChunk;
@@ -13,6 +11,7 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.ClaimPermission;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.managers.ChunkManager;
@@ -64,15 +63,12 @@ public final class ImportSubCmd extends SubCommandBuilder {
             }
         }
 
-        Logger.info("Done.");
-
-        ListUtils.printTable(new String[]{"Model", "Imported"}, DataStats.dataRows());
-
         return true;
     }
 
     private void importFromGriefPrevention() {
         if (!isInstalled("GriefPrevention")) {
+            Logger.error("The plugin 'GriefPrevention' was not found, or probably disabled.");
             return;
         }
 
@@ -107,10 +103,14 @@ public final class ImportSubCmd extends SubCommandBuilder {
 
             logImportedRegion(region, owner.getName(), owner.getUniqueId());
         }
+
+        Logger.info("Done!");
+        ListUtils.printTable(new String[]{"Model", "Imported"}, DataStats.dataRows());
     }
 
     private void importFromLandLord() {
         if (!isInstalled("LandLord")) {
+            Logger.error("The plugin 'LandLord' was not found, or probably disabled.");
             return;
         }
 
@@ -144,10 +144,14 @@ public final class ImportSubCmd extends SubCommandBuilder {
                 logImportedRegion(region, owner.getName(), owner.getUniqueId());
             }
         }
+
+        Logger.info("Done!");
+        ListUtils.printTable(new String[]{"Model", "Imported"}, DataStats.dataRows());
     }
 
     private void importFromClaimChunk() {
         if (!isInstalled("ClaimChunk")) {
+            Logger.error("The plugin 'ClaimChunk' was not found, or probably disabled.");
             return;
         }
 
@@ -178,10 +182,14 @@ public final class ImportSubCmd extends SubCommandBuilder {
 
             logImportedRegion(region, offlinePlayer.getName(), offlinePlayer.getUniqueId());
         }
+
+        Logger.info("Done!");
+        ListUtils.printTable(new String[]{"Model", "Imported"}, DataStats.dataRows());
     }
 
     private void importFromLands() {
         if (!isInstalled("Lands")) {
+            Logger.error("The plugin 'Lands' was not found, or probably disabled.");
             return;
         }
 
@@ -220,10 +228,14 @@ public final class ImportSubCmd extends SubCommandBuilder {
 
             logImportedRegion(region, owner.getName(), owner.getUniqueId());
         }
+
+        Logger.info("Done!");
+        ListUtils.printTable(new String[]{"Model", "Imported"}, DataStats.dataRows());
     }
 
     private void importFromHuskClaims() {
         if (!isInstalled("HuskClaims")) {
+            Logger.error("The plugin 'HuskClaims' was not found, or probably disabled.");
             return;
         }
 
@@ -253,6 +265,9 @@ public final class ImportSubCmd extends SubCommandBuilder {
                 logImportedRegion(region, offlinePlayer.getName(), offlinePlayer.getUniqueId());
             }
         }
+
+        Logger.info("Done!");
+        ListUtils.printTable(new String[]{"Model", "Imported"}, DataStats.dataRows());
     }
 
     @Override

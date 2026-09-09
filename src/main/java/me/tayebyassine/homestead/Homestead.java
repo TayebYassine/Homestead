@@ -33,6 +33,7 @@ import me.tayebyassine.homestead.snowflake.SnowflakeGenerator;
 import me.tayebyassine.homestead.storage.StorageManager;
 import me.tayebyassine.homestead.util.https.UpdateChecker;
 import me.tayebyassine.homestead.util.java.ListUtils;
+import me.tayebyassine.homestead.util.minecraft.chunks.ProtectionMode;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 import me.tayebyassine.homestead.util.minecraft.players.DelayedTeleport;
 import me.tayebyassine.homestead.util.minecraft.plugins.IntegrationUtility;
@@ -49,7 +50,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,12 +61,7 @@ import java.util.stream.Collectors;
 public class Homestead extends JavaPlugin {
     private final static String VERSION = "6.0.0.0-26w37a";
     private final static boolean SNAPSHOT = true;
-
-    private static boolean IS_FOLIA = false;
-    private static boolean IS_PAPER = false;
-
     public static Database database;
-
     // Cache
     public static RegionCache REGION_CACHE;
     public static RegionMemberCache MEMBER_CACHE;
@@ -80,8 +75,9 @@ public class Homestead extends JavaPlugin {
     public static WarsCache WAR_CACHE;
     public static SubAreasCache SUBAREA_CACHE;
     public static LevelsCache LEVEL_CACHE;
-
     public static Vault VAULT;
+    private static boolean IS_FOLIA = false;
+    private static boolean IS_PAPER = false;
     private static Homestead INSTANCE;
     private static DiscordWebhookClient DISCORD_WEBHOOK;
     private static long STARTED_AT;
@@ -152,11 +148,6 @@ public class Homestead extends JavaPlugin {
                     throw new IOException("Unable to create Bukkit data directory");
                 }
             }
-
-            prepareDataFolder("regions");
-            prepareDataFolder("wars");
-            prepareDataFolder("subareas");
-            prepareDataFolder("levels");
         } catch (IOException | SecurityException e) {
             endInstance(e);
             return;
@@ -229,21 +220,22 @@ public class Homestead extends JavaPlugin {
         }
 
         if (!Homestead.VAULT.setupPermissions()) {
-            if (Limits.getLimitsMethod() == Limits.LimitMethod.GROUPS) {
+            if (Limits.getLimitsMethod() == Limits.LimitMethod.GROUPS || Limits.getLimitsMethod() == Limits.LimitMethod.PERMISSIONS) {
                 Logger.error("No Permissions service provider found.");
-                Logger.error("You are using groups as a limit method, and permission services are required for Homestead to run. Shutting down plugin instance...");
+                Logger.error("You are using 'groups' or 'permissions' as a limit method, and a permission plugin is required for this feature to work.");
+                Logger.error("Change the limit method in the limits.yml file. Shutting down plugin...");
                 endInstance();
                 return;
             } else {
                 Logger.warning("No Permission service provider found.");
-                Logger.warning("The plugin is using static permissions; operator and non-operator.");
+                Logger.warning("The plugin is using 'static' permissions; operator and non-operator.");
             }
         } else {
             Logger.info("Loaded service provider: Permissions [" + Homestead.VAULT.getPermissions().getPermissionsName() + "]");
         }
 
         if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("clean-startup")) {
-            Logger.info("Cleaning up corrupted data...");
+            Logger.info("Cleaning up corrupted data... This may take a while!");
 
             int regions = RegionManager.cleanupInvalidRegions();
             int subareas = SubAreaManager.cleanupInvalidSubAreas();
@@ -767,14 +759,6 @@ public class Homestead extends JavaPlugin {
         DelayedTeleport.cleanup();
 
         Logger.info("Homestead has been disabled. Goodbye!");
-    }
-
-    private void prepareDataFolder(String dirName) throws IOException {
-        File dir = new File(getDataFolder(), dirName);
-
-        if (!dir.exists() && !dir.mkdir()) {
-            throw new IOException("Unable to create '" + dirName + "' directory, path: " + dir.getAbsolutePath());
-        }
     }
 
     public void registerExternalPlugins() {

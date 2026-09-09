@@ -1,10 +1,6 @@
 package me.tayebyassine.homestead.listeners.util;
 
 import me.tayebyassine.homestead.flags.PlayerFlag;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import me.tayebyassine.homestead.ProtectionMode;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.SubAreaManager;
 import me.tayebyassine.homestead.models.Region;
@@ -12,59 +8,63 @@ import me.tayebyassine.homestead.models.SubArea;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
+import me.tayebyassine.homestead.util.minecraft.chunks.ProtectionMode;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public final class RegionProtection {
-	public static boolean hasPermission(Player player,
-										Chunk chunk,
-										Location location,
-										PlayerFlag flag) {
-		if (ProtectionMode.isEnabled()) return false;
+    private RegionProtection() {
+        throw new AssertionError("Uninstantiable class");
+    }
 
-		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk))
-			return true;
+    public static boolean hasPermission(Player player,
+                                        Chunk chunk,
+                                        Location location,
+                                        PlayerFlag flag) {
+        if (ProtectionMode.isEnabled()) return false;
 
-		if (player == null) return true;
+        if (Resources.<RegionsFile>get(ResourceType.Regions).isRegionProtectionDisabledInDisabledWorlds() && ChunkManager.isChunkInDisabledWorld(chunk))
+            return true;
 
-		if (PlayerUtility.isOperator(player)) return true;
+        if (player == null) return true;
 
-		if (!ChunkManager.isChunkClaimed(chunk)) return true;
+        if (PlayerUtility.isOperator(player)) return true;
 
-		Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-		if (region == null) return true;
+        if (!ChunkManager.isChunkClaimed(chunk)) return true;
 
-		if (region.isOwner(player)) return true;
+        Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+        if (region == null) return true;
 
-		SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(location);
+        if (region.isOwner(player)) return true;
 
-		return subArea != null
-				? PlayerUtility.hasPermissionFlag(region, subArea, player, flag, true)
-				: PlayerUtility.hasPermissionFlag(region, player, flag, true);
-	}
+        SubArea subArea = SubAreaManager.findSubAreaHasLocationInside(location);
 
-	public static void hasPermission(Player player,
-									 Chunk chunk,
-									 Location location,
-									 PlayerFlag flag,
-									 Runnable onTrue,
-									 Runnable onFalse) {
-		if (ProtectionMode.isEnabled()) {
-			if (onFalse != null) onFalse.run();
-			return;
-		}
+        return subArea != null
+                ? PlayerUtility.hasPermissionFlag(region, subArea, player, flag, true)
+                : PlayerUtility.hasPermissionFlag(region, player, flag, true);
+    }
 
-		if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("special-feat.ignore-region-protection-if-action-in-disabled-world") && ChunkManager.isChunkInDisabledWorld(chunk)) {
-			if (onTrue != null) onTrue.run();
-			return;
-		}
+    public static void hasPermission(Player player,
+                                     Chunk chunk,
+                                     Location location,
+                                     PlayerFlag flag,
+                                     Runnable onTrue,
+                                     Runnable onFalse) {
+        if (ProtectionMode.isEnabled()) {
+            if (onFalse != null) onFalse.run();
+            return;
+        }
 
-		boolean allowed = hasPermission(player, chunk, location, flag);
+        if (Resources.<RegionsFile>get(ResourceType.Regions).isRegionProtectionDisabledInDisabledWorlds() && ChunkManager.isChunkInDisabledWorld(chunk)) {
+            if (onTrue != null) onTrue.run();
+            return;
+        }
 
-		if (allowed && onTrue != null) onTrue.run();
-		if (!allowed && onFalse != null) onFalse.run();
-	}
+        boolean allowed = hasPermission(player, chunk, location, flag);
 
-	private RegionProtection() {
-		throw new AssertionError("Uninstantiable class");
-	}
+        if (allowed && onTrue != null) onTrue.run();
+        if (!allowed && onFalse != null) onFalse.run();
+    }
 }

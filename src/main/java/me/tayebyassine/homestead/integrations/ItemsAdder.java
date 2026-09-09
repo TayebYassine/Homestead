@@ -1,11 +1,11 @@
 package me.tayebyassine.homestead.integrations;
 
 import dev.lone.itemsadder.api.CustomStack;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.items.ItemUtility;
 import me.tayebyassine.homestead.util.minecraft.plugins.IntegrationUtility;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class ItemsAdder {
         if (isAvailable()) {
             CustomStack stack = CustomStack.getInstance(itemId.toLowerCase());
 
-            ItemStack item = stack!= null? stack.getItemStack().clone() : new ItemStack(Material.BARRIER);
+            ItemStack item = stack != null ? stack.getItemStack().clone() : new ItemStack(Material.BARRIER);
 
             return ItemUtility.applyMetadata(item, displayname, lore, placeholder);
         }

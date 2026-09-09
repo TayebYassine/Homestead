@@ -1,5 +1,11 @@
 package me.tayebyassine.homestead.listeners.player;
 
+import me.tayebyassine.homestead.models.Region;
+import me.tayebyassine.homestead.resources.ResourceType;
+import me.tayebyassine.homestead.resources.Resources;
+import me.tayebyassine.homestead.resources.files.RegionsFile;
+import me.tayebyassine.homestead.sessions.TargetRegionSession;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -12,12 +18,6 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.resources.ResourceType;
-import me.tayebyassine.homestead.resources.Resources;
-import me.tayebyassine.homestead.resources.files.RegionsFile;
-import me.tayebyassine.homestead.sessions.TargetRegionSession;
-import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 
 import java.util.Map;
 import java.util.UUID;
@@ -32,67 +32,67 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class PlayerEnterEndExitPortalListener implements Listener {
 
-	private static final Map<UUID, Location> LAST_LOCATIONS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Location> LAST_LOCATIONS = new ConcurrentHashMap<>();
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerMove(PlayerMoveEvent event) {
-		Player player = event.getPlayer();
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
 
-		if (player.getWorld().getEnvironment() != World.Environment.THE_END) {
-			LAST_LOCATIONS.remove(player.getUniqueId());
-			return;
-		}
+        if (player.getWorld().getEnvironment() != World.Environment.THE_END) {
+            LAST_LOCATIONS.remove(player.getUniqueId());
+            return;
+        }
 
-		Location loc = event.getTo();
+        Location loc = event.getTo();
 
-		double distanceSquared = loc.getX() * loc.getX() + loc.getZ() * loc.getZ();
-		if (distanceSquared <= 64.0) {
-			LAST_LOCATIONS.put(player.getUniqueId(), loc.clone());
-		} else {
-			LAST_LOCATIONS.remove(player.getUniqueId());
-		}
-	}
+        double distanceSquared = loc.getX() * loc.getX() + loc.getZ() * loc.getZ();
+        if (distanceSquared <= 64.0) {
+            LAST_LOCATIONS.put(player.getUniqueId(), loc.clone());
+        } else {
+            LAST_LOCATIONS.remove(player.getUniqueId());
+        }
+    }
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-		Player player = event.getPlayer();
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
 
-		if (event.getFrom().getEnvironment() != World.Environment.THE_END) {
-			return;
-		}
+        if (event.getFrom().getEnvironment() != World.Environment.THE_END) {
+            return;
+        }
 
-		Location lastLoc = LAST_LOCATIONS.remove(player.getUniqueId());
+        Location lastLoc = LAST_LOCATIONS.remove(player.getUniqueId());
 
-		if (lastLoc == null) {
-			return;
-		}
+        if (lastLoc == null) {
+            return;
+        }
 
-		Block blockAt = lastLoc.getBlock();
+        Block blockAt = lastLoc.getBlock();
 
-		if (blockAt.getType() != Material.END_PORTAL) {
-			return;
-		}
+        if (blockAt.getType() != Material.END_PORTAL) {
+            return;
+        }
 
-		if (!Resources.<RegionsFile>get(ResourceType.Regions)
-				.teleportPlayersBackToTegionSpawnWhenEnteringEndExitPortal()) {
-			return;
-		}
+        if (!Resources.<RegionsFile>get(ResourceType.Regions)
+                .teleportPlayersBackToTegionSpawnWhenEnteringEndExitPortal()) {
+            return;
+        }
 
-		Region region = TargetRegionSession.getRegion(player);
+        Region region = TargetRegionSession.getRegion(player);
 
-		if (region == null || region.getLocation() == null) {
-			return;
-		}
+        if (region == null || region.getLocation() == null) {
+            return;
+        }
 
-		Location targetLocation = region.getLocation().toBukkit();
+        Location targetLocation = region.getLocation().toBukkit();
 
-		PlayerUtility.teleportPlayer(player, targetLocation);
-	}
+        PlayerUtility.teleportPlayer(player, targetLocation);
+    }
 
-	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
 
-		LAST_LOCATIONS.remove(player.getUniqueId());
-	}
+        LAST_LOCATIONS.remove(player.getUniqueId());
+    }
 }

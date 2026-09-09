@@ -138,15 +138,8 @@ public final class BrigadierSubCommandBuilder {
     }
 
     /**
-     * Holds an argument name and its Brigadier {@link ArgumentType}.
-     */
-    private static final class ArgumentNode {
-        private final String name;
-        private final ArgumentType<?> type;
-
-        private ArgumentNode(String name, ArgumentType<?> type) {
-            this.name = name;
-            this.type = type;
-        }
+         * Holds an argument name and its Brigadier {@link ArgumentType}.
+         */
+        private record ArgumentNode(String name, ArgumentType<?> type) {
     }
 }

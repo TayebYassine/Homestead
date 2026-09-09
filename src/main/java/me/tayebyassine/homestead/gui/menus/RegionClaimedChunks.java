@@ -1,11 +1,8 @@
 package me.tayebyassine.homestead.gui.menus;
 
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.api.events.ChunkUnclaimEvent;
+import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
@@ -20,7 +17,6 @@ import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
-import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.util.minecraft.chunks.PersistentChunkTicket;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
@@ -28,191 +24,195 @@ import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility.ButtonData;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerSound;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.Chunk;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public final class RegionClaimedChunks {
-	private List<RegionChunk> chunks;
+    private List<RegionChunk> chunks;
 
-	public RegionClaimedChunks(Player player, Region region) {
-		this.chunks = ChunkManager.getChunksOfRegion(region);
+    public RegionClaimedChunks(Player player, Region region) {
+        this.chunks = ChunkManager.getChunksOfRegion(region);
 
-		PaginationMenu.builder(11, 9 * 5)
-				.nextPageItem(MenuUtility.getNextPageButton())
-				.prevPageItem(MenuUtility.getPreviousPageButton())
-				.items(getItems(player, region))
-				.fillEmptySlots()
-				.goBack((_player, event) -> new RegionMenu(player, region))
-				.onClick((_player, context) -> handleChunkClick(player, region, context))
-				.actionButton(1, MenuUtility.getButton(73, new Placeholder()
-						.add("{max-chunks}", Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION))), null)
-				.build()
-				.open(player);
-	}
+        PaginationMenu.builder(11, 9 * 5)
+                .nextPageItem(MenuUtility.getNextPageButton())
+                .prevPageItem(MenuUtility.getPreviousPageButton())
+                .items(getItems(player, region))
+                .fillEmptySlots()
+                .goBack((_player, event) -> new RegionMenu(player, region))
+                .onClick((_player, context) -> handleChunkClick(player, region, context))
+                .actionButton(1, MenuUtility.getButton(73, new Placeholder()
+                        .add("{max-chunks}", Limits.getRegionLimit(region, Limits.LimitType.CHUNKS_PER_REGION))), null)
+                .build()
+                .open(player);
+    }
 
-	private void handleChunkClick(Player player, Region region, PaginationMenu.ClickContext context) {
-		if (context.getIndex() >= chunks.size()) return;
+    private void handleChunkClick(Player player, Region region, PaginationMenu.ClickContext context) {
+        if (context.index() >= chunks.size()) return;
 
-		if (RegionManager.findRegion(region.getUniqueId()) == null) {
-			player.closeInventory();
-			return;
-		}
+        if (RegionManager.findRegion(region.getUniqueId()) == null) {
+            player.closeInventory();
+            return;
+        }
 
-		RegionChunk chunk = chunks.get(context.getIndex());
+        RegionChunk chunk = chunks.get(context.index());
 
-		if (context.getEvent().isRightClick()) {
-			handleTeleport(player, region, chunk);
-		} else if (context.getEvent().isShiftClick() && context.getEvent().isLeftClick()) {
-			handleToggleForceLoad(player, region, chunk, context);
-		} else {
-			handleUnclaim(player, region, chunk, context);
-		}
-	}
+        if (context.event().isRightClick()) {
+            handleTeleport(player, region, chunk);
+        } else if (context.event().isShiftClick() && context.event().isLeftClick()) {
+            handleToggleForceLoad(player, region, chunk, context);
+        } else {
+            handleUnclaim(player, region, chunk, context);
+        }
+    }
 
-	private void handleTeleport(Player player, Region region, RegionChunk chunk) {
-		if (RegionManager.findRegion(region.getUniqueId()) == null) {
-			player.closeInventory();
-			return;
-		}
+    private void handleTeleport(Player player, Region region, RegionChunk chunk) {
+        if (RegionManager.findRegion(region.getUniqueId()) == null) {
+            player.closeInventory();
+            return;
+        }
 
-		if (!player.hasPermission("homestead.actions.regions.teleport")) {
-			Messages.send(player, "common.no_permission");
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return;
-		}
+        if (!player.hasPermission("homestead.actions.regions.teleport")) {
+            Messages.send(player, "common.no_permission");
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return;
+        }
 
-		player.closeInventory();
+        player.closeInventory();
 
-		PlayerUtility.teleportPlayerToChunkSafely(player, chunk, null);
-	}
+        PlayerUtility.teleportPlayerToChunkSafely(player, chunk, null);
+    }
 
-	private void handleToggleForceLoad(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
-		if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
-			Messages.send(player, "common.no_permission");
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return;
-		}
+    private void handleToggleForceLoad(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
+        if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
+            Messages.send(player, "common.no_permission");
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return;
+        }
 
-		if (RegionManager.findRegion(region.getUniqueId()) == null) {
-			player.closeInventory();
-			return;
-		}
+        if (RegionManager.findRegion(region.getUniqueId()) == null) {
+            player.closeInventory();
+            return;
+        }
 
-		int totalForcedLoadedChunks = ChunkManager.getChunksOfRegion(region).stream()
-				.filter(RegionChunk::isForceLoaded).toList().size();
-		int maxForceLoadedChunks = Limits.getRegionLimit(region, Limits.LimitType.MAX_FORCE_LOADED_CHUNKS);
+        int totalForcedLoadedChunks = ChunkManager.getChunksOfRegion(region).stream()
+                .filter(RegionChunk::isForceLoaded).toList().size();
+        int maxForceLoadedChunks = Limits.getRegionLimit(region, Limits.LimitType.MAX_FORCE_LOADED_CHUNKS);
 
-		if (totalForcedLoadedChunks >= maxForceLoadedChunks && !chunk.isForceLoaded()) {
-			Messages.send(player, "commands.claimlist.1");
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return;
-		}
+        if (totalForcedLoadedChunks >= maxForceLoadedChunks && !chunk.isForceLoaded()) {
+            Messages.send(player, "commands.claimlist.1");
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return;
+        }
 
-		Homestead.getInstance().runLocationTask(chunk.toBukkitDisplayLocation(), () -> {
-			Chunk bukkitChunk = chunk.toBukkit();
-			if (bukkitChunk == null) return;
+        Homestead.getInstance().runLocationTask(chunk.toBukkitDisplayLocation(), () -> {
+            Chunk bukkitChunk = chunk.toBukkit();
+            if (bukkitChunk == null) return;
 
-			boolean newState = !chunk.isForceLoaded();
-			chunk.setForceLoaded(newState);
+            boolean newState = !chunk.isForceLoaded();
+            chunk.setForceLoaded(newState);
 
-			if (newState) {
-				PersistentChunkTicket.addPersistent(Homestead.getInstance(), bukkitChunk);
-			} else {
-				PersistentChunkTicket.removePersistent(Homestead.getInstance(), bukkitChunk);
-			}
+            if (newState) {
+                PersistentChunkTicket.addPersistent(Homestead.getInstance(), bukkitChunk);
+            } else {
+                PersistentChunkTicket.removePersistent(Homestead.getInstance(), bukkitChunk);
+            }
 
-			Homestead.getInstance().runPlayerTask(player, () -> {
-				PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
-				chunks = ChunkManager.getChunksOfRegion(region);
-				context.getInstance().setItems(getItems(player, region));
-			});
-		});
-	}
+            Homestead.getInstance().runPlayerTask(player, () -> {
+                PlayerSound.play(player, PlayerSound.PredefinedSound.CLICK);
+                chunks = ChunkManager.getChunksOfRegion(region);
+                context.instance().setItems(getItems(player, region));
+            });
+        });
+    }
 
-	private void handleUnclaim(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
-		if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
-			Cooldown.sendCooldownMessage(player);
-			return;
-		}
+    private void handleUnclaim(Player player, Region region, RegionChunk chunk, PaginationMenu.ClickContext context) {
+        if (Cooldown.hasCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM)) {
+            Cooldown.sendCooldownMessage(player);
+            return;
+        }
 
-		if (RegionManager.findRegion(region.getUniqueId()) == null) {
-			player.closeInventory();
-			return;
-		}
+        if (RegionManager.findRegion(region.getUniqueId()) == null) {
+            player.closeInventory();
+            return;
+        }
 
-		if (!player.hasPermission("homestead.actions.regions.chunks.unclaim")) {
-			Messages.send(player, "common.no_permission");
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return;
-		}
+        if (!player.hasPermission("homestead.actions.regions.chunks.unclaim")) {
+            Messages.send(player, "common.no_permission");
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return;
+        }
 
-		Homestead.getInstance().runLocationTask(chunk.toBukkitDisplayLocation(), () -> {
-			Chunk bukkitChunk = chunk.toBukkit();
-			if (bukkitChunk == null) return;
+        Homestead.getInstance().runLocationTask(chunk.toBukkitDisplayLocation(), () -> {
+            Chunk bukkitChunk = chunk.toBukkit();
+            if (bukkitChunk == null) return;
 
-			if (!ChunkManager.isChunkClaimed(bukkitChunk) || !ChunkManager.isChunkClaimedByRegion(region, bukkitChunk)) {
-				return;
-			}
+            if (!ChunkManager.isChunkClaimed(bukkitChunk) || !ChunkManager.isChunkClaimedByRegion(region, bukkitChunk)) {
+                return;
+            }
 
-			if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNCLAIM_CHUNKS, true)) {
-				PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-				return;
-			}
+            if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.UNCLAIM_CHUNKS, true)) {
+                PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+                return;
+            }
 
-			Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
+            Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
-			int before = ChunkManager.getChunksOfRegion(region).size();
-			ChunkManager.unclaimChunk(region.getUniqueId(), bukkitChunk);
+            int before = ChunkManager.getChunksOfRegion(region).size();
+            ChunkManager.unclaimChunk(region.getUniqueId(), bukkitChunk);
 
-			if (ChunkManager.getChunksOfRegion(region).size() < before) {
-				double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
-				if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
-			}
+            if (ChunkManager.getChunksOfRegion(region).size() < before) {
+                double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getChunkPrice();
+                if (chunkPrice > 0) PlayerBank.deposit(region.getOwner(), chunkPrice);
+            }
 
-			Homestead.getInstance().runPlayerTask(player, () -> {
-				PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
-				ChunkBorder.show(player);
-			});
+            Homestead.getInstance().runPlayerTask(player, () -> {
+                PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
+                ChunkBorder.show(player);
+            });
 
-			Homestead.callEvent(new ChunkUnclaimEvent(region, bukkitChunk));
+            Homestead.callEvent(new ChunkUnclaimEvent(region, bukkitChunk));
 
-			Homestead.getInstance().runPlayerTask(player, () -> {
-				chunks = ChunkManager.getChunksOfRegion(region);
-				context.getInstance().setItems(getItems(player, region));
-			});
-		});
-	}
+            Homestead.getInstance().runPlayerTask(player, () -> {
+                chunks = ChunkManager.getChunksOfRegion(region);
+                context.instance().setItems(getItems(player, region));
+            });
+        });
+    }
 
-	private List<ItemStack> getItems(Player player, Region region) {
-		List<ItemStack> items = new ArrayList<>();
+    private List<ItemStack> getItems(Player player, Region region) {
+        List<ItemStack> items = new ArrayList<>();
 
-		for (int i = 0; i < chunks.size(); i++) {
-			RegionChunk chunk = chunks.get(i);
+        for (int i = 0; i < chunks.size(); i++) {
+            RegionChunk chunk = chunks.get(i);
 
-			Placeholder placeholder = new Placeholder()
-					.add("{region}", region.getName())
-					.add("{index}", i + 1)
-					.add("{chunk-claimedat}", Formatter.getDate(chunk.getClaimedAt()))
-					.add("{chunk-location}", Formatter.getLocation(Objects.requireNonNull(chunk.toBukkitDisplayLocation())))
-					.add("{chunk-is-loaded}", Formatter.getBoolean(chunk.isForceLoaded()));
+            Placeholder placeholder = new Placeholder()
+                    .add("{region}", region.getName())
+                    .add("{index}", i + 1)
+                    .add("{chunk-claimedat}", Formatter.getDate(chunk.getClaimedAt()))
+                    .add("{chunk-location}", Formatter.getLocation(Objects.requireNonNull(chunk.toBukkitDisplayLocation())))
+                    .add("{chunk-is-loaded}", Formatter.getBoolean(chunk.isForceLoaded()));
 
-			ButtonData data = MenuUtility.getButtonData(33);
+            ButtonData data = MenuUtility.getButtonData(33);
 
-			World world = chunk.getWorld();
+            World world = chunk.getWorld();
 
-			if (data.getOriginalType().equals("CUSTOM::GETBYWORLD") && world != null) {
-				data.setOriginalType(switch (world.getEnvironment()) {
-					case NETHER -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.nether");
-					case THE_END -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.the_end");
-					default -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.overworld");
-				});
-			}
+            if (data.getOriginalType().equals("CUSTOM::GETBYWORLD") && world != null) {
+                data.setOriginalType(switch (world.getEnvironment()) {
+                    case NETHER -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.nether");
+                    case THE_END -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.the_end");
+                    default -> Resources.<MenusFile>get(ResourceType.Menus).get("button-types.world.overworld");
+                });
+            }
 
-			items.add(MenuUtility.getButton(data, placeholder));
-		}
+            items.add(MenuUtility.getButton(data, placeholder));
+        }
 
-		return items;
-	}
+        return items;
+    }
 }

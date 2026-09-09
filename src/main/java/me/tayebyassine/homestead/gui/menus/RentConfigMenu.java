@@ -28,7 +28,7 @@ import java.util.function.BiConsumer;
 
 public final class RentConfigMenu {
     public RentConfigMenu(Player player, Region region, SubArea subArea) {
-        RegionsFile regionsConfig = Resources.<RegionsFile>get(ResourceType.Regions);
+        RegionsFile regionsConfig = Resources.get(ResourceType.Regions);
         boolean isRentEnabled = Homestead.VAULT.isEconomyReady() && regionsConfig.isRentingEnabled();
 
         SeRent rent = subArea != null ? subArea.getRent() : region.getRent();
@@ -50,7 +50,7 @@ public final class RentConfigMenu {
                 .add("{max-deposit}", Formatter.getBalance(regionsConfig.getMaxSecurityDeposit()))
                 .add("{rent-notice}", rent.hasNoticeToVacate()
                         ? Formatter.applyPlaceholders(
-                        Resources.<LanguageFile>get(ResourceType.Language).getString("common.variables.rent-vacate-notice"),
+                        Resources.<LanguageFile>get(ResourceType.Language).getVariableRentVacateNotice(),
                         new Placeholder().add("{days}", Objects.requireNonNull(rent.getNoticeToVacate()).getDaysToVacate())
                 )
                         : Formatter.getNone());
@@ -85,7 +85,7 @@ public final class RentConfigMenu {
 
             player.closeInventory();
 
-            RegionsFile config = Resources.<RegionsFile>get(ResourceType.Regions);
+            RegionsFile config = Resources.get(ResourceType.Regions);
             double min = config.getMinRentPrice();
             double max = config.getMaxRentPrice();
 
@@ -116,7 +116,7 @@ public final class RentConfigMenu {
 
             player.closeInventory();
 
-            RegionsFile config = Resources.<RegionsFile>get(ResourceType.Regions);
+            RegionsFile config = Resources.get(ResourceType.Regions);
             int minDays = config.getMinRentDays();
             int maxDays = config.getMaxRentDays();
 
@@ -153,7 +153,7 @@ public final class RentConfigMenu {
 
             player.closeInventory();
 
-            RegionsFile config = Resources.<RegionsFile>get(ResourceType.Regions);
+            RegionsFile config = Resources.get(ResourceType.Regions);
             double min = config.getMinSecurityDeposit();
             double max = config.getMaxSecurityDeposit();
 
@@ -207,7 +207,7 @@ public final class RentConfigMenu {
 
             player.closeInventory();
 
-            RegionsFile config = Resources.<RegionsFile>get(ResourceType.Regions);
+            RegionsFile config = Resources.get(ResourceType.Regions);
             int noticeDays = config.getNoticeToVacateDays();
 
             PlayerInputSession.builder(Homestead.getInstance(), player)

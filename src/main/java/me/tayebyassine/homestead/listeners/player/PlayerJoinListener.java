@@ -1,10 +1,5 @@
 package me.tayebyassine.homestead.listeners.player;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import me.tayebyassine.homestead.managers.InviteManager;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -15,31 +10,36 @@ import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  * Sends a welcome message to players on join, including the number of unread region logs
  * and pending region invites, when the feature is enabled in the configuration.
  */
 public final class PlayerJoinListener implements Listener {
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
 
-		boolean welcomeEnabled = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("welcome-message.enabled");
+        boolean welcomeEnabled = Resources.<RegionsFile>get(ResourceType.Regions).isWelcomeMessageEnabled();
 
-		if (!welcomeEnabled) return;
+        if (!welcomeEnabled) return;
 
-		String message = Resources.<RegionsFile>get(ResourceType.Regions).getString("welcome-message.message");
+        String message = Resources.<RegionsFile>get(ResourceType.Regions).getWelcomeMessage();
 
-		long unreadLogs = 0;
+        long unreadLogs = 0;
 
-		for (Region region : RegionManager.getRegionsOwnedByPlayer(player)) {
-			unreadLogs += LogManager.getLogs(region).stream().filter(log -> !log.isRead()).count();
-		}
+        for (Region region : RegionManager.getRegionsOwnedByPlayer(player)) {
+            unreadLogs += LogManager.getLogs(region).stream().filter(log -> !log.isRead()).count();
+        }
 
-		Messages.sendString(player, Formatter.applyPlaceholders(message, new Placeholder()
-				.add("{unread-logs}", unreadLogs)
-				.add("{regions-invited}", InviteManager.getInvitesOfPlayer(player).size())
-		));
-	}
+        Messages.sendString(player, Formatter.applyPlaceholders(message, new Placeholder()
+                .add("{unread-logs}", unreadLogs)
+                .add("{regions-invited}", InviteManager.getInvitesOfPlayer(player).size())
+        ));
+    }
 }

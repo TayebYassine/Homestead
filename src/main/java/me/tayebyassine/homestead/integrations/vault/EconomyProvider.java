@@ -3,13 +3,13 @@ package me.tayebyassine.homestead.integrations.vault;
 import org.bukkit.OfflinePlayer;
 
 public interface EconomyProvider {
-	String getName();
+    String getName();
 
-	double getBalance(OfflinePlayer player);
+    double getBalance(OfflinePlayer player);
 
-	boolean has(OfflinePlayer player, double amount);
+    boolean has(OfflinePlayer player, double amount);
 
-	boolean withdraw(OfflinePlayer player, double amount);
+    boolean withdraw(OfflinePlayer player, double amount);
 
-	boolean deposit(OfflinePlayer player, double amount);
+    boolean deposit(OfflinePlayer player, double amount);
 }

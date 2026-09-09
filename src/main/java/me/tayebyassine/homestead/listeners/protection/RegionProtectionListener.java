@@ -62,50 +62,6 @@ public final class RegionProtectionListener implements Listener {
     public static final Map<UUID, Location> LAST_ENTITY_LOCATIONS = new ConcurrentHashMap<>();
 
     /**
-     * Applies region/wilderness permission checks for an action performed by a player.
-     *
-     * <p>If the affected chunk is unclaimed and the world does not allow the flag, the action is
-     * denied immediately. Otherwise, the decision is delegated to {@link RegionProtection#hasPermission}.
-     *
-     * @param player   the acting player (maybe {@code null}, in which case the action is allowed)
-     * @param chunk    the chunk the action takes place in
-     * @param location the precise location of the action
-     * @param flag     the {@link PlayerFlag} flag required for the action
-     * @param deny     callback executed when the action should be cancelled/denied
-     */
-    private void checkPlayerFlag(Player player, Chunk chunk, Location location, PlayerFlag flag, Runnable deny) {
-        if (!ChunkManager.isChunkClaimed(chunk)
-                && !WorldRules.isPlayerFlagAllowed(chunk.getWorld(), flag)) {
-            deny.run();
-            return;
-        }
-        RegionProtection.hasPermission(player, chunk, location, flag, null, deny);
-    }
-
-    /**
-     * Applies region/wilderness flag checks for a non-player (natural or world-driven) change.
-     *
-     * <p>In a claimed chunk the owning region's world flag decides; in the wilderness the world's
-     * {@link WorldRules} decide.
-     *
-     * @param chunk the chunk the change takes place in
-     * @param flag  the {@link WorldFlag} flag that must be set to allow the change
-     * @param deny  callback executed when the change should be cancelled/denied
-     */
-    private void checkWorldFlag(Chunk chunk, WorldFlag flag, Runnable deny) {
-        if (ChunkManager.isChunkClaimed(chunk)) {
-            Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
-            if (region != null && !region.isWorldFlagSet(flag)) {
-                deny.run();
-            }
-        } else {
-            if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), flag)) {
-                deny.run();
-            }
-        }
-    }
-
-    /**
      * Called (from a per-tick task on non-Paper servers) to detect when an entity crosses a region
      * border and apply the {@link WorldFlag#ENTITY_GRIEFING} rules for Copper Golems.
      *
@@ -158,6 +114,54 @@ public final class RegionProtectionListener implements Listener {
         }
     }
 
+    private static boolean canBeBrokenByProjectile(Block block) {
+        return !block.isPreferredTool(new ItemStack(Material.AIR));
+    }
+
+    /**
+     * Applies region/wilderness permission checks for an action performed by a player.
+     *
+     * <p>If the affected chunk is unclaimed and the world does not allow the flag, the action is
+     * denied immediately. Otherwise, the decision is delegated to {@link RegionProtection#hasPermission}.
+     *
+     * @param player   the acting player (maybe {@code null}, in which case the action is allowed)
+     * @param chunk    the chunk the action takes place in
+     * @param location the precise location of the action
+     * @param flag     the {@link PlayerFlag} flag required for the action
+     * @param deny     callback executed when the action should be cancelled/denied
+     */
+    private void checkPlayerFlag(Player player, Chunk chunk, Location location, PlayerFlag flag, Runnable deny) {
+        if (!ChunkManager.isChunkClaimed(chunk)
+                && !WorldRules.isPlayerFlagAllowed(chunk.getWorld(), flag)) {
+            deny.run();
+            return;
+        }
+        RegionProtection.hasPermission(player, chunk, location, flag, null, deny);
+    }
+
+    /**
+     * Applies region/wilderness flag checks for a non-player (natural or world-driven) change.
+     *
+     * <p>In a claimed chunk the owning region's world flag decides; in the wilderness the world's
+     * {@link WorldRules} decide.
+     *
+     * @param chunk the chunk the change takes place in
+     * @param flag  the {@link WorldFlag} flag that must be set to allow the change
+     * @param deny  callback executed when the change should be cancelled/denied
+     */
+    private void checkWorldFlag(Chunk chunk, WorldFlag flag, Runnable deny) {
+        if (ChunkManager.isChunkClaimed(chunk)) {
+            Region region = ChunkManager.getRegionOwnsTheChunk(chunk);
+            if (region != null && !region.isWorldFlagSet(flag)) {
+                deny.run();
+            }
+        } else {
+            if (!WorldRules.isWorldFlagAllowed(chunk.getWorld(), flag)) {
+                deny.run();
+            }
+        }
+    }
+
     @EventHandler
     public void onEntitySpawn(EntitySpawnEvent event) {
         if (event.getEntity() instanceof CopperGolem golem) {
@@ -173,10 +177,6 @@ public final class RegionProtectionListener implements Listener {
         if (entity instanceof CopperGolem golem) {
             CopperGolemTracker.forgetGolem(golem);
         }
-    }
-
-    private static boolean canBeBrokenByProjectile(Block block) {
-        return !block.isPreferredTool(new ItemStack(Material.AIR));
     }
 
     /**
@@ -1031,7 +1031,7 @@ public final class RegionProtectionListener implements Listener {
                 }
             } else {
                 boolean belowSeaOnly = Resources.<RegionsFile>get(ResourceType.Regions)
-                        .getBoolean("special-feat.tnt-explodes-only-below-sea-level");
+                        .isTntRestrictedToBelowSeaLevel();
 
                 List<Block> allowed = new ArrayList<>();
 

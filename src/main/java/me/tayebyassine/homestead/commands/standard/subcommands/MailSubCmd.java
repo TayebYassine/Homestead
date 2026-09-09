@@ -38,7 +38,7 @@ public final class MailSubCmd extends SubCommandBuilder {
         }
 
         if (args.length < 2) {
-            Messages.send(player, "commands.mail.0");
+            Messages.send(player, "commands.mail.0", getUsage());
             return true;
         }
 

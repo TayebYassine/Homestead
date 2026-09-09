@@ -1,7 +1,5 @@
 package me.tayebyassine.homestead.events;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.MemberManager;
@@ -13,65 +11,68 @@ import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.economy.TaxesUtility;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 public final class MemberTaxes {
-	private MemberTaxes() {
-	}
+    private MemberTaxes() {
+    }
 
-	/**
-	 * Trigger event for: Member Taxes
-	 * @param instance Homestead's instance
-	 */
-	public static void trigger(Homestead instance) {
-		for (Region region : RegionManager.getAll()) {
-			double amountToPay = region.getTaxes();
+    /**
+     * Trigger event for: Member Taxes
+     *
+     * @param instance Homestead's instance
+     */
+    public static void trigger(Homestead instance) {
+        for (Region region : RegionManager.getAll()) {
+            double amountToPay = region.getTaxes();
 
-			if (amountToPay == 0) {
-				continue;
-			}
+            if (amountToPay == 0) {
+                continue;
+            }
 
-			for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
-				if (member.getTaxesAt() == 0) {
-					member.setTaxesAt(TaxesUtility.getNewTaxesAt());
+            for (RegionMember member : MemberManager.getMembersOfRegion(region)) {
+                if (member.getTaxesAt() == 0) {
+                    member.setTaxesAt(TaxesUtility.getNewTaxesAt());
 
-					continue;
-				}
+                    continue;
+                }
 
-				if (System.currentTimeMillis() >= member.getTaxesAt()) {
-					OfflinePlayer targetPlayer = member.getPlayer();
+                if (System.currentTimeMillis() >= member.getTaxesAt()) {
+                    OfflinePlayer targetPlayer = member.getPlayer();
 
-					if (targetPlayer == null) {
-						continue;
-					}
+                    if (targetPlayer == null) {
+                        continue;
+                    }
 
-					if (PlayerBank.get(targetPlayer) >= amountToPay) {
-						PlayerBank.withdraw(targetPlayer, amountToPay);
-						region.depositBank(amountToPay);
-						member.setTaxesAt(TaxesUtility.getNewTaxesAt());
+                    if (PlayerBank.get(targetPlayer) >= amountToPay) {
+                        PlayerBank.withdraw(targetPlayer, amountToPay);
+                        region.depositBank(amountToPay);
+                        member.setTaxesAt(TaxesUtility.getNewTaxesAt());
 
-						if (targetPlayer.isOnline()) {
-							Player targetPlayerOnline = (Player) targetPlayer;
+                        if (targetPlayer.isOnline()) {
+                            Player targetPlayerOnline = (Player) targetPlayer;
 
-							Placeholder placeholder = new Placeholder()
-									.add("{amount}", Formatter.getBalance(amountToPay))
-									.add("{region}", region.getName())
-									.add("{balance}", Formatter.getBalance(PlayerBank.get(targetPlayer)));
+                            Placeholder placeholder = new Placeholder()
+                                    .add("{amount}", Formatter.getBalance(amountToPay))
+                                    .add("{region}", region.getName())
+                                    .add("{balance}", Formatter.getBalance(PlayerBank.get(targetPlayer)));
 
-							Messages.send(targetPlayerOnline, "common.member_tax_success", placeholder);
-						}
-					} else {
-						MemberManager.removeMemberFromRegion(targetPlayer, region);
+                            Messages.send(targetPlayerOnline, "common.member_tax_success", placeholder);
+                        }
+                    } else {
+                        MemberManager.removeMemberFromRegion(targetPlayer, region);
 
-						if (targetPlayer.isOnline()) {
-							Player targetPlayerOnline = (Player) targetPlayer;
+                        if (targetPlayer.isOnline()) {
+                            Player targetPlayerOnline = (Player) targetPlayer;
 
-							Messages.send(targetPlayerOnline, "common.member_tax_error_cannot_pay", region.getName());
-						}
+                            Messages.send(targetPlayerOnline, "common.member_tax_error_cannot_pay", region.getName());
+                        }
 
-						LogManager.addLog(region, null, LogManager.PredefinedLog.UNTRUST_PLAYER, targetPlayer.getName());
-					}
-				}
-			}
-		}
-	}
+                        LogManager.addLog(region, null, LogManager.PredefinedLog.UNTRUST_PLAYER, targetPlayer.getName());
+                    }
+                }
+            }
+        }
+    }
 }

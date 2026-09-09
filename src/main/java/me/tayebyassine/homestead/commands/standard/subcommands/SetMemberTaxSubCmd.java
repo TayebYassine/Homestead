@@ -54,7 +54,7 @@ public final class SetMemberTaxSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("taxes.enabled")) {
+        if (!Resources.<RegionsFile>get(ResourceType.Regions).isTaxesEnabled()) {
             Messages.send(player, "commands.setmembertax.3");
 
             return true;
@@ -69,8 +69,8 @@ public final class SetMemberTaxSubCmd extends SubCommandBuilder {
 
         double taxAmount = Double.parseDouble(taxInput);
 
-        double minTax = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("taxes.min-tax");
-        double maxTax = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("taxes.max-tax");
+        double minTax = Resources.<RegionsFile>get(ResourceType.Regions).getMinTax();
+        double maxTax = Resources.<RegionsFile>get(ResourceType.Regions).getMaxTax();
 
         if (taxAmount <= minTax || taxAmount > maxTax) {
             Messages.send(player, "commands.setmembertax.5", Formatter.getBalance(maxTax), Formatter.getBalance(maxTax));

@@ -61,7 +61,7 @@ public final class PlayerInputSession implements Listener {
         switch (inputType) {
             case "title": {
                 List<String> titleData = Resources.<LanguageFile>get(ResourceType.Language)
-                        .getStringList("input." + promptId + ".title");
+                        .getInputPromptTitle(String.valueOf(promptId));
 
                 if (titleData.size() == 2) {
                     String t1 = titleData.getFirst();
@@ -74,7 +74,7 @@ public final class PlayerInputSession implements Listener {
             }
             case "chat": {
                 String text = Resources.<LanguageFile>get(ResourceType.Language)
-                        .getString("input." + promptId + ".chat");
+                        .getInputPromptChat(String.valueOf(promptId));
                 PlatformBridge.get().sendMessage(player, Formatter.applyPlaceholders(text, promptPlaceholder));
                 break;
             }
@@ -83,7 +83,7 @@ public final class PlayerInputSession implements Listener {
         this.repeatTask = plugin.runAsyncTimerTask(() -> {
             if (inputType.equals("actionbar")) {
                 String text = Resources.<LanguageFile>get(ResourceType.Language)
-                        .getString("input." + promptId + ".actionbar");
+                        .getInputPromptActionbar(String.valueOf(promptId));
                 PlatformBridge.get().sendActionBar(player, Formatter.applyPlaceholders(text, promptPlaceholder));
             }
         }, 1);
@@ -111,7 +111,7 @@ public final class PlayerInputSession implements Listener {
     }
 
     private String getInputType() {
-        return Resources.<ConfigFile>get(ResourceType.Config).getString("player-input.type");
+        return Resources.<ConfigFile>get(ResourceType.Config).getPlayerInputType();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

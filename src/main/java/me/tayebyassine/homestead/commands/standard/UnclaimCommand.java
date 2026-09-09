@@ -1,9 +1,10 @@
 package me.tayebyassine.homestead.commands.standard;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.api.events.ChunkUnclaimEvent;
+import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.commands.CommandBuilder;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.managers.ChunkManager;
@@ -15,7 +16,6 @@ import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
-import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 import org.bukkit.Chunk;
@@ -86,7 +86,7 @@ public final class UnclaimCommand extends CommandBuilder {
         ChunkManager.Error error = ChunkManager.unclaimChunk(region, chunk);
 
         if (error == null) {
-            double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
+            double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getChunkPrice();
 
             if (chunkPrice > 0) {
                 PlayerBank.deposit(region.getOwner(), chunkPrice);

@@ -1,8 +1,7 @@
 package me.tayebyassine.homestead.commands.operator.subcommands;
 
-import me.tayebyassine.homestead.commands.CommandSenderType;
-
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.FlagCalculator;
 import me.tayebyassine.homestead.flags.PlayerFlag;

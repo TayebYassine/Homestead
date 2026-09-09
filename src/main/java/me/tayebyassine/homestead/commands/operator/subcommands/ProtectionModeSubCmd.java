@@ -1,9 +1,9 @@
 package me.tayebyassine.homestead.commands.operator.subcommands;
 
-import me.tayebyassine.homestead.ProtectionMode;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.chunks.ProtectionMode;
 import org.bukkit.command.CommandSender;
 
 /**

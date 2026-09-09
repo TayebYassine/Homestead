@@ -1,11 +1,5 @@
 package me.tayebyassine.homestead.gui.menus;
 
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.gui.PaginationMenu;
@@ -20,6 +14,12 @@ import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerSound;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 import me.tayebyassine.homestead.util.minecraft.plugins.MapIcon;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +42,14 @@ public final class MapIconMenu {
     }
 
     private void handleMapIconClick(Player player, Region region, PaginationMenu.ClickContext context) {
-        if (context.getIndex() >= icons.size()) return;
+        if (context.index() >= icons.size()) return;
 
         if (RegionManager.findRegion(region.getUniqueId()) == null) {
             player.closeInventory();
             return;
         }
 
-        if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
+        if (!Resources.<ConfigFile>get(ResourceType.Config).isDynamicMapsIconsEnabled()) {
             player.closeInventory();
             return;
         }
@@ -68,7 +68,7 @@ public final class MapIconMenu {
 
         Cooldown.startCooldown(player, Cooldown.Type.REGION_DYNAMIC_MAP_SETTINGS_CHANGE);
 
-        String icon = icons.get(context.getIndex());
+        String icon = icons.get(context.index());
         region.setMapIcon(icon);
 
         PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);

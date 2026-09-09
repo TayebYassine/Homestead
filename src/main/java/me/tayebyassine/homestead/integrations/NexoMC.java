@@ -2,56 +2,56 @@ package me.tayebyassine.homestead.integrations;
 
 import com.nexomc.nexo.api.NexoItems;
 import com.nexomc.nexo.items.ItemBuilder;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.items.ItemUtility;
 import me.tayebyassine.homestead.util.minecraft.plugins.IntegrationUtility;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
 public final class NexoMC {
-	public static ItemStack getNexoItem(String itemId) {
-		if (isAvailable()) {
-			ItemBuilder builder = NexoItems.itemFromId(itemId);
+    public static ItemStack getNexoItem(String itemId) {
+        if (isAvailable()) {
+            ItemBuilder builder = NexoItems.itemFromId(itemId);
 
-			return (builder != null) ? builder.build() : new ItemStack(Material.BARRIER);
-		}
+            return (builder != null) ? builder.build() : new ItemStack(Material.BARRIER);
+        }
 
-		return new ItemStack(Material.BARRIER);
-	}
+        return new ItemStack(Material.BARRIER);
+    }
 
-	public static ItemStack getNexoItem(String itemId, String displayname, List<String> lore) {
-		if (isAvailable()) {
-			ItemBuilder builder = NexoItems.itemFromId(itemId);
+    public static ItemStack getNexoItem(String itemId, String displayname, List<String> lore) {
+        if (isAvailable()) {
+            ItemBuilder builder = NexoItems.itemFromId(itemId);
 
-			ItemStack item = (builder != null) ? builder.build() : new ItemStack(Material.BARRIER);
+            ItemStack item = (builder != null) ? builder.build() : new ItemStack(Material.BARRIER);
 
-			return ItemUtility.applyMetadata(item, displayname, lore);
-		}
+            return ItemUtility.applyMetadata(item, displayname, lore);
+        }
 
-		return new ItemStack(Material.BARRIER);
-	}
+        return new ItemStack(Material.BARRIER);
+    }
 
-	public static ItemStack getNexoItem(String itemId, String displayname, List<String> lore, Placeholder placeholder) {
-		if (isAvailable()) {
-			ItemBuilder builder = NexoItems.itemFromId(itemId);
+    public static ItemStack getNexoItem(String itemId, String displayname, List<String> lore, Placeholder placeholder) {
+        if (isAvailable()) {
+            ItemBuilder builder = NexoItems.itemFromId(itemId);
 
-			ItemStack item = (builder != null) ? builder.build() : new ItemStack(Material.BARRIER);
+            ItemStack item = (builder != null) ? builder.build() : new ItemStack(Material.BARRIER);
 
-			return ItemUtility.applyMetadata(item, displayname, lore, placeholder);
-		}
+            return ItemUtility.applyMetadata(item, displayname, lore, placeholder);
+        }
 
-		return ItemUtility.applyMetadata(new ItemStack(Material.BARRIER), displayname, lore, placeholder);
-	}
+        return ItemUtility.applyMetadata(new ItemStack(Material.BARRIER), displayname, lore, placeholder);
+    }
 
-	public static boolean isAvailable() {
-		try {
-			Class.forName("com.nexomc.nexo.items.ItemBuilder");
+    public static boolean isAvailable() {
+        try {
+            Class.forName("com.nexomc.nexo.items.ItemBuilder");
 
-			return IntegrationUtility.isEnabled(IntegrationUtility.Integration.NEXO);
-		} catch (ClassNotFoundException e) {
-			return false;
-		}
-	}
+            return IntegrationUtility.isEnabled(IntegrationUtility.Integration.NEXO);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 }

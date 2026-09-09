@@ -1,11 +1,9 @@
 package me.tayebyassine.homestead.gui.menus;
 
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.cooldown.Cooldown;
+import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.flags.FlagCalculator;
 import me.tayebyassine.homestead.flags.PlayerFlag;
-import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -20,74 +18,76 @@ import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerSound;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class SubAreaFlagsMenu {
 
-	public SubAreaFlagsMenu(Player player, Region region, SubArea subArea) {
-		List<ItemStack> items = new ArrayList<>();
+    public SubAreaFlagsMenu(Player player, Region region, SubArea subArea) {
+        List<ItemStack> items = new ArrayList<>();
 
-		for (String flagString : PlayerFlag.getFlags()) {
-			boolean value = FlagCalculator.isFlagSet(subArea.getPlayerFlags(), PlayerFlag.parse(flagString));
-			items.add(MenuUtility.getFlagButton(flagString, value));
-		}
+        for (String flagString : PlayerFlag.getFlags()) {
+            boolean value = FlagCalculator.isFlagSet(subArea.getPlayerFlags(), PlayerFlag.parse(flagString));
+            items.add(MenuUtility.getFlagButton(flagString, value));
+        }
 
-		PaginationMenu.builder(16, 9 * 5)
-				.nextPageItem(MenuUtility.getNextPageButton())
-				.prevPageItem(MenuUtility.getPreviousPageButton())
-				.items(items)
-				.fillEmptySlots()
-				.goBack((_player, event) -> new SubAreaMenu(player, region, subArea))
-				.onClick((_player, context) -> handleFlagClick(player, region, subArea, context))
-				.build()
-				.open(player);
-	}
+        PaginationMenu.builder(16, 9 * 5)
+                .nextPageItem(MenuUtility.getNextPageButton())
+                .prevPageItem(MenuUtility.getPreviousPageButton())
+                .items(items)
+                .fillEmptySlots()
+                .goBack((_player, event) -> new SubAreaMenu(player, region, subArea))
+                .onClick((_player, context) -> handleFlagClick(player, region, subArea, context))
+                .build()
+                .open(player);
+    }
 
-	private void handleFlagClick(Player player, Region region, SubArea subArea, PaginationMenu.ClickContext context) {
-		if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
-			player.closeInventory();
-			return;
-		}
+    private void handleFlagClick(Player player, Region region, SubArea subArea, PaginationMenu.ClickContext context) {
+        if (RegionManager.findRegion(region.getUniqueId()) == null || SubAreaManager.findSubArea(subArea.getUniqueId()) == null) {
+            player.closeInventory();
+            return;
+        }
 
-		if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
+        if (Cooldown.hasCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE)) return;
 
-		if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.global")) {
-			Messages.send(player, "common.no_permission");
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return;
-		}
+        if (!player.hasPermission("homestead.actions.regions.subareas.update.flags.global")) {
+            Messages.send(player, "common.no_permission");
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return;
+        }
 
-		if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return;
-		}
+        if (!PlayerUtility.hasControlPermissionFlag(region, player, ControlFlag.MANAGE_SUBAREAS, true)) {
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return;
+        }
 
-		String flagString = PlayerFlag.getFlags().get(context.getIndex());
+        String flagString = PlayerFlag.getFlags().get(context.index());
 
-		if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
-			Messages.send(player, "commands.flags.9");
-			PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
-			return;
-		}
+        if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
+            Messages.send(player, "commands.flags.9");
+            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+            return;
+        }
 
-		if (!context.getEvent().isLeftClick()) return;
+        if (!context.event().isLeftClick()) return;
 
-		long flags = subArea.getPlayerFlags();
-		long flag = PlayerFlag.parse(flagString);
-		boolean isSet = FlagCalculator.isFlagSet(flags, flag);
+        long flags = subArea.getPlayerFlags();
+        long flag = PlayerFlag.parse(flagString);
+        boolean isSet = FlagCalculator.isFlagSet(flags, flag);
 
-		Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
+        Cooldown.startCooldown(player, Cooldown.Type.FLAG_CHANGE_STATE);
 
-		subArea.setPlayerFlags(isSet
-				? FlagCalculator.removeFlag(flags, flag)
-				: FlagCalculator.addFlag(flags, flag));
+        subArea.setPlayerFlags(isSet
+                ? FlagCalculator.removeFlag(flags, flag)
+                : FlagCalculator.addFlag(flags, flag));
 
-		LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagString, subArea.getName(), Formatter.getFlagState(!isSet));
+        LogManager.addLog(region, player, LogManager.PredefinedLog.UPDATE_FLAG_STATE, flagString, subArea.getName(), Formatter.getFlagState(!isSet));
 
-		context.getInstance().replaceSlot(context.getIndex(), MenuUtility.getFlagButton(flagString, !isSet));
-	}
+        context.instance().replaceSlot(context.index(), MenuUtility.getFlagButton(flagString, !isSet));
+    }
 }
 
 

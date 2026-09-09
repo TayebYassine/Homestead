@@ -124,7 +124,7 @@ public final class PlayerAutoClaimListener implements Listener {
             return;
         }
 
-        double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
+        double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getChunkPrice();
 
         if (chunkPrice > 0 && PlayerBank.get(region.getOwner()) < chunkPrice) {
             Messages.send(player, "commands.claim.7", Formatter.getBalance(chunkPrice));

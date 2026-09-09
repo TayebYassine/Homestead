@@ -44,8 +44,8 @@ public final class SetMapIconSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!(Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")
-                && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled"))) {
+        if (!(Resources.<ConfigFile>get(ResourceType.Config).isDynamicMapsEnabled()
+                && Resources.<ConfigFile>get(ResourceType.Config).isDynamicMapsIconsEnabled())) {
             Messages.send(player, "commands.setmapicon.1");
             return true;
         }

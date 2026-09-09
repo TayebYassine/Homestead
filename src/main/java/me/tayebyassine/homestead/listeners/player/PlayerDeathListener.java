@@ -1,11 +1,5 @@
 package me.tayebyassine.homestead.listeners.player;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.inventory.ItemStack;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.managers.WarManager;
@@ -16,6 +10,12 @@ import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.items.ItemUtility;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,106 +27,106 @@ import java.util.Objects;
  * region is declared the winner (receiving the prize and the loser's head, if configured).</p>
  */
 public final class PlayerDeathListener implements Listener {
-	@EventHandler
-	public void onPlayerDeath(PlayerDeathEvent event) {
-		Player victim = event.getEntity();
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player victim = event.getEntity();
 
-		List<Region> ownedRegions = RegionManager.getRegionsOwnedByPlayer(victim);
+        List<Region> ownedRegions = RegionManager.getRegionsOwnedByPlayer(victim);
 
-		for (Region region : ownedRegions) {
-			if (!WarManager.isRegionInWar(region.getUniqueId())) {
-				continue;
-			}
+        for (Region region : ownedRegions) {
+            if (!WarManager.isRegionInWar(region.getUniqueId())) {
+                continue;
+            }
 
-			War war = WarManager.findWarByRegion(region.getUniqueId());
+            War war = WarManager.findWarByRegion(region.getUniqueId());
 
-			final List<OfflinePlayer> warMembers = List.copyOf(WarManager.getMembersOfWar(war.getUniqueId()));
+            final List<OfflinePlayer> warMembers = List.copyOf(WarManager.getMembersOfWar(war.getUniqueId()));
 
-			war = WarManager.removeRegionFromWar(region.getUniqueId());
+            war = WarManager.removeRegionFromWar(region.getUniqueId());
 
-			if (war == null) {
-				continue;
-			}
+            if (war == null) {
+                continue;
+            }
 
-			Region winner = war.getWinner();
+            Region winner = war.getWinner();
 
-			Cooldown.startCooldown(victim, Cooldown.Type.WAR_FLAG_DISABLED);
+            Cooldown.startCooldown(victim, Cooldown.Type.WAR_FLAG_DISABLED);
 
-			if (winner != null) {
-				distributePrize(war, region, winner);
-				giveHeadToWinner(winner, victim);
+            if (winner != null) {
+                distributePrize(war, region, winner);
+                giveHeadToWinner(winner, victim);
 
-				OfflinePlayer winnerOwner = winner.getOwner();
+                OfflinePlayer winnerOwner = winner.getOwner();
 
-				if (winnerOwner != null && winnerOwner.isOnline()) {
-					Cooldown.startCooldown(Objects.requireNonNull(winnerOwner.getPlayer()), Cooldown.Type.WAR_FLAG_DISABLED);
-				}
-			}
+                if (winnerOwner != null && winnerOwner.isOnline()) {
+                    Cooldown.startCooldown(Objects.requireNonNull(winnerOwner.getPlayer()), Cooldown.Type.WAR_FLAG_DISABLED);
+                }
+            }
 
-			WarManager.tellPlayersWarEnded(warMembers, winner);
+            WarManager.tellPlayersWarEnded(warMembers, winner);
 
-			WarManager.endWar(war.getUniqueId());
+            WarManager.endWar(war.getUniqueId());
 
-			Messages.send(victim, "common.war_player_death");
+            Messages.send(victim, "common.war_player_death");
 
-			boolean keepInventory = Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("wars.keep-inventory");
+            boolean keepInventory = Resources.<RegionsFile>get(ResourceType.Regions).isWarKeepInventory();
 
-			if (keepInventory) {
-				event.setKeepInventory(true);
-				event.getDrops().clear();
-			} else {
-				if (event.getKeepInventory()) {
-					for (ItemStack item : victim.getInventory().getContents()) {
-						if (item != null) event.getDrops().add(item);
-					}
-				}
-				event.setKeepInventory(false);
-			}
+            if (keepInventory) {
+                event.setKeepInventory(true);
+                event.getDrops().clear();
+            } else {
+                if (event.getKeepInventory()) {
+                    for (ItemStack item : victim.getInventory().getContents()) {
+                        if (item != null) event.getDrops().add(item);
+                    }
+                }
+                event.setKeepInventory(false);
+            }
 
-			break;
-		}
-	}
+            break;
+        }
+    }
 
-	private void distributePrize(War war, Region loser, Region winner) {
-		double prize = war.getPrize();
+    private void distributePrize(War war, Region loser, Region winner) {
+        double prize = war.getPrize();
 
-		if (prize <= 0) {
-			return;
-		}
+        if (prize <= 0) {
+            return;
+        }
 
-		double available = Math.min(prize, loser.getBank());
+        double available = Math.min(prize, loser.getBank());
 
-		if (available > 0) {
-			loser.withdrawBank(available);
-			winner.depositBank(available);
-		}
+        if (available > 0) {
+            loser.withdrawBank(available);
+            winner.depositBank(available);
+        }
 
-		OfflinePlayer offlineOwner = winner.getOwner();
-		Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
+        OfflinePlayer offlineOwner = winner.getOwner();
+        Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
 
-		if (owner != null) {
-			Messages.send(owner, "common.war_player_winner");
-		}
-	}
+        if (owner != null) {
+            Messages.send(owner, "common.war_player_winner");
+        }
+    }
 
-	private void giveHeadToWinner(Region winner, Player victim) {
-		if (!Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("wars.give-head")) {
-			return;
-		}
+    private void giveHeadToWinner(Region winner, Player victim) {
+        if (!Resources.<RegionsFile>get(ResourceType.Regions).isWarGiveHead()) {
+            return;
+        }
 
-		OfflinePlayer offlineOwner = winner.getOwner();
-		Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
+        OfflinePlayer offlineOwner = winner.getOwner();
+        Player owner = offlineOwner != null && offlineOwner.isOnline() ? (Player) offlineOwner : null;
 
-		if (owner == null) {
-			return;
-		}
+        if (owner == null) {
+            return;
+        }
 
-		ItemStack head = ItemUtility.getPlayerHead(victim);
+        ItemStack head = ItemUtility.getPlayerHead(victim);
 
-		if (owner.getInventory().firstEmpty() == -1) {
-			owner.getWorld().dropItemNaturally(owner.getLocation(), head);
-		} else {
-			owner.getInventory().addItem(head);
-		}
-	}
+        if (owner.getInventory().firstEmpty() == -1) {
+            owner.getWorld().dropItemNaturally(owner.getLocation(), head);
+        } else {
+            owner.getInventory().addItem(head);
+        }
+    }
 }

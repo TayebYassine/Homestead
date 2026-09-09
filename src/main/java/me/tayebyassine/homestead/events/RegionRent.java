@@ -1,7 +1,5 @@
 package me.tayebyassine.homestead.events;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.managers.SubAreaManager;
@@ -9,50 +7,53 @@ import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.SubArea;
 import me.tayebyassine.homestead.models.serialize.SeRent;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 public final class RegionRent {
-	private RegionRent() {
-	}
+    private RegionRent() {
+    }
 
-	/**
-	 * Trigger event for: Region Rent
-	 * @param instance Homestead's instance
-	 */
-	public static void trigger(Homestead instance) {
-		for (Region region : RegionManager.getAll()) {
-			SeRent rent = region.getRent();
+    /**
+     * Trigger event for: Region Rent
+     *
+     * @param instance Homestead's instance
+     */
+    public static void trigger(Homestead instance) {
+        for (Region region : RegionManager.getAll()) {
+            SeRent rent = region.getRent();
 
-			if (rent.hasRenter() && rent.isExpired()) {
-				OfflinePlayer renter = rent.getRenter();
+            if (rent.hasRenter() && rent.isExpired()) {
+                OfflinePlayer renter = rent.getRenter();
 
-				rent.clearRenter();
+                rent.clearRenter();
 
-				if (renter != null && renter.isOnline()) {
-					Player player = renter.getPlayer();
+                if (renter != null && renter.isOnline()) {
+                    Player player = renter.getPlayer();
 
-					if (player != null) {
-						Messages.send(player, "common.rent_end", region.getName());
-					}
-				}
-			}
-		}
+                    if (player != null) {
+                        Messages.send(player, "common.rent_end", region.getName());
+                    }
+                }
+            }
+        }
 
-		for (SubArea subArea : SubAreaManager.getAll()) {
-			SeRent rent = subArea.getRent();
+        for (SubArea subArea : SubAreaManager.getAll()) {
+            SeRent rent = subArea.getRent();
 
-			if (rent.hasRenter() && rent.isExpired()) {
-				OfflinePlayer renter = rent.getRenter();
+            if (rent.hasRenter() && rent.isExpired()) {
+                OfflinePlayer renter = rent.getRenter();
 
-				rent.clearRenter();
+                rent.clearRenter();
 
-				if (renter != null && renter.isOnline()) {
-					Player player = renter.getPlayer();
+                if (renter != null && renter.isOnline()) {
+                    Player player = renter.getPlayer();
 
-					if (player != null) {
-						Messages.send(player, "common.rent_subarea_end", subArea.getName(), subArea.getRegionName());
-					}
-				}
-			}
-		}
-	}
+                    if (player != null) {
+                        Messages.send(player, "common.rent_subarea_end", subArea.getName(), subArea.getRegionName());
+                    }
+                }
+            }
+        }
+    }
 }

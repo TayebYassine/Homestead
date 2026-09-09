@@ -6,7 +6,7 @@ import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.ConfigFile;
 
 import javax.imageio.ImageIO;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -15,63 +15,63 @@ import java.util.List;
 import java.util.Map;
 
 public final class MapIcon {
-	private static final Map<String, BufferedImage> ICONS = new HashMap<>();
-	private static BufferedImage DEFAULT_ICON;
+    private static final Map<String, BufferedImage> ICONS = new HashMap<>();
+    private static BufferedImage DEFAULT_ICON;
 
-	public static List<String> getAllIcons() {
-		return Resources.<ConfigFile>get(ResourceType.Config).getKeysUnderPath("dynamic-maps.icons.list");
-	}
+    public static List<String> getAllIcons() {
+        return Resources.<ConfigFile>get(ResourceType.Config).getDynamicMapsIconKeys();
+    }
 
-	public static boolean isValidIcon(String icon) {
-		return getAllIcons().contains(icon);
-	}
+    public static boolean isValidIcon(String icon) {
+        return getAllIcons().contains(icon);
+    }
 
-	public static BufferedImage getIconBufferedImage(String icon) {
-		if (icon == null) {
-			return DEFAULT_ICON;
-		}
+    public static BufferedImage getIconBufferedImage(String icon) {
+        if (icon == null) {
+            return DEFAULT_ICON;
+        }
 
-		return ICONS.getOrDefault(icon, DEFAULT_ICON);
-	}
+        return ICONS.getOrDefault(icon, DEFAULT_ICON);
+    }
 
-	public static void downloadAllIcons() {
-		List<String> allIcons = getAllIcons();
-		int totalIcons = allIcons.size();
-		int downloaded = 0;
+    public static void downloadAllIcons() {
+        List<String> allIcons = getAllIcons();
+        int totalIcons = allIcons.size();
+        int downloaded = 0;
 
-		Logger.info("Downloading icons... 0% (0 / " + totalIcons + ")");
+        Logger.info("Downloading icons... 0% (0 / " + totalIcons + ")");
 
-		DEFAULT_ICON = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.default"));
+        DEFAULT_ICON = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getDynamicMapsIconsDefault());
 
-		for (String icon : getAllIcons()) {
-			if (ICONS.containsKey(icon)) {
-				continue;
-			}
+        for (String icon : getAllIcons()) {
+            if (ICONS.containsKey(icon)) {
+                continue;
+            }
 
-			String url = Resources.<ConfigFile>get(ResourceType.Config).getString("dynamic-maps.icons.list." + icon);
+            String url = Resources.<ConfigFile>get(ResourceType.Config).getDynamicMapsIconValue(icon);
 
-			if (url != null) {
-				BufferedImage bufferedImage = downloadIcon(url);
+            if (url != null) {
+                BufferedImage bufferedImage = downloadIcon(url);
 
-				ICONS.putIfAbsent(icon, bufferedImage);
+                ICONS.putIfAbsent(icon, bufferedImage);
 
-				downloaded++;
-				Logger.info("Downloading icons... " + (int) ((downloaded / (float) totalIcons) * 100) + "% (" + downloaded + " / " + totalIcons + ")");
-			}
-		}
-	}
+                downloaded++;
+                Logger.info("Downloading icons... " + (int) ((downloaded / (float) totalIcons) * 100) + "% (" + downloaded + " / " + totalIcons + ")");
+            }
+        }
+    }
 
-	public static BufferedImage downloadIcon(String imageUrl) {
-		try {
-			URL url = new URI(imageUrl).toURL();
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    public static BufferedImage downloadIcon(String imageUrl) {
+        try {
+            URL url = new URI(imageUrl).toURL();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-			connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-			return ImageIO.read(connection.getInputStream());
-		} catch (Exception e) {
-			Logger.warning("Unable to download an icon, URL: " + imageUrl);
-			return null;
-		}
-	}
+            return ImageIO.read(connection.getInputStream());
+        } catch (Exception e) {
+            Logger.warning("Unable to download an icon, URL: " + imageUrl);
+            return null;
+        }
+    }
 }

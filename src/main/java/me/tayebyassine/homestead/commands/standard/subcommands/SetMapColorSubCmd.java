@@ -44,7 +44,7 @@ public final class SetMapColorSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
+        if (!Resources.<ConfigFile>get(ResourceType.Config).isDynamicMapsEnabled()) {
             Messages.send(player, "commands.setmapcolor.1");
             return true;
         }

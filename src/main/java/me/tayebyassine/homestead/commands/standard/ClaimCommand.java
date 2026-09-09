@@ -202,7 +202,7 @@ public final class ClaimCommand extends CommandBuilder {
     }
 
     private boolean validateAndClaim(Player player, Region region, List<Chunk> chunksToClaim) {
-        double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getDouble("chunk-price");
+        double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getChunkPrice();
         double totalPrice = chunkPrice * chunksToClaim.size();
 
         if (totalPrice > 0 && PlayerBank.get(region.getOwner()) < totalPrice) {

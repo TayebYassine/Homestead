@@ -1,20 +1,25 @@
+# ============================================================================
+# LEVELS CONFIGURATION
+# ============================================================================
+
 # Region Leveling System
 # Reward players for killing mobs inside their region
 # XP gained -> region levels up -> unlocks bonuses
-
 levels:
-  # Enable region leveling
+  # Enable region leveling?
+  # true = Yes, false = No
   enabled: true
 
-  # Restrict the xp gain, in seconds.
+  # Restrict XP gain cooldown period (in seconds).
   # Useful to avoid players from farming XP by killing multiple entities at once.
-  timeout: 2
+  timeout: 2 # 2 seconds
 
-  # XP per entity type (kill must happen IN your region, except Ender Dragon)
+  # XP per entity type (kill must happen in a region, except for Ender Dragon)
   # Format: ENTITY_NAME: [ min_xp, max_xp ]
+  # List of entities: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
   on-kill-entity:
     # Boss tier
-    ENDER_DRAGON: [ 5000, 10000 ]
+    ENDER_DRAGON: [ 5000, 10000 ] # Min: 5,000 XP, Max: 10,000 XP
     WARDEN: [ 5000, 7500 ]
     WITHER: [ 2500, 5000 ]
 
@@ -112,7 +117,8 @@ levels:
     HAPPY_GHAST: [ 20, 40 ]
 
   # Level-Based Rewards (keep levels and rewards in ASCENDING order)
-  # Rewards stack.
+  # Max level is 50. You cannot change it.
+  # Rewards stack — higher-level tiers include all lower-tier bonuses.
   rewards:
     5: # Level 5; Rewards: 1 Chunk, 5% Upkeep Reduction
       chunks: 1
@@ -132,7 +138,7 @@ levels:
       subareas: 1
       upkeep-reduction: 10
 
-    20: # ...
+    20:
       chunks: 4
       members: 2
       subareas: 1

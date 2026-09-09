@@ -1,25 +1,42 @@
-# Claim Limits System
+# ============================================================================
+# LIMITS CONFIGURATION
+# ============================================================================
+
+# ---------- IMPORTANT NOTICE ----------
+# Homestead uses a custom YAML validator, which protects users (you) from making silly mistakes.
+# For example, if a config key receives a boolean value (true/false), but you set it to an integer (1,2,3...),
+# the plugin will not shut down, but it will override the value to its correct type, and reads the correct type.
+# The validator includes a missing-key fixer, which means if you deleted a key, it will re-add it when the server
+# restarts or the configuration is reloaded. This applies to groups too! So, if you deleted a group or a permission
+# below, it will be re-added back. For this solution, don't delete the groups, just set their limits to 0 or to absolute
+# maximum value.
+# Example: Your server has these groups: default, builder, donor, staff, mod, admin, owner
+# If you add extra groups (e.g. vip, mvp) that don't exist in your permissions plugin, they will re-appear
+# on every restart. The solution is to set their limits to 0 (for regions, chunks...) or to something big
+# (for command cooldown) to 999999999. Since your server doesn't have those groups, they won't be used
+# by players and will not be detected by Homestead.
+# ---------- IMPORTANT NOTICE ----------
+
+# Limits System
 # Control how many regions/chunks/members each player can have
 limits:
   # Limit Assignment Method
   # 'static': Everyone gets same limits (except operators). Simple, no permissions plugin needed.
   # 'groups': Limits based on permission groups (LuckPerms, etc.). Requires permissions plugin.
-  # 'permissions': Limits based on custom permission group name, no weight required (like LuckPerms). THIS IS EXPERIMENTAL
+  # 'permissions': Limits based on custom permission group name, no weight required (like LuckPerms).
   method: 'static'
 
   # Group-Based Limits (only used if method = 'groups')
-  # Configure per group: regions, chunks-per-region, members-per-region, subareas-per-region,
-  # max-subarea-volume (blocks³), max-bank-deposit, max-force-loaded-chunks, commands-cooldown (seconds)
   groups:
     default:
-      regions: 1
-      chunks-per-region: 4
-      members-per-region: 2
-      subareas-per-region: 1
-      max-subarea-volume: 400
-      max-bank-deposit: 100000000
-      max-force-loaded-chunks: 2
-      commands-cooldown: 2
+      regions: 1 # 1 region
+      chunks-per-region: 4 # 4 chunks for each region they own
+      members-per-region: 2 # 2 trusted players for each region they own
+      subareas-per-region: 1 # 1 sub-area for each region they own
+      max-subarea-volume: 400 # 400 blocks³ volume for each sub-area part of all regions they own
+      max-bank-deposit: 100000000 # $100,000,000
+      max-force-loaded-chunks: 2 # 2 force loaded chunks for each region they own
+      commands-cooldown: 2 # 2 seconds cooldown (any region, homestead commands only)
 
     vip:
       regions: 2
@@ -77,11 +94,13 @@ limits:
   # Permissions Limits (only used if method = 'permissions')
   # Just like groups, but you will use permissions instead.
   permissions-priority:
-    - admin
+    - admin # Highest
     - vip
     - mvp
-    - default
+    - default # Lowest
 
+  # Note: You must give each group in LuckPerms (or any other plugin) the following permission: "homestead.group.(NAME)"
+  # Example: Go to your vip group in LuckPerms, add the permission "homestead.group.vip", and apply changes.
   permissions:
     default:
       regions: 1

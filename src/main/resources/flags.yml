@@ -1,5 +1,10 @@
+# ============================================================================
+# FLAGS CONFIGURATION
+# ============================================================================
+
 # Disabled Flags
 # Prevent players from changing these specific flags
+# Note: If you add a flag here, you should override the state for all existing regions using the command: /hsadmin overrideflag
 disabled-flags:
   - "use-bells"
   - "take-fall-damage"
@@ -7,18 +12,20 @@ disabled-flags:
 # Flag-Specific Configuration
 # Special behavior tweaks for specific flags
 flags-configuration:
-  # Should mobs from spawners ignore spawn flags? (recommended: true)
+  # Should mobs from spawners ignore spawn flags?
+  # true = Yes, false = No
   exclude-spawners: true
 
-  # Allow all flags for trusted players (once they join a region)?
+  # Allow all flags for trusted players once they join a region?
+  # true = Yes, false = No
   allow-all-flags-for-trusted-players: true
 
 # ============================================================================
 # DEFAULT FLAG VALUES
 # ============================================================================
-# These are the DEFAULT values for all new regions
+# These are the default values for all new regions
 # Players can change these (unless flag is disabled above)
-# true = allow, false = deny
+# true = Allow, false = Deny
 # ============================================================================
 
 # Global Player Flags (Non-Members)
@@ -90,16 +97,28 @@ default-world-flags:
   projectiles: false                # Any kind of projectile from any source except players
   weather-snow: true                # Snow form during weather storm (in cold biomes)
 
+# ============================================================================
+# UNCLAIMED CHUNKS FLAGS
+# ============================================================================
+
 # Apply player flags (global) and world flags for unclaimed chunks for each specific world
 # Flags that are ignored from the rules: liquid-flow, wilderness-dispensers, wilderness-pistons, wilderness-minecarts
+# Note: Since there are almost a hundred of flags, a website was designed to reduce the length of the file.
+# Use this website to calculate flags: https://tayebyassine.github.io/HomesteadFlagsCalculator
+# Select the flags, and then copy the bitwise value and paste it.
 world-rules:
+  # Apply flags for unclaimed chunks?
+  # true = Yes, false = No
   enabled: false
 
-  # World names
+  # The world names
   worlds:
+    # The End
     world_the_end:
       player_flags: 68719474687 # Everything allowed except for 'use-bells'
       world_flags: 13631487 # Everything allowed except for 'wars'
+
+    # A PvP arena (custom world)
     pvp_arena:
       player_flags: 68719474687
       world_flags: 13631487
