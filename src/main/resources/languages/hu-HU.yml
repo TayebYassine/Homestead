@@ -763,7 +763,7 @@ flags-info:
   punch-sulfur-cubes:
     description:
       - "&7Megengedik a játékosoknak, hogy kénkockákat üssenek?"
-    type: BUCKET_OF_SULFUR_CUBE
+    type: PLAYERHEAD-f0d9056ec6db388af12304ef96ffdc8228dcf368ab255323258b716f990b4ab
 
   passive-entity-spawn:
     description:
