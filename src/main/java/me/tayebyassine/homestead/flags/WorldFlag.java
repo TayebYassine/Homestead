@@ -143,6 +143,8 @@ public enum WorldFlag {
 
     static {
         for (WorldFlag flag : values()) {
+            if (flag == COPPER_GOLEMS_INTERACTION) continue;
+
             BY_NAME.put(flag.name.toLowerCase(), flag);
         }
     }
