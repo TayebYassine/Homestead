@@ -21,14 +21,16 @@ import java.util.stream.Collectors;
  */
 public final class LogManager {
     private LogManager() {
+        throw new AssertionError("Uninstantiable class");
     }
+
 
     /**
      * Add a new log to a region.
      *
-     * @param region  The region
-     * @param author  The author of the message
-     * @param message The message
+     * @param region  the region
+     * @param author  the author of the message
+     * @param message the message
      */
     public static void addLog(Region region, String author, String message) {
         addLog(region.getUniqueId(), author, message);
@@ -37,19 +39,35 @@ public final class LogManager {
     /**
      * Add a new log to a region.
      *
-     * @param regionId The region ID
-     * @param author   The author of the message
-     * @param message  The message
+     * @param regionId the region ID
+     * @param author   the author of the message
+     * @param message  the message
      */
     public static void addLog(long regionId, String author, String message) {
         RegionLog log = new RegionLog(regionId, author, message);
         Homestead.LOG_CACHE.putOrUpdate(log);
     }
 
+    /**
+     * Add a new log to a region using a predefined log template.
+     *
+     * @param region the region
+     * @param player the player associated with the log, or {@code null} for system logs
+     * @param log    the predefined log type
+     * @param data   the placeholder data to fill in the log message
+     */
     public static void addLog(Region region, @Nullable OfflinePlayer player, PredefinedLog log, Object... data) {
         addLog(region.getUniqueId(), player, log, data);
     }
 
+    /**
+     * Add a new log to a region using a predefined log template.
+     *
+     * @param regionId the region ID
+     * @param player   the player associated with the log, or {@code null} for system logs
+     * @param log      the predefined log type
+     * @param data     the placeholder data to fill in the log message
+     */
     public static void addLog(long regionId, @Nullable OfflinePlayer player, PredefinedLog log, Object... data) {
         String message = Resources.<LanguageFile>get(ResourceType.Language).getLogMessage(String.valueOf(log.id));
 
@@ -69,8 +87,8 @@ public final class LogManager {
     /**
      * Retrieves a specific log by its unique ID.
      *
-     * @param logId The log ID
-     * @return The {@link RegionLog}, or {@code null} if not found.
+     * @param logId the log ID
+     * @return the {@link RegionLog}, or {@code null} if not found
      */
     public static RegionLog getLog(long logId) {
         return Homestead.LOG_CACHE.get(logId);
@@ -79,8 +97,8 @@ public final class LogManager {
     /**
      * Returns a list of logs from a region, sorted newest first.
      *
-     * @param region The region
-     * @return List of logs from a region
+     * @param region the region
+     * @return list of logs from a region
      */
     public static List<RegionLog> getLogs(Region region) {
         return getLogs(region.getUniqueId());
@@ -89,8 +107,8 @@ public final class LogManager {
     /**
      * Returns a list of logs from a region, sorted newest first.
      *
-     * @param regionId The region ID
-     * @return List of logs from a region
+     * @param regionId the region ID
+     * @return list of logs from a region
      */
     public static List<RegionLog> getLogs(long regionId) {
         return Homestead.LOG_CACHE.getAll().stream()
@@ -100,53 +118,9 @@ public final class LogManager {
     }
 
     /**
-     * Returns only unread logs from a region.
-     *
-     * @param region The region
-     * @return List of unread logs.
-     */
-    public static List<RegionLog> getUnreadLogs(Region region) {
-        return getUnreadLogs(region.getUniqueId());
-    }
-
-    /**
-     * Returns only unread logs from a region.
-     *
-     * @param regionId The region ID
-     * @return List of unread logs.
-     */
-    public static List<RegionLog> getUnreadLogs(long regionId) {
-        return getLogs(regionId).stream()
-                .filter(l -> !l.isRead())
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the number of unread logs in a region.
-     *
-     * @param region The region
-     * @return Unread log count.
-     */
-    public static int getUnreadCount(Region region) {
-        return getUnreadCount(region.getUniqueId());
-    }
-
-    /**
-     * Returns the number of unread logs in a region.
-     *
-     * @param regionId The region ID
-     * @return Unread log count.
-     */
-    public static int getUnreadCount(long regionId) {
-        return (int) getLogs(regionId).stream()
-                .filter(l -> !l.isRead())
-                .count();
-    }
-
-    /**
      * Returns the total number of logs in the server.
      *
-     * @return Total log count.
+     * @return total log count
      */
     public static int getLogCount() {
         return Homestead.LOG_CACHE.getAll().size();
@@ -155,8 +129,8 @@ public final class LogManager {
     /**
      * Returns the total number of logs in a region.
      *
-     * @param region The region
-     * @return Total log count.
+     * @param region the region
+     * @return total log count
      */
     public static int getLogCount(Region region) {
         return getLogCount(region.getUniqueId());
@@ -165,8 +139,8 @@ public final class LogManager {
     /**
      * Returns the total number of logs in a region.
      *
-     * @param regionId The region ID
-     * @return Total log count.
+     * @param regionId the region ID
+     * @return total log count
      */
     public static int getLogCount(long regionId) {
         return (int) Homestead.LOG_CACHE.getAll().stream()
@@ -175,102 +149,10 @@ public final class LogManager {
     }
 
     /**
-     * Checks if a region has any unread logs.
-     *
-     * @param region The region
-     * @return {@code true} if unread logs exist.
-     */
-    public static boolean hasUnreadLogs(Region region) {
-        return hasUnreadLogs(region.getUniqueId());
-    }
-
-    /**
-     * Checks if a region has any unread logs.
-     *
-     * @param regionId The region ID
-     * @return {@code true} if unread logs exist.
-     */
-    public static boolean hasUnreadLogs(long regionId) {
-        return getUnreadCount(regionId) > 0;
-    }
-
-    /**
-     * Returns logs from a specific author in a region.
-     *
-     * @param region The region
-     * @param author The author name
-     * @return List of logs by the author.
-     */
-    public static List<RegionLog> getLogsByAuthor(Region region, String author) {
-        return getLogsByAuthor(region.getUniqueId(), author);
-    }
-
-    /**
-     * Returns logs from a specific author in a region.
-     *
-     * @param regionId The region ID
-     * @param author   The author name
-     * @return List of logs by the author.
-     */
-    public static List<RegionLog> getLogsByAuthor(long regionId, String author) {
-        return getLogs(regionId).stream()
-                .filter(l -> l.getAuthor().equalsIgnoreCase(author))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns logs sent before a specific timestamp.
-     *
-     * @param region    The region
-     * @param timestamp The cutoff timestamp (exclusive)
-     * @return List of older logs.
-     */
-    public static List<RegionLog> getLogsBefore(Region region, long timestamp) {
-        return getLogsBefore(region.getUniqueId(), timestamp);
-    }
-
-    /**
-     * Returns logs sent before a specific timestamp.
-     *
-     * @param regionId  The region ID
-     * @param timestamp The cutoff timestamp (exclusive)
-     * @return List of older logs.
-     */
-    public static List<RegionLog> getLogsBefore(long regionId, long timestamp) {
-        return getLogs(regionId).stream()
-                .filter(l -> l.getSentAt() < timestamp)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns logs sent after a specific timestamp.
-     *
-     * @param region    The region
-     * @param timestamp The cutoff timestamp (exclusive)
-     * @return List of newer logs.
-     */
-    public static List<RegionLog> getLogsAfter(Region region, long timestamp) {
-        return getLogsAfter(region.getUniqueId(), timestamp);
-    }
-
-    /**
-     * Returns logs sent after a specific timestamp.
-     *
-     * @param regionId  The region ID
-     * @param timestamp The cutoff timestamp (exclusive)
-     * @return List of newer logs.
-     */
-    public static List<RegionLog> getLogsAfter(long regionId, long timestamp) {
-        return getLogs(regionId).stream()
-                .filter(l -> l.getSentAt() > timestamp)
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Returns the oldest log in a region.
      *
-     * @param region The region
-     * @return The oldest log, or {@code null} if none exist.
+     * @param region the region
+     * @return the oldest log, or {@code null} if none exist
      */
     public static RegionLog getOldestLog(Region region) {
         return getOldestLog(region.getUniqueId());
@@ -279,8 +161,8 @@ public final class LogManager {
     /**
      * Returns the oldest log in a region.
      *
-     * @param regionId The region ID
-     * @return The oldest log, or {@code null} if none exist.
+     * @param regionId the region ID
+     * @return the oldest log, or {@code null} if none exist
      */
     public static RegionLog getOldestLog(long regionId) {
         return getLogs(regionId).stream()
@@ -291,8 +173,8 @@ public final class LogManager {
     /**
      * Returns the most recent log in a region.
      *
-     * @param region The region
-     * @return The latest log, or {@code null} if none exist.
+     * @param region the region
+     * @return the latest log, or {@code null} if none exist
      */
     public static RegionLog getLatestLog(Region region) {
         return getLatestLog(region.getUniqueId());
@@ -301,8 +183,8 @@ public final class LogManager {
     /**
      * Returns the most recent log in a region.
      *
-     * @param regionId The region ID
-     * @return The latest log, or {@code null} if none exist.
+     * @param regionId the region ID
+     * @return the latest log, or {@code null} if none exist
      */
     public static RegionLog getLatestLog(long regionId) {
         return getLogs(regionId).stream()
@@ -311,10 +193,146 @@ public final class LogManager {
     }
 
     /**
+     * Returns logs from a specific author in a region.
+     *
+     * @param region the region
+     * @param author the author name
+     * @return list of logs by the author
+     */
+    public static List<RegionLog> getLogsByAuthor(Region region, String author) {
+        return getLogsByAuthor(region.getUniqueId(), author);
+    }
+
+    /**
+     * Returns logs from a specific author in a region.
+     *
+     * @param regionId the region ID
+     * @param author   the author name
+     * @return list of logs by the author
+     */
+    public static List<RegionLog> getLogsByAuthor(long regionId, String author) {
+        return getLogs(regionId).stream()
+                .filter(l -> l.getAuthor().equalsIgnoreCase(author))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns logs sent before a specific timestamp.
+     *
+     * @param region    the region
+     * @param timestamp the cutoff timestamp (exclusive)
+     * @return list of older logs
+     */
+    public static List<RegionLog> getLogsBefore(Region region, long timestamp) {
+        return getLogsBefore(region.getUniqueId(), timestamp);
+    }
+
+    /**
+     * Returns logs sent before a specific timestamp.
+     *
+     * @param regionId  the region ID
+     * @param timestamp the cutoff timestamp (exclusive)
+     * @return list of older logs
+     */
+    public static List<RegionLog> getLogsBefore(long regionId, long timestamp) {
+        return getLogs(regionId).stream()
+                .filter(l -> l.getSentAt() < timestamp)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns logs sent after a specific timestamp.
+     *
+     * @param region    the region
+     * @param timestamp the cutoff timestamp (exclusive)
+     * @return list of newer logs
+     */
+    public static List<RegionLog> getLogsAfter(Region region, long timestamp) {
+        return getLogsAfter(region.getUniqueId(), timestamp);
+    }
+
+    /**
+     * Returns logs sent after a specific timestamp.
+     *
+     * @param regionId  the region ID
+     * @param timestamp the cutoff timestamp (exclusive)
+     * @return list of newer logs
+     */
+    public static List<RegionLog> getLogsAfter(long regionId, long timestamp) {
+        return getLogs(regionId).stream()
+                .filter(l -> l.getSentAt() > timestamp)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns only unread logs from a region.
+     *
+     * @param region the region
+     * @return list of unread logs
+     */
+    public static List<RegionLog> getUnreadLogs(Region region) {
+        return getUnreadLogs(region.getUniqueId());
+    }
+
+    /**
+     * Returns only unread logs from a region.
+     *
+     * @param regionId the region ID
+     * @return list of unread logs
+     */
+    public static List<RegionLog> getUnreadLogs(long regionId) {
+        return getLogs(regionId).stream()
+                .filter(l -> !l.isRead())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the number of unread logs in a region.
+     *
+     * @param region the region
+     * @return unread log count
+     */
+    public static int getUnreadCount(Region region) {
+        return getUnreadCount(region.getUniqueId());
+    }
+
+    /**
+     * Returns the number of unread logs in a region.
+     *
+     * @param regionId the region ID
+     * @return unread log count
+     */
+    public static int getUnreadCount(long regionId) {
+        return (int) getLogs(regionId).stream()
+                .filter(l -> !l.isRead())
+                .count();
+    }
+
+    /**
+     * Checks if a region has any unread logs.
+     *
+     * @param region the region
+     * @return {@code true} if unread logs exist
+     */
+    public static boolean hasUnreadLogs(Region region) {
+        return hasUnreadLogs(region.getUniqueId());
+    }
+
+    /**
+     * Checks if a region has any unread logs.
+     *
+     * @param regionId the region ID
+     * @return {@code true} if unread logs exist
+     */
+    public static boolean hasUnreadLogs(long regionId) {
+        return getUnreadCount(regionId) > 0;
+    }
+
+    /**
      * Marks a specific log as read.
      *
-     * @param logId The log ID
-     * @return {@code true} if the log was found and updated.
+     * @param logId the log ID
+     * @return {@code true} if the log was found and updated
      */
     public static boolean markAsRead(long logId) {
         RegionLog log = getLog(logId);
@@ -326,8 +344,8 @@ public final class LogManager {
     /**
      * Marks a specific log as unread.
      *
-     * @param logId The log ID
-     * @return {@code true} if the log was found and updated.
+     * @param logId the log ID
+     * @return {@code true} if the log was found and updated
      */
     public static boolean markAsUnread(long logId) {
         RegionLog log = getLog(logId);
@@ -339,7 +357,7 @@ public final class LogManager {
     /**
      * Mark all logs as read.
      *
-     * @param region The region
+     * @param region the region
      */
     public static void markAllAsRead(Region region) {
         markAllAsRead(region.getUniqueId());
@@ -348,7 +366,7 @@ public final class LogManager {
     /**
      * Mark all logs as read.
      *
-     * @param regionId The region ID
+     * @param regionId the region ID
      */
     public static void markAllAsRead(long regionId) {
         getLogs(regionId).forEach(l -> l.setRead(true));
@@ -357,7 +375,7 @@ public final class LogManager {
     /**
      * Mark all logs as unread.
      *
-     * @param region The region
+     * @param region the region
      */
     public static void markAllAsUnread(Region region) {
         markAllAsUnread(region.getUniqueId());
@@ -366,7 +384,7 @@ public final class LogManager {
     /**
      * Mark all logs as unread.
      *
-     * @param regionId The region ID
+     * @param regionId the region ID
      */
     public static void markAllAsUnread(long regionId) {
         getLogs(regionId).forEach(l -> l.setRead(false));
@@ -375,7 +393,7 @@ public final class LogManager {
     /**
      * Delete a log.
      *
-     * @param log The log
+     * @param log the log
      */
     public static void deleteLog(RegionLog log) {
         deleteLog(log.getUniqueId());
@@ -384,7 +402,7 @@ public final class LogManager {
     /**
      * Delete a log.
      *
-     * @param logId The log ID
+     * @param logId the log ID
      */
     public static void deleteLog(long logId) {
         Homestead.LOG_CACHE.remove(logId);
@@ -393,7 +411,7 @@ public final class LogManager {
     /**
      * Delete all logs from a region.
      *
-     * @param region The region
+     * @param region the region
      */
     public static void deleteLogsOfRegion(Region region) {
         deleteLogsOfRegion(region.getUniqueId());
@@ -402,7 +420,7 @@ public final class LogManager {
     /**
      * Delete all logs from a region.
      *
-     * @param regionId The region ID
+     * @param regionId the region ID
      */
     public static void deleteLogsOfRegion(long regionId) {
         for (RegionLog log : getLogs(regionId)) {
@@ -413,8 +431,8 @@ public final class LogManager {
     /**
      * Deletes all read logs from a region.
      *
-     * @param region The region
-     * @return The number of logs deleted.
+     * @param region the region
+     * @return the number of logs deleted
      */
     public static int deleteReadLogs(Region region) {
         return deleteReadLogs(region.getUniqueId());
@@ -423,8 +441,8 @@ public final class LogManager {
     /**
      * Deletes all read logs from a region.
      *
-     * @param regionId The region ID
-     * @return The number of logs deleted.
+     * @param regionId the region ID
+     * @return the number of logs deleted
      */
     public static int deleteReadLogs(long regionId) {
         List<Long> toRemove = getLogs(regionId).stream()
@@ -441,8 +459,8 @@ public final class LogManager {
     /**
      * Deletes all logs older than the specified timestamp.
      *
-     * @param timestamp The cutoff timestamp (exclusive)
-     * @return The number of logs deleted.
+     * @param timestamp the cutoff timestamp (exclusive)
+     * @return the number of logs deleted
      */
     public static int deleteLogsOlderThan(long timestamp) {
         List<Long> toRemove = Homestead.LOG_CACHE.getAll().stream()
@@ -459,7 +477,7 @@ public final class LogManager {
     /**
      * Deletes every log in the cache. Use with caution.
      *
-     * @return The number of logs deleted.
+     * @return the number of logs deleted
      */
     public static int deleteAllLogs() {
         List<Long> ids = Homestead.LOG_CACHE.getAll().stream()
@@ -476,7 +494,7 @@ public final class LogManager {
      * Removes all logs with invalid references:<br>
      * - Regions that no longer exist
      *
-     * @return Number of corrupted logs removed.
+     * @return number of corrupted logs removed
      */
     public static int cleanupInvalidLogs() {
         List<Long> toRemove = new ArrayList<>();

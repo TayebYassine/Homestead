@@ -27,9 +27,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+/**
+ * A session that waits for a player to type text input in chat.
+ *
+ * <p>Sessions are created via the {@link Builder} and automatically
+ * register as a Bukkit {@link Listener} to intercept the next chat
+ * message. The session supports configurable prompt display (chat,
+ * title, or action bar), input validation, a cancel keyword, and an
+ * automatic timeout.
+ * </p>
+ *
+ * <p>Only one session can be active per player at a time; creating a new
+ * session replaces any previous one.
+ * </p>
+ */
 public final class PlayerInputSession implements Listener {
 
-    private static final Map<UUID, PlayerInputSession> SESSIONS = new ConcurrentHashMap<>();
+    public static final Map<UUID, PlayerInputSession> SESSIONS = new ConcurrentHashMap<>();
 
     private final Homestead plugin;
     private final Player player;
@@ -91,10 +105,23 @@ public final class PlayerInputSession implements Listener {
         this.timeoutTask = plugin.runAsyncTaskLater(this::internalDestroy, builder.timeoutSeconds);
     }
 
+    /**
+     * Check whether the given player is currently waiting for input.
+     *
+     * @param player the player to check
+     * @return {@code true} if an active input session exists for the player
+     */
     public static boolean isWaitingForInput(Player player) {
         return SESSIONS.containsKey(player.getUniqueId());
     }
 
+    /**
+     * Create a new builder for a player input session.
+     *
+     * @param plugin the plugin instance
+     * @param player the player to request input from
+     * @return a new builder instance
+     */
     public static Builder builder(Homestead plugin, Player player) {
         return new Builder(plugin, player);
     }
@@ -150,7 +177,12 @@ public final class PlayerInputSession implements Listener {
         }
     }
 
+    /**
+     * A builder for constructing {@link PlayerInputSession} instances with
+     * a fluent API.
+     */
     public static final class Builder {
+
         private final Homestead plugin;
         private final Player player;
         private BiConsumer<Player, String> callback;
@@ -165,37 +197,83 @@ public final class PlayerInputSession implements Listener {
             this.player = player;
         }
 
+        /**
+         * Set the callback invoked with the player's input.
+         *
+         * @param callback the callback receiving the player and their input
+         * @return this builder
+         */
         public Builder callback(BiConsumer<Player, String> callback) {
             this.callback = callback;
             return this;
         }
 
+        /**
+         * Set a validator that filters acceptable input. The session is
+         * only forwarded to the callback when this returns {@code true}.
+         *
+         * @param validator the input validator
+         * @return this builder
+         */
         public Builder validator(Function<String, Boolean> validator) {
             this.validator = validator;
             return this;
         }
 
+        /**
+         * Set a callback invoked when the player types "cancel".
+         *
+         * @param onCancel the cancel callback
+         * @return this builder
+         */
         public Builder onCancel(Consumer<Player> onCancel) {
             this.onCancel = onCancel;
             return this;
         }
 
+        /**
+         * Set the prompt ID used to look up the display message.
+         *
+         * @param promptId the prompt identifier
+         * @return this builder
+         */
         public Builder prompt(int promptId) {
             this.promptId = promptId;
             return this;
         }
 
+        /**
+         * Set the prompt ID and placeholder values for the display message.
+         *
+         * @param promptId          the prompt identifier
+         * @param promptPlaceholder the placeholder values to apply
+         * @return this builder
+         */
         public Builder prompt(int promptId, Placeholder promptPlaceholder) {
             this.promptId = promptId;
             this.promptPlaceholder = promptPlaceholder;
             return this;
         }
 
+        /**
+         * Set the timeout in seconds before the session is automatically
+         * destroyed.
+         *
+         * @param seconds the timeout duration
+         * @return this builder
+         */
         public Builder timeout(int seconds) {
             this.timeoutSeconds = seconds;
             return this;
         }
 
+        /**
+         * Build the session. A callback must have been set via
+         * {@link #callback(BiConsumer)}.
+         *
+         * @return the new player input session
+         * @throws IllegalStateException if no callback was set
+         */
         public PlayerInputSession build() {
             if (callback == null) {
                 throw new IllegalStateException("Callback must be set");

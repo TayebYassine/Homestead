@@ -20,17 +20,18 @@ import java.util.stream.Collectors;
  */
 public final class SubAreaManager {
     private SubAreaManager() {
+        throw new AssertionError("Uninstantiable class");
     }
 
     /**
      * Create a new sub-area.
      *
-     * @param region The region
-     * @param name   The sub-area name
-     * @param world  The world
-     * @param point1 The first corner point
-     * @param point2 The second corner point
-     * @return The created SubArea.
+     * @param region the region
+     * @param name   the sub-area name
+     * @param world  the world
+     * @param point1 the first corner point
+     * @param point2 the second corner point
+     * @return the created sub-area
      */
     public static SubArea createSubArea(Region region, String name, World world, Block point1, Block point2) {
         return createSubArea(region.getUniqueId(), name, world, point1, point2, region.getPlayerFlags());
@@ -39,13 +40,13 @@ public final class SubAreaManager {
     /**
      * Create a new sub-area.
      *
-     * @param regionId The region ID
-     * @param name     The sub-area name
-     * @param world    The world
-     * @param point1   The first corner point
-     * @param point2   The second corner point
-     * @param flags    Default global player flags
-     * @return The created SubArea.
+     * @param regionId the region ID
+     * @param name     the sub-area name
+     * @param world    the world
+     * @param point1   the first corner point
+     * @param point2   the second corner point
+     * @param flags    default global player flags
+     * @return the created sub-area
      */
     public static SubArea createSubArea(long regionId, String name, World world, Block point1, Block point2, long flags) {
         SubArea subArea = new SubArea(
@@ -62,7 +63,7 @@ public final class SubAreaManager {
     /**
      * Returns an immutable view of every loaded sub-area.
      *
-     * @return List of all sub-areas.
+     * @return list of all sub-areas
      */
     public static List<SubArea> getAll() {
         return Homestead.SUBAREA_CACHE.getAll();
@@ -71,7 +72,7 @@ public final class SubAreaManager {
     /**
      * Returns the number of sub-areas in the server.
      *
-     * @return Sub-area count.
+     * @return sub-area count
      */
     public static int getSubAreaCount() {
         return getAll().size();
@@ -80,8 +81,8 @@ public final class SubAreaManager {
     /**
      * Returns the number of sub-areas in a region.
      *
-     * @param region The region
-     * @return Sub-area count.
+     * @param region the region
+     * @return sub-area count
      */
     public static int getSubAreaCount(Region region) {
         return getSubAreaCount(region.getUniqueId());
@@ -90,8 +91,8 @@ public final class SubAreaManager {
     /**
      * Returns the number of sub-areas in a region.
      *
-     * @param regionId The region ID
-     * @return Sub-area count.
+     * @param regionId the region ID
+     * @return sub-area count
      */
     public static int getSubAreaCount(long regionId) {
         return getSubAreasOfRegion(regionId).size();
@@ -100,8 +101,8 @@ public final class SubAreaManager {
     /**
      * Checks if a region has any sub-areas.
      *
-     * @param region The region
-     * @return {@code true} if sub-areas exist.
+     * @param region the region
+     * @return {@code true} if sub-areas exist
      */
     public static boolean hasSubAreas(Region region) {
         return hasSubAreas(region.getUniqueId());
@@ -110,8 +111,8 @@ public final class SubAreaManager {
     /**
      * Checks if a region has any sub-areas.
      *
-     * @param regionId The region ID
-     * @return {@code true} if sub-areas exist.
+     * @param regionId the region ID
+     * @return {@code true} if sub-areas exist
      */
     public static boolean hasSubAreas(long regionId) {
         return !getSubAreasOfRegion(regionId).isEmpty();
@@ -120,8 +121,8 @@ public final class SubAreaManager {
     /**
      * Get sub-areas of a region.
      *
-     * @param region The region
-     * @return List of sub-areas.
+     * @param region the region
+     * @return list of sub-areas
      */
     public static List<SubArea> getSubAreasOfRegion(Region region) {
         return getSubAreasOfRegion(region.getUniqueId());
@@ -130,8 +131,8 @@ public final class SubAreaManager {
     /**
      * Get sub-areas of a region.
      *
-     * @param regionId The region ID
-     * @return List of sub-areas.
+     * @param regionId the region ID
+     * @return list of sub-areas
      */
     public static List<SubArea> getSubAreasOfRegion(long regionId) {
         List<SubArea> subAreas = new ArrayList<>();
@@ -146,8 +147,8 @@ public final class SubAreaManager {
     /**
      * Returns all sub-areas in a specific world.
      *
-     * @param world The world
-     * @return List of sub-areas.
+     * @param world the world
+     * @return list of sub-areas
      */
     public static List<SubArea> getSubAreasInWorld(World world) {
         return getSubAreasInWorld(world.getUID());
@@ -156,8 +157,8 @@ public final class SubAreaManager {
     /**
      * Returns all sub-areas in a specific world.
      *
-     * @param worldId The world UUID
-     * @return List of sub-areas.
+     * @param worldId the world UUID
+     * @return list of sub-areas
      */
     public static List<SubArea> getSubAreasInWorld(UUID worldId) {
         List<SubArea> result = new ArrayList<>();
@@ -172,8 +173,8 @@ public final class SubAreaManager {
     /**
      * Returns all sub-area names for a region (useful for GUIs).
      *
-     * @param region The region
-     * @return List of names.
+     * @param region the region
+     * @return list of names
      */
     public static List<String> getSubAreaNames(Region region) {
         return getSubAreaNames(region.getUniqueId());
@@ -182,8 +183,8 @@ public final class SubAreaManager {
     /**
      * Returns all sub-area names for a region.
      *
-     * @param regionId The region ID
-     * @return List of names.
+     * @param regionId the region ID
+     * @return list of names
      */
     public static List<String> getSubAreaNames(long regionId) {
         return getSubAreasOfRegion(regionId).stream()
@@ -194,8 +195,8 @@ public final class SubAreaManager {
     /**
      * Retrieves the sub-area with the exact ID, or null if none exists.
      *
-     * @param id The sub-area ID
-     * @return The SubArea, or {@code null}.
+     * @param id the sub-area ID
+     * @return the sub-area, or {@code null}
      */
     public static SubArea findSubArea(long id) {
         return Homestead.SUBAREA_CACHE.get(id);
@@ -204,9 +205,9 @@ public final class SubAreaManager {
     /**
      * Retrieves the sub-area with the exact name (case-insensitive) within a region, or null if none exists.
      *
-     * @param regionId The region ID
-     * @param name     The sub-area name
-     * @return The SubArea, or {@code null}.
+     * @param regionId the region ID
+     * @param name     the sub-area name
+     * @return the sub-area, or {@code null}
      */
     public static SubArea findSubArea(long regionId, String name) {
         for (SubArea area : getAll()) {
@@ -218,10 +219,41 @@ public final class SubAreaManager {
     }
 
     /**
+     * Returns all sub-areas a player is a member of.
+     *
+     * @param player the player
+     * @return list of sub-areas
+     */
+    public static List<SubArea> getPlayerSubAreas(Player player) {
+        return getPlayerSubAreas(player.getUniqueId());
+    }
+
+    /**
+     * Returns all sub-areas a player is a member of.
+     *
+     * @param playerId the player UUID
+     * @return list of sub-areas
+     */
+    public static List<SubArea> getPlayerSubAreas(UUID playerId) {
+        List<Long> subAreaIds = MemberManager.getAllMembersOfPlayer(playerId).stream()
+                .map(RegionMember::getSubAreaId)
+                .filter(subAreaId -> subAreaId != -1L)
+                .distinct()
+                .toList();
+
+        List<SubArea> result = new ArrayList<>();
+        for (Long id : subAreaIds) {
+            SubArea area = findSubArea(id);
+            if (area != null) result.add(area);
+        }
+        return result;
+    }
+
+    /**
      * Finds the sub-area containing the given block.
      *
-     * @param block The block
-     * @return The SubArea, or {@code null}.
+     * @param block the block
+     * @return the sub-area, or {@code null}
      */
     public static SubArea findSubAreaHasBlockInside(Block block) {
         return findSubAreaHasLocationInside(block.getLocation());
@@ -230,8 +262,8 @@ public final class SubAreaManager {
     /**
      * Finds the sub-area containing the given location.
      *
-     * @param location The location
-     * @return The SubArea, or {@code null}.
+     * @param location the location
+     * @return the sub-area, or {@code null}
      */
     public static SubArea findSubAreaHasLocationInside(Location location) {
         for (SubArea subArea : getAll()) {
@@ -245,9 +277,9 @@ public final class SubAreaManager {
     /**
      * Finds the sub-area containing the given location, scoped to a specific region.
      *
-     * @param location The location
-     * @param regionId The region ID to search within
-     * @return The SubArea, or {@code null}.
+     * @param location the location
+     * @param regionId the region ID to search within
+     * @return the sub-area, or {@code null}
      */
     public static SubArea findSubAreaByLocationInRegion(Location location, long regionId) {
         for (SubArea subArea : getSubAreasOfRegion(regionId)) {
@@ -261,8 +293,8 @@ public final class SubAreaManager {
     /**
      * Checks if a location is inside any sub-area on the server.
      *
-     * @param location The location
-     * @return {@code true} if inside any sub-area.
+     * @param location the location
+     * @return {@code true} if inside any sub-area
      */
     public static boolean isLocationInAnySubArea(Location location) {
         return findSubAreaHasLocationInside(location) != null;
@@ -271,8 +303,8 @@ public final class SubAreaManager {
     /**
      * Checks if a block is inside any sub-area on the server.
      *
-     * @param block The block
-     * @return {@code true} if inside any sub-area.
+     * @param block the block
+     * @return {@code true} if inside any sub-area
      */
     public static boolean isBlockInAnySubArea(Block block) {
         return isLocationInAnySubArea(block.getLocation());
@@ -281,9 +313,9 @@ public final class SubAreaManager {
     /**
      * Checks if a player is currently inside a specific sub-area.
      *
-     * @param player  The player
-     * @param subArea The sub-area
-     * @return {@code true} if the player is inside.
+     * @param player  the player
+     * @param subArea the sub-area
+     * @return {@code true} if the player is inside
      */
     public static boolean isPlayerInSubArea(Player player, SubArea subArea) {
         return subArea.isLocationInside(player.getLocation());
@@ -292,8 +324,8 @@ public final class SubAreaManager {
     /**
      * Returns all sub-areas that intersect (overlap) with the given sub-area.
      *
-     * @param subArea The sub-area to check
-     * @return List of intersecting sub-areas (excluding itself).
+     * @param subArea the sub-area to check
+     * @return list of intersecting sub-areas (excluding itself)
      */
     public static List<SubArea> getSubAreasIntersecting(SubArea subArea) {
         List<SubArea> intersecting = new ArrayList<>();
@@ -309,8 +341,8 @@ public final class SubAreaManager {
     /**
      * Returns all sub-areas in a region that intersect with region chunks.
      *
-     * @param region The region
-     * @return List of sub-areas that overlap with the region's claimed chunks.
+     * @param region the region
+     * @return list of sub-areas that overlap with the region's claimed chunks
      */
     public static List<SubArea> getSubAreasIntersectingRegion(Region region) {
         return getSubAreasIntersectingRegion(region.getUniqueId());
@@ -319,8 +351,8 @@ public final class SubAreaManager {
     /**
      * Returns all sub-areas in a region that intersect with region chunks.
      *
-     * @param regionId The region ID
-     * @return List of sub-areas that overlap with the region's claimed chunks.
+     * @param regionId the region ID
+     * @return list of sub-areas that overlap with the region's claimed chunks
      */
     public static List<SubArea> getSubAreasIntersectingRegion(long regionId) {
         List<SubArea> result = new ArrayList<>();
@@ -350,8 +382,8 @@ public final class SubAreaManager {
     /**
      * Returns the total volume (in blocks) of all sub-areas in a region.
      *
-     * @param region The region
-     * @return Total volume.
+     * @param region the region
+     * @return total volume
      */
     public static int getTotalVolume(Region region) {
         return getTotalVolume(region.getUniqueId());
@@ -360,8 +392,8 @@ public final class SubAreaManager {
     /**
      * Returns the total volume (in blocks) of all sub-areas in a region.
      *
-     * @param regionId The region ID
-     * @return Total volume.
+     * @param regionId the region ID
+     * @return total volume
      */
     public static int getTotalVolume(long regionId) {
         return getSubAreasOfRegion(regionId).stream()
@@ -372,8 +404,8 @@ public final class SubAreaManager {
     /**
      * Returns the largest sub-area in a region by volume.
      *
-     * @param region The region
-     * @return The largest SubArea, or {@code null}.
+     * @param region the region
+     * @return the largest sub-area, or {@code null}
      */
     public static SubArea getLargestSubArea(Region region) {
         return getLargestSubArea(region.getUniqueId());
@@ -382,8 +414,8 @@ public final class SubAreaManager {
     /**
      * Returns the largest sub-area in a region by volume.
      *
-     * @param regionId The region ID
-     * @return The largest SubArea, or {@code null}.
+     * @param regionId the region ID
+     * @return the largest sub-area, or {@code null}
      */
     public static SubArea getLargestSubArea(long regionId) {
         return getSubAreasOfRegion(regionId).stream()
@@ -394,10 +426,10 @@ public final class SubAreaManager {
     /**
      * Returns sub-areas filtered by volume range.
      *
-     * @param region    The region
-     * @param minVolume Minimum volume (inclusive)
-     * @param maxVolume Maximum volume (inclusive)
-     * @return List of matching sub-areas.
+     * @param region    the region
+     * @param minVolume minimum volume (inclusive)
+     * @param maxVolume maximum volume (inclusive)
+     * @return list of matching sub-areas
      */
     public static List<SubArea> getSubAreasByVolumeRange(Region region, int minVolume, int maxVolume) {
         return getSubAreasByVolumeRange(region.getUniqueId(), minVolume, maxVolume);
@@ -406,10 +438,10 @@ public final class SubAreaManager {
     /**
      * Returns sub-areas filtered by volume range.
      *
-     * @param regionId  The region ID
-     * @param minVolume Minimum volume (inclusive)
-     * @param maxVolume Maximum volume (inclusive)
-     * @return List of matching sub-areas.
+     * @param regionId  the region ID
+     * @param minVolume minimum volume (inclusive)
+     * @param maxVolume maximum volume (inclusive)
+     * @return list of matching sub-areas
      */
     public static List<SubArea> getSubAreasByVolumeRange(long regionId, int minVolume, int maxVolume) {
         return getSubAreasOfRegion(regionId).stream()
@@ -423,8 +455,8 @@ public final class SubAreaManager {
     /**
      * Calculates the center location of a sub-area.
      *
-     * @param subArea The sub-area
-     * @return The center location, or {@code null} if world is unloaded.
+     * @param subArea the sub-area
+     * @return the center location, or {@code null} if world is unloaded
      */
     public static Location getSubAreaCenter(SubArea subArea) {
         World world = subArea.getWorld();
@@ -439,8 +471,8 @@ public final class SubAreaManager {
     /**
      * Returns all 8 corner blocks of a sub-area.
      *
-     * @param subArea The sub-area
-     * @return List of corner locations.
+     * @param subArea the sub-area
+     * @return list of corner locations
      */
     public static List<Location> getSubAreaCorners(SubArea subArea) {
         World world = subArea.getWorld();
@@ -462,42 +494,11 @@ public final class SubAreaManager {
     }
 
     /**
-     * Returns all sub-areas a player is a member of.
-     *
-     * @param player The player
-     * @return List of sub-areas.
-     */
-    public static List<SubArea> getPlayerSubAreas(Player player) {
-        return getPlayerSubAreas(player.getUniqueId());
-    }
-
-    /**
-     * Returns all sub-areas a player is a member of.
-     *
-     * @param playerId The player UUID
-     * @return List of sub-areas.
-     */
-    public static List<SubArea> getPlayerSubAreas(UUID playerId) {
-        List<Long> subAreaIds = MemberManager.getAllMembersOfPlayer(playerId).stream()
-                .map(RegionMember::getSubAreaId)
-                .filter(subAreaId -> subAreaId != -1L)
-                .distinct()
-                .toList();
-
-        List<SubArea> result = new ArrayList<>();
-        for (Long id : subAreaIds) {
-            SubArea area = findSubArea(id);
-            if (area != null) result.add(area);
-        }
-        return result;
-    }
-
-    /**
      * Safely renames a sub-area, ensuring uniqueness within the region.
      *
-     * @param subArea The sub-area to rename
-     * @param newName The desired name
-     * @return The actual name assigned (may have counter appended).
+     * @param subArea the sub-area to rename
+     * @param newName the desired name
+     * @return the actual name assigned (may have counter appended)
      */
     public static String renameSubArea(SubArea subArea, String newName) {
         String actualName = newName;
@@ -515,9 +516,9 @@ public final class SubAreaManager {
     /**
      * Resizes a sub-area to new corner points.
      *
-     * @param subArea The sub-area
-     * @param point1  The new first corner
-     * @param point2  The new second corner
+     * @param subArea the sub-area
+     * @param point1  the new first corner
+     * @param point2  the new second corner
      */
     public static void resizeSubArea(SubArea subArea, Block point1, Block point2) {
         subArea.setPoint1(point1);
@@ -527,8 +528,8 @@ public final class SubAreaManager {
     /**
      * Expands a sub-area by the given amount in all directions.
      *
-     * @param subArea The sub-area
-     * @param amount  Blocks to expand (must be positive)
+     * @param subArea the sub-area
+     * @param amount  blocks to expand (must be positive)
      */
     public static void expandSubArea(SubArea subArea, int amount) {
         if (amount <= 0) return;
@@ -546,7 +547,7 @@ public final class SubAreaManager {
     /**
      * Permanently deletes the specified sub-area and its related members.
      *
-     * @param id The sub-area ID
+     * @param id the sub-area ID
      */
     public static void deleteSubArea(long id) {
         Homestead.SUBAREA_CACHE.remove(id);
@@ -555,8 +556,8 @@ public final class SubAreaManager {
     /**
      * Deletes all sub-areas belonging to a region.
      *
-     * @param region The region
-     * @return The number of sub-areas deleted.
+     * @param region the region
+     * @return the number of sub-areas deleted
      */
     public static int deleteSubAreasOfRegion(Region region) {
         return deleteSubAreasOfRegion(region.getUniqueId());
@@ -565,8 +566,8 @@ public final class SubAreaManager {
     /**
      * Deletes all sub-areas belonging to a region.
      *
-     * @param regionId The region ID
-     * @return The number of sub-areas deleted.
+     * @param regionId the region ID
+     * @return the number of sub-areas deleted
      */
     public static int deleteSubAreasOfRegion(long regionId) {
         List<Long> toRemove = getSubAreasOfRegion(regionId).stream()
@@ -585,9 +586,9 @@ public final class SubAreaManager {
     /**
      * Checks whether any sub-area in the region already carries the supplied name, ignoring case.
      *
-     * @param regionId The region ID
-     * @param name     The name to check
-     * @return {@code true} if the name is used.
+     * @param regionId the region ID
+     * @param name     the name to check
+     * @return {@code true} if the name is used
      */
     public static boolean isNameUsed(long regionId, String name) {
         return getAll().stream()
@@ -600,7 +601,7 @@ public final class SubAreaManager {
      * - Regions that no longer exist
      * - Members whose player UUID no longer maps to a known player
      *
-     * @return Number of corrupted sub-areas removed + member fixes.
+     * @return number of corrupted sub-areas removed + member fixes
      */
     public static int cleanupInvalidSubAreas() {
         Set<UUID> validWorlds = Bukkit.getWorlds().stream()

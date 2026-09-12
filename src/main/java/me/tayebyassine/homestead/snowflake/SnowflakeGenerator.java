@@ -13,8 +13,8 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Snowflake ID Generator for Homestead models.
  */
-public class SnowflakeGenerator {
-    private static final long CUSTOM_EPOCH = 1704067200000L;
+public final class SnowflakeGenerator {
+    private static final long CUSTOM_EPOCH = 1704067200000L; // 2024-01-01T00:00:00.000Z
 
     private static final long WORKER_ID_BITS = 10L;
     private static final long SEQUENCE_BITS = 12L;
@@ -34,7 +34,7 @@ public class SnowflakeGenerator {
     /**
      * Creates a generator with a specific worker ID.
      *
-     * @param workerId Unique ID for this machine/worker, ranging from 0 to 1023
+     * @param workerId unique ID for this machine/worker, ranging from 0 to 1023
      * @throws IllegalArgumentException if workerId is out of range
      */
     public SnowflakeGenerator(long workerId) {
@@ -113,7 +113,7 @@ public class SnowflakeGenerator {
     /**
      * Generates the next unique Snowflake ID.
      *
-     * @return A unique 64-bit positive long ID
+     * @return a unique 64-bit positive long ID
      * @throws IllegalStateException if the clock moves backwards
      */
     public long nextId() {

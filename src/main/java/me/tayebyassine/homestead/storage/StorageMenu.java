@@ -22,7 +22,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class StorageMenu implements Listener {
+/**
+ * A player-specific inventory menu backed by a {@link SharedStorage}.
+ *
+ * <p>Handles all click/drag interactions, synchronizes changes back to the
+ * storage, and keeps the view updated when other players modify the same
+ * storage through {@link StorageManager}.
+ * </p>
+ */
+public final class StorageMenu implements Listener {
+
     private final Homestead plugin;
     private final Player player;
     private final long regionId;
@@ -36,6 +45,14 @@ public class StorageMenu implements Listener {
     private boolean valid;
     private ItemStack cursorItem;
 
+    /**
+     * Create and open a new storage menu for the given player.
+     *
+     * @param player   the player viewing the storage
+     * @param regionId the unique region ID
+     * @param title    the inventory title shown to the player
+     * @param size     the inventory size (must be a valid Bukkit size)
+     */
     public StorageMenu(Player player, long regionId, String title, int size) {
         this.plugin = Homestead.getInstance();
         this.player = player;
@@ -52,18 +69,36 @@ public class StorageMenu implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
+    /**
+     * Get the player viewing this menu.
+     *
+     * @return the player
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Get the unique region ID this menu is associated with.
+     *
+     * @return the region ID
+     */
     public long getRegionId() {
         return regionId;
     }
 
+    /**
+     * Whether this menu is still open and valid for interaction.
+     *
+     * @return {@code true} if the menu is open and the player is online
+     */
     public boolean isValid() {
         return valid && player.isOnline() && player.getOpenInventory().getTopInventory().equals(inventory);
     }
 
+    /**
+     * Refresh the entire inventory display from the current storage state.
+     */
     public void refreshDisplay() {
         Map<Integer, ItemStack> items = storage.getAllItems();
         for (int i = 0; i < inventory.getSize(); i++) {
@@ -72,17 +107,31 @@ public class StorageMenu implements Listener {
         }
     }
 
+    /**
+     * Update a single slot in the display.
+     *
+     * @param slot the slot index
+     * @param item the item to show, or {@code null} to clear
+     */
     public void updateSlot(int slot, ItemStack item) {
         if (!valid) return;
         inventory.setItem(slot, item != null ? item.clone() : null);
     }
 
+    /**
+     * Open the inventory for the player and register it with the inventory
+     * manager.
+     */
     public void open() {
         player.openInventory(inventory);
         passthroughMenu = Menu.builder(title, inventory.getSize()).build();
         InventoryManager.register(player, passthroughMenu);
     }
 
+    /**
+     * Force-close this menu, unregister all listeners, and close the
+     * inventory if it is still open.
+     */
     public void forceClose() {
         if (!valid) return;
         valid = false;
@@ -95,6 +144,13 @@ public class StorageMenu implements Listener {
         }
     }
 
+    /**
+     * Add a static item with an optional click callback to the inventory.
+     *
+     * @param slot      the slot index
+     * @param itemStack the item to display
+     * @param callback  the click callback, or {@code null} for no action
+     */
     public void addItem(int slot, ItemStack itemStack, BiConsumer<Player, InventoryClickEvent> callback) {
         if (slot < 0 || slot >= inventory.getSize()) return;
         inventory.setItem(slot, itemStack);
@@ -201,6 +257,12 @@ public class StorageMenu implements Listener {
         cleanup();
     }
 
+    /**
+     * Process a click inside the storage region of the inventory.
+     *
+     * @param event the original click event
+     * @param slot  the raw slot clicked
+     */
     private void handleStorageClick(InventoryClickEvent event, int slot) {
         ClickType clickType = event.getClick();
         ItemStack cursor = event.getCursor();
@@ -352,6 +414,12 @@ public class StorageMenu implements Listener {
         StorageManager.saveStorage(regionId);
     }
 
+    /**
+     * Handle a shift-click from the player's inventory into the storage.
+     * Attempts to merge with existing stacks first, then fills empty slots.
+     *
+     * @param event the original click event
+     */
     private void handleShiftClickFromInventory(InventoryClickEvent event) {
         ItemStack item = event.getCurrentItem();
         if (item == null || item.getType().isAir()) return;
@@ -387,6 +455,10 @@ public class StorageMenu implements Listener {
         StorageManager.saveStorage(regionId);
     }
 
+    /**
+     * Unregister the passthrough menu from the inventory manager and
+     * destroy it.
+     */
     private void unregisterPassthrough() {
         InventoryManager.unregister(player);
         if (passthroughMenu != null) {
@@ -395,6 +467,10 @@ public class StorageMenu implements Listener {
         }
     }
 
+    /**
+     * Save storage, unregister from the manager, and unregister all event
+     * listeners. Called on close or disconnect.
+     */
     private void cleanup() {
         if (!valid) return;
         valid = false;

@@ -13,13 +13,14 @@ import java.util.stream.Collectors;
  */
 public final class RateManager {
     private RateManager() {
+        throw new AssertionError("Uninstantiable class");
     }
 
     /**
      * Retrieves a specific rating by its unique ID.
      *
-     * @param id The rating ID
-     * @return The {@link RegionRate}, or {@code null} if not found.
+     * @param id the rating ID
+     * @return the {@link RegionRate}, or {@code null} if not found
      */
     public static RegionRate getRate(long id) {
         return Homestead.RATE_CACHE.get(id);
@@ -28,8 +29,8 @@ public final class RateManager {
     /**
      * Returns all ratings for a specific region.
      *
-     * @param region The region
-     * @return List of ratings.
+     * @param region the region
+     * @return list of ratings
      */
     public static List<RegionRate> getRatesOfRegion(Region region) {
         return getRatesOfRegion(region.getUniqueId());
@@ -38,8 +39,8 @@ public final class RateManager {
     /**
      * Returns all ratings for a specific region.
      *
-     * @param regionId The region ID
-     * @return List of ratings.
+     * @param regionId the region ID
+     * @return list of ratings
      */
     public static List<RegionRate> getRatesOfRegion(long regionId) {
         return Homestead.RATE_CACHE.getAll().stream()
@@ -50,7 +51,7 @@ public final class RateManager {
     /**
      * Returns the number of ratings in the server.
      *
-     * @return Rating count.
+     * @return rating count
      */
     public static int getRateCount() {
         return Homestead.RATE_CACHE.getAll().size();
@@ -59,8 +60,8 @@ public final class RateManager {
     /**
      * Returns the number of ratings for a region.
      *
-     * @param region The region
-     * @return Rating count.
+     * @param region the region
+     * @return rating count
      */
     public static int getRateCount(Region region) {
         return getRateCount(region.getUniqueId());
@@ -69,8 +70,8 @@ public final class RateManager {
     /**
      * Returns the number of ratings for a region.
      *
-     * @param regionId The region ID
-     * @return Rating count.
+     * @param regionId the region ID
+     * @return rating count
      */
     public static int getRateCount(long regionId) {
         return (int) Homestead.RATE_CACHE.getAll().stream()
@@ -78,35 +79,13 @@ public final class RateManager {
                 .count();
     }
 
-    /**
-     * Returns the sum of all rating scores for a region.
-     *
-     * @param region The region
-     * @return Total score.
-     */
-    public static int getTotalScore(Region region) {
-        return getTotalScore(region.getUniqueId());
-    }
-
-    /**
-     * Returns the sum of all rating scores for a region.
-     *
-     * @param regionId The region ID
-     * @return Total score.
-     */
-    public static int getTotalScore(long regionId) {
-        return Homestead.RATE_CACHE.getAll().stream()
-                .filter(r -> r.getRegionId() == regionId)
-                .mapToInt(RegionRate::getRate)
-                .sum();
-    }
 
     /**
      * Add a rate score from a player to a region.
      *
-     * @param region The region
-     * @param player The player
-     * @param score  The score; ranging from 0 to 5
+     * @param region the region
+     * @param player the player
+     * @param score  the score; ranging from 0 to 5
      */
     public static void rateRegion(Region region, OfflinePlayer player, int score) {
         rateRegion(region.getUniqueId(), player, score);
@@ -115,9 +94,9 @@ public final class RateManager {
     /**
      * Add a rate score from a player to a region.
      *
-     * @param regionId The region ID
-     * @param player   The player
-     * @param score    The score; ranging from 0 to 5
+     * @param regionId the region ID
+     * @param player   the player
+     * @param score    the score; ranging from 0 to 5
      */
     public static void rateRegion(long regionId, OfflinePlayer player, int score) {
         RegionRate rate = Homestead.RATE_CACHE.getAll().stream()
@@ -133,10 +112,10 @@ public final class RateManager {
     /**
      * Updates an existing rating or creates a new one.
      *
-     * @param player The player
-     * @param region The region
-     * @param score  The new score
-     * @return {@code true} if an existing rating was updated, {@code false} if a new one was created.
+     * @param player the player
+     * @param region the region
+     * @param score  the new score
+     * @return {@code true} if an existing rating was updated, {@code false} if a new one was created
      */
     public static boolean updateRating(OfflinePlayer player, Region region, int score) {
         return updateRating(player, region.getUniqueId(), score);
@@ -145,10 +124,10 @@ public final class RateManager {
     /**
      * Updates an existing rating or creates a new one.
      *
-     * @param player   The player
-     * @param regionId The region ID
-     * @param score    The new score
-     * @return {@code true} if an existing rating was updated, {@code false} if a new one was created.
+     * @param player   the player
+     * @param regionId the region ID
+     * @param score    the new score
+     * @return {@code true} if an existing rating was updated, {@code false} if a new one was created
      */
     public static boolean updateRating(OfflinePlayer player, long regionId, int score) {
         boolean existed = hasRatedRegion(player, regionId);
@@ -157,10 +136,33 @@ public final class RateManager {
     }
 
     /**
+     * Returns the sum of all rating scores for a region.
+     *
+     * @param region the region
+     * @return total score
+     */
+    public static int getTotalScore(Region region) {
+        return getTotalScore(region.getUniqueId());
+    }
+
+    /**
+     * Returns the sum of all rating scores for a region.
+     *
+     * @param regionId the region ID
+     * @return total score
+     */
+    public static int getTotalScore(long regionId) {
+        return Homestead.RATE_CACHE.getAll().stream()
+                .filter(r -> r.getRegionId() == regionId)
+                .mapToInt(RegionRate::getRate)
+                .sum();
+    }
+
+    /**
      * Get the average rating of all scores submitted by players.
      *
-     * @param region The region
-     * @return Average rating, or {@code 0.0} if no ratings.
+     * @param region the region
+     * @return average rating, or {@code 0.0} if no ratings
      */
     public static double getAverageRating(Region region) {
         return getAverageRating(region.getUniqueId());
@@ -169,8 +171,8 @@ public final class RateManager {
     /**
      * Get the average rating of all scores submitted by players.
      *
-     * @param regionId The region ID
-     * @return Average rating, or {@code 0.0} if no ratings.
+     * @param regionId the region ID
+     * @return average rating, or {@code 0.0} if no ratings
      */
     public static double getAverageRating(long regionId) {
         List<RegionRate> rates = getRatesOfRegion(regionId);
@@ -183,8 +185,8 @@ public final class RateManager {
     /**
      * Returns the average rating rounded to the nearest integer (useful for star displays).
      *
-     * @param region The region
-     * @return Rounded rating, or {@code 0} if no ratings.
+     * @param region the region
+     * @return rounded rating, or {@code 0} if no ratings
      */
     public static int getAverageRatingRounded(Region region) {
         return getAverageRatingRounded(region.getUniqueId());
@@ -193,8 +195,8 @@ public final class RateManager {
     /**
      * Returns the average rating rounded to the nearest integer (useful for star displays).
      *
-     * @param regionId The region ID
-     * @return Rounded rating, or {@code 0} if no ratings.
+     * @param regionId the region ID
+     * @return rounded rating, or {@code 0} if no ratings
      */
     public static int getAverageRatingRounded(long regionId) {
         return (int) Math.round(getAverageRating(regionId));
@@ -203,8 +205,8 @@ public final class RateManager {
     /**
      * Returns the mode (most common rating) for a region.
      *
-     * @param region The region
-     * @return Mode score, or {@code 0} if no ratings.
+     * @param region the region
+     * @return mode score, or {@code 0} if no ratings
      */
     public static int getModeRating(Region region) {
         return getModeRating(region.getUniqueId());
@@ -213,8 +215,8 @@ public final class RateManager {
     /**
      * Returns the mode (most common rating) for a region.
      *
-     * @param regionId The region ID
-     * @return Mode score, or {@code 0} if no ratings.
+     * @param regionId the region ID
+     * @return mode score, or {@code 0} if no ratings
      */
     public static int getModeRating(long regionId) {
         Map<Integer, Integer> frequency = getRatingDistribution(regionId);
@@ -233,8 +235,8 @@ public final class RateManager {
     /**
      * Returns a distribution map of ratings (score -> count) for a region.
      *
-     * @param region The region
-     * @return Map of score to count.
+     * @param region the region
+     * @return map of score to count
      */
     public static Map<Integer, Integer> getRatingDistribution(Region region) {
         return getRatingDistribution(region.getUniqueId());
@@ -243,8 +245,8 @@ public final class RateManager {
     /**
      * Returns a distribution map of ratings (score -> count) for a region.
      *
-     * @param regionId The region ID
-     * @return Map of score to count.
+     * @param regionId the region ID
+     * @return map of score to count
      */
     public static Map<Integer, Integer> getRatingDistribution(long regionId) {
         Map<Integer, Integer> distribution = new HashMap<>();
@@ -257,9 +259,9 @@ public final class RateManager {
     /**
      * Returns the percentage of ratings that match a specific score.
      *
-     * @param region The region
-     * @param score  The score to check
-     * @return Percentage from 0.0 to 100.0.
+     * @param region the region
+     * @param score  the score to check
+     * @return percentage from 0.0 to 100.0
      */
     public static double getRatingPercentage(Region region, int score) {
         return getRatingPercentage(region.getUniqueId(), score);
@@ -268,9 +270,9 @@ public final class RateManager {
     /**
      * Returns the percentage of ratings that match a specific score.
      *
-     * @param regionId The region ID
-     * @param score    The score to check
-     * @return Percentage from 0.0 to 100.0.
+     * @param regionId the region ID
+     * @param score    the score to check
+     * @return percentage from 0.0 to 100.0
      */
     public static double getRatingPercentage(long regionId, int score) {
         int total = getRateCount(regionId);
@@ -282,8 +284,8 @@ public final class RateManager {
     /**
      * Returns the top-rated regions, sorted by average rating descending.
      *
-     * @param limit Maximum number of results
-     * @return List of top-rated regions.
+     * @param limit maximum number of results
+     * @return list of top-rated regions
      */
     public static List<Region> getTopRatedRegions(int limit) {
         return RegionManager.getAll().stream()
@@ -295,8 +297,8 @@ public final class RateManager {
     /**
      * Returns the lowest-rated regions, sorted by average rating ascending.
      *
-     * @param limit Maximum number of results
-     * @return List of lowest-rated regions.
+     * @param limit maximum number of results
+     * @return list of lowest-rated regions
      */
     public static List<Region> getLowestRatedRegions(int limit) {
         return RegionManager.getAll().stream()
@@ -308,7 +310,7 @@ public final class RateManager {
     /**
      * Returns all regions that have not received any ratings.
      *
-     * @return List of unrated regions.
+     * @return list of unrated regions
      */
     public static List<Region> getUnratedRegions() {
         return RegionManager.getAll().stream()
@@ -319,8 +321,8 @@ public final class RateManager {
     /**
      * Returns the average rating a specific player gives across all regions.
      *
-     * @param player The player
-     * @return Average score given, or {@code 0.0} if no ratings.
+     * @param player the player
+     * @return average score given, or {@code 0.0} if no ratings
      */
     public static double getPlayerAverageRating(OfflinePlayer player) {
         return getPlayerAverageRating(player.getUniqueId());
@@ -329,8 +331,8 @@ public final class RateManager {
     /**
      * Returns the average rating a specific player gives across all regions.
      *
-     * @param playerId The player UUID
-     * @return Average score given, or {@code 0.0} if no ratings.
+     * @param playerId the player UUID
+     * @return average score given, or {@code 0.0} if no ratings
      */
     public static double getPlayerAverageRating(UUID playerId) {
         return Homestead.RATE_CACHE.getAll().stream()
@@ -343,8 +345,8 @@ public final class RateManager {
     /**
      * Returns all region IDs that a player has rated.
      *
-     * @param player The player
-     * @return List of region IDs.
+     * @param player the player
+     * @return list of region IDs
      */
     public static List<Long> getRegionsRatedByPlayer(OfflinePlayer player) {
         return getRegionsRatedByPlayer(player.getUniqueId());
@@ -353,8 +355,8 @@ public final class RateManager {
     /**
      * Returns all region IDs that a player has rated.
      *
-     * @param playerId The player UUID
-     * @return List of region IDs.
+     * @param playerId the player UUID
+     * @return list of region IDs
      */
     public static List<Long> getRegionsRatedByPlayer(UUID playerId) {
         return Homestead.RATE_CACHE.getAll().stream()
@@ -367,9 +369,9 @@ public final class RateManager {
     /**
      * Checks if a player has rated a region.
      *
-     * @param player The player
-     * @param region The region
-     * @return {@code true} if the player has rated the region.
+     * @param player the player
+     * @param region the region
+     * @return {@code true} if the player has rated the region
      */
     public static boolean hasRatedRegion(OfflinePlayer player, Region region) {
         return hasRatedRegion(player, region.getUniqueId());
@@ -378,9 +380,9 @@ public final class RateManager {
     /**
      * Checks if a player has rated a region.
      *
-     * @param player   The player
-     * @param regionId The region ID
-     * @return {@code true} if the player has rated the region.
+     * @param player   the player
+     * @param regionId the region ID
+     * @return {@code true} if the player has rated the region
      */
     public static boolean hasRatedRegion(OfflinePlayer player, long regionId) {
         return Homestead.RATE_CACHE.getAll().stream()
@@ -390,9 +392,9 @@ public final class RateManager {
     /**
      * Checks if a player has rated a region using UUID only.
      *
-     * @param playerId The player UUID
-     * @param regionId The region ID
-     * @return {@code true} if the player has rated the region.
+     * @param playerId the player UUID
+     * @param regionId the region ID
+     * @return {@code true} if the player has rated the region
      */
     public static boolean hasRatedRegion(UUID playerId, long regionId) {
         return Homestead.RATE_CACHE.getAll().stream()
@@ -402,9 +404,9 @@ public final class RateManager {
     /**
      * Retrieves a player's specific rating for a region.
      *
-     * @param player The player
-     * @param region The region
-     * @return The {@link RegionRate}, or {@code null} if not found.
+     * @param player the player
+     * @param region the region
+     * @return the {@link RegionRate}, or {@code null} if not found
      */
     public static RegionRate getPlayerRate(OfflinePlayer player, Region region) {
         return getPlayerRate(player, region.getUniqueId());
@@ -413,9 +415,9 @@ public final class RateManager {
     /**
      * Retrieves a player's specific rating for a region.
      *
-     * @param player   The player
-     * @param regionId The region ID
-     * @return The {@link RegionRate}, or {@code null} if not found.
+     * @param player   the player
+     * @param regionId the region ID
+     * @return the {@link RegionRate}, or {@code null} if not found
      */
     public static RegionRate getPlayerRate(OfflinePlayer player, long regionId) {
         return Homestead.RATE_CACHE.getAll().stream()
@@ -427,9 +429,9 @@ public final class RateManager {
     /**
      * Deletes a specific player's rating for a region.
      *
-     * @param player The player
-     * @param region The region
-     * @return {@code true} if a rating was found and deleted.
+     * @param player the player
+     * @param region the region
+     * @return {@code true} if a rating was found and deleted
      */
     public static boolean deletePlayerRating(OfflinePlayer player, Region region) {
         return deletePlayerRating(player, region.getUniqueId());
@@ -438,9 +440,9 @@ public final class RateManager {
     /**
      * Deletes a specific player's rating for a region.
      *
-     * @param player   The player
-     * @param regionId The region ID
-     * @return {@code true} if a rating was found and deleted.
+     * @param player   the player
+     * @param regionId the region ID
+     * @return {@code true} if a rating was found and deleted
      */
     public static boolean deletePlayerRating(OfflinePlayer player, long regionId) {
         RegionRate rate = getPlayerRate(player, regionId);
@@ -452,8 +454,8 @@ public final class RateManager {
     /**
      * Deletes all ratings submitted by a specific player.
      *
-     * @param player The player
-     * @return The number of ratings deleted.
+     * @param player the player
+     * @return the number of ratings deleted
      */
     public static int deleteAllRatingsByPlayer(OfflinePlayer player) {
         return deleteAllRatingsByPlayer(player.getUniqueId());
@@ -462,8 +464,8 @@ public final class RateManager {
     /**
      * Deletes all ratings submitted by a specific player.
      *
-     * @param playerId The player UUID
-     * @return The number of ratings deleted.
+     * @param playerId the player UUID
+     * @return the number of ratings deleted
      */
     public static int deleteAllRatingsByPlayer(UUID playerId) {
         List<Long> toRemove = Homestead.RATE_CACHE.getAll().stream()
@@ -480,7 +482,7 @@ public final class RateManager {
     /**
      * Delete all ratings sent to this region.
      *
-     * @param region The region
+     * @param region the region
      */
     public static void deleteAll(Region region) {
         deleteAll(region.getUniqueId());
@@ -489,7 +491,7 @@ public final class RateManager {
     /**
      * Delete all ratings sent to this region.
      *
-     * @param regionId The region ID
+     * @param regionId the region ID
      */
     public static void deleteAll(long regionId) {
         List<Long> toRemove = Homestead.RATE_CACHE.getAll().stream()
@@ -505,7 +507,7 @@ public final class RateManager {
     /**
      * Deletes every rating in the cache. Use with caution.
      *
-     * @return The number of ratings deleted.
+     * @return the number of ratings deleted
      */
     public static int deleteAllRatings() {
         List<Long> ids = Homestead.RATE_CACHE.getAll().stream()
@@ -523,7 +525,7 @@ public final class RateManager {
      * - Players whose UUID no longer maps to a known player<br>
      * - Regions that no longer exist
      *
-     * @return Number of corrupted ratings removed.
+     * @return number of corrupted ratings removed
      */
     public static int cleanupInvalidRatings() {
         List<Long> toRemove = new ArrayList<>();

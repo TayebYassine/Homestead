@@ -13,13 +13,14 @@ public final class LevelManager {
     private static final Random random = new Random();
 
     private LevelManager() {
+        throw new AssertionError("Uninstantiable class");
     }
 
     /**
      * Create a new level entry for a region.
      *
-     * @param regionId The region ID
-     * @return The created Level, or {@code null} if one already exists.
+     * @param regionId the region ID
+     * @return the created level, or {@code null} if one already exists
      */
     public static Level createLevel(long regionId) {
         if (getLevelByRegion(regionId) != null) {
@@ -34,7 +35,7 @@ public final class LevelManager {
     /**
      * Returns an immutable view of every loaded level.
      *
-     * @return List of all levels.
+     * @return list of all levels
      */
     public static List<Level> getAll() {
         return Homestead.LEVEL_CACHE.getAll();
@@ -43,7 +44,7 @@ public final class LevelManager {
     /**
      * Returns all region IDs that have a level entry.
      *
-     * @return List of region IDs.
+     * @return list of region IDs
      */
     public static List<Long> getAllRegions() {
         return getAll().stream()
@@ -55,8 +56,8 @@ public final class LevelManager {
     /**
      * Get level by region ID.
      *
-     * @param regionId The region ID
-     * @return The Level, or {@code null} if not found.
+     * @param regionId the region ID
+     * @return the level, or {@code null} if not found
      */
     public static Level getLevelByRegion(long regionId) {
         for (Level level : getAll()) {
@@ -70,8 +71,8 @@ public final class LevelManager {
     /**
      * Retrieves the level with the exact ID, or null if none exists.
      *
-     * @param id The level ID
-     * @return The Level, or {@code null}.
+     * @param id the level ID
+     * @return the level, or {@code null}
      */
     public static Level findLevel(long id) {
         return Homestead.LEVEL_CACHE.get(id);
@@ -80,8 +81,8 @@ public final class LevelManager {
     /**
      * Get or create level for a region.
      *
-     * @param regionId The region ID
-     * @return The existing or newly created Level.
+     * @param regionId the region ID
+     * @return the existing or newly created level
      */
     public static Level getOrCreateLevel(long regionId) {
         Level level = getLevelByRegion(regionId);
@@ -94,7 +95,7 @@ public final class LevelManager {
     /**
      * Returns the number of levels in the server.
      *
-     * @return The level count.
+     * @return the level count
      */
     public static int getLevelCount() {
         return Homestead.LEVEL_CACHE.getAll().size();
@@ -103,7 +104,7 @@ public final class LevelManager {
     /**
      * Permanently deletes the specified level.
      *
-     * @param id The level ID
+     * @param id the level ID
      */
     public static void deleteLevel(long id) {
         Homestead.LEVEL_CACHE.remove(id);
@@ -112,7 +113,7 @@ public final class LevelManager {
     /**
      * Delete level by region ID.
      *
-     * @param regionId The region ID
+     * @param regionId the region ID
      */
     public static void deleteLevelByRegion(long regionId) {
         Level level = getLevelByRegion(regionId);
@@ -124,8 +125,8 @@ public final class LevelManager {
     /**
      * Add fixed XP to a region.
      *
-     * @param regionId The region ID
-     * @param amount   Amount of XP to add
+     * @param regionId the region ID
+     * @param amount   amount of XP to add
      */
     public static void addXp(long regionId, long amount) {
         Level level = getOrCreateLevel(regionId);
@@ -136,8 +137,8 @@ public final class LevelManager {
     /**
      * Add XP as a percentage of the XP required for the next level.
      *
-     * @param regionId   The region ID
-     * @param percentage Percentage of next level XP (0.0–100.0)
+     * @param regionId   the region ID
+     * @param percentage percentage of next level XP (0.0–100.0)
      */
     public static void addXpPercentage(long regionId, double percentage) {
         Level level = getOrCreateLevel(regionId);
@@ -152,8 +153,8 @@ public final class LevelManager {
     /**
      * Multiplies the current XP progress by a factor (useful for boosters).
      *
-     * @param regionId The region ID
-     * @param factor   The multiplier (e.g., 2.0 for double)
+     * @param regionId the region ID
+     * @param factor   the multiplier (e.g., 2.0 for double)
      */
     public static void multiplyXp(long regionId, double factor) {
         Level level = getLevelByRegion(regionId);
@@ -167,10 +168,10 @@ public final class LevelManager {
     /**
      * Add random XP between min and max (inclusive).
      *
-     * @param regionId The region ID
-     * @param min      Minimum XP (can be double, will be floored)
-     * @param max      Maximum XP (can be double, will be floored)
-     * @return The actual amount of XP added.
+     * @param regionId the region ID
+     * @param min      minimum XP (can be double, will be floored)
+     * @param max      maximum XP (can be double, will be floored)
+     * @return the actual amount of XP added
      */
     public static long addRandomXp(long regionId, double min, double max) {
         long minLong = (long) Math.floor(min);
@@ -192,10 +193,10 @@ public final class LevelManager {
     /**
      * Add random XP with integer bounds.
      *
-     * @param regionId The region ID
-     * @param min      Minimum XP
-     * @param max      Maximum XP
-     * @return The actual amount of XP added.
+     * @param regionId the region ID
+     * @param min      minimum XP
+     * @param max      maximum XP
+     * @return the actual amount of XP added
      */
     public static long addRandomXp(long regionId, long min, long max) {
         return addRandomXp(regionId, (double) min, (double) max);
@@ -204,8 +205,8 @@ public final class LevelManager {
     /**
      * Remove XP from a region (won't decrease level, only progress).
      *
-     * @param regionId The region ID
-     * @param amount   Amount of XP to remove
+     * @param regionId the region ID
+     * @param amount   amount of XP to remove
      */
     public static void removeXp(long regionId, long amount) {
         Level level = getLevelByRegion(regionId);
@@ -218,7 +219,7 @@ public final class LevelManager {
     /**
      * Set exact XP amount (triggers level re-calculation).
      *
-     * @param regionId   The region ID
+     * @param regionId   the region ID
      * @param experience XP amount
      */
     public static void setXp(long regionId, long experience) {
@@ -230,8 +231,8 @@ public final class LevelManager {
     /**
      * Set exact level (resets progress to 0).
      *
-     * @param regionId The region ID
-     * @param level    Level to set
+     * @param regionId the region ID
+     * @param level    level to set
      */
     public static void setLevel(long regionId, int level) {
         Level lvl = getOrCreateLevel(regionId);
@@ -242,8 +243,8 @@ public final class LevelManager {
     /**
      * Grants multiple levels at once.
      *
-     * @param regionId The region ID
-     * @param levels   Number of levels to add
+     * @param regionId the region ID
+     * @param levels   number of levels to add
      */
     public static void grantLevels(long regionId, int levels) {
         if (levels <= 0) return;
@@ -255,8 +256,8 @@ public final class LevelManager {
     /**
      * Removes levels from a region without going below 0.
      *
-     * @param regionId The region ID
-     * @param levels   Number of levels to remove
+     * @param regionId the region ID
+     * @param levels   number of levels to remove
      */
     public static void delevel(long regionId, int levels) {
         if (levels <= 0) return;
@@ -270,7 +271,7 @@ public final class LevelManager {
     /**
      * Reset level to 0.
      *
-     * @param regionId The region ID
+     * @param regionId the region ID
      */
     public static void resetLevel(long regionId) {
         Level level = getLevelByRegion(regionId);
@@ -283,7 +284,7 @@ public final class LevelManager {
     /**
      * Resets every level in the cache. Use with caution.
      *
-     * @return The number of levels reset.
+     * @return the number of levels reset
      */
     public static int resetAllLevels() {
         int count = 0;
@@ -298,8 +299,8 @@ public final class LevelManager {
     /**
      * Returns the total accumulated XP (including spent on levels) for a region.
      *
-     * @param regionId The region ID
-     * @return Total XP, or {@code 0} if no level exists.
+     * @param regionId the region ID
+     * @return total XP, or {@code 0} if no level exists
      */
     public static long getTotalXpOfRegion(long regionId) {
         Level level = getLevelByRegion(regionId);
@@ -309,8 +310,8 @@ public final class LevelManager {
     /**
      * Returns the current progress percentage toward the next level.
      *
-     * @param regionId The region ID
-     * @return Progress from 0.0 to 100.0, or {@code 0.0} if no level exists.
+     * @param regionId the region ID
+     * @return progress from 0.0 to 100.0, or {@code 0.0} if no level exists
      */
     public static double getLevelProgressPercentage(long regionId) {
         Level level = getLevelByRegion(regionId);
@@ -320,8 +321,8 @@ public final class LevelManager {
     /**
      * Returns the remaining XP needed to reach the next level.
      *
-     * @param regionId The region ID
-     * @return XP remaining, or {@code 0} if no level exists.
+     * @param regionId the region ID
+     * @return XP remaining, or {@code 0} if no level exists
      */
     public static long getXpUntilNextLevel(long regionId) {
         Level level = getLevelByRegion(regionId);
@@ -331,8 +332,8 @@ public final class LevelManager {
     /**
      * Returns the XP required to reach a specific level from level 0.
      *
-     * @param targetLevel The target level
-     * @return Total XP required.
+     * @param targetLevel the target level
+     * @return total XP required
      */
     public static long getTotalXpForLevel(int targetLevel) {
         long total = 0;
@@ -345,9 +346,9 @@ public final class LevelManager {
     /**
      * Calculates the level difference between two regions.
      *
-     * @param regionIdA First region ID
-     * @param regionIdB Second region ID
-     * @return Positive if A &gt; B, negative if A &lt; B, 0 if equal or missing.
+     * @param regionIdA first region ID
+     * @param regionIdB second region ID
+     * @return positive if A &gt; B, negative if A &lt; B, 0 if equal or missing
      */
     public static int getLevelDifference(long regionIdA, long regionIdB) {
         Level a = getLevelByRegion(regionIdA);
@@ -359,7 +360,7 @@ public final class LevelManager {
     /**
      * Returns the server-wide average region level.
      *
-     * @return Average level, or {@code 0.0} if no levels exist.
+     * @return average level, or {@code 0.0} if no levels exist
      */
     public static double getAverageLevel() {
         List<Level> all = getAll();
@@ -375,8 +376,8 @@ public final class LevelManager {
     /**
      * Returns all region IDs at exactly the specified level.
      *
-     * @param level The level to search for
-     * @return List of region IDs.
+     * @param level the level to search for
+     * @return list of region IDs
      */
     public static List<Long> getRegionsAtLevel(int level) {
         return getAll().stream()
@@ -388,8 +389,8 @@ public final class LevelManager {
     /**
      * Returns all region IDs above the specified level threshold.
      *
-     * @param minLevel The minimum level (exclusive)
-     * @return List of region IDs.
+     * @param minLevel the minimum level (exclusive)
+     * @return list of region IDs
      */
     public static List<Long> getRegionsAboveLevel(int minLevel) {
         return getAll().stream()
@@ -401,7 +402,7 @@ public final class LevelManager {
     /**
      * Finds the region with the highest level. In case of ties, the one with most XP wins.
      *
-     * @return The highest level, or {@code null} if no levels exist.
+     * @return the highest level, or {@code null} if no levels exist
      */
     public static Level getHighestLevel() {
         return getAll().stream()
@@ -413,7 +414,7 @@ public final class LevelManager {
     /**
      * Finds the region ID with the highest level.
      *
-     * @return The region ID, or {@code -1} if no levels exist.
+     * @return the region ID, or {@code -1} if no levels exist
      */
     public static long getHighestLevelRegion() {
         Level highest = getHighestLevel();
@@ -423,7 +424,7 @@ public final class LevelManager {
     /**
      * Returns a histogram of level distribution.
      *
-     * @return Map of level -> count.
+     * @return map of level -> count
      */
     public static Map<Integer, Integer> getLevelDistribution() {
         Map<Integer, Integer> distribution = new HashMap<>();
@@ -436,9 +437,9 @@ public final class LevelManager {
     /**
      * Checks if a region has reached or exceeded a maximum level cap.
      *
-     * @param regionId The region ID
-     * @param maxLevel The maximum allowed level
-     * @return {@code true} if at or above cap.
+     * @param regionId the region ID
+     * @param maxLevel the maximum allowed level
+     * @return {@code true} if at or above cap
      */
     public static boolean isMaxLevel(long regionId, int maxLevel) {
         Level level = getLevelByRegion(regionId);
@@ -448,19 +449,32 @@ public final class LevelManager {
     /**
      * Returns how many milliseconds ago the level entry was created.
      *
-     * @param regionId The region ID
-     * @return Age in milliseconds, or {@code -1} if not found.
+     * @param regionId the region ID
+     * @return age in milliseconds, or {@code -1} if not found
      */
     public static long getLevelAge(long regionId) {
         Level level = getLevelByRegion(regionId);
         return level != null ? System.currentTimeMillis() - level.getCreatedAt() : -1L;
     }
 
+
+    /**
+     * Returns all region IDs at exactly the specified level.
+     *
+     * @return list of region IDs
+     */
+    public static List<Long> getRegionsAtLevel() {
+        return getAll().stream()
+                .map(Level::getRegionId)
+                .collect(Collectors.toList());
+    }
+
+
     /**
      * Get top levels sorted by level (desc), then by XP (desc).
      *
-     * @param limit Maximum results
-     * @return Sorted list of top levels.
+     * @param limit maximum results
+     * @return sorted list of top levels
      */
     public static List<Level> getTopLevels(int limit) {
         List<Level> sorted = new ArrayList<>(getAll());
@@ -476,8 +490,8 @@ public final class LevelManager {
     /**
      * Get region's rank on leaderboard.
      *
-     * @param regionId The region ID
-     * @return 1-based rank, or {@code -1} if not found.
+     * @param regionId the region ID
+     * @return 1-based rank, or {@code -1} if not found
      */
     public static int getRank(long regionId) {
         Level target = getLevelByRegion(regionId);
@@ -497,11 +511,12 @@ public final class LevelManager {
         return rank;
     }
 
+
     /**
      * Removes all level entries with invalid references:<br>
      * - Regions that no longer exist
      *
-     * @return Number of corrupted levels removed.
+     * @return number of corrupted levels removed
      */
     public static int cleanupInvalidLevels() {
         List<Long> toRemove = new ArrayList<>();

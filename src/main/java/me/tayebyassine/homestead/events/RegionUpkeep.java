@@ -13,14 +13,13 @@ import org.bukkit.entity.Player;
 
 public final class RegionUpkeep {
     private RegionUpkeep() {
+        throw new AssertionError("Uninstantiable class");
     }
 
     /**
      * Trigger event for: Region Upkeep
-     *
-     * @param instance Homestead's instance
      */
-    public static void trigger(Homestead instance) {
+    public static void trigger() {
         for (Region region : RegionManager.getAll()) {
             if (System.currentTimeMillis() > region.getUpkeepAt()) {
                 double amountToPay = UpkeepUtility.getAmountToPay(region);

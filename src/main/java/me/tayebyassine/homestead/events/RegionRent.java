@@ -12,14 +12,13 @@ import org.bukkit.entity.Player;
 
 public final class RegionRent {
     private RegionRent() {
+        throw new AssertionError("Uninstantiable class");
     }
 
     /**
      * Trigger event for: Region Rent
-     *
-     * @param instance Homestead's instance
      */
-    public static void trigger(Homestead instance) {
+    public static void trigger() {
         for (Region region : RegionManager.getAll()) {
             SeRent rent = region.getRent();
 

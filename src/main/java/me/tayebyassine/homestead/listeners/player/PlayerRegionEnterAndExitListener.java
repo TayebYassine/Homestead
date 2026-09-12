@@ -69,7 +69,6 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
                 if (!PlayerUtility.isOperator(player) && ClaimFlySession.hasSession(player)) {
                     ClaimFlySession.removeSession(player);
 
-                    player.setAllowFlight(false);
                     player.setFlying(false);
 
                     Messages.send(player, "commands.fly.2");
@@ -187,7 +186,6 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
             if (!PlayerUtility.isOperator(player) && ClaimFlySession.hasSession(player)) {
                 ClaimFlySession.removeSession(player);
 
-                player.setAllowFlight(false);
                 player.setFlying(false);
 
                 Messages.send(player, "commands.fly.2");

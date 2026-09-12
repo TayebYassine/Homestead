@@ -7,12 +7,27 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SharedStorage {
+/**
+ * Thread-safe, in-memory representation of a region's shared storage.
+ *
+ * <p>Items are stored by slot index and serialized to a Base64-encoded
+ * string for persistence. All public methods are synchronized on an
+ * internal lock to allow safe concurrent access.
+ * </p>
+ */
+public final class SharedStorage {
+
     private final long regionId;
     private final int size;
     private final Map<Integer, ItemStack> items;
     private final Object lock;
 
+    /**
+     * Create a new storage with the given capacity.
+     *
+     * @param regionId the unique region ID that owns this storage
+     * @param size     the inventory size (must be a valid Bukkit size)
+     */
     public SharedStorage(long regionId, int size) {
         this.regionId = regionId;
         this.size = size;
@@ -20,6 +35,13 @@ public class SharedStorage {
         this.lock = new Object();
     }
 
+    /**
+     * Deserialise a storage from its Base64-encoded representation.
+     *
+     * @param regionId the unique region ID
+     * @param data     the Base64-encoded storage data
+     * @return the deserialised storage, or an empty storage if the data is corrupt
+     */
     public static SharedStorage deserialize(long regionId, String data) {
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
@@ -51,10 +73,21 @@ public class SharedStorage {
         }
     }
 
+    /**
+     * Create an empty storage with the default size of 54 slots.
+     *
+     * @param regionId the unique region ID
+     * @return a new empty storage
+     */
     public static SharedStorage createEmpty(long regionId) {
         return new SharedStorage(regionId, 54);
     }
 
+    /**
+     * Serialize the storage to a Base64-encoded string for persistence.
+     *
+     * @return the encoded storage data
+     */
     public String serialize() {
         synchronized (lock) {
             try {
@@ -76,14 +109,30 @@ public class SharedStorage {
         }
     }
 
+    /**
+     * Get the unique region ID that owns this storage.
+     *
+     * @return the region ID
+     */
     public long getRegionId() {
         return regionId;
     }
 
+    /**
+     * Get the inventory size of this storage.
+     *
+     * @return the number of slots
+     */
     public int getSize() {
         return size;
     }
 
+    /**
+     * Get a clone of the item in the given slot.
+     *
+     * @param slot the slot index
+     * @return a clone of the item, or {@code null} if the slot is empty
+     */
     public ItemStack getItem(int slot) {
         synchronized (lock) {
             ItemStack item = items.get(slot);
@@ -91,6 +140,11 @@ public class SharedStorage {
         }
     }
 
+    /**
+     * Get a snapshot of all items in this storage.
+     *
+     * @return a map of slot index to cloned item
+     */
     public Map<Integer, ItemStack> getAllItems() {
         synchronized (lock) {
             Map<Integer, ItemStack> copy = new HashMap<>();
@@ -101,6 +155,13 @@ public class SharedStorage {
         }
     }
 
+    /**
+     * Set the item in the given slot, replacing any existing item. Air or
+     * {@code null} items are treated as removals.
+     *
+     * @param slot the slot index
+     * @param item the item to place, or {@code null} to clear
+     */
     public void setItem(int slot, ItemStack item) {
         synchronized (lock) {
             if (item == null || item.getType().isAir()) {
@@ -111,6 +172,12 @@ public class SharedStorage {
         }
     }
 
+    /**
+     * Take (remove and return) the item in the given slot.
+     *
+     * @param slot the slot index
+     * @return a clone of the removed item, or {@code null} if the slot was empty
+     */
     public ItemStack takeItem(int slot) {
         synchronized (lock) {
             ItemStack item = items.remove(slot);
@@ -118,6 +185,13 @@ public class SharedStorage {
         }
     }
 
+    /**
+     * Place an item into the given slot, removing it if air or
+     * {@code null}.
+     *
+     * @param slot the slot index
+     * @param item the item to place, or {@code null} to clear
+     */
     public void placeItem(int slot, ItemStack item) {
         synchronized (lock) {
             if (item == null || item.getType().isAir()) {
@@ -128,6 +202,13 @@ public class SharedStorage {
         }
     }
 
+    /**
+     * Atomically swap the item in the given slot with a new item.
+     *
+     * @param slot    the slot index
+     * @param newItem the item to place, or {@code null} to clear
+     * @return a clone of the previous item, or {@code null} if the slot was empty
+     */
     public ItemStack swapItem(int slot, ItemStack newItem) {
         synchronized (lock) {
             ItemStack old = items.get(slot);

@@ -16,14 +16,13 @@ import org.bukkit.entity.Player;
 
 public final class MemberTaxes {
     private MemberTaxes() {
+        throw new AssertionError("Uninstantiable class");
     }
 
     /**
      * Trigger event for: Member Taxes
-     *
-     * @param instance Homestead's instance
      */
-    public static void trigger(Homestead instance) {
+    public static void trigger() {
         for (Region region : RegionManager.getAll()) {
             double amountToPay = region.getTaxes();
 

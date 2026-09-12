@@ -27,8 +27,7 @@ import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
 import me.tayebyassine.homestead.resources.files.ConfigFile;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
-import me.tayebyassine.homestead.sessions.AutoClaimSession;
-import me.tayebyassine.homestead.sessions.TargetRegionSession;
+import me.tayebyassine.homestead.sessions.*;
 import me.tayebyassine.homestead.snowflake.SnowflakeGenerator;
 import me.tayebyassine.homestead.storage.StorageManager;
 import me.tayebyassine.homestead.util.https.UpdateChecker;
@@ -58,11 +57,14 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Entry point of Homestead plugin.
+ */
 public class Homestead extends JavaPlugin {
-    private final static String VERSION = "6.0.0.0-26w37b";
-    private final static boolean SNAPSHOT = true;
-    public static Database database;
-    // Cache
+
+    private static final String VERSION = "6.0.0.0-26w37b";
+    private static final boolean SNAPSHOT = true;
+
     public static RegionCache REGION_CACHE;
     public static RegionMemberCache MEMBER_CACHE;
     public static RegionBanCache BAN_CACHE;
@@ -75,30 +77,59 @@ public class Homestead extends JavaPlugin {
     public static WarsCache WAR_CACHE;
     public static SubAreasCache SUBAREA_CACHE;
     public static LevelsCache LEVEL_CACHE;
+
+    public static Database database;
     public static Vault VAULT;
-    private static boolean IS_FOLIA = false;
-    private static boolean IS_PAPER = false;
     private static Homestead INSTANCE;
     private static DiscordWebhookClient DISCORD_WEBHOOK;
+    private static boolean IS_FOLIA = false;
+    private static boolean IS_PAPER = false;
     private static long STARTED_AT;
     private static TaskHandle MOVE_CHECK_TASK;
 
+    /**
+     * Get the snowflake ID generator used for unique region, chunk, and
+     * sub-area identifiers.
+     *
+     * @return the singleton snowflake generator
+     */
     public static SnowflakeGenerator getSnowflake() {
         return SnowflakeHolder.INSTANCE;
     }
 
+    /**
+     * Get the current plugin version string.
+     *
+     * @return the version identifier
+     */
     public static String getVersion() {
         return VERSION;
     }
 
+    /**
+     * Whether this build is a snapshot (pre-release) version.
+     *
+     * @return {@code true} if the build is a snapshot
+     */
     public static boolean isSnapshot() {
         return SNAPSHOT;
     }
 
+    /**
+     * Get the singleton plugin instance.
+     *
+     * @return the active Homestead instance, or {@code null} if not yet loaded
+     */
     public static Homestead getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Detect whether the server software is Folia by checking for the
+     * {@code RegionizedServer} class at runtime.
+     *
+     * @return {@code true} if Folia classes are present
+     */
     public static boolean checkSoftwareIfFolia() {
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
@@ -108,10 +139,21 @@ public class Homestead extends JavaPlugin {
         }
     }
 
+    /**
+     * Whether the server is running on Folia.
+     *
+     * @return {@code true} if Folia was detected during startup
+     */
     public static boolean isFolia() {
         return IS_FOLIA;
     }
 
+    /**
+     * Detect whether the server software is Paper by checking for the
+     * {@code Configuration} class at runtime.
+     *
+     * @return {@code true} if Paper classes are present
+     */
     public static boolean checkSoftwareIfPaper() {
         try {
             Class.forName("io.papermc.paper.configuration.Configuration");
@@ -121,10 +163,21 @@ public class Homestead extends JavaPlugin {
         }
     }
 
+    /**
+     * Whether the server is running on Paper.
+     *
+     * @return {@code true} if Paper was detected during startup
+     */
     public static boolean isPaper() {
         return IS_PAPER;
     }
 
+    /**
+     * Fire an {@link APIEvent} synchronously and forward it to the Discord
+     * webhook if configured.
+     *
+     * @param event the custom event to dispatch
+     */
     public static void callEvent(APIEvent event) {
         Homestead.getInstance().runSyncTask(() -> Bukkit.getPluginManager().callEvent(event));
 
@@ -133,6 +186,14 @@ public class Homestead extends JavaPlugin {
         }
     }
 
+    /**
+     * Called when the plugin is enabled by the server.
+     *
+     * <p>Initialises caches, database, Vault hooks, event listeners,
+     * Brigadier commands, metrics, Discord integration, and all recurring
+     * background tasks.
+     * </p>
+     */
     public void onEnable() {
         Homestead.INSTANCE = this;
         Homestead.STARTED_AT = System.currentTimeMillis();
@@ -185,7 +246,7 @@ public class Homestead extends JavaPlugin {
             }
 
             Homestead.database = new Database(provider);
-            database.importToCache();
+            Homestead.database.importToCache();
         } catch (Exception e) {
             Logger.error("A critical database error occurred while starting up. The plugin will NOT be disabled.");
             Logger.error("The plugin will enter protection mode to keep all claims safe from griefing and land theft.");
@@ -199,13 +260,14 @@ public class Homestead extends JavaPlugin {
             Logger.error("Unable to start the plugin; \"Vault\" is required. Shutting down plugin instance...");
 
             if (isFolia()) {
-                Logger.error("FOLIA DETECTED! USE VaultUnlocked INSTEAD OF Vault! THE ORIGINAL VERSION DOESN'T SUPPORT FOLIA!");
+                Logger.error("Your server is running on Folia! Please use VaultUnlocked instead of Vault!");
+                Logger.error("The original Vault plugin doesn't support Folia servers!");
             }
 
             endInstance();
             return;
         } else {
-            Logger.info("Loading service providers with Vault... (Using " + (!isFolia() ? "Legacy Vault" : "VaultUnlocked") + ")");
+            Logger.info("Loading service providers with Vault... (Target: " + (!isFolia() ? "Vault" : "VaultUnlocked") + ")");
         }
 
         StorageManager.init(this);
@@ -234,7 +296,7 @@ public class Homestead extends JavaPlugin {
             Logger.info("Loaded service provider: Permissions [" + Homestead.VAULT.getPermissions().getPermissionsName() + "]");
         }
 
-        if (Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("clean-startup")) {
+        if (Resources.<RegionsFile>get(ResourceType.Regions).isCleanStartupEnabled()) {
             Logger.info("Cleaning up corrupted data... This may take a while!");
 
             int regions = RegionManager.cleanupInvalidRegions();
@@ -279,7 +341,7 @@ public class Homestead extends JavaPlugin {
         registerEvents();
         registerBrigadier();
 
-        if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("metrics")) {
+        if (Resources.<ConfigFile>get(ResourceType.Config).isMetricsEnabled()) {
             new bStats(this);
 
             Logger.info("bStats metrics is enabled, anonymous data is being sent to the servers.");
@@ -293,7 +355,6 @@ public class Homestead extends JavaPlugin {
             }
         }
 
-        // Load copper golems spawn location
         runSyncTask(() -> {
             Logger.debug("Loading Copper Golem spawn locations... This may take a while.");
 
@@ -310,16 +371,14 @@ public class Homestead extends JavaPlugin {
 
         Logger.info("Ready, took " + (System.currentTimeMillis() - STARTED_AT) + " ms to load.");
 
-        // Prepare Discord webhook client
-        if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("discord.enabled")) {
+        if (Resources.<ConfigFile>get(ResourceType.Config).isDiscordEnabled()) {
             Logger.info("Initializing new Discord webhook client...");
 
-            Homestead.DISCORD_WEBHOOK = new DiscordWebhookClient(Resources.<ConfigFile>get(ResourceType.Config).getString("discord.webhook_url"));
+            Homestead.DISCORD_WEBHOOK = new DiscordWebhookClient(Resources.<ConfigFile>get(ResourceType.Config).getDiscordWebhookURL());
 
             Logger.info("Discord webhook instance is ready.");
         }
 
-        // Cache interval
         int cacheInterval = Resources.<ConfigFile>get(ResourceType.Config).getCacheInterval();
 
         runAsyncTimerTask(() -> {
@@ -341,8 +400,7 @@ public class Homestead extends JavaPlugin {
             }
         }, 10, cacheInterval);
 
-        // Download icons
-        if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled") && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.icons.enabled")) {
+        if (Resources.<ConfigFile>get(ResourceType.Config).isDynamicMapsEnabled() && Resources.<ConfigFile>get(ResourceType.Config).isDynamicMapsIconsEnabled()) {
             if (DynamicMaps.isPl3xMapInstalled() || DynamicMaps.isSquaremapInstalled()) {
                 runAsyncTask(() -> {
                     MapIcon.downloadAllIcons();
@@ -353,34 +411,26 @@ public class Homestead extends JavaPlugin {
             }
         }
 
-        // Triggers
-        if (Resources.<ConfigFile>get(ResourceType.Config).getBoolean("dynamic-maps.enabled")) {
+        if (Resources.<ConfigFile>get(ResourceType.Config).isDynamicMapsEnabled()) {
             runAsyncTimerTask(() -> {
-                Logger.debug("Updating web-rendering plugin markers...");
+                Logger.info("Updating web-rendering plugin markers...");
 
                 DynamicMaps.trigger(this);
-            }, Resources.<ConfigFile>get(ResourceType.Config).getInt("dynamic-maps.update-interval"));
+            }, Resources.<ConfigFile>get(ResourceType.Config).getDynamicMapsUpdateInterval());
         }
 
-        if (Homestead.VAULT.isEconomyReady() && Resources.<ConfigFile>get(ResourceType.Config).getBoolean("taxes.enabled")) {
-            runAsyncTimerTask(() -> {
-                MemberTaxes.trigger(this);
-            }, 10);
+        if (Homestead.VAULT.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).isTaxesEnabled()) {
+            runAsyncTimerTask(MemberTaxes::trigger, 10);
         }
 
-        if (Homestead.VAULT.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).getBoolean("upkeep.enabled")) {
-            runAsyncTimerTask(() -> {
-                RegionUpkeep.trigger(this);
-            }, 10);
+        if (Homestead.VAULT.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).isUpkeepEnabled()) {
+            runAsyncTimerTask(RegionUpkeep::trigger, 10);
         }
 
         if (Homestead.VAULT.isEconomyReady() && Resources.<RegionsFile>get(ResourceType.Regions).isRentingEnabled()) {
-            runAsyncTimerTask(() -> {
-                RegionRent.trigger(this);
-            }, 10);
+            runAsyncTimerTask(RegionRent::trigger, 10);
         }
 
-        // Check for updates every 24 hours
         runAsyncTimerTask(() -> {
             UpdateChecker.FetchedUpdateData data = UpdateChecker.fetch();
 
@@ -396,17 +446,16 @@ public class Homestead extends JavaPlugin {
             }
         }, 86400);
 
-        // Register external plugins
         registerExternalPlugins();
 
-        // Do NOT touch this one
+        // Copper golems interaction platform bridge for SpigotMC and Paper.
+        // Since the event ItemTransportingEntityValidateTargetEvent only exists in the PaperMC API, we will need
+        // to check if the class exists or not. If the class is found, then the plugin will use it. Otherwise, if
+        // the class was not found, then the plugin will use a custom entity moving listener to capture Copper
+        // golem locations.
         if (ItemTransportingEntityValidateTargetListener.isClassFound()) {
-            Logger.debug("Event [ItemTransportingEntityValidateTargetListener] found, using PaperMC built-in event for Copper Golems interaction");
-
             registerEvent(new ItemTransportingEntityValidateTargetListener());
         } else {
-            Logger.debug("Event [ItemTransportingEntityValidateTargetListener] not found, using alternative method with Entities Moving listener");
-
             if (!isFolia()) {
                 Homestead.MOVE_CHECK_TASK = new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, () -> {
                     for (World world : Bukkit.getWorlds()) {
@@ -419,10 +468,70 @@ public class Homestead extends JavaPlugin {
         }
     }
 
+    /**
+     * Called when the plugin is disabled by the server.
+     *
+     * <p>Closes the database connection, cancels running tasks, persists
+     * region storage, and clears all in-memory caches.
+     * </p>
+     */
+    public void onDisable() {
+        if (Homestead.database != null) {
+            Logger.info("Closing database connection...");
+
+            try {
+                Homestead.database.closeConnection();
+            } catch (Exception e) {
+                Logger.error(e);
+            }
+        }
+
+        if (Homestead.MOVE_CHECK_TASK != null) {
+            Homestead.MOVE_CHECK_TASK.cancel();
+        }
+
+        Logger.info("Saving storage...");
+
+        StorageManager.saveAll();
+
+        Logger.info("Cleaning cache...");
+
+        Homestead.REGION_CACHE.clear();
+        Homestead.MEMBER_CACHE.clear();
+        Homestead.BAN_CACHE.clear();
+        Homestead.CHUNK_CACHE.clear();
+        Homestead.REGION_INDEXED_CHUNK_CACHE.clear();
+        Homestead.POSITION_INDEXED_CHUNK_CACHE.clear();
+        Homestead.INVITE_CACHE.clear();
+        Homestead.LOG_CACHE.clear();
+        Homestead.RATE_CACHE.clear();
+        Homestead.WAR_CACHE.clear();
+        Homestead.SUBAREA_CACHE.clear();
+        Homestead.LEVEL_CACHE.clear();
+
+        Logger.info("Cleaning sessions...");
+        AutoClaimSession.SESSIONS.clear();
+        ClaimFlySession.cleanupAll();
+        MergeRegionRequest.REQUESTS.clear();
+        PlayerInputSession.SESSIONS.clear();
+        PrivateChatSession.SESSIONS.clear();
+        TargetRegionSession.SESSIONS.clear();
+
+        DelayedTeleport.cleanup();
+
+        Logger.info("Homestead has been disabled.");
+    }
+
+    /**
+     * Register all plugin commands defined in {@code plugin.yml}.
+     */
     private void registerCommands() {
         CommandRegistry.registerAll();
     }
 
+    /**
+     * Register all Bukkit event listeners.
+     */
     private void registerEvents() {
         registerEvent(new PlayerJoinListener());
         registerEvent(new PlayerEnterEndExitPortalListener());
@@ -445,6 +554,11 @@ public class Homestead extends JavaPlugin {
         }
     }
 
+    /**
+     * Register a single Bukkit event listener.
+     *
+     * @param listener the listener to register
+     */
     private void registerEvent(Listener listener) {
         try {
             getServer().getPluginManager().registerEvents(listener, this);
@@ -453,6 +567,10 @@ public class Homestead extends JavaPlugin {
         }
     }
 
+    /**
+     * Register Brigadier command completions and argument types via
+     * Commodore, if the server supports Mojang Brigadier.
+     */
     private void registerBrigadier() {
         try {
             if (CommodoreProvider.isSupported()) {
@@ -467,12 +585,29 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
+     * Register external plugin integrations (e.g. PlaceholderAPI).
+     */
+    public void registerExternalPlugins() {
+        if (IntegrationUtility.isEnabled(IntegrationUtility.Integration.PAPI)) {
+            boolean registered = new PlaceholderAPI().register();
+
+            if (!registered) {
+                Logger.error("Failed to register hooks.");
+            }
+        }
+    }
+
+    /**
      * Run a task on the region thread that owns the given player.
-     * Use this instead of runSyncTask() whenever the task involves world/chunk/location
-     * access triggered by a player action (e.g. inventory clicks).
      *
-     * @param player   The player whose region thread to run on.
-     * @param callable The task to run.
+     * <p>Use this instead of {@link #runSyncTask(Runnable)} whenever the
+     * task involves world/chunk/location access triggered by a player
+     * action (e.g. inventory clicks).
+     * </p>
+     *
+     * @param player   the player whose region thread to run on
+     * @param callable the task to run
+     * @return a handle to the scheduled task
      */
     public TaskHandle runPlayerTask(Player player, Runnable callable) {
         if (isFolia()) {
@@ -483,11 +618,13 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Run a task on the region thread that owns the given player after a delay in seconds.
+     * Run a task on the region thread that owns the given player after a
+     * delay.
      *
-     * @param player   The player whose region thread to run on.
-     * @param callable The task to run.
-     * @param delay    The delay, in seconds.
+     * @param player   the player whose region thread to run on
+     * @param callable the task to run
+     * @param delay    the delay, in seconds
+     * @return a handle to the scheduled task
      */
     public TaskHandle runPlayerTaskLater(Player player, Runnable callable, int delay) {
         if (isFolia()) {
@@ -502,10 +639,11 @@ public class Homestead extends JavaPlugin {
     /**
      * Run a repeating task on the region thread that owns the given player.
      *
-     * @param player   The player whose region thread to run on.
-     * @param callable The task to run.
-     * @param delay    Ticks to wait before first execution.
-     * @param period   Ticks between executions.
+     * @param player   the player whose region thread to run on
+     * @param callable the task to run
+     * @param delay    ticks to wait before first execution
+     * @param period   ticks between executions
+     * @return a handle to the scheduled task
      */
     public TaskHandle runPlayerTaskTimer(Player player, Runnable callable, long delay, long period) {
         if (isFolia()) {
@@ -516,41 +654,25 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Run a repeating task asynchronously with interval in seconds.
+     * Run a task synchronously on the main thread.
      *
-     * @param callable The task to run.
-     * @param interval The interval, in seconds.
+     * @param callable the task to run
+     * @return a handle to the scheduled task
      */
-    public TaskHandle runAsyncTimerTask(Runnable callable, int interval) {
+    public TaskHandle runSyncTask(Runnable callable) {
         if (isFolia()) {
-            return new TaskHandle(Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> callable.run(), 0, interval, TimeUnit.SECONDS));
+            return new TaskHandle(Bukkit.getGlobalRegionScheduler().run(this, task -> callable.run()));
         }
 
-        long intervalTicks = interval * 20L;
-
-        return new TaskHandle(Bukkit.getScheduler().runTaskTimerAsynchronously(this, callable, 0L, intervalTicks));
+        return new TaskHandle(Bukkit.getScheduler().runTask(this, callable));
     }
 
     /**
-     * Run a repeating task synchronously with interval in ticks.
+     * Run a task synchronously after a delay.
      *
-     * @param callable The task to run.
-     * @param ticks    The interval, in ticks.
-     */
-    public TaskHandle runSyncTimerTask(Runnable callable, long ticks) {
-        if (isFolia()) {
-            // Folia requires initial delay >= 1; global region scheduler uses ticks
-            return new TaskHandle(Bukkit.getGlobalRegionScheduler().runAtFixedRate(this, task -> callable.run(), 1L, ticks));
-        }
-
-        return new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, callable, 0L, ticks));
-    }
-
-    /**
-     * Run a task synchronously after a delay in seconds.
-     *
-     * @param callable The task to run.
-     * @param delay    The delay, in seconds.
+     * @param callable the task to run
+     * @param delay    the delay, in seconds
+     * @return a handle to the scheduled task
      */
     public TaskHandle runSyncTaskLater(Runnable callable, int delay) {
         if (isFolia()) {
@@ -564,10 +686,77 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Run a repeating task asynchronously with interval in seconds, with a delay in seconds.
+     * Run a repeating task synchronously with interval in ticks.
      *
-     * @param callable The task to run.
-     * @param interval The interval, in seconds.
+     * @param callable the task to run
+     * @param ticks    the interval, in ticks
+     * @return a handle to the scheduled task
+     */
+    public TaskHandle runSyncTimerTask(Runnable callable, long ticks) {
+        if (isFolia()) {
+            // Folia requires initial delay >= 1; global region scheduler uses ticks
+            return new TaskHandle(Bukkit.getGlobalRegionScheduler().runAtFixedRate(this, task -> callable.run(), 1L, ticks));
+        }
+
+        return new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, callable, 0L, ticks));
+    }
+
+    /**
+     * Run a task asynchronously.
+     *
+     * @param callable the task to run
+     * @return a handle to the scheduled task
+     */
+    public TaskHandle runAsyncTask(Runnable callable) {
+        if (isFolia()) {
+            return new TaskHandle(Bukkit.getAsyncScheduler().runNow(this, task -> callable.run()));
+        }
+
+        return new TaskHandle(Bukkit.getScheduler().runTaskAsynchronously(this, callable));
+    }
+
+    /**
+     * Run a task asynchronously after a delay.
+     *
+     * @param callable the task to run
+     * @param delay    the delay, in seconds
+     * @return a handle to the scheduled task
+     */
+    public TaskHandle runAsyncTaskLater(Runnable callable, int delay) {
+        if (isFolia()) {
+            return new TaskHandle(Bukkit.getAsyncScheduler().runDelayed(this, task -> callable.run(), delay, TimeUnit.SECONDS));
+        }
+
+        long delayTicks = delay * 20L;
+
+        return new TaskHandle(Bukkit.getScheduler().runTaskLaterAsynchronously(this, callable, delayTicks));
+    }
+
+    /**
+     * Run a repeating task asynchronously with interval in seconds.
+     *
+     * @param callable the task to run
+     * @param interval the interval, in seconds
+     * @return a handle to the scheduled task
+     */
+    public TaskHandle runAsyncTimerTask(Runnable callable, int interval) {
+        if (isFolia()) {
+            return new TaskHandle(Bukkit.getAsyncScheduler().runAtFixedRate(this, task -> callable.run(), 0, interval, TimeUnit.SECONDS));
+        }
+
+        long intervalTicks = interval * 20L;
+
+        return new TaskHandle(Bukkit.getScheduler().runTaskTimerAsynchronously(this, callable, 0L, intervalTicks));
+    }
+
+    /**
+     * Run a repeating task asynchronously with a delay and interval in
+     * seconds.
+     *
+     * @param callable the task to run
+     * @param delay    the delay before first execution, in seconds
+     * @param interval the interval between executions, in seconds
+     * @return a handle to the scheduled task
      */
     public TaskHandle runAsyncTimerTask(Runnable callable, int delay, int interval) {
         if (isFolia()) {
@@ -581,53 +770,15 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Run a task asynchronously after a delay in seconds.
-     *
-     * @param callable The task to run.
-     * @param delay    The delay, in seconds.
-     */
-    public TaskHandle runAsyncTaskLater(Runnable callable, int delay) {
-        if (isFolia()) {
-            return new TaskHandle(Bukkit.getAsyncScheduler().runDelayed(this, task -> callable.run(), delay, TimeUnit.SECONDS));
-        }
-
-        long delayTicks = delay * 20L;
-
-        return new TaskHandle(Bukkit.getScheduler().runTaskLaterAsynchronously(this, callable, delayTicks));
-    }
-
-    /**
-     * Run a task asynchronously.
-     *
-     * @param callable The task to run.
-     */
-    public TaskHandle runAsyncTask(Runnable callable) {
-        if (isFolia()) {
-            return new TaskHandle(Bukkit.getAsyncScheduler().runNow(this, task -> callable.run()));
-        }
-
-        return new TaskHandle(Bukkit.getScheduler().runTaskAsynchronously(this, callable));
-    }
-
-    /**
-     * Run a task synchronously.
-     *
-     * @param callable The task to run.
-     */
-    public TaskHandle runSyncTask(Runnable callable) {
-        if (isFolia()) {
-            return new TaskHandle(Bukkit.getGlobalRegionScheduler().run(this, task -> callable.run()));
-        }
-
-        return new TaskHandle(Bukkit.getScheduler().runTask(this, callable));
-    }
-
-    /**
      * Run a task on the region thread that owns the given location.
-     * Use this for any event or operation tied to a specific world location.
      *
-     * @param location The location whose owning region thread to run on.
-     * @param callable The task to run.
+     * <p>Use this for any event or operation tied to a specific world
+     * location.
+     * </p>
+     *
+     * @param location the location whose owning region thread to run on
+     * @param callable the task to run
+     * @return a handle to the scheduled task
      */
     public TaskHandle runLocationTask(Location location, Runnable callable) {
         if (isFolia()) {
@@ -638,12 +789,14 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Runs a repeating task on the region scheduler with given location.
+     * Run a repeating task on the region thread that owns the given
+     * location.
      *
-     * @param location The location to determine which region thread to use
-     * @param callable The task to run
-     * @param delay    Ticks to wait before first execution
-     * @param period   Ticks between executions
+     * @param location the location to determine which region thread to use
+     * @param callable the task to run
+     * @param delay    ticks to wait before first execution
+     * @param period   ticks between executions
+     * @return a handle to the scheduled task
      */
     public TaskHandle runLocationTaskTimer(Location location, Runnable callable, long delay, long period) {
         if (isFolia()) {
@@ -654,7 +807,10 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Get a list of offline players.
+     * Get a list of all offline players (including those who have never
+     * logged in).
+     *
+     * @return an unmodifiable view of all known offline players
      */
     public List<OfflinePlayer> getOfflinePlayersSync() {
         OfflinePlayer[] offlinePlayers = Bukkit.getOfflinePlayers();
@@ -663,14 +819,18 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Get a list of online players.
+     * Get a list of all currently online players.
+     *
+     * @return a snapshot list of online players
      */
     public List<Player> getOnlinePlayersSync() {
         return new ArrayList<>(Bukkit.getOnlinePlayers());
     }
 
     /**
-     * Get a list of offline player names.
+     * Get the names of all offline players synchronously.
+     *
+     * @return list of player names, may contain {@code null} entries
      */
     public List<String> getOfflinePlayerNamesSync() {
         return Homestead.getInstance().getOfflinePlayersSync().stream()
@@ -679,7 +839,9 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Get a list of online player names.
+     * Get the names of all currently online players synchronously.
+     *
+     * @return list of online player names
      */
     public List<String> getOnlinePlayerNamesSync() {
         return Homestead.getInstance().getOnlinePlayersSync().stream()
@@ -688,9 +850,11 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Get an offline player with player unique IDs, using safe method.
+     * Look up an offline player by UUID, using a safe method that checks
+     * online players first, then the offline cache.
      *
-     * @param playerId The player ID.
+     * @param playerId the player UUID
+     * @return the offline player, or {@code null} if not found or never played
      */
     public @Nullable OfflinePlayer getOfflinePlayerSync(UUID playerId) {
         Player onlinePlayer = Bukkit.getPlayer(playerId);
@@ -705,9 +869,11 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Get an offline player with player name, using safe method.
+     * Look up an offline player by name, using a safe method that checks
+     * online players, the cached player list, and a full scan.
      *
-     * @param playerName The player name.
+     * @param playerName the player name
+     * @return the offline player, or {@code null} if not found or never played
      */
     public @Nullable OfflinePlayer getOfflinePlayerSync(String playerName) {
         Player onlinePlayer = Bukkit.getPlayer(playerName);
@@ -730,54 +896,18 @@ public class Homestead extends JavaPlugin {
         return player != null && player.getName() != null && (player.hasPlayedBefore() || player.isOnline()) ? player : null;
     }
 
-    public void onDisable() {
-        if (database != null) {
-            Logger.info("Closing database connection...");
-
-            try {
-                database.closeConnection();
-            } catch (Exception ignored) {
-            }
-        }
-
-        if (Homestead.MOVE_CHECK_TASK != null) {
-            Homestead.MOVE_CHECK_TASK.cancel();
-        }
-
-        Logger.info("Saving storage for each region...");
-
-        StorageManager.saveAll();
-
-        Logger.info("Cleaning cache...");
-
-        if (Homestead.REGION_CACHE != null) Homestead.REGION_CACHE.clear();
-        Homestead.WAR_CACHE.clear();
-        Homestead.SUBAREA_CACHE.clear();
-        Homestead.LEVEL_CACHE.clear();
-        TargetRegionSession.SESSIONS.clear();
-        AutoClaimSession.SESSIONS.clear();
-        DelayedTeleport.cleanup();
-
-        Logger.info("Homestead has been disabled. Goodbye!");
-    }
-
-    public void registerExternalPlugins() {
-        if (IntegrationUtility.isEnabled(IntegrationUtility.Integration.PAPI)) {
-            boolean registered = new PlaceholderAPI().register();
-
-            if (!registered) {
-                Logger.error("Failed to register hooks.");
-            }
-        }
-    }
-
     /**
-     * Kill the plugin's instance.
+     * Disable the plugin instance through the server's plugin manager.
      */
     public void endInstance() {
         getServer().getPluginManager().disablePlugin(this);
     }
 
+    /**
+     * Log the given throwable and then disable the plugin instance.
+     *
+     * @param e the error that caused the shutdown
+     */
     public void endInstance(Throwable e) {
         Logger.error(e);
 
@@ -785,9 +915,15 @@ public class Homestead extends JavaPlugin {
     }
 
     /**
-     * Attempt to (re)establish the database connection. Used while the plugin is in protection mode
-     * after a database failure, so the connection can recover in the background. Reconnecting does NOT
-     * automatically disable protection mode; an operator must turn it off manually.
+     * Attempt to (re)establish the database connection.
+     *
+     * <p>Used while the plugin is in protection mode after a database
+     * failure, so the connection can recover in the background.
+     * </p>
+     *
+     * <p>Reconnecting does NOT automatically disable protection mode; an
+     * operator must turn it off manually.
+     * </p>
      */
     private void tryReconnectDatabase() {
         try {

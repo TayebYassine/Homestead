@@ -4,7 +4,7 @@ import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.sessions.MergeRegionSession;
+import me.tayebyassine.homestead.sessions.MergeRegionRequest;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
@@ -73,12 +73,12 @@ public final class MergeRegionSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (MergeRegionSession.isFromHaveRequest(region) || MergeRegionSession.isToHaveRequest(targetRegion)) {
+        if (MergeRegionRequest.isFromHaveRequest(region) || MergeRegionRequest.isToHaveRequest(targetRegion)) {
             Messages.send(player, "commands.merge.6");
             return true;
         }
 
-        MergeRegionSession.newMergeRequest(region, targetRegion);
+        MergeRegionRequest.newMergeRequest(region, targetRegion);
 
         Messages.send(player, "commands.merge.7");
         Messages.send(targetOwner, "commands.merge.8", player.getName(), region.getName());

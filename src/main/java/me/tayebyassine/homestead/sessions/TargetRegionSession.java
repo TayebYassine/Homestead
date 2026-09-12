@@ -17,7 +17,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+/**
+ * Manages the "target region" session for each player.
+ *
+ * <p>The target region is the region that subsequent actions (claim,
+ * unclaim, set spawn, etc.) will operate on. Sessions are stored
+ * both in memory and in the player's {@link PersistentDataContainer}
+ * so they survive reconnects.
+ * </p>
+ */
 public final class TargetRegionSession {
+
     public static final HashMap<UUID, Long> SESSIONS = new HashMap<UUID, Long>();
     private static final Random random = new Random();
     private static final NamespacedKey PDC_KEY = new NamespacedKey(Homestead.getInstance(), "target-region");
@@ -26,10 +36,25 @@ public final class TargetRegionSession {
         throw new AssertionError("Uninstantiable class");
     }
 
+
+    /**
+     * Create a new session for the given player targeting a specific
+     * region.
+     *
+     * @param player the player
+     * @param region the region to target
+     */
     public static void newSession(Player player, Region region) {
         putSession(player, region.getUniqueId());
     }
 
+    /**
+     * Create a new session for the given player, automatically selecting
+     * the first region they own. If they own no regions, a sentinel value
+     * of {@code -1} is used.
+     *
+     * @param player the player
+     */
     public static void newSession(Player player) {
         List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
@@ -40,6 +65,17 @@ public final class TargetRegionSession {
         }
     }
 
+    /**
+     * Get the target region for the given player.
+     *
+     * <p>If no session exists in memory, the persisted value is loaded. If
+     * auto-set is enabled and the player owns regions, a random one is
+     * selected.
+     * </p>
+     *
+     * @param player the player
+     * @return the target region, or {@code null} if none is set
+     */
     public static Region getRegion(OfflinePlayer player) {
         Long session = SESSIONS.get(player.getUniqueId());
 
@@ -65,10 +101,33 @@ public final class TargetRegionSession {
         return region;
     }
 
+    /**
+     * Check whether the given player has an active target-region session
+     * that resolves to a valid region.
+     *
+     * @param player the player
+     * @return {@code true} if a valid target region is set
+     */
+    public static boolean hasSession(Player player) {
+        return SESSIONS.containsKey(player.getUniqueId()) && getRegion(player) != null;
+    }
+
+    /**
+     * Set the target region for the given player.
+     *
+     * @param player the player
+     * @param region the region to target
+     */
     public static void setRegion(OfflinePlayer player, Region region) {
         putSession(player, region.getUniqueId());
     }
 
+    /**
+     * Set the target region for the given player by region name.
+     *
+     * @param player     the player
+     * @param regionName the name of the region to target
+     */
     public static void setRegion(OfflinePlayer player, String regionName) {
         Region region = RegionManager.findRegion(regionName);
 
@@ -77,8 +136,13 @@ public final class TargetRegionSession {
         putSession(player, region.getUniqueId());
     }
 
-    public static void randomizeRegion(
-            Player player) {
+    /**
+     * Randomly select one of the regions owned by the given player and set
+     * it as the target.
+     *
+     * @param player the player
+     */
+    public static void randomizeRegion(Player player) {
         List<Region> regions = RegionManager.getRegionsOwnedByPlayer(player);
 
         if (regions.isEmpty()) {
@@ -90,10 +154,11 @@ public final class TargetRegionSession {
         }
     }
 
-    public static boolean hasSession(Player player) {
-        return SESSIONS.containsKey(player.getUniqueId()) && getRegion(player) != null;
-    }
-
+    /**
+     * Remove the target-region session for the given player.
+     *
+     * @param player the player
+     */
     public static void removeSession(Player player) {
         SESSIONS.remove(player.getUniqueId());
         saveToPersistentData(player, null);

@@ -39,7 +39,7 @@ public final class MapIcon {
         int totalIcons = allIcons.size();
         int downloaded = 0;
 
-        Logger.info("Downloading icons... 0% (0 / " + totalIcons + ")");
+        Logger.info("Downloading icons... 0% (0 / " + totalIcons + " icons)");
 
         DEFAULT_ICON = downloadIcon(Resources.<ConfigFile>get(ResourceType.Config).getDynamicMapsIconsDefault());
 
@@ -56,7 +56,7 @@ public final class MapIcon {
                 ICONS.putIfAbsent(icon, bufferedImage);
 
                 downloaded++;
-                Logger.info("Downloading icons... " + (int) ((downloaded / (float) totalIcons) * 100) + "% (" + downloaded + " / " + totalIcons + ")");
+                Logger.info("Downloading icons... " + (int) ((downloaded / (float) totalIcons) * 100) + "% (" + downloaded + " / " + totalIcons + " icons)");
             }
         }
     }

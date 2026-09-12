@@ -4,7 +4,7 @@ import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.sessions.MergeRegionSession;
+import me.tayebyassine.homestead.sessions.MergeRegionRequest;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
@@ -37,7 +37,7 @@ public final class MergeAcceptRegionSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!MergeRegionSession.isToHaveRequest(region)) {
+        if (!MergeRegionRequest.isToHaveRequest(region)) {
             Messages.send(player, "commands.mergeaccept.1");
             return true;
         }
@@ -47,7 +47,7 @@ public final class MergeAcceptRegionSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        Region from = RegionManager.findRegion(MergeRegionSession.getFrom(region));
+        Region from = RegionManager.findRegion(MergeRegionRequest.getFrom(region));
 
         if (from == null) {
             Messages.send(player, "commands.mergeaccept.3");

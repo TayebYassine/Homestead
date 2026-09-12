@@ -18,6 +18,15 @@ public final class RegionsFile extends ResourceFile {
     }
 
     /**
+     * Whether invalid data should be cleaned up on startup.
+     *
+     * @return {@code true} if clean-startup is enabled, defaults to {@code true}
+     */
+    public boolean isCleanStartupEnabled() {
+        return getBoolean("clean-startup", true);
+    }
+
+    /**
      * Whether the instant trust-acceptance system is enabled.
      *
      * @return {@code true} if trust acceptance is skipped, defaults to {@code false}

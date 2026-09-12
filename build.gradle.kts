@@ -36,9 +36,6 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 dependencies {
-    testImplementation("junit:junit:4.13.1")
-    testImplementation("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
-
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.20")

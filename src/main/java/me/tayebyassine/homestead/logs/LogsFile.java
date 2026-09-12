@@ -8,11 +8,22 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Manages the plugin's persistent log file ({@code logs.txt}).
+ *
+ * <p>Each entry is prefixed with a timestamp in {@code HH:mm:ss MM/dd/yyyy}
+ * format. The file is cleared and re-initialized on every server start.</p>
+ */
 public final class LogsFile {
+
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss MM/dd/yyyy");
     private final File logFile;
     private boolean isReady = false;
 
+    /**
+     * Create or open the log file, clear its contents, and write the
+     * header banner.
+     */
     public LogsFile() {
         this.logFile = new File(Homestead.getInstance().getDataFolder(), "logs.txt");
         createLogFile();
@@ -25,6 +36,10 @@ public final class LogsFile {
         save("-------------------------------------------------------------------");
     }
 
+    /**
+     * Ensure the log file exists on disk. Sets {@link #isReady} to
+     * {@code true} on success.
+     */
     private void createLogFile() {
         if (!logFile.exists()) {
             try {
@@ -37,6 +52,11 @@ public final class LogsFile {
         isReady = true;
     }
 
+    /**
+     * Append a timestamped message to the log file.
+     *
+     * @param message the message to write
+     */
     public void save(String message) {
         if (!isReady) {
             return;
@@ -50,6 +70,9 @@ public final class LogsFile {
         }
     }
 
+    /**
+     * Clear all contents of the log file.
+     */
     public void clear() {
         if (!isReady) {
             return;

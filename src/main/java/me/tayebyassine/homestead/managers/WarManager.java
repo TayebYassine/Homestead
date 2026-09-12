@@ -25,12 +25,13 @@ import java.util.stream.Collectors;
  */
 public final class WarManager {
     private WarManager() {
+        throw new AssertionError("Uninstantiable class");
     }
 
     /**
      * Returns the total number of active wars.
      *
-     * @return War count.
+     * @return war count
      */
     public static int getWarCount() {
         return getAll().size();
@@ -39,7 +40,7 @@ public final class WarManager {
     /**
      * Returns all active wars.
      *
-     * @return List of wars.
+     * @return list of wars
      */
     public static List<War> getAll() {
         return Homestead.WAR_CACHE.getAll();
@@ -48,7 +49,7 @@ public final class WarManager {
     /**
      * Returns all active wars (alias for semantic clarity).
      *
-     * @return List of active wars.
+     * @return list of active wars
      */
     public static List<War> getActiveWars() {
         return getAll();
@@ -57,8 +58,8 @@ public final class WarManager {
     /**
      * Retrieves the war with the exact ID.
      *
-     * @param warId The war ID
-     * @return The War, or {@code null}.
+     * @param warId the war ID
+     * @return the war, or {@code null}
      */
     public static War findWar(long warId) {
         return Homestead.WAR_CACHE.get(warId);
@@ -67,8 +68,8 @@ public final class WarManager {
     /**
      * Retrieves the war with the exact name (case-sensitive).
      *
-     * @param name The war name
-     * @return The War, or {@code null}.
+     * @param name the war name
+     * @return the war, or {@code null}
      */
     public static War findWar(String name) {
         return getAll().stream()
@@ -80,8 +81,8 @@ public final class WarManager {
     /**
      * Finds a war by name (case-insensitive).
      *
-     * @param name The war name
-     * @return The War, or {@code null}.
+     * @param name the war name
+     * @return the war, or {@code null}
      */
     public static War findWarIgnoreCase(String name) {
         return getAll().stream()
@@ -93,7 +94,7 @@ public final class WarManager {
     /**
      * Returns all war names for tab-completion.
      *
-     * @return List of war names.
+     * @return list of war names
      */
     public static List<String> getWarNames() {
         return getAll().stream()
@@ -104,8 +105,8 @@ public final class WarManager {
     /**
      * Returns the war the given region is participating in.
      *
-     * @param regionId The region ID
-     * @return The War, or {@code null}.
+     * @param regionId the region ID
+     * @return the war, or {@code null}
      */
     public static War findWarByRegion(long regionId) {
         return getAll().stream()
@@ -117,8 +118,8 @@ public final class WarManager {
     /**
      * Returns all wars a region is participating in.
      *
-     * @param region The region
-     * @return List of wars.
+     * @param region the region
+     * @return list of wars
      */
     public static List<War> getWarsByRegion(Region region) {
         return getWarsByRegion(region.getUniqueId());
@@ -127,8 +128,8 @@ public final class WarManager {
     /**
      * Returns all wars a region is participating in.
      *
-     * @param regionId The region ID
-     * @return List of wars.
+     * @param regionId the region ID
+     * @return list of wars
      */
     public static List<War> getWarsByRegion(long regionId) {
         return getAll().stream()
@@ -139,11 +140,11 @@ public final class WarManager {
     /**
      * Declares a new war between exactly two regions.
      *
-     * @param name    The war display name
-     * @param prize   The reward given to the winning region; must be &gt; 0
-     * @param regionA The first participating region
-     * @param regionB The second participating region
-     * @return The created War.
+     * @param name    the war display name
+     * @param prize   the reward given to the winning region; must be &gt; 0
+     * @param regionA the first participating region
+     * @param regionB the second participating region
+     * @return the created war
      * @throws IllegalArgumentException if regions are identical
      * @throws IllegalStateException    if either region is already in a war
      */
@@ -171,9 +172,9 @@ public final class WarManager {
     /**
      * Checks if two regions can declare war (pre-flight validation).
      *
-     * @param regionA The first region
-     * @param regionB The second region
-     * @return {@code true} if war can be declared.
+     * @param regionA the first region
+     * @param regionB the second region
+     * @return {@code true} if war can be declared
      */
     public static boolean canDeclareWar(Region regionA, Region regionB) {
         if (regionA.getUniqueId() == regionB.getUniqueId()) return false;
@@ -183,9 +184,9 @@ public final class WarManager {
     /**
      * Adds a region to an existing war.
      *
-     * @param war    The war
-     * @param region The region to add
-     * @return {@code true} if added successfully.
+     * @param war    the war
+     * @param region the region to add
+     * @return {@code true} if added successfully
      */
     public static boolean addRegionToWar(War war, Region region) {
         if (war == null || isRegionInWar(region.getUniqueId())) return false;
@@ -196,7 +197,7 @@ public final class WarManager {
     /**
      * Ends and removes the war with the given ID.
      *
-     * @param warId The war ID
+     * @param warId the war ID
      */
     public static void endWar(long warId) {
         Homestead.WAR_CACHE.remove(warId);
@@ -205,8 +206,8 @@ public final class WarManager {
     /**
      * Ends a war and declares a specific winner.
      *
-     * @param war    The war
-     * @param winner The winning region
+     * @param war    the war
+     * @param winner the winning region
      */
     public static void forceEndWar(War war, Region winner) {
         if (war == null || !war.getRegionIds().contains(winner.getUniqueId())) return;
@@ -219,7 +220,7 @@ public final class WarManager {
     /**
      * Ends all active wars immediately.
      *
-     * @return The number of wars ended.
+     * @return the number of wars ended
      */
     public static int endAllWars() {
         List<Long> toEnd = getAll().stream()
@@ -235,8 +236,8 @@ public final class WarManager {
     /**
      * Returns how long a war has been running in milliseconds.
      *
-     * @param war The war
-     * @return Duration in milliseconds.
+     * @param war the war
+     * @return duration in milliseconds
      */
     public static long getWarDuration(War war) {
         return System.currentTimeMillis() - war.getStartedAt();
@@ -245,7 +246,7 @@ public final class WarManager {
     /**
      * Returns the war with the longest duration.
      *
-     * @return The longest running war, or {@code null}.
+     * @return the longest running war, or {@code null}
      */
     public static War getLongestWar() {
         return getAll().stream()
@@ -256,7 +257,7 @@ public final class WarManager {
     /**
      * Returns the war with the highest prize.
      *
-     * @return The richest war, or {@code null}.
+     * @return the richest war, or {@code null}
      */
     public static War getRichestWar() {
         return getAll().stream()
@@ -267,8 +268,8 @@ public final class WarManager {
     /**
      * Returns wars sorted by prize descending.
      *
-     * @param limit Maximum results
-     * @return List of wars.
+     * @param limit maximum results
+     * @return list of wars
      */
     public static List<War> getWarLeaderboard(int limit) {
         return getAll().stream()
@@ -280,8 +281,8 @@ public final class WarManager {
     /**
      * Returns the most recently declared wars.
      *
-     * @param limit Maximum results
-     * @return List of recent wars.
+     * @param limit maximum results
+     * @return list of recent wars
      */
     public static List<War> getRecentWars(int limit) {
         return getAll().stream()
@@ -293,8 +294,8 @@ public final class WarManager {
     /**
      * Returns all regions participating in a war.
      *
-     * @param war The war
-     * @return List of regions.
+     * @param war the war
+     * @return list of regions
      */
     public static List<Region> getWarParticipants(War war) {
         return war != null ? war.getRegions() : Collections.emptyList();
@@ -303,8 +304,8 @@ public final class WarManager {
     /**
      * Returns the number of regions in a war.
      *
-     * @param war The war
-     * @return Participant count.
+     * @param war the war
+     * @return participant count
      */
     public static int getWarParticipantCount(War war) {
         return war != null ? war.getRegionIds().size() : 0;
@@ -313,8 +314,8 @@ public final class WarManager {
     /**
      * Returns the total number of unique players involved in a war.
      *
-     * @param war The war
-     * @return Player count.
+     * @param war the war
+     * @return player count
      */
     public static int getWarMemberCount(War war) {
         return getMembersOfWar(war).size();
@@ -323,8 +324,8 @@ public final class WarManager {
     /**
      * Returns only online players participating in a war.
      *
-     * @param war The war
-     * @return List of online players.
+     * @param war the war
+     * @return list of online players
      */
     public static List<Player> getOnlineWarMembers(War war) {
         List<Player> online = new ArrayList<>();
@@ -339,8 +340,8 @@ public final class WarManager {
     /**
      * Collects all members and owners from every region in the war.
      *
-     * @param warId The war ID
-     * @return List of unique players.
+     * @param warId the war ID
+     * @return list of unique players
      */
     public static List<OfflinePlayer> getMembersOfWar(long warId) {
         War war = findWar(warId);
@@ -350,8 +351,8 @@ public final class WarManager {
     /**
      * Collects all members and owners from every region in the war.
      *
-     * @param war The war
-     * @return List of unique players.
+     * @param war the war
+     * @return list of unique players
      */
     public static List<OfflinePlayer> getMembersOfWar(War war) {
         if (war == null || war.getRegionIds().size() < 2) {
@@ -374,8 +375,8 @@ public final class WarManager {
     /**
      * Returns {@code true} if the given player is a member or owner of any active war.
      *
-     * @param player The player
-     * @return {@code true} if in any war.
+     * @param player the player
+     * @return {@code true} if in any war
      */
     public static boolean isPlayerInWar(OfflinePlayer player) {
         UUID pid = player.getUniqueId();
@@ -391,9 +392,9 @@ public final class WarManager {
     /**
      * Returns {@code true} if the given player is a member or owner of the specified war.
      *
-     * @param player The player
-     * @param war    The war
-     * @return {@code true} if in the war.
+     * @param player the player
+     * @param war    the war
+     * @return {@code true} if in the war
      */
     public static boolean isPlayerInWar(OfflinePlayer player, War war) {
         if (war == null) return false;
@@ -408,11 +409,31 @@ public final class WarManager {
     }
 
     /**
+     * Returns {@code true} if the given region is currently participating in any war.
+     *
+     * @param region the region
+     * @return {@code true} if in a war
+     */
+    public static boolean isRegionInWar(Region region) {
+        return isRegionInWar(region.getUniqueId());
+    }
+
+    /**
+     * Returns {@code true} if the given region is currently participating in any war.
+     *
+     * @param regionId the region ID
+     * @return {@code true} if in a war
+     */
+    public static boolean isRegionInWar(long regionId) {
+        return findWarByRegion(regionId) != null;
+    }
+
+    /**
      * Removes the given region from whichever war it belongs to, without ending the war.
      * The caller is responsible for checking the war's state afterward and ending it if needed.
      *
-     * @param regionId The region ID to remove
-     * @return The war the region was removed from, or {@code null}.
+     * @param regionId the region ID to remove
+     * @return the war the region was removed from, or {@code null}
      */
     public static War removeRegionFromWar(long regionId) {
         for (War war : getAll()) {
@@ -425,52 +446,10 @@ public final class WarManager {
     }
 
     /**
-     * Checks whether any active war already carries the supplied name (case-insensitive).
-     *
-     * @param name The name to check
-     * @return {@code true} if the name is used.
-     */
-    public static boolean isNameUsed(String name) {
-        return getAll().stream()
-                .anyMatch(w -> w.getName().equalsIgnoreCase(name));
-    }
-
-    /**
-     * Checks whether any active war already carries the supplied name (case-sensitive).
-     *
-     * @param name The name to check
-     * @return {@code true} if the name is used.
-     */
-    public static boolean isWarNameUsed(String name) {
-        return getAll().stream()
-                .anyMatch(w -> w.getName().equals(name));
-    }
-
-    /**
-     * Returns {@code true} if the given region is currently participating in any war.
-     *
-     * @param region The region
-     * @return {@code true} if in a war.
-     */
-    public static boolean isRegionInWar(Region region) {
-        return isRegionInWar(region.getUniqueId());
-    }
-
-    /**
-     * Returns {@code true} if the given region is currently participating in any war.
-     *
-     * @param regionId The region ID
-     * @return {@code true} if in a war.
-     */
-    public static boolean isRegionInWar(long regionId) {
-        return findWarByRegion(regionId) != null;
-    }
-
-    /**
      * Updates the prize for a war.
      *
-     * @param war      The war
-     * @param newPrize The new prize amount
+     * @param war      the war
+     * @param newPrize the new prize amount
      */
     public static void updateWarPrize(War war, double newPrize) {
         if (war == null) return;
@@ -480,8 +459,8 @@ public final class WarManager {
     /**
      * Sends a message to all online participants of a war.
      *
-     * @param war     The war
-     * @param message The message to send
+     * @param war     the war
+     * @param message the message to send
      */
     public static void sendWarMessage(War war, String message) {
         for (Player player : getOnlineWarMembers(war)) {
@@ -492,8 +471,8 @@ public final class WarManager {
     /**
      * Plays a sound to all online participants of a war.
      *
-     * @param war   The war
-     * @param sound The sound to play
+     * @param war   the war
+     * @param sound the sound to play
      */
     public static void playWarSound(War war, Sound sound) {
         for (Player player : getOnlineWarMembers(war)) {
@@ -504,8 +483,8 @@ public final class WarManager {
     /**
      * Notifies all war participants that the war has ended.
      *
-     * @param receivers The players to notify
-     * @param winner    The winning region
+     * @param receivers the players to notify
+     * @param winner    the winning region
      */
     public static void tellPlayersWarEnded(List<OfflinePlayer> receivers, Region winner) {
         for (OfflinePlayer warPlayer : receivers) {
@@ -520,7 +499,7 @@ public final class WarManager {
     /**
      * Broadcasts the declaration of war to participants or the entire server.
      *
-     * @param war The war to broadcast
+     * @param war the war to broadcast
      */
     public static void broadcastDeclarationOfWar(War war) {
         String type = Resources.<RegionsFile>get(ResourceType.Regions).getWarBroadcastType();
@@ -566,11 +545,33 @@ public final class WarManager {
     }
 
     /**
+     * Checks whether any active war already carries the supplied name (case-insensitive).
+     *
+     * @param name the name to check
+     * @return {@code true} if the name is used
+     */
+    public static boolean isNameUsed(String name) {
+        return getAll().stream()
+                .anyMatch(w -> w.getName().equalsIgnoreCase(name));
+    }
+
+    /**
+     * Checks whether any active war already carries the supplied name (case-sensitive).
+     *
+     * @param name the name to check
+     * @return {@code true} if the name is used
+     */
+    public static boolean isWarNameUsed(String name) {
+        return getAll().stream()
+                .anyMatch(w -> w.getName().equals(name));
+    }
+
+    /**
      * Removes all wars with invalid references:<br>
      * - Regions that no longer exist<br>
      * - Wars with fewer than 2 valid regions
      *
-     * @return Number of corrupted wars removed.
+     * @return number of corrupted wars removed
      */
     public static int cleanupInvalidWars() {
         List<Long> toRemove = new ArrayList<>();

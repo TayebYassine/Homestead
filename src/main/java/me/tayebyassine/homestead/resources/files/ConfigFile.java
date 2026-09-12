@@ -43,6 +43,15 @@ public final class ConfigFile extends ResourceFile {
     }
 
     /**
+     * Whether anonymous usage statistics (bStats and FastStats) are enabled.
+     *
+     * @return {@code true} if metrics are enabled, defaults to {@code true}
+     */
+    public boolean isMetricsEnabled() {
+        return getBoolean("metrics", true);
+    }
+
+    /**
      * The interval (in minutes) between cache refreshes.
      *
      * @return cache interval in minutes, defaults to {@code 30}
@@ -85,6 +94,15 @@ public final class ConfigFile extends ResourceFile {
      */
     public boolean isDynamicMapsEnabled() {
         return getBoolean("dynamic-maps.enabled");
+    }
+
+    /**
+     * The interval (in seconds) for dynamic maps update.
+     *
+     * @return update interval in seconds, defaults to {@code 60}
+     */
+    public int getDynamicMapsUpdateInterval() {
+        return getInt("dynamic-maps.update-interval", 60);
     }
 
     /**
@@ -140,6 +158,15 @@ public final class ConfigFile extends ResourceFile {
      */
     public boolean isDiscordEnabled() {
         return getBoolean("discord.enabled");
+    }
+
+    /**
+     * The Discord webhook URL for sending event notifications.
+     *
+     * @return the webhook URL string
+     */
+    public String getDiscordWebhookURL() {
+        return getString("discord.webhook_url");
     }
 
     /**

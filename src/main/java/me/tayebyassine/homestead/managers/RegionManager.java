@@ -27,14 +27,15 @@ import java.util.stream.Collectors;
  */
 public final class RegionManager {
     private RegionManager() {
+        throw new AssertionError("Uninstantiable class");
     }
 
     /**
      * Creates a region, optionally ensuring the name is unique by appending a counter.
      *
-     * @param name   The region name
-     * @param player The owner of the region
-     * @return The created region.
+     * @param name   the region name
+     * @param player the owner of the region
+     * @return the created region
      */
     public static Region createRegion(String name, OfflinePlayer player) {
         String newName = name;
@@ -64,7 +65,7 @@ public final class RegionManager {
     /**
      * Returns the total number of regions in the server.
      *
-     * @return Region count.
+     * @return region count
      */
     public static int getRegionCount() {
         return getAll().size();
@@ -72,6 +73,8 @@ public final class RegionManager {
 
     /**
      * Returns a list of every loaded region, directly from dynamic cache.
+     *
+     * @return list of all regions
      */
     public static List<Region> getAll() {
         return Homestead.REGION_CACHE.getAll();
@@ -80,8 +83,8 @@ public final class RegionManager {
     /**
      * Retrieves the region with the exact ID, or null if none exists.
      *
-     * @param id The region ID
-     * @return The Region, or {@code null}.
+     * @param id the region ID
+     * @return the region, or {@code null}
      */
     public static Region findRegion(long id) {
         return Homestead.REGION_CACHE.get(id);
@@ -90,8 +93,8 @@ public final class RegionManager {
     /**
      * Retrieves the region with the exact name (case-insensitive), or null if none exists.
      *
-     * @param name The region name
-     * @return The Region, or {@code null}.
+     * @param name the region name
+     * @return the region, or {@code null}
      */
     public static Region findRegion(String name) {
         for (Region region : getAll()) {
@@ -105,7 +108,7 @@ public final class RegionManager {
     /**
      * Returns all region names for tab-completion purposes.
      *
-     * @return List of region names.
+     * @return list of region names
      */
     public static List<String> getRegionNames() {
         return getAll().stream()
@@ -114,10 +117,34 @@ public final class RegionManager {
     }
 
     /**
+     * Returns a random region from the cache.
+     *
+     * @return a random region, or {@code null} if none exist
+     */
+    public static Region getRandomRegion() {
+        List<Region> all = getAll();
+        if (all.isEmpty()) return null;
+        return all.get(new Random().nextInt(all.size()));
+    }
+
+    /**
+     * Returns every unique owner across all regions.
+     *
+     * @return list of owner players
+     */
+    public static List<OfflinePlayer> getAllOwners() {
+        return getAll().stream()
+                .map(Region::getOwner)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+
+    /**
      * Searches regions by name containing the given text (case-insensitive).
      *
-     * @param query The search query
-     * @return List of matching regions.
+     * @param query the search query
+     * @return list of matching regions
      */
     public static List<Region> searchRegions(String query) {
         String lower = query.toLowerCase();
@@ -127,22 +154,60 @@ public final class RegionManager {
     }
 
     /**
-     * Returns a random region from the cache.
+     * Supplies all regions sorted alphabetically by name.
      *
-     * @return A random region, or {@code null} if none exist.
+     * @return sorted list of regions
      */
-    public static Region getRandomRegion() {
-        List<Region> all = getAll();
-        if (all.isEmpty()) return null;
-        return all.get(new Random().nextInt(all.size()));
+    public static List<Region> sortRegionsAlpha() {
+        List<Region> regions = getAll();
+        regions.sort(Comparator.comparing(Region::getName, String.CASE_INSENSITIVE_ORDER));
+        return regions;
     }
+
+    /**
+     * Alias for {@link #sortRegionsAlpha()} with a more descriptive name.
+     *
+     * @return regions sorted alphabetically
+     */
+    public static List<Region> getRegionsSortedByName() {
+        return sortRegionsAlpha();
+    }
+
+    /**
+     * Produces a list ordered by the requested metric.
+     * Ordering is descending for numeric criteria, ascending for creation date.
+     *
+     * @param type the sorting method
+     * @return sorted list of regions
+     */
+    public static List<Region> sortRegions(RegionSorting type) {
+        return switch (type) {
+            case BANK -> getAll().stream()
+                    .sorted(Comparator.comparingDouble(Region::getBank).reversed())
+                    .collect(Collectors.toList());
+            case CHUNKS_COUNT -> getAll().stream()
+                    .sorted(Comparator.<Region>comparingInt(region -> ChunkManager.getChunksOfRegion(region.getUniqueId()).size()).reversed())
+                    .collect(Collectors.toList());
+            case MEMBERS_COUNT -> getAll().stream()
+                    .sorted(Comparator.<Region>comparingInt(region -> MemberManager.getMembersOfRegion(region.getUniqueId()).size()).reversed())
+                    .collect(Collectors.toList());
+            case RATING -> getAll().stream()
+                    .sorted(Comparator.<Region>comparingDouble(RateManager::getAverageRating).reversed())
+                    .collect(Collectors.toList());
+            case CREATION_DATE -> getAll().stream()
+                    .sorted(Comparator.comparingLong(Region::getCreatedAt).reversed())
+                    .collect(Collectors.toList());
+            default -> new ArrayList<>();
+        };
+    }
+
 
     /**
      * Permanently deletes the specified region and all related data.
      * If configured, all linked chunks are regenerated via FastAsyncWorldEdit.
      *
-     * @param id     The region ID
-     * @param player Executor (optional)
+     * @param id     the region ID
+     * @param player executor (optional)
      */
     public static void deleteRegion(long id, OfflinePlayer... player) {
         Region region = findRegion(id);
@@ -209,8 +274,8 @@ public final class RegionManager {
      * Merges all data from one region into another and deletes the source region.
      * Transfers bank balance, chunks, sub-areas, and members.
      *
-     * @param from The region to merge from (will be deleted)
-     * @param to   The region to merge into
+     * @param from the region to merge from (will be deleted)
+     * @param to   the region to merge into
      */
     public static void mergeRegions(Region from, Region to) {
         if (from.getUniqueId() == to.getUniqueId()) {
@@ -242,9 +307,9 @@ public final class RegionManager {
     /**
      * Safely renames a region, ensuring the new name is unique.
      *
-     * @param region  The region to rename
-     * @param newName The desired new name
-     * @return The actual name assigned (may have counter appended).
+     * @param region  the region to rename
+     * @param newName the desired new name
+     * @return the actual name assigned (may have counter appended)
      */
     public static String renameRegion(Region region, String newName) {
         String actualName = newName;
@@ -259,6 +324,14 @@ public final class RegionManager {
         return actualName;
     }
 
+    /**
+     * Sends a private chat message to all online members and the owner of a region.
+     * Optionally logs the message if configured.
+     *
+     * @param region  the region to chat in
+     * @param author  the player sending the message
+     * @param message the message content
+     */
     public static void sendPrivateChat(Region region, Player author, String message) {
         List<Player> receivers = MemberManager.getOnlineMembers(region);
         OfflinePlayer owner = region.getOwner();
@@ -274,11 +347,12 @@ public final class RegionManager {
         }
     }
 
+
     /**
      * Checks if a region has no chunks and no members (essentially empty).
      *
-     * @param region The region
-     * @return {@code true} if the region is empty.
+     * @param region the region
+     * @return {@code true} if the region is empty
      */
     public static boolean isRegionEmpty(Region region) {
         return ChunkManager.getChunksOfRegion(region.getUniqueId()).isEmpty()
@@ -288,72 +362,19 @@ public final class RegionManager {
     /**
      * Returns how many milliseconds ago the region was created.
      *
-     * @param region The region
-     * @return Age in milliseconds.
+     * @param region the region
+     * @return age in milliseconds
      */
     public static long getRegionAge(Region region) {
         return System.currentTimeMillis() - region.getCreatedAt();
     }
 
-    /**
-     * Collects every unique owner across all regions.
-     */
-    public static List<OfflinePlayer> getAllOwners() {
-        return getAll().stream()
-                .map(Region::getOwner)
-                .distinct()
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Supplies all regions sorted alphabetically by name.
-     */
-    public static List<Region> sortRegionsAlpha() {
-        List<Region> regions = getAll();
-        regions.sort(Comparator.comparing(Region::getName, String.CASE_INSENSITIVE_ORDER));
-        return regions;
-    }
-
-    /**
-     * Alias for {@link #sortRegionsAlpha()} with a more descriptive name.
-     *
-     * @return Regions sorted alphabetically.
-     */
-    public static List<Region> getRegionsSortedByName() {
-        return sortRegionsAlpha();
-    }
-
-    /**
-     * Supplies only regions that have a welcome sign configured.
-     */
-    public static List<Region> getRegionsWithWelcomeSigns() {
-        List<Region> filtered = new ArrayList<>();
-        for (Region region : getAll()) {
-            if (region.getWelcomeSign() != null) {
-                filtered.add(region);
-            }
-        }
-        return filtered;
-    }
-
-    /**
-     * Supplies owners of regions that possess a welcome sign.
-     */
-    public static List<OfflinePlayer> getPlayersWithRegionsHasWelcomeSigns() {
-        List<OfflinePlayer> filtered = new ArrayList<>();
-        for (Region region : getAll()) {
-            if (region.getWelcomeSign() != null) {
-                filtered.add(region.getOwner());
-            }
-        }
-        return filtered;
-    }
 
     /**
      * Supplies every region whose owner matches the given player.
      *
-     * @param player The player
-     * @return List of owned regions.
+     * @param player the player
+     * @return list of owned regions
      */
     public static List<Region> getRegionsOwnedByPlayer(OfflinePlayer player) {
         return getRegionsOwnedByPlayer(player.getUniqueId());
@@ -362,8 +383,8 @@ public final class RegionManager {
     /**
      * Supplies every region whose owner matches the given UUID.
      *
-     * @param ownerId The owner UUID
-     * @return List of owned regions.
+     * @param ownerId the owner UUID
+     * @return list of owned regions
      */
     public static List<Region> getRegionsOwnedByPlayer(UUID ownerId) {
         return getAll().stream()
@@ -374,8 +395,8 @@ public final class RegionManager {
     /**
      * Supplies every region that lists the given player as a member.
      *
-     * @param player The player
-     * @return List of regions.
+     * @param player the player
+     * @return list of regions
      */
     public static List<Region> getRegionsHasPlayerAsMember(OfflinePlayer player) {
         return getRegionsHasPlayerAsMember(player.getUniqueId());
@@ -384,8 +405,8 @@ public final class RegionManager {
     /**
      * Supplies every region that lists the given player as a member.
      *
-     * @param playerId The player UUID
-     * @return List of regions.
+     * @param playerId the player UUID
+     * @return list of regions
      */
     public static List<Region> getRegionsHasPlayerAsMember(UUID playerId) {
         List<Region> regions = new ArrayList<>();
@@ -399,6 +420,8 @@ public final class RegionManager {
 
     /**
      * Supplies regions flagged as public (passthrough + teleport-spawn).
+     *
+     * @return list of public regions
      */
     public static List<Region> getPublicRegions() {
         List<Region> regions = new ArrayList<>();
@@ -411,10 +434,24 @@ public final class RegionManager {
     }
 
     /**
+     * Tests whether the player's current chunk is claimed by the supplied region.
+     *
+     * @param player the player
+     * @param region the region
+     * @return {@code true} if the player is inside the region
+     */
+    public static boolean isPlayerInsideRegion(Player player, Region region) {
+        Chunk location = player.getLocation().getChunk();
+        RegionChunk rc = ChunkManager.findChunk(location);
+        return rc != null && rc.getRegionId() == region.getUniqueId();
+    }
+
+
+    /**
      * Returns all regions in a specific world.
      *
-     * @param world The world
-     * @return List of regions with chunks in that world.
+     * @param world the world
+     * @return list of regions with chunks in that world
      */
     public static List<Region> getRegionsInWorld(World world) {
         return getRegionsInWorld(world.getUID());
@@ -423,8 +460,8 @@ public final class RegionManager {
     /**
      * Returns all regions in a specific world.
      *
-     * @param worldId The world UUID
-     * @return List of regions with chunks in that world.
+     * @param worldId the world UUID
+     * @return list of regions with chunks in that world
      */
     public static List<Region> getRegionsInWorld(UUID worldId) {
         Set<Long> regionIds = ChunkManager.getChunksInWorld(worldId).stream()
@@ -442,9 +479,9 @@ public final class RegionManager {
     /**
      * Returns regions within a chunk radius of a location.
      *
-     * @param location    The center location
-     * @param chunkRadius The radius in chunks
-     * @return List of nearby regions.
+     * @param location    the center location
+     * @param chunkRadius the radius in chunks
+     * @return list of nearby regions
      */
     public static List<Region> getRegionsNearLocation(Location location, int chunkRadius) {
         World world = location.getWorld();
@@ -474,8 +511,8 @@ public final class RegionManager {
     /**
      * Returns the region that owns the chunk at the given location.
      *
-     * @param location The location
-     * @return The region, or {@code null} if unclaimed.
+     * @param location the location
+     * @return the region, or {@code null} if unclaimed
      */
     public static Region getRegionAtLocation(Location location) {
         if (location.getWorld() == null) return null;
@@ -485,8 +522,8 @@ public final class RegionManager {
     /**
      * Returns the region that owns the given chunk.
      *
-     * @param chunk The chunk
-     * @return The region, or {@code null} if unclaimed.
+     * @param chunk the chunk
+     * @return the region, or {@code null} if unclaimed
      */
     public static Region getRegionAtChunk(Chunk chunk) {
         RegionChunk rc = ChunkManager.findChunk(chunk);
@@ -497,9 +534,9 @@ public final class RegionManager {
     /**
      * Returns regions with bank balance within a range.
      *
-     * @param min Minimum bank balance (inclusive)
-     * @param max Maximum bank balance (inclusive)
-     * @return List of regions.
+     * @param min minimum bank balance (inclusive)
+     * @param max maximum bank balance (inclusive)
+     * @return list of regions
      */
     public static List<Region> getRegionsByBankRange(double min, double max) {
         return getAll().stream()
@@ -510,7 +547,7 @@ public final class RegionManager {
     /**
      * Returns the sum of all region bank balances.
      *
-     * @return Total server wealth in regions.
+     * @return total server wealth in regions
      */
     public static double getTotalServerBank() {
         return getAll().stream()
@@ -521,7 +558,7 @@ public final class RegionManager {
     /**
      * Returns the average bank balance across all regions.
      *
-     * @return Average balance, or {@code 0.0} if no regions.
+     * @return average balance, or {@code 0.0} if no regions
      */
     public static double getAverageBank() {
         List<Region> all = getAll();
@@ -532,7 +569,7 @@ public final class RegionManager {
     /**
      * Returns the richest region.
      *
-     * @return The region with the highest bank balance, or {@code null}.
+     * @return the region with the highest bank balance, or {@code null}
      */
     public static Region getRichestRegion() {
         return getAll().stream()
@@ -543,7 +580,7 @@ public final class RegionManager {
     /**
      * Returns the poorest region.
      *
-     * @return The region with the lowest bank balance, or {@code null}.
+     * @return the region with the lowest bank balance, or {@code null}
      */
     public static Region getPoorestRegion() {
         return getAll().stream()
@@ -552,9 +589,39 @@ public final class RegionManager {
     }
 
     /**
+     * Supplies only regions that have a welcome sign configured.
+     *
+     * @return list of regions with welcome signs
+     */
+    public static List<Region> getRegionsWithWelcomeSigns() {
+        List<Region> filtered = new ArrayList<>();
+        for (Region region : getAll()) {
+            if (region.getWelcomeSign() != null) {
+                filtered.add(region);
+            }
+        }
+        return filtered;
+    }
+
+    /**
+     * Supplies owners of regions that possess a welcome sign.
+     *
+     * @return list of players who own regions with welcome signs
+     */
+    public static List<OfflinePlayer> getPlayersWithRegionsHasWelcomeSigns() {
+        List<OfflinePlayer> filtered = new ArrayList<>();
+        for (Region region : getAll()) {
+            if (region.getWelcomeSign() != null) {
+                filtered.add(region.getOwner());
+            }
+        }
+        return filtered;
+    }
+
+    /**
      * Returns regions that have at least one sub-area.
      *
-     * @return List of regions with sub-areas.
+     * @return list of regions with sub-areas
      */
     public static List<Region> getRegionsWithSubAreas() {
         Set<Long> regionIds = SubAreaManager.getAll().stream()
@@ -572,7 +639,7 @@ public final class RegionManager {
     /**
      * Returns regions that have at least one member.
      *
-     * @return List of regions with members.
+     * @return list of regions with members
      */
     public static List<Region> getRegionsWithMembers() {
         return getAll().stream()
@@ -583,7 +650,7 @@ public final class RegionManager {
     /**
      * Returns regions that have at least one ban.
      *
-     * @return List of regions with bans.
+     * @return list of regions with bans
      */
     public static List<Region> getRegionsWithBans() {
         return getAll().stream()
@@ -594,7 +661,7 @@ public final class RegionManager {
     /**
      * Returns regions that have pending invites.
      *
-     * @return List of regions with invites.
+     * @return list of regions with invites
      */
     public static List<Region> getRegionsWithInvites() {
         return getAll().stream()
@@ -605,8 +672,8 @@ public final class RegionManager {
     /**
      * Returns regions with no activity (no logs) since a given timestamp.
      *
-     * @param since The timestamp threshold
-     * @return List of inactive regions.
+     * @param since the timestamp threshold
+     * @return list of inactive regions
      */
     public static List<Region> getInactiveRegions(long since) {
         return getAll().stream()
@@ -620,8 +687,8 @@ public final class RegionManager {
     /**
      * Returns regions whose upkeep is due (upkeepAt &lt;= current time + buffer).
      *
-     * @param bufferMillis Buffer time in milliseconds
-     * @return List of regions needing upkeep.
+     * @param bufferMillis buffer time in milliseconds
+     * @return list of regions needing upkeep
      */
     public static List<Region> getRegionsNeedingUpkeep(long bufferMillis) {
         long threshold = System.currentTimeMillis() + bufferMillis;
@@ -633,44 +700,20 @@ public final class RegionManager {
     /**
      * Checks if a region can afford its upkeep based on current bank balance.
      *
-     * @param region     The region
-     * @param upkeepCost The upkeep cost
-     * @return {@code true} if bank >= upkeep cost.
+     * @param region     the region
+     * @param upkeepCost the upkeep cost
+     * @return {@code true} if bank >= upkeep cost
      */
     public static boolean canAffordUpkeep(Region region, double upkeepCost) {
         return region.getBank() >= upkeepCost;
     }
 
     /**
-     * Produces a list ordered by the requested metric.
-     * Ordering is descending for numeric criteria, ascending for creation date.
-     *
-     * @param type The sorting method
-     * @return Sorted list of regions.
-     */
-    public static List<Region> sortRegions(RegionSorting type) {
-        return switch (type) {
-            case BANK -> getAll().stream()
-                    .sorted(Comparator.comparingDouble(Region::getBank).reversed())
-                    .collect(Collectors.toList());
-            case CHUNKS_COUNT -> getAll().stream()
-                    .sorted(Comparator.<Region>comparingInt(region -> ChunkManager.getChunksOfRegion(region.getUniqueId()).size()).reversed())
-                    .collect(Collectors.toList());
-            case MEMBERS_COUNT -> getAll().stream()
-                    .sorted(Comparator.<Region>comparingInt(region -> MemberManager.getMembersOfRegion(region.getUniqueId()).size()).reversed())
-                    .collect(Collectors.toList());
-            case RATING -> getAll().stream()
-                    .sorted(Comparator.<Region>comparingDouble(RateManager::getAverageRating).reversed())
-                    .collect(Collectors.toList());
-            case CREATION_DATE -> getAll().stream()
-                    .sorted(Comparator.comparingLong(Region::getCreatedAt).reversed())
-                    .collect(Collectors.toList());
-            default -> new ArrayList<>();
-        };
-    }
-
-    /**
      * Computes the 1-based rank of a region within the given sorting; 0 if not found.
+     *
+     * @param type the sorting method
+     * @param id   the region ID
+     * @return 1-based rank, or {@code 0} if not found
      */
     public static int getRank(RegionSorting type, long id) {
         List<Region> regions = sortRegions(type);
@@ -686,8 +729,8 @@ public final class RegionManager {
      * Averages the region's ranks across all metrics to give a global standing.
      * Missing regions in a category count as last place.
      *
-     * @param id The region ID
-     * @return Average rank across all categories.
+     * @param id the region ID
+     * @return average rank across all categories
      */
     public static int getGlobalRank(long id) {
         Region target = findRegion(id);
@@ -712,18 +755,12 @@ public final class RegionManager {
 
     /**
      * Checks whether any region already carries the supplied name, ignoring case.
+     *
+     * @param name the name to check
+     * @return {@code true} if the name is used
      */
     public static boolean isNameUsed(String name) {
         return findRegion(name) != null;
-    }
-
-    /**
-     * Tests whether the player's current chunk is claimed by the supplied region.
-     */
-    public static boolean isPlayerInsideRegion(Player player, Region region) {
-        Chunk location = player.getLocation().getChunk();
-        RegionChunk rc = ChunkManager.findChunk(location);
-        return rc != null && rc.getRegionId() == region.getUniqueId();
     }
 
     /**
@@ -732,7 +769,7 @@ public final class RegionManager {
      * - Worlds that no longer exist (for spawn location and welcome sign)<br><br>
      * Also cleans invalid spawn locations and welcome signs.
      *
-     * @return Number of corrupted regions removed + fixes applied.
+     * @return number of corrupted regions removed + fixes applied
      */
     public static int cleanupInvalidRegions() {
         List<Long> toRemove = new ArrayList<>();

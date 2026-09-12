@@ -40,6 +40,7 @@ public final class PlayerJoinListener implements Listener {
         Messages.sendString(player, Formatter.applyPlaceholders(message, new Placeholder()
                 .add("{unread-logs}", unreadLogs)
                 .add("{regions-invited}", InviteManager.getInvitesOfPlayer(player).size())
+                .add("{player}", player.getName())
         ));
     }
 }

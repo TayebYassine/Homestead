@@ -44,7 +44,6 @@ public final class FlySubCmd extends SubCommandBuilder {
         if (ClaimFlySession.hasSession(player)) {
             ClaimFlySession.removeSession(player);
 
-            player.setAllowFlight(false);
             player.setFlying(false);
 
             Messages.send(player, "commands.fly.2");

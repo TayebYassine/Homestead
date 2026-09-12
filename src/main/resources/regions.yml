@@ -4,7 +4,7 @@
 
 # Startup Data Cleanup
 # Remove invalid data on startup (orphaned regions, broken coordinates, etc.)
-# Disable if using dynamic world loading that happens after startup
+# true = Yes, false = No
 clean-startup: true
 
 # Welcome message
@@ -16,7 +16,7 @@ welcome-message:
 
   # The message to send
   # Note: Use "\n" for a new line.
-  message: "&eWelcome back! There are &6{unread-logs} &eunread mails, with &6{regions-invited} &eregions sent you an invite!"
+  message: "&eWelcome back, {player}!\nThere are &6{unread-logs} &eunread mails, with &6{regions-invited} &eregions sent you an invite!"
 
 # Log Private Region Chat to Console
 # Log all region chat messages for moderation purposes
@@ -66,7 +66,7 @@ borders:
   # Display type:
   # - particles: Using dust particles around region borders, following player's Y position (recommended)
   # - blocks: Spawns fake blocks in the highest surface of the region borders
-  # - glow: Spawns fake invisible blocks with glowing effect around the region borders, following player's Y position
+  # - glow: Spawns fake blocks with glowing effect around the region borders, following player's Y position
   type: particles
 
   # Dust colors, RGB format (type = 'particles')
@@ -90,7 +90,7 @@ enter-exit-region-message:
   enabled: true
 
   # Display type: title, actionbar, or chat
-  type: 'actionbar'
+  type: 'title'
 
   # Message content (use & for colors)
   # Variables: {region-displayname}, {region-description}, {region-owner}
@@ -127,6 +127,7 @@ selection-tool:
 
 # Region Upkeep System
 # Requires Vault + economy plugin
+# Note: Updating any value here requires a server restart.
 upkeep:
   # Enable recurring maintenance fees
   # true = Yes, false = No
@@ -148,6 +149,7 @@ upkeep:
 
 # Member Taxes System
 # Require members to pay fees to stay in region
+# Note: Updating any value here requires a server restart.
 taxes:
   # Enable taxation system
   # true = Yes, false = No
@@ -164,6 +166,7 @@ taxes:
   tax-timer: 604800 # 1 week = 604800 seconds
 
 # Region Renting System
+# Note: Updating any value here requires a server restart.
 renting:
   # Enable region renting
   # true = Yes, false = No
@@ -345,12 +348,15 @@ delayed-teleport:
 
   # Boss bar countdown display
   boss-bar:
+    # Enable boss bar
+    # true = Yes, false = No
     enabled: true
-    # Placeholders: {seconds}, {location}
-    title: "&7Teleporting in &3{seconds}s&7..."
-    color: "PURPLE"
-    style: "SEGMENTED_10"
-    countdown-mode: "DEPLETE"
+
+    # Boss bar configuration
+    title: "&7Teleporting in &3{seconds}s&7..." # Placeholders: {seconds}, {location}
+    color: "PURPLE" # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarColor.html
+    style: "SEGMENTED_10" # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/boss/BarStyle.html
+    countdown-mode: "DEPLETE" # DEPLETE / FILL
 
 # Cooldown for actions
 # Note: Restarting the server will reset the cooldowns!
