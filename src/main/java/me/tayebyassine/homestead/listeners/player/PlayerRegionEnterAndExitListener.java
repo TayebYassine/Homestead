@@ -113,7 +113,19 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 
             REGION_ENTRY_MAP.put(player.getUniqueId(), region.getUniqueId());
 
-            // Weather and Time
+            if (player.getPlayerWeather() != null) {
+                player.resetPlayerWeather();
+            }
+
+            if (player.getPlayerTimeOffset() != 0) {
+                player.resetPlayerTime();
+            }
+
+            if (player.hasPotionEffect(PotionEffectType.GLOWING)) {
+                player.removePotionEffect(PotionEffectType.GLOWING);
+            }
+
+            // Apply the new region's weather and time
             if (region.getWeather() != RegionWeather.SERVER) {
                 switch (region.getWeather()) {
                     case RegionWeather.CLEAR:

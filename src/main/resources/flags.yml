@@ -5,8 +5,10 @@
 # Disabled Flags
 # Prevent players from changing these specific flags
 # Note: If you add a flag here, you should override the state for all existing regions using the command: /hsadmin overrideflag
+# If you do not have any disabled flags, then use:
+# disabled-flags: []
 disabled-flags:
-  - "use-bells"
+  - "player-glowing"
   - "take-fall-damage"
 
 # Flag-Specific Configuration
@@ -88,7 +90,7 @@ default-world-flags:
   plant-growth: true                # Crops, saplings grow
   grass-growth: true                # Grass spreads
   sculk-spread: true                # Sculk spreads from shriekers
-  player-glowing: true              # Players have glowing effect
+  player-glowing: false             # Players have glowing effect
   snow-melting: true                # Snow melts
   ice-melting: true                 # Ice melts
   snowman-trails: true              # Snow golems leave snow trails
