@@ -62,7 +62,7 @@ import java.util.stream.Collectors;
  */
 public class Homestead extends JavaPlugin {
 
-    private static final String VERSION = "6.0.0.0-26w37b";
+    private static final String VERSION = "6.0.0.0-26w37c";
     private static final boolean SNAPSHOT = true;
 
     public static RegionCache REGION_CACHE;
