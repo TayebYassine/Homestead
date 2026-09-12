@@ -678,8 +678,11 @@ public final class RegionProtectionListener implements Listener {
         if (effectiveDamager != null) {
             if (entity instanceof ArmorStand) {
                 checkPlayerFlag(effectiveDamager, chunk, location, PlayerFlag.BREAK_BLOCKS, cancel);
-            } else if (entity instanceof Player) {
+            } else if (entity instanceof Player victim) {
                 checkPlayerFlag(effectiveDamager, chunk, location, PlayerFlag.PVP, cancel);
+                if (!victim.equals(effectiveDamager)) {
+                    checkPlayerFlag(victim, chunk, location, PlayerFlag.PVP, cancel);
+                }
             } else if (entity instanceof Monster || entity instanceof IronGolem) {
                 checkPlayerFlag(effectiveDamager, chunk, location, PlayerFlag.DAMAGE_HOSTILE_ENTITIES, cancel);
             } else if (entity instanceof Mob) {
@@ -798,8 +801,11 @@ public final class RegionProtectionListener implements Listener {
         Runnable cancel = () -> event.setCancelled(true);
 
         if (event.getEntity().getShooter() instanceof Player player) {
-            if (entityHit instanceof Player) {
+            if (entityHit instanceof Player victim) {
                 checkPlayerFlag(player, chunk, location, PlayerFlag.PVP, cancel);
+                if (!victim.equals(player)) {
+                    checkPlayerFlag(victim, chunk, location, PlayerFlag.PVP, cancel);
+                }
             } else if (entityHit instanceof Monster || entityHit instanceof IronGolem) {
                 checkPlayerFlag(player, chunk, location, PlayerFlag.DAMAGE_HOSTILE_ENTITIES, cancel);
             } else if (entityHit instanceof Mob) {
