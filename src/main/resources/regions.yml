@@ -245,6 +245,23 @@ wars:
   # - silent: No message will be sent
   broadcast-type: "regions"
 
+  # Force set player flags to Allow during a war, such as PvP, Breaking Blocks... etc.
+  # If there are no flags to override (which is not recommended):
+  # override-flags: []
+  override-flags:
+    - "pvp"
+    - "doors"
+    - "trap-doors"
+    - "fence-gates"
+    - "passthrough"
+    - "elytra"
+    - "teleport"
+    - "pickup-items"
+    - "take-fall-damage"
+    - "containers"
+    - "break-blocks"
+    - "place-blocks"
+
 # Welcome Signs Feature
 # Clickable signs that teleport to region homes
 welcome-signs:

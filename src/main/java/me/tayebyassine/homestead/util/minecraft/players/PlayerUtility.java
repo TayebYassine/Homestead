@@ -11,11 +11,15 @@ import me.tayebyassine.homestead.managers.SubAreaManager;
 import me.tayebyassine.homestead.managers.WarManager;
 import me.tayebyassine.homestead.models.*;
 import me.tayebyassine.homestead.models.serialize.SeRent;
+import me.tayebyassine.homestead.resources.ResourceType;
+import me.tayebyassine.homestead.resources.Resources;
+import me.tayebyassine.homestead.resources.files.RegionsFile;
 import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.chunks.ChunkUtility;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits.LimitMethod;
+import net.momirealms.craftengine.core.world.chunk.storage.RegionFile;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -36,20 +40,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class PlayerUtility {
     public static final Set<PlayerFlag> RENT_FLAGS_SET = Set.of(
             PlayerFlag.PVP
-    );
-    public static final Set<PlayerFlag> WAR_FLAGS_SET = Set.of(
-            PlayerFlag.PVP,
-            PlayerFlag.DOORS,
-            PlayerFlag.TRAP_DOORS,
-            PlayerFlag.FENCE_GATES,
-            PlayerFlag.PASSTHROUGH,
-            PlayerFlag.ELYTRA,
-            PlayerFlag.TELEPORT,
-            PlayerFlag.PICKUP_ITEMS,
-            PlayerFlag.TAKE_FALL_DAMAGE,
-            PlayerFlag.CONTAINERS,
-            PlayerFlag.BREAK_BLOCKS,
-            PlayerFlag.PLACE_BLOCKS
     );
     private static final int MESSAGE_COOLDOWN_SECONDS = 3;
     private static final Set<UUID> COOLDOWN = ConcurrentHashMap.newKeySet();
@@ -170,7 +160,7 @@ public final class PlayerUtility {
                 && !RENT_FLAGS_SET.contains(flag)) {
             response = true;
         } else if (WarManager.isPlayerInWar(player, war)
-                && WAR_FLAGS_SET.contains(flag)) {
+                && isFlagOverriddenDuringWar(flag)) {
             response = true;
         } else if (MemberManager.isMemberOfRegion(regionId, player)) {
             RegionMember member = MemberManager.getMemberOfRegion(regionId, player);
@@ -333,6 +323,10 @@ public final class PlayerUtility {
      */
     public static boolean equals(OfflinePlayer p1, OfflinePlayer p2) {
         return p1.getUniqueId().equals(p2.getUniqueId());
+    }
+
+    private static boolean isFlagOverriddenDuringWar(PlayerFlag flag) {
+        return Resources.<RegionsFile>get(ResourceType.Regions).getOverriddenFlagsDuringWar().contains(flag.name());
     }
 }
 

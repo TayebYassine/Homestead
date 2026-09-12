@@ -521,6 +521,13 @@ public final class RegionsFile extends ResourceFile {
     }
 
     /**
+     * List of player flags that will be set to Allow during a war.
+     *
+     * @return list of player flags
+     */
+    public List<String> getOverriddenFlagsDuringWar() { return getStringList("wars.override-flags"); }
+
+    /**
      * Whether the delayed-teleport system is enabled.
      *
      * @return {@code true} if enabled, defaults to {@code false}
