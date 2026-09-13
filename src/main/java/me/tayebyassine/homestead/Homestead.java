@@ -259,18 +259,19 @@ public class Homestead extends JavaPlugin {
         if (!IntegrationUtility.isEnabled(IntegrationUtility.Integration.VAULT)) {
             Logger.error("Unable to start the plugin; \"Vault\" is required. Shutting down plugin instance...");
 
-            if (isFolia()) {
-                Logger.error("Your server is running on Folia! Please use VaultUnlocked instead of Vault!");
-                Logger.error("The original Vault plugin doesn't support Folia servers!");
-            }
-
             endInstance();
             return;
         } else {
-            Logger.info("Loading service providers with Vault... (Target: " + (!isFolia() ? "Vault" : "VaultUnlocked") + ")");
+            Logger.info("Loading service providers with Vault... (Target: " + (isFolia() || Vault.isVaultUnlockedDetected() ? "VaultUnlocked" : "Legacy Vault") + ")");
         }
 
-        StorageManager.init(this);
+        if (isFolia() && !Vault.isVaultUnlockedDetected()) {
+            Logger.error("Your server is running on Folia! Please use VaultUnlocked instead of Vault!");
+            Logger.error("The original Vault plugin doesn't support Folia servers! Shutting down plugin...");
+
+            endInstance();
+            return;
+        }
 
         Homestead.VAULT = new Vault(this);
 
@@ -295,6 +296,8 @@ public class Homestead extends JavaPlugin {
         } else {
             Logger.info("Loaded service provider: Permissions [" + Homestead.VAULT.getPermissions().getPermissionsName() + "]");
         }
+
+        StorageManager.init();
 
         if (Resources.<RegionsFile>get(ResourceType.Regions).isCleanStartupEnabled()) {
             Logger.info("Cleaning up corrupted data... This may take a while!");

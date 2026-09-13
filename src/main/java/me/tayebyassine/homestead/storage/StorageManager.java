@@ -22,9 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class StorageManager {
 
+    private static final Homestead INSTANCE = Homestead.getInstance();
+
     private static final Map<Long, SharedStorage> STORAGES = new ConcurrentHashMap<>();
     private static final Map<Long, Set<StorageMenu>> ACTIVE_MENUS = new ConcurrentHashMap<>();
-    private static Homestead plugin;
     private static File storageFile;
     private static FileConfiguration storageConfig;
 
@@ -35,11 +36,8 @@ public final class StorageManager {
     /**
      * Initialize the storage manager with the plugin instance and load
      * the persisted storage file.
-     *
-     * @param homesteadPlugin the plugin instance
      */
-    public static void init(Homestead homesteadPlugin) {
-        plugin = homesteadPlugin;
+    public static void init() {
         loadStorageFile();
     }
 
@@ -48,7 +46,7 @@ public final class StorageManager {
      * into a {@link FileConfiguration}.
      */
     private static void loadStorageFile() {
-        storageFile = new File(plugin.getDataFolder(), "storages.yml");
+        storageFile = new File(INSTANCE.getDataFolder(), "storages.yml");
         if (!storageFile.exists()) {
             try {
                 storageFile.createNewFile();
@@ -161,7 +159,7 @@ public final class StorageManager {
         SharedStorage storage = STORAGES.get(regionId);
         if (storage != null) {
             storageConfig.set("storages." + regionId, storage.serialize());
-            plugin.runAsyncTask(StorageManager::saveConfig);
+            INSTANCE.runAsyncTask(StorageManager::saveConfig);
         }
     }
 
@@ -232,7 +230,7 @@ public final class StorageManager {
         Set<StorageMenu> menus = ACTIVE_MENUS.get(regionId);
         if (menus == null || menus.isEmpty()) return;
         List<StorageMenu> snapshot = new ArrayList<>(menus);
-        plugin.runSyncTask(() -> {
+        INSTANCE.runSyncTask(() -> {
             for (StorageMenu menu : snapshot) {
                 if (menu.isValid()) menu.refreshDisplay();
             }
@@ -249,7 +247,7 @@ public final class StorageManager {
         Set<StorageMenu> menus = ACTIVE_MENUS.get(regionId);
         if (menus == null || menus.isEmpty()) return;
         List<StorageMenu> snapshot = new ArrayList<>(menus);
-        plugin.runSyncTask(() -> {
+        INSTANCE.runSyncTask(() -> {
             SharedStorage storage = getStorage(regionId);
             ItemStack item = storage.getItem(slot);
             for (StorageMenu menu : snapshot) {

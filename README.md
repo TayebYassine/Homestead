@@ -83,33 +83,53 @@ The plugin offers more than 75 flags, allowing players to set specific permissio
 
 ## Prerequisites
 
-This depends on which software you are using. No worries, here is a guide.
+### <img src="https://avatars.githubusercontent.com/u/4350249?s=280&v=4" width="20" height="20"/> Spigot
 
-> [!IMPORTANT]
-> As of Homestead 5.0.1.0, the API was changed from the Spigot API to the PaperMC API, implementing a new platform bridge to make Spigot run with the PaperMC API.
->
-> Any software that was forked from the Spigot source will generally not work with Homestead.
+Spigot is one of the oldest Minecraft server software, but it lacks major performance improvements. We recommend you use PaperMC. If you prefer Spigot, Homestead supports the API from **1.21.10** up to **26.3**.
 
-### Spigot / PaperMC / Purpur / Pufferfish...
+Homestead requires the [Vault](https://www.spigotmc.org/resources/34315/) plugin as a bridge to connect to economy and permission services provided by other plugins. The Vault plugin must be installed on your server,
+even if you would rather not use economy features, or you're using static limits.
 
-- **Minecraft 1.21** to **1.21.8** — **Homestead 1.0.0** to **4.2.0**
-- **Minecraft 1.21.9** to latest — **Homestead 4.3.0** to latest
+List of verified and tested service provider plugins that work for Vault plugin.
 
-#### Dependencies
+|                 |                                                  Vault                                                  |
+|:----------------|:-------------------------------------------------------------------------------------------------------:|
+| **Economy**     | [EssentialsX](https://essentialsx.net/), [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked) | 
+| **Permissions** |                                   [LuckPerms](https://luckperms.net/)                                   |  
 
-- [Vault](https://www.spigotmc.org/resources/34315/) (Spigot), or [ServiceIO](https://modrinth.com/plugin/service-io)
-- Any Permissions plugin, like [LuckPerms](https://www.spigotmc.org/resources/28140/). (optional)
-- Any Economy plugin, like [EssentialsX](https://www.spigotmc.org/resources/9089/) with built-in Economy API. (optional)
+### <img src="https://avatars.githubusercontent.com/u/7608950?s=200&v=4" width="20" height="20"/> PaperMC / <img src="https://avatars.githubusercontent.com/u/94729614?s=200&v=4" width="20" height="20" /> Purpur
 
-### Folia
+PaperMC is the modern, high-performance, and more advanced Minecraft server software. Homestead supports the API from **1.21.10** up to **26.3**.
 
-- **Minecraft 1.21.9** to latest — **Homestead 5.0.1.0** to latest
+Homestead requires the [Vault](https://www.spigotmc.org/resources/34315/) plugin as a bridge to connect to economy and permission services provided by other plugins. The Vault plugin must be installed on your server,
+even if you would rather not use economy features, or you're using static limits.
 
-#### Dependencies
+The original Vault plugin is outdated for over 6 years but may still work. You can use [VaultUnlocked](https://www.spigotmc.org/resources/117277/) or [ServiceIO](https://modrinth.com/plugin/service-io) instead.
 
-- [VaultUnlocked](https://modrinth.com/plugin/vaultunlocked/version/2.16.0) version **2.16.0**
-- Any Permissions plugin, like [LuckPerms](https://www.spigotmc.org/resources/28140/). (optional)
-- Economy plugins supported by VaultUnlocked, like [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked). (optional)
+List of verified and tested service provider plugins that work for Vault, VaultUnlocked, and ServiceIO plugins.
+
+|                 |                                                  Vault                                                  |                         VaultUnlocked                          |                                               ServiceIO\*                                               |
+|:----------------|:-------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------:|
+| **Economy**     | [EssentialsX](https://essentialsx.net/), [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked) | [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked) | [EssentialsX](https://essentialsx.net/), [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked) |
+| **Permissions** |                                   [LuckPerms](https://luckperms.net/)                                   |                             (none)                             |                                   [LuckPerms](https://luckperms.net/)                                   |
+
+\*: Homestead will say that it uses "Legacy Vault" even though you use ServiceIO due to how ServiceIO was built.
+
+### <img src="https://avatars.githubusercontent.com/u/7608950?s=200&v=4" width="20" height="20"/> Folia
+
+Folia is a fork of PaperMC that introduces region-based multithreading. It is way more performant compared to PaperMC, but it lack many supported plugins. Luckily, Homestead supports Folia!  Homestead supports the API from **1.21.10** up to **26.3**.
+
+Homestead requires [VaultUnlocked](https://www.spigotmc.org/resources/117277/) or [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked) plugins because they act as a bridge to connect to economy and permission services provided by other plugins. One of the plugins must be installed on your server,
+even if you would rather not use economy features, or you're using static limits.
+
+List of verified and tested service provider plugins that work for VaultUnlocked and ServiceIO plugins.
+
+|                 |                         VaultUnlocked                          |                          ServiceIO\*                           |
+|:---------------:|:--------------------------------------------------------------:|:--------------------------------------------------------------:|
+|   **Economy**   | [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked) | [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked) |
+| **Permissions** |                             (none)                             |              [LuckPerms](https://luckperms.net/)               |
+
+\*: Homestead will say that it uses "Legacy Vault" even though you use ServiceIO due to how ServiceIO was built.
 
 ## Developer API
 How to include the API with Maven:
@@ -123,7 +143,7 @@ How to include the API with Maven:
 <dependency>
   <groupId>me.tayebyassine.homestead</groupId>
   <artifactId>homestead</artifactId>
-  <version>5.2.0.0</version>
+  <version>6.0.0.0</version>
   <classifier>api</classifier>
   <scope>provided</scope>
 </dependency>
@@ -137,7 +157,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("me.tayebyassine.homestead:homestead:5.2.0.0:api")
+    compileOnly("me.tayebyassine.homestead:homestead:6.0.0.0:api")
 }
 ```
 
@@ -147,7 +167,7 @@ All versions are available in [GitHub Packages](https://github.com/TayebYassine/
 
 Homestead is receiving anonymous data and sending them to [bStats](https://bstats.org/plugin/bukkit/Homestead/25286) and [FastStats](https://faststats.dev/project/homestead/minecraft-plugin), two well-known metrics service providers for Minecraft plugins industry.
 
-Metrics is **enabled** by default. You have all rights to completely disable metrics in the plugin's configuration files.
+Metrics are **enabled** by default. You have all rights to completely disable metrics in the plugin's configuration files.
 <details>
 <summary>Metrics Embedded Images</summary>
 
@@ -159,7 +179,9 @@ Metrics is **enabled** by default. You have all rights to completely disable met
 
 ## Contributing
 
-Click here: [CONTRIBUTING.md](./CONTRIBUTING.md)
+We love contributions! Feel free to open a pull request.
+
+Read the guidelines before you open a pull request: [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License
 

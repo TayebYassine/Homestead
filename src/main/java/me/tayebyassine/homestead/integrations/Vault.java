@@ -11,12 +11,24 @@ import me.tayebyassine.homestead.integrations.vault.VaultUnlockedProvider;
  */
 public class Vault {
 
+    private static boolean IS_VAULTUNLOCKED_DETECTED = false;
+
+    static {
+        try {
+            Class.forName("net.milkbowl.vault2.economy.Economy");
+            Class.forName("net.milkbowl.vault2.permission.PermissionUnlocked");
+            IS_VAULTUNLOCKED_DETECTED = true;
+        } catch (ClassNotFoundException e) {
+            IS_VAULTUNLOCKED_DETECTED = false;
+        }
+    }
+
     private VaultUnlockedProvider vaultUnlockedProvider;
     private LegacyVaultProvider legacyVaultProvider;
 
     public Vault(Homestead plugin) {
 
-        if (Homestead.isFolia()) {
+        if (isVaultUnlockedDetected()) {
             this.vaultUnlockedProvider = new VaultUnlockedProvider(plugin);
         } else {
             this.legacyVaultProvider = new LegacyVaultProvider(plugin);
@@ -24,7 +36,7 @@ public class Vault {
     }
 
     public boolean setupEconomy() {
-        if (Homestead.isFolia()) {
+        if (isVaultUnlockedDetected()) {
             return vaultUnlockedProvider.setupEconomy();
         } else {
             return legacyVaultProvider.setupEconomy();
@@ -32,7 +44,7 @@ public class Vault {
     }
 
     public boolean setupPermissions() {
-        if (Homestead.isFolia()) {
+        if (isVaultUnlockedDetected()) {
             return vaultUnlockedProvider.setupPermissions();
         } else {
             return legacyVaultProvider.setupPermissions();
@@ -40,7 +52,7 @@ public class Vault {
     }
 
     public EconomyProvider getEconomy() {
-        if (Homestead.isFolia()) {
+        if (isVaultUnlockedDetected()) {
             return vaultUnlockedProvider.getEconomy();
         } else {
             return legacyVaultProvider.getEconomy();
@@ -48,7 +60,7 @@ public class Vault {
     }
 
     public PermissionsProvider getPermissions() {
-        if (Homestead.isFolia()) {
+        if (isVaultUnlockedDetected()) {
             return vaultUnlockedProvider.getPermissions();
         } else {
             return legacyVaultProvider.getPermissions();
@@ -61,5 +73,9 @@ public class Vault {
 
     public boolean isPermissionsReady() {
         return getPermissions() != null;
+    }
+
+    public static boolean isVaultUnlockedDetected() {
+        return IS_VAULTUNLOCKED_DETECTED;
     }
 }
