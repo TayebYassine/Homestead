@@ -413,9 +413,11 @@ public class Homestead extends JavaPlugin {
 
         if (Resources.<ConfigFile>get(ResourceType.Config).isDynamicMapsEnabled()) {
             runAsyncTimerTask(() -> {
-                Logger.info("Updating web-rendering plugin markers...");
+                Logger.debug("Updating web-rendering plugin markers...");
 
                 DynamicMaps.trigger(this);
+
+                Logger.debug("Updated " + RegionManager.getAll().size() + " region markers.");
             }, Resources.<ConfigFile>get(ResourceType.Config).getDynamicMapsUpdateInterval());
         }
 

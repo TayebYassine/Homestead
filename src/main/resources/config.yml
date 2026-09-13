@@ -105,13 +105,18 @@ placeholderapi:
   default:
     region_bank: "None"
     region_name: "None"
+    region_rank: "None"
     region_claimed_chunks: "0"
     region_max_chunks: "0"
     region_trusted_members: "0"
     region_max_members: "0"
+    region_subareas: "0"
+    region_max_subareas: "0"
     region_current: "&2Wilderness"
     upkeep_amount: "0,00"
     upkeep_at: "Never"
+    tax_amount: "$0,00"
+    tax_at: "Never"
     war_name: "None"
     war_prize: "0,00"
 

@@ -375,7 +375,7 @@ commands:
     2: "{__prefix__} &cYou are not a member of this region. You cannot access the storage."
   subareas:
     0: "{__prefix__} &7You do not have a selected region. Use: &e/hs set [region]"
-    1: "{__prefix__} &7Insufficient arguments, usage: &2{0}"
+    1: "{__prefix__} &7Insufficient arguments, usage: &e{0}"
     2: "{__prefix__} &cPlease select two corners with the selection tool."
     3: "{__prefix__} &cThe selected area is not within the region borders."
     4: "{__prefix__} &cThe selected area is intersecting another sub-area."
@@ -681,7 +681,7 @@ input:
 formatters:
   date-format: "dd/M/yyyy hh:mm a"
   date: "{date} &7({time-ago} ago)"
-  duration: "{d} days, {h} hours, {m} minutes" # Removed "{s} seconds", you can add it
+  duration: "{d}d {h}h {m}m" # Removed "{s}" for seconds, you can add it
 
   ago-days: "{v} days"
   ago-hours: "{v} hours"
