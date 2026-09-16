@@ -31,13 +31,15 @@ java {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release = 21
+    options.release = 25
     options.encoding = "UTF-8"
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly("io.papermc.paper:paper-api:26.1.2.build.74-stable")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.20")
     compileOnly("de.bluecolored:bluemap-api:2.7.6")
     compileOnly("com.flowpowered:flow-math:1.0.3")

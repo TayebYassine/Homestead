@@ -185,7 +185,7 @@ public class Logger {
     public void sendPluginBanner() {
         StringBuilder lineSplitter = new StringBuilder();
 
-        lineSplitter.append("-".repeat(54));
+        lineSplitter.repeat("-", 54);
 
         String banner = " _   _                           _                 _ \r\n" +
                 "| | | | ___  _ __ ___   ___  ___| |_ ___  __ _  __| |\r\n" +

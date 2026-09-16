@@ -3,7 +3,7 @@ main: me.tayebyassine.homestead.Homestead
 version: 6.0.0.0-26w37c
 description: 'A chunk-based land claiming plugin'
 author: TayebYassine
-api-version: 1.21.10
+api-version: '26.1'
 folia-supported: true
 depend: [ Vault ]
 softdepend: [ VaultUnlocked, Essentials, EssentialsX, CMI, TheNewEconomy, Polyconomy, iConomyUnlocked, BlueMap, squaremap, dynmap, Pl3xMap, ItemsAdder, CraftEngine ]

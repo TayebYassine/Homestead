@@ -64,6 +64,7 @@ public class Homestead extends JavaPlugin {
 
     private static final String VERSION = "6.0.0.0-26w37c";
     private static final boolean SNAPSHOT = true;
+    private static final List<String> MC_VERSIONS = List.of("26.1", "26.1.1", "26.1.2", "26.2", "26.3");
 
     public static RegionCache REGION_CACHE;
     public static RegionMemberCache MEMBER_CACHE;
@@ -202,6 +203,12 @@ public class Homestead extends JavaPlugin {
         Homestead.IS_PAPER = checkSoftwareIfPaper();
 
         new Logger();
+
+        if (!MC_VERSIONS.contains(Bukkit.getMinecraftVersion())) {
+            Logger.warning("You are currently using an unsupported Minecraft version!");
+            Logger.warning("Homestead will likely face many problems due to the new API structure.");
+            Logger.warning("Supported versions: " + String.join(", ", MC_VERSIONS));
+        }
 
         try {
             if (!getDataFolder().exists()) {
