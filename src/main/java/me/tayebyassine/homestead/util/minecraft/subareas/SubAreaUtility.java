@@ -77,27 +77,6 @@ public final class SubAreaUtility {
         return width * height * depth;
     }
 
-    public static String toStringBlockLocation(World world, int[] coords) {
-        return toStringBlockLocation(world, parseBlockLocation(world, coords));
-    }
-
-    public static String toStringBlockLocation(World world, Block block) {
-        return (world.getName() + ";" + block.getX() + ";" + block.getY() + ";" + block.getZ());
-    }
-
-    public static Block parseBlockLocation(World world, int[] coords) {
-        return new Location(world, coords[0], coords[1], coords[2]).getBlock();
-    }
-
-    public static Block parseBlockLocation(World world, String coordsString) {
-        String[] splitted = coordsString.split(";");
-
-        int[] coords = {Integer.parseInt(splitted[1]), Integer.parseInt(splitted[2]),
-                Integer.parseInt(splitted[3])};
-
-        return parseBlockLocation(world, coords);
-    }
-
     public static int[] getBlockLocation(Block block) {
         return new int[]{block.getX(), block.getY(), block.getZ()};
     }

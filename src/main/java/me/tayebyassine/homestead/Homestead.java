@@ -206,7 +206,7 @@ public class Homestead extends JavaPlugin {
 
         if (!MC_VERSIONS.contains(Bukkit.getMinecraftVersion())) {
             Logger.warning("You are currently using an unsupported Minecraft version!");
-            Logger.warning("Homestead will likely face many problems due to the new API structure.");
+            Logger.warning("Homestead will likely face many problems due to the current API structure.");
             Logger.warning("Supported versions: " + String.join(", ", MC_VERSIONS));
         }
 

@@ -19,7 +19,6 @@ import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import me.tayebyassine.homestead.util.minecraft.chunks.ChunkUtility;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits;
 import me.tayebyassine.homestead.util.minecraft.limits.Limits.LimitMethod;
-import net.momirealms.craftengine.core.world.chunk.storage.RegionFile;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -27,7 +26,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +39,7 @@ public final class PlayerUtility {
     public static final Set<PlayerFlag> RENT_FLAGS_SET = Set.of(
             PlayerFlag.PVP
     );
-    private static final int MESSAGE_COOLDOWN_SECONDS = 3;
+    private static final int MESSAGE_COOLDOWN_SECONDS = 2;
     private static final Set<UUID> COOLDOWN = ConcurrentHashMap.newKeySet();
 
     private PlayerUtility() {
@@ -220,11 +218,9 @@ public final class PlayerUtility {
                 .add("{region}", region.getName())
         );
 
-        if (List.of(PlayerFlag.TRIGGER_TRIPWIRE, PlayerFlag.PVP).contains(flag)) {
-            COOLDOWN.add(player.getUniqueId());
-            Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()),
-                    MESSAGE_COOLDOWN_SECONDS);
-        }
+        COOLDOWN.add(player.getUniqueId());
+        Homestead.getInstance().runAsyncTaskLater(() -> COOLDOWN.remove(player.getUniqueId()),
+                MESSAGE_COOLDOWN_SECONDS);
     }
 
     /**

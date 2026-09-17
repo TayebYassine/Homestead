@@ -339,9 +339,10 @@ public final class RegionProtectionListener implements Listener {
         final Location location = (clicked != null ? clicked.getLocation() : player.getLocation());
         final Chunk chunk = location.getChunk();
         final Runnable cancel = () -> event.setCancelled(true);
+        final ItemStack item = event.getItem();
 
-        if (event.getItem() != null) {
-            final Material itemType = event.getItem().getType();
+        if (item != null) {
+            final Material itemType = item.getType();
             final String itn = itemType.name();
 
             final boolean placeSpawnItem =
@@ -349,6 +350,7 @@ public final class RegionProtectionListener implements Listener {
                             itn.contains("ARMOR_STAND") ||
                             itn.contains("MINECART") ||
                             itn.contains("PAINTING") ||
+                            itn.contains("CUSHION") ||
                             itemType == Material.BONE_MEAL ||
                             itemType == Material.ITEM_FRAME ||
                             itemType == Material.GLOW_ITEM_FRAME;
@@ -606,14 +608,18 @@ public final class RegionProtectionListener implements Listener {
      * Protects paintings and item frames from players, explosions and entity griefing.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onHangingEntityBreak(HangingBreakByEntityEvent event) {
+    public void onHangingEntityBreakByEntity(HangingBreakByEntityEvent event) {
         Entity entity = event.getEntity();
         Entity remover = event.getRemover();
         Location location = entity.getLocation();
         Chunk chunk = location.getChunk();
         Runnable cancel = () -> event.setCancelled(true);
+        EntityType entityType = entity.getType();
 
-        if (entity instanceof Painting || entity instanceof ItemFrame) {
+        if (entity instanceof Painting
+                || entity instanceof ItemFrame
+                || entityType.name().contains("CUSHION")
+                || entityType.name().contains("ARMOR_STAND")) {
             if (remover instanceof Player player) {
                 checkPlayerFlag(player, chunk, location, PlayerFlag.BREAK_BLOCKS, cancel);
             } else if (Explosives.isExplosive(remover)) {
@@ -660,6 +666,7 @@ public final class RegionProtectionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
+        EntityType entityType = entity.getType();
         Entity damager = event.getDamager();
         Location location = entity.getLocation();
         Chunk chunk = location.getChunk();
@@ -676,7 +683,7 @@ public final class RegionProtectionListener implements Listener {
         Player effectiveDamager = (damager instanceof Player player) ? player : shooterPlayer;
 
         if (effectiveDamager != null) {
-            if (entity instanceof ArmorStand) {
+            if (entity instanceof ArmorStand || entityType.name().contains("CUSHION")) {
                 checkPlayerFlag(effectiveDamager, chunk, location, PlayerFlag.BREAK_BLOCKS, cancel);
             } else if (entity instanceof Player victim) {
                 checkPlayerFlag(effectiveDamager, chunk, location, PlayerFlag.PVP, cancel);
@@ -810,7 +817,10 @@ public final class RegionProtectionListener implements Listener {
                 checkPlayerFlag(player, chunk, location, PlayerFlag.DAMAGE_HOSTILE_ENTITIES, cancel);
             } else if (entityHit instanceof Mob) {
                 checkPlayerFlag(player, chunk, location, PlayerFlag.DAMAGE_PASSIVE_ENTITIES, cancel);
-            } else if (entityHit instanceof ArmorStand || entityHit instanceof ItemFrame || entityHit instanceof Painting) {
+            } else if (entityHit instanceof ArmorStand
+                    || entityHit instanceof ItemFrame
+                    || entityHit instanceof Painting
+                    || entityHit.getType().name().contains("CUSHION")) {
                 checkPlayerFlag(player, chunk, location, PlayerFlag.BREAK_BLOCKS, cancel);
             }
         } else {
@@ -957,6 +967,7 @@ public final class RegionProtectionListener implements Listener {
     private void applyEntityInteraction(Player player, Entity entity, Runnable cancel) {
         Location location = entity.getLocation();
         Chunk chunk = location.getChunk();
+        EntityType entityType = entity.getType();
 
         if (entity instanceof Villager) {
             checkPlayerFlag(player, chunk, location, PlayerFlag.TRADE_VILLAGERS, cancel);
@@ -964,6 +975,8 @@ public final class RegionProtectionListener implements Listener {
             checkPlayerFlag(player, chunk, location, PlayerFlag.ARMOR_STANDS, cancel);
         } else if (entity instanceof ItemFrame) {
             checkPlayerFlag(player, chunk, location, PlayerFlag.ITEM_FRAME_INTERACTION, cancel);
+        } else if (entity instanceof Vehicle || entityType.name().contains("CUSHION")) {
+            checkPlayerFlag(player, chunk, location, PlayerFlag.VEHICLES, cancel);
         } else if (!(entity instanceof Player)) {
             checkPlayerFlag(player, chunk, location, PlayerFlag.INTERACT_ENTITIES, cancel);
         }

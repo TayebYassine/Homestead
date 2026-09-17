@@ -6,7 +6,7 @@ author: TayebYassine
 api-version: '26.1'
 folia-supported: true
 depend: [ Vault ]
-softdepend: [ VaultUnlocked, Essentials, EssentialsX, CMI, TheNewEconomy, Polyconomy, iConomyUnlocked, BlueMap, squaremap, dynmap, Pl3xMap, ItemsAdder, CraftEngine ]
+softdepend: [ ServiceIO, VaultUnlocked, Essentials, EssentialsX, CMI, TheNewEconomy, Polyconomy, iConomyUnlocked, BlueMap, squaremap, dynmap, Pl3xMap, ItemsAdder, CraftEngine ]
 libraries:
   - "org.xerial:sqlite-jdbc:3.53.2.1"
   - "com.mysql:mysql-connector-j:26.7.0"
