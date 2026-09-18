@@ -870,10 +870,6 @@ flags-info:
     description:
       - "&7Allow players to spawn mobs with Spawn eggs?"
     type: ZOMBIE_SPAWN_EGG
-  punch-sulfur-cubes:
-    description:
-      - "&7Allow players to punch Sulfur Cubes?"
-    type: PLAYERHEAD-f0d9056ec6db388af12304ef96ffdc8228dcf368ab255323258b716f990b4ab
   throw-eggs:
     description:
       - "&7Allow players to throw eggs?"

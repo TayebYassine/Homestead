@@ -198,7 +198,12 @@ public enum PlayerFlag {
 
     /**
      * Allows punching sulfur cubes (custom gameplay mechanic).
+     *
+     * @deprecated Due to heavy main-thread CPU overhead from constant raycasting
+     * and high vulnerability to client-side bypasses. Use
+     * {@link PlayerFlag#INTERACT_ENTITIES} instead.
      */
+    @Deprecated
     PUNCH_SULFUR_CUBES(1L << 36, "punch-sulfur-cubes"),
 
     /**
@@ -210,6 +215,8 @@ public enum PlayerFlag {
 
     static {
         for (PlayerFlag flag : values()) {
+            if (flag == PUNCH_SULFUR_CUBES) continue;
+
             BY_NAME.put(flag.name.toLowerCase(), flag);
         }
     }

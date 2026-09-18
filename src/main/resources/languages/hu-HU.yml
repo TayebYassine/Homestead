@@ -760,10 +760,6 @@ flags-info:
     description:
       - '&7Engedélyezed a játékosoknak a mobok spawnolását spawn tojásokkal?'
     type: ZOMBIE_SPAWN_EGG
-  punch-sulfur-cubes:
-    description:
-      - "&7Megengedik a játékosoknak, hogy kénkockákat üssenek?"
-    type: PLAYERHEAD-f0d9056ec6db388af12304ef96ffdc8228dcf368ab255323258b716f990b4ab
 
   passive-entity-spawn:
     description:

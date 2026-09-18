@@ -15,7 +15,6 @@ import me.tayebyassine.homestead.events.RegionUpkeep;
 import me.tayebyassine.homestead.integrations.*;
 import me.tayebyassine.homestead.listeners.borders.BorderBreakListener;
 import me.tayebyassine.homestead.listeners.entities.ItemTransportingEntityValidateTargetListener;
-import me.tayebyassine.homestead.listeners.entities.PaperSulfurCubeListener;
 import me.tayebyassine.homestead.listeners.player.*;
 import me.tayebyassine.homestead.listeners.protection.RegionProtectionListener;
 import me.tayebyassine.homestead.listeners.selection.SelectionToolListener;
@@ -558,12 +557,6 @@ public class Homestead extends JavaPlugin {
         registerEvent(new RegionProtectionListener());
         registerEvent(new PlayerRegionEnterAndExitListener());
         registerEvent(new PrivateRegionChatListener());
-
-        try {
-            registerEvent(new PaperSulfurCubeListener());
-        } catch (Exception e) {
-            Logger.error(e);
-        }
     }
 
     /**
