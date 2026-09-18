@@ -16,7 +16,10 @@ import me.tayebyassine.homestead.integrations.*;
 import me.tayebyassine.homestead.listeners.borders.BorderBreakListener;
 import me.tayebyassine.homestead.listeners.entities.ItemTransportingEntityValidateTargetListener;
 import me.tayebyassine.homestead.listeners.player.*;
-import me.tayebyassine.homestead.listeners.protection.RegionProtectionListener;
+import me.tayebyassine.homestead.listeners.protection.BlockProtectionHandler;
+import me.tayebyassine.homestead.listeners.protection.EntityProtectionHandler;
+import me.tayebyassine.homestead.listeners.protection.InventoryProtectionHandler;
+import me.tayebyassine.homestead.listeners.protection.PlayerActionHandler;
 import me.tayebyassine.homestead.listeners.selection.SelectionToolListener;
 import me.tayebyassine.homestead.listeners.signs.CustomSignsListener;
 import me.tayebyassine.homestead.listeners.util.CopperGolemTracker;
@@ -471,7 +474,7 @@ public class Homestead extends JavaPlugin {
                 Homestead.MOVE_CHECK_TASK = new TaskHandle(Bukkit.getScheduler().runTaskTimer(this, () -> {
                     for (World world : Bukkit.getWorlds()) {
                         for (Entity entity : world.getEntities()) {
-                            RegionProtectionListener.onEntityMove(entity);
+                            EntityProtectionHandler.onEntityMove(entity);
                         }
                     }
                 }, 0L, 1L));
@@ -554,7 +557,10 @@ public class Homestead extends JavaPlugin {
         registerEvent(new CustomSignsListener());
         registerEvent(new CommandsCooldownListener());
         registerEvent(new SelectionToolListener());
-        registerEvent(new RegionProtectionListener());
+        registerEvent(new BlockProtectionHandler());
+        registerEvent(new EntityProtectionHandler());
+        registerEvent(new PlayerActionHandler());
+        registerEvent(new InventoryProtectionHandler());
         registerEvent(new PlayerRegionEnterAndExitListener());
         registerEvent(new PrivateRegionChatListener());
     }
