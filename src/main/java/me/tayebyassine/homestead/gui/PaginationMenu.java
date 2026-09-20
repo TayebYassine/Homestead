@@ -1,11 +1,11 @@
 package me.tayebyassine.homestead.gui;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.MenuButtonRenderEvent;
-import me.tayebyassine.homestead.api.events.MenuClickEvent;
-import me.tayebyassine.homestead.api.events.MenuCloseEvent;
-import me.tayebyassine.homestead.api.events.MenuOpenEvent;
-import me.tayebyassine.homestead.api.events.MenuPageChangeEvent;
+import me.tayebyassine.homestead.api.events.menu.MenuButtonRenderEvent;
+import me.tayebyassine.homestead.api.events.menu.MenuClickEvent;
+import me.tayebyassine.homestead.api.events.menu.MenuCloseEvent;
+import me.tayebyassine.homestead.api.events.menu.MenuOpenEvent;
+import me.tayebyassine.homestead.api.events.menu.MenuPageChangeEvent;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;
 import me.tayebyassine.homestead.gui.helpers.MenuTitles;
 import me.tayebyassine.homestead.util.java.Formatter;

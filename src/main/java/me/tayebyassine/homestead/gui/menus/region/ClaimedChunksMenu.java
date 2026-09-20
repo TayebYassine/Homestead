@@ -1,7 +1,7 @@
 package me.tayebyassine.homestead.gui.menus.region;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.ChunkUnclaimEvent;
+import me.tayebyassine.homestead.api.events.chunk.ChunkUnclaimEvent;
 import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.flags.ControlFlag;

@@ -1,7 +1,7 @@
 package me.tayebyassine.homestead.events;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.RentExpireEvent;
+import me.tayebyassine.homestead.api.events.rent.RentExpireEvent;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.managers.SubAreaManager;
 import me.tayebyassine.homestead.models.Region;

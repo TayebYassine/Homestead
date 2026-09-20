@@ -1,9 +1,9 @@
 package me.tayebyassine.homestead.gui.menus.rent;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.RentConfigUpdateEvent;
-import me.tayebyassine.homestead.api.events.RentEndEvent;
-import me.tayebyassine.homestead.api.events.RentNoticeEvent;
+import me.tayebyassine.homestead.api.events.rent.RentConfigUpdateEvent;
+import me.tayebyassine.homestead.api.events.rent.RentEndEvent;
+import me.tayebyassine.homestead.api.events.rent.RentNoticeEvent;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.Menu;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;

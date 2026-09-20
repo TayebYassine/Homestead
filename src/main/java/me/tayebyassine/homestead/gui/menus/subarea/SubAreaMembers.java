@@ -1,8 +1,8 @@
 package me.tayebyassine.homestead.gui.menus.subarea;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.PlayerJoinSubAreaEvent;
-import me.tayebyassine.homestead.api.events.PlayerLeftSubAreaEvent;
+import me.tayebyassine.homestead.api.events.player.PlayerJoinSubAreaEvent;
+import me.tayebyassine.homestead.api.events.player.PlayerLeftSubAreaEvent;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;

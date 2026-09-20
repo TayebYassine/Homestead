@@ -1,7 +1,7 @@
 package me.tayebyassine.homestead.gui.menus.rent;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.RentStartEvent;
+import me.tayebyassine.homestead.api.events.rent.RentStartEvent;
 import me.tayebyassine.homestead.gui.Menu;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;
 import me.tayebyassine.homestead.models.Region;

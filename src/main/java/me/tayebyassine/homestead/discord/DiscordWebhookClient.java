@@ -1,6 +1,16 @@
 package me.tayebyassine.homestead.discord;
 
-import me.tayebyassine.homestead.api.events.*;
+import me.tayebyassine.homestead.api.events.APIEvent;
+import me.tayebyassine.homestead.api.events.region.RegionCreateEvent;
+import me.tayebyassine.homestead.api.events.region.RegionDeleteEvent;
+import me.tayebyassine.homestead.api.events.region.RegionNameUpdateEvent;
+import me.tayebyassine.homestead.api.events.region.RegionDisplaynameUpdateEvent;
+import me.tayebyassine.homestead.api.events.region.RegionDescriptionUpdateEvent;
+import me.tayebyassine.homestead.api.events.region.RegionOwnerUpdateEvent;
+import me.tayebyassine.homestead.api.events.communication.RegionChatEvent;
+import me.tayebyassine.homestead.api.events.communication.PlayerMailEvent;
+import me.tayebyassine.homestead.api.events.player.PlayerJoinRegionEvent;
+import me.tayebyassine.homestead.api.events.player.PlayerLeftRegionEvent;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.resources.ResourceType;

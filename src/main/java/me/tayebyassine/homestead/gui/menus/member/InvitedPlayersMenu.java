@@ -1,9 +1,9 @@
 package me.tayebyassine.homestead.gui.menus.member;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.BulkDeleteInvitesEvent;
-import me.tayebyassine.homestead.api.events.InvitePlayerEvent;
-import me.tayebyassine.homestead.api.events.PlayerJoinRegionEvent;
+import me.tayebyassine.homestead.api.events.player.BulkDeleteInvitesEvent;
+import me.tayebyassine.homestead.api.events.player.InvitePlayerEvent;
+import me.tayebyassine.homestead.api.events.player.PlayerJoinRegionEvent;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;

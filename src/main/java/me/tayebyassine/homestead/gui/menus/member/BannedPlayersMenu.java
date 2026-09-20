@@ -1,9 +1,9 @@
 package me.tayebyassine.homestead.gui.menus.member;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.BanPlayerEvent;
-import me.tayebyassine.homestead.api.events.BulkUnbanPlayersEvent;
-import me.tayebyassine.homestead.api.events.UnbanPlayerEvent;
+import me.tayebyassine.homestead.api.events.player.BanPlayerEvent;
+import me.tayebyassine.homestead.api.events.player.BulkUnbanPlayersEvent;
+import me.tayebyassine.homestead.api.events.player.UnbanPlayerEvent;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;

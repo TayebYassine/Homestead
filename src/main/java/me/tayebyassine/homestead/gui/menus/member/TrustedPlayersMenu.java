@@ -1,7 +1,7 @@
 package me.tayebyassine.homestead.gui.menus.member;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.PlayerLeftRegionEvent;
+import me.tayebyassine.homestead.api.events.player.PlayerLeftRegionEvent;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.PaginationMenu;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;

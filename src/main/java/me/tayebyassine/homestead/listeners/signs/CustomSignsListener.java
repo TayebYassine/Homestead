@@ -1,7 +1,7 @@
 package me.tayebyassine.homestead.listeners.signs;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.RegionOwnerUpdateEvent;
+import me.tayebyassine.homestead.api.events.region.RegionOwnerUpdateEvent;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.gui.menus.rent.RentConfirmationMenu;
 import me.tayebyassine.homestead.managers.*;

@@ -1,7 +1,12 @@
 package me.tayebyassine.homestead.gui.menus.region;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.*;
+import me.tayebyassine.homestead.api.events.region.RegionDeleteEvent;
+import me.tayebyassine.homestead.api.events.region.RegionNameUpdateEvent;
+import me.tayebyassine.homestead.api.events.region.RegionDisplaynameUpdateEvent;
+import me.tayebyassine.homestead.api.events.region.RegionDescriptionUpdateEvent;
+import me.tayebyassine.homestead.api.events.region.RegionLocationUpdateEvent;
+import me.tayebyassine.homestead.api.events.region.RegionOwnerUpdateEvent;
 import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.Menu;

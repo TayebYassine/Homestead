@@ -1,7 +1,7 @@
 package me.tayebyassine.homestead.commands.standard;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.ChunkUnclaimEvent;
+import me.tayebyassine.homestead.api.events.chunk.ChunkUnclaimEvent;
 import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.commands.CommandBuilder;
 import me.tayebyassine.homestead.commands.CommandSenderType;

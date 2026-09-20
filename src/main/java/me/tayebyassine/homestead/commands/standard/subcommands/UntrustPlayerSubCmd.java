@@ -1,8 +1,8 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.PlayerLeftRegionEvent;
-import me.tayebyassine.homestead.api.events.RevokePlayerInviteEvent;
+import me.tayebyassine.homestead.api.events.player.PlayerLeftRegionEvent;
+import me.tayebyassine.homestead.api.events.player.RevokePlayerInviteEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.ControlFlag;

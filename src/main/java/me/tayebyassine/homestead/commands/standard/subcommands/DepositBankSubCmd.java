@@ -1,7 +1,7 @@
 package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.BankDepositEvent;
+import me.tayebyassine.homestead.api.events.economy.BankDepositEvent;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.ControlFlag;

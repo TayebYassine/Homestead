@@ -1,7 +1,7 @@
 package me.tayebyassine.homestead.listeners.player;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.RegionChatEvent;
+import me.tayebyassine.homestead.api.events.communication.RegionChatEvent;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.resources.ResourceType;

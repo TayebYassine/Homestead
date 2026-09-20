@@ -1,8 +1,8 @@
 package me.tayebyassine.homestead.commands.standard;
 
 import me.tayebyassine.homestead.Homestead;
-import me.tayebyassine.homestead.api.events.ChunkClaimEvent;
-import me.tayebyassine.homestead.api.events.RegionCreateEvent;
+import me.tayebyassine.homestead.api.events.chunk.ChunkClaimEvent;
+import me.tayebyassine.homestead.api.events.region.RegionCreateEvent;
 import me.tayebyassine.homestead.borders.ChunkBorder;
 import me.tayebyassine.homestead.commands.CommandBuilder;
 import me.tayebyassine.homestead.commands.CommandSenderType;
