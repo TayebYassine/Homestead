@@ -8,8 +8,8 @@ import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.flags.FlagCalculator;
 import me.tayebyassine.homestead.flags.PlayerFlag;
 import me.tayebyassine.homestead.flags.WorldFlag;
-import me.tayebyassine.homestead.gui.menus.GlobalPlayerFlags;
-import me.tayebyassine.homestead.gui.menus.RegionWorldFlags;
+import me.tayebyassine.homestead.gui.menus.flag.GlobalPlayerFlagsMenu;
+import me.tayebyassine.homestead.gui.menus.flag.RegionWorldFlagsMenu;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.models.Region;
@@ -163,7 +163,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
         }
 
         if (args.length == 1) {
-            new GlobalPlayerFlags(player, region);
+            new GlobalPlayerFlagsMenu(player, region);
             return;
         }
 
@@ -190,7 +190,7 @@ public final class FlagsSubCmd extends SubCommandBuilder {
         }
 
         if (args.length == 1) {
-            new RegionWorldFlags(player, region);
+            new RegionWorldFlagsMenu(player, region);
             return;
         }
 

@@ -5,7 +5,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
-import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility.ButtonData;
+import me.tayebyassine.homestead.gui.helpers.ButtonData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;

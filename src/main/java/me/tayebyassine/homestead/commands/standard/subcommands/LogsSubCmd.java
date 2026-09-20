@@ -2,7 +2,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.gui.menus.RegionLogs;
+import me.tayebyassine.homestead.gui.menus.region.RegionLogsMenu;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
@@ -35,7 +35,7 @@ public final class LogsSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        new RegionLogs(player, region);
+        new RegionLogsMenu(player, region);
 
         return true;
     }

@@ -1,9 +1,11 @@
 package me.tayebyassine.homestead.gui;
 
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.gui.helpers.MenuButtons;
+import me.tayebyassine.homestead.gui.helpers.MenuTitles;
 import me.tayebyassine.homestead.util.java.Formatter;
+import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.chat.ColorTranslator;
-import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,6 +24,14 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+/**
+ * Paginated menu class with page navigation support.
+ *
+ * <p>Supports next/previous page buttons, item-based content with automatic page slicing, action
+ * buttons in the bottom row, and dynamic slot replacement. Handles page overflow and empty slot
+ * filling automatically. Registers itself as a Bukkit {@link Listener} on construction and
+ * unregisters on close.</p>
+ */
 public class PaginationMenu implements Listener {
 
     private final Homestead plugin;
@@ -64,14 +74,37 @@ public class PaginationMenu implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    public static Builder builder(int pathTitle, int size) {
-        return new Builder(pathTitle, size);
+    /**
+     * Creates a new {@link Builder} for the given menu key and inventory size.
+     *
+     * @param menuKey the menu title key
+     * @param size    the inventory size (must be a multiple of 9, at least 36)
+     * @return a new Builder instance
+     */
+    public static Builder builder(String menuKey, int size) {
+        return new Builder(menuKey, size);
     }
 
-    public static Builder builder(String title, int size) {
-        return new Builder(title, size);
+    /**
+     * Creates a new {@link Builder} with a placeholder for the menu title.
+     *
+     * @param menuKey          the menu title key
+     * @param titlePlaceholder the placeholder to apply to the title
+     * @param size             the inventory size (must be a multiple of 9, at least 36)
+     * @return a new Builder instance
+     */
+    public static Builder builder(String menuKey, Placeholder titlePlaceholder, int size) {
+        return new Builder(menuKey, titlePlaceholder, size);
     }
 
+    /**
+     * Adds an action button to the bottom row of the menu.
+     *
+     * @param index    the button index (0, 1, or 2)
+     * @param item     the item to display
+     * @param callback the click callback
+     * @return this menu instance
+     */
     public PaginationMenu addActionButton(int index, ItemStack item, BiConsumer<Player, InventoryClickEvent> callback) {
         int[] validSlots = {size - 6, size - 5, size - 4};
 
@@ -85,6 +118,13 @@ public class PaginationMenu implements Listener {
         return this;
     }
 
+    /**
+     * Replaces an item in the content list and updates the viewer's inventory if visible.
+     *
+     * @param index   the content index to replace
+     * @param newItem the new item
+     * @return this menu instance
+     */
     public PaginationMenu replaceSlot(int index, ItemStack newItem) {
         if (index < 0 || index >= items.size()) return this;
 
@@ -100,6 +140,12 @@ public class PaginationMenu implements Listener {
         return this;
     }
 
+    /**
+     * Replaces all items in the menu and refreshes the view if open.
+     *
+     * @param newItems the new item list
+     * @return this menu instance
+     */
     public PaginationMenu setItems(List<ItemStack> newItems) {
         boolean wasOpen = viewer != null && viewer.getOpenInventory() != null;
 
@@ -119,16 +165,29 @@ public class PaginationMenu implements Listener {
         return this;
     }
 
+    /**
+     * Opens the menu for the specified player.
+     *
+     * @param player the player to open the menu for
+     */
     public void open(Player player) {
         this.viewer = player;
         player.openInventory(createPage(currentPage));
         InventoryManager.register(player, this);
     }
 
+    /**
+     * Unregisters all event listeners for this menu.
+     */
     public void destroy() {
         HandlerList.unregisterAll(this);
     }
 
+    /**
+     * Returns the total number of pages based on the current items.
+     *
+     * @return the total page count
+     */
     public int getTotalPages() {
         return (int) Math.ceil((double) items.size() / getButtonsPerPage());
     }
@@ -163,7 +222,7 @@ public class PaginationMenu implements Listener {
         if (page > 0) {
             inv.setItem(size - 9, prevPageItem);
         } else {
-            inv.setItem(size - 9, MenuUtility.getBackButton());
+            inv.setItem(size - 9, MenuButtons.getBackButton());
         }
 
         if ((page + 1) * buttonsPerPage < items.size()) {
@@ -195,6 +254,11 @@ public class PaginationMenu implements Listener {
         return inv;
     }
 
+    /**
+     * Handles inventory click events, routing to page navigation, action buttons, or content callbacks.
+     *
+     * @param event the inventory click event
+     */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
@@ -260,6 +324,11 @@ public class PaginationMenu implements Listener {
         }
     }
 
+    /**
+     * Cleans up the menu when the inventory is closed, unless a page transition is in progress.
+     *
+     * @param event the inventory close event
+     */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event) {
         if (pageChanged) {
@@ -275,10 +344,10 @@ public class PaginationMenu implements Listener {
     }
 
     public static final class Builder {
-        private final String title;
         private final int size;
         private final Map<Integer, BiConsumer<Player, InventoryClickEvent>> bottomRowActions = new HashMap<>();
         private final Map<Integer, ItemStack> bottomRowActionItems = new HashMap<>();
+        private final String title;
         private ItemStack nextPageItem;
         private ItemStack prevPageItem;
         private List<ItemStack> items = new ArrayList<>();
@@ -288,62 +357,123 @@ public class PaginationMenu implements Listener {
         private Consumer<Inventory> openHandler;
         private ItemStack filler;
 
-        private Builder(int pathTitle, int size) {
-            this(MenuUtility.getTitle(pathTitle), size);
+        private Builder(String menuKey, int size) {
+            this(menuKey, null, size);
         }
 
-        private Builder(String title, int size) {
+        private Builder(String menuKey, Placeholder placeholder, int size) {
             if (size % 9 != 0 || size < 36) {
                 throw new IllegalArgumentException("Inventory size must be a multiple of 9 and at least 36.");
             }
-            this.title = title;
+            this.title = MenuTitles.getTitle(menuKey, placeholder);
             this.size = size;
         }
 
+        /**
+         * Sets the item displayed for the next-page button.
+         *
+         * @param item the next-page item
+         * @return this builder
+         */
         public Builder nextPageItem(ItemStack item) {
             this.nextPageItem = item;
             return this;
         }
 
+        /**
+         * Sets the item displayed for the previous-page button.
+         *
+         * @param item the previous-page item
+         * @return this builder
+         */
         public Builder prevPageItem(ItemStack item) {
             this.prevPageItem = item;
             return this;
         }
 
+        /**
+         * Sets the items to display across all pages.
+         *
+         * @param items the content items
+         * @return this builder
+         */
         public Builder items(List<ItemStack> items) {
             this.items = items != null ? new ArrayList<>(items) : new ArrayList<>();
             return this;
         }
 
+        /**
+         * Sets the callback invoked when the go-back button (slot 0) is clicked.
+         *
+         * @param callback the go-back callback
+         * @return this builder
+         */
         public Builder goBack(BiConsumer<Player, InventoryClickEvent> callback) {
             this.goBackCallback = callback;
             return this;
         }
 
+        /**
+         * Sets the callback invoked when a content item is clicked.
+         *
+         * @param callback the click callback
+         * @return this builder
+         */
         public Builder onClick(BiConsumer<Player, ClickContext> callback) {
             this.clickCallback = callback;
             return this;
         }
 
+        /**
+         * Sets the number of items displayed per page.
+         *
+         * @param n items per page (defaults to content area size)
+         * @return this builder
+         */
         public Builder itemsPerPage(int n) {
             this.itemsPerPage = n;
             return this;
         }
 
+        /**
+         * Sets a handler invoked after the inventory is created, before it is shown.
+         *
+         * @param handler the open handler
+         * @return this builder
+         */
         public Builder onOpen(Consumer<Inventory> handler) {
             this.openHandler = handler;
             return this;
         }
 
+        /**
+         * Fills empty header and footer slots with the given filler item.
+         *
+         * @param filler the filler item
+         * @return this builder
+         */
         public Builder fillEmptySlots(ItemStack filler) {
             this.filler = filler;
             return this;
         }
 
+        /**
+         * Fills empty header and footer slots with the default empty-slot item.
+         *
+         * @return this builder
+         */
         public Builder fillEmptySlots() {
-            return fillEmptySlots(MenuUtility.getEmptySlot());
+            return fillEmptySlots(MenuButtons.getEmptySlot());
         }
 
+        /**
+         * Adds an action button to the bottom row of the menu.
+         *
+         * @param index    the button index (0, 1, or 2)
+         * @param item     the item to display
+         * @param callback the click callback (may be null)
+         * @return this builder
+         */
         public Builder actionButton(int index, ItemStack item, BiConsumer<Player, InventoryClickEvent> callback) {
             int[] validSlots = {size - 6, size - 5, size - 4};
             if (index < 0 || index >= validSlots.length) {
@@ -357,6 +487,12 @@ public class PaginationMenu implements Listener {
             return this;
         }
 
+        /**
+         * Builds the {@link PaginationMenu}. Next-page and previous-page items must be set.
+         *
+         * @return the built PaginationMenu
+         * @throws IllegalStateException if next-page or previous-page items are not set
+         */
         public PaginationMenu build() {
             if (nextPageItem == null || prevPageItem == null) {
                 throw new IllegalStateException("nextPageItem and prevPageItem must be set");
@@ -365,6 +501,14 @@ public class PaginationMenu implements Listener {
         }
     }
 
+    /**
+     * Context passed to content click callbacks.
+     *
+     * @param event    the raw inventory click event
+     * @param index    the index of the clicked item in the content list
+     * @param items    the current content list
+     * @param instance the menu instance
+     */
     public record ClickContext(InventoryClickEvent event, int index, List<ItemStack> items, PaginationMenu instance) {
     }
 }

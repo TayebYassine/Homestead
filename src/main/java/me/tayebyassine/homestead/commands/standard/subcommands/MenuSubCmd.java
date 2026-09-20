@@ -2,8 +2,8 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.gui.menus.RegionMenu;
-import me.tayebyassine.homestead.gui.menus.RegionsMenu;
+import me.tayebyassine.homestead.gui.menus.region.SelectedRegionMainMenu;
+import me.tayebyassine.homestead.gui.menus.region.AllRegionsMenu;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import org.bukkit.command.CommandSender;
@@ -32,9 +32,9 @@ public final class MenuSubCmd extends SubCommandBuilder {
         Region region = TargetRegionSession.getRegion(player);
 
         if (region == null) {
-            new RegionsMenu(player);
+            new AllRegionsMenu(player);
         } else {
-            new RegionMenu(player, region);
+            new SelectedRegionMainMenu(player, region);
         }
 
         return true;

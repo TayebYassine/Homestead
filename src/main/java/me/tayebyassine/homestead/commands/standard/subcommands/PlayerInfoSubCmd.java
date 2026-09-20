@@ -3,7 +3,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.gui.menus.PlayerInfo;
+import me.tayebyassine.homestead.gui.menus.region.PlayerInfoMenu;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -33,7 +33,7 @@ public final class PlayerInfoSubCmd extends SubCommandBuilder {
         }
 
         if (args.length < 1) {
-            new PlayerInfo(player, player, player::closeInventory);
+            new PlayerInfoMenu(player, player, player::closeInventory);
             return true;
         }
 
@@ -46,7 +46,7 @@ public final class PlayerInfoSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        new PlayerInfo(player, target, player::closeInventory);
+        new PlayerInfoMenu(player, target, player::closeInventory);
 
         return true;
     }

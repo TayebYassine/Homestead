@@ -4,7 +4,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.flags.PlayerFlag;
-import me.tayebyassine.homestead.gui.menus.RegionsWithWelcomeSigns;
+import me.tayebyassine.homestead.gui.menus.region.RegionsWithWelcomeSignsMenu;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.serialize.SeLocation;
@@ -78,7 +78,7 @@ public final class VisitRegionSubCmd extends SubCommandBuilder {
 
     private boolean visitByWelcomeSigns(Player player, String[] args) {
         if (args.length < 1) {
-            new RegionsWithWelcomeSigns(player);
+            new RegionsWithWelcomeSignsMenu(player);
 
             return true;
         }

@@ -3,7 +3,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.gui.menus.RentConfigMenu;
+import me.tayebyassine.homestead.gui.menus.rent.RentConfigMenu;
 import me.tayebyassine.homestead.managers.SubAreaManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.models.SubArea;

@@ -2,7 +2,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.gui.menus.RegionRating;
+import me.tayebyassine.homestead.gui.menus.region.RegionRating;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;

@@ -2,7 +2,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.gui.menus.RegionMembersMenu;
+import me.tayebyassine.homestead.gui.menus.member.TrustedPlayersMenu;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
@@ -35,7 +35,7 @@ public final class MembersSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        new RegionMembersMenu(player, region);
+        new TrustedPlayersMenu(player, region);
 
         return true;
     }

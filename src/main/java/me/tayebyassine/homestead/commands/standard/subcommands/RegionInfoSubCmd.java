@@ -2,7 +2,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.gui.menus.RegionInfoMenu;
+import me.tayebyassine.homestead.gui.menus.region.RegionInfoMenu;
 import me.tayebyassine.homestead.managers.ChunkManager;
 import me.tayebyassine.homestead.managers.RegionManager;
 import me.tayebyassine.homestead.models.Region;

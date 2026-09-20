@@ -1,901 +1,1047 @@
 # Configuration file for all menus
 
-# Menu titles
-titles:
-  0: "Regions"
-  1: "Region - &2{region}"
-  2: "Player Flags - &9Global"
-  3: "World Flags"
-  4: "Manage Players"
-  5: "Trusted Players"
-  6: "Player Flags - &3{playername}&r"
-  7: "Region Control - &3{playername}&r"
-  8: "Region - &2{region}"
-  9: "Banned Players"
-  10: "Invited Players"
-  11: "Chunk List"
-  12: "Miscellaneous Settings"
-  13: "Logs & Mails"
-  14: "Sub-Areas"
-  15: "Sub-Area - &2{subarea}"
-  16: "Sub-Area Flags"
-  17: "Region Rating - &2{region}"
-  18: "Top Regions" # by Bank Balance
-  19: "Top Regions" # by Chunks
-  20: "Top Regions" # by Members
-  21: "Top Regions" # by Creation Date
-  22: "Top Regions" # by Player Rating
-  23: "Rewards - &2{region}"
-  24: "Sub-Area Members"
-  25: "Sub-Area Flags - &3{playername}&r"
-  26: "Levels and Rank - &2{region}"
-  27: "Player Information"
-  28: "Storage - &2{region}"
-  29: "Map Color - &2{region}"
-  30: "Map Icon - &2{region}"
-  31: "Region Rent - &2{region}"
-  32: "Sub-Area Rent - &2{subarea}"
-  33: "Rent Confirmation - &2{region-or-subarea}"
-
-# Menu buttons
-# Each button has its own unique index, which you cannot change or add/remove buttons.
-# Button details:
-# - Name: The button name/title
-# - Lore: The button description, must be a string list
-# - Type: The button type, must be a valid Minecraft Item name (Diamong → DIAMOND) in UPPER CASE! (or player heads, read documentation)
-# You can use hexadecimal color codes (&#FF00FF...) or default Minecraft color codes (&6, &b...).
-buttons:
-  0:
+# Shared default buttons
+defaults:
+  back:
     name: "&c&lBack"
     lore:
       - "&7Return to the previous menu."
     type: RED_STAINED_GLASS_PANE
-  1:
+  prev-page:
     name: "&9&lPrevious"
     lore:
       - "&7Go to the previous page."
     type: ARROW
-  2:
+  next-page:
     name: "&9&lNext"
     lore:
       - "&7Go to the next page."
     type: ARROW
-  3:
+  empty-slot:
     name: " "
     type: GRAY_STAINED_GLASS_PANE
-  4:
-    name: "&#FFB74D&lRegion: &r&2{region} &8(&2{region-displayname}&8)"
-    lore:
-      - "&7• Owner: &3{region-owner}"
-      - "&7• Bank: &c{region-bank}"
-      - "&7• Created At: &6{region-createdat}"
-      - ""
-      - "&#FFB74D&n➥ Shift + Left-click to set as target."
-      - "&#FFB74D&n➥ Shift + Right-click to show detailed information."
-      - "&#FFB74D&n➥ Left-click to configure."
-      - "&#FFB74D&n➥ Right-click to teleport to spawn."
-    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
-  5:
-    name: "&#FF9A76&lRegion: &r&2{region} &8(&2{region-displayname}&8)"
-    lore:
-      - "&7You set this region as targeted region. Any command"
-      - "&7that manages a region (&e/claim&7, &e/rg trust&7) will be"
-      - "&7executed to this region."
-      - ""
-      - "&7• Owner: &3{region-owner}"
-      - "&7• Bank: &c{region-bank}"
-      - "&7• Created At: &6{region-createdat}"
-      - ""
-      - "&#FF9A76&n➥ Shift + Left-click to set as target."
-      - "&#FF9A76&n➥ Shift + Right-click to show detailed information."
-      - "&#FF9A76&n➥ Left-click to configure."
-      - "&#FF9A76&n➥ Right-click to teleport to spawn."
-    type: PLAYERHEAD-a79a5c95ee17abfef45c8dc224189964944d560f19a44f19f8a46aef3fee4756
-  6:
-    name: "&#BA68C8&lManage Players"
-    lore:
-      - "&7Manage players for this region; Ban, unban,"
-      - "&7trust, untrust, invite..."
-      - ""
-      - "&7This region has &6{region-members} &7members."
-      - ""
-      - "&#BA68C8&n➥ Left-click to manage players."
-    type: PLAYERHEAD-75ad626181111e55ebfc906a8e7040c66b8efe94f7c07448d5710012d68436c
-  7:
-    name: "&#64B5F6&lChunk List"
-    lore:
-      - "&7View the list of claimed chunks."
-      - ""
-      - "&7This region has &6{region-chunks}&7/&6{region-chunks-max} &7claimed chunks."
-      - ""
-      - "&#64B5F6&n➥ Left-click to view chunks."
-    type: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
-  8:
-    name: "&#4FC3F7&lManage Flags"
-    lore:
-      - "&7Set flags for global players and the environment."
-      - ""
-      - "&e&lNote:"
-      - "&eThe global player flags won't have any effect on members,"
-      - "&eyou must set specific flags for each member."
-      - ""
-      - "&#4FC3F7&n➥ Left-click to configure global player flags."
-      - "&#4FC3F7&n➥ Right-click to configure environment flags."
-    type: PLAYERHEAD-e8b8c6a46d87cf86a55df214cf84bf45cca25edb9a676e96364dd6a6eea235b3
-  9:
-    name: "&#81C784&lMiscellaneous Settings"
-    lore:
-      - "&7Rename, set description or displayname, set spawn..."
-      - ""
-      - "&#81C784&n➥ Left-click to configure miscellaneous settings."
-    type: PLAYERHEAD-ec2ff244dfc9dd3a2cef63112e7502dc6367b0d02132950347b2b479a72366dd
-  10:
-    name: "&#FFB74D&lSub-Areas &8({subareas-enabled}&8)"
-    lore:
-      - "&7Manage sub-areas inside the region."
-      - ""
-      - "&7This region has &6{region-subareas}&7/&6{region-subareas-max} &7sub-areas."
-      - ""
-      - "&#FFB74D&n➥ Left-click to manage sub-areas."
-    type: OAK_FENCE
-  11:
-    name: "&#AED581&lUpkeep &8({upkeep-enabled}&8)"
-    lore:
-      - "&7• Chunks: &6{region-chunks}"
-      - "&7• Payment: &6{upkeep-amount}"
-      - "&7• Due In: &6{upkeep-date}"
-    type: EMERALD
-  12:
-    name: "&#FF8A65&lRent &8({rent-enabled}&8)"
-    lore:
-      - "&7Rent management for this region."
-      - ""
-      - "&#FF8A65&n➥ Left-click to configure the rent."
-    type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
-  13:
-    name: "&#9575CD&lLogs"
-    lore:
-      - "&7View all logs for the region."
-      - ""
-      - "&7There are &6{region-logs} &7messages (&6{region-logs-unread} &7unread)."
-      - ""
-      - "&#9575CD&n➥ Left-click to read and manage the logs."
-    type: PLAYERHEAD-c2af9b072d19455809dc9d09d9da8bb32f63ad16b015ac772acd9a9f22c77098
-  14:
-    name: "&#EF5350&lLeave"
-    lore:
-      - "&7Quietly leave the region."
-      - ""
-      - "&#EF5350&n➥ Left-click to leave this region."
-    type: OAK_DOOR
-  15:
-    name: "&#42A5F5&lRank Information"
-    lore:
-      - "&7The owner of the region is &3{region-owner}"
-      - ""
-      - "&7• Global: &d#{region-global-rank}"
-      - "&7• By Bank: &a#{region-rank-bank}"
-      - "&7• By Chunks: &a#{region-rank-chunks}"
-      - "&7• By Members: &a#{region-rank-members}"
-      - "&7• By Rating: &a#{region-rank-rating}"
-    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
-  16:
-    name: "&#FFD54F&lWeather & Time"
-    lore:
-      - "&7• Weather: &b{region-weather}"
-      - "&7• Time: &b{region-time}"
-      - ""
-      - "&7You must go outside of region borders and"
-      - "&7then re-enter to see the applied changes!"
-      - ""
-      - "&#FFD54F&n➥ Left-click to change the weather."
-      - "&#FFD54F&n➥ Right-click to change the time."
-    type: PLAYERHEAD-65f37826161c792d7f6c920b2fa06b88e6845288ab02ad9b65d4bbf5ca2ce1e3
-  17:
-    name: "&#81D4FA&lFlag: &6{flag}"
-    lore:
-      - "&7{flag-description}"
-      - ""
-      - "&7➤ State: {state}"
-      - ""
-      - "&#81D4FA&n➥ Left-click to change the state."
-  18:
-    name: "&#4DB6AC&lTrusted Players"
-    lore:
-      - "&7Untrust or set flags for trusted players."
-      - ""
-      - "&7There are &6{region-members}&7/&6{region-members-max} &7trusted players"
-      - "&7in this region."
-      - ""
-      - "&#4DB6AC&n➥ Left-click to view the members."
-    type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
-  19:
-    name: "&#E57373&lBanned Players"
-    lore:
-      - "&7Ban or unban players."
-      - ""
-      - "&e&lNote:"
-      - "&eYou cannot trust any banned player. You must"
-      - "&eunban them to send an invite."
-      - ""
-      - "&7There are &6{region-banned-players} &7banned players"
-      - "&7from this region."
-      - ""
-      - "&#E57373&n➥ Left-click to manage banned players."
-    type: BARRIER
-  20:
-    name: "&#FFB74D&lInvited Players"
-    lore:
-      - "&7Invite or revoke invitation of players."
-      - ""
-      - "&7There are &6{region-invited-players} &7invited players"
-      - "&7to join this region."
-      - ""
-      - "&#FFB74D&n➥ Left-click to manage invitations."
-    type: WRITABLE_BOOK
-  21:
-    name: "&#81C784&l{playername}"
-    lore:
-      - "&7The player is currently {player-status}&7."
-      - ""
-      - "&7• Balance: &c{player-balance}"
-      - "&7• Ping: &a{player-ping}"
-      - "&7• Joined At: &6{player-joinedat}"
-    type: PLAYERHEAD-this
-  22:
-    name: "&#4DD0E1&lOwned Regions"
-    lore:
-      - "&7The regions which this player owns."
-      - ""
-      - "{player-owned-regions}"
-    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
-  23:
-    name: "&#7986CB&lRegions as Member"
-    lore:
-      - "&7The regions which trusted this player."
-      - ""
-      - "{player-trusted-regions}"
-    type: PLAYERHEAD-ae156eb5affddf208617aab7b430fad9f2c991ec2f38304a0c213f31e76cbbe4
-  24:
-    name: "&#AED581&l{playername}"
-    lore:
-      - "&7This player is trusted in the region &2{region}&7."
-      - ""
-      - "&7• Joined At: &6{member-joinedat}"
-      - "&7• Taxes Amount: &c{tax-amount}"
-      - "&7• Taxes Due In: &6{taxes-dueon}"
-      - ""
-      - "&#AED581&n➥ Shift + Left-click to remove the player."
-      - "&#AED581&n➥ Shift + Right-click to view detailed information."
-      - "&#AED581&n➥ Left-click to configure player flags."
-      - "&#AED581&n➥ Right-click to configure region control flags."
-    type: PLAYERHEAD-this
-  25:
-    name: "&#FFB74D&lRegion: &2{region}"
-    lore:
-      - "&7• Owner: &3{region-owner}"
-      - "&7• Created At: &6{region-createdat}"
-      - "&7• Bank: &c{region-bank}"
-      - "&7• Rating: &r{region-rating}"
-      - ""
-      - "&7• Global Rank: &d#{region-global-rank}"
-      - "&7• Rank By Bank: &a#{region-rank-bank}"
-      - "&7• Rank By Chunks: &a#{region-rank-chunks}"
-      - "&7• Rank By Members: &a#{region-rank-members}"
-      - "&7• Rank By Rating: &a#{region-rank-rating}"
-    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
-  26:
-    name: "&#81C784&lMembers"
-    lore:
-      - "{region-members}"
-    type: PLAYER_HEAD
-  27:
-    name: "&#EF9A9A&l{playername}"
-    lore:
-      - "&7This player is permanently banned."
-      - ""
-      - "&7• Banned At: &6{player-bannedat}"
-      - "&7• Reason: &f{player-banreason}"
-      - ""
-      - "&#EF9A9A&n➥ Left-click to unban the player."
-    type: PLAYERHEAD-this
-  28:
-    name: "&#D32F2F&lBan Player"
-    lore:
-      - "&7Ban a player by its name."
-      - ""
-      - "&#D32F2F&n➥ Left-click to ban a player."
-    type: MACE
-  29:
-    name: "&#66BB6A&lInvite Player"
-    lore:
-      - "&7Invite a player to this region."
-      - ""
-      - "&#66BB6A&n➥ Left-click to invite a player."
-    type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
-  30:
-    name: "&#FFF176&l{playername}"
-    lore:
-      - "&7This player is invited, they need to accept"
-      - "&7to join this region."
-      - ""
-      - "&#FFF176&n➥ Left-click to revoke the invite."
-    type: WRITABLE_BOOK
-  31:
-    name: "&#FF7043&lPurge"
-    lore:
-      - "&7Revoke all invites."
-      - ""
-      - "&#FF7043&n➥ Left-click to purge."
-    type: BRUSH
-  32:
-    name: "&#FFAB91&lUnban All"
-    lore:
-      - "&7Unban all banned players."
-      - ""
-      - "&#FFAB91&n➥ Left-click to purge the bans."
-    type: BRUSH
-  33:
-    name: "&#42A5F5&lChunk #{index}"
-    lore:
-      - "&7This chunk is part of the region &2{region}&7."
-      - ""
-      - "&7• Claimed At: &6{chunk-claimedat}"
-      - "&7• Location: &6{chunk-location}"
-      - "&7• Always Loaded? {chunk-is-loaded}"
-      - ""
-      - "&#42A5F5&n➥ Shift + Left-click to always load this chunk."
-      - "&#42A5F5&n➥ Left-click to unclaim this chunk."
-      - "&#42A5F5&n➥ Right-click to teleport to the chunk."
-    type: CUSTOM::GETBYWORLD
-  34:
-    name: "&#FFB74D&lRename Region"
-    lore:
-      - "&7Rename the region, the current name"
-      - "&7is: &2{region}"
-      - ""
-      - "&#FFB74D&n➥ Left-click to rename this region."
-    type: NAME_TAG
-  35:
-    name: "&#FFD54F&lSet Displayname"
-    lore:
-      - "&7Set the displayname of the region, current"
-      - "&7one is: &2{region-displayname}"
-      - ""
-      - "&e&lNote:"
-      - "&eThe display name is the actual name of the"
-      - "&eregion, which you can use spaces and any"
-      - "&echaracter!"
-      - ""
-      - "&#FFD54F&n➥ Left-click to set the displayname."
-    type: NAME_TAG
-  36:
-    name: "&#81C784&lSet Description"
-    lore:
-      - "&7Set the description of the region, current"
-      - "&7one is: &7{region-description}"
-      - ""
-      - "&7Custom variables:"
-      - "&7• &a%player%&7: The player that entered the region"
-      - "&7• &a%owner%&7: The owner of the region"
-      - ""
-      - "&7Example variable usage: &aWelcome, %player%!"
-      - "&#81C784&n➥ Left-click to set the description."
-    type: OAK_SIGN
-  37:
-    name: "&#9575CD&lSet Location"
-    lore:
-      - "&7Set the region's location to your current position."
-      - ""
-      - "&#9575CD&n➥ Left-click to update the location."
-    type: COMPASS
-  38:
-    name: "&#FF8A65&lTransfer Ownership"
-    lore:
-      - "&7Give your region to another player."
-      - ""
-      - "&c&lWarning:"
-      - "&cThis action is permanent, which means once you"
-      - "&ctransfer the ownership, you will never own this"
-      - "&cregion again. All the members, chunks, and bank"
-      - "&cwill not be modified except the new owner."
-      - ""
-      - "&#FF8A65&n➥ Left-click to transfer ownership."
-    type: PLAYER_HEAD
-  39:
-    name: "&#64B5F6&lLog #{index}"
-    lore:
-      - "&7• Author: &3{log-author}"
-      - "&7• At: &6{log-sentat}"
-      - ""
-      - "&7➽ &f{log-message}"
-      - ""
-      - "&#64B5F6&n➥ Left-click to mark it as read."
-      - "&#64B5F6&n➥ Right-click to delete this log."
-    type: BOOK
-  40:
-    name: "&#81C784&lLog #{index} &7(Marked as Read)"
-    lore:
-      - "&7• Author: &3{log-author}"
-      - "&7• At: &6{log-sentat}"
-      - ""
-      - "&7➽ &f{log-message}"
-      - ""
-      - "&#81C784&n➥ Right-click to delete this log."
-    type: ENCHANTED_BOOK
-  41:
-    name: "&#FF7043&lPurge"
-    lore:
-      - "&7Remove all logs."
-      - ""
-      - "&#FF7043&n➥ Left-click to purge."
-    type: BRUSH
-  42:
-    name: "&#FFB74D&l{subarea}"
-    lore:
-      - "&7This sub-area is inside the region &2{region}&7."
-      - ""
-      - "&7• Volume: &6{subarea-volume}"
-      - "&7• Created At: &6{subarea-createdat}"
-      - ""
-      - "&#FFB74D&n➥ Left-click to manage the sub-area."
-    type: OAK_FENCE
-  43:
-    name: "&#FFD54F&lRename Sub-Area"
-    lore:
-      - "&7Rename the sub-area, the current name"
-      - "&7is: &2{subarea}"
-      - ""
-      - "&#FFD54F&n➥ Left-click to rename this sub-area."
-    type: NAME_TAG
-  44:
-    name: "&#4FC3F7&lFlags"
-    lore:
-      - "&7Set flags for global players."
-      - ""
-      - "&e&lNote:"
-      - "&eRegion members won't have any effect with"
-      - "&ethe sub-area's flags, unless they're a"
-      - "&emember of this sub-area!"
-      - ""
-      - "&#4FC3F7&n➥ Left-click to set the flags."
-    type: PLAYERHEAD-e8b8c6a46d87cf86a55df214cf84bf45cca25edb9a676e96364dd6a6eea235b3
-  45:
-    name: "&#E57373&lDelete"
-    lore:
-      - "&7Delete the sub-area."
-      - ""
-      - "&#E57373&n➥ Left-click to delete the sub-area."
-    type: BARRIER
-  46:
-    name: "&#81C784&lMark All as Read"
-    lore:
-      - "&7Mark all logs as read."
-      - ""
-      - "&#81C784&n➥ Left-click to mark them."
-    type: BOOKSHELF
-  47:
-    name: "&#FFD54F&l{region-displayname}"
-    lore:
-      - "&7• Owner: &3{region-owner}"
-      - "&7• Created At: &6{region-createdat}"
-      - "&7• Bank: &c{region-bank}"
-      - "&7• Rating: &r{region-rating}"
-      - ""
-      - "&#FFD54F&n➥ Left-click to visit."
-    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
-  48:
-    name: "&#E57373&l★"
-    lore:
-      - "&#E57373&n➥ Left-click to rate."
-    type: RED_STAINED_GLASS
-  49:
-    name: "&#FFB74D&l★★"
-    lore:
-      - "&#FFB74D&n➥ Left-click to rate."
-    type: ORANGE_STAINED_GLASS
-  50:
-    name: "&#FFF176&l★★★"
-    lore:
-      - "&#FFF176&n➥ Left-click to rate."
-    type: YELLOW_STAINED_GLASS
-  51:
-    name: "&#AED581&l★★★★"
-    lore:
-      - "&#AED581&n➥ Left-click to rate."
-    type: LIME_STAINED_GLASS
-  52:
-    name: "&#81C784&l★★★★★"
-    lore:
-      - "&#81C784&n➥ Left-click to rate."
-    type: GREEN_STAINED_GLASS
-  53:
-    name: "&#E0E0E0&lYou have never rated this region before!"
-    type: PAPER
-  54:
-    name: "&#FFF176&lYou rated this region: &r{player-rate}"
-    type: PAPER
-  55:
-    name: "&#CE93D8&l#{rank} &r&2{region} &8(&2{region-displayname}&8)"
-    lore:
-      - "&7The owner of the region is &3{region-owner}"
-      - ""
-      - "&7This region is on the rank &d#{rank}&7!"
-      - ""
-      - "&#CE93D8&n➥ Left-click to show detailed information."
-    type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
-  56:
-    name: "&#BA68C8&lFilter"
-    lore:
-      - "&7The filter will show regions ranked by the"
-      - "&7amount of balance (highest to lowest)."
-      - ""
-      - "&a➤ Bank"
-      - "&7➤ Chunks"
-      - "&7➤ Members"
-      - "&7➤ Oldest"
-      - "&7➤ Rating"
-      - ""
-      - "&#BA68C8&n➥ Left-click or right-click to change the filter."
-    type: HOPPER
-  57:
-    name: "&#64B5F6&lFilter"
-    lore:
-      - "&7The filter will show regions ranked by the"
-      - "&7number of claimed chunks (highest to lowest)."
-      - ""
-      - "&7➤ Bank"
-      - "&a➤ Chunks"
-      - "&7➤ Members"
-      - "&7➤ Oldest"
-      - "&7➤ Rating"
-      - ""
-      - "&#64B5F6&n➥ Left-click or right-click to change the filter."
-    type: HOPPER
-  58:
-    name: "&#4FC3F7&lFilter"
-    lore:
-      - "&7The filter will show regions ranked by the"
-      - "&7number of trusted players (highest to lowest)."
-      - ""
-      - "&7➤ Bank"
-      - "&7➤ Chunks"
-      - "&a➤ Members"
-      - "&7➤ Oldest"
-      - "&7➤ Rating"
-      - ""
-      - "&#4FC3F7&n➥ Left-click or right-click to change the filter."
-    type: HOPPER
-  59:
-    name: "&#81C784&lFilter"
-    lore:
-      - "&7The filter will show regions ranked by the"
-      - "&7date of creation (oldest to newest)."
-      - ""
-      - "&7➤ Bank"
-      - "&7➤ Chunks"
-      - "&7➤ Members"
-      - "&a➤ Oldest"
-      - "&7➤ Rating"
-      - ""
-      - "&#81C784&n➥ Left-click or right-click to change the filter."
-    type: HOPPER
-  60:
-    name: "&#FFD54F&lFilter"
-    lore:
-      - "&7The filter will show regions ranked by the"
-      - "&7public rating (highest to lowest)."
-      - ""
-      - "&7➤ Bank"
-      - "&7➤ Chunks"
-      - "&7➤ Members"
-      - "&7➤ Oldest"
-      - "&a➤ Rating"
-      - ""
-      - "&#FFD54F&n➥ Left-click or right-click to change the filter."
-    type: HOPPER
-  61:
-    name: "&#CE93D8&lRating"
-    lore:
-      - "&7Rate this region based on stars count!"
-      - ""
-      - "&#CE93D8&n➥ Left-click to rate this region."
-    type: NETHER_STAR
-  62:
-    name: "&#66BB6A&lShow All Regions"
-    lore:
-      - "&7Status: &aON"
-      - "&aCurrently showing all regions."
-      - ""
-      - "&#66BB6A&n➥ Left-click to change."
-    type: ENDER_EYE
-  63:
-    name: "&#FF7043&lShow All Regions"
-    lore:
-      - "&7Status: &cOFF"
-      - "&cCurrently showing your regions."
-      - ""
-      - "&#FF7043&n➥ Left-click to change."
-    type: ENDER_PEARL
-  64:
-    name: "&#D32F2F&lDelete Region"
-    lore:
-      - "&c&lWarning:"
-      - "&cOnly the owner or an operator can delete this region."
-      - "&cThis action is &4irreversible&c."
-      - ""
-      - "&#D32F2F&n➥ Shift + Right-click to delete."
-    type: BARRIER
-  65:
-    name: "&#FFB74D&lBulk toggle flags"
-    lore:
-      - "&7Toggle all flags at once!"
-      - ""
-      - "&#FFB74D&n➥ Left-click to enable all."
-      - "&#FFB74D&n➥ Right-click to disable all."
-    type: JIGSAW
-  66:
-    name: "&#AED581&lRewards by Member"
-    lore:
-      - "&7Invited players: &6{members}"
-      - ""
-      - "&7• Unlocked Rewards:"
-      - "  &7- &a✔ {chunks} Unlocked Chunks"
-      - "  &7- &a✔ {subareas} Unlocked Sub-Areas"
-    type: PAPER
-  67:
-    name: "&#81C784&lRewards by Playtime"
-    lore:
-      - "&7Playtime: &6{player-playtime}"
-      - ""
-      - "&7• Unlocked Rewards:"
-      - "  &7- &a✔ {chunks} Unlocked Chunks"
-      - "  &7- &a✔ {subareas} Unlocked Sub-Areas"
-    type: PAPER
-  68:
-    name: "&#66BB6A&lAdd Player"
-    lore:
-      - "&7Add a player to this sub-area."
-      - ""
-      - "&#66BB6A&n➥ Left-click to add a player."
-    type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
-  69:
-    name: "&#C5E1A5&l{playername}"
-    lore:
-      - "&7This player is trusted in the region &2{region}&7,"
-      - "&7and a member of the sub-area &3{subarea}&7."
-      - ""
-      - "&#C5E1A5&n➥ Shift + Left-click to remove the player."
-      - "&#C5E1A5&n➥ Shift + Right-click to view detailed information."
-      - "&#C5E1A5&n➥ Left-click to configure player flags for this sub-area."
-    type: PLAYERHEAD-this
-  70:
-    name: "&#7986CB&lSub-Area Players"
-    lore:
-      - "&7Set flags for players in this sub-area only."
-      - ""
-      - "&e&lNote:"
-      - "&eSub-Area member permissions have more priority"
-      - "&ethan normal region members! You can set specific"
-      - "&eregion member to manage something in the sub-area"
-      - "&ewithout letting the other members to do it."
-      - ""
-      - "&7• Players: &6{subarea-players}"
-      - ""
-      - "&#7986CB&n➥ Left-click to view the players."
-    type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
-  71:
-    name: "&#FF8A65&lRent &8({rent-enabled}&8)"
-    lore:
-      - "&7Rent management for this sub-area."
-      - ""
-      - "&#FF8A65&n➥ Left-click to configure the rent."
-    type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
-  72:
-    name: "&#42A5F5&lInformation"
-    lore:
-      - "&7This region can have &6{max-subareas} &7sub-area!"
-      - "&7Upgrade to higher rank to unlock more."
-      - " "
-      - "&7Check your rewards: &e/hs rewards"
-    type: PAPER
-  73:
-    name: "&#42A5F5&lInformation"
-    lore:
-      - "&7This region can have &6{max-chunks} &7claimed chunks!"
-      - "&7Upgrade to higher rank to unlock more."
-      - " "
-      - "&7Check your rewards: &e/hs rewards"
-    type: PAPER
-  74:
-    name: "&#42A5F5&lInformation"
-    lore:
-      - "&7Earn XP to level up your region!"
-      - "&7Kill mobs or do such activities to gain"
-      - "&7more XP. Each level requires a specific"
-      - "&7amount of XP to unlock it!"
-      - " "
-      - "&7• Level: &6{level}"
-      - "&7• XP: &6{xp}"
-      - "&7• Unlocked Rewards:"
-      - "  &7- &a✔ {reward-chunks} Chunks"
-      - "  &7- &a✔ {reward-members} Members"
-      - "  &7- &a✔ {reward-subareas} Sub-Areas"
-      - "  &7- &a✔ {reward-upkeep}% Upkeep Price"
-    type: PAPER
-  75:
-    name: "&#391AE8&lProgress"
-    lore:
-      - "&7Progress: &6{xp}&7/&6{next-lvl-xp} XP &7(&a{next-lvl-percentage}%&7)"
-      - "&7Next Level: &6{next-lvl}"
-    type: BLUE_STAINED_GLASS_PANE
-  76:
-    name: "&#808080&lRemaining"
-    lore:
-      - "&7Progress: &6{xp}&7/&6{next-lvl-xp} XP &7(&a{next-lvl-percentage}%&7)"
-      - "&7Next Level: &6{next-lvl}"
-    type: LIGHT_GRAY_STAINED_GLASS_PANE
-  77:
-    name: "&#81C784&lLevel {level}"
-    lore:
-      - "&7This level is unlocked!"
-      - " "
-      - "&7Rewards:"
-      - "{level-rewards}"
-    type: GREEN_CONCRETE
-  78:
-    name: "&#E57373&lLevel {level}"
-    lore:
-      - "&7This level is locked. You need &6{xp} XP &7to"
-      - "&7unlock it!"
-      - " "
-      - "&7Rewards:"
-      - "{level-rewards}"
-    type: RED_CONCRETE
-  79:
-    name: "&#AED581&lRewards"
-    lore:
-      - "&7View the rewards you have earned."
-      - ""
-      - "&#AED581&n➥ Left-click to view the rewards."
-    type: PLAYERHEAD-d1c3e87f30290045d019506c805834ba971f5aeec0d7d0505261f314a5465638
-  80:
-    name: "&#1DCAE0&lLevels"
-    lore:
-      - "&7View the levels for this region."
-      - ""
-      - "&#1DCAE0&n➥ Left-click to view the levels."
-    type: NETHER_STAR
-  81:
-    name: "&#BA68C8&lPublic? &r{is-public-regions}"
-    lore:
-      - "&7If &aEnabled&7, only regions with allowed permissions"
-      - "&7for everyone to visit it will be listed."
-      - ""
-      - "&7If &cDisabled&7, all regions will be listed here."
-    type: COMPARATOR
-  82:
-    name: "&#42A5F5&lYour Rank"
-    lore:
-      - "&7You have selected &2{selected-region} &7as targeted region,"
-      - "&7and its current rank with this filter is: &d#{selected-region-rank}&7!"
-    type: PAPER
-  83:
-    name: "&#42A5F5&lInformation"
-    lore:
-      - "&7This region can have &6{max-members} &7trusted players!"
-      - "&7Upgrade to higher rank to unlock more."
-      - " "
-      - "&7Check your rewards: &e/hs rewards"
-    type: PAPER
-  84:
-    name: "&9&lDynamic Map"
-    lore:
-      - "&7Configure how your region should be shown on"
-      - "&7Pl3xMap, Squaremap, dynmap, or BlueMap! Edit the"
-      - "&7chunks color and your region icon."
-      - ""
-      - "&e&lNote:"
-      - "&eMap Icons are only available for Pl3xMap and"
-      - "&eSquaremap!"
-      - ""
-      - "&9&n➥ Left-click to change region icon."
-      - "&9&n➥ Right-click to change the map color."
-    type: FILLED_MAP
-  85:
-    name: "&#FFD54F&lRent Price"
-    lore:
-      - "&7Set the rent price for this region/sub-area."
-      - ""
-      - "&7Current: &c{rent-price}"
-      - "&7Range: &c{min-price} &7- &c{max-price}"
-      - ""
-      - "&#FFD54F&n➥ Left-click to set price."
-    type: EMERALD
-  86:
-    name: "&#FFB74D&lRent Duration"
-    lore:
-        - "&7Set the rent duration in days."
-        - ""
-        - "&7Current: &6{rent-duration}"
-        - "&7Range: &c{min-days} &7- &c{max-days} &7days"
-        - "&7Use &c-1 &7for permanent rent."
-        - ""
-        - "&#FFB74D&n➥ Left-click to set duration."
-    type: CLOCK
-  87:
-    name: "&#AED581&lSecurity Deposit"
-    lore:
-        - "&7Set the security deposit (refundable)."
-        - ""
-        - "&7Current: &c{rent-deposit}"
-        - "&7Range: &c{min-deposit} &7- &c{max-deposit}"
-        - ""
-        - "&#AED581&n➥ Left-click to set deposit."
-    type: PLAYERHEAD-e730127542440ef0e18b4a2994fbd097e9529d59f6cedb57dbfd5fb6134a606d
-  88:
-    name: "&#4FC3F7&lNotice to Vacate"
-    lore:
-        - "&7Issue a notice to vacate to the current renter."
-        - ""
-        - "&7Status: &6{rent-notice}"
-        - ""
-        - "&#4FC3F7&n➥ Left-click to issue/cancel notice."
-    type: WRITABLE_BOOK
-  89:
-    name: "&#E57373&lCancel Rent"
-    lore:
-        - "&7Cancel the current rent agreement."
-        - ""
-        - "&7Current Renter: &6{rent-renter}"
-        - ""
-        - "&#E57373&n➥ Left-click to cancel rent."
-    type: BARRIER
-  90:
-    name: "&#FF8A65&lEnd Rent (Owner)"
-    lore:
-        - "&7Forcefully end the current rent."
-        - ""
-        - "&7Current Renter: &6{rent-renter}"
-        - ""
-        - "&#FF8A65&n➥ Left-click to end rent."
-    type: PLAYERHEAD-927c3b8a5696d20c62b9eaf7f47bc41a6ae8ee79d7000308b5a1542b73a1b5eb
-  91:
-    name: "&#9575CD&lSet Permanent"
-    lore:
-        - "&7Make the rent permanent (no expiration)."
-        - ""
-        - "&#9575CD&n➥ Left-click to set permanent."
-    type: NETHER_STAR
 
-    # Rent Confirmation Menu Buttons
-  92:
-    name: "&#FFD54F&lRent Offer Details"
-    lore:
-        - "&7Region: &2{region}"
-        - "&7Sub-Area: &3{subarea}"
-        - ""
-        - "&7Price: &c{rent-price}"
-        - "&7Duration: &6{rent-duration}"
-        - "&7Deposit: &c{rent-deposit}"
-        - "&7Total Cost: &c{rent-total}"
-        - ""
-        - "&7Your Balance: &c{player-balance}"
-    type: OAK_SIGN
-  93:
-    name: "&#66BB6A&lAccept Rent"
-    lore:
-        - "&7Confirm and pay for the rent."
-        - ""
-        - "&#66BB6A&n➥ Left-click to accept."
-    type: LIME_STAINED_GLASS_PANE
-  94:
-    name: "&#EF5350&lDecline Rent"
-    lore:
-        - "&7Cancel and don't rent."
-        - ""
-        - "&#EF5350&n➥ Left-click to decline."
-    type: RED_STAINED_GLASS_PANE
+# Per-menu configuration
+# Each menu has its own title and buttons section.
+# Button IDs are local to each menu (0, 1, 2, ...).
+# You can use hexadecimal color codes (&#FF00FF...) or default Minecraft color codes (&6, &b...).
+menus:
+  region_menu:
+    title: "Region - &2{region}"
+    buttons:
+      0:
+        name: "&#BA68C8&lManage Players"
+        lore:
+          - "&7Manage players for this region; Ban, unban,"
+          - "&7trust, untrust, invite..."
+          - ""
+          - "&7This region has &6{region-members} &7members."
+          - ""
+          - "&#BA68C8&n➥ Left-click to manage players."
+        type: PLAYERHEAD-75ad626181111e55ebfc906a8e7040c66b8efe94f7c07448d5710012d68436c
+      1:
+        name: "&#64B5F6&lChunk List"
+        lore:
+          - "&7View the list of claimed chunks."
+          - ""
+          - "&7This region has &6{region-chunks}&7/&6{region-chunks-max} &7claimed chunks."
+          - ""
+          - "&#64B5F6&n➥ Left-click to view chunks."
+        type: PLAYERHEAD-61b635bc92dd20011d6e7d01257e6ea737b49fb7de941d3bbd1877104fc5eb1e
+      2:
+        name: "&#4FC3F7&lManage Flags"
+        lore:
+          - "&7Set flags for global players and the environment."
+          - ""
+          - "&e&lNote:"
+          - "&eThe global player flags won't have any effect on members,"
+          - "&eyou must set specific flags for each member."
+          - ""
+          - "&#4FC3F7&n➥ Left-click to configure global player flags."
+          - "&#4FC3F7&n➥ Right-click to configure environment flags."
+        type: PLAYERHEAD-e8b8c6a46d87cf86a55df214cf84bf45cca25edb9a676e96364dd6a6eea235b3
+      3:
+        name: "&#81C784&lMiscellaneous Settings"
+        lore:
+          - "&7Rename, set description or displayname, set spawn..."
+          - ""
+          - "&#81C784&n➥ Left-click to configure miscellaneous settings."
+        type: PLAYERHEAD-ec2ff244dfc9dd3a2cef63112e7502dc6367b0d02132950347b2b479a72366dd
+      4:
+        name: "&#FFB74D&lSub-Areas &8({subareas-enabled}&8)"
+        lore:
+          - "&7Manage sub-areas inside the region."
+          - ""
+          - "&7This region has &6{region-subareas}&7/&6{region-subareas-max} &7sub-areas."
+          - ""
+          - "&#FFB74D&n➥ Left-click to manage sub-areas."
+        type: OAK_FENCE
+      5:
+        name: "&#AED581&lUpkeep &8({upkeep-enabled}&8)"
+        lore:
+          - "&7• Chunks: &6{region-chunks}"
+          - "&7• Payment: &6{upkeep-amount}"
+          - "&7• Due In: &6{upkeep-date}"
+        type: EMERALD
+      6:
+        name: "&#FF8A65&lRent &8({rent-enabled}&8)"
+        lore:
+          - "&7Rent management for this region."
+          - ""
+          - "&#FF8A65&n➥ Left-click to configure the rent."
+        type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
+      7:
+        name: "&#9575CD&lLogs"
+        lore:
+          - "&7View all logs for the region."
+          - ""
+          - "&7There are &6{region-logs} &7messages (&6{region-logs-unread} &7unread)."
+          - ""
+          - "&#9575CD&n➥ Left-click to read and manage the logs."
+        type: PLAYERHEAD-c2af9b072d19455809dc9d09d9da8bb32f63ad16b015ac772acd9a9f22c77098
+      8:
+        name: "&#42A5F5&lRank Information"
+        lore:
+          - "&7The owner of the region is &3{region-owner}"
+          - ""
+          - "&7• Global: &d#{region-global-rank}"
+          - "&7• By Bank: &a#{region-rank-bank}"
+          - "&7• By Chunks: &a#{region-rank-chunks}"
+          - "&7• By Members: &a#{region-rank-members}"
+          - "&7• By Rating: &a#{region-rank-rating}"
+        type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+      9:
+        name: "&#FFD54F&lWeather & Time"
+        lore:
+          - "&7• Weather: &b{region-weather}"
+          - "&7• Time: &b{region-time}"
+          - ""
+          - "&7You must go outside of region borders and"
+          - "&7then re-enter to see the applied changes!"
+          - ""
+          - "&#FFD54F&n➥ Left-click to change the weather."
+          - "&#FFD54F&n➥ Right-click to change the time."
+        type: PLAYERHEAD-65f37826161c792d7f6c920b2fa06b88e6845288ab02ad9b65d4bbf5ca2ce1e3
+      10:
+        name: "&#EF5350&lLeave"
+        lore:
+          - "&7Quietly leave the region."
+          - ""
+          - "&#EF5350&n➥ Left-click to leave this region."
+        type: OAK_DOOR
+      11:
+        name: "&#AED581&lRewards"
+        lore:
+          - "&7View the rewards you have earned."
+          - ""
+          - "&#AED581&n➥ Left-click to view the rewards."
+        type: PLAYERHEAD-d1c3e87f30290045d019506c805834ba971f5aeec0d7d0505261f314a5465638
+      12:
+        name: "&#1DCAE0&lLevels"
+        lore:
+          - "&7View the levels for this region."
+          - ""
+          - "&#1DCAE0&n➥ Left-click to view the levels."
+        type: NETHER_STAR
+      13:
+        name: "&#FFD54F&l{region-displayname}"
+        lore:
+          - "&7• Owner: &3{region-owner}"
+          - "&7• Created At: &6{region-createdat}"
+          - "&7• Bank: &c{region-bank}"
+          - "&7• Rating: &r{region-rating}"
+          - ""
+          - "&#FFD54F&n➥ Left-click to visit."
+        type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+      14:
+        name: "&#FFD54F&lRent Price"
+        lore:
+          - "&7Set the rent price for this region/sub-area."
+          - ""
+          - "&7Current: &c{rent-price}"
+          - "&7Range: &c{min-price} &7- &c{max-price}"
+          - ""
+          - "&#FFD54F&n➥ Left-click to set price."
+        type: EMERALD
+  regions:
+    title: "Regions"
+    buttons:
+      0:
+        name: "&#FFB74D&lRegion: &r&2{region} &8(&2{region-displayname}&8)"
+        lore:
+          - "&7• Owner: &3{region-owner}"
+          - "&7• Bank: &c{region-bank}"
+          - "&7• Created At: &6{region-createdat}"
+          - ""
+          - "&#FFB74D&n➥ Shift + Left-click to set as target."
+          - "&#FFB74D&n➥ Shift + Right-click to show detailed information."
+          - "&#FFB74D&n➥ Left-click to configure."
+          - "&#FFB74D&n➥ Right-click to teleport to spawn."
+        type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+      1:
+        name: "&#FF9A76&lRegion: &r&2{region} &8(&2{region-displayname}&8)"
+        lore:
+          - "&7You set this region as targeted region. Any command"
+          - "&7that manages a region (&e/claim&7, &e/rg trust&7) will be"
+          - "&7executed to this region."
+          - ""
+          - "&7• Owner: &3{region-owner}"
+          - "&7• Bank: &c{region-bank}"
+          - "&7• Created At: &6{region-createdat}"
+          - ""
+          - "&#FF9A76&n➥ Shift + Left-click to set as target."
+          - "&#FF9A76&n➥ Shift + Right-click to show detailed information."
+          - "&#FF9A76&n➥ Left-click to configure."
+          - "&#FF9A76&n➥ Right-click to teleport to spawn."
+        type: PLAYERHEAD-a79a5c95ee17abfef45c8dc224189964944d560f19a44f19f8a46aef3fee4756
+      2:
+        name: "&#66BB6A&lShow All Regions"
+        lore:
+          - "&7Status: &aON"
+          - "&aCurrently showing all regions."
+          - ""
+          - "&#66BB6A&n➥ Left-click to change."
+        type: ENDER_EYE
+      3:
+        name: "&#FF7043&lShow All Regions"
+        lore:
+          - "&7Status: &cOFF"
+          - "&cCurrently showing your regions."
+          - ""
+          - "&#FF7043&n➥ Left-click to change."
+        type: ENDER_PEARL
+
+  player_info:
+    title: "Player Information"
+    buttons:
+      0:
+        name: "&#81C784&l{playername}"
+        lore:
+          - "&7The player is currently {player-status}&7."
+          - ""
+          - "&7• Balance: &c{player-balance}"
+          - "&7• Ping: &a{player-ping}"
+          - "&7• Joined At: &6{player-joinedat}"
+        type: PLAYERHEAD-this
+      1:
+        name: "&#4DD0E1&lOwned Regions"
+        lore:
+          - "&7The regions which this player owns."
+          - ""
+          - "{player-owned-regions}"
+        type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+      2:
+        name: "&#7986CB&lRegions as Member"
+        lore:
+          - "&7The regions which trusted this player."
+          - ""
+          - "{player-trusted-regions}"
+        type: PLAYERHEAD-ae156eb5affddf208617aab7b430fad9f2c991ec2f38304a0c213f31e76cbbe4
+
+  region_players_management:
+    title: "Manage Players"
+    buttons:
+      0:
+        name: "&#4DB6AC&lTrusted Players"
+        lore:
+          - "&7Untrust or set flags for trusted players."
+          - ""
+          - "&7There are &6{region-members}&7/&6{region-members-max} &7trusted players"
+          - "&7in this region."
+          - ""
+          - "&#4DB6AC&n➥ Left-click to view the members."
+        type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
+      1:
+        name: "&#E57373&lBanned Players"
+        lore:
+          - "&7Ban or unban players."
+          - ""
+          - "&e&lNote:"
+          - "&eYou cannot trust any banned player. You must"
+          - "&eunban them to send an invite."
+          - ""
+          - "&7There are &6{region-banned-players} &7banned players"
+          - "&7from this region."
+          - ""
+          - "&#E57373&n➥ Left-click to manage banned players."
+        type: BARRIER
+      2:
+        name: "&#FFB74D&lInvited Players"
+        lore:
+          - "&7Invite or revoke invitation of players."
+          - ""
+          - "&7There are &6{region-invited-players} &7invited players"
+          - "&7to join this region."
+          - ""
+          - "&#FFB74D&n➥ Left-click to manage invitations."
+        type: WRITABLE_BOOK
+
+  region_info:
+    title: "Region - &2{region}"
+    buttons:
+      0:
+        name: "&#FFB74D&lRegion: &2{region}"
+        lore:
+          - "&7• Owner: &3{region-owner}"
+          - "&7• Created At: &6{region-createdat}"
+          - "&7• Bank: &c{region-bank}"
+          - "&7• Rating: &r{region-rating}"
+          - ""
+          - "&7• Global Rank: &d#{region-global-rank}"
+          - "&7• Rank By Bank: &a#{region-rank-bank}"
+          - "&7• Rank By Chunks: &a#{region-rank-chunks}"
+          - "&7• Rank By Members: &a#{region-rank-members}"
+          - "&7• Rank By Rating: &a#{region-rank-rating}"
+        type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+      1:
+        name: "&#81C784&lMembers"
+        lore:
+          - "{region-members}"
+        type: PLAYER_HEAD
+      2:
+        name: "&#CE93D8&lRating"
+        lore:
+          - "&7Rate this region based on stars count!"
+          - ""
+          - "&#CE93D8&n➥ Left-click to rate this region."
+        type: NETHER_STAR
+
+  region_trusted_players:
+    title: "Trusted Players"
+    buttons:
+      0:
+        name: "&#81C784&l{playername}"
+        lore:
+          - "&7This player is trusted in the region &2{region}&7."
+          - ""
+          - "&7• Joined At: &6{member-joinedat}"
+          - "&7• Taxes Amount: &c{tax-amount}"
+          - "&7• Taxes Due In: &6{taxes-dueon}"
+          - ""
+          - "&#AED581&n➥ Shift + Left-click to remove the player."
+          - "&#AED581&n➥ Shift + Right-click to view detailed information."
+          - "&#AED581&n➥ Left-click to configure player flags."
+          - "&#AED581&n➥ Right-click to configure region control flags."
+        type: PLAYERHEAD-this
+      1:
+        name: "&#42A5F5&lInformation"
+        lore:
+          - "&7This region can have &6{max-members} &7trusted players!"
+          - "&7Upgrade to higher rank to unlock more."
+          - " "
+          - "&7Check your rewards: &e/hs rewards"
+        type: PAPER
+
+  region_banned_players:
+    title: "Banned Players"
+    buttons:
+      0:
+        name: "&#D32F2F&lBan Player"
+        lore:
+          - "&7Ban a player by its name."
+          - ""
+          - "&#D32F2F&n➥ Left-click to ban a player."
+        type: MACE
+      1:
+        name: "&#EF9A9A&l{playername}"
+        lore:
+          - "&7This player is permanently banned."
+          - ""
+          - "&7• Banned At: &6{player-bannedat}"
+          - "&7• Reason: &f{player-banreason}"
+          - ""
+          - "&#EF9A9A&n➥ Left-click to unban the player."
+        type: PLAYERHEAD-this
+      2:
+        name: "&#FFAB91&lUnban All"
+        lore:
+          - "&7Unban all banned players."
+          - ""
+          - "&#FFAB91&n➥ Left-click to purge the bans."
+        type: BRUSH
+
+  region_invited_players:
+    title: "Invited Players"
+    buttons:
+      0:
+        name: "&#66BB6A&lInvite Player"
+        lore:
+          - "&7Invite a player to this region."
+          - ""
+          - "&#66BB6A&n➥ Left-click to invite a player."
+        type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
+      1:
+        name: "&#FFF176&l{playername}"
+        lore:
+          - "&7This player is invited, they need to accept"
+          - "&7to join this region."
+          - ""
+          - "&#FFF176&n➥ Left-click to revoke the invite."
+        type: WRITABLE_BOOK
+      2:
+        name: "&#FF7043&lPurge"
+        lore:
+          - "&7Revoke all invites."
+          - ""
+          - "&#FF7043&n➥ Left-click to purge."
+        type: BRUSH
+
+  region_member_flags:
+    title: "Player Flags - &3{playername}&r"
+    buttons:
+      0:
+        name: "&#FFB74D&lBulk toggle flags"
+        lore:
+          - "&7Toggle all flags at once!"
+          - ""
+          - "&#FFB74D&n➥ Left-click to enable all."
+          - "&#FFB74D&n➥ Right-click to disable all."
+        type: JIGSAW
+      1:
+        name: "&#81D4FA&lFlag: &6{flag}"
+        lore:
+          - "&7{flag-description}"
+          - ""
+          - "&7➤ State: {state}"
+          - ""
+          - "&#81D4FA&n➥ Left-click to change the state."
+
+  region_member_control_flags:
+    title: "Region Control - &3{playername}&r"
+    buttons:
+      0:
+        name: "&#81D4FA&lFlag: &6{flag}"
+        lore:
+          - "&7{flag-description}"
+          - ""
+          - "&7➤ State: {state}"
+          - ""
+          - "&#81D4FA&n➥ Left-click to change the state."
+
+  region_global_player_flags:
+    title: "Player Flags - &9Global"
+    buttons:
+      0:
+        name: "&#81D4FA&lFlag: &6{flag}"
+        lore:
+          - "&7{flag-description}"
+          - ""
+          - "&7➤ State: {state}"
+          - ""
+          - "&#81D4FA&n➥ Left-click to change the state."
+
+  region_world_flags:
+    title: "World Flags"
+    buttons:
+      0:
+        name: "&#81D4FA&lFlag: &6{flag}"
+        lore:
+          - "&7{flag-description}"
+          - ""
+          - "&7➤ State: {state}"
+          - ""
+          - "&#81D4FA&n➥ Left-click to change the state."
+
+  region_claimed_chunks:
+    title: "Chunk List"
+    buttons:
+      0:
+        name: "&#42A5F5&lChunk #{index}"
+        lore:
+          - "&7This chunk is part of the region &2{region}&7."
+          - ""
+          - "&7• Claimed At: &6{chunk-claimedat}"
+          - "&7• Location: &6{chunk-location}"
+          - "&7• Always Loaded? {chunk-is-loaded}"
+          - ""
+          - "&#42A5F5&n➥ Shift + Left-click to always load this chunk."
+          - "&#42A5F5&n➥ Left-click to unclaim this chunk."
+          - "&#42A5F5&n➥ Right-click to teleport to the chunk."
+        type: CUSTOM::GETBYWORLD
+      1:
+        name: "&#42A5F5&lInformation"
+        lore:
+          - "&7This region can have &6{max-chunks} &7claimed chunks!"
+          - "&7Upgrade to higher rank to unlock more."
+          - " "
+          - "&7Check your rewards: &e/hs rewards"
+        type: PAPER
+
+  region_logs:
+    title: "Logs & Mails"
+    buttons:
+      0:
+        name: "&#64B5F6&lLog #{index}"
+        lore:
+          - "&7• Author: &3{log-author}"
+          - "&7• At: &6{log-sentat}"
+          - ""
+          - "&7➽ &f{log-message}"
+          - ""
+          - "&#64B5F6&n➥ Left-click to mark it as read."
+          - "&#64B5F6&n➥ Right-click to delete this log."
+        type: BOOK
+      1:
+        name: "&#81C784&lLog #{index} &7(Marked as Read)"
+        lore:
+          - "&7• Author: &3{log-author}"
+          - "&7• At: &6{log-sentat}"
+          - ""
+          - "&7➽ &f{log-message}"
+          - ""
+          - "&#81C784&n➥ Right-click to delete this log."
+        type: ENCHANTED_BOOK
+      2:
+        name: "&#81C784&lMark All as Read"
+        lore:
+          - "&7Mark all logs as read."
+          - ""
+          - "&#81C784&n➥ Left-click to mark them."
+        type: BOOKSHELF
+      3:
+        name: "&#FF7043&lPurge"
+        lore:
+          - "&7Remove all logs."
+          - ""
+          - "&#FF7043&n➥ Left-click to purge."
+        type: BRUSH
+
+  miscellaneous_settings:
+    title: "Miscellaneous Settings"
+    buttons:
+      0:
+        name: "&#FFB74D&lRename Region"
+        lore:
+          - "&7Rename the region, the current name"
+          - "&7is: &2{region}"
+          - ""
+          - "&#FFB74D&n➥ Left-click to rename this region."
+        type: NAME_TAG
+      1:
+        name: "&#FFD54F&lSet Displayname"
+        lore:
+          - "&7Set the displayname of the region, current"
+          - "&7one is: &2{region-displayname}"
+          - ""
+          - "&e&lNote:"
+          - "&eThe display name is the actual name of the"
+          - "&eregion, which you can use spaces and any"
+          - "&echaracter!"
+          - ""
+          - "&#FFD54F&n➥ Left-click to set the displayname."
+        type: NAME_TAG
+      2:
+        name: "&#81C784&lSet Description"
+        lore:
+          - "&7Set the description of the region, current"
+          - "&7one is: &7{region-description}"
+          - ""
+          - "&7Custom variables:"
+          - "&7• &a%player%&7: The player that entered the region"
+          - "&7• &a%owner%&7: The owner of the region"
+          - ""
+          - "&7Example variable usage: &aWelcome, %player%!"
+          - "&#81C784&n➥ Left-click to set the description."
+        type: OAK_SIGN
+      3:
+        name: "&#9575CD&lSet Location"
+        lore:
+          - "&7Set the region's location to your current position."
+          - ""
+          - "&#9575CD&n➥ Left-click to update the location."
+        type: COMPASS
+      4:
+        name: "&#FF8A65&lTransfer Ownership"
+        lore:
+          - "&7Give your region to another player."
+          - ""
+          - "&c&lWarning:"
+          - "&cThis action is permanent, which means once you"
+          - "&ctransfer the ownership, you will never own this"
+          - "&cregion again. All the members, chunks, and bank"
+          - "&cwill not be modified except the new owner."
+          - ""
+          - "&#FF8A65&n➥ Left-click to transfer ownership."
+        type: PLAYER_HEAD
+      5:
+        name: "&9&lDynamic Map"
+        lore:
+          - "&7Configure how your region should be shown on"
+          - "&7Pl3xMap, Squaremap, dynmap, or BlueMap! Edit the"
+          - "&7chunks color and your region icon."
+          - ""
+          - "&e&lNote:"
+          - "&eMap Icons are only available for Pl3xMap and"
+          - "&eSquaremap!"
+          - ""
+          - "&9&n➥ Left-click to change region icon."
+          - "&9&n➥ Right-click to change the map color."
+        type: FILLED_MAP
+      6:
+        name: "&#D32F2F&lDelete Region"
+        lore:
+          - "&c&lWarning:"
+          - "&cOnly the owner or an operator can delete this region."
+          - "&cThis action is &4irreversible&c."
+          - ""
+          - "&#D32F2F&n➥ Shift + Right-click to delete."
+        type: BARRIER
+
+  region_rating:
+    title: "Region Rating - &2{region}"
+    buttons:
+      0:
+        name: "&#E57373&l★"
+        lore:
+          - "&#E57373&n➥ Left-click to rate."
+        type: RED_STAINED_GLASS
+      1:
+        name: "&#FFB74D&l★★"
+        lore:
+          - "&#FFB74D&n➥ Left-click to rate."
+        type: ORANGE_STAINED_GLASS
+      2:
+        name: "&#FFF176&l★★★"
+        lore:
+          - "&#FFF176&n➥ Left-click to rate."
+        type: YELLOW_STAINED_GLASS
+      3:
+        name: "&#AED581&l★★★★"
+        lore:
+          - "&#AED581&n➥ Left-click to rate."
+        type: LIME_STAINED_GLASS
+      4:
+        name: "&#81C784&l★★★★★"
+        lore:
+          - "&#81C784&n➥ Left-click to rate."
+        type: GREEN_STAINED_GLASS
+      5:
+        name: "&#E0E0E0&lYou have never rated this region before!"
+        type: PAPER
+      6:
+        name: "&#FFF176&lYou rated this region: &r{player-rate}"
+        type: PAPER
+
+  region_levels:
+    title: "Levels and Rank - &2{region}"
+    buttons:
+      0:
+        name: "&#42A5F5&lInformation"
+        lore:
+          - "&7Earn XP to level up your region!"
+          - "&7Kill mobs or do such activities to gain"
+          - "&7more XP. Each level requires a specific"
+          - "&7amount of XP to unlock it!"
+          - " "
+          - "&7• Level: &6{level}"
+          - "&7• XP: &6{xp}"
+          - "&7• Unlocked Rewards:"
+          - "  &7- &a✔ {reward-chunks} Chunks"
+          - "  &7- &a✔ {reward-members} Members"
+          - "  &7- &a✔ {reward-subareas} Sub-Areas"
+          - "  &7- &a✔ {reward-upkeep}% Upkeep Price"
+        type: PAPER
+      1:
+        name: "&#391AE8&lProgress"
+        lore:
+          - "&7Progress: &6{xp}&7/&6{next-lvl-xp} XP &7(&a{next-lvl-percentage}%&7)"
+          - "&7Next Level: &6{next-lvl}"
+        type: BLUE_STAINED_GLASS_PANE
+      2:
+        name: "&#808080&lRemaining"
+        lore:
+          - "&7Progress: &6{xp}&7/&6{next-lvl-xp} XP &7(&a{next-lvl-percentage}%&7)"
+          - "&7Next Level: &6{next-lvl}"
+        type: LIGHT_GRAY_STAINED_GLASS_PANE
+      3:
+        name: "&#81C784&lLevel {level}"
+        lore:
+          - "&7This level is unlocked!"
+          - " "
+          - "&7Rewards:"
+          - "{level-rewards}"
+        type: GREEN_CONCRETE
+      4:
+        name: "&#E57373&lLevel {level}"
+        lore:
+          - "&7This level is locked. You need &6{xp} XP &7to"
+          - "&7unlock it!"
+          - " "
+          - "&7Rewards:"
+          - "{level-rewards}"
+        type: RED_CONCRETE
+
+  top_regions:
+    title: "Top Regions"
+    buttons:
+      0:
+        name: "&#CE93D8&l#{rank} &r&2{region} &8(&2{region-displayname}&8)"
+        lore:
+          - "&7The owner of the region is &3{region-owner}"
+          - ""
+          - "&7This region is on the rank &d#{rank}&7!"
+          - ""
+          - "&#CE93D8&n➥ Left-click to show detailed information."
+        type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+      1:
+        name: "&#BA68C8&lFilter"
+        lore:
+          - "&7The filter will show regions ranked by the"
+          - "&7amount of balance (highest to lowest)."
+          - ""
+          - "&a➤ Bank"
+          - "&7➤ Chunks"
+          - "&7➤ Members"
+          - "&7➤ Oldest"
+          - "&7➤ Rating"
+          - ""
+          - "&#BA68C8&n➥ Left-click or right-click to change the filter."
+        type: HOPPER
+      2:
+        name: "&#64B5F6&lFilter"
+        lore:
+          - "&7The filter will show regions ranked by the"
+          - "&7number of claimed chunks (highest to lowest)."
+          - ""
+          - "&7➤ Bank"
+          - "&a➤ Chunks"
+          - "&7➤ Members"
+          - "&7➤ Oldest"
+          - "&7➤ Rating"
+          - ""
+          - "&#64B5F6&n➥ Left-click or right-click to change the filter."
+        type: HOPPER
+      3:
+        name: "&#4FC3F7&lFilter"
+        lore:
+          - "&7The filter will show regions ranked by the"
+          - "&7number of trusted players (highest to lowest)."
+          - ""
+          - "&7➤ Bank"
+          - "&7➤ Chunks"
+          - "&a➤ Members"
+          - "&7➤ Oldest"
+          - "&7➤ Rating"
+          - ""
+          - "&#4FC3F7&n➥ Left-click or right-click to change the filter."
+        type: HOPPER
+      4:
+        name: "&#81C784&lFilter"
+        lore:
+          - "&7The filter will show regions ranked by the"
+          - "&7date of creation (oldest to newest)."
+          - ""
+          - "&7➤ Bank"
+          - "&7➤ Chunks"
+          - "&7➤ Members"
+          - "&a➤ Oldest"
+          - "&7➤ Rating"
+          - ""
+          - "&#81C784&n➥ Left-click or right-click to change the filter."
+        type: HOPPER
+      5:
+        name: "&#FFD54F&lFilter"
+        lore:
+          - "&7The filter will show regions ranked by the"
+          - "&7public rating (highest to lowest)."
+          - ""
+          - "&7➤ Bank"
+          - "&7➤ Chunks"
+          - "&7➤ Members"
+          - "&7➤ Oldest"
+          - "&a➤ Rating"
+          - ""
+          - "&#FFD54F&n➥ Left-click or right-click to change the filter."
+        type: HOPPER
+      6:
+        name: "&#BA68C8&lPublic? &r{is-public-regions}"
+        lore:
+          - "&7If &aEnabled&7, only regions with allowed permissions"
+          - "&7for everyone to visit it will be listed."
+          - ""
+          - "&7If &cDisabled&7, all regions will be listed here."
+        type: COMPARATOR
+      7:
+        name: "&#42A5F5&lYour Rank"
+        lore:
+          - "&7You have selected &2{selected-region} &7as targeted region,"
+          - "&7and its current rank with this filter is: &d#{selected-region-rank}&7!"
+        type: PAPER
+
+  sub_areas:
+    title: "Sub-Areas"
+    buttons:
+      0:
+        name: "&#FFB74D&l{subarea}"
+        lore:
+          - "&7This sub-area is inside the region &2{region}&7."
+          - ""
+          - "&7• Volume: &6{subarea-volume}"
+          - "&7• Created At: &6{subarea-createdat}"
+          - ""
+          - "&#FFB74D&n➥ Left-click to manage the sub-area."
+        type: OAK_FENCE
+      1:
+        name: "&#42A5F5&lInformation"
+        lore:
+          - "&7This region can have &6{max-subareas} &7sub-area!"
+          - "&7Upgrade to higher rank to unlock more."
+          - " "
+          - "&7Check your rewards: &e/hs rewards"
+        type: PAPER
+
+  sub_area:
+    title: "Sub-Area - &2{subarea}"
+    buttons:
+      0:
+        name: "&#FFD54F&lRename Sub-Area"
+        lore:
+          - "&7Rename the sub-area, the current name"
+          - "&7is: &2{subarea}"
+          - ""
+          - "&#FFD54F&n➥ Left-click to rename this sub-area."
+        type: NAME_TAG
+      1:
+        name: "&#4FC3F7&lFlags"
+        lore:
+          - "&7Set flags for global players."
+          - ""
+          - "&e&lNote:"
+          - "&eRegion members won't have any effect with"
+          - "&ethe sub-area's flags, unless they're a"
+          - "&emember of this sub-area!"
+          - ""
+          - "&#4FC3F7&n➥ Left-click to set the flags."
+        type: PLAYERHEAD-e8b8c6a46d87cf86a55df214cf84bf45cca25edb9a676e96364dd6a6eea235b3
+      2:
+        name: "&#7986CB&lSub-Area Players"
+        lore:
+          - "&7Set flags for players in this sub-area only."
+          - ""
+          - "&e&lNote:"
+          - "&eSub-Area member permissions have more priority"
+          - "&ethan normal region members! You can set specific"
+          - "&eregion member to manage something in the sub-area"
+          - "&ewithout letting the other members to do it."
+          - ""
+          - "&7• Players: &6{subarea-players}"
+          - ""
+          - "&#7986CB&n➥ Left-click to view the players."
+        type: PLAYERHEAD-d1d2b7dd66ffd86ad4709927b175e83f1a9e10fbc864b2390403708f39d8efd8
+      3:
+        name: "&#FF8A65&lRent &8({rent-enabled}&8)"
+        lore:
+          - "&7Rent management for this sub-area."
+          - ""
+          - "&#FF8A65&n➥ Left-click to configure the rent."
+        type: PLAYERHEAD-89bd1ffae94fbe1c1ab0ce6420901e1a38354f6e414475a738996d759ccfa7f2
+      4:
+        name: "&#E57373&lDelete"
+        lore:
+          - "&7Delete the sub-area."
+          - ""
+          - "&#E57373&n➥ Left-click to delete the sub-area."
+        type: BARRIER
+
+  sub_area_members:
+    title: "Sub-Area Members"
+    buttons:
+      0:
+        name: "&#66BB6A&lAdd Player"
+        lore:
+          - "&7Add a player to this sub-area."
+          - ""
+          - "&#66BB6A&n➥ Left-click to add a player."
+        type: PLAYERHEAD-5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1
+      1:
+        name: "&#C5E1A5&l{playername}"
+        lore:
+          - "&7This player is trusted in the region &2{region}&7,"
+          - "&7and a member of the sub-area &3{subarea}&7."
+          - ""
+          - "&#C5E1A5&n➥ Shift + Left-click to remove the player."
+          - "&#C5E1A5&n➥ Shift + Right-click to view detailed information."
+          - "&#C5E1A5&n➥ Left-click to configure player flags for this sub-area."
+        type: PLAYERHEAD-this
+
+  sub_area_member_flags:
+    title: "Sub-Area Flags - &3{playername}&r"
+    buttons:
+      0:
+        name: "&#FFB74D&lBulk toggle flags"
+        lore:
+          - "&7Toggle all flags at once!"
+          - ""
+          - "&#FFB74D&n➥ Left-click to enable all."
+          - "&#FFB74D&n➥ Right-click to disable all."
+        type: JIGSAW
+      1:
+        name: "&#81D4FA&lFlag: &6{flag}"
+        lore:
+          - "&7{flag-description}"
+          - ""
+          - "&7➤ State: {state}"
+          - ""
+          - "&#81D4FA&n➥ Left-click to change the state."
+
+  sub_area_flags:
+    title: "Sub-Area Flags"
+    buttons:
+      0:
+        name: "&#81D4FA&lFlag: &6{flag}"
+        lore:
+          - "&7{flag-description}"
+          - ""
+          - "&7➤ State: {state}"
+          - ""
+          - "&#81D4FA&n➥ Left-click to change the state."
+
+  rewards:
+    title: "Rewards - &2{region}"
+    buttons:
+      0:
+        name: "&#AED581&lRewards by Member"
+        lore:
+          - "&7Invited players: &6{members}"
+          - ""
+          - "&7• Unlocked Rewards:"
+          - "  &7- &a✔ {chunks} Unlocked Chunks"
+          - "  &7- &a✔ {subareas} Unlocked Sub-Areas"
+        type: PAPER
+      1:
+        name: "&#81C784&lRewards by Playtime"
+        lore:
+          - "&7Playtime: &6{player-playtime}"
+          - ""
+          - "&7• Unlocked Rewards:"
+          - "  &7- &a✔ {chunks} Unlocked Chunks"
+          - "  &7- &a✔ {subareas} Unlocked Sub-Areas"
+        type: PAPER
+
+  map_color:
+    title: "Map Color - &2{region}"
+    buttons: {}
+
+  map_icon:
+    title: "Map Icon - &2{region}"
+    buttons: {}
+
+  regions_with_welcome_signs:
+    title: "Regions"
+    buttons:
+      0:
+        name: "&#FFD54F&l{region-displayname}"
+        lore:
+          - "&7• Owner: &3{region-owner}"
+          - "&7• Created At: &6{region-createdat}"
+          - "&7• Bank: &c{region-bank}"
+          - "&7• Rating: &r{region-rating}"
+          - ""
+          - "&#FFD54F&n➥ Left-click to visit."
+        type: PLAYERHEAD-e19997593f2c592b9fbd4f15ead1673b76f519d7ab3efa15edd19448d1a20bfc
+
+  rent_config:
+    title: "Region Rent - &2{region-or-subarea}"
+    buttons:
+      0:
+        name: "&#FFD54F&lRent Price"
+        lore:
+          - "&7Set the rent price for this region/sub-area."
+          - ""
+          - "&7Current: &c{rent-price}"
+          - "&7Range: &c{min-price} &7- &c{max-price}"
+          - ""
+          - "&#FFD54F&n➥ Left-click to set price."
+        type: EMERALD
+      1:
+        name: "&#FFB74D&lRent Duration"
+        lore:
+          - "&7Set the rent duration in days."
+          - ""
+          - "&7Current: &6{rent-duration}"
+          - "&7Range: &c{min-days} &7- &c{max-days} &7days"
+          - "&7Use &c-1 &7for permanent rent."
+          - ""
+          - "&#FFB74D&n➥ Left-click to set duration."
+        type: CLOCK
+      2:
+        name: "&#9575CD&lSet Permanent"
+        lore:
+          - "&7Make the rent permanent (no expiration)."
+          - ""
+          - "&#9575CD&n➥ Left-click to set permanent."
+        type: NETHER_STAR
+      3:
+        name: "&#AED581&lSecurity Deposit"
+        lore:
+          - "&7Set the security deposit (refundable)."
+          - ""
+          - "&7Current: &c{rent-deposit}"
+          - "&7Range: &c{min-deposit} &7- &c{max-deposit}"
+          - ""
+          - "&#AED581&n➥ Left-click to set deposit."
+        type: PLAYERHEAD-e730127542440ef0e18b4a2994fbd097e9529d59f6cedb57dbfd5fb6134a606d
+      4:
+        name: "&#4FC3F7&lNotice to Vacate"
+        lore:
+          - "&7Issue a notice to vacate to the current renter."
+          - ""
+          - "&7Status: &6{rent-notice}"
+          - ""
+          - "&#4FC3F7&n➥ Left-click to issue/cancel notice."
+        type: WRITABLE_BOOK
+      5:
+        name: "&#E57373&lCancel Rent"
+        lore:
+          - "&7Cancel the current rent agreement."
+          - ""
+          - "&7Current Renter: &6{rent-renter}"
+          - ""
+          - "&#E57373&n➥ Left-click to cancel rent."
+        type: BARRIER
+      6:
+        name: "&#FF8A65&lEnd Rent (Owner)"
+        lore:
+          - "&7Forcefully end the current rent."
+          - ""
+          - "&7Current Renter: &6{rent-renter}"
+          - ""
+          - "&#FF8A65&n➥ Left-click to end rent."
+        type: PLAYERHEAD-927c3b8a5696d20c62b9eaf7f47bc41a6ae8ee79d7000308b5a1542b73a1b5eb
+
+  rent_confirmation:
+    title: "Rent Confirmation - &2{region-or-subarea}"
+    buttons:
+      0:
+        name: "&#FFD54F&lRent Offer Details"
+        lore:
+          - "&7Region: &2{region}"
+          - "&7Sub-Area: &3{subarea}"
+          - ""
+          - "&7Price: &c{rent-price}"
+          - "&7Duration: &6{rent-duration}"
+          - "&7Deposit: &c{rent-deposit}"
+          - "&7Total Cost: &c{rent-total}"
+          - ""
+          - "&7Your Balance: &c{player-balance}"
+        type: OAK_SIGN
+      1:
+        name: "&#66BB6A&lAccept Rent"
+        lore:
+          - "&7Confirm and pay for the rent."
+          - ""
+          - "&#66BB6A&n➥ Left-click to accept."
+        type: LIME_STAINED_GLASS_PANE
+      2:
+        name: "&#EF5350&lDecline Rent"
+        lore:
+          - "&7Cancel and don't rent."
+          - ""
+          - "&#EF5350&n➥ Left-click to decline."
+        type: RED_STAINED_GLASS_PANE
+
+  region_storage:
+    title: "Storage - &2{region}"
 
 # Do NOT modify these
 button-types:

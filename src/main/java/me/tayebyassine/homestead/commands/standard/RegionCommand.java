@@ -3,7 +3,7 @@ package me.tayebyassine.homestead.commands.standard;
 import me.tayebyassine.homestead.commands.CommandBuilder;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.standard.subcommands.*;
-import me.tayebyassine.homestead.gui.menus.RegionsMenu;
+import me.tayebyassine.homestead.gui.menus.region.AllRegionsMenu;
 import me.tayebyassine.homestead.util.java.StringSimilarity;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
 import org.bukkit.command.CommandSender;
@@ -80,7 +80,7 @@ public final class RegionCommand extends CommandBuilder {
         }
 
         if (args.length == 0) {
-            new RegionsMenu(player);
+            new AllRegionsMenu(player);
             return true;
         }
 

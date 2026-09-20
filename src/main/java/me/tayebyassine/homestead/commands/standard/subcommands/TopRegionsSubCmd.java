@@ -2,7 +2,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.gui.menus.TopRegionsMenu;
+import me.tayebyassine.homestead.gui.menus.region.TopRegionsMenu;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

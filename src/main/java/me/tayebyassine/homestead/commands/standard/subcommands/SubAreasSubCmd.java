@@ -9,7 +9,7 @@ import me.tayebyassine.homestead.cooldown.Cooldown;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.flags.FlagCalculator;
 import me.tayebyassine.homestead.flags.PlayerFlag;
-import me.tayebyassine.homestead.gui.menus.SubAreasMenu;
+import me.tayebyassine.homestead.gui.menus.subarea.SubAreasMenu;
 import me.tayebyassine.homestead.listeners.selection.SelectionToolListener;
 import me.tayebyassine.homestead.listeners.selection.SelectionToolListener.Selection;
 import me.tayebyassine.homestead.managers.ChunkManager;

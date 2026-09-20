@@ -2,7 +2,8 @@ package me.tayebyassine.homestead.storage;
 
 import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.models.Region;
-import me.tayebyassine.homestead.util.minecraft.menus.MenuUtility;
+import me.tayebyassine.homestead.gui.helpers.MenuButtons;
+import me.tayebyassine.homestead.gui.helpers.MenuTitles;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -105,11 +106,9 @@ public final class RegionStorage {
      * region is public
      */
     public static boolean canAccess(Region region, Player player) {
-        if (region.isOwner(player.getUniqueId())) return true;
-        if (MemberManager.isMemberOfRegion(region, player)) {
-            return true;
-        }
-        return region.isPublic();
+        if (region.isOwner(player)) return true;
+
+        return MemberManager.isMemberOfRegion(region, player);
     }
 
     /**
@@ -126,11 +125,11 @@ public final class RegionStorage {
 
         SharedStorage storage = getStorage(region);
 
-        String title = MenuUtility.getTitle(28).replace("{region}", region.getName());
+        String title = MenuTitles.getTitle("region_storage").replace("{region}", region.getName());
 
         StorageMenu menu = new StorageMenu(player, region.getUniqueId(), title, storage.getSize());
 
-        menu.addItem(getStorageSize(region) - 9, MenuUtility.getBackButton(), (_player, click) -> {
+        menu.addItem(getStorageSize(region) - 9, MenuButtons.getBackButton(), (_player, click) -> {
             if (click.isLeftClick()) {
                 _player.closeInventory();
             }

@@ -2,7 +2,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
-import me.tayebyassine.homestead.gui.menus.RegionBannedPlayers;
+import me.tayebyassine.homestead.gui.menus.member.BannedPlayersMenu;
 import me.tayebyassine.homestead.managers.BanManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.sessions.TargetRegionSession;
@@ -38,7 +38,7 @@ public final class BanlistSubCmd extends SubCommandBuilder {
         }
 
         if (args.length == 1 && args[0].equals("gui")) {
-            new RegionBannedPlayers(player, region);
+            new BannedPlayersMenu(player, region);
             return true;
         }
 

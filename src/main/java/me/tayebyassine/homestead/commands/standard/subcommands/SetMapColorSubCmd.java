@@ -3,7 +3,7 @@ package me.tayebyassine.homestead.commands.standard.subcommands;
 import me.tayebyassine.homestead.commands.CommandSenderType;
 import me.tayebyassine.homestead.commands.SubCommandBuilder;
 import me.tayebyassine.homestead.cooldown.Cooldown;
-import me.tayebyassine.homestead.gui.menus.MapColorMenu;
+import me.tayebyassine.homestead.gui.menus.region.MapColorMenu;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
