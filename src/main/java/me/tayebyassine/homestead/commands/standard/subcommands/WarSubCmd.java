@@ -67,6 +67,7 @@ public final class WarSubCmd extends SubCommandBuilder {
 
         return switch (args[0]) {
             case "declare" -> declareWar(player, args);
+            case "declare-ownership" -> declareOwnershipWar(player, args);
             case "surrender" -> surrender(player);
             case "info" -> warInfo(player);
             default -> true;
@@ -82,7 +83,7 @@ public final class WarSubCmd extends SubCommandBuilder {
 
         List<String> suggestions = new ArrayList<>();
 
-        if (args.length == 2 && args[0].equalsIgnoreCase("declare")) {
+        if (args.length == 2 && (args[0].equalsIgnoreCase("declare") || args[0].equalsIgnoreCase("declare-ownership"))) {
             suggestions.addAll(RegionManager.getAll().stream().map(Region::getName).toList());
         }
 
@@ -169,6 +170,84 @@ public final class WarSubCmd extends SubCommandBuilder {
         }
 
         War war = WarManager.declareWar(name, prize, region, targetRegion);
+
+        WarManager.broadcastDeclarationOfWar(war);
+
+        return true;
+    }
+
+    private boolean declareOwnershipWar(Player player, String[] args) {
+        Region region = TargetRegionSession.getRegion(player);
+
+        if (region == null) {
+            Messages.send(player, "commands.war.4");
+            return true;
+        }
+
+        if (WarManager.isRegionInWar(region.getUniqueId())) {
+            Messages.send(player, "commands.war.5");
+            return true;
+        }
+
+        if (args.length < 4) {
+            Messages.send(player, "commands.war.2", "/hs war declare-ownership [target] [kills-to-win] [timeout-minutes] (war name)");
+            return true;
+        }
+
+        Region targetRegion = RegionManager.findRegion(args[1]);
+
+        if (targetRegion == null) {
+            Messages.send(player, "commands.war.6");
+            return true;
+        }
+
+        if (!PlayerUtility.isOperator(player) && !region.isOwner(player)) {
+            Messages.send(player, "commands.war.7");
+            return true;
+        }
+
+        if (region.getUniqueId() == targetRegion.getUniqueId()
+                || region.isOwner(targetRegion.getOwnerId())) {
+            Messages.send(player, "commands.war.8");
+            return true;
+        }
+
+        if (!(region.isWorldFlagSet(WorldFlag.WARS.getBitmask()) && targetRegion.isWorldFlagSet(WorldFlag.WARS.getBitmask()))) {
+            Messages.send(player, "commands.war.9");
+            return true;
+        }
+
+        if (WarManager.isRegionInWar(targetRegion.getUniqueId())) {
+            Messages.send(player, "commands.war.10");
+            return true;
+        }
+
+        if (!NumberUtils.isValidInteger(args[2]) || Integer.parseInt(args[2]) <= 0) {
+            Messages.send(player, "commands.war.18");
+            return true;
+        }
+
+        int killsToWin = Integer.parseInt(args[2]);
+
+        if (!NumberUtils.isValidInteger(args[3]) || Integer.parseInt(args[3]) < 0) {
+            Messages.send(player, "commands.war.19");
+            return true;
+        }
+
+        int timeoutMinutes = Integer.parseInt(args[3]);
+
+        String name = String.join(" ", Arrays.asList(args).subList(4, args.length));
+
+        if (name.isEmpty()) {
+            name = "Ownership War";
+        }
+
+        if (name.length() > 128 || ColorTranslator.containsMiniMessageTag(name)) {
+            Messages.send(player, "commands.war.14");
+            return true;
+        }
+
+        War war = WarManager.declareOwnershipWar(name, region, targetRegion, killsToWin, timeoutMinutes);
 
         WarManager.broadcastDeclarationOfWar(war);
 

@@ -528,6 +528,33 @@ public final class RegionsFile extends ResourceFile {
     public List<String> getOverriddenFlagsDuringWar() { return getStringList("wars.override-flags"); }
 
     /**
+     * Whether ownership wager wars are enabled.
+     *
+     * @return {@code true} if enabled, defaults to {@code true}
+     */
+    public boolean isOwnershipWarsEnabled() {
+        return getBoolean("wars.ownership-wars.enabled", true);
+    }
+
+    /**
+     * The default number of kills needed to win an ownership war.
+     *
+     * @return default kills to win, defaults to {@code 10}
+     */
+    public int getDefaultOwnershipKillsToWin() {
+        return getInt("wars.ownership-wars.default-kills-to-win", 10);
+    }
+
+    /**
+     * The default timeout in minutes for ownership wars.
+     *
+     * @return default timeout minutes, defaults to {@code 60}
+     */
+    public int getDefaultOwnershipTimeoutMinutes() {
+        return getInt("wars.ownership-wars.default-timeout-minutes", 60);
+    }
+
+    /**
      * Whether the delayed-teleport system is enabled.
      *
      * @return {@code true} if enabled, defaults to {@code false}

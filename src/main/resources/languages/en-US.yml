@@ -44,6 +44,8 @@ common:
   war_player_death: "&4You have been killed. &cYou have lost the war."
   war_player_winner: "&aCongratulations! You have won the war. The prize has been added to your region's bank."
   war_end: "&eThe war has ended, and the region &2{0} &ehas been declared as the winner."
+  war_ownership_transfer: "&c&l >> OWNERSHIP TRANSFERRED << &7The region &2{0} &7now belongs to &2{1}&7."
+  war_ownership_kill: "&7[War] &2{0} &7eliminated &2{1} &7for &c{2} &7(&c{3}&7/&c{4}&7 kills)"
 
   rent_end: "&eThe contract has ended. You have been removed from the region &2{0}&e."
   rent_subarea_end: "&eThe contract has ended. You have been removed from the sub-area &2{0}&e, part of the region &2{1}&e."
@@ -472,6 +474,12 @@ commands:
     15: "{__prefix__} &cThe region is not in a war."
     16: "{__prefix__} &7You have surrendered. You have lost the war."
     17: "{__prefix__} &7Regions: &2{regions}&7, Prize: &c{prize}"
+    18: "{__prefix__} &cKills to win must be a valid positive integer."
+    19: "{__prefix__} &cTimeout must be a valid non-negative integer."
+    20: "{__prefix__} &cOwnership wars are currently disabled."
+    21: "{__prefix__} &7Kill: &2{killer} &7(&c{killer-region}&7) &7eliminated &2{victim} &7(&c{victim-region}&7) &7[&c{kills}&7/&c{goal}&7]"
+    22: "{__prefix__} &cOwnership War has timed out!"
+    23: "{__prefix__} &7The region &2{0} &7has won by having more kills (&c{1}&7 vs &c{2}&7)."
   withdraw:
     0: "{__prefix__} &cPlease provide the amount to withdraw, or use 'all' to withdraw all savings."
     1: "{__prefix__} &cEconomy integration is disabled."

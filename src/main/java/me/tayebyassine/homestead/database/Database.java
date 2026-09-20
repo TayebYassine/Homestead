@@ -256,6 +256,40 @@ public final class Database {
                     + quote("regionId") + " BIGINT NOT NULL, "
                     + "PRIMARY KEY (" + quote("warId") + ", " + quote("regionId") + "))");
         }
+
+        migrateWarTable();
+    }
+
+    private void migrateWarTable() throws SQLException {
+        String warsTable = tablePrefix + "wars";
+        Set<String> existingColumns = new HashSet<>();
+        try (Connection raw = rawConnection();
+             ResultSet rs = raw.getMetaData().getColumns(null, null, warsTable, null)) {
+            while (rs.next()) {
+                existingColumns.add(rs.getString("COLUMN_NAME").toLowerCase());
+            }
+        }
+
+        try (Connection raw = rawConnection();
+             Statement stmt = raw.createStatement()) {
+            if (!existingColumns.contains("wagertype")) {
+                stmt.executeUpdate("ALTER TABLE " + quote(warsTable) + " ADD COLUMN " + quote("wagerType") + " VARCHAR DEFAULT 'MONEY'");
+            }
+            if (!existingColumns.contains("killstowin")) {
+                stmt.executeUpdate("ALTER TABLE " + quote(warsTable) + " ADD COLUMN " + quote("killsToWin") + " INTEGER DEFAULT 0");
+            }
+            if (!existingColumns.contains("attackerkills")) {
+                stmt.executeUpdate("ALTER TABLE " + quote(warsTable) + " ADD COLUMN " + quote("attackerKills") + " INTEGER DEFAULT 0");
+            }
+            if (!existingColumns.contains("defenderkills")) {
+                stmt.executeUpdate("ALTER TABLE " + quote(warsTable) + " ADD COLUMN " + quote("defenderKills") + " INTEGER DEFAULT 0");
+            }
+            if (!existingColumns.contains("timeout")) {
+                stmt.executeUpdate("ALTER TABLE " + quote(warsTable) + " ADD COLUMN " + quote("timeout") + " BIGINT DEFAULT 0");
+            }
+        } catch (SQLException e) {
+            Logger.debug("War table migration skipped (columns may already exist): " + e.getMessage());
+        }
     }
 
     private Connection rawConnection() throws SQLException {
@@ -676,9 +710,18 @@ public final class Database {
 
         List<War> list = new ArrayList<>();
         for (WarEntity entity : warDao.queryForAll()) {
+            War.WagerType wagerType;
+            try {
+                wagerType = War.WagerType.valueOf(entity.wagerType);
+            } catch (Exception e) {
+                wagerType = War.WagerType.MONEY;
+            }
+
             list.add(new War(entity.id, entity.name, entity.displayName, entity.description,
                     warRegions.getOrDefault(entity.id, new ArrayList<>()),
-                    entity.prize, entity.startedAt));
+                    entity.prize, entity.startedAt,
+                    wagerType, entity.killsToWin,
+                    entity.attackerKills, entity.defenderKills, entity.timeout));
         }
         return list;
     }
@@ -694,6 +737,11 @@ public final class Database {
             entity.description = war.getDescription();
             entity.prize = war.getPrize();
             entity.startedAt = war.getStartedAt();
+            entity.wagerType = war.getWagerType().name();
+            entity.killsToWin = war.getKillsToWin();
+            entity.attackerKills = war.getAttackerKills();
+            entity.defenderKills = war.getDefenderKills();
+            entity.timeout = war.getTimeout();
             entities.add(entity);
             cacheIds.add(war.getUniqueId());
         }

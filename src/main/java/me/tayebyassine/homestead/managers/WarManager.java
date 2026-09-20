@@ -1,8 +1,11 @@
 package me.tayebyassine.homestead.managers;
 
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.api.events.war.WarKillEvent;
+import me.tayebyassine.homestead.api.events.war.WarOwnershipTransferEvent;
 import me.tayebyassine.homestead.logs.Logger;
 import me.tayebyassine.homestead.models.Region;
+import me.tayebyassine.homestead.models.RegionMember;
 import me.tayebyassine.homestead.models.War;
 import me.tayebyassine.homestead.resources.ResourceType;
 import me.tayebyassine.homestead.resources.Resources;
@@ -16,6 +19,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -167,6 +171,256 @@ public final class WarManager {
         Homestead.WAR_CACHE.putOrUpdate(war);
 
         return war;
+    }
+
+    /**
+     * Declares an ownership wager war between two regions.
+     * The loser's region ownership is transferred to a member of the winning region.
+     *
+     * @param name       the war display name
+     * @param regionA    the attacking region
+     * @param regionB    the defending region
+     * @param killsToWin the number of kills needed to win
+     * @param timeout    the timeout in minutes (0 = no timeout)
+     * @return the created war
+     */
+    public static War declareOwnershipWar(String name, Region regionA, Region regionB, int killsToWin, int timeout) {
+        if (regionA.getUniqueId() == regionB.getUniqueId()) {
+            throw new IllegalArgumentException("A war must involve two distinct regions.");
+        }
+
+        if (isRegionInWar(regionA.getUniqueId()) || isRegionInWar(regionB.getUniqueId())) {
+            throw new IllegalStateException("One of the regions is currently in a war.");
+        }
+
+        War war = new War(name);
+
+        war.setDescription(Resources.<LanguageFile>get(ResourceType.Language).getDefaultWarDescription());
+        war.addRegionId(regionA.getUniqueId());
+        war.addRegionId(regionB.getUniqueId());
+        war.setWagerType(War.WagerType.OWNERSHIP);
+        war.setKillsToWin(killsToWin);
+        war.setAttackerKills(0);
+        war.setDefenderKills(0);
+
+        if (timeout > 0) {
+            war.setTimeout(System.currentTimeMillis() + (long) timeout * 60 * 1000);
+        }
+
+        Homestead.WAR_CACHE.putOrUpdate(war);
+
+        scheduleTimeout(war);
+
+        return war;
+    }
+
+    /**
+     * Checks if a war is an ownership wager war.
+     *
+     * @param war the war
+     * @return {@code true} if ownership wager
+     */
+    public static boolean isOwnershipWar(War war) {
+        return war != null && war.getWagerType() == War.WagerType.OWNERSHIP;
+    }
+
+    /**
+     * Records a kill for the given region in an ownership war.
+     *
+     * @param war          the war
+     * @param killerRegion the region of the killer
+     * @param victimRegion the region of the victim
+     * @param killer       the killer player
+     * @param victim       the victim player
+     */
+    public static void recordKill(War war, Region killerRegion, Region victimRegion,
+                                  OfflinePlayer killer, OfflinePlayer victim) {
+        if (!isOwnershipWar(war)) return;
+
+        List<Long> regionIds = war.getRegionIds();
+        if (regionIds.size() != 2) return;
+
+        boolean isAttacker = regionIds.get(0) == killerRegion.getUniqueId();
+
+        if (isAttacker) {
+            war.setAttackerKills(war.getAttackerKills() + 1);
+        } else {
+            war.setDefenderKills(war.getDefenderKills() + 1);
+        }
+
+        WarKillEvent killEvent = new WarKillEvent(war, killerRegion, victimRegion, killer, victim);
+        Bukkit.getPluginManager().callEvent(killEvent);
+
+        Region winner = getOwnershipWinner(war);
+        if (winner != null) {
+            endOwnershipWar(war, winner);
+        }
+    }
+
+    /**
+     * Determines the winner of an ownership war based on kill counts.
+     *
+     * @param war the war
+     * @return the winning region, or {@code null} if no winner yet
+     */
+    public static @Nullable Region getOwnershipWinner(War war) {
+        if (!isOwnershipWar(war)) return null;
+
+        int attackerKills = war.getAttackerKills();
+        int defenderKills = war.getDefenderKills();
+        int killsToWin = war.getKillsToWin();
+
+        if (killsToWin <= 0) return null;
+
+        List<Long> regionIds = war.getRegionIds();
+        if (regionIds.size() != 2) return null;
+
+        if (attackerKills >= killsToWin) {
+            return RegionManager.findRegion(regionIds.get(0));
+        }
+        if (defenderKills >= killsToWin) {
+            return RegionManager.findRegion(regionIds.get(1));
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks if an ownership war has timed out and declares a winner based on kills.
+     *
+     * @param war the war
+     * @return the winning region, or {@code null} if no timeout or no winner
+     */
+    public static @Nullable Region handleTimeout(War war) {
+        if (!isOwnershipWar(war) || !war.hasTimedOut()) return null;
+
+        Region winner = getHighestKillsWinner(war);
+        if (winner != null) {
+            endOwnershipWar(war, winner);
+        } else {
+            endWar(war.getUniqueId());
+        }
+        return winner;
+    }
+
+    /**
+     * When time runs out, the region with more kills wins.
+     * If tied, the defender (region B) wins.
+     *
+     * @param war the war
+     * @return the winning region, or {@code null} if tied
+     */
+    private static @Nullable Region getHighestKillsWinner(War war) {
+        List<Long> regionIds = war.getRegionIds();
+        if (regionIds.size() != 2) return null;
+
+        int attackerKills = war.getAttackerKills();
+        int defenderKills = war.getDefenderKills();
+
+        if (attackerKills > defenderKills) {
+            return RegionManager.findRegion(regionIds.get(0));
+        } else if (defenderKills > attackerKills) {
+            return RegionManager.findRegion(regionIds.get(1));
+        }
+
+        return null;
+    }
+
+    /**
+     * Ends an ownership war and transfers the loser's region ownership.
+     *
+     * @param war    the war
+     * @param winner the winning region
+     */
+    public static void endOwnershipWar(War war, Region winner) {
+        List<Long> regionIds = war.getRegionIds();
+        if (regionIds.size() != 2) {
+            endWar(war.getUniqueId());
+            return;
+        }
+
+        long loserId = regionIds.get(0) == winner.getUniqueId() ? regionIds.get(1) : regionIds.get(0);
+        Region loser = RegionManager.findRegion(loserId);
+
+        final List<OfflinePlayer> warMembers = List.copyOf(getMembersOfWar(war.getUniqueId()));
+
+        if (loser != null) {
+            transferOwnership(war, loser, winner);
+        }
+
+        tellPlayersWarEnded(warMembers, winner);
+        endWar(war.getUniqueId());
+    }
+
+    /**
+     * Transfers ownership of a region from its current owner to a member of the winning region.
+     *
+     * @param war    the war
+     * @param loser  the losing region
+     * @param winner the winning region
+     */
+    public static void transferOwnership(War war, Region loser, Region winner) {
+        OfflinePlayer oldOwner = loser.getOwner();
+        if (oldOwner == null) return;
+
+        OfflinePlayer newOwner = findEligibleRecipient(winner);
+        if (newOwner == null) return;
+
+        WarOwnershipTransferEvent transferEvent = new WarOwnershipTransferEvent(war, loser, oldOwner, newOwner);
+        Bukkit.getPluginManager().callEvent(transferEvent);
+
+        loser.setOwner(newOwner);
+    }
+
+    /**
+     * Finds a member of the winning region who can receive ownership.
+     * Prefers online members, then falls back to any member.
+     *
+     * @param winner the winning region
+     * @return an eligible player, or {@code null}
+     */
+    private static @Nullable OfflinePlayer findEligibleRecipient(Region winner) {
+        List<RegionMember> members = MemberManager.getMembersOfRegion(winner);
+
+        for (RegionMember member : members) {
+            OfflinePlayer player = member.getPlayer();
+            if (player != null && player.isOnline()) {
+                return player;
+            }
+        }
+
+        for (RegionMember member : members) {
+            OfflinePlayer player = member.getPlayer();
+            if (player != null) {
+                return player;
+            }
+        }
+
+        return winner.getOwner();
+    }
+
+    /**
+     * Schedules a timeout task for an ownership war.
+     *
+     * @param war the war
+     */
+    public static void scheduleTimeout(War war) {
+        if (!isOwnershipWar(war) || war.getTimeout() <= 0) return;
+
+        long delayMillis = war.getTimeout() - System.currentTimeMillis();
+        if (delayMillis <= 0) {
+            handleTimeout(war);
+            return;
+        }
+
+        long delayTicks = delayMillis / 50;
+
+        Homestead.getInstance().runSyncTaskLater(() -> {
+            War currentWar = findWar(war.getUniqueId());
+            if (currentWar != null) {
+                handleTimeout(currentWar);
+            }
+        }, (int) Math.max(1, delayTicks / 20));
     }
 
     /**

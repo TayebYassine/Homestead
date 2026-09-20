@@ -25,6 +25,21 @@ public final class WarEntity {
     @DatabaseField(columnName = "startedAt")
     public long startedAt;
 
+    @DatabaseField(columnName = "wagerType", defaultValue = "MONEY")
+    public String wagerType;
+
+    @DatabaseField(columnName = "killsToWin", defaultValue = "0")
+    public int killsToWin;
+
+    @DatabaseField(columnName = "attackerKills", defaultValue = "0")
+    public int attackerKills;
+
+    @DatabaseField(columnName = "defenderKills", defaultValue = "0")
+    public int defenderKills;
+
+    @DatabaseField(columnName = "timeout", defaultValue = "0")
+    public long timeout;
+
     public WarEntity() {
     }
 }

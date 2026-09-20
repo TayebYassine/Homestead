@@ -262,6 +262,21 @@ wars:
     - "break-blocks"
     - "place-blocks"
 
+  # Ownership wager wars
+  # In ownership wars, the loser's region is transferred to the winning team
+  ownership-wars:
+    # Enable ownership wager wars
+    # true = Yes, false = No
+    enabled: true
+
+    # Default number of kills needed to win
+    # Can be overridden per war declaration
+    default-kills-to-win: 10
+
+    # Default timeout in minutes (0 = no timeout)
+    # Can be overridden per war declaration
+    default-timeout-minutes: 60
+
 # Welcome Signs Feature
 # Clickable signs that teleport to region homes
 welcome-signs:

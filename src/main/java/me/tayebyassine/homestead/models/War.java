@@ -25,6 +25,11 @@ public final class War {
     private String description;
     private double prize;
     private long startedAt;
+    private WagerType wagerType;
+    private int killsToWin;
+    private int attackerKills;
+    private int defenderKills;
+    private long timeout;
 
     /**
      * Create a new war with a generated snowflake ID.
@@ -39,6 +44,11 @@ public final class War {
         this.regionIds = new ArrayList<>();
         this.prize = 0.0;
         this.startedAt = System.currentTimeMillis();
+        this.wagerType = WagerType.MONEY;
+        this.killsToWin = 0;
+        this.attackerKills = 0;
+        this.defenderKills = 0;
+        this.timeout = 0;
     }
 
     /**
@@ -55,15 +65,22 @@ public final class War {
     /**
      * Create a war from pre-existing data (deserialisation).
      *
-     * @param id          the snowflake ID
-     * @param name        the war name
-     * @param displayName the display name
-     * @param description the description
-     * @param regionIds   the participating region IDs
-     * @param prize       the prize pool
-     * @param startedAt   the start timestamp
+     * @param id            the snowflake ID
+     * @param name          the war name
+     * @param displayName   the display name
+     * @param description   the description
+     * @param regionIds     the participating region IDs
+     * @param prize         the prize pool
+     * @param startedAt     the start timestamp
+     * @param wagerType     the wager type
+     * @param killsToWin    kills needed to win (ownership wars)
+     * @param attackerKills attacker's current kill count
+     * @param defenderKills defender's current kill count
+     * @param timeout       timeout timestamp (0 = no timeout)
      */
-    public War(long id, String name, String displayName, String description, List<Long> regionIds, double prize, long startedAt) {
+    public War(long id, String name, String displayName, String description, List<Long> regionIds,
+               double prize, long startedAt, WagerType wagerType, int killsToWin,
+               int attackerKills, int defenderKills, long timeout) {
         this.id = id;
         this.name = name;
         this.displayName = displayName;
@@ -71,6 +88,11 @@ public final class War {
         this.regionIds = new ArrayList<>(regionIds);
         this.prize = prize;
         this.startedAt = startedAt;
+        this.wagerType = wagerType != null ? wagerType : WagerType.MONEY;
+        this.killsToWin = killsToWin;
+        this.attackerKills = attackerKills;
+        this.defenderKills = defenderKills;
+        this.timeout = timeout;
     }
 
     /**
@@ -239,6 +261,110 @@ public final class War {
     }
 
     /**
+     * Get the wager type.
+     *
+     * @return the wager type
+     */
+    public @NotNull WagerType getWagerType() {
+        return wagerType;
+    }
+
+    /**
+     * Set the wager type.
+     *
+     * @param wagerType the new wager type
+     */
+    public void setWagerType(@NotNull WagerType wagerType) {
+        this.wagerType = wagerType;
+        update();
+    }
+
+    /**
+     * Get the number of kills needed to win an ownership war.
+     *
+     * @return kills to win
+     */
+    public int getKillsToWin() {
+        return killsToWin;
+    }
+
+    /**
+     * Set the number of kills needed to win.
+     *
+     * @param killsToWin the kills threshold
+     */
+    public void setKillsToWin(int killsToWin) {
+        this.killsToWin = killsToWin;
+        update();
+    }
+
+    /**
+     * Get the attacker's current kill count.
+     *
+     * @return attacker kills
+     */
+    public int getAttackerKills() {
+        return attackerKills;
+    }
+
+    /**
+     * Set the attacker's kill count.
+     *
+     * @param attackerKills the kill count
+     */
+    public void setAttackerKills(int attackerKills) {
+        this.attackerKills = attackerKills;
+        update();
+    }
+
+    /**
+     * Get the defender's current kill count.
+     *
+     * @return defender kills
+     */
+    public int getDefenderKills() {
+        return defenderKills;
+    }
+
+    /**
+     * Set the defender's kill count.
+     *
+     * @param defenderKills the kill count
+     */
+    public void setDefenderKills(int defenderKills) {
+        this.defenderKills = defenderKills;
+        update();
+    }
+
+    /**
+     * Get the timeout timestamp for ownership wars.
+     *
+     * @return timeout epoch-millis, or 0 if no timeout
+     */
+    public long getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * Set the timeout timestamp.
+     *
+     * @param timeout the timeout epoch-millis, or 0 to clear
+     */
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+        update();
+    }
+
+    /**
+     * Check if this war has timed out.
+     *
+     * @return {@code true} if timeout is set and has passed
+     */
+    public boolean hasTimedOut() {
+        return timeout > 0 && System.currentTimeMillis() >= timeout;
+    }
+
+    /**
      * Get the winning region. A region wins when it is the last one
      * remaining.
      *
@@ -254,5 +380,12 @@ public final class War {
 
     private void update() {
         Homestead.WAR_CACHE.putOrUpdate(this);
+    }
+
+    /**
+     * The type of wager for a war.
+     */
+    public enum WagerType {
+        MONEY, OWNERSHIP
     }
 }
