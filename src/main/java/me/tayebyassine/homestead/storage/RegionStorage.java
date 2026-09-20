@@ -4,6 +4,7 @@ import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.models.Region;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;
 import me.tayebyassine.homestead.gui.helpers.MenuTitles;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -106,6 +107,8 @@ public final class RegionStorage {
      * region is public
      */
     public static boolean canAccess(Region region, Player player) {
+        if (PlayerUtility.isOperator(player)) return true;
+
         if (region.isOwner(player)) return true;
 
         return MemberManager.isMemberOfRegion(region, player);

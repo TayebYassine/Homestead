@@ -45,9 +45,7 @@ public final class StorageSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        if (!PlayerUtility.isOperator(player)
-                && !region.isOwner(player)
-                && !MemberManager.isMemberOfRegion(region, player)) {
+        if (!(PlayerUtility.isOperator(player) || region.isOwner(player) || MemberManager.isMemberOfRegion(region, player))) {
             Messages.send(player, "commands.storage.2");
             return true;
         }
