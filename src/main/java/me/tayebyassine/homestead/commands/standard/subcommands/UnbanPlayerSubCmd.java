@@ -68,13 +68,15 @@ public final class UnbanPlayerSubCmd extends SubCommandBuilder {
             return true;
         }
 
+        UnbanPlayerEvent unbanEvent = new UnbanPlayerEvent(region, target);
+        Homestead.callEvent(unbanEvent);
+        if (unbanEvent.isCancelled()) return true;
+
         BanManager.unbanPlayer(region, target);
 
         Messages.send(player, "commands.unban.4");
 
         LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, target.getName());
-
-        Homestead.callEvent(new UnbanPlayerEvent(region, player));
 
         return true;
     }

@@ -1,6 +1,11 @@
 package me.tayebyassine.homestead.gui;
 
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.api.events.MenuButtonRenderEvent;
+import me.tayebyassine.homestead.api.events.MenuClickEvent;
+import me.tayebyassine.homestead.api.events.MenuCloseEvent;
+import me.tayebyassine.homestead.api.events.MenuOpenEvent;
+import me.tayebyassine.homestead.api.events.MenuPageChangeEvent;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;
 import me.tayebyassine.homestead.gui.helpers.MenuTitles;
 import me.tayebyassine.homestead.util.java.Formatter;
@@ -14,6 +19,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -52,6 +58,7 @@ public class PaginationMenu implements Listener {
     private int currentPage = 0;
     private boolean pageChanged = false;
     private Player viewer;
+    private final String menuKey;
 
     private PaginationMenu(Builder builder) {
         this.plugin = Homestead.getInstance();
@@ -66,6 +73,7 @@ public class PaginationMenu implements Listener {
         this.itemsPerPage = builder.itemsPerPage;
         this.openHandler = builder.openHandler;
         this.filler = builder.filler;
+        this.menuKey = builder.menuKey;
 
 
         this.bottomRowActions.putAll(builder.bottomRowActions);
@@ -172,8 +180,22 @@ public class PaginationMenu implements Listener {
      */
     public void open(Player player) {
         this.viewer = player;
-        player.openInventory(createPage(currentPage));
+        Inventory pageInv = createPage(currentPage);
+        for (int i = 0; i < pageInv.getSize(); i++) {
+            ItemStack item = pageInv.getItem(i);
+            if (item != null) {
+                MenuButtonRenderEvent renderEvent = new MenuButtonRenderEvent(player, menuKey, i, item);
+                Homestead.callEvent(renderEvent);
+                if (renderEvent.isCancelled()) {
+                    pageInv.setItem(i, null);
+                } else if (renderEvent.getItem() != item) {
+                    pageInv.setItem(i, renderEvent.getItem());
+                }
+            }
+        }
+        player.openInventory(pageInv);
         InventoryManager.register(player, this);
+        Homestead.callEvent(new MenuOpenEvent(player, menuKey, pageInv, true));
     }
 
     /**
@@ -281,6 +303,11 @@ public class PaginationMenu implements Listener {
         event.setCancelled(true);
         int slot = event.getRawSlot();
 
+        ItemStack clickedItem = slot >= 0 && slot < size ? event.getView().getTopInventory().getItem(slot) : null;
+        MenuClickEvent menuClickEvent = new MenuClickEvent(player, menuKey, slot, event.getClick(), clickedItem,
+                bottomRowActions.containsKey(slot) || (slot >= 9 && slot < size - 9));
+        Homestead.callEvent(menuClickEvent);
+        if (menuClickEvent.isCancelled()) return;
 
         if (bottomRowActions.containsKey(slot)) {
             bottomRowActions.get(slot).accept(player, event);
@@ -291,9 +318,23 @@ public class PaginationMenu implements Listener {
         if (slot < 9) return;
 
 
-        if (slot == size - 9 && currentPage > 0) {
-            currentPage--;
-            refresh();
+        if (slot == size - 9) {
+            if (currentPage > 0) {
+                int fromPage = currentPage;
+                currentPage--;
+                MenuPageChangeEvent pageEvent = new MenuPageChangeEvent(player, menuKey, fromPage, currentPage);
+                Homestead.callEvent(pageEvent);
+                if (pageEvent.isCancelled()) {
+                    currentPage = fromPage;
+                    return;
+                }
+                refresh();
+            } else {
+                plugin.runPlayerTask(player, () -> {
+                    if (goBackCallback != null) goBackCallback.accept(player, event);
+                    destroy();
+                });
+            }
             return;
         }
 
@@ -301,17 +342,15 @@ public class PaginationMenu implements Listener {
 
 
         if (slot == size - 1 && (currentPage + 1) * buttonsPerPage < items.size()) {
+            int fromPage = currentPage;
             currentPage++;
+            MenuPageChangeEvent pageEvent = new MenuPageChangeEvent(player, menuKey, fromPage, currentPage);
+            Homestead.callEvent(pageEvent);
+            if (pageEvent.isCancelled()) {
+                currentPage = fromPage;
+                return;
+            }
             refresh();
-            return;
-        }
-
-
-        if (slot == size - 9) {
-            plugin.runPlayerTask(player, () -> {
-                if (goBackCallback != null) goBackCallback.accept(player, event);
-                destroy();
-            });
             return;
         }
 
@@ -338,6 +377,7 @@ public class PaginationMenu implements Listener {
 
         Player player = (Player) event.getPlayer();
         if (InventoryManager.getMenu(player) == this) {
+            Homestead.callEvent(new MenuCloseEvent(player, menuKey));
             InventoryManager.unregister(player);
             destroy();
         }
@@ -348,6 +388,7 @@ public class PaginationMenu implements Listener {
         private final Map<Integer, BiConsumer<Player, InventoryClickEvent>> bottomRowActions = new HashMap<>();
         private final Map<Integer, ItemStack> bottomRowActionItems = new HashMap<>();
         private final String title;
+        private String menuKey;
         private ItemStack nextPageItem;
         private ItemStack prevPageItem;
         private List<ItemStack> items = new ArrayList<>();
@@ -367,6 +408,7 @@ public class PaginationMenu implements Listener {
             }
             this.title = MenuTitles.getTitle(menuKey, placeholder);
             this.size = size;
+            this.menuKey = menuKey;
         }
 
         /**

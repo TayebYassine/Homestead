@@ -207,9 +207,8 @@ public final class RegionManager {
      * If configured, all linked chunks are regenerated via FastAsyncWorldEdit.
      *
      * @param id     the region ID
-     * @param player executor (optional)
      */
-    public static void deleteRegion(long id, OfflinePlayer... player) {
+    public static void deleteRegion(long id) {
         Region region = findRegion(id);
 
         if (region == null) {

@@ -2,11 +2,13 @@ package me.tayebyassine.homestead.api.events;
 
 import me.tayebyassine.homestead.models.Region;
 import org.bukkit.Location;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
 public class RegionLocationUpdateEvent extends APIEvent {
+    private static final HandlerList HANDLERS = new HandlerList();
     private final Region region;
     private final Location oldLocation;
     private final Location newLocation;
@@ -27,5 +29,14 @@ public class RegionLocationUpdateEvent extends APIEvent {
 
     public @Nullable Location getNewLocation() {
         return newLocation;
+    }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
     }
 }

@@ -79,6 +79,10 @@ public final class BannedPlayersMenu {
 
                         if (targetPlayer == null) return;
 
+                        BanPlayerEvent banEvent = new BanPlayerEvent(region, targetPlayer, null);
+                        Homestead.callEvent(banEvent);
+                        if (banEvent.isCancelled()) return;
+
                         BanManager.banPlayer(region, targetPlayer, null);
                         if (MemberManager.isMemberOfRegion(region, targetPlayer))
                             MemberManager.removeMemberFromRegion(targetPlayer, region);
@@ -88,8 +92,6 @@ public final class BannedPlayersMenu {
                         PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
                         LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, targetPlayer.getName());
-
-                        Homestead.callEvent(new BanPlayerEvent(region, player, null));
 
                         Homestead.getInstance().runSyncTask(() -> new BannedPlayersMenu(player, region));
                     })
@@ -187,12 +189,14 @@ public final class BannedPlayersMenu {
             return;
         }
 
+        UnbanPlayerEvent unbanEvent = new UnbanPlayerEvent(region, bannedPlayer.getPlayer());
+        Homestead.callEvent(unbanEvent);
+        if (unbanEvent.isCancelled()) return;
+
         BanManager.unbanPlayer(region, bannedPlayer.getPlayer());
         PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
         LogManager.addLog(region, player, LogManager.PredefinedLog.UNBAN_PLAYER, bannedPlayer.getPlayerName());
-
-        Homestead.callEvent(new UnbanPlayerEvent(region, player));
 
         bannedPlayers = BanManager.getBansOfRegion(region);
         context.instance().setItems(getItems(player, region));

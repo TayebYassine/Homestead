@@ -1,10 +1,12 @@
 package me.tayebyassine.homestead.api.events;
 
 import me.tayebyassine.homestead.models.Region;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 
 public class BankDepositEvent extends APIEvent {
+    private static final HandlerList HANDLERS = new HandlerList();
     private final Region region;
     private final double amount;
 
@@ -19,5 +21,14 @@ public class BankDepositEvent extends APIEvent {
 
     public double getAmount() {
         return amount;
+    }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
     }
 }

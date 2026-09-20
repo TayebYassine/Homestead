@@ -10,7 +10,6 @@ import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.java.Placeholder;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -37,41 +36,6 @@ public class DiscordWebhookClient {
 
     public void sendContent(@NotNull String message) throws Exception {
         executePost("{\"content\": \"" + escapeJson(message) + "\"}");
-    }
-
-    public void sendEmbed(@Nullable String title, @NotNull String description, int color, String[][] fields) throws Exception {
-        StringBuilder embedBuilder = new StringBuilder();
-        embedBuilder.append("{");
-
-        if (title != null) {
-            embedBuilder.append("\"title\":\"").append(escapeJson(title)).append("\",");
-        }
-
-        embedBuilder.append("\"description\":\"").append(escapeJson(description)).append("\",");
-        embedBuilder.append("\"color\":").append(color);
-
-        if (fields != null && fields.length > 0) {
-            embedBuilder.append(",\"fields\":[");
-            for (int i = 0; i < fields.length; i++) {
-                String[] field = fields[i];
-                if (field.length >= 2) {
-                    if (i > 0) embedBuilder.append(",");
-                    embedBuilder.append("{");
-                    embedBuilder.append("\"name\":\"").append(escapeJson(field[0])).append("\",");
-                    embedBuilder.append("\"value\":\"").append(escapeJson(field[1])).append("\"");
-                    if (field.length >= 3 && "true".equalsIgnoreCase(field[2])) {
-                        embedBuilder.append(",\"inline\":true");
-                    }
-                    embedBuilder.append("}");
-                }
-            }
-            embedBuilder.append("]");
-        }
-
-        embedBuilder.append("}");
-
-        String payload = "{\"embeds\":[" + embedBuilder + "]}";
-        executePost(payload);
     }
 
     private void executePost(String jsonPayload) throws Exception {

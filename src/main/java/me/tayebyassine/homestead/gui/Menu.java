@@ -1,6 +1,10 @@
 package me.tayebyassine.homestead.gui;
 
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.api.events.MenuButtonRenderEvent;
+import me.tayebyassine.homestead.api.events.MenuClickEvent;
+import me.tayebyassine.homestead.api.events.MenuCloseEvent;
+import me.tayebyassine.homestead.api.events.MenuOpenEvent;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;
 import me.tayebyassine.homestead.gui.helpers.MenuTitles;
 import me.tayebyassine.homestead.util.java.Placeholder;
@@ -35,11 +39,13 @@ public class Menu implements Listener {
     protected final Inventory inventory;
     protected final Map<Integer, BiConsumer<Player, InventoryClickEvent>> callbacks = new HashMap<>();
     protected boolean passthrough;
+    protected final String menuKey;
 
     protected Menu(Builder<?> builder) {
         this.plugin = Homestead.getInstance();
         this.inventory = Bukkit.createInventory(null, builder.size, ColorTranslator.translate(builder.title));
         this.passthrough = builder.passthrough;
+        this.menuKey = builder.menuKey;
 
         for (Map.Entry<Integer, ItemStack> entry : builder.items.entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue());
@@ -179,8 +185,21 @@ public class Menu implements Listener {
      * @param player the player to open the menu for
      */
     public void open(Player player) {
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack item = inventory.getItem(i);
+            if (item != null) {
+                MenuButtonRenderEvent renderEvent = new MenuButtonRenderEvent(player, menuKey, i, item);
+                Homestead.callEvent(renderEvent);
+                if (renderEvent.isCancelled()) {
+                    inventory.setItem(i, null);
+                } else if (renderEvent.getItem() != item) {
+                    inventory.setItem(i, renderEvent.getItem());
+                }
+            }
+        }
         player.openInventory(inventory);
         InventoryManager.register(player, this);
+        Homestead.callEvent(new MenuOpenEvent(player, menuKey, inventory, false));
     }
 
     /**
@@ -219,6 +238,11 @@ public class Menu implements Listener {
         if (event.getClick() == ClickType.MIDDLE) return;
 
         int slot = event.getRawSlot();
+        ItemStack clickedItem = slot >= 0 && slot < inventory.getSize() ? inventory.getItem(slot) : null;
+        MenuClickEvent menuClickEvent = new MenuClickEvent(player, menuKey, slot, event.getClick(), clickedItem, callbacks.containsKey(slot));
+        Homestead.callEvent(menuClickEvent);
+        if (menuClickEvent.isCancelled()) return;
+
         BiConsumer<Player, InventoryClickEvent> action = callbacks.get(slot);
         if (action != null) {
             plugin.runPlayerTask(player, () -> action.accept(player, event));
@@ -234,6 +258,7 @@ public class Menu implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
         if (InventoryManager.getMenu(player) == this) {
+            Homestead.callEvent(new MenuCloseEvent(player, menuKey));
             InventoryManager.unregister(player);
             destroy();
         }
@@ -256,6 +281,7 @@ public class Menu implements Listener {
         protected String title;
         protected boolean passthrough;
         protected ItemStack filler;
+        protected String menuKey;
 
         protected Builder(String menuKey, int size) {
             this(menuKey, size, false);
@@ -275,6 +301,7 @@ public class Menu implements Listener {
             }
             this.title = MenuTitles.getTitle(menuKey, placeholder);
             this.size = size;
+            this.menuKey = menuKey;
             this.passthrough = passthrough;
         }
 

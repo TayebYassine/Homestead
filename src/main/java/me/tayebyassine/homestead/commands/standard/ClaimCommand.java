@@ -202,6 +202,10 @@ public final class ClaimCommand extends CommandBuilder {
     }
 
     private boolean validateAndClaim(Player player, Region region, List<Chunk> chunksToClaim) {
+        ChunkClaimEvent claimEvent = new ChunkClaimEvent(region, chunksToClaim.getFirst());
+        Homestead.callEvent(claimEvent);
+        if (claimEvent.isCancelled()) return false;
+
         double chunkPrice = Resources.<RegionsFile>get(ResourceType.Regions).getChunkPrice();
         double totalPrice = chunkPrice * chunksToClaim.size();
 
@@ -261,8 +265,6 @@ public final class ClaimCommand extends CommandBuilder {
             }
 
             ChunkBorder.show(player);
-
-            Homestead.callEvent(new ChunkClaimEvent(region, chunksToClaim.getFirst()));
         }
 
         return true;
@@ -298,7 +300,12 @@ public final class ClaimCommand extends CommandBuilder {
 
                 region = RegionManager.createRegion(player.getName(), player);
 
-                Homestead.callEvent(new RegionCreateEvent(region, player));
+                RegionCreateEvent createEvent = new RegionCreateEvent(region, player);
+                Homestead.callEvent(createEvent);
+                if (createEvent.isCancelled()) {
+                    RegionManager.deleteRegion(region.getUniqueId());
+                    return null;
+                }
 
                 TargetRegionSession.newSession(player, region);
             }

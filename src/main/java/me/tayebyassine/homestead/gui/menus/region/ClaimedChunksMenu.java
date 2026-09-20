@@ -172,6 +172,10 @@ public final class ClaimedChunksMenu {
 
             Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
+            ChunkUnclaimEvent unclaimEvent = new ChunkUnclaimEvent(region, bukkitChunk);
+            Homestead.callEvent(unclaimEvent);
+            if (unclaimEvent.isCancelled()) return;
+
             int before = ChunkManager.getChunksOfRegion(region).size();
             ChunkManager.unclaimChunk(region.getUniqueId(), bukkitChunk);
 
@@ -184,8 +188,6 @@ public final class ClaimedChunksMenu {
                 PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
                 ChunkBorder.show(player);
             });
-
-            Homestead.callEvent(new ChunkUnclaimEvent(region, bukkitChunk));
 
             Homestead.getInstance().runPlayerTask(player, () -> {
                 chunks = ChunkManager.getChunksOfRegion(region);

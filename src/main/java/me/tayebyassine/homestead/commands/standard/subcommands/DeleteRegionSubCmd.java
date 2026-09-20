@@ -57,18 +57,20 @@ public final class DeleteRegionSubCmd extends SubCommandBuilder {
             return true;
         }
 
+        RegionDeleteEvent deleteEvent = new RegionDeleteEvent(region);
+        Homestead.callEvent(deleteEvent);
+        if (deleteEvent.isCancelled()) return true;
+
         final double bankAmount = region.getBank();
         final String regionName = region.getName();
 
-        RegionManager.deleteRegion(region.getUniqueId(), player);
+        RegionManager.deleteRegion(region.getUniqueId());
 
         PlayerBank.deposit(region.getOwner(), bankAmount);
 
         Messages.send(player, "commands.delete.3", regionName);
 
         TargetRegionSession.randomizeRegion(player);
-
-        Homestead.callEvent(new RegionDeleteEvent(region));
 
         return true;
     }

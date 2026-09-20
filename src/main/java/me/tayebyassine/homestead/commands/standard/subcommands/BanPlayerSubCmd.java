@@ -101,6 +101,10 @@ public final class BanPlayerSubCmd extends SubCommandBuilder {
             return true;
         }
 
+        BanPlayerEvent banEvent = new BanPlayerEvent(region, target, reason);
+        Homestead.callEvent(banEvent);
+        if (banEvent.isCancelled()) return true;
+
         Player targetOnline = target.isOnline() ? target.getPlayer() : null;
 
         if (targetOnline != null && RegionManager.isPlayerInsideRegion(targetOnline, region)) {
@@ -115,8 +119,6 @@ public final class BanPlayerSubCmd extends SubCommandBuilder {
         LogManager.addLog(region, player, LogManager.PredefinedLog.BAN_PLAYER, target.getName());
 
         Messages.send(player, "commands.ban.8", targetName, region.getName(), reason);
-
-        Homestead.callEvent(new BanPlayerEvent(region, target, reason));
 
         return true;
     }

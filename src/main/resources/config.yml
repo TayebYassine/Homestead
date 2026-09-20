@@ -222,52 +222,52 @@ discord:
     # When a region is created
     region_create:
       enabled: true
-      message: "**[REGIONS]** Region created: {0}"
+      message: "🆕 **[REGIONS]** Region created: {0}"
 
     # When a region is deleted
     region_delete:
       enabled: true
-      message: "**[REGIONS]** Region deleted: {0}"
+      message: "🗑️ **[REGIONS]** Region deleted: {0}"
 
     # When a region is renamed
     region_rename:
       enabled: true
-      message: "**[REGIONS]** Region name update: {0} -> {1}"
+      message: "✍️ **[REGIONS]** Region name update: {0} -> {1}"
 
     # When a region's displayname is updated
     region_displayname_update:
       enabled: true
-      message: "**[REGIONS]** Region display-name update: {0} -> {1}"
+      message: "✍️ **[REGIONS]** Region display-name update: {0} -> {1}"
 
     # When a region's description is updated
     region_description_update:
       enabled: true
-      message: "**[REGIONS]** Region description update: {0} -> {1}"
+      message: "✍️ **[REGIONS]** Region description update: {0} -> {1}"
 
     # When a player sends a message in a region's private chat
     region_private_chat:
       enabled: true
-      message: "**[CHAT]** Player {0} (`{1}`) -> {2}: *{3}*"
+      message: "🗨️ **[CHAT]** Player {0} (`{1}`) -> {2}: *{3}*"
 
     # When a player bought a region, or a player gave their region to another player
     region_owner_transfer:
       enabled: true
-      message: "**[REGIONS]** Region owner changed: {0} -> {1} (Region: {2})"
+      message: "👑 **[REGIONS]** Region owner changed: {0} -> {1} (Region: {2})"
 
     # When a player sends a mail to a region
     player_send_mail:
       enabled: true
-      message: "**[MAILS]** Player {0} (`{1}`) -> {2}: *{3}*"
+      message: "📨 **[MAILS]** Player {0} (`{1}`) -> {2}: *{3}*"
 
     # When a player joined a region (trust)
     player_join_region:
       enabled: true
-      message: "**[MEMBERS]** Player {0} (`{1}`) joined region: {2}"
+      message: "👋 **[MEMBERS]** Player {0} (`{1}`) joined region: {2}"
 
     # When a player left a region (untrust)
     player_left_region:
       enabled: true
-      message: "**[MEMBERS]** Player {0} (`{1}`) left region: {2}"
+      message: "🚪 **[MEMBERS]** Player {0} (`{1}`) left region: {2}"
 
 # ============================================================================
 # PLAYER INPUT SESSION

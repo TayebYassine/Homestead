@@ -2,11 +2,13 @@ package me.tayebyassine.homestead.api.events;
 
 import me.tayebyassine.homestead.models.Region;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
 public class RegionOwnerUpdateEvent extends APIEvent {
+    private static final HandlerList HANDLERS = new HandlerList();
     private final Region region;
     private final OfflinePlayer oldOwner;
     private final OfflinePlayer newOwner;
@@ -27,5 +29,14 @@ public class RegionOwnerUpdateEvent extends APIEvent {
 
     public @NotNull OfflinePlayer getNewOwner() {
         return newOwner;
+    }
+
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
     }
 }

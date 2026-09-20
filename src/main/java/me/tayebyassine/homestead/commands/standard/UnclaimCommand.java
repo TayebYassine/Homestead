@@ -81,6 +81,10 @@ public final class UnclaimCommand extends CommandBuilder {
             return true;
         }
 
+        ChunkUnclaimEvent unclaimEvent = new ChunkUnclaimEvent(region, chunk);
+        Homestead.callEvent(unclaimEvent);
+        if (unclaimEvent.isCancelled()) return true;
+
         Cooldown.startCooldown(player, Cooldown.Type.REGION_CHUNK_UNCLAIM);
 
         ChunkManager.Error error = ChunkManager.unclaimChunk(region, chunk);
@@ -97,8 +101,6 @@ public final class UnclaimCommand extends CommandBuilder {
             LogManager.addLog(region, player, LogManager.PredefinedLog.UNCLAIM_CHUNK);
 
             ChunkBorder.show(player);
-
-            Homestead.callEvent(new ChunkUnclaimEvent(region, chunk));
         } else {
             switch (error) {
                 case REGION_NOT_FOUND -> Messages.send(player, "commands.unclaim.6");

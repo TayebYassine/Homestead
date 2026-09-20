@@ -56,11 +56,16 @@ public final class CreateRegionSubCmd extends SubCommandBuilder {
 
         Region region = RegionManager.createRegion(regionName, player);
 
+        RegionCreateEvent createEvent = new RegionCreateEvent(region, player);
+        Homestead.callEvent(createEvent);
+        if (createEvent.isCancelled()) {
+            RegionManager.deleteRegion(region.getUniqueId());
+            return true;
+        }
+
         Messages.send(player, "commands.create.4", regionName);
 
         TargetRegionSession.newSession(player, region);
-
-        Homestead.callEvent(new RegionCreateEvent(region, player));
 
         return true;
     }

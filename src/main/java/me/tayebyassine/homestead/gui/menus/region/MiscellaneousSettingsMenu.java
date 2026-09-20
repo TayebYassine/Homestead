@@ -347,15 +347,17 @@ public final class MiscellaneousSettingsMenu {
                 DELETE_CONFIRM_REGION.remove(pid);
                 DELETE_CONFIRM_TIME.remove(pid);
 
+                RegionDeleteEvent deleteEvent = new RegionDeleteEvent(region);
+                Homestead.callEvent(deleteEvent);
+                if (deleteEvent.isCancelled()) return;
+
                 double amountToGive = region.getBank();
-                RegionManager.deleteRegion(region.getUniqueId(), player);
+                RegionManager.deleteRegion(region.getUniqueId());
                 PlayerBank.deposit(region.getOwner(), amountToGive);
 
                 PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
 
                 TargetRegionSession.randomizeRegion(player);
-
-                Homestead.callEvent(new RegionDeleteEvent(region));
 
                 new AllRegionsMenu(_player);
 
