@@ -1,6 +1,9 @@
 package me.tayebyassine.homestead.gui.menus.rent;
 
 import me.tayebyassine.homestead.Homestead;
+import me.tayebyassine.homestead.api.events.RentConfigUpdateEvent;
+import me.tayebyassine.homestead.api.events.RentEndEvent;
+import me.tayebyassine.homestead.api.events.RentNoticeEvent;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.Menu;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;
@@ -20,8 +23,10 @@ import me.tayebyassine.homestead.sessions.PlayerInputSession;
 import me.tayebyassine.homestead.util.java.Formatter;
 import me.tayebyassine.homestead.util.java.Placeholder;
 import me.tayebyassine.homestead.util.minecraft.chat.Messages;
+import me.tayebyassine.homestead.util.minecraft.players.PlayerBank;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerSound;
 import me.tayebyassine.homestead.util.minecraft.players.PlayerUtility;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -101,7 +106,9 @@ public final class RentConfigMenu {
                     .callback((p, input) -> {
                         double price = Double.parseDouble(input);
                         SeRent rent = subArea != null ? subArea.getRent() : region.getRent();
+                        double oldPrice = rent.getPrice();
                         rent.setPrice(price);
+                        Homestead.callEvent(new RentConfigUpdateEvent(region, subArea, rent, "price", oldPrice, price));
                         PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
                         Homestead.getInstance().runSyncTask(() -> new RentConfigMenu(player, region, subArea));
                     })
@@ -133,12 +140,23 @@ public final class RentConfigMenu {
                         long days = Long.parseLong(input);
                         long duration = days == -1 ? -1L : days * 24L * 60 * 60 * 1000;
                         SeRent rent = subArea != null ? subArea.getRent() : region.getRent();
+
+                        if (rent.hasRenter() && rent.hasNoticeToVacate()) {
+                            Messages.send(player, "commands.rent.15");
+                            PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+                            return;
+                        }
+
+                        long oldDuration = rent.getDuration();
                         rent.setDuration(duration);
                         if (days != -1 && rent.getStartedAt() > 0) {
                             rent.setUntilAt(rent.getStartedAt() + duration);
                         } else if (days == -1) {
                             rent.setUntilAt(-1L);
                         }
+
+                        Homestead.callEvent(new RentConfigUpdateEvent(region, subArea, rent, "duration", oldDuration, duration));
+
                         PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
                         Homestead.getInstance().runSyncTask(() -> new RentConfigMenu(player, region, subArea));
                     })
@@ -169,7 +187,9 @@ public final class RentConfigMenu {
                     .callback((p, input) -> {
                         double deposit = Double.parseDouble(input);
                         SeRent rent = subArea != null ? subArea.getRent() : region.getRent();
+                        double oldDeposit = rent.getSecurityDeposit();
                         rent.setSecurityDeposit(deposit);
+                        Homestead.callEvent(new RentConfigUpdateEvent(region, subArea, rent, "securityDeposit", oldDeposit, deposit));
                         PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
                         Homestead.getInstance().runSyncTask(() -> new RentConfigMenu(player, region, subArea));
                     })
@@ -205,6 +225,7 @@ public final class RentConfigMenu {
             if (rent.hasNoticeToVacate()) {
                 rent.setNoticeToVacate(null);
                 rent.setUntilAt(rent.getStartedAt() + rent.getDuration());
+                Homestead.callEvent(new RentNoticeEvent(region, subArea, rent, true));
                 Messages.send(player, "commands.rent.5");
                 PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
                 new RentConfigMenu(player, region, subArea);
@@ -230,6 +251,7 @@ public final class RentConfigMenu {
 
                         rent.setNoticeToVacate(new SeNoticeToVacate(noticeAt, days));
                         rent.setUntilAt(vacateAt);
+                        Homestead.callEvent(new RentNoticeEvent(region, subArea, rent, false));
                         Messages.send(player, "commands.rent.6", days);
                         PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
                         Homestead.getInstance().runSyncTask(() -> new RentConfigMenu(player, region, subArea));
@@ -256,7 +278,21 @@ public final class RentConfigMenu {
                 return;
             }
 
+            OfflinePlayer renter = rent.getRenter();
+
+            if (renter == null) return;
+
+            double deposit = rent.getSecurityDeposit();
+
+            RentEndEvent endEvent = new RentEndEvent(region, subArea, renter, rent);
+            Homestead.callEvent(endEvent);
+            if (endEvent.isCancelled()) return;
+
             rent.clearRenter();
+
+            if (deposit > 0) {
+                PlayerBank.deposit(renter, deposit);
+            }
 
             Messages.send(player, "commands.rent.7");
             PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
@@ -281,7 +317,21 @@ public final class RentConfigMenu {
                 return;
             }
 
+            OfflinePlayer renter = rent.getRenter();
+
+            if (renter == null) return;
+
+            double deposit = rent.getSecurityDeposit();
+
+            RentEndEvent endEvent = new RentEndEvent(region, subArea, renter, rent);
+            Homestead.callEvent(endEvent);
+            if (endEvent.isCancelled()) return;
+
             rent.clearRenter();
+
+            if (deposit > 0) {
+                PlayerBank.deposit(renter, deposit);
+            }
 
             Messages.send(player, "commands.rent.7");
             PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);
@@ -300,9 +350,19 @@ public final class RentConfigMenu {
             }
 
             SeRent rent = subArea != null ? subArea.getRent() : region.getRent();
+
+            if (rent.hasRenter()) {
+                Messages.send(player, "commands.rent.16");
+                PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
+                return;
+            }
+
+            long oldDuration = rent.getDuration();
             rent.setDuration(-1L);
             rent.setUntilAt(-1L);
             rent.setNoticeToVacate(null);
+
+            Homestead.callEvent(new RentConfigUpdateEvent(region, subArea, rent, "duration", oldDuration, -1L));
 
             Messages.send(player, "commands.rent.8");
             PlayerSound.play(player, PlayerSound.PredefinedSound.SUCCESS);

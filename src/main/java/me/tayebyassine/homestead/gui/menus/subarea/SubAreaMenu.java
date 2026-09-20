@@ -4,6 +4,7 @@ import me.tayebyassine.homestead.Homestead;
 import me.tayebyassine.homestead.flags.ControlFlag;
 import me.tayebyassine.homestead.gui.Menu;
 import me.tayebyassine.homestead.gui.helpers.MenuButtons;
+import me.tayebyassine.homestead.gui.menus.rent.RentConfigMenu;
 import me.tayebyassine.homestead.managers.LogManager;
 import me.tayebyassine.homestead.managers.MemberManager;
 import me.tayebyassine.homestead.managers.RegionManager;
@@ -50,7 +51,7 @@ public final class SubAreaMenu {
                 .button(11, MenuButtons.getButton(MENU_KEY, 0, placeholder), handleRename(player, region, subArea))
                 .button(12, MenuButtons.getButton(MENU_KEY, 1, placeholder), handleFlags(player, region, subArea))
                 .button(13, MenuButtons.getButton(MENU_KEY, 2, placeholder), handleMembers(player, region, subArea))
-                .button(14, MenuButtons.getButton(MENU_KEY, 3, placeholder), handleEndRent(player, region, subArea))
+                .button(14, MenuButtons.getButton(MENU_KEY, 3, placeholder), handleOpenRentMenu(player, region, subArea))
                 .button(15, MenuButtons.getButton(MENU_KEY, 4, placeholder), handleDelete(player, region, subArea))
                 .button(18, MenuButtons.getBackButton(), handleBack(player, region, subArea))
                 .fillEmptySlots()
@@ -104,7 +105,7 @@ public final class SubAreaMenu {
         };
     }
 
-    private static BiConsumer<Player, InventoryClickEvent> handleEndRent(Player player, Region region, SubArea subArea) {
+    private static BiConsumer<Player, InventoryClickEvent> handleOpenRentMenu(Player player, Region region, SubArea subArea) {
         return (_player, event) -> {
             if (!checkValid(player, region, subArea) || !event.isLeftClick()) return;
 
@@ -114,15 +115,7 @@ public final class SubAreaMenu {
                 return;
             }
 
-            SeRent rent = subArea.getRent();
-
-            if (!rent.hasRenter()) {
-                Messages.send(player, "commands.rent.0");
-            } else {
-                rent.clearRenter();
-
-                new SubAreaMenu(player, region, subArea);
-            }
+            new RentConfigMenu(player, region, subArea);
         };
     }
 
