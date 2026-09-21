@@ -310,7 +310,7 @@ menus:
     title: "Jugadores de Confianza"
     buttons:
       0:
-        name: "&#AED581&l{playername}"
+        name: "&#81C784&l{playername}"
         lore:
           - "&7Este jugador es de confianza en la región &2{region}&7."
           - ""
@@ -919,11 +919,11 @@ menus:
         type: PAPER
 
   map_color:
-    title: "Map Color - &2{region}"
+    title: "Color del Mapa - &2{region}"
     buttons: {}
 
   map_icon:
-    title: "Map Icon - &2{region}"
+    title: "Icono del Mapa - &2{region}"
     buttons: {}
 
   regions_with_welcome_signs:
@@ -1054,21 +1054,21 @@ button-types:
 button-levels:
   5:
     - "&a✔ 1 Chunk"
-    - "&a✔ 5% Upkeep price"
+    - "&a✔ 5% Precio de manutención"
   10:
     - "&a✔ 2 Chunks"
-    - "&a✔ 1 Member"
+    - "&a✔ 1 Miembro"
   15:
     - "&a✔ 4 Chunks"
-    - "&a✔ 2 Members"
-    - "&a✔ 1 Sub-Area"
-    - "&a✔ 10% Upkeep price"
+    - "&a✔ 2 Miembros"
+    - "&a✔ 1 Sub-Área"
+    - "&a✔ 10% Precio de manutención"
   20:
-    - "&a✔ 15% Upkeep price"
+    - "&a✔ 15% Precio de manutención"
   30:
-    - "&a✔ 30% Upkeep price"
+    - "&a✔ 30% Precio de manutención"
   50:
     - "&a✔ 10 Chunks"
-    - "&a✔ 6 Members"
-    - "&a✔ 5 Sub-Areas"
-    - "&a✔ 50% Upkeep price"
+    - "&a✔ 6 Miembros"
+    - "&a✔ 5 Sub-Áreas"
+    - "&a✔ 50% Precio de manutención"

@@ -783,13 +783,17 @@ public final class WarManager {
     }
 
     private static void sendBroadcastMessage(Player player, War war, Region regionA, Region regionB) {
-        List<String> listString = Resources.<LanguageFile>get(ResourceType.Language).getWarDeclarationMessages();
+        List<String> listString = Resources.<LanguageFile>get(ResourceType.Language).getWarDeclarationMessages(war.getWagerType());
+
+        long timeout = war.getTimeout();
 
         Placeholder placeholder = new Placeholder()
                 .add("{war-name}", war.getName())
                 .add("{regionplayer}", regionA.getName())
                 .add("{regiontarget}", regionB.getName())
-                .add("{prize}", Formatter.getBalance(war.getPrize()));
+                .add("{prize}", Formatter.getBalance(war.getPrize()))
+                .add("{kills}", war.getKillsToWin())
+                .add("{timeout}", timeout == 0 ? Formatter.getNever() : Formatter.getRemainingTime(timeout));
 
         player.playSound(player.getLocation(), Sound.EVENT_MOB_EFFECT_RAID_OMEN, SoundCategory.PLAYERS, 1f, 1f);
 

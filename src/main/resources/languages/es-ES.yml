@@ -10,6 +10,7 @@ common:
   no_flag_permission:
     - '&cLo siento, pero no tienes permiso para hacer esto.'
     - '&cFlag: &7{flag}&c, Región: &2{region}'
+  economy_disabled: '&cLa integración económica está desactivada.'
   cooldown: '&cEstás en enfriamiento por {0}!'
   cooldown_command: '&c¡Demasiado rápido! Por favor intenta de nuevo en unos segundos.'
   teleport_started: '&7Teletransporte iniciado, no te muevas durante los próximos &33 segundos&7!'
@@ -26,17 +27,30 @@ common:
   level_entity_kill: '&7Mataste a &3{entity}&7, y ganaste &6{xp} XP &7para la región &2{region}&7!'
   level_up: '&a¡Felicidades, has desbloqueado el nivel &6{0}&a!'
   war_declaration:
-    - ' '
-    - '&c&l >> SE HA DECLARADO UNA GUERRA <<'
-    - '&c&l-------------------------------'
-    - '&cGuerra: &7{war-name}'
-    - '&cRegiones: &7{regionplayer} &cy &7{regiontarget}'
-    - '&cPremio para el Ganador: &7{prize}'
-    - '&c&l-------------------------------'
-    - ' '
+    money:
+      - ' '
+      - '&c&l >> SE HA DECLARADO UNA GUERRA <<'
+      - '&c&l-------------------------------'
+      - '&cGuerra: &7{war-name}'
+      - '&cRegiones: &7{regionplayer} &cy &7{regiontarget}'
+      - '&cPremio para el Ganador: &7{prize}'
+      - '&c&l-------------------------------'
+      - ' '
+    ownership:
+      - ' '
+      - '&c&l >> SE HA DECLARADO UNA GUERRA <<'
+      - '&c&l-------------------------------'
+      - '&cGuerra: &7{war-name}'
+      - '&cRegiones: &7{regionplayer} &cy &7{regiontarget}'
+      - '&cMuertes para ganar: &7{kills}'
+      - '&cTiempo límite: &7{timeout}'
+      - '&c&l-------------------------------'
+      - ' '
   war_player_death: '&4Has sido asesinado. &cHas perdido la guerra.'
   war_player_winner: '&a¡Felicidades! Has ganado la guerra. El premio ha sido añadido al banco de tu región.'
   war_end: '&eLa guerra ha terminado, y la región &2{0} &eha sido declarada como ganadora.'
+  war_ownership_transfer: '&c&l >> PROPIEDAD TRANSFERIDA << &7La región &2{0} &7ahora pertenece a &2{1}&7.'
+  war_ownership_kill: '&7[Guerra] &2{0} &7eliminó a &2{1} &7para &c{2} &7(&c{3}&7/&c{4}&7 muertes)'
   rent_end: '&eEl contrato ha terminado. Has sido eliminado de la región &2{0}&e.'
   rent_subarea_end: '&eEl contrato ha terminado. Has sido eliminado del sub-área &2{0}&e, parte de la región &2{1}&e.'
   region_ban:
@@ -70,6 +84,9 @@ common:
       3: '&e'
       4: '&a'
       5: '&a'
+    na: '&3N/A'
+    permanent: '&6Permanente'
+    rent-vacate-notice: '&aActivo &7({days} días)'
 
 
 prefix: '&8[&6Homestead&8]&r'
@@ -87,6 +104,7 @@ commands:
       - '{__prefix__} &7El reclamo automático ha sido &aactivado&7.'
       - '{__prefix__} &7Cualquier chunk no reclamado será reclamado automáticamente para la región &2{0}&7.'
     1: '{__prefix__} &7El reclamo automático ha sido &cdesactivado&7.'
+    2: '{__prefix__} &7No tienes una región seleccionada. Usa: &e/hs set [región]'
   balance:
     0: '{__prefix__} &cLa integración económica está desactivada.'
     1: '{__prefix__} &cNo se encontró ninguna región con el nombre ''&2{0}&7''.'
@@ -264,6 +282,21 @@ commands:
     1: '{__prefix__} &cNo se encontró ninguna región con el nombre ''&2{0}&c''.'
   rent:
     0: '{__prefix__} &cNadie ha rentado actualmente esta región.'
+    1: '{__prefix__} &cEl alquiler está actualmente desactivado.'
+    2: '{__prefix__} &cNo se encontró ninguna sub-área con el nombre ''&2{0}&c''.'
+    3: '{__prefix__} &cNo hay inquilino al que notificar para desalojar.'
+    4: '{__prefix__} &cNo se puede emitir notificación de desalojo para alquiler permanente.'
+    5: '{__prefix__} &aNotificación de desalojo cancelada.'
+    6: '{__prefix__} &aNotificación de desalojo emitida para &e{0} &7días.'
+    7: '{__prefix__} &aAlquiler cancelado exitosamente.'
+    8: '{__prefix__} &aAlquiler establecido como permanente.'
+    9: '{__prefix__} &cEl precio debe estar entre &6{0} &cy &6{1}&c.'
+    10: '{__prefix__} &cFormato de número inválido.'
+    11: '{__prefix__} &cLa duración debe estar entre &6{0} &cy &6{1} &cdías (o -1 para permanente).'
+    12: '{__prefix__} &cLos días de notificación deben estar entre &6{0} &cy &6{1}&c.'
+    13: '{__prefix__} &cEsta región/sub-área ya está rentada.'
+    14: '{__prefix__} &7Alquiler cancelado.'
+    15: '{__prefix__} &cSolo el dueño de esta región puede configurar el alquiler!'
   info:
     0: '{__prefix__} &cNo se encontró ninguna región con el nombre ''&2{0}&c''.'
     1: '{__prefix__} &7Actualmente estás en el desierto.'
@@ -325,7 +358,7 @@ commands:
   setspawn:
     0: '{__prefix__} &7No tienes una región seleccionada. Usa: &e/hs set [región]'
     1: '{__prefix__} &cNo tienes permiso del dueño.'
-    2: '{__prefix__} &cNo puedes establecer spawn en el desierto o en un chunk no reclamado por &2{0}&c.'
+    2: '{__prefix__} &cNo puedes establecer spawn en la intemperie o en un chunk no reclamado por &2{0}&c.'
     3: '{__prefix__} &7Ubicación de spawn de la región actualizada.'
   settime:
     0: '{__prefix__} &7No tienes una región seleccionada. Usa: &e/hs set [región]'
@@ -368,6 +401,7 @@ commands:
     23: '{__prefix__} &7Jugador &3{0} &7añadido al sub-área.'
     24: '{__prefix__} &cEl jugador no está añadido a este sub-área.'
     25: '{__prefix__} &7Jugador &3{0} &7eliminado del sub-área.'
+    26: '{__prefix__} &7¡Has recibido el item de herramienta de selección! Revisa tu inventario.'
   trust:
     0: '{__prefix__} &cPor favor proporciona un nombre de jugador.'
     1: '{__prefix__} &7No tienes una región seleccionada. Usa: &e/hs set [región]'
@@ -439,6 +473,12 @@ commands:
     15: '{__prefix__} &cLa región no está en una guerra.'
     16: '{__prefix__} &7Te has rendido. Has perdido la guerra.'
     17: '{__prefix__} &7Regiones: &2{0}&7, Premio: &c{1}'
+    18: '{__prefix__} &cLas muertes para ganar deben ser un entero positivo válido.'
+    19: '{__prefix__} &cEl tiempo límite debe ser un entero no negativo válido.'
+    20: '{__prefix__} &cLas guerras de propiedad están actualmente desactivadas.'
+    21: '{__prefix__} &7Muerte: &2{killer} &7(&c{killer-region}&7) &7eliminó a &2{victim} &7(&c{victim-region}&7) &7[&c{kills}&7/&c{goal}&7]'
+    22: '{__prefix__} &c¡La Guerra de Propiedad ha expirado!'
+    23: '{__prefix__} &7La región &2{0} &7ha ganado por tener más muertes (&c{1}&7 vs &c{2}&7).'
   withdraw:
     0: '{__prefix__} &cPor favor proporciona la cantidad a retirar, o usa ''all'' para retirar todos los ahorros.'
     1: '{__prefix__} &cLa integración económica está desactivada.'
@@ -556,6 +596,8 @@ signs:
   13: '{__prefix__} &cLa región está actualmente en una guerra.'
   14: '{__prefix__} &cLo siento, pero no puedes hacer esto!'
   15: '{__prefix__} &cHas rentado la región, no puedes comprarla hasta que el contrato termine.'
+  16: '{__prefix__} &cLa duración del alquiler debe estar entre &6{0} &cy &6{1} &cdías!'
+  17: '{__prefix__} &cLa región está actualmente rentada.'
 logs:
   0: Nombre de región actualizado a '{0}'.
   1: Nombre mostrado de región actualizado a '{0}'.
@@ -577,6 +619,51 @@ logs:
   17: Sub-área eliminado.
   18: Todas las invitaciones purgadas.
   19: Unido a la región.
+input:
+  1:
+    title: [ '&eNombre de Región', '&7Por favor ingresa el nuevo nombre de la región!' ]
+    actionbar: '&ePor favor escribe el nuevo nombre de la región! &7Escribe ''cancel'' para cancelar'
+    chat: '&ePor favor escribe el nuevo nombre de la región! &7Escribe ''cancel'' para cancelar'
+  2:
+    title: [ '&eNombre Mostrado de Región', '&7Por favor ingresa el nuevo nombre mostrado de la región!' ]
+    actionbar: '&ePor favor escribe el nuevo nombre mostrado de la región! &7Escribe ''cancel'' para cancelar'
+    chat: '&ePor favor escribe el nuevo nombre mostrado de la región! &7Escribe ''cancel'' para cancelar'
+  3:
+    title: [ '&eDescripción de Región', '&7Por favor ingresa la nueva descripción de la región!' ]
+    actionbar: '&ePor favor escribe la nueva descripción de la región! &7Escribe ''cancel'' para cancelar'
+    chat: '&ePor favor escribe la nueva descripción de la región! &7Escribe ''cancel'' para cancelar'
+  4:
+    title: [ '&eTransferir Propiedad', '&7Por favor ingresa el nombre del nuevo dueño de la región!' ]
+    actionbar: '&ePor favor escribe el nombre del nuevo dueño de la región! &7Escribe ''cancel'' para cancelar'
+    chat: '&ePor favor escribe el nombre del nuevo dueño de la región! &7Escribe ''cancel'' para cancelar'
+  5:
+    title: [ '&eBanear Jugador', '&7Por favor ingresa el nombre del jugador a banear!' ]
+    actionbar: '&ePor favor escribe el nombre del jugador a banear! &7Escribe ''cancel'' para cancelar'
+    chat: '&ePor favor escribe el nombre del jugador a banear! &7Escribe ''cancel'' para cancelar'
+  6:
+    title: [ '&eInvitar Jugador', '&7Por favor ingresa el nombre del jugador a invitar!' ]
+    actionbar: '&ePor favor escribe el nombre del jugador a invitar! &7Escribe ''cancel'' para cancelar'
+    chat: '&ePor favor escribe el nombre del jugador a invitar! &7Escribe ''cancel'' para cancelar'
+  7:
+    title: [ '&eNombre de Sub-Área', '&7Por favor ingresa el nuevo nombre de la sub-área!' ]
+    actionbar: '&ePor favor escribe el nuevo nombre de la sub-área! &7Escribe ''cancel'' para cancelar'
+    chat: '&ePor favor escribe el nuevo nombre de la sub-área! &7Escribe ''cancel'' para cancelar'
+  10:
+    title: [ '&ePrecio de Alquiler', '&7Por favor ingresa el precio del alquiler!' ]
+    actionbar: '&eIngresa el precio del alquiler &7(&c{min-price} &7- &c{max-price}&7). &7Escribe ''cancel'' para cancelar'
+    chat: '&eIngresa el precio del alquiler &7(&c{min-price} &7- &c{max-price}&7). &7Escribe ''cancel'' para cancelar'
+  11:
+    title: [ '&eDuración del Alquiler', '&7Por favor ingresa la duración del alquiler en días!' ]
+    actionbar: '&eIngresa la duración del alquiler en días &7(&c{min-days} &7- &c{max-days}&7). &7Escribe ''cancel'' para cancelar'
+    chat: '&eIngresa la duración del alquiler en días &7(&c{min-days} &7- &c{max-days}&7). &7Escribe ''cancel'' para cancelar'
+  12:
+    title: [ '&eDepósito de Seguridad', '&7Por favor ingresa el depósito de seguridad!' ]
+    actionbar: '&eIngresa el depósito de seguridad &7(&c{min-deposit} &7- &c{max-deposit}&7). &7Escribe ''cancel'' para cancelar'
+    chat: '&eIngresa el depósito de seguridad &7(&c{min-deposit} &7- &c{max-deposit}&7). &7Escribe ''cancel'' para cancelar'
+  13:
+    title: [ '&eNotificación de Desalojo', '&7Por favor ingresa los días de notificación!' ]
+    actionbar: '&eIngresa los días de notificación!'
+    chat: '&eIngresa los días de notificación!'
 formatters:
   date-format: dd/M/yyyy hh:mm a
   date: '{date} &7({time-ago} atrás)'
@@ -762,6 +849,10 @@ flags-info:
     description:
       - '&7Permitir a los jugadores generar mobs con huevos de spawn?'
     type: ZOMBIE_SPAWN_EGG
+  throw-eggs:
+    description:
+      - '&7Permitir a los jugadores lanzar huevos?'
+    type: EGG
 
   passive-entity-spawn:
     description:

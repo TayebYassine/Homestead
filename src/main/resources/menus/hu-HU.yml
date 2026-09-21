@@ -15,7 +15,7 @@ defaults:
   next-page:
     name: "&9&lKövetkező"
     lore:
-      - "&7Tovább a következő odalra."
+      - "&7Tovább a következő oldalra."
     type: ARROW
   empty-slot:
     name: " "

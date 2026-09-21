@@ -10,6 +10,7 @@ common:
   no_flag_permission:
     - '&cSajnáljuk, de nincs jogosultságod ehhez.'
     - '&cFlag: &7{flag}&c, Régió: &2{region}'
+  economy_disabled: '&cA gazdasági integráció le van tiltva.'
   cooldown: '&cVárakozási időn vagy {0} miatt!'
   cooldown_command: '&cTúl gyors! Kérjük, próbáld újra néhány másodperc múlva.'
   teleport_started: '&7A teleportálás elkezdődött, ne mozogj a következő &33 másodpercig&7!'
@@ -26,17 +27,30 @@ common:
   level_entity_kill: '&7Megölted &3{entity}&7-et, és &6{xp} XP-t &7szereztél a &2{region}&7 régiónak!'
   level_up: '&aGratulálunk, feloldottad a &6{0}&a. szintet!'
   war_declaration:
-    - ' '
-    - '&c&l >> HÁBORÚT HIRDETTEK <<'
-    - '&c&l-------------------------------'
-    - '&cHáború: &7{war-name}'
-    - '&cRégiók: &7{regionplayer} &cés &7{regiontarget}'
-    - '&cNyeremény: &7{prize}'
-    - '&c&l-------------------------------'
-    - ' '
+    money:
+      - ' '
+      - '&c&l >> HÁBORÚT HIRDETTEK <<'
+      - '&c&l-------------------------------'
+      - '&cHáború: &7{war-name}'
+      - '&cRégiók: &7{regionplayer} &cés &7{regiontarget}'
+      - '&cNyeremény: &7{prize}'
+      - '&c&l-------------------------------'
+      - ' '
+    ownership:
+      - ' '
+      - '&c&l >> HÁBORÚT HIRDETTEK <<'
+      - '&c&l-------------------------------'
+      - '&cHáború: &7{war-name}'
+      - '&cRégiók: &7{regionplayer} &cés &7{regiontarget}'
+      - '&cÖlések a győzelemhez: &7{kills}'
+      - '&cIdőkorlát: &7{timeout}'
+      - '&c&l-------------------------------'
+      - ' '
   war_player_death: '&4Megöltek. &cElvesztetted a háborút.'
   war_player_winner: '&aGratulálunk! Megnyerted a háborút. A nyeremény hozzáadásra került a régiód bankjához.'
   war_end: '&eA háború véget ért, és a &2{0} &erégiót hirdették győztesnek.'
+  war_ownership_transfer: '&c&l >> TULAJDONJOG ÁTADVA << &7A &2{0} &erégió most &2{1}&7 tulajdona.'
+  war_ownership_kill: '&7[Háború] &2{0} &7megölte &2{1}-t &c{2} &7(&c{3}&7/&c{4}&7 ölések)'
   rent_end: '&eA szerződés lejárt. Eltávolítottak a &2{0}&e régióból.'
   rent_subarea_end: '&eA szerződés lejárt. Eltávolítottak a &2{0}&e alrégióból, amely a &2{1}&e régió része.'
   region_ban:
@@ -70,6 +84,9 @@ common:
       3: '&e'
       4: '&a'
       5: '&a'
+    na: '&3N/A'
+    permanent: '&6Állandó'
+    rent-vacate-notice: '&aAktív &7({days} nap)'
 prefix: '&8[&6Homestead&8]&r'
 commands:
   accept:
@@ -85,6 +102,7 @@ commands:
       - '{__prefix__} &7Az automatikus foglalás &aengedélyezve&7 lett.'
       - '{__prefix__} &7Minden nem foglalt chunk automatikusan lefoglalásra kerül a &2{0}&7 régió számára.'
     1: '{__prefix__} &7Az automatikus foglalás &cletiltva&7 lett.'
+    2: '{__prefix__} &7Nincs kiválasztott régiód. Használd: &e/hs set [régió]'
   balance:
     0: '{__prefix__} &cA gazdasági integráció le van tiltva.'
     1: '{__prefix__} &cNem található régió ''&2{0}&7'' néven.'
@@ -262,6 +280,21 @@ commands:
     1: '{__prefix__} &cNem található régió ''&2{0}&c'' néven.'
   rent:
     0: '{__prefix__} &cJelenleg senki sem bérli ezt a régiót.'
+    1: '{__prefix__} &cA bérleti rendszer jelenleg le van tiltva.'
+    2: '{__prefix__} &cNem található ''&2{0}&c'' nevű alrégió.'
+    3: '{__prefix__} &cNincs kitiltásra kötelezett bérlő.'
+    4: '{__prefix__} &cNem adhat ki kitiltási értesítést állandó bérlethez.'
+    5: '{__prefix__} &aKitiltási értesítés visszavonva.'
+    6: '{__prefix__} &aKitiltási értesítés kiadva &e{0} &7napra.'
+    7: '{__prefix__} &aBérlet sikeresen visszavonva.'
+    8: '{__prefix__} &aBérlet állandóra állítva.'
+    9: '{__prefix__} &cAz árnak &6{0} &cés &6{1} &cközött kell lennie.'
+    10: '{__prefix__} &cÉrvénytelen számformátum.'
+    11: '{__prefix__} &cA tartománynak &6{0} &cés &6{1} &cnap között kell lennie (vagy -1 állandóhoz).'
+    12: '{__prefix__} &cAz értesítési napoknak &6{0} &cés &6{1} &cközött kell lenniük.'
+    13: '{__prefix__} &cEz a régió/alrégio már ki van bérelve.'
+    14: '{__prefix__} &7Bérlet visszavonva.'
+    15: '{__prefix__} &cCsak ennek a régiónak a tulajdonosa állíthatja be a bérletet!'
   info:
     0: '{__prefix__} &cNem található régió ''&2{0}&c'' néven.'
     1: '{__prefix__} &7Jelenleg a vadonban vagy.'
@@ -366,6 +399,7 @@ commands:
     23: '{__prefix__} &7A &3{0} &7játékos hozzáadva az alrégióhoz.'
     24: '{__prefix__} &cA játékos nincs hozzáadva ehhez az alrégióhoz.'
     25: '{__prefix__} &7A &3{0} &7játékos eltávolítva az alrégióból.'
+    26: '{__prefix__} &7Megkaptad a kijelölő eszközt! Ellenőrizd a hátizsákod.'
   trust:
     0: '{__prefix__} &cKérjük, add meg a játékos nevét.'
     1: '{__prefix__} &7Nincs kiválasztott régiód. Használd: &e/hs set [régió]'
@@ -437,6 +471,12 @@ commands:
     15: '{__prefix__} &cA régió nincs háborúban.'
     16: '{__prefix__} &7Megadtad magad. Elvesztetted a háborút.'
     17: '{__prefix__} &7Régiók: &2{0}&7, Nyeremény: &c{1}'
+    18: '{__prefix__} &cAz öléseknek érvényes pozitív egész számnak kell lenniük.'
+    19: '{__prefix__} &cAz időkorlátnak érvényes nem negatív egész számnak kell lennie.'
+    20: '{__prefix__} &cA tulajdonjogi háborúk jelenleg le vannak tiltva.'
+    21: '{__prefix__} &7Ölés: &2{killer} &7(&c{killer-region}&7) &7megölte &2{victim}-t &7(&c{victim-region}&7) &7[&c{kills}&7/&c{goal}&7]'
+    22: '{__prefix__} &cA tulajdonjogi háború lejárt!'
+    23: '{__prefix__} &7A &2{0} &erégió nyert, mivel több ölése volt (&c{1}&7 vs &c{2}&7).'
   withdraw:
     0: '{__prefix__} &cKérjük, add meg a kivenni kívánt összeget, vagy használd az ''all'' parancsot az összes megtakarítás kivételéhez.'
     1: '{__prefix__} &cA gazdasági integráció le van tiltva.'
@@ -554,6 +594,8 @@ signs:
   13: '{__prefix__} &cA régió jelenleg háborúban van.'
   14: '{__prefix__} &cSajnáljuk, de ezt nem teheted meg!'
   15: '{__prefix__} &cBérelted a régiót, nem vásárolhatod meg, amíg a szerződés le nem jár.'
+  16: '{__prefix__} &cA bérleti időtartamnak &6{0} &cés &6{1} &cnap között kell lennie!'
+  17: '{__prefix__} &cA régió jelenleg ki van bérelve.'
 logs:
   0: 'Régió neve frissítve: ''{0}''.'
   1: 'Régió megjelenítendő neve frissítve: ''{0}''.'
@@ -575,6 +617,51 @@ logs:
   17: Alrégió törölve.
   18: Minden meghívás törölve.
   19: Csatlakozás a régióhoz.
+input:
+  1:
+    title: [ '&eRégió Név', '&7Kérjük, add meg a régió új nevét!' ]
+    actionbar: '&eKérjük, írd be a régió új nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eKérjük, írd be a régió új nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+  2:
+    title: [ '&eRégió Megjelenítendő Név', '&7Kérjük, add meg a régió új megjelenítendő nevét!' ]
+    actionbar: '&eKérjük, írd be a régió új megjelenítendő nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eKérjük, írd be a régió új megjelenítendő nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+  3:
+    title: [ '&eRégió Leírás', '&7Kérjük, add meg a régió új leírását!' ]
+    actionbar: '&eKérjük, írd be a régió új leírását! &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eKérjük, írd be a régió új leírását! &7Írd be a ''cancel'' szót a megszakításhoz'
+  4:
+    title: [ '&eTulajdonjog Átadása', '&7Kérjük, add meg a régió új tulajdonosának nevét!' ]
+    actionbar: '&eKérjük, írd be a régió új tulajdonosának nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eKérjük, írd be a régió új tulajdonosának nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+  5:
+    title: [ '&eJátékos Kitiltása', '&7Kérjük, add meg a kitiltani kívánt játékos nevét!' ]
+    actionbar: '&eKérjük, írd be a kitiltani kívánt játékos nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eKérjük, írd be a kitiltani kívánt játékos nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+  6:
+    title: [ '&eJátékos Meghívása', '&7Kérjük, add meg a meghívni kívánt játékos nevét!' ]
+    actionbar: '&eKérjük, írd be a meghívni kívánt játékos nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eKérjük, írd be a meghívni kívánt játékos nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+  7:
+    title: [ '&eAlrégio Név', '&7Kérjük, add meg az alrégio új nevét!' ]
+    actionbar: '&eKérjük, írd be az alrégio új nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eKérjük, írd be az alrégio új nevét! &7Írd be a ''cancel'' szót a megszakításhoz'
+  10:
+    title: [ '&eBérleti Ár', '&7Kérjük, add meg a bérleti árat!' ]
+    actionbar: '&eAdd meg a bérleti árat &7(&c{min-price} &7- &c{max-price}&7). &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eAdd meg a bérleti árat &7(&c{min-price} &7- &c{max-price}&7). &7Írd be a ''cancel'' szót a megszakításhoz'
+  11:
+    title: [ '&eBérleti Időtartam', '&7Kérjük, add meg a bérleti időtartamot napokban!' ]
+    actionbar: '&eAdd meg a bérleti időtartamot napokban &7(&c{min-days} &7- &c{max-days}&7). &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eAdd meg a bérleti időtartamot napokban &7(&c{min-days} &7- &c{max-days}&7). &7Írd be a ''cancel'' szót a megszakításhoz'
+  12:
+    title: [ '&eKaució', '&7Kérjük, add meg a kauciót!' ]
+    actionbar: '&eAdd meg a kauciót &7(&c{min-deposit} &7- &c{max-deposit}&7). &7Írd be a ''cancel'' szót a megszakításhoz'
+    chat: '&eAdd meg a kauciót &7(&c{min-deposit} &7- &c{max-deposit}&7). &7Írd be a ''cancel'' szót a megszakításhoz'
+  13:
+    title: [ '&eKitiltási Értesítés', '&7Kérjük, add meg az értesítési napokat!' ]
+    actionbar: '&eAdd meg az értesítési napokat!'
+    chat: '&eAdd meg az értesítési napokat!'
 formatters:
   date-format: dd/M/yyyy hh:mm a
   date: '{date} &7({time-ago} ezelőtt)'
@@ -760,6 +847,10 @@ flags-info:
     description:
       - '&7Engedélyezed a játékosoknak a mobok spawnolását spawn tojásokkal?'
     type: ZOMBIE_SPAWN_EGG
+  throw-eggs:
+    description:
+      - '&7Engedélyezed a játékosoknak a tojások dobását?'
+    type: EGG
 
   passive-entity-spawn:
     description:

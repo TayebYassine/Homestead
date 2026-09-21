@@ -1,5 +1,6 @@
 package me.tayebyassine.homestead.resources.files;
 
+import me.tayebyassine.homestead.models.War;
 import me.tayebyassine.homestead.resources.ResourceFile;
 
 import java.io.File;
@@ -61,8 +62,11 @@ public final class LanguageFile extends ResourceFile {
      *
      * @return war declaration message lines, never {@code null}
      */
-    public List<String> getWarDeclarationMessages() {
-        return getStringList("common.war_declaration");
+    public List<String> getWarDeclarationMessages(War.WagerType type) {
+        return switch (type) {
+            case MONEY -> getStringList("common.war_declaration.money");
+            case OWNERSHIP -> getStringList("common.war_declaration.ownership");
+        };
     }
 
     /**
