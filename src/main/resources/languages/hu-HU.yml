@@ -436,7 +436,7 @@ commands:
     14: '{__prefix__} &cÉrvénytelen háborúnév.'
     15: '{__prefix__} &cA régió nincs háborúban.'
     16: '{__prefix__} &7Megadtad magad. Elvesztetted a háborút.'
-    17: '{__prefix__} &7Régiók: &2{regions}&7, Nyeremény: &c{prize}'
+    17: '{__prefix__} &7Régiók: &2{0}&7, Nyeremény: &c{1}'
   withdraw:
     0: '{__prefix__} &cKérjük, add meg a kivenni kívánt összeget, vagy használd az ''all'' parancsot az összes megtakarítás kivételéhez.'
     1: '{__prefix__} &cA gazdasági integráció le van tiltva.'

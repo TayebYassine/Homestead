@@ -438,7 +438,7 @@ commands:
     14: '{__prefix__} &cNombre de guerra inválido.'
     15: '{__prefix__} &cLa región no está en una guerra.'
     16: '{__prefix__} &7Te has rendido. Has perdido la guerra.'
-    17: '{__prefix__} &7Regiones: &2{regions}&7, Premio: &c{prize}'
+    17: '{__prefix__} &7Regiones: &2{0}&7, Premio: &c{1}'
   withdraw:
     0: '{__prefix__} &cPor favor proporciona la cantidad a retirar, o usa ''all'' para retirar todos los ahorros.'
     1: '{__prefix__} &cLa integración económica está desactivada.'

@@ -473,7 +473,7 @@ commands:
     14: "{__prefix__} &cInvalid war name."
     15: "{__prefix__} &cThe region is not in a war."
     16: "{__prefix__} &7You have surrendered. You have lost the war."
-    17: "{__prefix__} &7Regions: &2{regions}&7, Prize: &c{prize}"
+    17: "{__prefix__} &7Regions: &2{0}&7, Prize: &c{1}"
     18: "{__prefix__} &cKills to win must be a valid positive integer."
     19: "{__prefix__} &cTimeout must be a valid non-negative integer."
     20: "{__prefix__} &cOwnership wars are currently disabled."
