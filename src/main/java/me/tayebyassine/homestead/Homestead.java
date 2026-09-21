@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
  */
 public class Homestead extends JavaPlugin {
 
-    private static final String VERSION = "6.0.0.0-26w37c";
+    private static final String VERSION = "6.0.0.0-rc-1";
     private static final boolean SNAPSHOT = true;
     private static final List<String> MC_VERSIONS = List.of("26.1", "26.1.1", "26.1.2", "26.2", "26.3");
 
