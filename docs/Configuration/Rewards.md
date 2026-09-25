@@ -1,19 +1,27 @@
 # Rewards
 
-The rewards system gives players bonus chunks and sub-areas based on community engagement and playtime. Rewards stack on top of base limits from [Ranks & Limits](Ranks and Limits.md).
+The rewards system hands players bonus chunks and sub-areas in exchange for community engagement and playtime. It runs on top of the base limits from [Ranks & Limits](Ranks%20and%20Limits.md), so an active region can grow well beyond what any rank allows on its own. Bonuses from [leveling](Leveling%20and%20XP.md) stack with these as well.
 
-## Example Calculation
+Rewards are configured in `regions.yml`. First, make sure the system is switched on:
 
-| Source | Chunks |
-|:-------|:------:|
-| Base limit (default rank) | 4 |
-| 3 trusted members (2 each) | +6 |
-| 10 hours playtime | +4 |
-| **Total** | **14** |
+```yaml
+rewards:
+  enabled: true
+```
+
+- **true** (default): Trusted members and playtime award bonus chunks and sub-areas.
+- **false**: Rewards are off; players keep only their base limits.
+
+Here is an example calculation for a default-rank player:
+
+- Base limit (default rank): **4** chunks
+- 3 trusted members × 2 chunks each: **+6** chunks
+- 12 hours of playtime (12-hour tier): **+4** chunks
+- **Total: 14 chunks**
 
 ## Member Rewards
 
-Region owners get bonus chunks for each trusted member they add.
+Region owners get bonus chunks for each trusted member they add, which encourages inviting friends rather than hoarding land:
 
 ```yaml
 rewards:
@@ -22,64 +30,65 @@ rewards:
     subareas: 1   # Bonus sub-areas per member
 ```
 
-**Examples:**
+With the default values:
 
-| Members | Chunks Bonus | Sub-Areas Bonus |
-|:-------:|:------------:|:---------------:|
-| 3 | +6 | +3 |
-| 5 | +10 | +5 |
-| 10 | +20 | +10 |
+- **3 members**: +6 chunks, +3 sub-areas
+- **5 members**: +10 chunks, +5 sub-areas
+- **10 members**: +20 chunks, +10 sub-areas
 
-!!! warning "Dynamic"
-
-    If you untrust a player, you lose those reward chunks. Rewards go to the region **owner**, not the members.
+Member bonuses grow linearly with no cap, so raise or lower `chunks` and `subareas` if the defaults scale too quickly for your server's economy.
 
 ## Playtime Rewards
 
-The longer a player is active, the more bonus chunks they earn. The highest qualifying tier is used — **tiers do not stack**.
+The longer a player is active, the more bonus chunks they earn. The highest qualifying tier is used; the playtime tiers themselves do not stack with each other, though they do combine with member rewards.
 
 ```yaml
 rewards:
   by-playtime:
     - minutes: 30
+      hours: 0
+      days: 0
       chunks: 1
       subareas: 1
-    - hours: 3
+    - minutes: 0
+      hours: 3
+      days: 0
       chunks: 2
       subareas: 2
-    - hours: 12
+    - minutes: 0
+      hours: 12
+      days: 0
       chunks: 4
       subareas: 3
-    - days: 1
+    - minutes: 0
+      hours: 0
+      days: 1
       chunks: 6
       subareas: 4
-    - days: 3
+    - minutes: 0
+      hours: 0
+      days: 3
       chunks: 8
       subareas: 6
-    - days: 7
+    - minutes: 0
+      hours: 0
+      days: 7
       chunks: 10
       subareas: 8
 ```
+
+The `minutes`, `hours`, and `days` fields are additive within a single tier, so a tier can mix units: `days: 1` together with `hours: 12` for a threshold of one and a half days.
 
 ### How Tiers Work
 
 If a player has **7 hours** of playtime:
 
-- :material-check: Qualifies for 30 min tier
-- :material-check: Qualifies for 3 hour tier
-- :material-close: Does NOT qualify for 12 hour tier yet
-- **Gets**: 2 chunks (from the 3 hour tier — highest qualifying)
+- :material-check: Qualifies for the 30-minute tier
+- :material-check: Qualifies for the 3-hour tier
+- :material-close: Does not yet qualify for the 12-hour tier
+- **Gets**: 2 chunks, from the 3-hour tier (the highest qualifying tier)
 
 !!! tip "Tier Design"
 
-    Make sure each tier gives **more** than the previous one. Rewards only increase as playtime grows.
+    Make sure each tier gives **more** than the previous one. Rewards only increase as playtime grows, so a smaller later tier would never be reached.
 
-## Best Practices
-
-| Server Size | Recommended Max Chunks |
-|:------------|:----------------------:|
-| Small | 30–50 |
-| Medium | 20–40 |
-| Large | 15–30 |
-
-Balance your base limits, member rewards, and playtime tiers to prevent players from claiming unreasonable amounts of the map.

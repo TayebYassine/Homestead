@@ -1,33 +1,38 @@
 # Disabled Flags
 
-Disabled flags cannot be modified by players or operators — they are forced to their default values from `flags.yml`.
+Disabled flags are locked so that neither players nor operators can change them. Homestead forces them back to their default values from `flags.yml`, which protects gameplay-critical rules from accidental edits, for example, keeping a flag pinned no matter what anyone runs in chat.
+
+Disabling a flag does not remove it; it simply stops the state from being toggled through the normal flag commands or GUI. A flag can still be Allow or Deny while disabled, depending on the default set in `flags.yml`.
 
 ## Configuration
 
-In `flags.yml`:
+List the flags you want to lock under `disabled-flags` in `flags.yml`:
 
 ```yaml
+# In flags.yml
 disabled-flags:
-  - "use-bells"
+  - "player-glowing"
   - "take-fall-damage"
-  - "wither-damage"
-  - "explosion-damage"
+```
+
+If you do not want any flags disabled, use an empty list:
+
+```yaml
+disabled-flags: []
 ```
 
 ## Overriding After Disabling
 
-If some players already changed a flag's state before you disabled it, use the flagsoverride command:
+Disabling a flag does not rewrite regions that already changed it. If some regions were modified before you disabled the flag, force the intended state everywhere with:
 
 ```
-/hsadmin flagsoverride [global/world/member] [flag] (allow/deny)
-/hsadmin flagsoverride member [player] [flag] (allow/deny)
-```
-
-**Examples:**
-```
-/hsadmin flagsoverride global pvp deny
-/hsadmin flagsoverride world fire-spread allow
-/hsadmin flagsoverride member Steve break-blocks allow
+/hsadmin overrideflag [global/world/member] [flag] (allow/deny)
+/hsadmin overrideflag member [player] [flag] (allow/deny)
 ```
 
 This overrides the flag for all regions at once.
+
+!!! warning "Override After Every Change"
+
+    Whenever you add a flag to `disabled-flags`, run the override command so existing regions snap to the intended state. New regions pick up the default automatically.
+

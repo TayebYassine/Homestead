@@ -1,35 +1,49 @@
-# Contribution Guidelines  
+# Contribution Guidelines
 
-Thank you for your interest in contributing to Homestead! To maintain consistency and quality, please follow these rules when contributing.  
+Thank you for your interest in contributing to Homestead! Whether you are fixing a bug, improving the documentation, or adding a feature, your help keeps the project moving. To keep the codebase consistent and reviews smooth, please follow these guidelines when contributing.
 
-## Code Style & Conventions  
+---
 
-### 1. **Java Coding Standards**  
-- Use **4 tabs** for indentation.  
-- Use **[K&R (Kernighan & Ritchie)](https://en.wikipedia.org/wiki/Indentation_style#K&R) braces style**.
+## Code Style & Conventions
 
-### 2. **Spacing & Formatting**  
-- Use spaces around operators (`a = b + c`, not `a=b+c`).  
-- Put a space after `if`, `for`, `while`, etc. (`if (condition)`).  
-- Keep one blank line between methods and logical code blocks.  
+Homestead follows a small, consistent coding style. Matching it keeps diffs readable and lets reviewers focus on behavior instead of formatting.
 
-## Pull Request (PR) Guidelines  
+### Java Coding Standards
 
-### **Before Submitting a PR:**  
-1. **Fork & Sync**  
-   - Fork the repo and sync with the latest `main` branch. In case there is a development branch (e.g. `dev-5.1.0.0`, `dev-4.3.0`), fork that branch instead of the main one.  
+- Indent with **4 spaces** per level.
+- Use the **[K&R (Kernighan & Ritchie)](https://en.wikipedia.org/wiki/Indentation_style#K&R) brace style**: open the brace on the same line as the statement, and close it on its own line.
 
-2. **Code Quality Checks**  
-   - Ensure your code follows the style guide.  
-   - Run tests on your Minecraft testing server.  
+### Spacing & Formatting
 
-3. **Commit Messages**  
-   - Follow **[Conventional Commits](https://www.conventionalcommits.org/)**.  
-   - Keep commits **small and logical** (avoid "fixed stuff" messages).  
+- Put spaces around operators (`a = b + c`, not `a=b+c`).
+- Put a space after keywords such as `if`, `for`, and `while` (`if (condition)`).
+- Keep one blank line between methods and between logical blocks of code.
 
-### **PR Submission:**  
-- Provide a **clear title**.  
-- Add a **detailed description**:  
-  - What changes were made?  
-  - Why were they needed?  
-  - Link related issues (optional).
+---
+
+## Pull Request (PR) Guidelines
+
+Every pull request goes through the same process: prepare a branch, check your work, then describe it clearly.
+
+### Before Submitting a PR
+
+1. **Fork & Sync**
+   - Fork the repository and sync your fork with the latest `main` branch. If a development branch exists (for example, `dev-5.1.0.0` or `dev-4.3.0`), fork that branch instead of `main` and base your changes on it.
+
+2. **Code Quality Checks**
+   - Ensure your code follows the style guide above.
+   - Run your changes on a Minecraft testing server to confirm they behave as expected.
+
+3. **Commit Messages**
+   - Follow **[Conventional Commits](https://www.conventionalcommits.org/)** so the history stays readable.
+   - Keep commits **small and logical** (avoid vague messages such as "fixed stuff").
+
+### PR Submission
+
+- Provide a **clear title** that summarizes the change.
+- Add a **detailed description** covering:
+  - What changes were made.
+  - Why they were needed.
+  - Related issues (optional links).
+
+Questions about the process? Ask on the [Discord server](https://discord.gg/uh7gqDY6sz) or open a [GitHub issue](https://github.com/TayebYassine/Homestead/issues).

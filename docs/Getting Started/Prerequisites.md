@@ -2,39 +2,68 @@
 
 ## Server Software
 
-Homestead supports all major server software built on the Bukkit/Paper API:
+Homestead supports all major server software built on the [Bukkit](https://github.com/Bukkit) API:
 
-| Software | Java | Homestead Versions |
-|:--------:|:----:|:------------------:|
-| Paper 1.21.10+ | 21 / 25 | 5.2.0.0+ |
-| Purpur 1.21.10+ | 21 / 25 | 5.2.0.0+ |
-| Spigot 1.21.10+ | 21 / 25 | 5.2.0.0+ |
-| Folia 1.21.10+ | 21 / 25 | 5.2.0.0+ |
+- [Paper](https://papermc.io/downloads/paper)
+- [Purpur](https://purpurmc.org/download/purpur)
+- [Spigot](https://getbukkit.org/download/spigot)
+- [Folia](https://papermc.io/downloads/folia)
 
-!!! warning "Older Versions"
+All four run Minecraft versions **26.1** through **26.3**, require **Java 25**, and are supported by Homestead **6.x+**.
 
-    For servers running Minecraft 1.21 to 1.21.8, use Homestead 4.2.0 or earlier.
-    For 1.21.9, use Homestead 4.3.0 – 5.1.0.1.
+!!! warning "Unsupported Server Software"
+
+    If you are using software other than **Paper**, **Purpur**, **Spigot**, or **Folia**, there is a high chance that Homestead will not work. Homestead may be compatible with **Pufferfish**, **Leaves**, and **UniverseSpigot**, but the four listed above are the only software verified and tested by the developers.
+
+---
 
 ## Dependencies
 
-### Required
+Homestead does not handle economy or permissions itself. Instead, it uses a bridge plugin ([Vault](https://www.spigotmc.org/resources/34315/) or a modern alternative) to connect to the economy and permission services provided by other plugins. The bridge must be installed on your server even if you would rather not use economy features or you are using static limits.
 
-- **Vault** — [SpigotMC](https://www.spigotmc.org/resources/34315/) (for economy and permission support)
+The sections below describe which bridge to use with each server software and list the service providers that have been verified and tested with it.
 
-### Optional (Alternative to Vault)
+### Spigot
 
-- **ServiceIO** — [Modrinth](https://modrinth.com/plugin/service-io) (recommended for Paper/Purpur, lighter than Vault)
+Spigot is one of the oldest Minecraft server software options, but it lacks many of the performance improvements found in Paper. We recommend PaperMC instead. If you prefer Spigot, Homestead supports the API from **26.1** up to **26.3**.
 
-### Folia Users
+Spigot uses Vault as its bridge. The following service providers are verified with Vault on Spigot:
 
-- **VaultUnlocked** — [Modrinth](https://modrinth.com/plugin/vaultunlocked/version/2.16.0) v2.16.0+ (Folia-compatible Vault replacement)
+- **Economy**: [EssentialsX](https://essentialsx.net/), [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked)
+- **Permissions**: [LuckPerms](https://luckperms.net/)
 
-### Recommended Plugins
+### PaperMC / Purpur
 
-| Plugin | Purpose |
-|--------|---------|
-| [LuckPerms](https://luckperms.net) | Permission management for ranks & limits |
-| [PlaceholderAPI](https://www.spigotmc.org/resources/6245/) | Display Homestead data in chat, tab, scoreboards |
-| [dynmap](https://www.spigotmc.org/resources/274/) / [BlueMap](https://bluemap.bluecolored.de/) / [Squaremap](https://modrinth.com/plugin/squaremap) / [Pl3xMap](https://modrinth.com/plugin/pl3xmap) | Web map visualization of claimed regions |
-| [EssentialsX](https://www.spigotmc.org/resources/9089/) or [CMI](https://www.spigotmc.org/resources/3742/) | Economy service provider |
+PaperMC is the modern, high-performance, and more advanced Minecraft server software. Homestead supports the API from **26.1** up to **26.3**.
+
+Paper and Purpur can use Vault as well as the modern alternatives described in the tip below. Verified service providers for each bridge:
+
+- **Vault**
+    - **Economy**: [EssentialsX](https://essentialsx.net/), [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked)
+    - **Permissions**: [LuckPerms](https://luckperms.net/)
+- **VaultUnlocked**
+    - **Economy**: [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked)
+    - **Permissions**: none verified
+- **ServiceIO**
+    - **Economy**: [EssentialsX](https://essentialsx.net/), [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked)
+    - **Permissions**: [LuckPerms](https://luckperms.net/)
+
+!!! tip "Alternative to Legacy Vault"
+
+    The original Vault plugin has been outdated for over 6 years but may still work. You can use [VaultUnlocked](https://www.spigotmc.org/resources/117277/) or [ServiceIO](https://modrinth.com/plugin/service-io) instead.
+
+### Folia
+
+Folia is a fork of PaperMC that introduces region-based multithreading. It is significantly more performant than PaperMC, but it lacks support for many plugins. Luckily, Homestead supports Folia, with API support from **26.1** up to **26.3**.
+
+On Folia, Homestead requires [VaultUnlocked](https://www.spigotmc.org/resources/117277/) or [ServiceIO](https://modrinth.com/plugin/service-io) as its bridge to economy and permission services. One of the two must be installed on your server, even if you would rather not use economy features or you are using static limits.
+
+Verified service providers for each bridge on Folia:
+
+- **VaultUnlocked**
+    - **Economy**: [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked)
+    - **Permissions**: none verified
+- **ServiceIO**
+    - **Economy**: [EssentialsX](https://essentialsx.net/), [iConomyUnlocked](https://modrinth.com/plugin/iconomyunlocked)
+    - **Permissions**: [LuckPerms](https://luckperms.net/)
+

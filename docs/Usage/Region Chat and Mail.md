@@ -2,21 +2,26 @@
 
 Communication features let region members stay connected.
 
+---
+
 ## Region Chat
 
-Talk privately with all region members. Messages are only visible to the region's trusted members.
+Talk privately with all region members. Messages are only visible to the region's trusted members (and the owner).
 
 ```
 /region chat [message]
 ```
 
 **Examples:**
+
 ```
 /region chat                # Toggle region chat mode on/off
 /region chat Hey everyone!  # Send a single message in region chat
 ```
 
-When in region chat mode, all your messages go to region chat instead of global chat.
+When region chat mode is on, every message you type is sent to the region chat instead of global chat. Run `/region chat` again with no message to turn it off.
+
+MiniMessage formatting tags are not allowed in region chat (or mail): plain text with legacy color codes only.
 
 ### Configuration
 
@@ -25,20 +30,27 @@ When in region chat mode, all your messages go to region chat instead of global 
 log-private-chat: true  # Log region chat to console
 ```
 
-Region chat can also be forwarded to Discord via webhook.
+When `log-private-chat` is `true`, every region chat message is also written to the server console for moderation.
+
+Region chat can also be forwarded to Discord via webhook. See [Plugin Integrations](../Advanced/Integrations.md).
+
+---
 
 ## Region Mail
 
-Send messages to all trusted members of a region at once.
+Send a message to all trusted members of a region at once, even when the owner is offline.
 
 ```
 /region mail [region] [message]
 ```
 
 **Example:**
+
 ```
 /region mail MyBase Can you check the farm?
 ```
+
+MiniMessage tags are forbidden here as well. Each player can have at most **10 unread mails** in a region at a time; older ones must be read (cleared) before more can be sent.
 
 ### Reading Mail
 
@@ -48,13 +60,15 @@ Players are notified of unread logs on join:
 &eWelcome back! There are &63 &eunread mails...
 ```
 
+The `{unread-logs}` and `{regions-invited}` placeholders in the welcome message (configured in `regions.yml`) show the count of unread mails and pending invites.
+
 ### Mailing History
 
 ```
-/region logs         # View all region activity logs
+/region logs
 ```
 
-The logs system records all significant actions: member additions, flag changes, bank transactions, bans, and more.
+This opens the region activity log GUI. The logs system records significant actions: member additions, flag changes, bank transactions, bans, claims, sub-area changes, weather/time updates, and more. Mail messages appear here as unread entries until the recipient reads them.
 
 ### Permissions
 
@@ -65,5 +79,6 @@ The logs system records all significant actions: member additions, flag changes,
 
 ### API Events
 
-- `RegionChatEvent` — When a message is sent in region chat
-- `PlayerMailEvent` — When a player receives mail
+- `RegionChatEvent` — fired when a message is sent in region chat (used for Discord forwarding).
+- `PlayerMailEvent` — fired when a player receives mail.
+

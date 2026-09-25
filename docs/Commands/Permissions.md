@@ -1,6 +1,12 @@
 # Permissions
 
+Homestead separates permissions into two layers. **Command permissions** decide which commands a player can run, while **action permissions** decide what they are allowed to do inside regions. Player-facing nodes are allowed for everyone by default; admin nodes are reserved for operators. Any permission plugin can change this. [First Steps](../Getting%20Started/First%20Steps.md) shows a typical LuckPerms setup.
+
+---
+
 ## Command Permissions
+
+A command permission must be held before the command runs at all. Player subcommands check two nodes together: the base `homestead.commands.region` permission and the specific node listed below. Granting `homestead.commands.region` plus `homestead.commands.region.*` covers the entire table, and `/claim` and `/unclaim` have their own separate command nodes.
 
 ### Player Commands
 
@@ -60,13 +66,15 @@
 
 ### Admin Commands
 
+Admin subcommands follow the same two-node pattern with a `homestead.commands.homesteadadmin` base, and they default to operators only. Each command is described on the [Admin Commands](Admin%20Commands.md) page.
+
 | Permission | Command |
 |:-----------|:--------|
 | `homestead.commands.homesteadadmin.*` | All admin commands |
 | `homestead.commands.homesteadadmin.claim` | `/hsadmin claim` |
 | `homestead.commands.homesteadadmin.export` | `/hsadmin export` |
-| `homestead.commands.homesteadadmin.flagsoverride` | `/hsadmin flagsoverride` |
 | `homestead.commands.homesteadadmin.import` | `/hsadmin import` |
+| `homestead.commands.homesteadadmin.overrideflag` | `/hsadmin overrideflag` |
 | `homestead.commands.homesteadadmin.plugin` | `/hsadmin plugin` |
 | `homestead.commands.homesteadadmin.reload` | `/hsadmin reload` |
 | `homestead.commands.homesteadadmin.transfer` | `/hsadmin transfer` |
@@ -74,11 +82,15 @@
 | `homestead.commands.homesteadadmin.updates` | `/hsadmin updates` |
 | `homestead.admin.forceunclaim` | `/forceunclaim` |
 
+---
+
 ## Action Permissions
 
-Action permissions control what players can **do** within regions.
+Action permissions control what players can **do** within regions. They work together with the command permissions above: several subcommands refuse to run without a matching action. `/region visit` also requires `homestead.actions.regions.teleport`, and `/region war` also requires `homestead.actions.regions.war`. A `.*` wildcard grants every node in its group.
 
 ### Region Actions
+
+Permissions for managing a region as a whole: creating and deleting it, chatting, mailing, banking, storage, and wars.
 
 | Permission | Allows |
 |:-----------|:-------|
@@ -100,6 +112,8 @@ Action permissions control what players can **do** within regions.
 
 ### Chunk Actions
 
+These nodes gate claiming and releasing chunks. The `/claim` and `/unclaim` commands check them directly, so they are required alongside the command permissions above.
+
 | Permission | Allows |
 |:-----------|:-------|
 | `homestead.actions.regions.chunks.*` | All chunk actions |
@@ -107,6 +121,8 @@ Action permissions control what players can **do** within regions.
 | `homestead.actions.regions.chunks.unclaim` | Unclaim chunks |
 
 ### Player Management
+
+Controls who can add or remove other players: trusting, banning, and their reversals.
 
 | Permission | Allows |
 |:-----------|:-------|
@@ -117,6 +133,8 @@ Action permissions control what players can **do** within regions.
 | `homestead.actions.regions.players.untrust` | Untrust players |
 
 ### Sub-Area Actions
+
+Each sub-area operation (creating, deleting, resizing, renaming, flag changes, and its player list) has its own node below.
 
 | Permission | Allows |
 |:-----------|:-------|
@@ -134,6 +152,8 @@ Action permissions control what players can **do** within regions.
 
 ### Update Actions
 
+Changing a region's settings is gated separately: name, display name, description, spawn, time, weather, map appearance, and flags.
+
 | Permission | Allows |
 |:-----------|:-------|
 | `homestead.actions.regions.update.*` | All region update actions |
@@ -150,13 +170,20 @@ Action permissions control what players can **do** within regions.
 | `homestead.actions.regions.update.time` | Set region time |
 | `homestead.actions.regions.update.weather` | Set region weather |
 
+---
+
 ## Special Permissions
+
+Two nodes sit outside the normal command and action groups.
 
 | Permission | Effect |
 |:-----------|:-------|
-| `homestead.operator` | :material-alert: **Full operator access** — manage any region, bypass all restrictions |
+| `homestead.operator` | :material-alert: **Full operator access**. Manage any region, bypass all restrictions |
 | `homestead.group.[name]` | Assign a specific limits group (when using `permissions` method) |
 
-!!! danger "Operator Permission"
+The `homestead.group.[name]` node assigns a player to a limits group when the `permissions` method is used in `limits.yml`. See [Ranks & Limits](../Configuration/Ranks%20and%20Limits.md).
 
-    `homestead.operator` grants complete access to all regions. Only give this to trusted admins.
+!!! warning "Operator Permission"
+
+    `homestead.operator` grants complete access to all regions. Only give it to trusted admins.
+

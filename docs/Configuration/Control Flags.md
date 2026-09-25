@@ -1,10 +1,12 @@
 # Control Flags
 
-Control flags determine what **trusted members** can manage in your region. When a player first becomes a member, all control flags are in Deny state.
+Control flags decide what **trusted members** can manage in your region. When a player first joins as a member, every control flag starts in the Deny state, so trust alone grants nothing. The owner hands out each responsibility individually. This least-privilege default means you can, for example, let a builder claim new chunks without also giving them access to the region bank.
+
+Because control flags only ever apply to trusted members, they cannot be set globally the way player and world flags can.
 
 !!! tip "GUI Only"
 
-    Control flags are managed through the Region Menu GUI, not via commands. Open the Region Menu → Players Management → Trusted Players → Right-click a player head.
+    Control flags are managed through the Region Menu GUI, not via commands. Open the Region Menu → Players Management → Trusted Players → right-click a player head.
 
 | Flag | Bit | Default | What It Allows |
 |:-----|:---:|:-------:|:---------------|
@@ -26,3 +28,13 @@ Control flags determine what **trusted members** can manage in your region. When
 | `manage-logs` | 32768 | Deny | View and manage region logs |
 | `kick-players` | 65536 | Deny | Kick players from the region |
 | `set-weather-and-time` | 131072 | Deny | Change region weather and time |
+
+## Granting Control Flags
+
+1. Open the Region Menu.
+2. Click **Players Management**.
+3. Click **Trusted Players**.
+4. Right-click the member's head and toggle the flags they should have.
+
+Anything left in Deny stays unavailable to that member, and you can revoke a flag the same way you granted it. Common splits include giving a market manager `deposit-money` and `withdraw-money` without `trust-players`, or letting a builder claim land with `claim-chunks` while keeping `rename-region` with the owner.
+

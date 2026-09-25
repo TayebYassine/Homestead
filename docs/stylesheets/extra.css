@@ -1,5 +1,6 @@
 :root {
-    --md-admonition-icon--donating: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/></svg>')
+    --md-admonition-icon--donating: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/></svg>');
+    --md-content-width: 100%;
 }
 
 .md-typeset .admonition.donating,
@@ -53,6 +54,19 @@
     --md-code-hl-punctuation-color: #abb2bf;
     --md-code-hl-constant-color: #d19a66;
     --md-code-hl-generic-color: #e06c75;
+}
+
+/* Expand content area to fill viewport width */
+.md-grid {
+    max-width: 100% !important;
+}
+
+.md-content {
+    max-width: 100% !important;
+}
+
+.md-typeset {
+    max-width: 100% !important;
 }
 
 .highlight .linenos {

@@ -4,6 +4,8 @@
 
     Experimental features are newly added and may contain bugs. They are not recommended for active production servers.
 
+---
+
 ## Enabling Experimental Features
 
 ```yaml
@@ -12,12 +14,14 @@ experimental:
   enabled: true
 ```
 
+---
+
 ## Current Experimental Features
 
-| Version | Feature | Description |
-|:-------:|:--------|:------------|
-| 3.5.3 | Adjacent Chunk Connection | Pl3xMap and Squaremap chunk connection visualization |
-| 4.1.3 | Wars & Clashes | Region war system with PvP and economic stakes |
+- **Adjacent Chunk Connection** (since 3.5.3) — Pl3xMap and Squaremap chunk connection visualization
+- **Wars & Clashes** (since 4.1.3) — Region war system with PvP and economic stakes; see [Wars](../Usage/Wars.md)
+
+---
 
 ## Notes
 

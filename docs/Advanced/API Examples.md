@@ -1,10 +1,16 @@
 # API Examples
 
+Practical snippets for the most common API tasks. All examples use the published API coordinates from [Developer API](API.md).
+
 !!! warning "Model ID Change"
 
     As of release 5.2.0.0, all model IDs use [Twitter Snowflake IDs](https://en.wikipedia.org/wiki/Snowflake_ID) instead of UUID v4.
 
+---
+
 ## Creating a Region
+
+Create a new region owned by a player:
 
 ```java
 import org.bukkit.Bukkit;
@@ -16,7 +22,11 @@ Player player = Bukkit.getPlayer("TFA_Gaming");
 Region region = RegionManager.createRegion("ExampleRegion", player);
 ```
 
+---
+
 ## Fetching a Region
+
+Look up a region by name (case-insensitive) or by its numeric ID:
 
 ```java
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
@@ -29,10 +39,15 @@ Region region = RegionManager.findRegion("ExampleRegion");
 Region region = RegionManager.findRegion(309031393541763072L);
 ```
 
+---
+
 ## Deleting a Region
+
+Delete a region by ID after confirming it exists:
 
 ```java
 import tfagaming.projects.minecraft.homestead.managers.RegionManager;
+import tfagaming.projects.minecraft.homestead.models.Region;
 
 long regionId = 309031393541763072L;
 
@@ -42,7 +57,11 @@ if (region != null) {
 }
 ```
 
+---
+
 ## Claiming a Chunk
+
+Claim a chunk for a region. The return value is a `ChunkManager.Error`. `null` means success:
 
 ```java
 import org.bukkit.Chunk;
@@ -57,11 +76,17 @@ ChunkManager.Error error = ChunkManager.claimChunk(region.getUniqueId(), chunk);
 if (error == null) {
     // Success
 } else {
-    // Handle error
+    // Handle error (e.g. error == ChunkManager.Error.CHUNK_NOT_ADJACENT_TO_REGION)
 }
 ```
 
+Possible errors: `REGION_NOT_FOUND`, `CHUNK_NOT_FOUND`, `CHUNK_IN_DISABLED_WORLD`, `CHUNK_NOT_ADJACENT_TO_REGION`, `CHUNK_WOULD_SPLIT_REGION`.
+
+---
+
 ## Unclaiming a Chunk
+
+Remove a chunk from a region:
 
 ```java
 import org.bukkit.Chunk;
@@ -78,7 +103,11 @@ if (error == null) {
 }
 ```
 
+---
+
 ## Managing Members
+
+Invite players, revoke invites, and check invitation status:
 
 ```java
 import org.bukkit.Bukkit;
@@ -93,22 +122,26 @@ Region region = ...;
 InviteManager.invitePlayer(region, target);
 
 // Delete invites of a player
-InviteManager.deleteInvitesOfPlayer(player);
+InviteManager.deleteInvitesOfPlayer(target);
 
 // Delete invites of a region
 InviteManager.deleteInvitesOfRegion(region);
 
 // Get invites of a player
-InviteManager.getInvitesOfPlayer(player);
+InviteManager.getInvitesOfPlayer(target);
 
 // Get invites of a region
 InviteManager.getInvitesOfRegion(region);
 
 // Check if invited
-boolean invited = InviteManager.isInvited(region, player);
+boolean invited = InviteManager.isInvited(region, target);
 ```
 
+---
+
 ## Working with Flags
+
+Read and modify bitwise flag values on a region:
 
 ```java
 import tfagaming.projects.minecraft.homestead.flags.*;
@@ -121,7 +154,7 @@ long playerFlags = region.getPlayerFlags();
 long worldFlags = region.getWorldFlags();
 
 // Get all flag names
-List<String> flagNames = PlayerFlags.getAll();
+List<String> flagNames = PlayerFlags.getFlags();
 
 // Get a specific flag value
 long flag = PlayerFlags.valueOf("break-blocks");
@@ -146,7 +179,11 @@ region.setPlayerFlags(newFlags);
 
     Each flag class (`PlayerFlags`, `WorldFlags`, `ControlFlags`) has its own values. Don't use `WorldFlags` values for player flags.
 
+---
+
 ## Listening to Events
+
+Register a listener to react to Homestead events:
 
 ```java
 import org.bukkit.event.EventHandler;
@@ -174,14 +211,13 @@ public class HomesteadListener implements Listener {
 
     @EventHandler
     public void onBankDeposit(BankDepositEvent event) {
-        event.getPlayer();
         event.getRegion();
         event.getAmount();
     }
 
     @EventHandler
     public void onRegionChat(RegionChatEvent event) {
-        event.getSender();
+        event.getPlayer();
         event.getMessage();
         event.getRegion();
     }
@@ -195,3 +231,4 @@ public void onEnable() {
     Bukkit.getPluginManager().registerEvents(new HomesteadListener(), this);
 }
 ```
+

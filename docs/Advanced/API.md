@@ -1,6 +1,8 @@
 # Developer API
 
-Homestead provides a public API for developers to integrate with the plugin. You can manage regions, chunks, members, flags, and more programmatically.
+Homestead provides a public API for developers to integrate with the plugin. You can manage regions, chunks, members, flags, and more programmatically, and listen to events fired for every major action.
+
+---
 
 ## Installation
 
@@ -13,9 +15,9 @@ Homestead provides a public API for developers to integrate with the plugin. You
 </repository>
 
 <dependency>
-    <groupId>tfagaming.projects.minecraft.homestead</groupId>
+    <groupId>me.tayebyassine.homestead</groupId>
     <artifactId>homestead</artifactId>
-    <version>5.2.0.0</version>
+    <version>6.0.0.0</version>
     <classifier>api</classifier>
     <scope>provided</scope>
 </dependency>
@@ -29,9 +31,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly("tfagaming.projects.minecraft.homestead:homestead:5.2.0.0:api")
+    compileOnly("me.tayebyassine.homestead:homestead:6.0.0.0:api")
 }
 ```
+
+---
 
 ## JavaDoc
 
@@ -42,9 +46,20 @@ Full API documentation is available:
 - [Managers Package](https://tayebyassine.github.io/Homestead/javadoc/tfagaming/projects/minecraft/homestead/managers/package-summary.html)
 - [Models Package](https://tayebyassine.github.io/Homestead/javadoc/tfagaming/projects/minecraft/homestead/models/package-summary.html)
 
+---
+
 ## API Events
 
-Homestead fires events for many actions. Listen to them like any Bukkit event.
+Homestead fires events for many actions. Listen to them like any Bukkit event by implementing `Listener` and annotating handler methods with `@EventHandler`.
+
+Several lifecycle events are **cancellable**. Call `event.setCancelled(true)` to abort the action before it completes:
+
+- `RegionCreateEvent`
+- `RegionDeleteEvent`
+- `ChunkClaimEvent`
+- `ChunkUnclaimEvent`
+- `BanPlayerEvent`
+- `UnbanPlayerEvent`
 
 ### Region Lifecycle
 
@@ -109,6 +124,9 @@ Homestead fires events for many actions. Listen to them like any Bukkit event.
 | `RegionLocationUpdateEvent` | Region location data is updated |
 | `RegionOwnerUpdateEvent` | Region ownership is transferred |
 
+---
+
 ## API Usage Examples
 
-See [API Examples](API Examples.md) for code examples.
+See [API Examples](API%20Examples.md) for code examples covering regions, chunks, members, flags, and events.
+

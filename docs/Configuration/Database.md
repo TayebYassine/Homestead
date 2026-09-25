@@ -1,19 +1,17 @@
 # Database
 
-A database stores all region data — claims, members, bans, logs, and settings. Homestead includes a built-in caching system that improves performance for region lookups.
+Every region Homestead knows about (claims, members, bans, logs, and settings) is stored in a database. Homestead also keeps a built-in cache in memory so region lookups are fast and the disk is not hit for every command. Two things therefore matter for performance and reliability: which provider you use, and how often the cache is flushed.
 
 ## Supported Providers
 
-| Provider | Recommended For |
-|:---------|:----------------|
-| **SQLite** (default) | Small servers (~100 players), no setup required |
-| **MySQL** | Large servers (~1,000+ players) |
-| **MariaDB** | Large servers (~1,000+ players) |
-| **PostgreSQL** | Large servers (~1,000+ players) |
+- **SQLite** (default): Stores everything in a single file on disk. No setup required, and recommended for small to medium servers.
+- **MySQL**: A dedicated database server. Recommended for large servers (roughly 100+ players) or setups that already run MySQL.
+- **MariaDB**: A MySQL-compatible alternative with the same configuration format, also recommended for large servers.
+- **PostgreSQL**: Another dedicated option for large servers already invested in the PostgreSQL ecosystem.
 
 ## Configuration
 
-Set the provider in `config.yml`:
+The active provider is chosen in `config.yml`:
 
 ```yaml
 database:
@@ -22,7 +20,7 @@ database:
 
 ### SQLite
 
-The default — no setup needed. Database file is saved to the server directory.
+SQLite is the default and needs nothing beyond a filename. The database file is written to the server's main directory rather than the plugin data folder, which makes backups as simple as copying one file.
 
 ```yaml
 database:
@@ -31,6 +29,8 @@ database:
 ```
 
 ### MySQL / MariaDB / PostgreSQL
+
+These providers suit advanced setups such as large SMPs, where many players generate constant writes or where you want the database hosted separately from the game server. Only the connection block matching `provider` is read, so you can prefill the others without effect.
 
 ```yaml
 database:
@@ -45,33 +45,34 @@ database:
     jdbc_url_parameters: ""    # e.g. "?useSSL=false&serverTimezone=UTC"
 ```
 
+- **`table_prefix`** — Prepended to every Homestead table name. Useful when several plugins share one database.
+- **`jdbc_url_parameters`** — Extra JDBC connection parameters appended to the connection URL. The value must start with `?`.
+
+!!! warning "Keep Credentials Private"
+
+    The `password` field holds a real secret. Restrict access to `config.yml` and never commit it to a public repository.
+
 ## Cache System
 
-Homestead caches all data in memory for fast lookups. Modified data is periodically written back to the database.
+Homestead holds all data in memory and writes changes back to the database on a timer. The timer is controlled by `cache-interval`:
 
 ```yaml
 cache-interval: 30  # Seconds between cache flushes
 ```
 
-**Recommendations:**
+- **Lower values** flush more often, which reduces the amount of data a hard crash can lose but costs more CPU.
+- **Higher values** improve performance at the cost of a slightly larger window of unsaved progress.
 
-| Players | Interval |
-|:--------|:---------|
-| <20 | 30s |
-| 20-50 | 60s |
-| 50-100 | 120-180s |
-| 100+ | 300s |
+If your server has a large player base (or you expect it to grow), raise the interval once to a value that matches your population and leave it there; repeatedly changing it provides no benefit.
 
-## Changing Providers
+Recommended intervals by player count:
 
-To switch databases without losing data:
+- **Fewer than 20 players**: 30 seconds
+- **20–50 players**: 60 seconds
+- **50–100 players**: 120–180 seconds
+- **100+ players**: 300 seconds
 
-1. Configure the **new** provider in `config.yml` (but keep `provider` set to the old one)
-2. Run `/hsadmin reload`
-3. Run `/hsadmin export [new-provider]`
-4. Wait for the export to complete
-5. Stop the server
-6. Update `provider` to the new value in `config.yml`
-7. Start the server
+!!! info "Switching Providers"
 
-Read more: [Database Migration](Database Migration.md)
+    To move your data from one provider to another without losing anything, follow the export and switch procedure in [Database Migration](Database%20Migration.md).
+

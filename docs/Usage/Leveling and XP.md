@@ -1,6 +1,8 @@
 # Leveling & XP
 
-Regions gain experience when members kill mobs inside claimed territory. Leveling up unlocks bonus chunks, member slots, and upkeep reductions.
+Regions gain experience when members kill mobs inside claimed territory. Leveling up unlocks bonus chunks, member slots, sub-area slots, and upkeep reductions.
+
+---
 
 ## Checking Your Region's Level
 
@@ -15,12 +17,18 @@ Shows:
 - XP needed for next level
 - Unlocked rewards
 
+---
+
 ## How XP Works
 
-1. Kill mobs **inside your claimed region**
-2. Different mobs give different XP amounts
-3. XP accumulates toward the next level
-4. Level up and claim your rewards
+1. Kill mobs **inside your claimed region** (the Ender Dragon is the exception — it awards XP regardless of where it is killed).
+2. Different mobs give different XP amounts.
+3. XP accumulates toward the next level.
+4. Level up and claim your rewards.
+
+### XP Timeout
+
+There is a 2-second cooldown between XP gains (configurable as `levels.timeout` in `levels.yml`) to prevent farming by killing multiple entities at once.
 
 ### XP Per Mob
 
@@ -37,13 +45,13 @@ Shows:
 | Cow | 10–20 | Passive |
 | Bat | 1–3 | Ambient |
 
-!!! tip "XP Timeout"
+This is a sample of the full table. Every entity type can be configured in `levels.yml` under `on-kill-entity`.
 
-    There's a 2-second cooldown between XP gains to prevent farming.
+---
 
 ## Level Rewards
 
-Level-up rewards are **cumulative** — you keep all rewards from previous levels.
+Level-up rewards are **cumulative**. You keep all rewards from previous levels. The maximum level is 50.
 
 | Level | Chunks | Members | Sub-Areas | Upkeep Reduction |
 |:-----:|:------:|:-------:|:---------:|:----------------:|
@@ -54,12 +62,23 @@ Level-up rewards are **cumulative** — you keep all rewards from previous level
 | 30 | +4 | +2 | +1 | 30% |
 | 50 | +8 | +6 | +4 | 50% |
 
+Rewards stack: reaching level 15 grants every bonus listed for levels 5, 10, and 15 combined.
+
+---
+
 ## Formula
+
+The XP required to reach the next level follows:
 
 ```
 XP for next level = 5 × level² + 50 × level + 100
 ```
 
+For example, going from level 0 to 1 requires `5(0)² + 50(0) + 100 = 100` XP; from level 1 to 2 requires `5(1)² + 50(1) + 100 = 155` XP.
+
+---
+
 ## Configuration
 
-See [Leveling & XP Configuration](../Configuration/Leveling and XP.md) for full configuration details.
+See [Leveling & XP Configuration](../Configuration/Leveling%20and%20XP.md) for full configuration details, including enabling/disabling the system, adjusting the XP timeout, and customizing per-entity XP values and reward tiers.
+

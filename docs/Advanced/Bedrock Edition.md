@@ -2,6 +2,8 @@
 
 Bedrock (mobile/console) players can use Homestead's full feature set via **BedrockGUI**, which converts all 27 Homestead GUI menus into native Bedrock forms.
 
+---
+
 ## How It Works
 
 1. **Geyser** translates Minecraft Java <-> Bedrock protocol
@@ -9,16 +11,20 @@ Bedrock (mobile/console) players can use Homestead's full feature set via **Bedr
 3. **BedrockGUI** intercepts Homestead's GUI calls and renders them as native Bedrock form modals
 4. **Homestead Addon** maps every Homestead menu (regions, flags, members, sub-areas, etc.) to a Bedrock-compatible form
 
-Java players are unaffected — they continue using the standard chest GUIs.
+Java players are unaffected. They continue using the standard chest GUIs.
+
+---
 
 ## Requirements
 
-| Component | Download |
-|:----------|:---------|
-| **Geyser** | [geysermc.org](https://geysermc.org/) |
-| **Floodgate** | [geysermc.org](https://geysermc.org/) |
-| **BedrockGUI** (Paper) | [SpigotMC](https://www.spigotmc.org/resources/119592/) — `BedrockGUI-Paper-2.0.9.jar` |
-| **Homestead Addon** | [GitHub](https://github.com/pintux98/BedrockGUI/releases) — `BedrockGUI-HomesteadAddon-2.0.9.jar` |
+You need all four components:
+
+- **Geyser** — [geysermc.org](https://geysermc.org/)
+- **Floodgate** — [geysermc.org](https://geysermc.org/)
+- **BedrockGUI** (Paper) — [SpigotMC](https://www.spigotmc.org/resources/119592/), file `BedrockGUI-Paper-2.0.9.jar`
+- **Homestead Addon** — [GitHub Releases](https://github.com/pintux98/BedrockGUI/releases), file `BedrockGUI-HomesteadAddon-2.0.9.jar`
+
+---
 
 ## Installation
 
@@ -42,24 +48,28 @@ Follow the [Geyser setup guide](https://geysermc.org/wiki/). Both Geyser and Flo
 
     Both `BedrockGUI-Paper-2.0.9.jar` **and** `BedrockGUI-HomesteadAddon-2.0.9.jar` must be present.
 
+---
+
 ## What Gets Converted
 
-All 27 Homestead GUI menus are converted to native Bedrock forms:
+All 27 Homestead GUI menus are converted to native Bedrock forms, covering:
 
-| Category | Menus |
-|:---------|:------|
-| Regions | Region list, region settings |
-| Members | Member list, add/remove members |
-| Invites | Pending invites |
-| Bans | Ban list, ban/unban players |
-| Flags | Global flags, world flags, member flags, control flags |
-| Sub-Areas | Sub-area list, create/manage sub-areas |
-| Chunks | Claimed chunks list |
-| Map | Map color picker, map icon picker |
-| Progression | Levels & XP, rewards |
-| Logs | Region activity logs |
-| Rating | Rate a region |
-| Other | Welcome signs, weather/time settings, top regions |
+- **Regions** — region list and region settings
+- **Members** — member list, add/remove members
+- **Invites** — pending invites
+- **Bans** — ban list, ban/unban players
+- **Flags** — global flags, world flags, member flags, control flags
+- **Sub-Areas** — sub-area list, create/manage sub-areas
+- **Chunks** — claimed chunks list
+- **Map** — map color picker, map icon picker
+- **Progression** — levels & XP, rewards
+- **Logs** — region activity logs
+- **Rating** — rate a region
+- **Other** — welcome signs, weather/time settings, top regions
+
+Nothing is lost in translation. Every Homestead feature remains accessible from Bedrock.
+
+---
 
 ## Configuration
 
@@ -75,10 +85,12 @@ integrated-gui: true
 register-actions: true
 ```
 
-| Setting | Default | Description |
-|:--------|:-------:|:------------|
-| `integrated-gui` | `true` | When `true`, Bedrock players see native forms instead of chest GUIs. Set to `false` if you want to build custom forms using the `hs_*` actions. |
-| `register-actions` | `true` | Registers action handlers so custom BedrockGUI menus can trigger Homestead operations. |
+- **integrated-gui**:
+    - **true** (default): Bedrock players see native forms instead of chest GUIs
+    - **false**: Set this if you want to build custom forms using the `hs_*` actions
+- **register-actions**:
+    - **true** (default): Registers action handlers so custom BedrockGUI menus can trigger Homestead operations
+    - **false**: Custom `hs_*` actions are not registered
 
 Reload after changing config:
 
@@ -90,6 +102,8 @@ Reload after changing config:
 
 If `integrated-gui` is disabled and `register-actions` is enabled, you can build custom Bedrock forms that invoke Homestead actions. The addon registers a set of `hs_*` actions accessible from any BedrockGUI menu configuration.
 
+---
+
 ## Commands
 
 | Command | Permission | Description |
@@ -98,9 +112,12 @@ If `integrated-gui` is disabled and `register-actions` is enabled, you can build
 | `/bedrockgui open <menu> [player]` | `bedrockgui.admin` | Open a Bedrock form for a player |
 | `/homesteadaddon` | — | Homestead addon admin command |
 
+---
+
 ## Notes
 
 - Java players continue using standard chest GUIs — only Bedrock players see native forms
 - The addon intercepts `/region` (and aliases: `/rg`, `/hs`, `/homestead`) when they would open a GUI
 - All Homestead features are accessible — nothing is lost in translation
 - For custom menu design, see the [BedrockGUI Web Designer](https://designer.pintux.org/) and [Documentation](https://pintux.gitbook.io/pintux-support/)
+
