@@ -127,6 +127,7 @@ See [Region Chat & Mail](../Usage/Region%20Chat%20and%20Mail.md) for details.
 Sub-areas carve out zones inside a region with their own flags and player lists, useful for shared bases, farms, or shops. Create one from a selection with the [selection tool](../Configuration/Other%20Settings.md#selection-tool), then manage it through the `conf` subcommands below. All of these commands operate on the targeted region.
 
 - `/hs subareas create [name]` — create a sub-area from the current selection
+- `/hs subareas tool` — receive the selection tool
 - `/hs subareas conf [name] delete` — delete a sub-area
 - `/hs subareas conf [name] rename [new-name]` — rename a sub-area
 - `/hs subareas conf [name] resize` — resize the sub-area from the current selection

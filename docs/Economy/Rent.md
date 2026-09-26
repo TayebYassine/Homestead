@@ -20,8 +20,6 @@ Line 3: (Leave empty)
 Line 4: (Leave empty)
 ```
 
-Duration is entered in whole days and must fall within the configured minimum and maximum (see below).
-
 ## Via Command
 
 - `/region rent` — open the rent configuration menu for your target region, where you can set the price, duration, permanent mode, security deposit, notice to vacate, and cancel or end an active rental
