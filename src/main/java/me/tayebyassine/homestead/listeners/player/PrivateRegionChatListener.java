@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 /**
  * Routes chat messages sent by players in a private-region chat session to the region's members
- * only, and fires a {@link me.tayebyassine.homestead.api.events.RegionChatEvent}.
+ * only, and fires a {@link me.tayebyassine.homestead.api.events.communication.RegionChatEvent}.
  */
 public final class PrivateRegionChatListener implements Listener {
     private static void sendMessage(Player player, String path) {
