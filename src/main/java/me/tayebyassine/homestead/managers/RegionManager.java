@@ -338,7 +338,7 @@ public final class RegionManager {
         if (owner != null && owner.isOnline()) receivers.add(owner.getPlayer());
 
         for (Player receiver : receivers) {
-            Messages.send(receiver, Formatter.formatPrivateChat(region.getName(), author.getName(), message));
+            Messages.sendString(receiver, Formatter.formatPrivateChat(region.getName(), author.getName(), message));
         }
 
         if (Resources.<RegionsFile>get(ResourceType.Regions).isLogPrivateChat()) {
