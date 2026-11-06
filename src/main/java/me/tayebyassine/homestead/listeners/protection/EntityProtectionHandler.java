@@ -13,6 +13,7 @@ import me.tayebyassine.homestead.resources.files.FlagsFile;
 import me.tayebyassine.homestead.resources.files.RegionsFile;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Raid;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -160,7 +161,9 @@ public final class EntityProtectionHandler extends ProtectionHandler implements 
         Chunk chunk = location.getChunk();
 
         if (entity instanceof Sheep || entity instanceof Goat || entity instanceof Cow || entity instanceof Villager
-                || entity instanceof Bee || entity instanceof FallingBlock || block.getType().hasGravity()) {
+                || entity instanceof Bee || entity instanceof FallingBlock || block.getType().hasGravity()
+                || (entity instanceof Frog && event.getTo() == Material.FROGSPAWN)
+                || (entity instanceof Turtle && event.getTo() == Material.TURTLE_EGG)) {
             return;
         }
 
