@@ -174,11 +174,12 @@ Changing a region's settings is gated separately: name, display name, descriptio
 
 ## Special Permissions
 
-Two nodes sit outside the normal command and action groups.
+Three nodes sit outside the normal command and action groups.
 
 | Permission | Effect |
 |:-----------|:-------|
 | `homestead.operator` | :material-alert: **Full operator access**. Manage any region, bypass all restrictions |
+| `homestead.admin.bypass.ban` | Enter regions you are banned from, without full operator access |
 | `homestead.group.[name]` | Assign a specific limits group (when using `permissions` method) |
 
 The `homestead.group.[name]` node assigns a player to a limits group when the `permissions` method is used in `limits.yml`. See [Ranks & Limits](../Configuration/Ranks%20and%20Limits.md).

@@ -77,7 +77,7 @@ public final class PlayerRegionEnterAndExitListener implements Listener {
 
             RegionBan ban = BanManager.getBannedPlayer(region, player);
 
-            if (!PlayerUtility.isOperator(player) && ban != null) {
+            if (!PlayerUtility.isOperator(player) && !player.hasPermission("homestead.admin.bypass.ban") && ban != null) {
                 Chunk nearbyChunk = ChunkManager.findNearbyUnclaimedChunk(player);
 
                 if (nearbyChunk != null) {

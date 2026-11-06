@@ -372,5 +372,7 @@ permissions:
       homestead.commands.region.withdraw: true
   homestead.admin.forceunclaim:
     default: op
+  homestead.admin.bypass.ban:
+    default: op
   homestead.operator:
     default: op
