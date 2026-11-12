@@ -22,6 +22,10 @@ flags-configuration:
   # true = Yes, false = No
   allow-all-flags-for-trusted-players: true
 
+  # Hide disabled flags from the flag menus?
+  # true = Hide them (the other flags move up to fill the gaps), false = Show them
+  hide-disabled-flags: false
+
 # ============================================================================
 # DEFAULT FLAG VALUES
 # ============================================================================

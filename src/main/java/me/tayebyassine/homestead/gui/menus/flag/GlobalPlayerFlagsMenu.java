@@ -33,7 +33,7 @@ public final class GlobalPlayerFlagsMenu {
     public GlobalPlayerFlagsMenu(Player player, Region region) {
         List<ItemStack> flagItems = new ArrayList<>();
 
-        for (String flagString : PlayerFlag.getFlags()) {
+        for (String flagString : Resources.<FlagsFile>get(ResourceType.Flags).getMenuFlags(PlayerFlag.getFlags())) {
             boolean value = FlagCalculator.isFlagSet(region.getPlayerFlags(), PlayerFlag.parse(flagString));
             flagItems.add(MenuButtons.getFlagButton(MENU_KEY, 0, flagString, value));
         }
@@ -71,7 +71,7 @@ public final class GlobalPlayerFlagsMenu {
             return;
         }
 
-        String flagString = PlayerFlag.getFlags().get(context.index());
+        String flagString = Resources.<FlagsFile>get(ResourceType.Flags).getMenuFlags(PlayerFlag.getFlags()).get(context.index());
 
         if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
             Messages.send(player, "commands.flags.9");

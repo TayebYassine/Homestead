@@ -34,7 +34,7 @@ public final class MemberControlFlagsMenu {
     public MemberControlFlagsMenu(Player player, Region region, RegionMember member) {
         List<ItemStack> items = new ArrayList<>();
 
-        for (String flagString : ControlFlag.getFlags()) {
+        for (String flagString : Resources.<FlagsFile>get(ResourceType.Flags).getMenuFlags(ControlFlag.getFlags())) {
             boolean value = FlagCalculator.isFlagSet(member.getControlFlags(), ControlFlag.parse(flagString));
             items.add(MenuButtons.getFlagButton(MENU_KEY, 0, flagString, value));
         }
@@ -75,7 +75,7 @@ public final class MemberControlFlagsMenu {
             return;
         }
 
-        String flagString = ControlFlag.getFlags().get(context.index());
+        String flagString = Resources.<FlagsFile>get(ResourceType.Flags).getMenuFlags(ControlFlag.getFlags()).get(context.index());
 
         if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
             Messages.send(player, "commands.flags.9");
