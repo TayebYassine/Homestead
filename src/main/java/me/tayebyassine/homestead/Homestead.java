@@ -509,6 +509,7 @@ public class Homestead extends JavaPlugin {
             Logger.info("Closing database connection...");
 
             try {
+                Homestead.database.exportFromCache();
                 Homestead.database.closeConnection();
             } catch (Exception e) {
                 Logger.error(e);
