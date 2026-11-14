@@ -34,9 +34,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Sub-command ({@code /hs subareas}) that manages the sub-areas of the current region:
@@ -204,7 +206,11 @@ public final class SubAreasSubCmd extends SubCommandBuilder {
             return true;
         }
 
-        player.getInventory().addItem(SelectionToolListener.getSelectionToolItem());
+        Map<Integer, ItemStack> leftover = player.getInventory().addItem(SelectionToolListener.getSelectionToolItem());
+
+        for (ItemStack item : leftover.values()) {
+            player.getWorld().dropItem(player.getLocation(), item);
+        }
 
         Messages.send(player, "commands.subareas.26");
 
