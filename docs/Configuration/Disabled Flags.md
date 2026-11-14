@@ -21,6 +21,16 @@ If you do not want any flags disabled, use an empty list:
 disabled-flags: []
 ```
 
+## Hiding Disabled Flags From Menus
+
+By default, disabled flags still appear in the flag menus (they just can't be toggled). To hide them instead, enable `hide-disabled-flags` in `flags.yml`. The remaining flags move up to fill the gaps:
+
+```yaml
+# In flags.yml
+flags-configuration:
+  hide-disabled-flags: true
+```
+
 ## Overriding After Disabling
 
 Disabling a flag does not rewrite regions that already changed it. If some regions were modified before you disabled the flag, force the intended state everywhere with:

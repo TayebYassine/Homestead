@@ -35,7 +35,7 @@ public final class SubAreaFlagsMenu {
     public SubAreaFlagsMenu(Player player, Region region, SubArea subArea) {
         List<ItemStack> items = new ArrayList<>();
 
-        for (String flagString : PlayerFlag.getFlags()) {
+        for (String flagString : Resources.<FlagsFile>get(ResourceType.Flags).getMenuFlags(PlayerFlag.getFlags())) {
             boolean value = FlagCalculator.isFlagSet(subArea.getPlayerFlags(), PlayerFlag.parse(flagString));
             items.add(MenuButtons.getFlagButton(MENU_KEY, 17, flagString, value));
         }
@@ -70,7 +70,7 @@ public final class SubAreaFlagsMenu {
             return;
         }
 
-        String flagString = PlayerFlag.getFlags().get(context.index());
+        String flagString = Resources.<FlagsFile>get(ResourceType.Flags).getMenuFlags(PlayerFlag.getFlags()).get(context.index());
 
         if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
             Messages.send(player, "commands.flags.9");

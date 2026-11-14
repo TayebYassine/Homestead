@@ -31,6 +31,28 @@ public final class FlagsFile extends ResourceFile {
     }
 
     /**
+     * Whether disabled flags should be hidden from the flag menus.
+     *
+     * @return {@code true} if disabled flags are hidden, defaults to {@code false}
+     */
+    public boolean hideDisabledFlags() {
+        return getBoolean("flags-configuration.hide-disabled-flags", false);
+    }
+
+    /**
+     * Filters out disabled flags if {@code hide-disabled-flags} is enabled.
+     *
+     * @param flags the flags to filter
+     * @return the flags to show in menus
+     */
+    public List<String> getMenuFlags(List<String> flags) {
+        if (!hideDisabledFlags()) return flags;
+
+        List<String> disabled = getStringList("disabled-flags");
+        return flags.stream().filter(flag -> !disabled.contains(flag)).toList();
+    }
+
+    /**
      * Whether spawners should ignore the spawn-limit flag.
      *
      * @return {@code true} if spawners are excluded, defaults to {@code true}

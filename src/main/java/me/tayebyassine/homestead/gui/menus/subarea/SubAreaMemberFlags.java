@@ -125,10 +125,12 @@ public final class SubAreaMemberFlags {
     }
 
     private void handleSingleToggle(Player player, Region region, SubArea subArea, RegionMember member, PaginationMenu.ClickContext context, int index) {
-        int flagListIndex = index - 1;
-        if (flagListIndex < 0 || flagListIndex >= PlayerFlag.getFlags().size()) return;
+        List<String> menuFlags = Resources.<FlagsFile>get(ResourceType.Flags).getMenuFlags(PlayerFlag.getFlags());
 
-        String flagString = PlayerFlag.getFlags().get(flagListIndex);
+        int flagListIndex = index - 1;
+        if (flagListIndex < 0 || flagListIndex >= menuFlags.size()) return;
+
+        String flagString = menuFlags.get(flagListIndex);
 
         if (Resources.<FlagsFile>get(ResourceType.Flags).isFlagDisabled(flagString)) {
             PlayerSound.play(player, PlayerSound.PredefinedSound.DENIED);
@@ -158,7 +160,7 @@ public final class SubAreaMemberFlags {
         List<ItemStack> items = new ArrayList<>();
         items.add(MenuButtons.getButton(MENU_KEY, 0));
 
-        for (String flagString : PlayerFlag.getFlags()) {
+        for (String flagString : Resources.<FlagsFile>get(ResourceType.Flags).getMenuFlags(PlayerFlag.getFlags())) {
             boolean value = FlagCalculator.isFlagSet(member.getPlayerFlags(), PlayerFlag.parse(flagString));
             items.add(MenuButtons.getFlagButton(MENU_KEY, 1, flagString, value));
         }
